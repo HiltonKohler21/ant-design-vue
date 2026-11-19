@@ -32,6 +32,7 @@ const dimensionMaxMap = {
 export type CollapseType = 'clickTrigger' | 'responsive';
 
 export const siderProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   collapsible: { type: Boolean, default: undefined },
   collapsed: { type: Boolean, default: undefined },
@@ -212,6 +213,7 @@ export default defineComponent({
         },
       ];
       const siderCls = classNames(
+        props.rootClassName,
         pre,
         `${pre}-${theme}`,
         {

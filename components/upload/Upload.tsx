@@ -392,7 +392,13 @@ export default defineComponent({
         return wrapSSR(
           <span
             {...attrs}
-            class={classNames(`${prefixCls.value}-wrapper`, rtlCls, className, hashId.value)}
+            class={classNames(
+              `${prefixCls.value}-wrapper`,
+              props.rootClassName,
+              rtlCls,
+              className,
+              hashId.value,
+            )}
           >
             <div
               class={dragCls}
@@ -434,6 +440,7 @@ export default defineComponent({
             {...attrs}
             class={classNames(
               `${prefixCls.value}-wrapper`,
+              props.rootClassName,
               `${prefixCls.value}-picture-card-wrapper`,
               rtlCls,
               attrs.class,
@@ -447,7 +454,13 @@ export default defineComponent({
       return wrapSSR(
         <span
           {...attrs}
-          class={classNames(`${prefixCls.value}-wrapper`, rtlCls, attrs.class, hashId.value)}
+          class={classNames(
+            `${prefixCls.value}-wrapper`,
+            props.rootClassName,
+            rtlCls,
+            attrs.class,
+            hashId.value,
+          )}
         >
           {renderUploadButton(children && children.length ? undefined : { display: 'none' })}
           {renderUploadList()}

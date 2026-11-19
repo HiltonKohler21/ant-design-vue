@@ -96,6 +96,7 @@ type BeforeUploadValueType = void | boolean | string | Blob | FileType;
 
 function uploadProps<T = any>() {
   return {
+    rootClassName: String,
     capture: someType<boolean | 'user' | 'environment'>([Boolean, String]),
     type: stringType<UploadType>(),
     name: String,

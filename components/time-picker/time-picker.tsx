@@ -25,6 +25,7 @@ export interface TimePickerLocale {
 }
 
 export const timePickerProps = () => ({
+  rootClassName: String,
   format: String,
   showNow: booleanType(),
   showHour: booleanType(),
@@ -135,7 +136,8 @@ function createTimePicker<
         return (
           <InternalTimePicker
             {...attrs}
-            {...omit(props, ['onUpdate:value', 'onUpdate:open'])}
+            {...omit(props, ['onUpdate:value', 'onUpdate:open', 'rootClassName'])}
+            rootClassName={props.rootClassName}
             id={id}
             dropdownClassName={props.popupClassName}
             mode={undefined}

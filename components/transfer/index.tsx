@@ -80,6 +80,7 @@ export interface TransferLocale {
 }
 
 export const transferProps = () => ({
+  rootClassName: String,
   id: String,
   prefixCls: String,
   dataSource: arrayType<TransferItem[]>([]),
@@ -361,6 +362,7 @@ const Transfer = defineComponent({
 
       const cls = classNames(
         prefixCls.value,
+        props.rootClassName,
         className,
         {
           [`${prefixCls.value}-disabled`]: disabled,

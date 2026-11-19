@@ -134,6 +134,7 @@ function getRows(children: VNode[], column: number) {
 
 export const descriptionsProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   /** 语义化 classNames（antd 5.25+）：root / header / title / extra / label / content */
   classNames: {
     type: Object as PropType<SemanticNames<DescriptionsSemanticName>>,
@@ -231,6 +232,7 @@ const Descriptions = defineComponent({
               [`${prefixCls.value}-bordered`]: !!bordered,
               [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
             },
+            props.rootClassName,
             props.classNames?.root,
             attrs.class,
             hashId.value,

@@ -129,3 +129,20 @@ describe('upstream: rootClassName 第六批（8 组件）', () => {
     );
   });
 });
+
+describe('upstream: rootClassName 第七批（descriptions/list/layout/calendar/upload/table/form/transfer）', () => {
+  const c = (name, Comp, props = {}, check) => {
+    it(`${name} 挂到根节点`, () => {
+      const wrapper = mount(Comp, { props: { rootClassName: 'rc7-' + name, ...props } });
+      const html = wrapper.html();
+      expect(html).toContain('rc7-' + name);
+    });
+  };
+  c('descriptions', require('../../descriptions').default);
+  c('list', require('../../list').default);
+  c('layout', require('../../layout').default);
+  c('calendar', require('../../calendar').default);
+  c('upload', require('../../upload').default);
+  c('form', require('../../form').default);
+  c('transfer', require('../../transfer').default, { dataSource: [], targetKeys: [] });
+});

@@ -6,6 +6,7 @@ import useStyle from './style';
 
 export const basicProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   hasSider: { type: Boolean, default: undefined },
   tagName: String,
 });
@@ -44,7 +45,8 @@ const Basic = defineComponent({
   compatConfig: { MODE: 3 },
   props: basicProps(),
   setup(props, { slots }) {
-    return () => createVNode(props.tagName, { class: props.prefixCls }, slots);
+    return () =>
+      createVNode(props.tagName, { class: [props.prefixCls, props.rootClassName] }, slots);
   },
 });
 
@@ -78,7 +80,13 @@ const BasicLayout = defineComponent({
     });
     return () => {
       const { tagName } = props;
-      return wrapSSR(createVNode(tagName, { ...attrs, class: [divCls.value, attrs.class] }, slots));
+      return wrapSSR(
+        createVNode(
+          tagName,
+          { ...attrs, class: [divCls.value, props.rootClassName, attrs.class] },
+          slots,
+        ),
+      );
     };
   },
 });

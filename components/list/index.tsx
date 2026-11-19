@@ -52,6 +52,7 @@ export type ListSize = 'small' | 'default' | 'large';
 export type ListItemLayout = 'horizontal' | 'vertical';
 
 export const listProps = () => ({
+  rootClassName: String,
   bordered: booleanType(),
   dataSource: arrayType(),
   extra: vNodeType(),
@@ -273,6 +274,7 @@ const List = defineComponent({
           ...classObj.value,
           [`${prefixCls.value}-something-after-last-item`]: isSomethingAfterLastItem,
         },
+        props.rootClassName,
         attrs.class,
         hashId.value,
       );

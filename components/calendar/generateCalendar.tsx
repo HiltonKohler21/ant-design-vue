@@ -97,6 +97,7 @@ function generateCalendar<
     inheritAttrs: false,
     props: {
       prefixCls: String,
+      rootClassName: String,
       locale: { type: Object as PropType<Props['locale']>, default: undefined as Props['locale'] },
       validRange: { type: Array as PropType<DateType[]>, default: undefined },
       disabledDate: { type: Function as PropType<Props['disabledDate']>, default: undefined },
@@ -308,6 +309,7 @@ function generateCalendar<
             {...attrs}
             class={classNames(
               calendarPrefixCls.value,
+              (props as any).rootClassName,
               {
                 [`${calendarPrefixCls.value}-full`]: fullscreen,
                 [`${calendarPrefixCls.value}-mini`]: !fullscreen,

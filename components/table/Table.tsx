@@ -122,6 +122,7 @@ export interface TableProps<RecordType = DefaultRecordType>
 export const tableProps = () => {
   return {
     prefixCls: stringType<string>(),
+    rootClassName: String,
     columns: arrayType<ColumnsType>(),
     rowKey: someType<TableProps['rowKey']>([String, Function]),
     tableLayout: stringType<TableProps['tableLayout']>(),
@@ -592,6 +593,7 @@ const InternalTable = defineComponent({
         {
           [`${prefixCls.value}-wrapper-rtl`]: direction.value === 'rtl',
         },
+        props.rootClassName,
         attrs.class,
         hashId.value,
       );

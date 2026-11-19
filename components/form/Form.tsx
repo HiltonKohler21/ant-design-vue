@@ -46,6 +46,7 @@ export type RequiredMark = boolean | 'optional';
 export type FormLayout = 'horizontal' | 'inline' | 'vertical';
 
 export const formProps = () => ({
+  rootClassName: String,
   layout: PropTypes.oneOf(tuple('horizontal', 'inline', 'vertical')),
   labelCol: objectType<ColProps & HTMLAttributes>(),
   wrapperCol: objectType<ColProps & HTMLAttributes>(),
@@ -162,6 +163,7 @@ const Form = defineComponent({
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-${size.value}`]: size.value,
         },
+        props.rootClassName,
         hashId.value,
       ),
     );
