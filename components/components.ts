@@ -76,9 +76,12 @@ export { default as Empty } from './empty';
 export type {
   FloatButtonProps,
   FloatButtonGroupProps,
-  BackTopProps,
+  BackTopProps as FloatButtonBackTopProps,
 } from './float-button/interface';
-export { default as FloatButton, FloatButtonGroup, BackTop } from './float-button';
+export { default as FloatButton, FloatButtonGroup, BackTop as FloatButtonBackTop } from './float-button';
+
+export type { BackTopProps } from './back-top';
+export { default as BackTop } from './back-top';
 
 export type { FormProps, FormItemProps, FormInstance, FormItemInstance } from './form';
 export { default as Form, FormItem, FormItemRest } from './form';
