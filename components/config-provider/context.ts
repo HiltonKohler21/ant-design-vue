@@ -49,6 +49,14 @@ export type SizeType = 'small' | 'middle' | 'large' | undefined;
 
 export type Direction = 'ltr' | 'rtl';
 
+/**
+ * 组件视觉变体（antd 5.13+）
+ * @see https://ant.design/components/input-cn#input-demo-variant
+ */
+export const Variants = ['outlined', 'borderless', 'filled', 'underlined'] as const;
+
+export type Variant = (typeof Variants)[number];
+
 export type MappingAlgorithm = DerivativeFunc<SeedToken, MapToken>;
 
 export interface ThemeConfig {
@@ -78,7 +86,8 @@ export const configProviderProps = () => ({
     type: Function as PropType<(tableProps: TransformCellTextProps) => any>,
   },
   csp: objectType<CSPConfig>(),
-  input: objectType<{ autocomplete?: string }>(),
+  variant: { type: String as PropType<Variant> },
+  input: objectType<{ autocomplete?: string; variant?: Variant }>(),
   autoInsertSpaceInButton: { type: Boolean, default: undefined },
   locale: objectType<Locale>(),
   pageHeader: objectType<{ ghost?: boolean }>(),
@@ -104,6 +113,7 @@ export const configProviderProps = () => ({
   theme: objectType<ThemeConfig>(),
   select: objectType<{
     showSearch?: boolean;
+    variant?: Variant;
   }>(),
   wave: objectType<{
     disabled?: boolean;
@@ -114,6 +124,7 @@ export type ConfigProviderProps = Partial<ExtractPropTypes<ReturnType<typeof con
 
 export interface ConfigProviderInnerProps {
   csp?: ComputedRef<CSPConfig>;
+  variant?: ComputedRef<Variant>;
   autoInsertSpaceInButton?: ComputedRef<boolean>;
   locale?: ComputedRef<Locale>;
   direction?: ComputedRef<'ltr' | 'rtl'>;
@@ -133,6 +144,7 @@ export interface ConfigProviderInnerProps {
   }>;
   input?: ComputedRef<{
     autocomplete?: string;
+    variant?: Variant;
   }>;
   pagination?: ComputedRef<{
     showSizeChanger?: boolean;
@@ -144,6 +156,7 @@ export interface ConfigProviderInnerProps {
   }>;
   select?: ComputedRef<{
     showSearch?: boolean;
+    variant?: Variant;
   }>;
   componentSize?: ComputedRef<SizeType>;
   componentDisabled?: ComputedRef<boolean>;

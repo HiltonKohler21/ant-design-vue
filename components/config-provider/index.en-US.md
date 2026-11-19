@@ -56,7 +56,7 @@ Some components use dynamic style to support wave effect. You can config `csp` p
 | form | Set Form common props | { validateMessages?: [ValidateMessages](/components/form/#validatemessages), requiredMark?: boolean \| `optional` } | - | 3.0 |
 | getPopupContainer | to set the container of the popup element. The default is to create a `div` element in `body`. | Function(triggerNode, dialogContext) | `() => document.body` |  |
 | getTargetContainer | Config Affix, Anchor scroll target container | () => HTMLElement | () => window | 3.0 |
-| input | Set Input common props | { autocomplete?: string } | - | 3.0 |
+| input | Set Input common props | { autocomplete?: string, variant?: `outlined` \| `borderless` \| `filled` \| `underlined` } | - | 3.0 |
 | locale | language package setting, you can find the packages in [ant-design-vue/es/locale](http://unpkg.com/ant-design-vue/es/locale/) | object | - | 1.5.0 |
 | pageHeader | Unify the ghost of pageHeader ,Ref [pageHeader]\(&lt;(/components/page-header)> | { ghost:boolean } | 'true' | 1.5.0 |
 | prefixCls | set prefix class | string | ant |  |
@@ -64,6 +64,7 @@ Some components use dynamic style to support wave effect. You can config `csp` p
 | space | Set Space `size`, ref [Space](/components/space) | { size: `small` \| `middle` \| `large` \| `number` } | - | 3.0 |
 | transformCellText | Table data can be changed again before rendering. The default configuration of general user empty data. | Function({ text, column, record, index }) => any | - | 1.5.4 |
 | virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |
+| variant | Set the default variant of input-like components (Input / Select ...) | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | wave | Config wave effect | { disabled?: boolean } | - | 4.0.7 |
 
 ### ConfigProvider.config() `3.0.0+`

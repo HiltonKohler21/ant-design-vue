@@ -11,6 +11,7 @@ import type {
   MouseEventHandler,
 } from '../_util/EventInterface';
 import type { InputStatus } from '../_util/statusUtils';
+import type { Variant } from '../config-provider/context';
 import type { InputFocusOptions } from './utils/commonUtils';
 export const inputDefaultValue = Symbol() as unknown as string;
 export const commonInputProps = () => {
@@ -86,6 +87,7 @@ export const inputProps = () => ({
   maxlength: Number,
   loading: { type: Boolean, default: undefined },
   bordered: { type: Boolean, default: undefined },
+  variant: { type: String as PropType<Variant> },
   showCount: { type: [Boolean, Object] as PropType<boolean | ShowCountProps> },
   htmlSize: Number,
   onPressEnter: Function as PropType<KeyboardEventHandler>,

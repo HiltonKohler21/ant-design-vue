@@ -23,7 +23,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sBqqTatJ-AkAAA
 | addonAfter | 带标签的 input，设置后置标签 | string\|slot |  |  |
 | addonBefore | 带标签的 input，设置前置标签 | string\|slot |  |  |
 | allowClear | 可以点击清除图标删除内容 | boolean |  |  |
-| bordered | 是否有边框 | boolean | true | 3.0 |
+| bordered | 是否有边框 | boolean | true（deprecated，请用 `variant`） | 3.0 |
 | clearIcon | 自定义清除图标 （allowClear 为 true 时生效） | slot | `<CloseCircleFilled />` | 3.3.0 |
 | defaultValue | 输入框默认内容 | string |  |  |
 | disabled | 是否禁用状态，默认为 false | boolean | false |  |
@@ -36,6 +36,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sBqqTatJ-AkAAA
 | suffix | 带有后缀图标的 input | string\|slot |  |  |
 | type | 声明 input 类型，同原生 input 标签的 type 属性，见：[MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/input#属性)(请直接使用 `<a-textarea />` 代替 `type="textarea"`)。 | string | `text` |  |
 | value(v-model) | 输入框内容 | string |  |  |
+| variant | 形态变体 | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 
 ### Input 事件
 
@@ -49,11 +50,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sBqqTatJ-AkAAA
 ### TextArea
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |  |
-| --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 | allowClear | 可以点击清除图标删除内容 | boolean |  | 1.5.0 |  |
 | autosize | 自适应内容高度，可设置为 `true | false` 或对象：`{ minRows: 2, maxRows: 6 }` | boolean\|object | false |  |
 | defaultValue | 输入框默认内容 | string |  |  |  |
-_| showCount | 是否展示字数 | boolean \| { formatter: (info: { value: string, count: number, maxLength?: number }) => string } | false |  |  |_
+| \_ | showCount | 是否展示字数 | boolean \| { formatter: (info: { value: string, count: number, maxLength?: number }) => string } | false |  |  | \_ |
 | value(v-model) | 输入框内容 | string |  |  |  |
 
 ### TextArea 事件

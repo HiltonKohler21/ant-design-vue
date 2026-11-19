@@ -35,7 +35,9 @@ export type {
   Direction,
   CSPConfig,
   DirectionType,
+  Variant,
 } from './context';
+export { Variants } from './context';
 export const defaultPrefixCls = 'ant';
 export { defaultIconPrefixCls };
 function getGlobalPrefixCls() {
@@ -197,8 +199,10 @@ const ConfigProvider = defineComponent({
     const componentSize = computed(() => props.componentSize);
     const componentDisabled = computed(() => props.componentDisabled);
     const wave = computed(() => props.wave ?? parentContext.wave?.value);
+    const variant = computed(() => props.variant ?? parentContext.variant?.value);
     const configProvider: ConfigProviderInnerProps = {
       csp,
+      variant,
       autoInsertSpaceInButton,
       locale,
       direction,

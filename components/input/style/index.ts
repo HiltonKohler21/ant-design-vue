@@ -4,6 +4,7 @@ import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import type { GlobalToken } from '../../theme/interface';
 import { clearFix, resetComponent } from '../../style';
 import { genCompactItemStyle } from '../../style/compact-item';
+import { genVariantsStyle } from './variants';
 
 export type InputToken<T extends GlobalToken = FullToken<'Input'>> = T & {
   inputAffixPadding: number;
@@ -963,6 +964,10 @@ export default genComponentStyleHook('Input', token => {
     genAffixStyle(inputToken),
     genGroupStyle(inputToken),
     genSearchInputStyle(inputToken),
+    // =====================================================
+    // ==                Variant                          ==
+    // =====================================================
+    genVariantsStyle(inputToken),
     // =====================================================
     // ==             Space Compact                       ==
     // =====================================================

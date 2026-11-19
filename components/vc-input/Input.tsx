@@ -150,6 +150,7 @@ export default defineComponent({
         'defaultValue',
         'size',
         'bordered',
+        'variant',
         'htmlSize',
         'lazy',
         'showCount',

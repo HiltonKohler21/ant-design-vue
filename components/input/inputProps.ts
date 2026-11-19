@@ -4,6 +4,7 @@ import type { VueNode } from '../_util/type';
 import { eventType } from '../_util/type';
 import type { CompositionEventHandler } from '../_util/EventInterface';
 import { inputProps as vcInputProps } from '../vc-input/inputProps';
+import type { Variant } from '../config-provider/context';
 
 export const inputDefaultValue = Symbol() as unknown as string;
 
@@ -12,12 +13,15 @@ export interface AutoSizeType {
   maxRows?: number;
 }
 const inputProps = () => {
-  return omit(vcInputProps(), [
-    'wrapperClassName',
-    'groupClassName',
-    'inputClassName',
-    'affixWrapperClassName',
-  ]);
+  return {
+    ...omit(vcInputProps(), [
+      'wrapperClassName',
+      'groupClassName',
+      'inputClassName',
+      'affixWrapperClassName',
+    ]),
+    variant: { type: String as PropType<Variant> },
+  };
 };
 export default inputProps;
 export type InputProps = Partial<ExtractPropTypes<ReturnType<typeof inputProps>>>;

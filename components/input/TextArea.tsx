@@ -24,6 +24,8 @@ import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 // CSSINJS
 import useStyle from './style';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
+import useVariant from '../form/hooks/useVariant';
+import { deprecated } from '../_util/warning';
 
 function fixEmojiLength(value: string, maxLength: number) {
   return [...(value || '')].slice(0, maxLength).join('');
@@ -62,6 +64,14 @@ export default defineComponent({
     const resizableTextArea = shallowRef();
     const mergedValue = shallowRef('');
     const { prefixCls, size, direction } = useConfigInject('input', props);
+
+    // ====================== Variant =======================
+    const [mergedVariant, enableVariantCls] = useVariant(
+      'input',
+      computed(() => props.variant),
+      computed(() => props.bordered),
+    );
+    deprecated(props.bordered === undefined, 'bordered', 'variant', 'TextArea');
 
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -192,13 +202,18 @@ export default defineComponent({
     };
     const renderTextArea = () => {
       const { class: customClass } = attrs;
-      const { bordered = true } = props;
+      const isBorderless = mergedVariant.value === 'borderless';
+      const variantCls =
+        enableVariantCls.value && mergedVariant.value !== 'outlined'
+          ? `${prefixCls.value}-${mergedVariant.value}`
+          : undefined;
       const resizeProps = {
         ...omit(props, ['allowClear']),
         ...attrs,
         class: [
           {
-            [`${prefixCls.value}-borderless`]: !bordered,
+            [`${prefixCls.value}-borderless`]: isBorderless,
+            [variantCls]: !!variantCls,
             [`${customClass}`]: customClass && !showCount.value,
             [`${prefixCls.value}-sm`]: size.value === 'small',
             [`${prefixCls.value}-lg`]: size.value === 'large',
@@ -249,7 +264,7 @@ export default defineComponent({
       mergedValue.value = val;
     });
     return () => {
-      const { maxlength, bordered = true, hidden } = props;
+      const { maxlength, hidden } = props;
       const { style, class: customClass } = attrs;
       const inputProps: any = {
         ...props,
@@ -258,7 +273,8 @@ export default defineComponent({
         inputType: 'text',
         handleReset,
         direction: direction.value,
-        bordered,
+        bordered: mergedVariant.value !== 'borderless',
+        variant: mergedVariant.value,
         style: showCount.value ? undefined : style,
         hashId: hashId.value,
         disabled: props.disabled ?? disabled.value,

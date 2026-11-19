@@ -7,6 +7,7 @@ import { defineComponent } from 'vue';
 import type { VueNode } from '../_util/type';
 import { anyType, tuple } from '../_util/type';
 import type { Direction, SizeType } from '../config-provider';
+import type { Variant } from '../config-provider/context';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import { hasAddon } from './util';
 import { FormItemInputContext } from '../form/FormItemContext';
@@ -37,6 +38,7 @@ export default defineComponent({
     readonly: { type: Boolean, default: undefined },
     focused: { type: Boolean, default: undefined },
     bordered: { type: Boolean, default: true },
+    variant: { type: String as PropType<Variant> },
     triggerFocus: { type: Function as PropType<() => void> },
     hidden: Boolean,
     status: String as PropType<InputStatus>,
@@ -69,7 +71,7 @@ export default defineComponent({
         value,
         allowClear,
         direction,
-        bordered,
+        variant,
         hidden,
         status: customStatus,
         addonAfter = slots.addonAfter,
@@ -95,7 +97,8 @@ export default defineComponent({
         ),
         {
           [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl',
-          [`${prefixCls}-affix-wrapper-borderless`]: !bordered,
+          [`${prefixCls}-affix-wrapper-borderless`]: variant === 'borderless',
+          [`${prefixCls}-affix-wrapper-${variant}`]: variant && variant !== 'outlined',
           // className will go to addon wrapper
           [`${attrs.class}`]: !hasAddon({ addonAfter, addonBefore }) && attrs.class,
         },

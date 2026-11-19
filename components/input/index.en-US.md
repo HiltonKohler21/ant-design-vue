@@ -22,7 +22,7 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 | addonAfter | The label text displayed after (on the right side of) the input field. | string\|slot |  |  |
 | addonBefore | The label text displayed before (on the left side of) the input field. | string\|slot |  |  |
 | allowClear | allow to remove input content with clear icon | boolean |  |  |
-| bordered | Whether has border style | boolean | true | 4.5.0 |
+| bordered | Whether has border style | boolean | true (deprecated, use `variant` instead) | 4.5.0 |
 | clearIcon | custom clear icon when allowClear | slot | `<CloseCircleFilled />` | 3.3.0 |
 | defaultValue | The initial input content | string |  |  |
 | disabled | Whether the input is disabled. | boolean | false |  |
@@ -35,6 +35,7 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 | suffix | The suffix icon for the Input. | string\|slot |  |  |
 | type | The type of input, see: [MDN](https://developer.mozilla.org/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types)(use `<a-textarea />` instead of `type="textarea"`) | string | `text` |  |
 | value(v-model) | The input content value | string |  |  |
+| variant | Variant of the input | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 
 ### Input Events
 
