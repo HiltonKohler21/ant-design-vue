@@ -26,6 +26,12 @@ export interface SemanticStyles {
   popup?: Partial<Record<PopupSemanticName, CSSProperties>>;
 }
 
+/** Input 语义位 */
+export type InputSemanticName = 'prefix' | 'suffix' | 'input' | 'count';
+
+/** Slider 语义位 */
+export type SliderSemanticName = 'root' | 'tracks' | 'track' | 'rail' | 'handle';
+
 /** Card 语义位 */
 export type CardSemanticName = 'header' | 'body' | 'extra' | 'actions' | 'title' | 'cover';
 

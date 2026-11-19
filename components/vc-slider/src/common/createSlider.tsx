@@ -33,6 +33,9 @@ export default function createSlider(Component) {
     handleStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
     trackStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
     railStyle: PropTypes.object,
+    railClassName: String,
+    trackClassName: String,
+    handleClassName: String,
     dotStyle: PropTypes.object,
     activeDotStyle: PropTypes.object,
     autofocus: { type: Boolean, default: undefined },
@@ -337,7 +340,7 @@ export default function createSlider(Component) {
           style={style}
         >
           <div
-            class={`${prefixCls}-rail`}
+            class={classNames(`${prefixCls}-rail`, this.railClassName)}
             style={{
               ...maximumTrackStyle,
               ...railStyle,

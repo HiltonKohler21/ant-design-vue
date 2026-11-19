@@ -196,7 +196,14 @@ export default defineComponent({
       return inputNode;
     };
     const getSuffix = () => {
-      const { maxlength, suffix = slots.suffix?.(), showCount, prefixCls } = props;
+      const {
+        maxlength,
+        suffix = slots.suffix?.(),
+        showCount,
+        prefixCls,
+        countClassName,
+        countStyle,
+      } = props;
       // Max length value
       const hasMaxLength = Number(maxlength) > 0;
 
@@ -211,9 +218,10 @@ export default defineComponent({
           <>
             {!!showCount && (
               <span
-                class={classNames(`${prefixCls}-show-count-suffix`, {
+                class={classNames(`${prefixCls}-show-count-suffix`, countClassName, {
                   [`${prefixCls}-show-count-has-suffix`]: !!suffix,
                 })}
+                style={countStyle}
               >
                 {dataCount}
               </span>

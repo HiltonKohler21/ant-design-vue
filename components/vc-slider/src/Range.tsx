@@ -432,10 +432,13 @@ const Range = defineComponent({
     getTrack({ bounds, prefixCls, reverse, vertical, included, offsets, trackStyle }) {
       return bounds.slice(0, -1).map((_, index) => {
         const i = index + 1;
-        const trackClassName = classNames({
-          [`${prefixCls}-track`]: true,
-          [`${prefixCls}-track-${i}`]: true,
-        });
+        const trackClassName = classNames(
+          {
+            [`${prefixCls}-track`]: true,
+            [`${prefixCls}-track-${i}`]: true,
+          },
+          this.trackClassName,
+        );
         return (
           <Track
             class={trackClassName}
@@ -483,6 +486,7 @@ const Range = defineComponent({
         return handleGenerator({
           class: classNames({
             [handleClassName]: true,
+            [this.handleClassName]: !!this.handleClassName,
             [`${handleClassName}-${i + 1}`]: true,
             [`${handleClassName}-dragging`]: dragging,
           }),

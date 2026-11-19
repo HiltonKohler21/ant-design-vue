@@ -72,6 +72,10 @@ export default defineComponent({
         affixWrapperClassName,
         wrapperClassName,
         groupClassName,
+        prefixClassName,
+        suffixClassName,
+        prefixStyle,
+        suffixStyle,
       } = props;
       let element = cloneElement(inputElement, {
         value,
@@ -93,7 +97,7 @@ export default defineComponent({
         );
 
         const suffixNode = (suffix || allowClear) && (
-          <span class={`${prefixCls}-suffix`}>
+          <span class={[`${prefixCls}-suffix`, suffixClassName]} style={suffixStyle}>
             {getClearIcon()}
             {suffix}
           </span>
@@ -107,7 +111,11 @@ export default defineComponent({
             onMousedown={onInputMouseDown}
             ref={containerRef}
           >
-            {prefix && <span class={`${prefixCls}-prefix`}>{prefix}</span>}
+            {prefix && (
+              <span class={[`${prefixCls}-prefix`, prefixClassName]} style={prefixStyle}>
+                {prefix}
+              </span>
+            )}
             {cloneElement(inputElement, {
               style: null,
               value,

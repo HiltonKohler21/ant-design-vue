@@ -5,6 +5,7 @@ import { eventType } from '../_util/type';
 import type { CompositionEventHandler } from '../_util/EventInterface';
 import { inputProps as vcInputProps } from '../vc-input/inputProps';
 import type { Variant } from '../config-provider/context';
+import type { InputSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
 
 export const inputDefaultValue = Symbol() as unknown as string;
 
@@ -22,6 +23,16 @@ const inputProps = () => {
     ]),
     variant: { type: String as PropType<Variant> },
     rootClassName: String,
+    /** 语义化 classNames（antd 5.25+）：prefix / suffix / input / count */
+    classNames: {
+      type: Object as PropType<SemanticNames<InputSemanticName>>,
+      default: undefined,
+    },
+    /** 语义化 styles（antd 5.25+）：prefix / suffix / input / count */
+    styles: {
+      type: Object as PropType<SemanticStylesMap<InputSemanticName>>,
+      default: undefined,
+    },
   };
 };
 export default inputProps;

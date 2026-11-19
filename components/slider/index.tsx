@@ -14,6 +14,7 @@ import {
   functionType,
 } from '../_util/type';
 import type { TooltipPlacement } from '../tooltip/Tooltip';
+import type { SemanticNames, SemanticStylesMap, SliderSemanticName } from '../_util/semantic';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import SliderTooltip from './SliderTooltip';
 import classNames from '../_util/classNames';
@@ -79,6 +80,10 @@ export const sliderProps = () => ({
   autofocus: booleanType(),
   handleStyle: someType<CSSProperties[] | CSSProperties>([Array, Object]),
   trackStyle: someType<CSSProperties[] | CSSProperties>([Array, Object]),
+  /** 语义化 classNames（antd 5.25+）：root / tracks / track / rail / handle */
+  classNames: objectType<SemanticNames<SliderSemanticName>>(),
+  /** 语义化 styles（antd 5.25+）：root / tracks / track / rail / handle */
+  styles: objectType<SemanticStylesMap<SliderSemanticName>>(),
   onChange: functionType<(value: Value) => void>(),
   onAfterChange: functionType<(value: Value) => void>(),
   onFocus: functionType<FocusEventHandler>(),
@@ -182,11 +187,14 @@ const Slider = defineComponent({
         tooltipPrefixCls: customizeTooltipPrefixCls,
         range,
         id = formItemContext.id.value,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
         ...restProps
       } = props;
       const tooltipPrefixCls = configProvider.getPrefixCls('tooltip', customizeTooltipPrefixCls);
       const cls = classNames(
         attrs.class,
+        semanticClassNames?.root,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
@@ -212,6 +220,21 @@ const Slider = defineComponent({
             step={restProps.step!}
             draggableTrack={draggableTrack}
             class={cls}
+            style={[attrs.style as any, semanticStyles?.root]}
+            railClassName={semanticClassNames?.rail}
+            trackClassName={semanticClassNames?.track}
+            handleClassName={semanticClassNames?.handle}
+            railStyle={semanticStyles?.rail}
+            trackStyle={
+              Array.isArray(restProps.trackStyle)
+                ? restProps.trackStyle.map(s => ({ ...s, ...semanticStyles?.track }))
+                : { ...restProps.trackStyle, ...semanticStyles?.track }
+            }
+            handleStyle={
+              Array.isArray(restProps.handleStyle)
+                ? restProps.handleStyle.map(s => ({ ...s, ...semanticStyles?.handle }))
+                : { ...restProps.handleStyle, ...semanticStyles?.handle }
+            }
             ref={sliderRef}
             handle={(info: HandleGeneratorInfo) =>
               handleWithTooltip({
@@ -234,6 +257,17 @@ const Slider = defineComponent({
           id={id}
           step={restProps.step!}
           class={cls}
+          style={[attrs.style as any, semanticStyles?.root]}
+          railClassName={semanticClassNames?.rail}
+          trackClassName={semanticClassNames?.track}
+          handleClassName={semanticClassNames?.handle}
+          railStyle={semanticStyles?.rail}
+          trackStyle={{ ...restProps.trackStyle, ...semanticStyles?.track }}
+          handleStyle={
+            Array.isArray(restProps.handleStyle)
+              ? restProps.handleStyle.map(s => ({ ...s, ...semanticStyles?.handle }))
+              : { ...restProps.handleStyle, ...semanticStyles?.handle }
+          }
           ref={sliderRef}
           handle={(info: HandleGeneratorInfo) =>
             handleWithTooltip({

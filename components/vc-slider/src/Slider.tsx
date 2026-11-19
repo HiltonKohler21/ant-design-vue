@@ -1,4 +1,5 @@
 import PropTypes from '../../_util/vue-types';
+import classNames from '../../_util/classNames';
 import BaseMixin from '../../_util/BaseMixin';
 import { hasProp } from '../../_util/props-util';
 import Track from './common/Track';
@@ -146,7 +147,7 @@ const Slider = defineComponent({
     }) {
       return (
         <Track
-          class={`${prefixCls}-track`}
+          class={classNames(`${prefixCls}-track`, this.trackClassName)}
           vertical={vertical}
           included={included}
           offset={offset}
@@ -183,7 +184,7 @@ const Slider = defineComponent({
       const { sValue, dragging } = this;
       const offset = this.calcOffset(sValue);
       const handles = handleGenerator({
-        class: `${prefixCls}-handle`,
+        class: classNames(`${prefixCls}-handle`, this.handleClassName),
         prefixCls,
         vertical,
         offset,

@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, PropType } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import PropTypes from '../_util/vue-types';
 import type { SizeType } from '../config-provider';
 import type { VueNode } from '../_util/type';
@@ -47,6 +47,10 @@ export const baseInputProps = () => {
     readonly: { type: Boolean, default: undefined },
     handleReset: Function as PropType<MouseEventHandler>,
     hidden: { type: Boolean, default: undefined },
+    prefixClassName: String,
+    suffixClassName: String,
+    prefixStyle: { type: Object as PropType<CSSProperties>, default: undefined },
+    suffixStyle: { type: Object as PropType<CSSProperties>, default: undefined },
   };
 };
 export const inputProps = () => ({
@@ -88,6 +92,8 @@ export const inputProps = () => ({
   loading: { type: Boolean, default: undefined },
   bordered: { type: Boolean, default: undefined },
   variant: { type: String as PropType<Variant> },
+  countClassName: String,
+  countStyle: { type: Object as PropType<CSSProperties>, default: undefined },
   showCount: { type: [Boolean, Object] as PropType<boolean | ShowCountProps> },
   htmlSize: Number,
   onPressEnter: Function as PropType<KeyboardEventHandler>,

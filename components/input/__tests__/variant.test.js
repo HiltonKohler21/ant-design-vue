@@ -70,3 +70,22 @@ describe('Input.Variant', () => {
     expect(rootClasses(wrapper)).toContain('ant-input-filled');
   });
 });
+
+describe('Input semantic API（antd 5.25）', () => {
+  it('classNames.prefix / suffix / count / input', () => {
+    const wrapper = mount(Input, {
+      props: {
+        prefix: 'P',
+        suffix: 'S',
+        showCount: true,
+        value: 'v',
+        classNames: { prefix: 'i-prefix', suffix: 'i-suffix', count: 'i-count', input: 'i-input' },
+        styles: { prefix: { color: 'rgb(1, 2, 3)' }, suffix: { color: 'rgb(4, 5, 6)' } },
+      },
+    });
+    const html = wrapper.html();
+    for (const c of ['i-prefix', 'i-suffix', 'i-count', 'i-input']) expect(html).toContain(c);
+    expect(html).toContain('color: rgb(1, 2, 3)');
+    expect(html).toContain('color: rgb(4, 5, 6)');
+  });
+});

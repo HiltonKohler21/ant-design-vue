@@ -160,6 +160,12 @@ export default defineComponent({
           onFocus={handleFocus}
           prefix={prefix}
           suffix={suffixNode}
+          prefixClassName={props.classNames?.prefix}
+          suffixClassName={props.classNames?.suffix}
+          countClassName={props.classNames?.count}
+          prefixStyle={props.styles?.prefix}
+          suffixStyle={props.styles?.suffix}
+          countStyle={props.styles?.count}
           allowClear={allowClear}
           addonAfter={
             addonAfter && (
@@ -183,6 +189,7 @@ export default defineComponent({
               [`${prefixClsValue}-rtl`]: direction.value === 'rtl',
               [`${prefixClsValue}-borderless`]: isBorderless,
               [variantCls]: !inputHasPrefixSuffix && !!variantCls,
+              [props.classNames?.input as string]: !!props.classNames?.input,
             },
             !inputHasPrefixSuffix && getStatusClassNames(prefixClsValue, mergedStatus.value),
             hashId.value,
