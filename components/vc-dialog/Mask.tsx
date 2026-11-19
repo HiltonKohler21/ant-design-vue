@@ -9,14 +9,15 @@ export default defineComponent({
     visible: Boolean,
     motionName: String,
     maskProps: Object,
+    maskClassName: String,
   },
   setup(props, {}) {
     return () => {
-      const { prefixCls, visible, maskProps, motionName } = props;
+      const { prefixCls, visible, maskProps, motionName, maskClassName } = props;
       const transitionProps = getTransitionProps(motionName);
       return (
         <Transition {...transitionProps}>
-          <div v-show={visible} class={`${prefixCls}-mask`} {...maskProps} />
+          <div v-show={visible} class={[`${prefixCls}-mask`, maskClassName]} {...maskProps} />
         </Transition>
       );
     };

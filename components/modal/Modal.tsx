@@ -13,6 +13,7 @@ import initDefaultProps from '../_util/props-util/initDefaultProps';
 import type { Direction } from '../config-provider';
 import type { VueNode } from '../_util/type';
 import { objectType } from '../_util/type';
+import type { DialogSemanticClassNames, DialogSemanticStyles } from '../_util/semantic';
 import { canUseDocElement } from '../_util/styleChecker';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { getTransitionName } from '../_util/transition';
@@ -65,6 +66,10 @@ export const modalProps = () => ({
   forceRender: { type: Boolean, default: undefined },
   okButtonProps: objectType<ButtonPropsType>(),
   cancelButtonProps: objectType<ButtonPropsType>(),
+  /** 语义化 classNames（antd 5.25+）：mask / wrapper / content / header / body / footer */
+  classNames: objectType<DialogSemanticClassNames>(),
+  /** 语义化 styles（antd 5.25+）：mask / wrapper / content / header / body / footer */
+  styles: objectType<DialogSemanticStyles>(),
   destroyOnClose: { type: Boolean, default: undefined },
   /** @deprecated Please use `destroyOnHidden` instead */
   destroyOnHidden: { type: Boolean, default: undefined },
@@ -219,6 +224,8 @@ export default defineComponent({
         closeIcon = slots.closeIcon?.(),
         focusTriggerAfterClose = true,
         destroyOnHidden,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
         ...restProps
       } = props;
 
@@ -234,7 +241,18 @@ export default defineComponent({
           class={classNames(hashId.value, attrs.class)}
           getContainer={getContainer || getPopupContainer?.value}
           prefixCls={prefixCls.value}
-          wrapClassName={wrapClassNameExtended}
+          wrapClassName={classNames(wrapClassNameExtended, semanticClassNames?.wrapper)}
+          wrapStyle={semanticStyles?.wrapper}
+          maskClassName={semanticClassNames?.mask}
+          maskStyle={{ ...semanticStyles?.mask, ...props.maskStyle }}
+          headerClassName={semanticClassNames?.header}
+          headerStyle={semanticStyles?.header}
+          bodyClassName={semanticClassNames?.body}
+          bodyStyle={{ ...semanticStyles?.body, ...props.bodyStyle }}
+          footerClassName={semanticClassNames?.footer}
+          footerStyle={semanticStyles?.footer}
+          dialogClass={semanticClassNames?.content}
+          dialogStyle={semanticStyles?.content}
           visible={open ?? visible}
           onClose={handleCancel}
           focusTriggerAfterClose={focusTriggerAfterClose}

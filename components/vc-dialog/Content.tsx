@@ -80,6 +80,13 @@ export default defineComponent({
         closeIcon = slots.closeIcon?.(),
         onClose,
         bodyStyle,
+        headerStyle,
+        footerStyle,
+        headerClassName,
+        bodyClassName,
+        footerClassName,
+        dialogClass,
+        dialogStyle,
         bodyProps,
         onMousedown,
         onMouseup,
@@ -90,13 +97,17 @@ export default defineComponent({
       } = props;
       let footerNode: any;
       if (footer) {
-        footerNode = <div class={`${prefixCls}-footer`}>{footer}</div>;
+        footerNode = (
+          <div class={[`${prefixCls}-footer`, footerClassName]} style={footerStyle}>
+            {footer}
+          </div>
+        );
       }
 
       let headerNode: any;
       if (title) {
         headerNode = (
-          <div class={`${prefixCls}-header`}>
+          <div class={[`${prefixCls}-header`, headerClassName]} style={headerStyle}>
             <div class={`${prefixCls}-title`} id={ariaId}>
               {title}
             </div>
@@ -114,10 +125,10 @@ export default defineComponent({
       }
 
       const content = (
-        <div class={`${prefixCls}-content`}>
+        <div class={[`${prefixCls}-content`, dialogClass]} style={dialogStyle}>
           {closer}
           {headerNode}
-          <div class={`${prefixCls}-body`} style={bodyStyle} {...bodyProps}>
+          <div class={[`${prefixCls}-body`, bodyClassName]} style={bodyStyle} {...bodyProps}>
             {slots.default?.()}
           </div>
           {footerNode}

@@ -149,6 +149,7 @@ export default defineComponent({
         closable,
         maskProps,
         maskStyle,
+        maskClassName,
         transitionName,
         animation,
         wrapProps,
@@ -166,6 +167,7 @@ export default defineComponent({
               ...maskStyle,
             }}
             maskProps={maskProps}
+            maskClassName={maskClassName}
           />
           <div
             tabIndex={-1}

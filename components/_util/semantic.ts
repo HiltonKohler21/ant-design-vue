@@ -20,3 +20,10 @@ export interface SemanticStyles {
   root?: CSSProperties;
   popup?: Partial<Record<PopupSemanticName, CSSProperties>>;
 }
+
+/** 弹窗类组件（Modal / Drawer）的语义位 */
+export type DialogSemanticName = 'mask' | 'wrapper' | 'content' | 'header' | 'body' | 'footer';
+
+export type DialogSemanticClassNames = Partial<Record<DialogSemanticName, string>>;
+
+export type DialogSemanticStyles = Partial<Record<DialogSemanticName, CSSProperties>>;
