@@ -68,13 +68,13 @@
         },
         {
           "id": "P2-3",
-          "title": "ColorPicker（antd 5.0 起，依赖 @rc-component/color-picker Color 类 + 15+ 子组件，3000+ 行，需单独评估）",
-          "status": "in_progress"
+          "title": "ColorPicker（精简版：纯色+预设色+弹层，渐变留后续增量）",
+          "status": "done"
         },
         {
           "id": "P2-4",
-          "title": "Masonry / BorderBeam / Listy（antd 6.x，独立分支）",
-          "status": "pending"
+          "title": "Masonry / BorderBeam / Listy（antd 6.x，不在 5.29.3 基线内，跳过）",
+          "status": "done"
         }
       ]
     },
@@ -119,10 +119,10 @@
     }
   ],
   "knownGaps": {
-    "note": "唯一大缺口 config-provider 的 55 项为 theme.components 的 ComponentToken 类型定义缺口（类型提示层，非运行时 API），归入 P3",
+    "note": "缺失组件已清零；剩余大缺口：config-provider（55 项 ComponentToken 类型）+ color-picker（18 项渐变相关 API，精简版未覆盖）",
     "vs_5_29_3": {
-      "missingComponents": 1,
-      "bigGap": 1,
+      "missingComponents": 0,
+      "bigGap": 2,
       "gap": 43,
       "ok": 27
     },
@@ -152,9 +152,10 @@
       "P1-4 完成（46 组件 rootClassName）",
       "auto-complete popup 别名 + segmented shape/vertical",
       "P2 BackTop 组件",
-      "P2 Splitter 组件"
+      "P2 Splitter 组件",
+      "P2 ColorPicker 组件（精简版）"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "ColorPicker（最后缺失组件，需引入色彩空间算法或移植 @rc-component/color-picker Color 类）"
+    "nextUp": "P3 零散属性（config-provider ComponentToken 类型 / color-picker 渐变 / Spin percent 等）或 CI 常驻跟踪"
   }
 }
