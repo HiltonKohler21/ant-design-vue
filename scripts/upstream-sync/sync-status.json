@@ -36,12 +36,12 @@
         },
         {
           "id": "P1-3",
-          "title": "classNames + styles 语义化 API：已完成 Select 族 + Modal + Drawer；剩余 Table 族 / Form / Tree / Upload 等",
+          "title": "classNames + styles 语义化 API：已完成 select 族 / modal / drawer / badge / empty / space / tooltip；剩余 button / card / descriptions / input / list / slider / date-picker",
           "status": "in_progress"
         },
         {
           "id": "P1-4",
-          "title": "rootClassName：已完成 Rate/Divider/Segmented/Switch/Empty/Spin；剩余 ~15 个组件",
+          "title": "rootClassName：已完成 10 个（rate/divider/segmented/switch/empty/spin/input/mentions/tabs/tooltip），剩余 36 个",
           "status": "in_progress"
         },
         {
@@ -122,9 +122,9 @@
     "note": "由 node scripts/upstream-sync/scan.mjs --antd <version> 生成；数字随批次推进递减",
     "vs_5_29_3": {
       "missingComponents": 3,
-      "bigGap": 15,
-      "gap": 48,
-      "ok": 6
+      "bigGap": 4,
+      "gap": 55,
+      "ok": 10
     },
     "vs_6_7_1": {
       "missingComponents": 6,
@@ -145,9 +145,11 @@
       "P1-4 rootClassName 首批",
       "P1-3 第1组 Select 族语义化",
       "P1-3 第2组 Modal 语义化",
-      "P1-3 第2组 Drawer 语义化"
+      "P1-3 第2组 Drawer 语义化",
+      "P1-3 Badge/Empty/Space/Tooltip 语义化",
+      "P1-4 rootClassName 第二批 Input/Mentions/Tabs/Tooltip"
     ],
-    "notes": "本仓库无 lockfile，验证时需将 vue 钉到 3.4.x；demo 快照失败为存量环境问题",
+    "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
     "nextUp": "P1-3 第3组 Table 族（classNames.root/header/body/row/cell + styles.*）"
   }
 }
