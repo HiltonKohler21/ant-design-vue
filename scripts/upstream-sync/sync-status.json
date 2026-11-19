@@ -31,18 +31,18 @@
         },
         {
           "id": "P1-2",
-          "title": "popupXxx 改名（antd 5.25）：Select 已完成；TreeSelect / Cascader / AutoComplete / Mentions 待做",
-          "status": "in_progress"
+          "title": "popupXxx 改名（antd 5.25）：Select / TreeSelect / Cascader / AutoComplete 完成（Mentions 上游无对应属性）",
+          "status": "done"
         },
         {
           "id": "P1-3",
-          "title": "classNames + styles 语义化 API（antd 5.16 → 5.25）",
+          "title": "classNames + styles 语义化 API（antd 5.16 → 5.25）：未开始，工作量最大",
           "status": "pending"
         },
         {
           "id": "P1-4",
-          "title": "rootClassName 全组件铺开",
-          "status": "pending"
+          "title": "rootClassName：已完成 Rate/Divider/Segmented/Switch/Empty/Spin；剩余 ~15 个组件",
+          "status": "in_progress"
         },
         {
           "id": "P1-5",
@@ -137,10 +137,12 @@
     "updatedAt": "2026-11-19",
     "commits": [
       "P0 扫描器与基线",
-      "P1-1 Input 家族 variant",
+      "P1-1 Input variant",
       "P1-1 续 select 家族 variant",
       "P1-5 destroyOnHidden",
-      "P1-2 Select popup API"
+      "P1-2 Select popup API",
+      "P1-2 余 TreeSelect/Cascader/AutoComplete",
+      "P1-4 rootClassName 首批"
     ],
     "notes": "本仓库无 lockfile，验证时需将 vue 钉到 3.4.x；demo 快照失败为存量环境问题"
   }
