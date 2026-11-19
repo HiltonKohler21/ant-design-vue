@@ -19,7 +19,8 @@ import { initDefaultProps } from '../_util/props-util';
 
 import type { InputStatus } from '../_util/statusUtils';
 import { getStatusClassNames, getMergedStatus } from '../_util/statusUtils';
-import { stringType, someType, functionType, booleanType } from '../_util/type';
+import { stringType, someType, functionType, booleanType, objectType } from '../_util/type';
+import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
 import { useCompactItemContext } from '../space/Compact';
 // CSSINJS
 import useStyle from './style';
@@ -59,6 +60,11 @@ export const selectProps = () => ({
   mode: stringType<'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE'>(),
   bordered: booleanType(true),
   variant: stringType<Variant>(),
+  rootClassName: String,
+  /** 语义化 classNames（antd 5.25+） */
+  classNames: objectType<SemanticClassNames>(),
+  /** 语义化 styles（antd 5.25+） */
+  styles: objectType<SemanticStyles>(),
   transitionName: String,
   choiceTransitionName: stringType(''),
   popupClassName: String,
@@ -137,6 +143,16 @@ const Select = defineComponent({
     // ====================== Warning ======================
     if (process.env.NODE_ENV !== 'production') {
       devWarning(
+        !props.popupClassName,
+        'Select',
+        '`popupClassName` is deprecated. Please use `classNames.popup.root` instead.',
+      );
+      devWarning(
+        !props.styles?.popup?.root,
+        'Select',
+        '`dropdownStyle` is deprecated. Please use `styles.popup.root` instead.',
+      );
+      devWarning(
         !props.dropdownClassName,
         'Select',
         '`dropdownClassName` is deprecated. Please use `popupClassName` instead.',
@@ -196,6 +212,8 @@ const Select = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
         },
+        props.rootClassName,
+        props.classNames?.root,
         getStatusClassNames(prefixCls.value, mergedStatus.value, formItemInputContext.hasFeedback),
         compactItemClassnames.value,
         hashId.value,
@@ -290,9 +308,14 @@ const Select = defineComponent({
         'popupMatchSelectWidth',
         'onOpenChange',
         'dropdownMatchSelectWidth',
+        'rootClassName',
+        'classNames',
+        'styles',
+        'dropdownStyle',
       ]);
 
       const rcSelectRtlDropdownClassName = classNames(
+        props.classNames?.popup?.root,
         popupClassName || dropdownClassName,
         {
           [`${prefixCls.value}-dropdown-${direction.value}`]: direction.value === 'rtl',
@@ -327,6 +350,8 @@ const Select = defineComponent({
           id={id}
           dropdownRender={mergedPopupRender.value}
           onDropdownVisibleChange={handleOpenChange}
+          dropdownStyle={props.styles?.popup?.root ?? props.dropdownStyle}
+          style={[props.styles?.root, attrs.style as any]}
           v-slots={{ option: slots.option }}
           transitionName={transitionName.value}
           children={slots.default?.()}

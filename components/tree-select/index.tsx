@@ -40,6 +40,7 @@ import { useCompactItemContext } from '../space/Compact';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 
 import type { CustomSlotsType } from '../_util/type';
+import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
 
 const getTransitionName = (rootPrefixCls: string, motion: string, transitionName?: string) => {
   if (transitionName !== undefined) {
@@ -79,6 +80,11 @@ export function treeSelectProps<
     variant: stringType<Variant>(),
     /** 自定义弹层宽度（antd 5.25 起替代 dropdownMatchSelectWidth） */
     popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
+    rootClassName: String,
+    /** 语义化 classNames（antd 5.25+） */
+    classNames: objectType<SemanticClassNames>(),
+    /** 语义化 styles（antd 5.25+） */
+    styles: objectType<SemanticStyles>(),
     /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
     onOpenChange: functionType<(open: boolean) => void>(),
     treeLine: someType<TreeProps['showLine']>([Boolean, Object]),
@@ -205,6 +211,7 @@ const TreeSelect = defineComponent({
 
     const mergedDropdownClassName = computed(() =>
       classNames(
+        props.classNames?.popup?.root,
         props.popupClassName || props.dropdownClassName,
         `${treeSelectPrefixCls.value}-dropdown`,
         {
@@ -295,6 +302,9 @@ const TreeSelect = defineComponent({
         'status',
         'popupMatchSelectWidth',
         'onOpenChange',
+        'rootClassName',
+        'classNames',
+        'styles',
         'onUpdate:value',
         'onUpdate:treeExpandedKeys',
         'onUpdate:searchValue',
@@ -311,6 +321,8 @@ const TreeSelect = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: isFormItemInput,
         },
+        props.rootClassName,
+        props.classNames?.root,
         getStatusClassNames(prefixCls.value, mergedStatus.value, hasFeedback),
         compactItemClassnames.value,
         attrs.class,
@@ -334,6 +346,7 @@ const TreeSelect = defineComponent({
             ref={treeSelectRef}
             prefixCls={prefixCls.value}
             class={mergedClassName}
+            style={[props.styles?.root, attrs.style as any]}
             listHeight={listHeight}
             listItemHeight={listItemHeight}
             treeLine={!!treeLine}

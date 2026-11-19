@@ -11,6 +11,7 @@ import useConfigInject from '../config-provider/hooks/useConfigInject';
 import type { InputStatus } from '../_util/statusUtils';
 
 import type { CustomSlotsType } from '../_util/type';
+import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
 
 function isSelectOptionOrSelectOptGroup(child: any): boolean {
   return child?.type?.isSelectOption || child?.type?.isSelectOptGroup;
@@ -25,6 +26,10 @@ export const autoCompleteProps = () => ({
   },
   // optionLabelProp: String,
   dropdownMatchSelectWidth: { type: [Number, Boolean], default: true },
+  /** 语义化 classNames（antd 5.25+），透传给 Select */
+  classNames: { type: Object as PropType<SemanticClassNames>, default: undefined },
+  /** 语义化 styles（antd 5.25+），透传给 Select */
+  styles: { type: Object as PropType<SemanticStyles>, default: undefined },
   prefixCls: String,
   showSearch: { type: Boolean, default: undefined },
   transitionName: String,

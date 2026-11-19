@@ -19,6 +19,7 @@ import useConfigInject from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { SizeType } from '../config-provider';
 import type { Variant } from '../config-provider/context';
+import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
 import devWarning from '../vc-util/devWarning';
 import type { SelectCommonPlacement } from '../_util/transition';
 import { getTransitionDirection, getTransitionName } from '../_util/transition';
@@ -114,6 +115,11 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     variant: { type: String as PropType<Variant> },
     /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
     onOpenChange: { type: Function as PropType<(open: boolean) => void> },
+    rootClassName: String,
+    /** 语义化 classNames（antd 5.25+） */
+    classNames: { type: Object as PropType<SemanticClassNames>, default: undefined },
+    /** 语义化 styles（antd 5.25+） */
+    styles: { type: Object as PropType<SemanticStyles>, default: undefined },
     placement: { type: String as PropType<SelectCommonPlacement> },
     suffixIcon: PropTypes.any,
     status: String as PropType<InputStatus>,
@@ -220,6 +226,7 @@ const Cascader = defineComponent({
     // =================== Dropdown ====================
     const mergedDropdownClassName = computed(() =>
       classNames(
+        props.classNames?.popup?.root,
         props.popupClassName || props.dropdownClassName,
         `${cascaderPrefixCls.value}-dropdown`,
         {
@@ -300,7 +307,16 @@ const Cascader = defineComponent({
       return wrapCascaderSSR(
         wrapSelectSSR(
           <VcCascader
-            {...omit(restProps, ['variant', 'bordered', 'onOpenChange'])}
+            {...omit(restProps, [
+              'variant',
+              'bordered',
+              'onOpenChange',
+              'rootClassName',
+              'classNames',
+              'styles',
+            ])}
+            dropdownStyle={props.styles?.popup?.root}
+            style={[props.styles?.root, attrs.style as any]}
             onDropdownVisibleChange={handleOpenChange}
             {...attrs}
             id={id}
@@ -316,6 +332,8 @@ const Cascader = defineComponent({
                   enableVariantCls.value && mergedVariant.value !== 'outlined',
                 [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
               },
+              props.rootClassName,
+              props.classNames?.root,
               getStatusClassNames(
                 prefixCls.value,
                 mergedStatus.value,
