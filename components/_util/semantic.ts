@@ -11,6 +11,11 @@ import type { CSSProperties } from 'vue';
  */
 export type PopupSemanticName = 'root';
 
+/** 通用语义化 classNames / styles（按组件语义位集合生成） */
+export type SemanticNames<K extends string> = Partial<Record<K, string>>;
+
+export type SemanticStylesMap<K extends string> = Partial<Record<K, CSSProperties>>;
+
 export interface SemanticClassNames {
   root?: string;
   popup?: Partial<Record<PopupSemanticName, string>>;

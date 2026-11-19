@@ -5,6 +5,7 @@ export type TriggerType = 'hover' | 'focus' | 'click' | 'contextmenu';
 import type { PresetColorType } from '../_util/colors';
 import type { LiteralUnion } from '../_util/type';
 import { objectType } from '../_util/type';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 export type TooltipPlacement =
   | 'top'
   | 'left'
@@ -46,6 +47,10 @@ export default () => ({
     default: undefined as boolean | AdjustOverflow,
   },
   destroyTooltipOnHide: { type: Boolean, default: undefined },
+  /** 语义化 classNames（antd 5.25+）：root / body */
+  classNames: objectType<SemanticNames<'root' | 'body'>>(),
+  /** 语义化 styles（antd 5.25+）：root / body */
+  styles: objectType<SemanticStylesMap<'root' | 'body'>>(),
   /** @deprecated Please use `destroyOnHidden` instead */
   destroyOnHidden: { type: Boolean, default: undefined },
   align: objectType<AlignType>(),

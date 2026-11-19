@@ -6,6 +6,7 @@ const tooltipContentProps = {
   prefixCls: String,
   id: String,
   overlayInnerStyle: PropTypes.any,
+  overlayInnerClassName: String,
 };
 
 export type TooltipContentProps = Partial<ExtractPropTypes<typeof tooltipContentProps>>;
@@ -17,7 +18,7 @@ export default defineComponent({
   setup(props: TooltipContentProps, { slots }) {
     return () => (
       <div
-        class={`${props.prefixCls}-inner`}
+        class={[`${props.prefixCls}-inner`, props.overlayInnerClassName]}
         id={props.id}
         role="tooltip"
         style={props.overlayInnerStyle}

@@ -252,6 +252,8 @@ export default defineComponent({
     );
     return () => {
       const { openClassName, overlayClassName, overlayStyle, overlayInnerStyle } = props;
+      const semanticClassNames = props.classNames;
+      const semanticStyles = props.styles;
       let children = filterEmpty(slots.default?.()) ?? null;
       children = children.length === 1 ? children[0] : children;
 
@@ -293,9 +295,10 @@ export default defineComponent({
         builtinPlacements: tooltipPlacements.value,
         visible: tempVisible,
         ref: tooltip,
-        overlayClassName: customOverlayClassName,
-        overlayStyle: { ...arrowContentStyle, ...overlayStyle },
-        overlayInnerStyle: formattedOverlayInnerStyle,
+        overlayClassName: classNames(customOverlayClassName, semanticClassNames?.root),
+        overlayInnerClassName: semanticClassNames?.body,
+        overlayStyle: { ...arrowContentStyle, ...overlayStyle, ...semanticStyles?.root },
+        overlayInnerStyle: { ...formattedOverlayInnerStyle, ...semanticStyles?.body },
         onVisibleChange: handleVisibleChange,
         onPopupAlign,
         destroyTooltipOnHide: props.destroyOnHidden ?? props.destroyTooltipOnHide,

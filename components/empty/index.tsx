@@ -7,6 +7,7 @@ import SimpleEmptyImg from './simple';
 import { filterEmpty } from '../_util/props-util';
 import type { VueNode } from '../_util/type';
 import { anyType, objectType, withInstall } from '../_util/type';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 
 import useStyle from './style';
@@ -18,6 +19,10 @@ interface Locale {
 export const emptyProps = () => ({
   prefixCls: String,
   rootClassName: String,
+  /** 语义化 classNames（antd 5.25+）：root / image / description / footer */
+  classNames: objectType<SemanticNames<'root' | 'image' | 'description' | 'footer'>>(),
+  /** 语义化 styles（antd 5.25+）：root / image / description / footer */
+  styles: objectType<SemanticStylesMap<'root' | 'image' | 'description' | 'footer'>>(),
   imageStyle: objectType<CSSProperties>(),
   image: anyType<VueNode>(),
   description: anyType<VueNode>(),
@@ -64,18 +69,41 @@ const Empty = defineComponent({
 
             return (
               <div
-                class={classNames(prefixCls, props.rootClassName, className, hashId.value, {
-                  [`${prefixCls}-normal`]: isNormal,
-                  [`${prefixCls}-rtl`]: direction.value === 'rtl',
-                })}
+                class={classNames(
+                  prefixCls,
+                  props.rootClassName,
+                  className,
+                  props.classNames?.root,
+                  hashId.value,
+                  {
+                    [`${prefixCls}-normal`]: isNormal,
+                    [`${prefixCls}-rtl`]: direction.value === 'rtl',
+                  },
+                )}
                 {...restProps}
+                style={[(restProps as any).style, props.styles?.root]}
               >
-                <div class={`${prefixCls}-image`} style={imageStyle}>
+                <div
+                  class={[`${prefixCls}-image`, props.classNames?.image]}
+                  style={[imageStyle, props.styles?.image]}
+                >
                   {imageNode}
                 </div>
-                {des && <p class={`${prefixCls}-description`}>{des}</p>}
+                {des && (
+                  <p
+                    class={[`${prefixCls}-description`, props.classNames?.description]}
+                    style={props.styles?.description}
+                  >
+                    {des}
+                  </p>
+                )}
                 {slots.default && (
-                  <div class={`${prefixCls}-footer`}>{filterEmpty(slots.default())}</div>
+                  <div
+                    class={[`${prefixCls}-footer`, props.classNames?.footer]}
+                    style={props.styles?.footer}
+                  >
+                    {filterEmpty(slots.default())}
+                  </div>
                 )}
               </div>
             );

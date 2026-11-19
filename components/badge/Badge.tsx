@@ -12,6 +12,8 @@ import isNumeric from '../_util/isNumeric';
 import useStyle from './style';
 import type { PresetColorKey } from '../theme/interface';
 import type { LiteralUnion, CustomSlotsType } from '../_util/type';
+import { objectType } from '../_util/type';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import type { PresetStatusColorType } from '../_util/colors';
 import { isPresetColor } from '../_util/colors';
 
@@ -32,6 +34,10 @@ export const badgeProps = () => ({
   offset: Array as unknown as PropType<[number | string, number | string]>,
   numberStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   title: String,
+  /** 语义化 classNames（antd 5.25+）：root / indicator */
+  classNames: objectType<SemanticNames<'root' | 'indicator'>>(),
+  /** 语义化 styles（antd 5.25+）：root / indicator */
+  styles: objectType<SemanticStylesMap<'root' | 'indicator'>>(),
 });
 
 export type BadgeProps = Partial<ExtractPropTypes<ReturnType<typeof badgeProps>>>;
@@ -183,6 +189,7 @@ export default defineComponent({
 
       const badgeClassName = classNames(
         pre,
+        props.classNames?.root,
         {
           [`${pre}-status`]: hasStatus.value,
           [`${pre}-not-a-wrapper`]: !children,
@@ -215,17 +222,17 @@ export default defineComponent({
       }
 
       return wrapSSR(
-        <span {...attrs} class={badgeClassName}>
+        <span {...attrs} class={badgeClassName} style={[attrs.style as any, props.styles?.root]}>
           {children}
           <Transition {...transitionProps}>
             <ScrollNumber
               v-show={visible}
               prefixCls={props.scrollNumberPrefixCls}
               show={visible}
-              class={scrollNumberCls.value}
+              class={classNames(scrollNumberCls.value, props.classNames?.indicator)}
               count={displayCount.value}
               title={titleNode}
-              style={scrollNumberStyle}
+              style={[scrollNumberStyle, props.styles?.indicator]}
               key="scrollNumber"
             >
               {displayNode}

@@ -21,6 +21,7 @@ export default defineComponent({
     afterVisibleChange: PropTypes.func.def(() => {}),
     overlayStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
     overlayClassName: String,
+    overlayInnerClassName: String,
     prefixCls: PropTypes.string.def('rc-tooltip'),
     mouseEnterDelay: PropTypes.number.def(0.1),
     mouseLeaveDelay: PropTypes.number.def(0.1),
@@ -43,7 +44,7 @@ export default defineComponent({
     const triggerDOM = shallowRef();
 
     const getPopupElement = () => {
-      const { prefixCls, tipId, overlayInnerStyle } = props;
+      const { prefixCls, tipId, overlayInnerStyle, overlayInnerClassName } = props;
 
       return [
         !!props.arrow ? (
@@ -56,6 +57,7 @@ export default defineComponent({
           prefixCls={prefixCls}
           id={tipId}
           overlayInnerStyle={overlayInnerStyle}
+          overlayInnerClassName={overlayInnerClassName}
           v-slots={{ overlay: slots.overlay }}
         />,
       ];

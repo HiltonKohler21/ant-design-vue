@@ -4,7 +4,8 @@ import PropTypes from '../_util/vue-types';
 import { filterEmpty } from '../_util/props-util';
 import type { SizeType } from '../config-provider';
 import type { CustomSlotsType } from '../_util/type';
-import { booleanType, tuple } from '../_util/type';
+import { booleanType, objectType, tuple } from '../_util/type';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import useFlexGapSupport from '../_util/hooks/useFlexGapSupport';
 import classNames from '../_util/classNames';
@@ -26,6 +27,10 @@ export const spaceProps = () => ({
   direction: PropTypes.oneOf(tuple('horizontal', 'vertical')).def('horizontal'),
   align: PropTypes.oneOf(tuple('start', 'end', 'center', 'baseline')),
   wrap: booleanType(),
+  /** 语义化 classNames（antd 5.25+）：item */
+  classNames: objectType<SemanticNames<'item'>>(),
+  /** 语义化 styles（antd 5.25+）：item */
+  styles: objectType<SemanticStylesMap<'item'>>(),
 });
 
 export type SpaceProps = Partial<ExtractPropTypes<ReturnType<typeof spaceProps>>>;
@@ -97,7 +102,7 @@ const Space = defineComponent({
         return null;
       }
       const split = slots.split?.();
-      const itemClassName = `${prefixCls.value}-item`;
+      const itemClassName = classNames(`${prefixCls.value}-item`, props.classNames?.item);
       const horizontalSizeVal = horizontalSize.value;
       const latestIndex = len - 1;
       return (
@@ -129,7 +134,7 @@ const Space = defineComponent({
 
             return wrapSSR(
               <Fragment key={originIndex}>
-                <div class={itemClassName} style={itemStyle}>
+                <div class={itemClassName} style={[itemStyle, props.styles?.item]}>
                   {child}
                 </div>
                 {index < latestIndex && split && (
