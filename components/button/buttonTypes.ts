@@ -1,6 +1,7 @@
 import PropTypes from '../_util/vue-types';
 
 import type { ExtractPropTypes, PropType } from 'vue';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import type { SizeType } from '../config-provider';
 import { eventType } from '../_util/type';
 import type { MouseEventHandler } from '../_util/EventInterface';
@@ -19,6 +20,10 @@ export function convertLegacyProps(type?: LegacyButtonType): ButtonProps {
 }
 
 export const buttonProps = () => ({
+  /** 语义化 classNames（antd 5.25+）：icon */
+  classNames: { type: Object as PropType<SemanticNames<'icon'>>, default: undefined },
+  /** 语义化 styles（antd 5.25+）：icon */
+  styles: { type: Object as PropType<SemanticStylesMap<'icon'>>, default: undefined },
   prefixCls: String,
   type: String as PropType<ButtonType>,
   htmlType: { type: String as PropType<ButtonHTMLType>, default: 'button' },

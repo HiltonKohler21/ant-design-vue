@@ -10,6 +10,7 @@ import devWarning from '../vc-util/devWarning';
 import useStyle from './style';
 import Skeleton from '../skeleton';
 import type { CustomSlotsType } from '../_util/type';
+import type { CardSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import { customRenderSlot } from '../_util/vnode';
 
 export interface CardTabListType {
@@ -27,6 +28,13 @@ const { TabPane } = Tabs;
 
 export const cardProps = () => ({
   prefixCls: String,
+  /** 语义化 classNames（antd 5.25+）：header / body / extra / actions / title / cover */
+  classNames: { type: Object as PropType<SemanticNames<CardSemanticName>>, default: undefined },
+  /** 语义化 styles（antd 5.25+）：header / body / extra / actions / title / cover */
+  styles: {
+    type: Object as PropType<SemanticStylesMap<CardSemanticName>>,
+    default: undefined,
+  },
   title: PropTypes.any,
   extra: PropTypes.any,
   bordered: { type: Boolean, default: true },
@@ -161,24 +169,49 @@ const Card = defineComponent({
         ) : null;
       if (title || extra || tabs) {
         head = (
-          <div class={`${pre}-head`} style={headStyle}>
+          <div
+            class={[`${pre}-head`, props.classNames?.header]}
+            style={[headStyle, props.styles?.header]}
+          >
             <div class={`${pre}-head-wrapper`}>
-              {title && <div class={`${pre}-head-title`}>{title}</div>}
-              {extra && <div class={`${pre}-extra`}>{extra}</div>}
+              {title && (
+                <div
+                  class={[`${pre}-head-title`, props.classNames?.title]}
+                  style={props.styles?.title}
+                >
+                  {title}
+                </div>
+              )}
+              {extra && (
+                <div class={[`${pre}-extra`, props.classNames?.extra]} style={props.styles?.extra}>
+                  {extra}
+                </div>
+              )}
             </div>
             {tabs}
           </div>
         );
       }
 
-      const coverDom = cover ? <div class={`${pre}-cover`}>{cover}</div> : null;
+      const coverDom = cover ? (
+        <div class={[`${pre}-cover`, props.classNames?.cover]} style={props.styles?.cover}>
+          {cover}
+        </div>
+      ) : null;
       const body = (
-        <div class={`${pre}-body`} style={bodyStyle}>
+        <div
+          class={[`${pre}-body`, props.classNames?.body]}
+          style={[bodyStyle, props.styles?.body]}
+        >
           {loading ? loadingBlock : children}
         </div>
       );
       const actionDom =
-        actions && actions.length ? <ul class={`${pre}-actions`}>{getAction(actions)}</ul> : null;
+        actions && actions.length ? (
+          <ul class={[`${pre}-actions`, props.classNames?.actions]} style={props.styles?.actions}>
+            {getAction(actions)}
+          </ul>
+        ) : null;
 
       return wrapSSR(
         <div ref="cardContainerRef" {...attrs} class={[classString, attrs.class]}>

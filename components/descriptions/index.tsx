@@ -27,6 +27,7 @@ import { cloneElement } from '../_util/vnode';
 import { flattenChildren } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import type { CustomSlotsType } from '../_util/type';
+import type { DescriptionsSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import useStyle from './style';
 
 export const DescriptionsItemProps = {
@@ -133,6 +134,16 @@ function getRows(children: VNode[], column: number) {
 
 export const descriptionsProps = () => ({
   prefixCls: String,
+  /** 语义化 classNames（antd 5.25+）：root / header / title / extra / label / content */
+  classNames: {
+    type: Object as PropType<SemanticNames<DescriptionsSemanticName>>,
+    default: undefined,
+  },
+  /** 语义化 styles（antd 5.25+）：root / header / title / extra / label / content */
+  styles: {
+    type: Object as PropType<SemanticStylesMap<DescriptionsSemanticName>>,
+    default: undefined,
+  },
   bordered: { type: Boolean, default: undefined },
   size: { type: String as PropType<'default' | 'middle' | 'small'>, default: 'default' },
   title: PropTypes.any,
@@ -220,14 +231,33 @@ const Descriptions = defineComponent({
               [`${prefixCls.value}-bordered`]: !!bordered,
               [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
             },
+            props.classNames?.root,
             attrs.class,
             hashId.value,
           ]}
+          style={[attrs.style as any, props.styles?.root]}
         >
           {(title || extra) && (
-            <div class={`${prefixCls.value}-header`}>
-              {title && <div class={`${prefixCls.value}-title`}>{title}</div>}
-              {extra && <div class={`${prefixCls.value}-extra`}>{extra}</div>}
+            <div
+              class={[`${prefixCls.value}-header`, props.classNames?.header]}
+              style={props.styles?.header}
+            >
+              {title && (
+                <div
+                  class={[`${prefixCls.value}-title`, props.classNames?.title]}
+                  style={props.styles?.title}
+                >
+                  {title}
+                </div>
+              )}
+              {extra && (
+                <div
+                  class={[`${prefixCls.value}-extra`, props.classNames?.extra]}
+                  style={props.styles?.extra}
+                >
+                  {extra}
+                </div>
+              )}
             </div>
           )}
           <div class={`${prefixCls.value}-view`}>

@@ -1,4 +1,5 @@
 import PropTypes from '../_util/vue-types';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import classNames from '../_util/classNames';
 import { isStringElement, isEmptyElement, flattenChildren } from '../_util/props-util';
 import { Col } from '../grid';
@@ -15,6 +16,13 @@ export const listItemProps = () => ({
   prefixCls: String,
   extra: PropTypes.any,
   actions: PropTypes.array,
+  /** 语义化 classNames（antd 5.25+）：actions / extra */
+  classNames: { type: Object as PropType<SemanticNames<'actions' | 'extra'>>, default: undefined },
+  /** 语义化 styles（antd 5.25+）：actions / extra */
+  styles: {
+    type: Object as PropType<SemanticStylesMap<'actions' | 'extra'>>,
+    default: undefined,
+  },
   grid: Object as PropType<ListGridType>,
   colStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
 });
@@ -65,7 +73,11 @@ export default defineComponent({
       let actions = props.actions ?? flattenChildren(slots.actions?.());
       actions = actions && !Array.isArray(actions) ? [actions] : actions;
       const actionsContent = actions && actions.length > 0 && (
-        <ul class={`${pre}-item-action`} key="actions">
+        <ul
+          class={[`${pre}-item-action`, props.classNames?.actions]}
+          style={props.styles?.actions}
+          key="actions"
+        >
           {actions.map((action, i) => (
             <li key={`${pre}-item-action-${i}`}>
               {action}

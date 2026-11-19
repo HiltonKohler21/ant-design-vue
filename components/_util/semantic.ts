@@ -26,6 +26,12 @@ export interface SemanticStyles {
   popup?: Partial<Record<PopupSemanticName, CSSProperties>>;
 }
 
+/** Card 语义位 */
+export type CardSemanticName = 'header' | 'body' | 'extra' | 'actions' | 'title' | 'cover';
+
+/** Descriptions 语义位 */
+export type DescriptionsSemanticName = 'root' | 'header' | 'title' | 'extra' | 'label' | 'content';
+
 /** 弹窗类组件（Modal / Drawer）的语义位 */
 export type DialogSemanticName = 'mask' | 'wrapper' | 'content' | 'header' | 'body' | 'footer';
 

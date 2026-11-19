@@ -12,6 +12,7 @@ import {
 import Wave from '../_util/wave';
 import buttonProps from './buttonTypes';
 import { flattenChildren, initDefaultProps } from '../_util/props-util';
+import { cloneElement } from '../_util/vnode';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 import devWarning from '../vc-util/devWarning';
@@ -202,7 +203,10 @@ export default defineComponent({
       }
       const iconNode =
         icon && !innerLoading.value ? (
-          icon
+          cloneElement(icon, {
+            class: props.classNames?.icon,
+            style: props.styles?.icon,
+          })
         ) : (
           <LoadingIcon
             existIcon={!!icon}
