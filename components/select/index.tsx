@@ -62,6 +62,12 @@ export const selectProps = () => ({
   transitionName: String,
   choiceTransitionName: stringType(''),
   popupClassName: String,
+  /** 自定义弹层宽度（antd 5.25 起替代 dropdownMatchSelectWidth） */
+  popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
+  /** 自定义下拉内容（antd 5.25 起替代 dropdownRender） */
+  popupRender: functionType<(menu: any) => any>(),
+  /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
+  onOpenChange: functionType<(open: boolean) => void>(),
   /** @deprecated Please use `popupClassName` instead */
   dropdownClassName: String,
   placement: stringType<SelectCommonPlacement>(),
@@ -216,6 +222,20 @@ const Select = defineComponent({
         : props.loading || !(isMultiple.value || mode.value === 'combobox'),
     );
 
+    // ===================== Popup API =====================
+    const mergedPopupMatchSelectWidth = computed(
+      () => props.popupMatchSelectWidth ?? props.dropdownMatchSelectWidth,
+    );
+    const mergedPopupRender = computed(
+      () => props.popupRender ?? props.dropdownRender ?? slots.dropdownRender,
+    );
+    const handleOpenChange = (open: boolean) => {
+      props.onOpenChange?.(open);
+      props.onDropdownVisibleChange?.(open);
+      emit('openChange', open);
+      emit('update:open', open);
+    };
+
     return () => {
       const {
         notFoundContent,
@@ -224,7 +244,6 @@ const Select = defineComponent({
         popupClassName,
         dropdownClassName,
         virtual,
-        dropdownMatchSelectWidth,
         id = formItemContext.id.value,
         placeholder = slots.placeholder?.(),
         showArrow,
@@ -267,6 +286,10 @@ const Select = defineComponent({
         'bordered',
         'variant',
         'status',
+        'popupRender',
+        'popupMatchSelectWidth',
+        'onOpenChange',
+        'dropdownMatchSelectWidth',
       ]);
 
       const rcSelectRtlDropdownClassName = classNames(
@@ -281,8 +304,8 @@ const Select = defineComponent({
         <RcSelect
           ref={selectRef}
           virtual={virtual}
-          dropdownMatchSelectWidth={dropdownMatchSelectWidth}
           {...selectProps}
+          dropdownMatchSelectWidth={mergedPopupMatchSelectWidth.value}
           {...attrs}
           showSearch={props.showSearch ?? select?.value?.showSearch}
           placeholder={placeholder}
@@ -302,7 +325,8 @@ const Select = defineComponent({
           onChange={triggerChange}
           onBlur={handleBlur}
           id={id}
-          dropdownRender={selectProps.dropdownRender || slots.dropdownRender}
+          dropdownRender={mergedPopupRender.value}
+          onDropdownVisibleChange={handleOpenChange}
           v-slots={{ option: slots.option }}
           transitionName={transitionName.value}
           children={slots.default?.()}
