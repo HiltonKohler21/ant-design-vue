@@ -58,18 +58,18 @@
       "items": [
         {
           "id": "P2-1",
-          "title": "Splitter（antd 5.21）",
-          "status": "pending"
+          "title": "BackTop（antd 5.28 回归，独立组件）",
+          "status": "done"
         },
         {
           "id": "P2-2",
-          "title": "ColorPicker（antd 5.0 起即缺失）",
-          "status": "pending"
+          "title": "Splitter（antd 5.21，可拖拽分隔面板）",
+          "status": "done"
         },
         {
           "id": "P2-3",
-          "title": "BackTop（antd 5.28 回归）",
-          "status": "pending"
+          "title": "ColorPicker（antd 5.0 起，依赖 @rc-component/color-picker Color 类 + 15+ 子组件，3000+ 行，需单独评估）",
+          "status": "in_progress"
         },
         {
           "id": "P2-4",
@@ -121,10 +121,10 @@
   "knownGaps": {
     "note": "唯一大缺口 config-provider 的 55 项为 theme.components 的 ComponentToken 类型定义缺口（类型提示层，非运行时 API），归入 P3",
     "vs_5_29_3": {
-      "missingComponents": 3,
+      "missingComponents": 1,
       "bigGap": 1,
-      "gap": 42,
-      "ok": 26
+      "gap": 43,
+      "ok": 27
     },
     "vs_6_7_1": {
       "missingComponents": 6,
@@ -150,9 +150,11 @@
       "P1-4 rootClassName 第二批 Input/Mentions/Tabs/Tooltip",
       "P1-3 完成（18 组件 classNames/styles）",
       "P1-4 完成（46 组件 rootClassName）",
-      "auto-complete popup 别名 + segmented shape/vertical"
+      "auto-complete popup 别名 + segmented shape/vertical",
+      "P2 BackTop 组件",
+      "P2 Splitter 组件"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "P2 缺失组件（Splitter → ColorPicker → BackTop）或 P3 零散属性（ComponentToken 类型 / Spin percent / Slider handleRender 等）"
+    "nextUp": "ColorPicker（最后缺失组件，需引入色彩空间算法或移植 @rc-component/color-picker Color 类）"
   }
 }
