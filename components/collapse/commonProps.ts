@@ -19,6 +19,7 @@ export interface PanelProps {
 
 const collapseProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   activeKey: someType<ActiveKeyType>([Array, Number, String]),
   defaultActiveKey: someType<ActiveKeyType>([Array, Number, String]),
   accordion: booleanType(),

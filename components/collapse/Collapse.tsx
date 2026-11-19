@@ -186,6 +186,7 @@ export default defineComponent({
           [`${prefixCls.value}-ghost`]: !!ghost,
           [attrs.class as string]: !!attrs.class,
         },
+        props.rootClassName,
         hashId.value,
       );
       return wrapSSR(

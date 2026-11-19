@@ -16,6 +16,7 @@ import { useAvatarInjectContext } from './AvatarContext';
 export type AvatarSize = 'large' | 'small' | 'default' | number | ScreenSizeMap;
 
 export const avatarProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   shape: { type: String as PropType<'circle' | 'square'>, default: 'circle' },
   size: {
@@ -140,6 +141,7 @@ const Avatar = defineComponent({
       const pre = prefixCls.value;
       const classString = {
         [`${attrs.class}`]: !!attrs.class,
+        [props.rootClassName as string]: !!props.rootClassName,
         [pre]: true,
         [`${pre}-lg`]: size.value === 'large',
         [`${pre}-sm`]: size.value === 'small',

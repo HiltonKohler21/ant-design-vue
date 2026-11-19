@@ -15,6 +15,7 @@ import useStyle from './style';
 import type { CustomSlotsType } from '../_util/type';
 
 export const timelineProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   /** 指定最后一个幽灵节点是否存在或内容 */
   pending: PropTypes.any,
@@ -103,6 +104,8 @@ export default defineComponent({
           [`${prefixCls.value}-label`]: hasLabelItem,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
+        props.rootClassName,
+        props.rootClassName,
         attrs.class,
         hashId.value,
       );

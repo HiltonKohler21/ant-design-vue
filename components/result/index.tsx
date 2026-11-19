@@ -35,6 +35,7 @@ const ExceptionStatus = Object.keys(ExceptionMap);
 
 export const resultProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   icon: PropTypes.any,
   status: { type: [Number, String] as PropType<ResultStatusType>, default: 'info' },
   title: PropTypes.any,
@@ -90,7 +91,7 @@ const Result = defineComponent({
       const extra = props.extra ?? slots.extra?.();
       const pre = prefixCls.value;
       return wrapSSR(
-        <div {...attrs} class={[className.value, attrs.class]}>
+        <div {...attrs} class={[className.value, props.rootClassName, attrs.class]}>
           {renderIcon(pre, { status: props.status, icon })}
           <div class={`${pre}-title`}>{title}</div>
           {subTitle && <div class={`${pre}-subtitle`}>{subTitle}</div>}

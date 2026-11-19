@@ -12,6 +12,7 @@ import { anyType, booleanType, functionType, someType, vNodeType } from '../_uti
 import type { CustomSlotsType, VueNode } from '../_util/type';
 
 export const statisticProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   decimalSeparator: String,
   groupSeparator: String,
@@ -72,7 +73,13 @@ export default defineComponent({
       return wrapSSR(
         <div
           {...attrs}
-          class={[pre, { [`${pre}-rtl`]: direction.value === 'rtl' }, attrs.class, hashId.value]}
+          class={[
+            pre,
+            { [`${pre}-rtl`]: direction.value === 'rtl' },
+            props.rootClassName,
+            attrs.class,
+            hashId.value,
+          ]}
         >
           {title && <div class={`${pre}-title`}>{title}</div>}
           <Skeleton paragraph={false} loading={props.loading}>

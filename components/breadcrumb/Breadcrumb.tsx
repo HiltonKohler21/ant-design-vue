@@ -17,6 +17,7 @@ export interface Route {
 }
 
 export const breadcrumbProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   routes: { type: Array as PropType<Route[]> },
   params: PropTypes.any,
@@ -158,6 +159,7 @@ export default defineComponent({
         [prefixCls.value]: true,
         [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         [`${attrs.class}`]: !!attrs.class,
+        [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: true,
       };
 

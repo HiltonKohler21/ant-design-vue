@@ -41,6 +41,7 @@ export interface AffixState {
 
 // Affix
 export const affixProps = () => ({
+  rootClassName: String,
   /**
    * 距离窗口顶部达到指定偏移量后触发
    */
@@ -270,7 +271,13 @@ const Affix = defineComponent({
       ]);
       return wrapSSR(
         <ResizeObserver onResize={updatePosition}>
-          <div {...restProps} {...attrs} ref={placeholderNode} data-measure-status={status}>
+          <div
+            {...restProps}
+            {...attrs}
+            ref={placeholderNode}
+            data-measure-status={status}
+            class={[attrs.class, props.rootClassName]}
+          >
             {affixStyle && <div style={placeholderStyle} aria-hidden="true" />}
             <div class={className} ref={fixedNode} style={affixStyle}>
               {slots.default?.()}

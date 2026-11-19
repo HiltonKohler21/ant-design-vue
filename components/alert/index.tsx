@@ -38,6 +38,7 @@ const AlertTypes = tuple('success', 'info', 'warning', 'error');
 export type AlertType = (typeof AlertTypes)[number];
 
 export const alertProps = () => ({
+  rootClassName: String,
   /**
    * Type of Alert styles, options: `success`, `info`, `warning`, `error`
    */
@@ -181,7 +182,7 @@ const Alert = defineComponent({
               {...attrs}
               style={[attrs.style as CSSProperties, motionStyle.value]}
               v-show={!closing.value}
-              class={[attrs.class, alertCls]}
+              class={[attrs.class, props.rootClassName, alertCls]}
               data-show={!closing.value}
               ref={alertNode}
             >
