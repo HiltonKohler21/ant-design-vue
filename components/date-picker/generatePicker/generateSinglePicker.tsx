@@ -177,6 +177,7 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
               slots.monthCellContentRender,
             clearIcon = slots.clearIcon?.(),
             id = formItemContext.id.value,
+            rootClassName,
             ...restProps
           } = p;
           const showTime = (p.showTime as string) === '' ? true : p.showTime;
@@ -230,6 +231,7 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
               showToday={showToday}
               locale={locale!.lang}
               class={classNames(
+                rootClassName,
                 {
                   [`${pre}-${mergedSize.value}`]: mergedSize.value,
                   [`${pre}-borderless`]: !bordered,

@@ -162,6 +162,7 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
           separator = slots.separator?.(),
           clearIcon = slots.clearIcon?.(),
           id = formItemContext.id.value,
+          rootClassName,
           ...restProps
         } = p;
         delete restProps['onUpdate:value'];
@@ -210,6 +211,7 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
             defaultPickerValue={defaultPickerValue.value}
             picker={picker}
             class={classNames(
+              rootClassName,
               {
                 [`${pre}-${mergedSize.value}`]: mergedSize.value,
                 [`${pre}-borderless`]: !bordered,

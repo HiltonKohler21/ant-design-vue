@@ -37,6 +37,7 @@ type RangeShowTimeObject<DateType> = Omit<SharedTimeProps<DateType>, 'defaultVal
 function commonProps<DateType = any>() {
   return {
     id: String,
+    rootClassName: String,
     /**
      * @deprecated `dropdownClassName` is deprecated which will be removed in next major
      *   version.Please use `popupClassName` instead.
@@ -114,6 +115,7 @@ function commonProps<DateType = any>() {
 
 export interface CommonProps<DateType> {
   id?: string;
+  rootClassName?: string;
   prefixCls?: string;
   /**
    * @deprecated `dropdownClassName` is deprecated which will be removed in next major
@@ -175,6 +177,7 @@ export interface CommonProps<DateType> {
 
 function datePickerProps<DateType = any>() {
   return {
+    rootClassName: String,
     defaultPickerValue: someType<DateType | string>([Object, String]),
     defaultValue: someType<DateType | string>([Object, String]),
     value: someType<DateType | string>([Object, String]),
@@ -203,6 +206,7 @@ export interface DatePickerProps<DateType> {
 
 function rangePickerProps<DateType>() {
   return {
+    rootClassName: String,
     allowEmpty: arrayType<[boolean, boolean]>(),
     dateRender: functionType<RangeDateRender<DateType>>(),
     defaultPickerValue: arrayType<RangeValue<DateType> | RangeValue<string>>(),
