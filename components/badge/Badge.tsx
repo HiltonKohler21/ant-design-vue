@@ -18,6 +18,7 @@ import type { PresetStatusColorType } from '../_util/colors';
 import { isPresetColor } from '../_util/colors';
 
 export const badgeProps = () => ({
+  rootClassName: String,
   /** Number to show in badge */
   count: PropTypes.any.def(null),
   showZero: { type: Boolean, default: undefined },
@@ -189,6 +190,7 @@ export default defineComponent({
 
       const badgeClassName = classNames(
         pre,
+        props.rootClassName,
         props.classNames?.root,
         {
           [`${pre}-status`]: hasStatus.value,

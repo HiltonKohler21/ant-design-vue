@@ -15,6 +15,7 @@ export type FloatButtonBadgeProps = Omit<BadgeProps, 'status' | 'text' | 'title'
 export const floatButtonProps = () => {
   return {
     prefixCls: String,
+    rootClassName: String,
     description: PropTypes.any,
     type: stringType<FloatButtonType>('default'),
     shape: stringType<FloatButtonShape>('circle'),

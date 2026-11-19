@@ -50,6 +50,7 @@ const FloatButton = defineComponent({
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
         attrs.class,
+        props.rootClassName,
         hashId.value,
       );
 

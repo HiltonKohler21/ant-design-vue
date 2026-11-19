@@ -21,6 +21,7 @@ const spaceSize = {
 };
 export const spaceProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   size: {
     type: [String, Number, Array] as PropType<SpaceSize | [SpaceSize, SpaceSize]>,
   },
@@ -108,7 +109,7 @@ const Space = defineComponent({
       return (
         <div
           {...attrs}
-          class={[cn.value, attrs.class]}
+          class={[cn.value, props.rootClassName, attrs.class]}
           style={[style.value, attrs.style as CSSProperties]}
         >
           {items.map((child, index) => {

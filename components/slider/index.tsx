@@ -54,6 +54,7 @@ type Value = [number, number] | number;
 const defaultTipFormatter = (value: number) => (typeof value === 'number' ? value.toString() : '');
 export const sliderProps = () => ({
   id: String,
+  rootClassName: String,
   prefixCls: String,
   tooltipPrefixCls: String,
   range: someType<boolean | SliderRange>([Boolean, Object]),
@@ -194,6 +195,7 @@ const Slider = defineComponent({
       const tooltipPrefixCls = configProvider.getPrefixCls('tooltip', customizeTooltipPrefixCls);
       const cls = classNames(
         attrs.class,
+        props.rootClassName,
         semanticClassNames?.root,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',

@@ -79,6 +79,7 @@ const QRCode = defineComponent({
           class={[
             hashId.value,
             pre,
+            props.rootClassName,
             {
               [`${pre}-borderless`]: !props.bordered,
             },

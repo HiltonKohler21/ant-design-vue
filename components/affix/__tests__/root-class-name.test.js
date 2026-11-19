@@ -95,3 +95,37 @@ describe('upstream: rootClassName 第五批（6 组件）', () => {
     expect(wrapper.find('button').element.getAttribute('class')).toContain('rc5-dropdown');
   });
 });
+
+describe('upstream: rootClassName 第六批（8 组件）', () => {
+  const c = (name, Comp, props = {}, sel) => {
+    it(`${name} 挂到根节点`, () => {
+      const wrapper = mount(Comp, { props: { rootClassName: 'rc6-' + name, ...props } });
+      const el = sel ? wrapper.find(sel).element : wrapper.element;
+      expect(el.getAttribute('class') || '').toContain('rc6-' + name);
+    });
+  };
+  c('slider', require('../../slider').default, { defaultValue: 30 });
+  c('badge', require('../../badge').default, { count: 1 });
+  it('space 挂到根节点', () => {
+    const { default: Space } = require('../../space');
+    const wrapper = mount(Space, {
+      props: { rootClassName: 'rc6-space' },
+      slots: { default: () => <span>x</span> },
+    });
+    expect(wrapper.find('div').element.getAttribute('class')).toContain('rc6-space');
+  });
+  c('float-button', require('../../float-button').default, {});
+  c('qrcode', require('../../qrcode').default, { value: 'https://antdv.com' });
+  c('carousel', require('../../carousel').default);
+  c('typography', require('../../typography').default);
+  it('typography-text 挂到根节点', () => {
+    const { TypographyText } = require('../../typography');
+    const wrapper = mount(TypographyText, {
+      props: { rootClassName: 'rc6-typography-text' },
+      slots: { default: () => 'txt' },
+    });
+    expect(wrapper.find('.ant-typography').element.getAttribute('class')).toContain(
+      'rc6-typography-text',
+    );
+  });
+});

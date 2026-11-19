@@ -23,6 +23,7 @@ export const qrProps = () => {
 export const qrcodeProps = () => {
   return {
     ...qrProps(),
+    rootClassName: String,
     errorLevel: stringType<'L' | 'M' | 'Q' | 'H'>('M'),
 
     icon: String,

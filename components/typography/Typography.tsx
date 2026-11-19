@@ -17,6 +17,7 @@ export interface InternalTypographyProps extends TypographyProps {
 }
 export const typographyProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   direction: String as PropType<Direction>,
   // Form Internal use
   component: String,
@@ -36,6 +37,7 @@ const Typography = defineComponent({
         prefixCls: _prefixCls,
         direction: _direction,
         component: Component = 'article' as any,
+        rootClassName,
         ...restProps
       } = { ...props, ...attrs };
       return wrapSSR(
@@ -44,6 +46,7 @@ const Typography = defineComponent({
           class={classNames(
             prefixCls.value,
             { [`${prefixCls.value}-rtl`]: direction.value === 'rtl' },
+            rootClassName,
             attrs.class,
             hashId.value,
           )}

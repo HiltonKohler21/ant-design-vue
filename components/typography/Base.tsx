@@ -97,6 +97,7 @@ interface InternalBlockProps extends BlockProps {
 const ELLIPSIS_STR = '...';
 
 export const baseProps = () => ({
+  rootClassName: String,
   editable: {
     type: [Boolean, Object] as PropType<InternalBlockProps['editable']>,
     default: undefined as InternalBlockProps['editable'],
@@ -586,6 +587,7 @@ const Base = defineComponent({
                 <Typography
                   ref={contentRef}
                   class={[
+                    props.rootClassName,
                     {
                       [`${prefixCls.value}-${type}`]: type,
                       [`${prefixCls.value}-disabled`]: disabled,

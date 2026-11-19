@@ -27,6 +27,7 @@ export interface CarouselRef {
 
 // Carousel
 export const carouselProps = () => ({
+  rootClassName: String,
   effect: stringType<CarouselEffect>(),
   dots: booleanType(true),
   vertical: booleanType(),
@@ -131,6 +132,7 @@ const Carousel = defineComponent({
       const fade = effect === 'fade' ? true : props.fade;
       const className = classNames(
         prefixCls.value,
+        props.rootClassName,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-vertical`]: vertical.value,
