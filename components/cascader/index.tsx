@@ -112,6 +112,8 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     size: String as PropType<SizeType>,
     bordered: { type: Boolean, default: undefined },
     variant: { type: String as PropType<Variant> },
+    /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
+    onOpenChange: { type: Function as PropType<(open: boolean) => void> },
     placement: { type: String as PropType<SelectCommonPlacement> },
     suffixIcon: PropTypes.any,
     status: String as PropType<InputStatus>,
@@ -170,6 +172,12 @@ const Cascader = defineComponent({
       computed(() => props.bordered),
     );
     deprecated(props.bordered === undefined, 'bordered', 'variant', 'Cascader');
+    const handleOpenChange = (open: boolean) => {
+      props.onOpenChange?.(open);
+      props.onDropdownVisibleChange?.(open);
+      emit('openChange', open);
+      emit('update:open', open);
+    };
     const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
     const mergedSize = computed(() => compactSize.value || contextSize.value);
     const contextDisabled = useInjectDisabled();
@@ -292,7 +300,8 @@ const Cascader = defineComponent({
       return wrapCascaderSSR(
         wrapSelectSSR(
           <VcCascader
-            {...omit(restProps, ['variant', 'bordered'])}
+            {...omit(restProps, ['variant', 'bordered', 'onOpenChange'])}
+            onDropdownVisibleChange={handleOpenChange}
             {...attrs}
             id={id}
             prefixCls={prefixCls.value}

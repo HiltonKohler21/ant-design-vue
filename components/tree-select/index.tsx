@@ -77,6 +77,10 @@ export function treeSelectProps<
     size: stringType<SizeType>(),
     bordered: booleanType(),
     variant: stringType<Variant>(),
+    /** 自定义弹层宽度（antd 5.25 起替代 dropdownMatchSelectWidth） */
+    popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
+    /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
+    onOpenChange: functionType<(open: boolean) => void>(),
     treeLine: someType<TreeProps['showLine']>([Boolean, Object]),
     replaceFields: objectType<FieldNames>(),
     placement: stringType<SelectCommonPlacement>(),
@@ -154,6 +158,17 @@ const TreeSelect = defineComponent({
     const mergedSize = computed(() => compactSize.value || contextSize.value);
     const contextDisabled = useInjectDisabled();
     const mergedDisabled = computed(() => disabled.value ?? contextDisabled.value);
+
+    // ===================== Popup API =====================
+    const mergedPopupMatchSelectWidth = computed(
+      () => props.popupMatchSelectWidth ?? dropdownMatchSelectWidth.value,
+    );
+    const handleOpenChange = (open: boolean) => {
+      props.onOpenChange?.(open);
+      props.onDropdownVisibleChange?.(open);
+      emit('openChange', open);
+      emit('update:open', open);
+    };
     const rootPrefixCls = computed(() => getPrefixCls());
     // ===================== Placement =====================
     const placement = computed(() => {
@@ -278,6 +293,8 @@ const TreeSelect = defineComponent({
         'bordered',
         'variant',
         'status',
+        'popupMatchSelectWidth',
+        'onOpenChange',
         'onUpdate:value',
         'onUpdate:treeExpandedKeys',
         'onUpdate:searchValue',
@@ -310,7 +327,8 @@ const TreeSelect = defineComponent({
             {...selectProps}
             disabled={mergedDisabled.value}
             virtual={virtual.value}
-            dropdownMatchSelectWidth={dropdownMatchSelectWidth.value}
+            dropdownMatchSelectWidth={mergedPopupMatchSelectWidth.value}
+            onDropdownVisibleChange={handleOpenChange}
             id={id}
             fieldNames={fieldNames}
             ref={treeSelectRef}
