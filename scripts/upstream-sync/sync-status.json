@@ -36,13 +36,13 @@
         },
         {
           "id": "P1-3",
-          "title": "classNames + styles 语义化 API：已完成 select 族 / modal / drawer / badge / empty / space / tooltip；剩余 button / card / descriptions / input / list / slider / date-picker",
-          "status": "in_progress"
+          "title": "classNames + styles 语义化 API：18 个组件全部完成（select 族/modal/drawer/badge/empty/space/tooltip/button/card/descriptions/list/input/slider）",
+          "status": "done"
         },
         {
           "id": "P1-4",
-          "title": "rootClassName：已完成 10 个（rate/divider/segmented/switch/empty/spin/input/mentions/tabs/tooltip），剩余 36 个",
-          "status": "in_progress"
+          "title": "rootClassName：46 个组件全部完成（含 date-picker/time-picker 深层传递链）",
+          "status": "done"
         },
         {
           "id": "P1-5",
@@ -119,12 +119,12 @@
     }
   ],
   "knownGaps": {
-    "note": "由 node scripts/upstream-sync/scan.mjs --antd <version> 生成；数字随批次推进递减",
+    "note": "唯一大缺口 config-provider 的 55 项为 theme.components 的 ComponentToken 类型定义缺口（类型提示层，非运行时 API），归入 P3",
     "vs_5_29_3": {
       "missingComponents": 3,
-      "bigGap": 4,
-      "gap": 55,
-      "ok": 10
+      "bigGap": 1,
+      "gap": 42,
+      "ok": 26
     },
     "vs_6_7_1": {
       "missingComponents": 6,
@@ -147,9 +147,12 @@
       "P1-3 第2组 Modal 语义化",
       "P1-3 第2组 Drawer 语义化",
       "P1-3 Badge/Empty/Space/Tooltip 语义化",
-      "P1-4 rootClassName 第二批 Input/Mentions/Tabs/Tooltip"
+      "P1-4 rootClassName 第二批 Input/Mentions/Tabs/Tooltip",
+      "P1-3 完成（18 组件 classNames/styles）",
+      "P1-4 完成（46 组件 rootClassName）",
+      "auto-complete popup 别名 + segmented shape/vertical"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "P1-3 第3组 Table 族（classNames.root/header/body/row/cell + styles.*）"
+    "nextUp": "P2 缺失组件（Splitter → ColorPicker → BackTop）或 P3 零散属性（ComponentToken 类型 / Spin percent / Slider handleRender 等）"
   }
 }
