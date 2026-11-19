@@ -1,4 +1,4 @@
-import { objectType, stringType } from '../_util/type';
+import { functionType, objectType, stringType } from '../_util/type';
 
 export interface ImageSettings {
   src: string;
@@ -30,6 +30,8 @@ export const qrcodeProps = () => {
     iconSize: { type: Number, default: 40 },
 
     status: stringType<'active' | 'expired' | 'loading' | 'scanned'>('active'),
+    /** 点击刷新按钮回调（status=expired 时） */
+    onRefresh: functionType<(e: MouseEvent) => void>(),
     bordered: { type: Boolean, default: true },
   };
 };

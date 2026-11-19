@@ -18,7 +18,8 @@ const QRCode = defineComponent({
   inheritAttrs: false,
   props: qrcodeProps(),
   emits: ['refresh'],
-  setup(props, { emit, attrs, expose }) {
+  slots: Object as any,
+  setup(props, { emit, attrs, expose, slots }) {
     if (process.env.NODE_ENV !== 'production') {
       warning(
         !(props.icon && props.errorLevel === 'L'),
@@ -87,20 +88,31 @@ const QRCode = defineComponent({
         >
           {props.status !== 'active' && (
             <div class={`${pre}-mask`}>
-              {props.status === 'loading' && <Spin />}
-              {props.status === 'expired' && (
+              {slots.statusRender?.(props) ? (
+                slots.statusRender(props)
+              ) : (
                 <>
-                  <p class={`${pre}-expired`}>{locale.value.expired}</p>
-                  <Button
-                    type="link"
-                    onClick={e => emit('refresh', e)}
-                    v-slots={{ icon: () => <ReloadOutlined /> }}
-                  >
-                    {locale.value.refresh}
-                  </Button>
+                  {props.status === 'loading' && <Spin />}
+                  {props.status === 'expired' && (
+                    <>
+                      <p class={`${pre}-expired`}>{locale.value.expired}</p>
+                      <Button
+                        type="link"
+                        onClick={e => {
+                          emit('refresh', e);
+                          props.onRefresh?.(e);
+                        }}
+                        v-slots={{ icon: () => <ReloadOutlined /> }}
+                      >
+                        {locale.value.refresh}
+                      </Button>
+                    </>
+                  )}
+                  {props.status === 'scanned' && (
+                    <p class={`${pre}-scanned`}>{locale.value.scanned}</p>
+                  )}
                 </>
               )}
-              {props.status === 'scanned' && <p class={`${pre}-scanned`}>{locale.value.scanned}</p>}
             </div>
           )}
           {props.type === 'canvas' ? (

@@ -23,6 +23,8 @@ export const buttonProps = () => ({
   rootClassName: String,
   /** 语义化 classNames（antd 5.25+）：icon */
   classNames: { type: Object as PropType<SemanticNames<'icon'>>, default: undefined },
+  /** 图标位置（antd 5.17+） */
+  iconPosition: { type: String as PropType<'start' | 'end'>, default: 'start' },
   /** 语义化 styles（antd 5.25+）：icon */
   styles: { type: Object as PropType<SemanticStylesMap<'icon'>>, default: undefined },
   prefixCls: String,

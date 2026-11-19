@@ -6,6 +6,7 @@ import { filterEmpty, getPropsSlot } from '../_util/props-util';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 import useStyle from './style';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import Progress from '../progress';
 import omit from '../_util/omit';
 
 export type SpinSize = 'small' | 'default' | 'large';
@@ -18,6 +19,10 @@ export const spinProps = () => ({
   tip: PropTypes.any,
   delay: Number,
   indicator: PropTypes.any,
+  /** 环形进度百分比（antd 5.11+），与 indicator 互斥 */
+  percent: Number,
+  /** 全屏遮罩模式（antd 5.11+） */
+  fullscreen: { type: Boolean, default: false },
 });
 
 export type SpinProps = Partial<ExtractPropTypes<ReturnType<typeof spinProps>>>;
@@ -83,6 +88,16 @@ export default defineComponent({
 
       function renderIndicator(prefixCls: string) {
         const dotClassName = `${prefixCls}-dot`;
+        if (props.percent !== undefined) {
+          return (
+            <Progress
+              type="circle"
+              percent={props.percent}
+              size={(size.value === 'small' && 14) || (size.value === 'large' ? 32 : 20)}
+              showInfo={false}
+            />
+          );
+        }
         let indicator = getPropsSlot(slots, props, 'indicator');
         // should not be render default indicator when indicator value is null
         if (indicator === null) {
@@ -114,6 +129,22 @@ export default defineComponent({
           {tip ? <div class={`${prefixCls.value}-text`}>{tip}</div> : null}
         </div>
       );
+      if (props.fullscreen) {
+        return wrapSSR(
+          <div
+            class={[
+              `${prefixCls.value}-fullscreen`,
+              {
+                [`${prefixCls.value}-fullscreen-show`]: sSpinning.value,
+              },
+              props.rootClassName,
+              hashId.value,
+            ]}
+          >
+            {spinElement}
+          </div>,
+        );
+      }
       if (children && filterEmpty(children).length) {
         const containerClassName = {
           [`${prefixCls.value}-container`]: true,

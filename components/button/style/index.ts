@@ -54,6 +54,10 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
         ...genFocusStyle(token),
       },
 
+      '&-icon-end': {
+        flexDirection: 'row-reverse',
+      },
+
       // make `btn-icon-only` not too narrow
       [`&-icon-only${componentCls}-compact-item`]: {
         flex: 'none',

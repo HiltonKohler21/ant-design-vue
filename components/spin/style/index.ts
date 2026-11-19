@@ -34,6 +34,20 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
     opacity: 0,
     transition: `transform ${token.motionDurationSlow} ${token.motionEaseInOutCirc}`,
 
+    '&-fullscreen': {
+      position: 'fixed',
+      inset: 0,
+      zIndex: token.zIndexPopupBase,
+      display: 'none',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: token.colorBgMask,
+      transition: `opacity ${token.motionDurationMid}`,
+      '&-show': {
+        display: 'flex',
+      },
+    },
+
     '&-spinning': {
       position: 'static',
       display: 'inline-block',
