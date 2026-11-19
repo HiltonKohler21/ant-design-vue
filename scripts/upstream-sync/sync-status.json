@@ -36,8 +36,8 @@
         },
         {
           "id": "P1-3",
-          "title": "classNames + styles 语义化 API（antd 5.16 → 5.25）：未开始，工作量最大",
-          "status": "pending"
+          "title": "classNames + styles 语义化 API：已完成 Select 族 + Modal + Drawer；剩余 Table 族 / Form / Tree / Upload 等",
+          "status": "in_progress"
         },
         {
           "id": "P1-4",
@@ -142,8 +142,12 @@
       "P1-5 destroyOnHidden",
       "P1-2 Select popup API",
       "P1-2 余 TreeSelect/Cascader/AutoComplete",
-      "P1-4 rootClassName 首批"
+      "P1-4 rootClassName 首批",
+      "P1-3 第1组 Select 族语义化",
+      "P1-3 第2组 Modal 语义化",
+      "P1-3 第2组 Drawer 语义化"
     ],
-    "notes": "本仓库无 lockfile，验证时需将 vue 钉到 3.4.x；demo 快照失败为存量环境问题"
+    "notes": "本仓库无 lockfile，验证时需将 vue 钉到 3.4.x；demo 快照失败为存量环境问题",
+    "nextUp": "P1-3 第3组 Table 族（classNames.root/header/body/row/cell + styles.*）"
   }
 }
