@@ -183,6 +183,7 @@ const DrawerChild = defineComponent({
         showMask,
         maskClosable,
         maskStyle,
+        maskClassName,
         keyboard,
         getOpenCount,
         scrollLocker,
@@ -220,7 +221,7 @@ const DrawerChild = defineComponent({
             {showMask && (
               <div
                 v-show={open}
-                class={`${prefixCls}-mask`}
+                class={[`${prefixCls}-mask`, maskClassName]}
                 onClick={maskClosable ? onClose : undefined}
                 style={maskStyle}
                 ref={maskDom}

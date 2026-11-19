@@ -16,6 +16,7 @@ const props = () => ({
     type: String as PropType<IPlacement>,
   },
   wrapperClassName: String,
+  maskClassName: String,
   level: { type: [String, Array] as PropType<string | string[]> },
   levelMove: {
     type: [Number, Function, Array] as PropType<

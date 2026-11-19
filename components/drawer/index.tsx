@@ -18,6 +18,7 @@ import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { objectType, withInstall } from '../_util/type';
 import type { CustomSlotsType } from '../_util/type';
+import type { DialogSemanticClassNames, DialogSemanticStyles } from '../_util/semantic';
 import omit from '../_util/omit';
 import devWarning from '../vc-util/devWarning';
 import type { KeyboardEventHandler, MouseEventHandler } from '../_util/EventInterface';
@@ -45,6 +46,10 @@ export const drawerProps = () => ({
   autofocus: { type: Boolean, default: undefined },
   closable: { type: Boolean, default: undefined },
   closeIcon: PropTypes.any,
+  /** 语义化 classNames（antd 5.25+）：mask / wrapper / content / header / body / footer */
+  classNames: objectType<DialogSemanticClassNames>(),
+  /** 语义化 styles（antd 5.25+）：mask / wrapper / content / header / body / footer */
+  styles: objectType<DialogSemanticStyles>(),
   destroyOnClose: { type: Boolean, default: undefined },
   /** @deprecated Please use `destroyOnHidden` instead */
   destroyOnHidden: { type: Boolean, default: undefined },
@@ -313,10 +318,14 @@ const Drawer = defineComponent({
 
       return (
         <div
-          class={classnames(`${prefixCls}-header`, {
-            [`${prefixCls}-header-close-only`]: closable && !title && !extra,
-          })}
-          style={headerStyle}
+          class={classnames(
+            `${prefixCls}-header`,
+            {
+              [`${prefixCls}-header-close-only`]: closable && !title && !extra,
+            },
+            props.classNames?.header,
+          )}
+          style={[headerStyle, props.styles?.header]}
         >
           <div class={`${prefixCls}-header-title`}>
             {renderCloseIcon(prefixCls)}
@@ -347,9 +356,16 @@ const Drawer = defineComponent({
       const { bodyStyle, drawerStyle } = props;
 
       return (
-        <div class={`${prefixCls}-wrapper-body`} style={drawerStyle}>
+        <div
+          class={[`${prefixCls}-wrapper-body`, props.classNames?.content]}
+          style={[drawerStyle, props.styles?.content]}
+        >
           {renderHeader(prefixCls)}
-          <div key="body" class={`${prefixCls}-body`} style={bodyStyle}>
+          <div
+            key="body"
+            class={[`${prefixCls}-body`, props.classNames?.body]}
+            style={[bodyStyle, props.styles?.body]}
+          >
             {slots.default?.()}
           </div>
           {renderFooter(prefixCls)}
@@ -365,7 +381,10 @@ const Drawer = defineComponent({
 
       const footerClassName = `${prefixCls}-footer`;
       return (
-        <div class={footerClassName} style={props.footerStyle}>
+        <div
+          class={[footerClassName, props.classNames?.footer]}
+          style={[props.footerStyle, props.styles?.footer]}
+        >
           {footer}
         </div>
       );
@@ -411,6 +430,8 @@ const Drawer = defineComponent({
           'onUpdate:visible',
           'onUpdate:open',
           'visible',
+          'classNames',
+          'styles',
         ]),
         forceRender,
         onClose: close,
@@ -419,6 +440,9 @@ const Drawer = defineComponent({
         prefixCls: prefixCls.value,
         open: visible.value,
         showMask: mask,
+        maskClassName: props.classNames?.mask,
+        wrapperClassName: props.classNames?.wrapper,
+        maskStyle: { ...props.styles?.mask, ...props.maskStyle },
         placement,
         ref: vcDrawer,
       };
