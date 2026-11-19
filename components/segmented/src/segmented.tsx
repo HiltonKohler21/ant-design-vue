@@ -40,6 +40,7 @@ function normalizeOptions(options: (SegmentedOption | string | number)[]) {
 export const segmentedProps = () => {
   return {
     prefixCls: String,
+    rootClassName: String,
     options: arrayType<(SegmentedOption | string | number)[]>(),
     block: booleanType(),
     disabled: booleanType(),
@@ -139,6 +140,7 @@ export default defineComponent({
           {...attrs}
           class={classNames(
             pre,
+            props.rootClassName,
             {
               [hashId.value]: true,
               [`${pre}-block`]: props.block,

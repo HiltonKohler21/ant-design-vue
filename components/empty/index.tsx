@@ -17,6 +17,7 @@ interface Locale {
 
 export const emptyProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   imageStyle: objectType<CSSProperties>(),
   image: anyType<VueNode>(),
   description: anyType<VueNode>(),
@@ -63,7 +64,7 @@ const Empty = defineComponent({
 
             return (
               <div
-                class={classNames(prefixCls, className, hashId.value, {
+                class={classNames(prefixCls, props.rootClassName, className, hashId.value, {
                   [`${prefixCls}-normal`]: isNormal,
                   [`${prefixCls}-rtl`]: direction.value === 'rtl',
                 })}

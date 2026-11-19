@@ -20,6 +20,7 @@ import useStyle from './style';
 
 export const rateProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   count: Number,
   value: Number,
   allowHalf: { type: Boolean, default: undefined },
@@ -226,10 +227,16 @@ const Rate = defineComponent({
           />,
         );
       }
-      const rateClassName = classNames(prefixCls.value, disabledClass, className, {
-        [hashId.value]: true,
-        [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-      });
+      const rateClassName = classNames(
+        prefixCls.value,
+        disabledClass,
+        className,
+        props.rootClassName,
+        {
+          [hashId.value]: true,
+          [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+        },
+      );
       return wrapSSR(
         <ul
           {...attrs}

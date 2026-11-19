@@ -19,6 +19,7 @@ type CheckedType = boolean | string | number;
 export const switchProps = () => ({
   id: String,
   prefixCls: String,
+  rootClassName: String,
   size: PropTypes.oneOf(SwitchSizes),
   disabled: { type: Boolean, default: undefined },
   checkedChildren: PropTypes.any,
@@ -158,6 +159,7 @@ const Switch = defineComponent({
       [`${prefixCls.value}-disabled`]: mergedDisabled.value,
       [prefixCls.value]: true,
       [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [props.rootClassName as string]: !!props.rootClassName,
       [hashId.value]: true,
     }));
 
@@ -167,6 +169,7 @@ const Switch = defineComponent({
           <button
             {...omit(props, [
               'prefixCls',
+              'rootClassName',
               'checkedChildren',
               'unCheckedChildren',
               'checked',

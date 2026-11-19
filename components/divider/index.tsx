@@ -7,6 +7,7 @@ import useStyle from './style';
 
 export const dividerProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   type: {
     type: String as PropType<'horizontal' | 'vertical' | ''>,
     default: 'horizontal',
@@ -46,6 +47,7 @@ const Divider = defineComponent({
       const prefixCls = prefixClsRef.value;
       return {
         [prefixCls]: true,
+        [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: !!hashId.value,
         [`${prefixCls}-${type}`]: true,
         [`${prefixCls}-dashed`]: !!dashed,

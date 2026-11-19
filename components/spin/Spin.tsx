@@ -6,10 +6,12 @@ import { filterEmpty, getPropsSlot } from '../_util/props-util';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 import useStyle from './style';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import omit from '../_util/omit';
 
 export type SpinSize = 'small' | 'default' | 'large';
 export const spinProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   spinning: { type: Boolean, default: undefined },
   size: String as PropType<SpinSize>,
   wrapperClassName: String,
@@ -64,12 +66,13 @@ export default defineComponent({
       updateSpinning?.cancel();
     });
     return () => {
-      const { class: cls, ...divProps } = attrs;
+      const { class: cls, ...divProps } = omit(attrs, ['rootClassName']);
       const { tip = slots.tip?.() } = props;
       const children = slots.default?.();
       const spinClassName = {
         [hashId.value]: true,
         [prefixCls.value]: true,
+        [props.rootClassName as string]: !!props.rootClassName,
         [`${prefixCls.value}-sm`]: size.value === 'small',
         [`${prefixCls.value}-lg`]: size.value === 'large',
         [`${prefixCls.value}-spinning`]: sSpinning.value,
