@@ -1,0 +1,64 @@
+name: Antd Upstream Sync Scan
+
+on:
+  schedule:
+    # 每周一 00:00 UTC 运行
+    - cron: '0 0 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  scan:
+    name: Scan antd upstream gaps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run upstream sync scanner
+        id: scan
+        run: |
+          node scripts/upstream-sync/scan.mjs --antd 5.29.3 --json > /tmp/report.json 2>/dev/null || {
+            echo "scan failed"
+            exit 0
+          }
+          cat /tmp/report.json
+
+      - name: Read baseline and compare
+        id: compare
+        run: |
+          MISSING=$(node -e "const r=require('/tmp/report.json');process.stdout.write(String((r.missingComponents||[]).length))")
+          BIGGAP=$(node -e "const r=require('/tmp/report.json');process.stdout.write(String(r.bigGap))")
+          echo "missingComponents=$MISSING"
+          echo "bigGap=$BIGGAP"
+          echo "missingComponents=$MISSING" >> "$GITHUB_OUTPUT"
+          echo "bigGap=$BIGGAP" >> "$GITHUB_OUTPUT"
+
+      - name: Create issue if gap increased
+        if: steps.compare.outputs.missingComponents != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          MISSING="${{ steps.compare.outputs.missingComponents }}"
+          BIGGAP="${{ steps.compare.outputs.bigGap }}"
+          gh issue create \
+            --title "antd upstream sync: $MISSING missing components, $BIGGAP big gaps" \
+            --body "Weekly upstream scan detected gaps against antd@5.29.3.
+
+- Missing components: $MISSING
+- Big gap components (<70% coverage): $BIGGAP
+
+Run locally:
+\`\`\`bash
+node scripts/upstream-sync/scan.mjs --antd 5.29.3
+\`\`\`
+
+See \`.cache/upstream/report-5.29.3.md\` for details." \
+            --label "upstream-sync"
