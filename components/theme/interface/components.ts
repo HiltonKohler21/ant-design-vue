@@ -31,6 +31,7 @@ import type { ComponentToken as RadioComponentToken } from '../../radio/style';
 import type { ComponentToken as RateComponentToken } from '../../rate/style';
 import type { ComponentToken as ResultComponentToken } from '../../result/style';
 import type { ComponentToken as SegmentedComponentToken } from '../../segmented/style';
+import type { ComponentToken as SplitterComponentToken } from '../../splitter/style';
 import type { ComponentToken as SelectComponentToken } from '../../select/style';
 import type { ComponentToken as SkeletonComponentToken } from '../../skeleton/style';
 import type { ComponentToken as SliderComponentToken } from '../../slider/style';
@@ -112,6 +113,7 @@ export interface ComponentTokenMap {
   Tooltip?: TooltipComponentToken;
   Table?: TableComponentToken;
   Space?: SpaceComponentToken;
+  Splitter?: SplitterComponentToken;
   Progress?: ProgressComponentToken;
   Tour?: TourComponentToken;
   QRCode?: QRCodeComponentToken;

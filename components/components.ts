@@ -78,10 +78,17 @@ export type {
   FloatButtonGroupProps,
   BackTopProps as FloatButtonBackTopProps,
 } from './float-button/interface';
-export { default as FloatButton, FloatButtonGroup, BackTop as FloatButtonBackTop } from './float-button';
+export {
+  default as FloatButton,
+  FloatButtonGroup,
+  BackTop as FloatButtonBackTop,
+} from './float-button';
 
 export type { BackTopProps } from './back-top';
 export { default as BackTop } from './back-top';
+
+export type { SplitterProps, PanelProps as SplitterPanelProps } from './splitter';
+export { default as Splitter } from './splitter';
 
 export type { FormProps, FormItemProps, FormInstance, FormItemInstance } from './form';
 export { default as Form, FormItem, FormItemRest } from './form';
