@@ -27,6 +27,7 @@ export interface SuccessProps {
 }
 
 export const progressProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   type: stringType<ProgressType>(),
   percent: Number,

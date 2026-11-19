@@ -20,6 +20,7 @@ export function convertLegacyProps(type?: LegacyButtonType): ButtonProps {
 }
 
 export const buttonProps = () => ({
+  rootClassName: String,
   /** 语义化 classNames（antd 5.25+）：icon */
   classNames: { type: Object as PropType<SemanticNames<'icon'>>, default: undefined },
   /** 语义化 styles（antd 5.25+）：icon */

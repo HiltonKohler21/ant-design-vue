@@ -43,7 +43,7 @@ const AFlex = defineComponent({
 
       return wrapSSR(
         <Component
-          class={[attrs.class, mergedCls.value]}
+          class={[attrs.class, props.rootClassName, mergedCls.value]}
           style={[attrs.style as CSSProperties, mergedStyle]}
           {...omit(othersProps, ['justify', 'wrap', 'align', 'vertical'])}
         >

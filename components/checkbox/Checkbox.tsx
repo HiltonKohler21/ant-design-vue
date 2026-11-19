@@ -103,6 +103,7 @@ export default defineComponent({
         checkboxProps.onChange = handleChange;
       }
       const classString = classNames(
+        props.rootClassName,
         {
           [`${prefixCls.value}-wrapper`]: true,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',

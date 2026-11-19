@@ -58,6 +58,7 @@ interface Section {
 export type AnchorContainer = HTMLElement | Window;
 
 export const anchorProps = () => ({
+  rootClassName: String,
   prefixCls: String,
   offsetTop: Number,
   bounds: Number,
@@ -307,7 +308,11 @@ export default defineComponent({
         ...props.wrapperStyle,
       };
       const anchorContent = (
-        <div class={wrapperClass} style={wrapperStyle} ref={anchorRef}>
+        <div
+          class={[wrapperClass, !affix ? props.rootClassName : undefined]}
+          style={wrapperStyle}
+          ref={anchorRef}
+        >
           <div class={anchorClass}>
             <span class={inkClass} ref={spanLinkNode} />
             {Array.isArray(props.items) ? createNestedLink(props.items) : slots.default?.()}
@@ -319,7 +324,12 @@ export default defineComponent({
         !affix ? (
           anchorContent
         ) : (
-          <Affix {...attrs} offsetTop={offsetTop} target={getContainer.value}>
+          <Affix
+            {...attrs}
+            offsetTop={offsetTop}
+            rootClassName={props.rootClassName}
+            target={getContainer.value}
+          >
             {anchorContent}
           </Affix>
         ),

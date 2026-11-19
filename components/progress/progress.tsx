@@ -74,6 +74,7 @@ export default defineComponent({
         [`${pre}-show-info`]: showInfo,
         [`${pre}-${size}`]: size,
         [`${pre}-rtl`]: direction.value === 'rtl',
+        [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: true,
       };
     });

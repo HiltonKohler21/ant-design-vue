@@ -4,6 +4,7 @@ import { anyType, booleanType, someType, stringType } from '../_util/type';
 
 export const flexProps = () => ({
   prefixCls: stringType(),
+  rootClassName: stringType(),
   vertical: booleanType(),
   wrap: stringType<CSSProperties['flex-wrap']>(),
   justify: stringType<CSSProperties['justify-content']>(),

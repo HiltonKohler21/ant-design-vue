@@ -28,6 +28,7 @@ const { TabPane } = Tabs;
 
 export const cardProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   /** 语义化 classNames（antd 5.25+）：header / body / extra / actions / title / cover */
   classNames: { type: Object as PropType<SemanticNames<CardSemanticName>>, default: undefined },
   /** 语义化 styles（antd 5.25+）：header / body / extra / actions / title / cover */
@@ -120,6 +121,7 @@ const Card = defineComponent({
       const pre = prefixCls.value;
       const classString = {
         [`${pre}`]: true,
+        [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: true,
         [`${pre}-loading`]: loading,
         [`${pre}-bordered`]: bordered,

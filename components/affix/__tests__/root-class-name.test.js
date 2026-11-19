@@ -39,3 +39,36 @@ describe('upstream: rootClassName 第三批（8 组件）', () => {
     expect(cls(wrapper)).toContain('rc3-col');
   });
 });
+
+describe('upstream: rootClassName 第四批（7 组件）', () => {
+  it('Anchor 挂到根节点', () => {
+    const { default: Anchor } = require('../../anchor');
+    const wrapper = mount(Anchor, { props: { rootClassName: 'rc4-anchor' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc4-anchor');
+  });
+  it('Button 挂到根节点', () => {
+    const { default: Button } = require('../../button');
+    const wrapper = mount(Button, { props: { rootClassName: 'rc4-button' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc4-button');
+  });
+  it('Card 挂到根节点', () => {
+    const { default: Card } = require('../../card');
+    const wrapper = mount(Card, { props: { rootClassName: 'rc4-card' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc4-card');
+  });
+  it('Progress 挂到根节点', () => {
+    const { default: Progress } = require('../../progress');
+    const wrapper = mount(Progress, { props: { rootClassName: 'rc4-progress', percent: 30 } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc4-progress');
+  });
+  it('Flex 挂到根节点', () => {
+    const { default: Flex } = require('../../flex');
+    const wrapper = mount(Flex, { props: { rootClassName: 'rc4-flex' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc4-flex');
+  });
+  it('Checkbox 挂到根节点', () => {
+    const { default: Checkbox } = require('../../checkbox');
+    const wrapper = mount(Checkbox, { props: { rootClassName: 'rc4-checkbox' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc4-checkbox');
+  });
+});

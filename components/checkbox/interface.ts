@@ -51,6 +51,7 @@ export type CheckboxGroupProps = Partial<ExtractPropTypes<ReturnType<typeof chec
 export const abstractCheckboxProps = () => {
   return {
     prefixCls: String,
+    rootClassName: String,
     defaultChecked: booleanType(),
     checked: booleanType(),
     disabled: booleanType(),

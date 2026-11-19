@@ -191,6 +191,7 @@ export default defineComponent({
         disabled: mergedDisabled.value,
         class: [
           classes.value,
+          props.rootClassName,
           attrs.class,
           { [`${prefixCls.value}-icon-only`]: children.length === 0 && !!iconType },
         ],
