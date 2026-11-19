@@ -54,6 +54,7 @@ export const abstractCheckboxProps = () => {
     rootClassName: String,
     defaultChecked: booleanType(),
     checked: booleanType(),
+    required: booleanType(),
     disabled: booleanType(),
     isGroup: booleanType(),
     value: PropTypes.any,

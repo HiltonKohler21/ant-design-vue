@@ -12,6 +12,8 @@ import { useAvatarProviderContext } from './AvatarContext';
 export const groupProps = () => ({
   prefixCls: String,
   maxCount: Number,
+  /** Alias for `maxCount` */
+  max: Number,
   maxStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   maxPopoverPlacement: { type: String as PropType<'top' | 'bottom'>, default: 'top' },
   maxPopoverTrigger: String as PropType<'hover' | 'focus' | 'click'>,
@@ -45,10 +47,12 @@ const Group = defineComponent({
       const {
         maxPopoverPlacement = 'top',
         maxCount,
+        max,
         maxStyle,
         maxPopoverTrigger = 'hover',
         shape,
       } = props;
+      const mergedMax = max ?? maxCount;
 
       const cls = {
         [groupPrefixCls.value]: true,
@@ -65,9 +69,9 @@ const Group = defineComponent({
       );
 
       const numOfChildren = childrenWithProps.length;
-      if (maxCount && maxCount < numOfChildren) {
-        const childrenShow = childrenWithProps.slice(0, maxCount);
-        const childrenHidden = childrenWithProps.slice(maxCount, numOfChildren);
+      if (mergedMax && mergedMax < numOfChildren) {
+        const childrenShow = childrenWithProps.slice(0, mergedMax);
+        const childrenHidden = childrenWithProps.slice(mergedMax, numOfChildren);
 
         childrenShow.push(
           <Popover
@@ -77,7 +81,7 @@ const Group = defineComponent({
             placement={maxPopoverPlacement}
             overlayClassName={`${groupPrefixCls.value}-popover`}
           >
-            <Avatar style={maxStyle} shape={shape}>{`+${numOfChildren - maxCount}`}</Avatar>
+            <Avatar style={maxStyle} shape={shape}>{`+${numOfChildren - mergedMax}`}</Avatar>
           </Popover>,
         );
         return wrapSSR(

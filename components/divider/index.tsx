@@ -16,6 +16,9 @@ export const dividerProps = () => ({
     type: Boolean,
     default: false,
   },
+  /** 5.13+ 替代 dashed，可选 solid / dashed / dotted */
+  variant: String as PropType<'solid' | 'dashed' | 'dotted'>,
+  size: String as PropType<'small' | 'middle' | 'large'>,
   orientation: {
     type: String as PropType<'left' | 'right' | 'center'>,
     default: 'center',
@@ -43,14 +46,17 @@ const Divider = defineComponent({
       () => props.orientation === 'right' && props.orientationMargin != null,
     );
     const classString = computed(() => {
-      const { type, dashed, plain } = props;
+      const { type, dashed, plain, variant, size } = props;
+      const mergedVariant = variant ?? (dashed ? 'dashed' : 'solid');
       const prefixCls = prefixClsRef.value;
       return {
         [prefixCls]: true,
         [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: !!hashId.value,
         [`${prefixCls}-${type}`]: true,
-        [`${prefixCls}-dashed`]: !!dashed,
+        [`${prefixCls}-dashed`]: mergedVariant === 'dashed',
+        [`${prefixCls}-dotted`]: mergedVariant === 'dotted',
+        [`${prefixCls}-${size}`]: !!size && size !== 'middle',
         [`${prefixCls}-plain`]: !!plain,
         [`${prefixCls}-rtl`]: direction.value === 'rtl',
         [`${prefixCls}-no-default-orientation-margin-left`]: hasCustomMarginLeft.value,

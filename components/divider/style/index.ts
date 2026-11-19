@@ -98,6 +98,13 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         borderWidth: `${lineWidth}px 0 0`,
       },
 
+      '&-dotted': {
+        background: 'none',
+        borderColor: colorSplit,
+        borderStyle: 'dotted',
+        borderWidth: `${lineWidth}px 0 0`,
+      },
+
       [`&-horizontal${componentCls}-with-text${componentCls}-dashed`]: {
         '&::before, &::after': {
           borderStyle: 'dashed none none',

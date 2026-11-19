@@ -27,7 +27,12 @@ export const switchProps = () => ({
   tabindex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   autofocus: { type: Boolean, default: undefined },
   loading: { type: Boolean, default: undefined },
-  checked: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.looseBool]),
+  checked: {
+    type: [String, Number, Boolean] as PropType<CheckedType>,
+    default: undefined,
+  },
+  /** Alias for `defaultChecked` */
+  defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.looseBool]),
   checkedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.looseBool]).def(
     true,
   ),
@@ -87,7 +92,9 @@ const Switch = defineComponent({
       );
     });
     const checked = ref<string | number | boolean>(
-      props.checked !== undefined ? props.checked : (attrs.defaultChecked as boolean),
+      props.checked !== undefined
+        ? props.checked
+        : props.defaultValue ?? (attrs.defaultChecked as boolean),
     );
     const checkedStatus = computed(() => checked.value === props.checkedValue);
 
@@ -173,6 +180,7 @@ const Switch = defineComponent({
               'checkedChildren',
               'unCheckedChildren',
               'checked',
+              'defaultValue',
               'autofocus',
               'checkedValue',
               'unCheckedValue',
