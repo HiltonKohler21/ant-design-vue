@@ -1,0 +1,70 @@
+{
+  "$schema": "./sync-status.schema.json",
+  "baseline": {
+    "antd": "5.29.3",
+    "antNote": "antd 5.x 最后一个发布版本；6.x 另行跟踪，不在本基线内",
+    "localVersion": "4.2.6",
+    "startedAt": "2026-11-19",
+    "strategy": "先追平 antd 5.29.3（保持 4.x API 兼容），再评估 6.x"
+  },
+  "batches": [
+    {
+      "id": "P0",
+      "title": "清场与基线",
+      "status": "done",
+      "items": [
+        "CRLF → LF 归一化（core.autocrlf=false）",
+        "scripts/upstream-sync/scan.mjs 缺口扫描器",
+        ".cache/ 加入 .gitignore",
+        "sync-status.json 基线"
+      ]
+    },
+    {
+      "id": "P1",
+      "title": "横向 API 批处理（一次覆盖 40+ 组件）",
+      "status": "in_progress",
+      "items": [
+        { "id": "P1-1", "title": "variant 属性（antd 5.13）：bordered → variant", "status": "in_progress" },
+        { "id": "P1-2", "title": "popupXxx 改名（antd 5.25）：dropdownXxx → popupXxx / visible → open / onOpenChange", "status": "pending" },
+        { "id": "P1-3", "title": "classNames + styles 语义化 API（antd 5.16 → 5.25）", "status": "pending" },
+        { "id": "P1-4", "title": "rootClassName 全组件铺开", "status": "pending" },
+        { "id": "P1-5", "title": "destroyOnClose → destroyOnHidden（antd 5.25）", "status": "pending" }
+      ]
+    },
+    {
+      "id": "P2",
+      "title": "补缺失组件",
+      "status": "pending",
+      "items": [
+        { "id": "P2-1", "title": "Splitter（antd 5.21）", "status": "pending" },
+        { "id": "P2-2", "title": "ColorPicker（antd 5.0 起即缺失）", "status": "pending" },
+        { "id": "P2-3", "title": "BackTop（antd 5.28 回归）", "status": "pending" },
+        { "id": "P2-4", "title": "Masonry / BorderBeam / Listy（antd 6.x，独立分支）", "status": "pending" }
+      ]
+    },
+    {
+      "id": "P3",
+      "title": "逐组件细化（scan 覆盖率 ≥ 92%）",
+      "status": "pending",
+      "items": [
+        { "id": "P3-1", "title": "Spin percent / fullscreen", "status": "pending" },
+        { "id": "P3-2", "title": "Slider handleRender / onChangeComplete", "status": "pending" },
+        { "id": "P3-3", "title": "Steps orientation / titlePlacement", "status": "pending" },
+        { "id": "P3-4", "title": "其余 scan 报告列出的零散项", "status": "pending" }
+      ]
+    },
+    {
+      "id": "CI",
+      "title": "常驻跟踪",
+      "status": "pending",
+      "items": [
+        { "id": "CI-1", "title": "GitHub Action 每周跑 scan，与基线对比，有变化即开 issue", "status": "pending" }
+      ]
+    }
+  ],
+  "knownGaps": {
+    "note": "由 node scripts/upstream-sync/scan.mjs --antd <version> 生成；数字随批次推进递减",
+    "vs_5_29_3": { "missingComponents": 3, "bigGap": 15, "gap": 48, "ok": 6 },
+    "vs_6_7_1": { "missingComponents": 6, "bigGap": 22, "gap": 41, "ok": 5 }
+  }
+}

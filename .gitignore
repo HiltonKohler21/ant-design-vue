@@ -39,6 +39,9 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
+# upstream-sync 缓存（antd 源码包 / 缺口报告）
+.cache/
+
 # Optional eslint cache
 .eslintcache
 
