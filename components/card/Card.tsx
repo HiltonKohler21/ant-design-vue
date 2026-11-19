@@ -1,11 +1,12 @@
 import type { VNodeTypes, PropType, VNode, ExtractPropTypes, CSSProperties } from 'vue';
-import { isVNode, defineComponent } from 'vue';
+import { isVNode, defineComponent, computed } from 'vue';
 import Tabs from '../tabs';
 import PropTypes from '../_util/vue-types';
 import { flattenChildren, isEmptyElement, filterEmptyWithUndefined } from '../_util/props-util';
 import type { SizeType } from '../config-provider';
 import isPlainObject from 'lodash-es/isPlainObject';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useVariant from '../form/hooks/useVariant';
 import devWarning from '../vc-util/devWarning';
 import useStyle from './style';
 import Skeleton from '../skeleton';
@@ -39,6 +40,8 @@ export const cardProps = () => ({
   title: PropTypes.any,
   extra: PropTypes.any,
   bordered: { type: Boolean, default: true },
+  /** 5.24+ 替代 bordered，可选 borderless / outlined */
+  variant: { type: String as PropType<'borderless' | 'outlined'> },
   bodyStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   headStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   loading: { type: Boolean, default: false },
@@ -76,6 +79,13 @@ const Card = defineComponent({
   }>,
   setup(props, { slots, attrs }) {
     const { prefixCls, direction, size } = useConfigInject('card', props);
+
+    // ====================== Variant =======================
+    const [mergedVariant] = useVariant(
+      'card',
+      computed(() => props.variant),
+      computed(() => props.bordered),
+    );
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const getAction = (actions: VNodeTypes[]) => {
       const actionList = actions.map((action, index) =>
@@ -105,7 +115,6 @@ const Card = defineComponent({
         headStyle = {},
         bodyStyle = {},
         loading,
-        bordered = true,
         type,
         tabList,
         hoverable,
@@ -124,7 +133,7 @@ const Card = defineComponent({
         [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: true,
         [`${pre}-loading`]: loading,
-        [`${pre}-bordered`]: bordered,
+        [`${pre}-bordered`]: mergedVariant.value !== 'borderless',
         [`${pre}-hoverable`]: !!hoverable,
         [`${pre}-contain-grid`]: isContainGrid(children),
         [`${pre}-contain-tabs`]: tabList && tabList.length,

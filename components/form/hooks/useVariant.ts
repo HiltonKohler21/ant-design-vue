@@ -8,6 +8,7 @@ export type VariantComponent =
   | 'input'
   | 'inputNumber'
   | 'select'
+  | 'card'
   | 'cascader'
   | 'treeSelect'
   | 'mentions'
