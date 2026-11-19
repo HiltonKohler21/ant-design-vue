@@ -167,6 +167,7 @@ const Dropdown = defineComponent({
                 [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
               },
               `${prefixCls.value}-trigger`,
+              props.rootClassName,
             ),
           },
           disabled ? { disabled } : {},
@@ -204,6 +205,7 @@ const Dropdown = defineComponent({
           placement: placement.value,
           destroyPopupOnHide: props.destroyOnHidden ?? props.destroyPopupOnHide,
           destroyOnHidden: undefined,
+          rootClassName: props.rootClassName,
         },
         ['overlay', 'onUpdate:visible'],
       );

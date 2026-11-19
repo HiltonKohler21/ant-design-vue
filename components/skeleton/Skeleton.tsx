@@ -15,6 +15,7 @@ import useStyle from './style';
 type SkeletonAvatarProps = Omit<AvatarProps, 'active'>;
 
 export const skeletonProps = () => ({
+  rootClassName: String,
   active: { type: Boolean, default: undefined },
   loading: { type: Boolean, default: undefined },
   prefixCls: String,
@@ -150,7 +151,7 @@ const Skeleton = defineComponent({
           );
         }
 
-        const cls = classNames(pre, {
+        const cls = classNames(pre, props.rootClassName, {
           [`${pre}-with-avatar`]: hasAvatar,
           [`${pre}-active`]: active,
           [`${pre}-rtl`]: direction.value === 'rtl',

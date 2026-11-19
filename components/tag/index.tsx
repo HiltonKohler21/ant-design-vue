@@ -17,6 +17,7 @@ import useStyle from './style';
 
 export const tagProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   color: {
     type: String as PropType<LiteralUnion<PresetColorType | PresetStatusColorType>>,
   },
@@ -146,7 +147,7 @@ const Tag = defineComponent({
         <span
           {...attrs}
           onClick={handleClick}
-          class={[tagClassName.value, attrs.class]}
+          class={[tagClassName.value, props.rootClassName, attrs.class]}
           style={[tagStyle, attrs.style as CSSProperties]}
         >
           {kids}

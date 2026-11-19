@@ -22,6 +22,7 @@ import useStyle from './style';
 
 export const stepsProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   iconPrefix: String,
   current: Number,
   initial: Number,
@@ -126,6 +127,7 @@ const Steps = defineComponent({
           [`${prefixCls.value}-rtl`]: rtlDirection.value === 'rtl',
           [`${prefixCls.value}-with-progress`]: mergedPercent.value !== undefined,
         },
+        props.rootClassName,
         attrs.class,
         hashId.value,
       );

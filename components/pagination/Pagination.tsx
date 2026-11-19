@@ -17,6 +17,7 @@ import { booleanType, arrayType, stringType, functionType, someType } from '../_
 import useStyle from './style';
 
 export const paginationProps = () => ({
+  rootClassName: String,
   total: Number,
   defaultCurrent: Number,
   disabled: booleanType(),
@@ -156,6 +157,7 @@ export default defineComponent({
             [`${prefixCls.value}-mini`]: isSmall,
             [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           },
+          props.rootClassName,
           attrs.class,
           hashId.value,
         ),

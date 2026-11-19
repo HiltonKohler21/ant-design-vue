@@ -33,6 +33,7 @@ export const inputNumberProps = () => ({
   ...baseProps,
   size: stringType<SizeType>(),
   bordered: booleanType(true),
+  rootClassName: String,
   variant: stringType<Variant>(),
   placeholder: String,
   name: String,
@@ -150,6 +151,7 @@ const InputNumber = defineComponent({
         },
         getStatusClassNames(preCls, mergedStatus.value),
         className,
+        props.rootClassName,
         compactItemClassnames.value,
         hashId.value,
       );

@@ -25,6 +25,7 @@ export type DropdownArrowOptions = {
   pointAtCenter?: boolean;
 };
 const dropdownProps = () => ({
+  rootClassName: String,
   arrow: someType<boolean | DropdownArrowOptions>([Boolean, Object]),
   trigger: {
     type: [Array, String] as PropType<Trigger[] | Trigger>,

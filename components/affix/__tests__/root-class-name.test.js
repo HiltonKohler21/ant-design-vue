@@ -72,3 +72,26 @@ describe('upstream: rootClassName 第四批（7 组件）', () => {
     expect(wrapper.element.getAttribute('class')).toContain('rc4-checkbox');
   });
 });
+
+describe('upstream: rootClassName 第五批（6 组件）', () => {
+  const c = (name, Comp, props = {}) => {
+    it(`${name} 挂到根节点`, () => {
+      const wrapper = mount(Comp, { props: { rootClassName: 'rc5-' + name, ...props } });
+      expect(wrapper.element.getAttribute('class')).toContain('rc5-' + name);
+    });
+  };
+  c('tag', require('../../tag').default);
+  c('pagination', require('../../pagination').default);
+  c('steps', require('../../steps').default);
+  c('input-number', require('../../input-number').default);
+  c('skeleton', require('../../skeleton').default);
+  it('dropdown 挂到 trigger', () => {
+    const { default: Dropdown } = require('../../dropdown');
+    const { default: Button } = require('../../button');
+    const wrapper = mount(Dropdown, {
+      props: { rootClassName: 'rc5-dropdown' },
+      slots: { default: () => <Button>btn</Button> },
+    });
+    expect(wrapper.find('button').element.getAttribute('class')).toContain('rc5-dropdown');
+  });
+});
