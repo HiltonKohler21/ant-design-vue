@@ -5,6 +5,9 @@ import UpOutlined from '@ant-design/icons-vue/UpOutlined';
 import DownOutlined from '@ant-design/icons-vue/DownOutlined';
 import VcInputNumber, { inputNumberProps as baseInputNumberProps } from './src/InputNumber';
 import type { SizeType } from '../config-provider';
+import type { Variant } from '../config-provider/context';
+import useVariant from '../form/hooks/useVariant';
+import { deprecated } from '../_util/warning';
 import {
   FormItemInputContext,
   NoFormStatus,
@@ -30,6 +33,7 @@ export const inputNumberProps = () => ({
   ...baseProps,
   size: stringType<SizeType>(),
   bordered: booleanType(true),
+  variant: stringType<Variant>(),
   placeholder: String,
   name: String,
   id: String,
@@ -64,6 +68,14 @@ const InputNumber = defineComponent({
     const formItemInputContext = FormItemInputContext.useInject();
     const mergedStatus = computed(() => getMergedStatus(formItemInputContext.status, props.status));
     const { prefixCls, size, direction, disabled } = useConfigInject('input-number', props);
+
+    // ====================== Variant =======================
+    const [mergedVariant, enableVariantCls] = useVariant(
+      'inputNumber',
+      computed(() => props.variant),
+      computed(() => props.bordered),
+    );
+    deprecated(props.bordered === undefined, 'bordered', 'variant', 'InputNumber');
     const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
     const disabledContext = useInjectDisabled();
     const mergedDisabled = computed(() => disabled.value ?? disabledContext.value);
@@ -113,7 +125,6 @@ const InputNumber = defineComponent({
       const id = props.id ?? formItemContext.id.value;
       const {
         class: className,
-        bordered,
         readonly,
         style,
         addonBefore = slots.addonBefore?.(),
@@ -132,7 +143,9 @@ const InputNumber = defineComponent({
           [`${preCls}-sm`]: mergedSize.value === 'small',
           [`${preCls}-rtl`]: direction.value === 'rtl',
           [`${preCls}-readonly`]: readonly,
-          [`${preCls}-borderless`]: !bordered,
+          [`${preCls}-borderless`]: mergedVariant.value === 'borderless',
+          [`${preCls}-${mergedVariant.value}`]:
+            enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${preCls}-in-form-item`]: isFormItemInput,
         },
         getStatusClassNames(preCls, mergedStatus.value),
@@ -143,7 +156,7 @@ const InputNumber = defineComponent({
 
       let element = (
         <VcInputNumber
-          {...omit(others, ['size', 'defaultValue'])}
+          {...omit(others, ['size', 'defaultValue', 'variant', 'bordered'])}
           ref={inputNumberRef}
           lazy={!!valueModifiers.lazy}
           value={mergedValue.value}
@@ -176,7 +189,9 @@ const InputNumber = defineComponent({
             [`${preCls}-affix-wrapper-lg`]: mergedSize.value === 'large',
             [`${preCls}-affix-wrapper-rtl`]: direction.value === 'rtl',
             [`${preCls}-affix-wrapper-readonly`]: readonly,
-            [`${preCls}-affix-wrapper-borderless`]: !bordered,
+            [`${preCls}-affix-wrapper-borderless`]: mergedVariant.value === 'borderless',
+            [`${preCls}-affix-wrapper-${mergedVariant.value}`]:
+              enableVariantCls.value && mergedVariant.value !== 'outlined',
             // className will go to addon wrapper
             [`${className}`]: !hasAddon && className,
           },

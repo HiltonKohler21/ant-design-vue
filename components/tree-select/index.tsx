@@ -10,11 +10,13 @@ import VcTreeSelect, {
 import classNames from '../_util/classNames';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 import type { SizeType } from '../config-provider';
+import type { Variant } from '../config-provider/context';
 import type { FieldNames, Key } from '../vc-tree-select/interface';
 import omit from '../_util/omit';
 import PropTypes from '../_util/vue-types';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import devWarning from '../vc-util/devWarning';
+import useVariant from '../form/hooks/useVariant';
 import getIcons from '../select/utils/iconUtil';
 import type { SwitcherIconProps } from '../tree/utils/iconUtil';
 import renderSwitcherIcon from '../tree/utils/iconUtil';
@@ -74,6 +76,7 @@ export function treeSelectProps<
     suffixIcon: PropTypes.any,
     size: stringType<SizeType>(),
     bordered: booleanType(),
+    variant: stringType<Variant>(),
     treeLine: someType<TreeProps['showLine']>([Boolean, Object]),
     replaceFields: objectType<FieldNames>(),
     placement: stringType<SelectCommonPlacement>(),
@@ -172,6 +175,13 @@ const TreeSelect = defineComponent({
       getTransitionName(rootPrefixCls.value, '', props.choiceTransitionName),
     );
     const treePrefixCls = computed(() => getPrefixCls('select-tree', props.prefixCls));
+
+    // ====================== Variant =======================
+    const [mergedVariant, enableVariantCls] = useVariant(
+      'treeSelect',
+      computed(() => props.variant),
+      computed(() => props.bordered),
+    );
     const treeSelectPrefixCls = computed(() => getPrefixCls('tree-select', props.prefixCls));
 
     // style
@@ -226,7 +236,6 @@ const TreeSelect = defineComponent({
       const {
         notFoundContent = slots.notFoundContent?.(),
         prefixCls: customizePrefixCls,
-        bordered,
         listHeight,
         listItemHeight,
         multiple,
@@ -267,6 +276,7 @@ const TreeSelect = defineComponent({
         'clearIcon',
         'switcherIcon',
         'bordered',
+        'variant',
         'status',
         'onUpdate:value',
         'onUpdate:treeExpandedKeys',
@@ -279,7 +289,9 @@ const TreeSelect = defineComponent({
           [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
           [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-          [`${prefixCls.value}-borderless`]: !bordered,
+          [`${prefixCls.value}-borderless`]: mergedVariant.value === 'borderless',
+          [`${prefixCls.value}-${mergedVariant.value}`]:
+            enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: isFormItemInput,
         },
         getStatusClassNames(prefixCls.value, mergedStatus.value, hasFeedback),

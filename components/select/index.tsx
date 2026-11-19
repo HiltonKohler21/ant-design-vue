@@ -14,6 +14,7 @@ import { FormItemInputContext, useInjectFormItemContext } from '../form/FormItem
 import type { SelectCommonPlacement } from '../_util/transition';
 import { getTransitionDirection, getTransitionName } from '../_util/transition';
 import type { SizeType } from '../config-provider';
+import type { Variant } from '../config-provider/context';
 import { initDefaultProps } from '../_util/props-util';
 
 import type { InputStatus } from '../_util/statusUtils';
@@ -23,6 +24,8 @@ import { useCompactItemContext } from '../space/Compact';
 // CSSINJS
 import useStyle from './style';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
+import useVariant from '../form/hooks/useVariant';
+import { deprecated } from '../_util/warning';
 import devWarning from '../vc-util/devWarning';
 
 import type { CustomSlotsType } from '../_util/type';
@@ -55,6 +58,7 @@ export const selectProps = () => ({
   size: stringType<SizeType>(),
   mode: stringType<'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE'>(),
   bordered: booleanType(true),
+  variant: stringType<Variant>(),
   transitionName: String,
   choiceTransitionName: stringType(''),
   popupClassName: String,
@@ -145,6 +149,14 @@ const Select = defineComponent({
     } = useConfigInject('select', props);
     const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
     const mergedSize = computed(() => compactSize.value || contextSize.value);
+
+    // ====================== Variant =======================
+    const [mergedVariant, enableVariantCls] = useVariant(
+      'select',
+      computed(() => props.variant),
+      computed(() => props.bordered),
+    );
+    deprecated(props.bordered === undefined, 'bordered', 'variant', 'Select');
     const contextDisabled = useInjectDisabled();
     const mergedDisabled = computed(() => disabled.value ?? contextDisabled.value);
     // style
@@ -173,7 +185,9 @@ const Select = defineComponent({
           [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
           [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-          [`${prefixCls.value}-borderless`]: !props.bordered,
+          [`${prefixCls.value}-borderless`]: mergedVariant.value === 'borderless',
+          [`${prefixCls.value}-${mergedVariant.value}`]:
+            enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
         },
         getStatusClassNames(prefixCls.value, mergedStatus.value, formItemInputContext.hasFeedback),
@@ -251,6 +265,7 @@ const Select = defineComponent({
         'clearIcon',
         'size',
         'bordered',
+        'variant',
         'status',
       ]);
 

@@ -18,6 +18,7 @@ import { initDefaultProps } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { SizeType } from '../config-provider';
+import type { Variant } from '../config-provider/context';
 import devWarning from '../vc-util/devWarning';
 import type { SelectCommonPlacement } from '../_util/transition';
 import { getTransitionDirection, getTransitionName } from '../_util/transition';
@@ -27,6 +28,8 @@ import type { InputStatus } from '../_util/statusUtils';
 import { getStatusClassNames, getMergedStatus } from '../_util/statusUtils';
 import { FormItemInputContext } from '../form/FormItemContext';
 import { useCompactItemContext } from '../space/Compact';
+import useVariant from '../form/hooks/useVariant';
+import { deprecated } from '../_util/warning';
 
 import useSelectStyle from '../select/style';
 import useStyle from './style';
@@ -108,6 +111,7 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     multiple: { type: Boolean, default: undefined },
     size: String as PropType<SizeType>,
     bordered: { type: Boolean, default: undefined },
+    variant: { type: String as PropType<Variant> },
     placement: { type: String as PropType<SelectCommonPlacement> },
     suffixIcon: PropTypes.any,
     status: String as PropType<InputStatus>,
@@ -158,6 +162,14 @@ const Cascader = defineComponent({
       disabled,
     } = useConfigInject('cascader', props);
     const prefixCls = computed(() => getPrefixCls('select', props.prefixCls));
+
+    // ====================== Variant =======================
+    const [mergedVariant, enableVariantCls] = useVariant(
+      'cascader',
+      computed(() => props.variant),
+      computed(() => props.bordered),
+    );
+    deprecated(props.bordered === undefined, 'bordered', 'variant', 'Cascader');
     const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
     const mergedSize = computed(() => compactSize.value || contextSize.value);
     const contextDisabled = useInjectDisabled();
@@ -244,7 +256,6 @@ const Cascader = defineComponent({
         notFoundContent = slots.notFoundContent?.(),
         expandIcon = slots.expandIcon?.(),
         multiple,
-        bordered,
         allowClear,
         choiceTransitionName,
         transitionName,
@@ -281,7 +292,7 @@ const Cascader = defineComponent({
       return wrapCascaderSSR(
         wrapSelectSSR(
           <VcCascader
-            {...restProps}
+            {...omit(restProps, ['variant', 'bordered'])}
             {...attrs}
             id={id}
             prefixCls={prefixCls.value}
@@ -291,7 +302,9 @@ const Cascader = defineComponent({
                 [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
                 [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
                 [`${prefixCls.value}-rtl`]: isRtl.value,
-                [`${prefixCls.value}-borderless`]: !bordered,
+                [`${prefixCls.value}-borderless`]: mergedVariant.value === 'borderless',
+                [`${prefixCls.value}-${mergedVariant.value}`]:
+                  enableVariantCls.value && mergedVariant.value !== 'outlined',
                 [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
               },
               getStatusClassNames(

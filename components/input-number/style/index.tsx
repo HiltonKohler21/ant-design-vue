@@ -296,6 +296,42 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
         },
       },
     },
+
+    // =====================================================
+    // ==                     Variant                      ==
+    // =====================================================
+    {
+      [`${componentCls}-filled, ${componentCls}-affix-wrapper-filled`]: {
+        backgroundColor: token.colorFillTertiary,
+        borderColor: 'transparent',
+
+        '&:hover': {
+          backgroundColor: token.colorFillSecondary,
+        },
+
+        '&:focus, &:focus-within, &-focused': {
+          backgroundColor: token.colorBgContainer,
+          borderColor: token.colorPrimary,
+          outline: 0,
+        },
+      },
+      [`${componentCls}-underlined, ${componentCls}-affix-wrapper-underlined`]: {
+        backgroundColor: token.colorBgContainer,
+        borderWidth: `${token.lineWidth}px 0`,
+        borderStyle: `${token.lineType} none`,
+        borderColor: `transparent transparent ${token.colorBorder} transparent`,
+        borderRadius: 0,
+
+        '&:hover': {
+          borderColor: `transparent transparent ${token.colorPrimaryHover} transparent`,
+        },
+
+        '&:focus, &:focus-within, &-focused': {
+          borderColor: `transparent transparent ${token.colorPrimary} transparent`,
+          outline: 0,
+        },
+      },
+    },
   ];
 };
 

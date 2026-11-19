@@ -6,6 +6,7 @@ import genMultipleStyle from './multiple';
 import genSingleStyle from './single';
 import { resetComponent, resetIcon, textEllipsis } from '../../style';
 import { genCompactItemStyle } from '../../style/compact-item';
+import { genSelectVariantsStyle } from './variants';
 
 export interface ComponentToken {
   zIndexPopup: number;
@@ -322,6 +323,10 @@ const genSelectStyle: GenerateStyle<SelectToken> = token => {
       borderElCls: `${componentCls}-selector`,
       focusElCls: `${componentCls}-focused`,
     }),
+    // =====================================================
+    // ==                    Variant                      ==
+    // =====================================================
+    genSelectVariantsStyle(token),
   ];
 };
 

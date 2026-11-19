@@ -11,6 +11,8 @@ import omit from '../_util/omit';
 import { optionProps, optionOptions } from '../vc-mentions/src/Option';
 import type { KeyboardEventHandler } from '../_util/EventInterface';
 import type { InputStatus } from '../_util/statusUtils';
+import type { Variant } from '../config-provider/context';
+import useVariant from '../form/hooks/useVariant';
 import { getStatusClassNames, getMergedStatus } from '../_util/statusUtils';
 import useStyle from './style';
 import { useProvideOverride } from '../menu/src/OverrideContext';
@@ -95,6 +97,7 @@ export const mentionsProps = () => ({
   defaultValue: String,
   id: String,
   status: String as PropType<InputStatus>,
+  variant: String as PropType<Variant>,
 });
 
 export type MentionsProps = Partial<ExtractPropTypes<ReturnType<typeof mentionsProps>>>;
@@ -119,6 +122,12 @@ const Mentions = defineComponent({
       );
     }
     const { prefixCls, renderEmpty, direction } = useConfigInject('mentions', props);
+
+    // ====================== Variant =======================
+    const [mergedVariant, enableVariantCls] = useVariant(
+      'mentions',
+      computed(() => props.variant),
+    );
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const focused = shallowRef(false);
     const vcMentions = shallowRef(null);
@@ -210,13 +219,20 @@ const Mentions = defineComponent({
       } = props;
       const { hasFeedback, feedbackIcon } = formItemInputContext;
       const { class: className, ...otherAttrs } = attrs;
-      const otherProps = omit(restProps, ['defaultValue', 'onUpdate:value', 'prefixCls']);
+      const otherProps = omit(restProps, [
+        'defaultValue',
+        'onUpdate:value',
+        'prefixCls',
+        'variant',
+      ]);
 
       const mergedClassName = classNames(
         {
           [`${prefixCls.value}-disabled`]: disabled,
           [`${prefixCls.value}-focused`]: focused.value,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+          [`${prefixCls.value}-${mergedVariant.value}`]:
+            enableVariantCls.value && mergedVariant.value !== 'outlined',
         },
         getStatusClassNames(prefixCls.value, mergedStatus.value),
         !hasFeedback && className,
