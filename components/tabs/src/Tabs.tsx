@@ -66,6 +66,7 @@ export const tabsProps = () => {
     tabPosition: stringType<TabPosition>(),
     destroyInactiveTabPane: booleanType(),
     destroyOnHidden: booleanType(),
+    rootClassName: String,
 
     hideAdd: Boolean,
     type: stringType<TabsType>(),
@@ -336,6 +337,7 @@ const InternalTabs = defineComponent({
               [`${pre}-rtl`]: rtl.value,
             },
             attrs.class,
+            props.rootClassName,
           )}
         >
           {tabNavBar}

@@ -48,6 +48,7 @@ export default () => ({
   },
   destroyTooltipOnHide: { type: Boolean, default: undefined },
   /** 语义化 classNames（antd 5.25+）：root / body */
+  rootClassName: String,
   classNames: objectType<SemanticNames<'root' | 'body'>>(),
   /** 语义化 styles（antd 5.25+）：root / body */
   styles: objectType<SemanticStylesMap<'root' | 'body'>>(),

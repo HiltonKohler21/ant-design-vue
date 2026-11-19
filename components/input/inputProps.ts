@@ -21,6 +21,7 @@ const inputProps = () => {
       'affixWrapperClassName',
     ]),
     variant: { type: String as PropType<Variant> },
+    rootClassName: String,
   };
 };
 export default inputProps;

@@ -43,3 +43,23 @@ describe('upstream: rootClassName（antd 5.16+）', () => {
     expect(wrapper.element.getAttribute('rootclassname')).toBeNull();
   });
 });
+
+describe('upstream: rootClassName 第二批（Input / Mentions / Tabs / Tooltip）', () => {
+  it('Input 透传到根节点', () => {
+    const { default: Input } = require('../../input');
+    const wrapper = mount(Input, { props: { rootClassName: 'rc-input' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc-input');
+  });
+
+  it('Mentions 透传到根节点', () => {
+    const { default: Mentions } = require('../../mentions');
+    const wrapper = mount(Mentions, { props: { rootClassName: 'rc-mentions' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc-mentions');
+  });
+
+  it('Tabs 透传到根节点', () => {
+    const { default: Tabs } = require('../../tabs');
+    const wrapper = mount(Tabs, { props: { rootClassName: 'rc-tabs' } });
+    expect(wrapper.element.getAttribute('class')).toContain('rc-tabs');
+  });
+});

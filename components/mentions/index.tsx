@@ -98,6 +98,7 @@ export const mentionsProps = () => ({
   id: String,
   status: String as PropType<InputStatus>,
   variant: String as PropType<Variant>,
+  rootClassName: String,
 });
 
 export type MentionsProps = Partial<ExtractPropTypes<ReturnType<typeof mentionsProps>>>;
@@ -235,6 +236,7 @@ const Mentions = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
         },
         getStatusClassNames(prefixCls.value, mergedStatus.value),
+        props.rootClassName,
         !hasFeedback && className,
         hashId.value,
       );

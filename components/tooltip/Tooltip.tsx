@@ -295,7 +295,11 @@ export default defineComponent({
         builtinPlacements: tooltipPlacements.value,
         visible: tempVisible,
         ref: tooltip,
-        overlayClassName: classNames(customOverlayClassName, semanticClassNames?.root),
+        overlayClassName: classNames(
+          customOverlayClassName,
+          props.rootClassName,
+          semanticClassNames?.root,
+        ),
         overlayInnerClassName: semanticClassNames?.body,
         overlayStyle: { ...arrowContentStyle, ...overlayStyle, ...semanticStyles?.root },
         overlayInnerStyle: { ...formattedOverlayInnerStyle, ...semanticStyles?.body },

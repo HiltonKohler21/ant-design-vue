@@ -175,7 +175,7 @@ export default defineComponent({
               </NoCompactStyle>
             )
           }
-          class={[attrs.class, compactItemClassnames.value]}
+          class={[attrs.class, compactItemClassnames.value, props.rootClassName]}
           inputClassName={classNames(
             {
               [`${prefixClsValue}-sm`]: mergedSize.value === 'small',
