@@ -81,16 +81,16 @@
     {
       "id": "P3",
       "title": "逐组件细化（scan 覆盖率 ≥ 92%）",
-      "status": "pending",
+      "status": "in_progress",
       "items": [
         {
           "id": "P3-1",
-          "title": "Spin percent / fullscreen",
-          "status": "pending"
+          "title": "Spin percent/fullscreen、Button iconPosition、QRCode onRefresh/statusRender、Switch defaultValue、Checkbox required、Avatar max、Divider variant/size、Radio.Group defaultValue、Tooltip defaultOpen/afterOpenChange、Card variant",
+          "status": "done"
         },
         {
           "id": "P3-2",
-          "title": "Slider handleRender / onChangeComplete",
+          "title": "config-provider 55 项 ComponentToken 类型定义（类型提示层）",
           "status": "pending"
         },
         {
@@ -123,15 +123,16 @@
     "vs_5_29_3": {
       "missingComponents": 0,
       "bigGap": 2,
-      "gap": 43,
-      "ok": 27
+      "gap": 36,
+      "ok": 34
     },
     "vs_6_7_1": {
       "missingComponents": 6,
       "bigGap": 22,
       "gap": 41,
       "ok": 5
-    }
+    },
+    "remainingBreakdown": "剩余 36 小缺口分类：① 误报/内部/React 专有（popover.onOpenChange 已继承、avatar.srcSet 驼峰、menu._internal*/badge.motionClassName/layout.displayName/splitter hook 内部变量、table._renderTimes、form fieldKey/meta 等）约 15 项；② 中等复杂度功能（tabs.items、calendar.cellRender、slider.handleRender/keyboard、input.mask/separator、watermark.add/inherit、dropdown.buttonsRender、tree 插槽、notification.actions 等）约 15 项；③ 简单样式（collapse.size、drawer.loading、progress.percentPosition/rounding、transfer.deselectAll 等）约 6 项"
   },
   "progress": {
     "updatedAt": "2026-11-19",
@@ -153,9 +154,13 @@
       "auto-complete popup 别名 + segmented shape/vertical",
       "P2 BackTop 组件",
       "P2 Splitter 组件",
-      "P2 ColorPicker 组件（精简版）"
+      "P2 ColorPicker 组件（精简版）",
+      "P3 第一批 Switch/Checkbox/Avatar/Divider",
+      "P3 第二批 Button/Spin/QRCode",
+      "P3 第三批 Radio/Tooltip",
+      "P3 第四批 Card.variant"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "P3 零散属性（config-provider ComponentToken 类型 / color-picker 渐变 / Spin percent 等）或 CI 常驻跟踪"
+    "nextUp": "CI 常驻跟踪（GitHub Action 每周 scan）或继续 P3 中等复杂度功能"
   }
 }
