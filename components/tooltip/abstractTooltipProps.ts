@@ -49,6 +49,10 @@ export default () => ({
   destroyTooltipOnHide: { type: Boolean, default: undefined },
   /** 语义化 classNames（antd 5.25+）：root / body */
   rootClassName: String,
+  /** 非受控默认展开 */
+  defaultOpen: { type: Boolean, default: undefined },
+  /** @deprecated Please use \`defaultOpen\` instead */
+  defaultVisible: { type: Boolean, default: undefined },
   classNames: objectType<SemanticNames<'root' | 'body'>>(),
   /** 语义化 styles（antd 5.25+）：root / body */
   styles: objectType<SemanticStylesMap<'root' | 'body'>>(),
@@ -62,5 +66,8 @@ export default () => ({
   /** @deprecated Please use `onUpdate:open` instead. */
   'onUpdate:visible': Function as PropType<(vis: boolean) => void>,
   onOpenChange: Function as PropType<(vis: boolean) => void>,
+  afterOpenChange: Function as PropType<(vis: boolean) => void>,
+  /** @deprecated Please use \`afterOpenChange\` instead */
+  afterVisibleChange: Function as PropType<(vis: boolean) => void>,
   'onUpdate:open': Function as PropType<(vis: boolean) => void>,
 });

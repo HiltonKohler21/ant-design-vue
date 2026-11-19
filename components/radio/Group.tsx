@@ -27,6 +27,8 @@ export type RadioGroupChildOption = {
 export const radioGroupProps = () => ({
   prefixCls: String,
   value: PropTypes.any,
+  /** 非受控默认值 */
+  defaultValue: PropTypes.any,
   size: stringType<RadioGroupSize>(),
   options: arrayType<Array<string | RadioGroupChildOption | number>>(),
   disabled: booleanType(),
@@ -53,7 +55,7 @@ export default defineComponent({
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
-    const stateValue = ref(props.value);
+    const stateValue = ref(props.value ?? props.defaultValue);
     const updatingValue = ref<boolean>(false);
     watch(
       () => props.value,

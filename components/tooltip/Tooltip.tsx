@@ -105,7 +105,14 @@ export default defineComponent({
       props,
     );
     const mergedOpen = computed(() => props.open ?? props.visible);
-    const innerOpen = ref(firstNotUndefined([props.open, props.visible]));
+    const innerOpen = ref(
+      firstNotUndefined([
+        props.open,
+        props.visible,
+        props.defaultOpen,
+        props.defaultVisible,
+      ]),
+    );
 
     const tooltip = ref();
 
@@ -127,6 +134,10 @@ export default defineComponent({
         innerOpen.value = noTitle ? false : val;
       }
       if (!noTitle) {
+        props.afterOpenChange?.(val);
+        props.afterVisibleChange?.(val);
+        emit('afterOpenChange', val);
+        emit('afterVisibleChange', val);
         emit('update:visible', val);
         emit('visibleChange', val);
         emit('update:open', val);
