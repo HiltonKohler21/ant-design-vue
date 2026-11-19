@@ -45,6 +45,8 @@ export const segmentedProps = () => {
     block: booleanType(),
     disabled: booleanType(),
     size: stringType<segmentedSize>(),
+    shape: stringType<'default' | 'round'>(),
+    vertical: booleanType(),
     value: { ...someType<SegmentedValue>([String, Number]), required: true },
     motionName: String,
     onChange: functionType<(val: SegmentedValue) => void>(),
@@ -144,6 +146,8 @@ export default defineComponent({
             {
               [hashId.value]: true,
               [`${pre}-block`]: props.block,
+              [`${pre}-vertical`]: props.vertical,
+              [`${pre}-shape-${props.shape}`]: props.shape === 'round',
               [`${pre}-disabled`]: props.disabled,
               [`${pre}-lg`]: size.value == 'large',
               [`${pre}-sm`]: size.value == 'small',

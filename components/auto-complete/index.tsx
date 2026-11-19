@@ -26,6 +26,15 @@ export const autoCompleteProps = () => ({
   },
   // optionLabelProp: String,
   dropdownMatchSelectWidth: { type: [Number, Boolean], default: true },
+  /** @deprecated Please use `popupRender` instead */
+  dropdownRender: { type: Function as PropType<(menu: any) => any>, default: undefined },
+  /** @deprecated Please use `styles.popup.root` instead */
+  dropdownStyle: { type: Object as PropType<CSSProperties>, default: undefined },
+  /** @deprecated Please use `onOpenChange` instead */
+  onDropdownVisibleChange: {
+    type: Function as PropType<(open: boolean) => void>,
+    default: undefined,
+  },
   /** 语义化 classNames（antd 5.25+），透传给 Select */
   classNames: { type: Object as PropType<SemanticClassNames>, default: undefined },
   /** 语义化 styles（antd 5.25+），透传给 Select */

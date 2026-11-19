@@ -67,6 +67,18 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         direction: 'rtl',
       },
 
+      // vertical styles
+      [`&${componentCls}-vertical`]: {
+        [`${componentCls}-group`]: {
+          flexDirection: 'column',
+        },
+        [`${componentCls}-thumb`]: {
+          width: '100%',
+          height: 0,
+          padding: `0 ${token.paddingXXS}px`,
+        },
+      },
+
       // block styles
       [`&${componentCls}-block`]: {
         display: 'flex',
@@ -162,6 +174,13 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         },
         [`${componentCls}-item, ${componentCls}-thumb`]: {
           borderRadius: token.borderRadius,
+        },
+      },
+
+      [`&${componentCls}-shape-round`]: {
+        borderRadius: 9999,
+        [`${componentCls}-item, ${componentCls}-thumb`]: {
+          borderRadius: 9999,
         },
       },
 
