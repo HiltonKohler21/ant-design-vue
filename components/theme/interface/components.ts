@@ -9,6 +9,7 @@ import type { ComponentToken as CardComponentToken } from '../../card/style';
 import type { ComponentToken as CarouselComponentToken } from '../../carousel/style';
 import type { ComponentToken as CascaderComponentToken } from '../../cascader/style';
 import type { ComponentToken as CheckboxComponentToken } from '../../checkbox/style';
+import type { ComponentToken as ColorPickerComponentToken } from '../../color-picker/style';
 import type { ComponentToken as CollapseComponentToken } from '../../collapse/style';
 import type { ComponentToken as DatePickerComponentToken } from '../../date-picker/style';
 import type { ComponentToken as DividerComponentToken } from '../../divider/style';
@@ -66,6 +67,7 @@ export interface ComponentTokenMap {
   Cascader?: CascaderComponentToken;
   Checkbox?: CheckboxComponentToken;
   Collapse?: CollapseComponentToken;
+  ColorPicker?: ColorPickerComponentToken;
   Comment?: {};
   DatePicker?: DatePickerComponentToken;
   Descriptions?: {};

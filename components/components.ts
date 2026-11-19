@@ -90,6 +90,9 @@ export { default as BackTop } from './back-top';
 export type { SplitterProps, PanelProps as SplitterPanelProps } from './splitter';
 export { default as Splitter } from './splitter';
 
+export type { colorPickerProps as ColorPickerProps } from './color-picker';
+export { default as ColorPicker } from './color-picker';
+
 export type { FormProps, FormItemProps, FormInstance, FormItemInstance } from './form';
 export { default as Form, FormItem, FormItemRest } from './form';
 
