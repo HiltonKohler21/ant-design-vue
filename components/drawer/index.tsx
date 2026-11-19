@@ -46,6 +46,8 @@ export const drawerProps = () => ({
   closable: { type: Boolean, default: undefined },
   closeIcon: PropTypes.any,
   destroyOnClose: { type: Boolean, default: undefined },
+  /** @deprecated Please use `destroyOnHidden` instead */
+  destroyOnHidden: { type: Boolean, default: undefined },
   forceRender: { type: Boolean, default: undefined },
   getContainer: {
     type: [String, Function, Boolean, Object] as PropType<
@@ -131,6 +133,13 @@ const Drawer = defineComponent({
     const load = shallowRef(false);
     const visible = shallowRef(false);
     const mergedOpen = computed(() => props.open ?? props.visible);
+    const mergedDestroyOnHidden = computed(() => props.destroyOnHidden ?? props.destroyOnClose);
+
+    devWarning(
+      props.destroyOnClose === undefined,
+      'Drawer',
+      '`destroyOnClose` is deprecated. Please use `destroyOnHidden` instead.',
+    );
     watch(
       mergedOpen,
       () => {
@@ -238,7 +247,7 @@ const Drawer = defineComponent({
           // set true only once
           destroyClose.value = true;
         }
-        if (props.destroyOnClose) {
+        if (mergedDestroyOnHidden.value) {
           load.value = false;
         }
       }
@@ -391,6 +400,7 @@ const Drawer = defineComponent({
           'closeIcon',
           'closable',
           'destroyOnClose',
+          'destroyOnHidden',
           'drawerStyle',
           'headerStyle',
           'bodyStyle',

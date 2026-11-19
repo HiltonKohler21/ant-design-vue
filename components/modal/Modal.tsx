@@ -66,6 +66,8 @@ export const modalProps = () => ({
   okButtonProps: objectType<ButtonPropsType>(),
   cancelButtonProps: objectType<ButtonPropsType>(),
   destroyOnClose: { type: Boolean, default: undefined },
+  /** @deprecated Please use `destroyOnHidden` instead */
+  destroyOnHidden: { type: Boolean, default: undefined },
   wrapClassName: String,
   maskTransitionName: String,
   transitionName: String,
@@ -216,6 +218,7 @@ export default defineComponent({
         getContainer,
         closeIcon = slots.closeIcon?.(),
         focusTriggerAfterClose = true,
+        destroyOnHidden,
         ...restProps
       } = props;
 
@@ -235,6 +238,7 @@ export default defineComponent({
           visible={open ?? visible}
           onClose={handleCancel}
           focusTriggerAfterClose={focusTriggerAfterClose}
+          destroyOnClose={destroyOnHidden ?? props.destroyOnClose}
           transitionName={getTransitionName(rootPrefixCls.value, 'zoom', props.transitionName)}
           maskTransitionName={getTransitionName(
             rootPrefixCls.value,

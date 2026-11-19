@@ -46,6 +46,8 @@ export default () => ({
     default: undefined as boolean | AdjustOverflow,
   },
   destroyTooltipOnHide: { type: Boolean, default: undefined },
+  /** @deprecated Please use `destroyOnHidden` instead */
+  destroyOnHidden: { type: Boolean, default: undefined },
   align: objectType<AlignType>(),
   builtinPlacements: objectType<BuildInPlacements>(),
   children: Array,

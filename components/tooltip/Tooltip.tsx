@@ -298,6 +298,8 @@ export default defineComponent({
         overlayInnerStyle: formattedOverlayInnerStyle,
         onVisibleChange: handleVisibleChange,
         onPopupAlign,
+        destroyTooltipOnHide: props.destroyOnHidden ?? props.destroyTooltipOnHide,
+        destroyOnHidden: undefined,
         transitionName: getTransitionName(
           rootPrefixCls.value,
           'zoom-big-fast',

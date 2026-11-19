@@ -59,6 +59,8 @@ const dropdownProps = () => ({
   openClassName: String,
   minOverlayWidthMatchTrigger: booleanType(),
   destroyPopupOnHide: booleanType(),
+  /** @deprecated Please use `destroyOnHidden` instead */
+  destroyOnHidden: booleanType(),
   /** @deprecated Please use `onOpenChange` instead */
   onVisibleChange: {
     type: Function as PropType<(val: boolean) => void>,

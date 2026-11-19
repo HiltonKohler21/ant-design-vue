@@ -65,6 +65,7 @@ export const tabsProps = () => {
     tabBarStyle: objectType<CSSProperties>(),
     tabPosition: stringType<TabPosition>(),
     destroyInactiveTabPane: booleanType(),
+    destroyOnHidden: booleanType(),
 
     hideAdd: Boolean,
     type: stringType<TabsType>(),
@@ -252,6 +253,10 @@ const InternalTabs = defineComponent({
       prefixCls,
     });
 
+    const mergedDestroyOnHidden = computed(
+      () => props.destroyOnHidden ?? props.destroyInactiveTabPane,
+    );
+
     return () => {
       const {
         id,
@@ -259,7 +264,6 @@ const InternalTabs = defineComponent({
         tabBarGutter,
         tabBarStyle,
         locale,
-        destroyInactiveTabPane,
         renderTabBar = slots.renderTabBar,
         onTabScroll,
         hideAdd,
@@ -336,7 +340,7 @@ const InternalTabs = defineComponent({
         >
           {tabNavBar}
           <TabPanelList
-            destroyInactiveTabPane={destroyInactiveTabPane}
+            destroyInactiveTabPane={mergedDestroyOnHidden.value}
             {...sharedProps}
             animated={mergedAnimated.value}
           />

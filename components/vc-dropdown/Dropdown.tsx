@@ -29,6 +29,9 @@ export default defineComponent({
     hideAction: PropTypes.array,
     getPopupContainer: Function,
     visible: { type: Boolean, default: undefined },
+    destroyOnHidden: { type: Boolean, default: undefined },
+    /** @deprecated Please use `destroyOnHidden` instead */
+    destroyPopupOnHide: { type: Boolean, default: undefined },
     defaultVisible: { type: Boolean, default: false },
     mouseEnterDelay: PropTypes.number.def(0.15),
     mouseLeaveDelay: PropTypes.number.def(0.1),
@@ -78,6 +81,13 @@ export default defineComponent({
       );
     };
 
+    const mergedDestroyOnHidden = computed(
+      () => props.destroyOnHidden ?? !!props.destroyPopupOnHide,
+    );
+
+    const getPopupElement = () =>
+      mergedDestroyOnHidden.value && !triggerVisible.value ? null : getMenuElement();
+
     const minOverlayWidthMatchTrigger = computed(() => {
       const { minOverlayWidthMatchTrigger: matchTrigger = !props.alignPoint } = props;
       return matchTrigger;
@@ -113,6 +123,8 @@ export default defineComponent({
         transitionName,
         animation,
         overlayClassName,
+        destroyOnHidden,
+        destroyPopupOnHide,
         ...otherProps
       } = props;
       return (
@@ -136,7 +148,7 @@ export default defineComponent({
           stretch={minOverlayWidthMatchTrigger.value ? 'minWidth' : ''}
           onPopupVisibleChange={onVisibleChange}
           getPopupContainer={getPopupContainer}
-          v-slots={{ popup: getMenuElement, default: renderChildren }}
+          v-slots={{ popup: getPopupElement, default: renderChildren }}
         ></Trigger>
       );
     };

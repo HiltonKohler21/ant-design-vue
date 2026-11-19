@@ -202,6 +202,8 @@ const Dropdown = defineComponent({
           trigger: triggerActions,
           onVisibleChange: handleVisibleChange,
           placement: placement.value,
+          destroyPopupOnHide: props.destroyOnHidden ?? props.destroyPopupOnHide,
+          destroyOnHidden: undefined,
         },
         ['overlay', 'onUpdate:visible'],
       );
