@@ -90,7 +90,11 @@ const FloatButtonGroup = defineComponent({
     });
 
     return () => {
-      const { shape = 'circle', type = 'default', tooltip, description, trigger } = props;
+      const { shape = 'circle', type = 'default', tooltip, description, trigger, items } = props;
+
+      const childrenNode = items
+        ? items.map((item, index) => <FloatButton key={index} {...item} />)
+        : slots.default?.();
 
       const groupPrefixCls = `${prefixCls.value}-group`;
 
@@ -110,7 +114,7 @@ const FloatButtonGroup = defineComponent({
             <>
               <Transition {...transitionProps}>
                 <div v-show={open.value} class={wrapperCls}>
-                  {slots.default && slots.default()}
+                  {childrenNode}
                 </div>
               </Transition>
               <FloatButton
@@ -130,7 +134,7 @@ const FloatButtonGroup = defineComponent({
               ></FloatButton>
             </>
           ) : (
-            slots.default?.()
+            childrenNode
           )}
         </div>,
       );

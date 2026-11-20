@@ -34,3 +34,12 @@ describe('P3: float-button.disabled/htmlType / watermark.inherit / tour.actionsR
     wrapper.unmount();
   });
 });
+
+describe('FloatButton.Group items', () => {
+  it('items 配置式渲染子按钮', () => {
+    const wrapper = mount(FloatButton.Group, {
+      props: { items: [{ description: 'a' }, { description: 'b' }] },
+    });
+    expect(wrapper.html()).toContain('ant-float-btn');
+  });
+});

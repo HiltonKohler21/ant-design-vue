@@ -45,6 +45,8 @@ export type FloatButtonContentProps = Partial<
 
 export const floatButtonGroupProps = () => {
   return {
+    /** 配置式子按钮（替代 children） */
+    items: { type: Array as PropType<Record<string, any>[]>, default: undefined },
     ...floatButtonProps(),
     // 包含的 Float Button
     // 触发方式 (有触发方式为菜单模式）
