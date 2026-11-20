@@ -50,6 +50,18 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
         [`${componentCls}-ink-bar`]: {
           visibility: 'hidden',
         },
+
+        '&-indicator-size-small': {
+          [`${componentCls}-ink-bar`]: {
+            height: 14,
+          },
+        },
+
+        '&-indicator-size-large': {
+          [`${componentCls}-ink-bar`]: {
+            height: 28,
+          },
+        },
       },
 
       // ========================== Top & Bottom ==========================

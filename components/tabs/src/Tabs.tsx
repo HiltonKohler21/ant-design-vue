@@ -1,6 +1,7 @@
 // Accessibility https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Tab_Role
 import TabNavList from './TabNavList';
 import TabPanelList from './TabPanelList';
+import TabPane from './TabPanelList/TabPane';
 import type {
   TabPosition,
   RenderTabBar,
@@ -67,6 +68,10 @@ export const tabsProps = () => {
     destroyInactiveTabPane: booleanType(),
     destroyOnHidden: booleanType(),
     rootClassName: String,
+    /** 5.23+ 配置式标签页 */
+    items: arrayType<any[]>(),
+    /** 5.21+ 指示条尺寸（deprecated，映射到 indicator.size） */
+    indicatorSize: [Number, String],
 
     hideAdd: Boolean,
     type: stringType<TabsType>(),
@@ -86,6 +91,30 @@ export const tabsProps = () => {
 };
 
 export type TabsProps = Partial<ExtractPropTypes<ReturnType<typeof tabsProps>>>;
+
+/** 将配置式 items 转为等价 Tab 数组 */
+function convertItemsToTabs(items: any[]): Tab[] {
+  return items
+    .filter(item => item)
+    .map(item => {
+      const { key, label, children, closeIcon, ...rest } = item;
+      const node = (
+        <TabPane key={key} {...rest} tab={label}>
+          {children}
+        </TabPane>
+      );
+      return {
+        key,
+        tab: label,
+        node,
+        closeIcon,
+        disabled: rest.disabled,
+        forceRender: rest.forceRender,
+        closable: rest.closable,
+        ...rest,
+      };
+    });
+}
 
 function parseTabList(children: any[]): Tab[] {
   return children
@@ -269,6 +298,7 @@ const InternalTabs = defineComponent({
         onTabScroll,
         hideAdd,
         centered,
+        indicatorSize,
       } = props;
       // ======================== Render ========================
       const sharedProps = {
@@ -335,6 +365,8 @@ const InternalTabs = defineComponent({
               [`${pre}-mobile`]: mobile.value,
               [`${pre}-editable`]: type === 'editable-card',
               [`${pre}-rtl`]: rtl.value,
+              [`${pre}-indicator-size-${indicatorSize}`]:
+                indicatorSize === 'small' || indicatorSize === 'large',
             },
             attrs.class,
             props.rootClassName,
@@ -380,7 +412,9 @@ export default defineComponent({
       emit('change', key);
     };
     return () => {
-      const tabs = parseTabList(flattenChildren(slots.default?.()));
+      const tabs = props.items
+        ? convertItemsToTabs(props.items)
+        : parseTabList(flattenChildren(slots.default?.()));
       return (
         <InternalTabs
           {...omit(props, ['onUpdate:activeKey'])}
