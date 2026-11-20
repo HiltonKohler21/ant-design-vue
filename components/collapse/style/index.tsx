@@ -51,6 +51,20 @@ export const genBaseStyle: GenerateStyle<CollapseToken> = token => {
         direction: 'rtl',
       },
 
+      '&-small': {
+        [`> ${componentCls}-item > ${componentCls}-header`]: {
+          padding: `${token.paddingXS}px ${token.paddingSM}px`,
+          fontSize: token.fontSize,
+        },
+      },
+
+      '&-large': {
+        [`> ${componentCls}-item > ${componentCls}-header`]: {
+          padding: `${token.padding}px ${token.paddingLG}px`,
+          fontSize: token.fontSizeLG,
+        },
+      },
+
       [`& > ${componentCls}-item`]: {
         borderBottom: borderBase,
         [`&:last-child`]: {

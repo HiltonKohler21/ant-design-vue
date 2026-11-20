@@ -36,6 +36,8 @@ export const progressProps = () => ({
   showInfo: booleanType(),
   strokeWidth: Number,
   strokeLinecap: stringType<'butt' | 'square' | 'round'>(),
+  /** 5.20+ 替代 strokeLinecap，true 等价 'round' */
+  rounding: { type: Boolean, default: undefined },
   strokeColor: anyType<string | string[] | ProgressGradient>(),
   trailColor: String,
   /** @deprecated Use `size` instead */

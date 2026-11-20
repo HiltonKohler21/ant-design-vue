@@ -176,7 +176,7 @@ export default defineComponent({
     };
 
     return () => {
-      const { accordion, bordered, ghost } = props;
+      const { accordion, bordered, ghost, size } = props;
       const collapseClassName = classNames(
         prefixCls.value,
         {
@@ -184,6 +184,7 @@ export default defineComponent({
           [`${prefixCls.value}-icon-position-${iconPosition.value}`]: true,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-ghost`]: !!ghost,
+          [`${prefixCls.value}-${size}`]: !!size && size !== 'middle',
           [attrs.class as string]: !!attrs.class,
         },
         props.rootClassName,

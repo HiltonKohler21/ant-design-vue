@@ -43,6 +43,9 @@ export default defineComponent({
 
       devWarning('width' in props, 'Progress', '`width` is deprecated. Please use `size` instead.');
     }
+    const mergedStrokeLinecap = computed(() =>
+      props.rounding === true ? 'round' : props.strokeLinecap,
+    );
     const strokeColorNotArray = computed(() =>
       Array.isArray(props.strokeColor) ? props.strokeColor[0] : props.strokeColor,
     );
@@ -133,6 +136,7 @@ export default defineComponent({
         ) : (
           <Line
             {...props}
+            strokeLinecap={mergedStrokeLinecap.value}
             strokeColor={strokeColorNotArray.value}
             prefixCls={prefixCls.value}
             direction={direction.value}
@@ -144,6 +148,7 @@ export default defineComponent({
         progress = (
           <Circle
             {...props}
+            strokeLinecap={mergedStrokeLinecap.value}
             prefixCls={prefixCls.value}
             strokeColor={strokeColorNotArray.value}
             progressStatus={progressStatus.value}

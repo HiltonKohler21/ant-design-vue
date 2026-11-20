@@ -98,6 +98,7 @@ export const mentionsProps = () => ({
   id: String,
   status: String as PropType<InputStatus>,
   variant: String as PropType<Variant>,
+  popupClassName: String,
   rootClassName: String,
 });
 
@@ -271,7 +272,7 @@ const Mentions = defineComponent({
       const mentions = (
         <VcMentions
           {...mentionsProps}
-          dropdownClassName={hashId.value}
+          dropdownClassName={classNames(hashId.value, props.popupClassName)}
           v-slots={{ notFoundContent: getNotFoundContent, option: slots.option }}
         ></VcMentions>
       );

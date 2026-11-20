@@ -23,6 +23,7 @@ import omit from '../_util/omit';
 import devWarning from '../vc-util/devWarning';
 import type { KeyboardEventHandler, MouseEventHandler } from '../_util/EventInterface';
 import useStyle from './style';
+import Skeleton from '../skeleton';
 import { NoCompactStyle } from '../space/Compact';
 
 import isNumeric from '../_util/isNumeric';
@@ -48,6 +49,7 @@ export const drawerProps = () => ({
   closeIcon: PropTypes.any,
   /** 语义化 classNames（antd 5.25+）：mask / wrapper / content / header / body / footer */
   classNames: objectType<DialogSemanticClassNames>(),
+  loading: { type: Boolean, default: false },
   /** 语义化 styles（antd 5.25+）：mask / wrapper / content / header / body / footer */
   styles: objectType<DialogSemanticStyles>(),
   destroyOnClose: { type: Boolean, default: undefined },
@@ -366,7 +368,16 @@ const Drawer = defineComponent({
             class={[`${prefixCls}-body`, props.classNames?.body]}
             style={[bodyStyle, props.styles?.body]}
           >
-            {slots.default?.()}
+            {props.loading ? (
+              <Skeleton
+                active
+                title={false}
+                paragraph={{ rows: 5 }}
+                class={`${prefixCls}-body-skeleton`}
+              />
+            ) : (
+              slots.default?.()
+            )}
           </div>
           {renderFooter(prefixCls)}
         </div>

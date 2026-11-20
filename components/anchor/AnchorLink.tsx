@@ -11,6 +11,7 @@ import type { CSSProperties } from '../_util/cssinjs/hooks/useStyleRegister';
 export const anchorLinkProps = () => ({
   prefixCls: String,
   href: String,
+  replace: { type: Boolean, default: false },
   title: anyType<VueNode | ((item: any) => VueNode)>(),
   target: String,
   /* private use  */
@@ -50,9 +51,24 @@ export default defineComponent({
     const { prefixCls } = useConfigInject('anchor', props);
 
     const handleClick = (e: Event) => {
-      const { href } = props;
+      const { href, replace } = props;
       contextHandleClick(e, { title: mergedTitle, href });
       scrollTo(href);
+      // Support clicking on an anchor does not record history.
+      if (e.defaultPrevented) {
+        return;
+      }
+      const isExternalLink = href.startsWith('http://') || href.startsWith('https://');
+      if (isExternalLink) {
+        if (replace) {
+          e.preventDefault();
+          window.location.replace(href);
+        }
+        return;
+      }
+      e.preventDefault();
+      const historyMethod = replace ? 'replaceState' : 'pushState';
+      (window.history as any)[historyMethod](null, '', href);
     };
 
     watch(
