@@ -24,6 +24,8 @@ export const colorPickerProps = () => ({
   },
   allowClear: { type: Boolean, default: false },
   format: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
+  defaultFormat: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
+  onFormatChange: Function as PropType<(format: 'hex' | 'rgb' | 'hsb') => void>,
   mode: { type: String as PropType<'single' | 'gradient'>, default: 'single' },
   onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
   disabledFormat: { type: Boolean, default: undefined },
@@ -70,6 +72,18 @@ const ColorPicker = defineComponent({
         mergedMode.value = v;
       },
     );
+    const mergedFormat = ref<'hex' | 'rgb' | 'hsb'>(props.format ?? props.defaultFormat);
+    watch(
+      () => props.format,
+      v => {
+        if (v !== undefined) mergedFormat.value = v;
+      },
+    );
+    const setFormat = (f: 'hex' | 'rgb' | 'hsb') => {
+      mergedFormat.value = f;
+      props.onFormatChange?.(f);
+    };
+
     const setMode = (m: 'single' | 'gradient') => {
       mergedMode.value = m;
       props.onModeChange?.(m);
@@ -167,6 +181,9 @@ const ColorPicker = defineComponent({
                 mode={mergedMode.value}
                 onModeChange={setMode}
                 panelRender={props.panelRender}
+                format={mergedFormat.value}
+                onFormatChange={setFormat}
+                disabledFormat={props.disabledFormat}
               />
             ),
           }}

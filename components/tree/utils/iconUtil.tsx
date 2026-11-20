@@ -17,10 +17,14 @@ export default function renderSwitcherIcon(
   props: SwitcherIconProps,
   leafIcon?: (props: SwitcherIconProps) => any,
   showLine?: boolean | { showLeafIcon: boolean } | undefined,
+  switcherLoadingIcon?: any,
 ) {
   const { isLeaf, expanded, loading } = props;
   let icon = switcherIcon;
   if (loading) {
+    if (isValidElement(switcherLoadingIcon)) {
+      return switcherLoadingIcon;
+    }
     return <LoadingOutlined class={`${prefixCls}-switcher-loading-icon`} />;
   }
   let showLeafIcon: boolean;

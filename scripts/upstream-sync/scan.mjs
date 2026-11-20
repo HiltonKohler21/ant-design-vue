@@ -246,7 +246,7 @@ const WHITELIST = {
     'tooltipProps',
   ], // React aria / 内部子组件字段（CopyBtn.loading / EditConfig.maxLength / EllipsisTooltip.tooltipProps）
   notification: ['datatestid', 'readonlytype'], // React 专有
-  cascader: ['dropdownMenuColumnStyle', 'popupMenuColumnStyle'], // React 专有（Vue 用插槽）
+  cascader: [], // 已补齐
   splitter: [
     'basicsState',
     'containerRef',
@@ -263,13 +263,13 @@ const WHITELIST = {
   'auto-complete': ['popupMatchSelectWidth'], // 已继承 Select
   input: ['_skipAddonWarning', 'readonlyaction', 'readonlyinputPrefixCls'], // 内部实现
   table: ['_renderTimes'], // 内部实现
-  tree: ['filterAntTreeNode', 'switcherLoadingIcon', 'treeNodeProps'], // React 专有（Vue 用插槽）/ iconUtil 内部字段
+  tree: ['filterAntTreeNode', 'treeNodeProps'], // React 专有（Vue 用插槽）/ iconUtil 内部字段
   skeleton: ['fullSize'], // Skeleton.Node 内部属性
   avatar: ['srcSet'], // 驼峰误报（本地 srcset）
   menu: ['_internalDisableMenuItemTitleTooltip'], // 内部实现
   badge: ['motionClassName'], // 内部实现
   layout: ['displayName'], // 内部实现
-  collapse: ['destroyOnHidden'], // 已实现（P1-5 destroyOnHidden 映射）
+  collapse: [], // 已补齐
   watermark: ['add'], // antd 6.x，不在 5.x 基线
   'config-provider': '*', // ThemeConfig.components 组件 key（camelCase），本地 ComponentTokenMap 已 PascalCase 完整覆盖
   'color-picker': [
@@ -280,7 +280,6 @@ const WHITELIST = {
     'onGradientDragging',
     'onKeyDelete',
     'range',
-    'onFormatChange',
   ], // 渐变拖拽内部实现（GradientColorBar 内部处理，非公开 API）
 };
 

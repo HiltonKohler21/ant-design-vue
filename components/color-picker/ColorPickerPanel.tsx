@@ -14,6 +14,9 @@ const colorPickerPanelProps = () => ({
   onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
   onChangeComplete: Function as PropType<(color: AggregationColor) => void>,
   panelRender: Function as PropType<(panel: any) => any>,
+  format: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
+  onFormatChange: Function as PropType<(format: 'hex' | 'rgb' | 'hsb') => void>,
+  disabledFormat: { type: Boolean, default: false },
 });
 
 export default defineComponent({
@@ -101,13 +104,30 @@ export default defineComponent({
     };
     onBeforeUnmount(unbindWindow);
 
-    /* ====================== Hex 输入 ====================== */
-    const hexInput = ref(hsv.value ? props.value.toHex() : '');
-    const onHexInput = (e: Event) => {
+    /* ====================== 格式输入 ====================== */
+    const formatValue = computed(() => {
+      if (props.format === 'rgb') return props.value.toRgbString();
+      if (props.format === 'hsb') return props.value.toHsbString();
+      return props.value.toHex();
+    });
+    const onFormatInput = (e: Event) => {
       const val = (e.target as HTMLInputElement).value;
-      const color = new TinyColorWrapper(val);
-      if (color.isValid) {
-        props.onChange?.(new AggregationColor(val));
+      if (props.format === 'hex') {
+        if (/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(val)) {
+          props.onChange?.(new AggregationColor(val));
+        }
+      } else if (props.format === 'rgb') {
+        const m = val.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        if (m) {
+          props.onChange?.(
+            new AggregationColor({
+              r: +m[1],
+              g: +m[2],
+              b: +m[3],
+              a: m[4] !== undefined ? +m[4] : 1,
+            }),
+          );
+        }
       }
     };
 
@@ -189,12 +209,23 @@ export default defineComponent({
                   </div>
                 )}
               </div>
-              {/* Hex 输入 */}
+              {/* 格式输入 */}
               <div class={`${panelPrefixCls.value}-input`}>
-                <span>Hex</span>
+                {!props.disabledFormat && (
+                  <Segmented
+                    size="small"
+                    options={[
+                      { label: 'HEX', value: 'hex' },
+                      { label: 'RGB', value: 'rgb' },
+                      { label: 'HSB', value: 'hsb' },
+                    ]}
+                    value={props.format}
+                    onChange={val => props.onFormatChange?.(val as 'hex' | 'rgb' | 'hsb')}
+                  />
+                )}
                 <input
-                  value={hexInput.value}
-                  onInput={onHexInput}
+                  value={formatValue.value}
+                  onInput={onFormatInput}
                   onChange={() => {}}
                   spellcheck={false}
                 />
@@ -224,13 +255,5 @@ export default defineComponent({
     };
   },
 });
-
-// TinyColor 包装（避免引入额外依赖，直接复用 color.ts 的类型）
-class TinyColorWrapper {
-  isValid: boolean;
-  constructor(input: string) {
-    this.isValid = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(input);
-  }
-}
 
 export { generateColor };

@@ -133,6 +133,9 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     dropdownRender: { type: Function as PropType<(menu: any) => any>, default: undefined },
     popupRender: { type: Function as PropType<(menu: any) => any>, default: undefined },
     dropdownStyle: { type: Object as PropType<CSSProperties>, default: undefined },
+    /** 下拉菜单列样式 */
+    dropdownMenuColumnStyle: { type: Object as PropType<CSSProperties>, default: undefined },
+    popupMenuColumnStyle: { type: Object as PropType<CSSProperties>, default: undefined },
     'onUpdate:value': Function as PropType<(value: ValueType) => void>,
   };
 }
@@ -320,8 +323,13 @@ const Cascader = defineComponent({
               'rootClassName',
               'classNames',
               'styles',
+              'dropdownMenuColumnStyle',
+              'popupMenuColumnStyle',
             ])}
             dropdownStyle={{ ...props.styles?.popup?.root, ...props.dropdownStyle }}
+            dropdownMenuColumnStyle={
+              props.popupMenuColumnStyle ?? props.dropdownMenuColumnStyle
+            }
             style={[props.styles?.root, attrs.style as any]}
             onDropdownVisibleChange={handleOpenChange}
             {...attrs}

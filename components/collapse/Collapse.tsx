@@ -129,7 +129,8 @@ export default defineComponent({
     const getNewChild = (child, index) => {
       if (isEmptyElement(child)) return;
       const activeKey = stateActiveKey.value;
-      const { accordion, destroyInactivePanel, collapsible, openAnimation } = props;
+      const { accordion, destroyInactivePanel, destroyOnHidden, collapsible, openAnimation } = props;
+      const mergedDestroyInactivePanel = destroyOnHidden ?? destroyInactivePanel;
       const animation = openAnimation || collapseMotion(`${rootPrefixCls.value}-motion-collapse`);
 
       // If there is no key provide, use the panel order as default key
@@ -160,7 +161,7 @@ export default defineComponent({
         headerClass,
         isActive,
         prefixCls: prefixCls.value,
-        destroyInactivePanel,
+        destroyInactivePanel: mergedDestroyInactivePanel,
         openAnimation: animation,
         accordion,
         onItemClick: mergeCollapsible === 'disabled' ? null : onClickItem,

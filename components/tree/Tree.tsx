@@ -123,6 +123,7 @@ export const treeProps = () => {
     showIcon: booleanType(),
     icon: functionType<(nodeProps: AntdTreeNodeAttribute) => any>(),
     switcherIcon: PropTypes.any,
+    switcherLoadingIcon: PropTypes.any,
     prefixCls: String,
     /**
      * @default{title,key,children}
@@ -156,6 +157,7 @@ export default defineComponent({
     icon?: any;
     title?: any;
     switcherIcon?: any;
+    switcherLoadingIcon?: any;
     titleRender?: any;
     default?: any;
     leafIcon?: any;
@@ -213,6 +215,7 @@ export default defineComponent({
         showIcon,
         showLine,
         switcherIcon = slots.switcherIcon,
+        switcherLoadingIcon = slots.switcherLoadingIcon,
         icon = slots.icon,
         blockNode,
         checkable,
@@ -259,7 +262,14 @@ export default defineComponent({
           checkable={checkable}
           selectable={selectable}
           switcherIcon={(nodeProps: SwitcherIconProps) =>
-            renderSwitcherIcon(prefixCls.value, switcherIcon, nodeProps, slots.leafIcon, showLine)
+            renderSwitcherIcon(
+              prefixCls.value,
+              switcherIcon,
+              nodeProps,
+              slots.leafIcon,
+              showLine,
+              switcherLoadingIcon,
+            )
           }
           onCheck={handleCheck}
           onExpand={handleExpand}

@@ -25,6 +25,8 @@ const collapseProps = () => ({
   defaultActiveKey: someType<ActiveKeyType>([Array, Number, String]),
   accordion: booleanType(),
   destroyInactivePanel: booleanType(),
+  /** 5.25+ 替代 destroyInactivePanel */
+  destroyOnHidden: booleanType(),
   bordered: booleanType(),
   expandIcon: functionType<(panelProps: PanelProps) => any>(),
   openAnimation: PropTypes.object,
