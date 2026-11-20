@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, HTMLAttributes, ComponentPublicInstance } from 'vue';
+import type { ExtractPropTypes, HTMLAttributes, ComponentPublicInstance, PropType } from 'vue';
 import { defineComponent, computed, watch, ref } from 'vue';
 import PropTypes from '../_util/vue-types';
 import classNames from '../_util/classNames';
@@ -41,6 +41,8 @@ import useForm from './useForm';
 import { useInjectGlobalForm } from '../config-provider/context';
 import useStyle from './style';
 import { useProviderSize } from '../config-provider/SizeContext';
+import { useProvideFormFeedbackIcons } from './FormItemContext';
+import type { FeedbackIcons } from './FormItemContext';
 import { useProviderDisabled } from '../config-provider/DisabledContext';
 export type RequiredMark = boolean | 'optional';
 export type FormLayout = 'horizontal' | 'inline' | 'vertical';
@@ -60,6 +62,8 @@ export const formProps = () => ({
   model: PropTypes.object,
   rules: objectType<{ [k: string]: Rule[] | Rule }>(),
   validateMessages: objectType<ValidateMessages>(),
+  /** 5.x 自定义校验状态图标 */
+  feedbackIcons: { type: Function as PropType<FeedbackIcons>, default: undefined },
   validateOnRuleChange: booleanType(),
   // 提交失败自动滚动到第一个错误字段
   scrollToFirstError: anyType<boolean | Options>(),
@@ -141,6 +145,7 @@ const Form = defineComponent({
     });
     useProviderSize(size);
     useProviderDisabled(disabled);
+    useProvideFormFeedbackIcons(props.feedbackIcons);
     const mergedColon = computed(() => props.colon ?? contextForm.value?.colon);
     const { validateMessages: globalValidateMessages } = useInjectGlobalForm();
     const validateMessages = computed(() => {

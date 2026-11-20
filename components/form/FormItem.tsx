@@ -47,7 +47,11 @@ import { useInjectForm } from './context';
 import FormItemLabel from './FormItemLabel';
 import FormItemInput from './FormItemInput';
 import type { FormItemStatusContextProps } from './FormItemContext';
-import { FormItemInputContext, useProvideFormItemContext } from './FormItemContext';
+import {
+  FormItemInputContext,
+  useProvideFormItemContext,
+  useInjectFormFeedbackIcons,
+} from './FormItemContext';
 import useDebounce from './utils/useDebounce';
 import classNames from '../_util/classNames';
 import useStyle from './style';
@@ -414,6 +418,7 @@ export default defineComponent({
       }
       return validateState.value;
     });
+    const feedbackIcons = useInjectFormFeedbackIcons();
     const itemClassName = computed(() => ({
       [`${prefixCls.value}-item`]: true,
       [hashId.value]: true,
@@ -430,7 +435,15 @@ export default defineComponent({
     watchEffect(() => {
       let feedbackIcon: any;
       if (props.hasFeedback) {
-        const IconNode = mergedValidateStatus.value && iconMap[mergedValidateStatus.value];
+        const customIcons = feedbackIcons
+          ? feedbackIcons({
+              status: mergedValidateStatus.value,
+              errors: debounceErrors.value,
+              warnings: debounceErrors.value,
+            })
+          : undefined;
+        const mergedIconMap = { ...iconMap, ...(customIcons || {}) };
+        const IconNode = mergedValidateStatus.value && mergedIconMap[mergedValidateStatus.value];
         feedbackIcon = IconNode ? (
           <span
             class={classNames(

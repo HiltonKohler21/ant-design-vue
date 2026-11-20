@@ -257,8 +257,8 @@ const WHITELIST = {
     'setSize',
   ], // hook 内部变量误报
   'float-button': ['arialabel'], // React aria-label 驼峰
-  carousel: ['waitForAnimate'], // 内部实现
-  form: ['feedbackIcons', 'fieldKey', 'meta', 'onSubItemMetaChange', 'onVisibleChanged'], // Field 内部
+  carousel: [], // 已补齐
+  form: ['fieldKey', 'meta', 'onSubItemMetaChange', 'onVisibleChanged'], // Field 内部（rc-field-form 内部字段）
   modal: ['cancelTextLocale', 'okTextLocale', 'isSilent'], // 内部实现
   'auto-complete': ['popupMatchSelectWidth'], // 已继承 Select
   input: ['_skipAddonWarning', 'readonlyaction', 'readonlyinputPrefixCls'], // 内部实现

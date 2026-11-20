@@ -114,6 +114,22 @@ export interface FormItemStatusContextProps {
   feedbackIcon?: any;
 }
 
+export type FeedbackIcons = (itemStatus: {
+  status: ValidateStatus;
+  errors?: any[];
+  warnings?: any[];
+}) => Partial<Record<ValidateStatus, any>>;
+
+const FormFeedbackIconsKey: InjectionKey<FeedbackIcons> = Symbol('FormFeedbackIcons');
+
+export const useProvideFormFeedbackIcons = (feedbackIcons?: FeedbackIcons) => {
+  provide(FormFeedbackIconsKey, feedbackIcons);
+};
+
+export const useInjectFormFeedbackIcons = () => {
+  return inject(FormFeedbackIconsKey, undefined);
+};
+
 export const FormItemInputContext = createContext<FormItemStatusContextProps>({});
 
 export const NoFormStatus = defineComponent({

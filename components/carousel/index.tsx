@@ -50,6 +50,8 @@ export const carouselProps = () => ({
   cssEase: String,
   dotsClass: String,
   draggable: booleanType(false),
+  /** 动画等待（是否等待过渡动画完成再切换） */
+  waitForAnimate: booleanType(),
   fade: booleanType(),
   focusOnSelect: booleanType(),
   infinite: booleanType(),
