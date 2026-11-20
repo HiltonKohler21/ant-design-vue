@@ -1,6 +1,8 @@
 import { computed, defineComponent, onBeforeUnmount, ref, type PropType } from 'vue';
 import classNames from '../_util/classNames';
+import Segmented from '../segmented';
 import { AggregationColor, generateColor, type HsbType } from './color';
+import GradientColorBar from './components/GradientColorBar';
 
 const colorPickerPanelProps = () => ({
   prefixCls: String,
@@ -8,6 +10,10 @@ const colorPickerPanelProps = () => ({
   onChange: Function as PropType<(color: AggregationColor) => void>,
   disabledAlpha: { type: Boolean, default: false },
   presets: { type: Array as PropType<{ label: string; colors: string[] }[]>, default: undefined },
+  mode: { type: String as PropType<'single' | 'gradient'>, default: 'single' },
+  onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
+  onChangeComplete: Function as PropType<(color: AggregationColor) => void>,
+  panelRender: Function as PropType<(panel: any) => any>,
 });
 
 export default defineComponent({
@@ -19,6 +25,9 @@ export default defineComponent({
 
     // 拖拽状态：null 表示未拖拽，否则记录拖拽的维度
     const dragging = ref<'sv' | 'hue' | 'alpha' | null>(null);
+
+    // 渐变点激活索引
+    const activeIndex = ref(0);
 
     const hsv = computed(() => props.value.toHsb());
 
@@ -110,55 +119,88 @@ export default defineComponent({
     const hueBg = `linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)`;
 
     return () => {
-      const { disabledAlpha, presets } = props;
+      const { disabledAlpha, presets, mode, onModeChange } = props;
       const color = props.value;
       const { h, s, b, a } = hsv.value;
+      const isGradient = mode === 'gradient';
 
       return (
         <div class={panelPrefixCls.value}>
-          {/* SV 色板 */}
-          <div class={`${panelPrefixCls.value}-sat`} ref={svRef} onMousedown={svDown}>
-            <div class={`${panelPrefixCls.value}-sat-fill`} style={{ background: svBg.value }} />
-            <div
-              class={`${panelPrefixCls.value}-sat-thumb`}
-              style={{ left: `${s * 100}%`, top: `${(1 - b) * 100}%` }}
+          {/* mode 切换 */}
+          <Segmented
+            size="small"
+            class={`${panelPrefixCls.value}-mode`}
+            options={[
+              { label: '单色', value: 'single' },
+              { label: '渐变', value: 'gradient' },
+            ]}
+            value={mode}
+            onChange={val => onModeChange?.(val as 'single' | 'gradient')}
+          />
+          {isGradient ? (
+            <GradientColorBar
+              prefixCls={panelPrefixCls.value}
+              value={color}
+              activeIndex={activeIndex.value}
+              onChange={c => props.onChange?.(c)}
+              onActive={i => {
+                activeIndex.value = i;
+              }}
             />
-          </div>
-          <div class={`${panelPrefixCls.value}-sliders`}>
-            {/* 色相 */}
-            <div class={`${panelPrefixCls.value}-hue`} ref={hueRef} onMousedown={hueDown}>
-              <div class={`${panelPrefixCls.value}-hue-fill`} style={{ background: hueBg }} />
-              <div
-                class={`${panelPrefixCls.value}-hue-thumb`}
-                style={{ left: `${(h / 360) * 100}%` }}
-              />
-            </div>
-            {/* Alpha */}
-            {!disabledAlpha && (
-              <div class={`${panelPrefixCls.value}-alpha`} ref={alphaRef} onMousedown={alphaDown}>
+          ) : (
+            <>
+              {/* SV 色板 */}
+              <div class={`${panelPrefixCls.value}-sat`} ref={svRef} onMousedown={svDown}>
                 <div
-                  class={`${panelPrefixCls.value}-alpha-fill`}
-                  style={{
-                    background: `linear-gradient(to right, transparent, ${color.toHexString()})`,
-                  }}
+                  class={`${panelPrefixCls.value}-sat-fill`}
+                  style={{ background: svBg.value }}
                 />
                 <div
-                  class={`${panelPrefixCls.value}-alpha-thumb`}
-                  style={{ left: `${(a ?? 1) * 100}%` }}
+                  class={`${panelPrefixCls.value}-sat-thumb`}
+                  style={{ left: `${s * 100}%`, top: `${(1 - b) * 100}%` }}
                 />
               </div>
-            )}
-          </div>
-          {/* Hex 输入 */}
-          <div class={`${panelPrefixCls.value}-input`}>
-            <span>Hex</span>
-            <input
-              value={hexInput.value}
-              onInput={onHexInput}
-              onChange={() => {}}
-              spellcheck={false}
-            />
-          </div>
+              <div class={`${panelPrefixCls.value}-sliders`}>
+                {/* 色相 */}
+                <div class={`${panelPrefixCls.value}-hue`} ref={hueRef} onMousedown={hueDown}>
+                  <div class={`${panelPrefixCls.value}-hue-fill`} style={{ background: hueBg }} />
+                  <div
+                    class={`${panelPrefixCls.value}-hue-thumb`}
+                    style={{ left: `${(h / 360) * 100}%` }}
+                  />
+                </div>
+                {/* Alpha */}
+                {!disabledAlpha && (
+                  <div
+                    class={`${panelPrefixCls.value}-alpha`}
+                    ref={alphaRef}
+                    onMousedown={alphaDown}
+                  >
+                    <div
+                      class={`${panelPrefixCls.value}-alpha-fill`}
+                      style={{
+                        background: `linear-gradient(to right, transparent, ${color.toHexString()})`,
+                      }}
+                    />
+                    <div
+                      class={`${panelPrefixCls.value}-alpha-thumb`}
+                      style={{ left: `${(a ?? 1) * 100}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+              {/* Hex 输入 */}
+              <div class={`${panelPrefixCls.value}-input`}>
+                <span>Hex</span>
+                <input
+                  value={hexInput.value}
+                  onInput={onHexInput}
+                  onChange={() => {}}
+                  spellcheck={false}
+                />
+              </div>
+            </>
+          )}
           {/* 预设色 */}
           {presets?.map(preset => (
             <div key={preset.label} class={`${panelPrefixCls.value}-presets`}>

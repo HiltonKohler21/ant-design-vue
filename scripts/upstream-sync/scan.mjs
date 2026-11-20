@@ -25,13 +25,47 @@ const CACHE = path.join(ROOT, '.cache/upstream');
 
 /** 非组件目录（antd / 本项目两侧通用噪音） */
 const IGNORE = new Set([
-  '__tests__', '_util', 'vc-util', 'style', 'theme', 'version', 'locale', 'locale-provider',
-  'overview', 'grid', 'style-only', 'style', 'index', 'components.ts', 'vc-align',
-  'vc-picker', 'vc-select', 'vc-input', 'vc-table', 'vc-tree', 'vc-upload', 'vc-trigger',
-  'vc-dialog', 'vc-drawer', 'vc-dropdown', 'vc-cascader', 'vc-checkbox', 'vc-image',
-  'vc-mentions', 'vc-notification', 'vc-overflow', 'vc-pagination', 'vc-progress',
-  'vc-resize-observer', 'vc-slick', 'vc-slider', 'vc-steps', 'vc-tooltip', 'vc-tour',
-  'vc-tree-select', 'vc-virtual-list',
+  '__tests__',
+  '_util',
+  'vc-util',
+  'style',
+  'theme',
+  'version',
+  'locale',
+  'locale-provider',
+  'overview',
+  'grid',
+  'style-only',
+  'style',
+  'index',
+  'components.ts',
+  'vc-align',
+  'vc-picker',
+  'vc-select',
+  'vc-input',
+  'vc-table',
+  'vc-tree',
+  'vc-upload',
+  'vc-trigger',
+  'vc-dialog',
+  'vc-drawer',
+  'vc-dropdown',
+  'vc-cascader',
+  'vc-checkbox',
+  'vc-image',
+  'vc-mentions',
+  'vc-notification',
+  'vc-overflow',
+  'vc-pagination',
+  'vc-progress',
+  'vc-resize-observer',
+  'vc-slick',
+  'vc-slider',
+  'vc-steps',
+  'vc-tooltip',
+  'vc-tour',
+  'vc-tree-select',
+  'vc-virtual-list',
 ]);
 
 /** 两侧目录名/组件名不一致的映射：antd -> local */
@@ -65,7 +99,14 @@ function downloadAndExtract(version) {
   const tgz = path.join(CACHE, `antd-${version}.tgz`);
   if (!fs.existsSync(tgz)) {
     console.log(`↓ 下载 antd@${version} ...`);
-    sh('curl', ['-sSL', '--max-time', '180', '-o', tgz, `https://registry.npmjs.org/antd/-/antd-${version}.tgz`]);
+    sh('curl', [
+      '-sSL',
+      '--max-time',
+      '180',
+      '-o',
+      tgz,
+      `https://registry.npmjs.org/antd/-/antd-${version}.tgz`,
+    ]);
   }
   console.log(`⇡ 解包 antd@${version} ...`);
   sh('tar', ['-xzf', tgz, '-C', dir]);
@@ -78,15 +119,14 @@ function downloadAndExtract(version) {
  * ------------------------------------------------------------------ */
 /** 去掉注释，避免 JSDoc 文本被误认为成员名 */
 function stripComments(text) {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|\s)\/\/[^\n]*/g, '$1');
+  return text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/[^\n]*/g, '$1');
 }
 
 function extractPropsFromDts(rawText) {
   const text = stripComments(rawText);
   const out = new Map(); // interfaceName -> string[]
-  const re = /(?:export\s+)?interface\s+([A-Za-z0-9_$]+)\s*(?:<[^>]*>)?\s*(?:extends\s+([^{]+))?\{/g;
+  const re =
+    /(?:export\s+)?interface\s+([A-Za-z0-9_$]+)\s*(?:<[^>]*>)?\s*(?:extends\s+([^{]+))?\{/g;
   let m;
   while ((m = re.exec(text))) {
     const name = m[1];
@@ -157,10 +197,34 @@ function topLevelMembers(body) {
 
 /** React 专有的成员名，Vue 侧天然不支持（或走 attrs / emits），不计入缺口 */
 const REACT_ONLY = new Set([
-  'className', 'children', 'style', 'key', 'ref', 'id', 'role', 'title', 'tabIndex',
-  'onClick', 'onFocus', 'onBlur', 'onChange', 'onKeyDown', 'onKeyPress', 'onKeyUp',
-  'onMouseEnter', 'onMouseLeave', 'onMouseDown', 'onMouseUp', 'onMouseOver', 'onError',
-  'onLoad', 'href', 'target', 'rel', 'autoFocus', 'dangerouslySetInnerHTML',
+  'className',
+  'children',
+  'style',
+  'key',
+  'ref',
+  'id',
+  'role',
+  'title',
+  'tabIndex',
+  'onClick',
+  'onFocus',
+  'onBlur',
+  'onChange',
+  'onKeyDown',
+  'onKeyPress',
+  'onKeyUp',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onMouseDown',
+  'onMouseUp',
+  'onMouseOver',
+  'onError',
+  'onLoad',
+  'href',
+  'target',
+  'rel',
+  'autoFocus',
+  'dangerouslySetInnerHTML',
 ]);
 
 /**
@@ -169,27 +233,52 @@ const REACT_ONLY = new Set([
  * - 值为 `'*'` 时排除该组件全部剩余缺口。
  */
 const WHITELIST = {
-  'popover': ['onOpenChange'], // 已继承 tooltip 的 abstractTooltipProps
-  'typography': ['arialabel', 'enableEllipsis', 'enableMeasure', 'iconOnly', 'miscDeps', 'setContentRef'], // React aria / 内部实现
-  'notification': ['datatestid', 'readonlytype'], // React 专有
-  'cascader': ['dropdownMenuColumnStyle', 'popupMenuColumnStyle'], // React 专有（Vue 用插槽）
-  'splitter': ['basicsState', 'containerRef', 'panelsRef', 'setBasicsState', 'setOffset', 'setResizing', 'setSize'], // hook 内部变量误报
+  popover: ['onOpenChange'], // 已继承 tooltip 的 abstractTooltipProps
+  typography: [
+    'arialabel',
+    'enableEllipsis',
+    'enableMeasure',
+    'iconOnly',
+    'miscDeps',
+    'setContentRef',
+  ], // React aria / 内部实现
+  notification: ['datatestid', 'readonlytype'], // React 专有
+  cascader: ['dropdownMenuColumnStyle', 'popupMenuColumnStyle'], // React 专有（Vue 用插槽）
+  splitter: [
+    'basicsState',
+    'containerRef',
+    'panelsRef',
+    'setBasicsState',
+    'setOffset',
+    'setResizing',
+    'setSize',
+  ], // hook 内部变量误报
   'float-button': ['arialabel'], // React aria-label 驼峰
-  'carousel': ['waitForAnimate'], // 内部实现
-  'form': ['feedbackIcons', 'fieldKey', 'meta', 'onSubItemMetaChange', 'onVisibleChanged'], // Field 内部
-  'modal': ['cancelTextLocale', 'okTextLocale', 'isSilent'], // 内部实现
+  carousel: ['waitForAnimate'], // 内部实现
+  form: ['feedbackIcons', 'fieldKey', 'meta', 'onSubItemMetaChange', 'onVisibleChanged'], // Field 内部
+  modal: ['cancelTextLocale', 'okTextLocale', 'isSilent'], // 内部实现
   'auto-complete': ['popupMatchSelectWidth'], // 已继承 Select
-  'input': ['_skipAddonWarning', 'readonlyaction', 'readonlyinputPrefixCls'], // 内部实现
-  'table': ['_renderTimes'], // 内部实现
-  'tree': ['filterAntTreeNode', 'switcherLoadingIcon'], // React 专有（Vue 用插槽）
-  'skeleton': ['fullSize'], // Skeleton.Node 内部属性
-  'avatar': ['srcSet'], // 驼峰误报（本地 srcset）
-  'menu': ['_internalDisableMenuItemTitleTooltip'], // 内部实现
-  'badge': ['motionClassName'], // 内部实现
-  'layout': ['displayName'], // 内部实现
-  'collapse': ['destroyOnHidden'], // 已实现（P1-5 destroyOnHidden 映射）
-  'watermark': ['add'], // antd 6.x，不在 5.x 基线
+  input: ['_skipAddonWarning', 'readonlyaction', 'readonlyinputPrefixCls'], // 内部实现
+  table: ['_renderTimes'], // 内部实现
+  tree: ['filterAntTreeNode', 'switcherLoadingIcon'], // React 专有（Vue 用插槽）
+  skeleton: ['fullSize'], // Skeleton.Node 内部属性
+  avatar: ['srcSet'], // 驼峰误报（本地 srcset）
+  menu: ['_internalDisableMenuItemTitleTooltip'], // 内部实现
+  badge: ['motionClassName'], // 内部实现
+  layout: ['displayName'], // 内部实现
+  collapse: ['destroyOnHidden'], // 已实现（P1-5 destroyOnHidden 映射）
+  watermark: ['add'], // antd 6.x，不在 5.x 基线
   'config-provider': '*', // ThemeConfig.components 组件 key（camelCase），本地 ComponentTokenMap 已 PascalCase 完整覆盖
+  'color-picker': [
+    'gradientDragging',
+    'modeOptions',
+    'onDragChange',
+    'onDragStart',
+    'onGradientDragging',
+    'onKeyDelete',
+    'range',
+    'onFormatChange',
+  ], // 渐变拖拽内部实现（GradientColorBar 内部处理，非公开 API）
 };
 
 /** 解析某组件目录下所有 .d.ts，聚合成 name -> Set<propName> */
@@ -275,14 +364,23 @@ for (const ac of antdComps) {
   const lcDir = path.join(localComp, lc);
   if (!fs.existsSync(lcDir)) {
     missingComponents.push(ac);
-    rows.push({ antd: ac, local: '—', status: 'MISSING_COMPONENT', missing: [], extra: 0, coverage: 0 });
+    rows.push({
+      antd: ac,
+      local: '—',
+      status: 'MISSING_COMPONENT',
+      missing: [],
+      extra: 0,
+      coverage: 0,
+    });
     continue;
   }
   const antdProps = collectAntdProps(path.join(antdEs, ac));
   const src = projectSourceText(lcDir);
   const wl = WHITELIST[ac] || [];
   const isWildcard = wl === '*' || wl.includes('*');
-  const allMissing = [...antdProps].filter(p => !new RegExp(`\\b${p.replace(/\$/g, '\\$')}\\b`).test(src)).sort();
+  const allMissing = [...antdProps]
+    .filter(p => !new RegExp(`\\b${p.replace(/\$/g, '\\$')}\\b`).test(src))
+    .sort();
   const whitelisted = isWildcard ? allMissing : allMissing.filter(p => wl.includes(p));
   const missing = isWildcard ? [] : allMissing.filter(p => !wl.includes(p));
   const coverage = antdProps.size ? 1 - missing.length / antdProps.size : 1;
@@ -317,7 +415,10 @@ const summary = {
 
 const outDir = path.join(CACHE);
 fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, `report-${version}.json`), JSON.stringify({ summary, rows }, null, 2));
+fs.writeFileSync(
+  path.join(outDir, `report-${version}.json`),
+  JSON.stringify({ summary, rows }, null, 2),
+);
 
 if (jsonOnly) {
   console.log(JSON.stringify(summary, null, 2));
@@ -340,22 +441,41 @@ md.push(`| 属性小缺口 | ${summary.gap} |`);
 md.push(`| 完全对齐 | ${summary.ok} |`, '');
 md.push(`| 白名单排除项（误报/内部/React 专有） | ${summary.whitelistedCount} |`, '');
 md.push(`### 完全缺失的组件`, '');
-md.push(missingComponents.length ? missingComponents.map(c => `\`${c}\``).join('、 ') : '（无）', '');
+md.push(
+  missingComponents.length ? missingComponents.map(c => `\`${c}\``).join('、 ') : '（无）',
+  '',
+);
 md.push(`### 本地独有（上游已移除或本项目自建）`, '');
 md.push(localOnly.length ? localOnly.map(c => `\`${c}\``).join('、 ') : '（无）', '');
 md.push(`### 上游已废弃、未计入`, '');
-md.push(deprecatedSkipped.length ? deprecatedSkipped.map(c => `\`${c}\``).join('、 ') : '（无）', '');
+md.push(
+  deprecatedSkipped.length ? deprecatedSkipped.map(c => `\`${c}\``).join('、 ') : '（无）',
+  '',
+);
 md.push('', `## 属性缺口 Top ${top}`, '');
-md.push(`| 组件 | 上游 Props 数 | 覆盖 | 疑似缺失属性（本项目源码中完全未出现） |`, `| --- | --- | --- | --- |`);
+md.push(
+  `| 组件 | 上游 Props 数 | 覆盖 | 疑似缺失属性（本项目源码中完全未出现） |`,
+  `| --- | --- | --- | --- |`,
+);
 for (const r of rows.slice(0, top)) {
   if (r.status === 'MISSING_COMPONENT') continue;
   const pct = (r.coverage * 100).toFixed(0) + '%';
-  const list = r.missing.slice(0, 14).map(x => `\`${x}\``).join(' ');
-  md.push(`| \`${r.antd}\` | ${r.total} | ${pct} | ${list}${r.missing.length > 14 ? ` …+${r.missing.length - 14}` : ''} |`);
+  const list = r.missing
+    .slice(0, 14)
+    .map(x => `\`${x}\``)
+    .join(' ');
+  md.push(
+    `| \`${r.antd}\` | ${r.total} | ${pct} | ${list}${
+      r.missing.length > 14 ? ` …+${r.missing.length - 14}` : ''
+    } |`,
+  );
 }
 md.push('', `> 说明：本地侧采用「词元存在性」启发式判断（源码里连名字都没出现过 ≈ 一定没实现），`);
 md.push(`> 因此结果是**下限缺口**（可能存在同名变量干扰造成的假阳性，不会漏报）。`);
-md.push(`> 白名单排除项为扫描器误报 / React 专有 / 内部实现细节（见 WHITELIST），不构成真实缺口。`, '');
+md.push(
+  `> 白名单排除项为扫描器误报 / React 专有 / 内部实现细节（见 WHITELIST），不构成真实缺口。`,
+  '',
+);
 
 const mdPath = path.join(outDir, `report-${version}.md`);
 fs.writeFileSync(mdPath, md.join('\n'));

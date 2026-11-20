@@ -110,6 +110,36 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
         boxShadow: '0 0 0 1px rgba(0,0,0,0.25)',
         pointerEvents: 'none',
       },
+      [`${panelCls}-mode`]: {
+        marginBottom: token.marginSM,
+      },
+
+      [`${panelCls}-gradient-slider`]: {
+        position: 'relative',
+        marginTop: token.marginSM,
+        outline: 'none',
+        [`${panelCls}-gradient-slider-bg`]: {
+          position: 'relative',
+          height: 16,
+          borderRadius: token.borderRadiusXS,
+          cursor: 'crosshair',
+        },
+        [`${panelCls}-gradient-slider-handle`]: {
+          position: 'absolute',
+          top: '50%',
+          width: 14,
+          height: 14,
+          margin: '-7px 0 0 -7px',
+          border: '2px solid #fff',
+          borderRadius: '50%',
+          boxShadow: '0 0 0 1px rgba(0,0,0,0.25)',
+          cursor: 'pointer',
+          [`&-active`]: {
+            boxShadow: `0 0 0 2px ${token.colorPrimary}`,
+          },
+        },
+      },
+
       [`${panelCls}-input`]: {
         marginTop: token.marginSM,
         display: 'flex',

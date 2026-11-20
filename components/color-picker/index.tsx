@@ -24,6 +24,14 @@ export const colorPickerProps = () => ({
   },
   allowClear: { type: Boolean, default: false },
   format: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
+  mode: { type: String as PropType<'single' | 'gradient'>, default: 'single' },
+  onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
+  disabledFormat: { type: Boolean, default: undefined },
+  onClear: Function as PropType<() => void>,
+  onChangeComplete: Function as PropType<(color: string) => void>,
+  panelRender: Function as PropType<(panel: any) => any>,
+  prefix: { type: Object as PropType<any>, default: undefined },
+  formatter: Function as PropType<(color: string) => string>,
   onChange: Function as PropType<(color: string) => void>,
   'onUpdate:value': Function as PropType<(color: string) => void>,
   'onUpdate:open': Function as PropType<(open: boolean) => void>,
@@ -54,6 +62,28 @@ const ColorPicker = defineComponent({
     );
     const color = computed(() => generateColor(innerValue.value));
 
+    // mode 状态（非受控）
+    const mergedMode = ref<'single' | 'gradient'>(props.mode);
+    watch(
+      () => props.mode,
+      v => {
+        mergedMode.value = v;
+      },
+    );
+    const setMode = (m: 'single' | 'gradient') => {
+      mergedMode.value = m;
+      props.onModeChange?.(m);
+      if (m === 'gradient' && !color.value.isGradient()) {
+        // 切换到渐变时，初始化为双色渐变
+        setColor(
+          new AggregationColor([
+            { color: color.value, percent: 0 },
+            { color: new AggregationColor('#ffffff'), percent: 100 },
+          ]),
+        );
+      }
+    };
+
     const open = ref(props.open ?? false);
     watch(
       () => props.open,
@@ -69,15 +99,20 @@ const ColorPicker = defineComponent({
     };
 
     const setColor = (nextColor: AggregationColor) => {
-      const hex = nextColor.toHexString();
-      innerValue.value = hex;
-      emit('update:value', hex);
-      props.onChange?.(hex);
+      const raw = nextColor.isGradient() ? nextColor.toCssString() : nextColor.toHexString();
+      const val = props.formatter ? props.formatter(raw) : raw;
+      innerValue.value = val;
+      emit('update:value', val);
+      props.onChange?.(val);
+    };
+    const setColorComplete = (nextColor: AggregationColor) => {
+      const raw = nextColor.isGradient() ? nextColor.toCssString() : nextColor.toHexString();
+      props.onChangeComplete?.(raw);
     };
 
     return () => {
       const { disabled, disabledAlpha, presets, showText, allowClear, rootClassName } = props;
-      const display = color.value.toHexString();
+      const display = color.value.toCssString();
 
       const trigger = (
         <div
@@ -90,6 +125,7 @@ const ColorPicker = defineComponent({
             getStatusClassNames(`${prefixCls.value}-trigger`, mergedStatus.value),
           )}
         >
+          {props.prefix && <span class={`${prefixCls.value}-trigger-prefix`}>{props.prefix}</span>}
           <div
             class={`${prefixCls.value}-trigger-color`}
             style={{ background: color.value.cleared ? 'transparent' : display }}
@@ -101,6 +137,7 @@ const ColorPicker = defineComponent({
               onClick={e => {
                 e.stopPropagation();
                 setColor(new AggregationColor(''));
+                props.onClear?.();
               }}
             >
               ×
@@ -124,8 +161,12 @@ const ColorPicker = defineComponent({
                 prefixCls={prefixCls.value}
                 value={color.value}
                 onChange={setColor}
+                onChangeComplete={setColorComplete}
                 disabledAlpha={disabledAlpha}
                 presets={presets}
+                mode={mergedMode.value}
+                onModeChange={setMode}
+                panelRender={props.panelRender}
               />
             ),
           }}
