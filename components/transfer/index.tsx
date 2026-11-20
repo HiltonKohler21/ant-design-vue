@@ -103,6 +103,8 @@ export const transferProps = () => ({
   rowKey: functionType<(record: TransferItem) => string>(),
   showSelectAll: booleanType(),
   selectAllLabels: arrayType<SelectAllLabel[]>(),
+  /** 全选下拉图标 */
+  selectionsIcon: PropTypes.any,
   children: functionType<(props: TransferListBodyProps) => VueNode>(),
   oneWay: booleanType(),
   pagination: someType<PaginationType>([Object, Boolean]),
@@ -344,6 +346,7 @@ const Transfer = defineComponent({
         filterOption,
         showSelectAll,
         selectAllLabels = [],
+        selectionsIcon,
         oneWay,
         pagination,
         id = formItemContext.id.value,
@@ -398,6 +401,7 @@ const Transfer = defineComponent({
             direction={direction.value === 'rtl' ? 'right' : 'left'}
             showSelectAll={showSelectAll}
             selectAllLabel={selectAllLabels[0] || slots.leftSelectAllLabel}
+            selectionsIcon={selectionsIcon}
             pagination={mergedPagination}
             {...locale}
             v-slots={{ titleText: () => leftTitle, footer }}
@@ -436,6 +440,7 @@ const Transfer = defineComponent({
             direction={direction.value === 'rtl' ? 'left' : 'right'}
             showSelectAll={showSelectAll}
             selectAllLabel={selectAllLabels[1] || slots.rightSelectAllLabel}
+            selectionsIcon={selectionsIcon}
             showRemove={oneWay}
             pagination={mergedPagination}
             {...locale}

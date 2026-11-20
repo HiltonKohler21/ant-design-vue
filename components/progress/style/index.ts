@@ -94,6 +94,16 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         backgroundColor: token.colorSuccess,
       },
 
+      [`${progressCls}-show-info-inner`]: {
+        [`${progressCls}-text`]: {
+          position: 'absolute',
+          insetInlineEnd: 0,
+          insetBlockStart: 0,
+          marginInlineEnd: token.marginXS,
+          lineHeight: 1,
+        },
+      },
+
       [`${progressCls}-text`]: {
         display: 'inline-block',
         width: '2em',

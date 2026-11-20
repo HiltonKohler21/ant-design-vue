@@ -54,6 +54,8 @@ export const transferListProps = {
   removeAll: String,
   removeCurrent: String,
   selectAllLabel: PropTypes.any,
+  deselectAll: String,
+  selectionsIcon: PropTypes.any,
   showRemove: booleanType(),
   pagination: PropTypes.any,
   onItemSelect: Function,
@@ -272,7 +274,9 @@ export default defineComponent({
         showSearch,
         searchPlaceholder,
         selectAll,
+        deselectAll,
         selectCurrent,
+        selectionsIcon,
         selectInvert,
         removeAll,
         removeCurrent,
@@ -347,7 +351,9 @@ export default defineComponent({
                 onItemSelectAll(getNewSelectKeys(keys, []));
               }}
             >
-              {selectAll}
+              {checkedKeys.length > 0 && checkedKeys.length === enabledItemKeys.value.length
+                ? deselectAll
+                : selectAll}
             </Menu.Item>
             {pagination && (
               <Menu.Item
@@ -395,7 +401,7 @@ export default defineComponent({
 
       const dropdown = (
         <Dropdown class={`${prefixCls}-header-dropdown`} overlay={menu} disabled={disabled}>
-          <DownOutlined />
+          {selectionsIcon || <DownOutlined />}
         </Dropdown>
       );
 

@@ -38,6 +38,8 @@ export const progressProps = () => ({
   strokeLinecap: stringType<'butt' | 'square' | 'round'>(),
   /** 5.20+ 替代 strokeLinecap，true 等价 'round' */
   rounding: { type: Boolean, default: undefined },
+  /** 5.20+ 百分比文字位置：inner（进度条内）/ outer（进度条外） */
+  percentPosition: stringType<'inner' | 'outer'>(),
   strokeColor: anyType<string | string[] | ProgressGradient>(),
   trailColor: String,
   /** @deprecated Use `size` instead */

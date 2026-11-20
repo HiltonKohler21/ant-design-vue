@@ -67,7 +67,7 @@ export default defineComponent({
     });
 
     const classString = computed(() => {
-      const { type, showInfo, size } = props;
+      const { type, showInfo, size, percentPosition } = props;
       const pre = prefixCls.value;
       return {
         [pre]: true,
@@ -75,6 +75,7 @@ export default defineComponent({
         [`${pre}-${(type === 'dashboard' && 'circle') || type}`]: true,
         [`${pre}-status-${progressStatus.value}`]: true,
         [`${pre}-show-info`]: showInfo,
+        [`${pre}-show-info-inner`]: percentPosition === 'inner',
         [`${pre}-${size}`]: size,
         [`${pre}-rtl`]: direction.value === 'rtl',
         [props.rootClassName as string]: !!props.rootClassName,

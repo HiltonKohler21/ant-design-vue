@@ -206,6 +206,7 @@ export default defineComponent({
         appendAction,
         itemRender,
         appendActionVisible,
+        extra,
       } = props;
       const appendActionDom = appendAction?.();
       const items = mergedItems.value;
@@ -233,6 +234,7 @@ export default defineComponent({
                 previewIcon={previewIcon}
                 downloadIcon={downloadIcon}
                 itemRender={itemRender}
+                extra={extra}
                 v-slots={{
                   ...slots,
                   iconRender: internalIconRender,

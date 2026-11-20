@@ -4,6 +4,7 @@ import type {
 } from '../vc-upload/interface';
 import type { ProgressProps } from '../progress';
 import type { VueNode } from '../_util/type';
+import { anyType } from '../_util/type';
 import type { ExtractPropTypes, CSSProperties, ImgHTMLAttributes } from 'vue';
 import {
   booleanType,
@@ -97,6 +98,7 @@ type BeforeUploadValueType = void | boolean | string | Blob | FileType;
 function uploadProps<T = any>() {
   return {
     rootClassName: String,
+    extra: anyType<VueNode>(),
     capture: someType<boolean | 'user' | 'environment'>([Boolean, String]),
     type: stringType<UploadType>(),
     name: String,
@@ -188,6 +190,7 @@ function uploadListProps<T = any>() {
     appendAction: functionType<() => VueNode>(),
     appendActionVisible: booleanType(),
     itemRender: functionType<ItemRender<T>>(),
+    extra: anyType<VueNode>(),
   };
 }
 

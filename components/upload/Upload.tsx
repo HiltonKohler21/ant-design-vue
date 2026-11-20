@@ -312,6 +312,7 @@ export default defineComponent({
         itemRender,
         iconRender,
         showUploadList,
+        extra,
       } = props;
       const { showDownloadIcon, showPreviewIcon, showRemoveIcon } =
         typeof showUploadList === 'boolean' ? ({} as ShowUploadListInterface) : showUploadList;
@@ -335,6 +336,7 @@ export default defineComponent({
           isImageUrl={isImageUrl}
           progress={progress}
           itemRender={itemRender}
+          extra={extra}
           appendActionVisible={buttonVisible}
           appendAction={button}
           v-slots={{ ...slots }}
