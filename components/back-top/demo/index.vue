@@ -1,25 +1,23 @@
-<docs>
----
-order: 0
-title:
-  zh-CN: 基本
-  en-US: Basic
----
-
-## zh-CN
-
-最简单的用法。
-
-## en-US
-
-The most basic usage.
-
-</docs>
 <template>
-  <a-back-top />
-  <div style="height: 200vh; padding: 8px 24px; color: #999; font-size: 14px">
-    Scroll down to see the bottom-right
-    <span style="color: #1677ff">BackTop</span>
-    button.
-  </div>
+  <demo-sort>
+    <basic />
+  </demo-sort>
 </template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import CN from '../index.zh-CN.md';
+import US from '../index.en-US.md';
+import Basic from './basic.vue';
+
+export default defineComponent({
+  CN,
+  US,
+  components: {
+    Basic,
+  },
+  setup() {
+    return {};
+  },
+});
+</script>

@@ -6,6 +6,7 @@ import type { Mode, DisplayValueType } from '../BaseSelect';
 
 export interface InnerSelectorProps {
   prefixCls: string;
+  prefix?: any;
   id: string;
   mode: Mode;
   inputRef: RefObject;

@@ -100,6 +100,7 @@ export type BaseSelectRef = {
 const baseSelectPrivateProps = () => {
   return {
     prefixCls: String,
+    prefix: { type: [String, Object, Function] as PropType<any>, default: undefined },
     id: String,
     omitDomProps: Array as PropType<string[]>,
 

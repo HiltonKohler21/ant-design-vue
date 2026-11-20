@@ -107,6 +107,7 @@ export function selectProps<
   return {
     ...baseSelectPropsWithoutPrivate(),
     prefixCls: String,
+    prefix: { type: [String, Object, Function] as PropType<any>, default: undefined },
     id: String,
 
     backfill: { type: Boolean, default: undefined },

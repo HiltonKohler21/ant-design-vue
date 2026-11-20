@@ -36,6 +36,7 @@ type SelectorProps = InnerSelectorProps & {
 const props = {
   id: String,
   prefixCls: String,
+  prefix: { type: [String, Object, Function] as PropType<any>, default: undefined },
   values: PropTypes.array,
   open: { type: Boolean, default: undefined },
   searchValue: String,
@@ -288,6 +289,7 @@ const SelectSelector = defineComponent<SelectorProps>({
       );
       return (
         <>
+          {props.prefix && <span class={`${selectionPrefixCls.value}-prefix`}>{props.prefix}</span>}
           {selectionNode}
           {!values.length && !inputValue.value && !compositionStatus && (
             <span class={`${selectionPrefixCls.value}-placeholder`}>{placeholder}</span>

@@ -55,6 +55,8 @@ export const selectProps = () => ({
   defaultValue: someType<SelectValue>([Array, Object, String, Number]),
   notFoundContent: PropTypes.any,
   suffixIcon: PropTypes.any,
+  /** 选择器内前缀图标 */
+  prefix: PropTypes.any,
   itemIcon: PropTypes.any,
   size: stringType<SizeType>(),
   mode: stringType<'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE'>(),
@@ -338,6 +340,7 @@ const Select = defineComponent({
           prefixCls={prefixCls.value}
           direction={direction.value}
           inputIcon={suffixIcon}
+          prefix={props.prefix}
           menuItemSelectedIcon={itemIcon}
           removeIcon={removeIcon}
           clearIcon={clearIcon}

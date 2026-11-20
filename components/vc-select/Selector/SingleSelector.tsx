@@ -1,7 +1,7 @@
 import pickAttrs from '../../_util/pickAttrs';
 import Input from './Input';
 import type { InnerSelectorProps } from './interface';
-import { Fragment, computed, defineComponent, shallowRef, watch } from 'vue';
+import { Fragment, computed, defineComponent, shallowRef, watch, type PropType } from 'vue';
 import PropTypes from '../../_util/vue-types';
 import type { VueNode } from '../../_util/type';
 import useInjectLegacySelectContext from '../../vc-tree-select/LegacyContext';
@@ -16,6 +16,7 @@ const props = {
   inputElement: PropTypes.any,
   id: String,
   prefixCls: String,
+  prefix: { type: [String, Object, Function] as PropType<any>, default: undefined },
   values: PropTypes.array,
   open: { type: Boolean, default: undefined },
   searchValue: String,
@@ -142,6 +143,7 @@ const SingleSelector = defineComponent<SelectorProps>({
       }
       return (
         <>
+          {props.prefix && <span class={`${prefixCls}-prefix`}>{props.prefix}</span>}
           <span class={`${prefixCls}-selection-search`}>
             <Input
               inputRef={inputRef}

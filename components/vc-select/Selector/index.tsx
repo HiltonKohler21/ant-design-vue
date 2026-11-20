@@ -79,6 +79,7 @@ const Selector = defineComponent<SelectorProps>({
   props: {
     id: String,
     prefixCls: String,
+    prefix: { type: [String, Object, Function] as PropType<any>, default: undefined },
     showSearch: { type: Boolean, default: undefined },
     open: { type: Boolean, default: undefined },
     /** Display in the Selector value, it's not same as `value` prop */
