@@ -61,7 +61,8 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
     const rootPrefixCls = computed(() => getPrefixCls());
 
     // ==================== Component Token（用原始 token 做数值计算）====================
-    const getComponentToken = () => {
+    /** 原始 component token（key 原名、值为字面量） */
+    const getRawComponentToken = () => {
       const { token: proxyToken } = statisticToken(realToken.value);
       const defaultComponentToken =
         typeof getDefaultToken === 'function'
@@ -70,11 +71,47 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
       return { ...defaultComponentToken, ...realToken.value[component] };
     };
 
+    /**
+     * component token key → 带组件前缀（defaultBg → TagDefaultBg）。
+     * 避免不同组件同名 token 的变量互相覆盖（对齐 antd v6 的 --ant-tag-default-bg 命名）。
+     */
+    const toCompTokenKey = (key: string) =>
+      `${component}${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+
+    /** 声明侧：key 加组件前缀，由 useCSSVarRegister 生成 --ant-tag-default-bg */
+    const getComponentToken = () => {
+      const raw = getRawComponentToken();
+      const prefixed: Record<string, any> = {};
+      Object.keys(raw).forEach(key => {
+        prefixed[toCompTokenKey(key)] = raw[key];
+      });
+      return prefixed;
+    };
+
+    /** 引用侧：key 保持原名，值替换为 var(--ant-tag-default-bg)，供 styleFn 使用 */
+    const getStyleComponentToken = () => {
+      const raw = getRawComponentToken();
+      if (!cssVarConfig.value) {
+        return raw;
+      }
+      const prefix = cssVarConfig.value.prefix || 'ant';
+      const result: Record<string, any> = {};
+      Object.keys(raw).forEach(key => {
+        const value = raw[key];
+        result[key] =
+          typeof value === 'string' || typeof value === 'number'
+            ? `var(${token2CSSVar(toCompTokenKey(key), prefix)})`
+            : value;
+      });
+      return result;
+    };
+
     // ==================== CSS 变量注册（antd v6 纯变量模式）====================
     const unitlessCssVar = new Set(
       Object.keys(CSS_VAR_UNITLESS).map(key => token2CSSVar(key, cssVarConfig.value?.prefix)),
     );
-    const cssVarToken = useCSSVarRegister(
+    // 注册组件级 CSS 变量声明（--ant-<component>-<token>）
+    useCSSVarRegister(
       computed(() => ({
         path: [component],
         prefix: cssVarConfig.value?.prefix || 'ant',
@@ -117,7 +154,9 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
       useStyleRegister(componentInfo, () => {
         const { token: proxyToken, flush } = statisticToken(token.value);
 
-        const mergedComponentToken = cssVarConfig.value ? cssVarToken.value : getComponentToken();
+        const mergedComponentToken = cssVarConfig.value
+          ? getStyleComponentToken()
+          : getRawComponentToken();
 
         const componentCls = `.${prefixCls.value}`;
         const mergedToken = mergeToken<

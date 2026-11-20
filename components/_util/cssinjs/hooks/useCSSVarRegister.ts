@@ -55,7 +55,9 @@ export default function useCSSVarRegister(
       const cssVars: Record<string, string> = {};
       const mergedToken: Record<string, any> = {};
       Object.entries(originToken).forEach(([key, value]) => {
-        if (c.preserve?.[key]) {
+        if (key.startsWith('_')) {
+          mergedToken[key] = value;
+        } else if (c.preserve?.[key]) {
           mergedToken[key] = value;
         } else if ((typeof value === 'string' || typeof value === 'number') && !c.ignore?.[key]) {
           const cssVar = token2CSSVar(key, c.prefix || 'ant');
@@ -65,11 +67,20 @@ export default function useCSSVarRegister(
         }
       });
 
-      const cssVarsStr = Object.keys(cssVars).length
-        ? `${c.scope}{${Object.entries(cssVars)
-            .map(([k, v]) => `${k}:${v};`)
-            .join('')}}`
-        : '';
+      if (process.env.NODE_ENV !== 'production' && process.env.CSSVAR_DEBUG) {
+        console.log(
+          '[useCSSVarRegister]',
+          c.path.join('-'),
+          'scope=' + c.scope,
+          'vars=' + Object.keys(cssVars).length,
+        );
+      }
+      const cssVarsStr =
+        Object.keys(cssVars).length && c.scope
+          ? `${c.scope}{${Object.entries(cssVars)
+              .map(([k, v]) => `${k}:${v};`)
+              .join('')}}`
+          : '';
       const styleId = uniqueHash(keyPath.value, cssVarsStr);
 
       if (cssVarsStr && !c.zeroRuntime && typeof document !== 'undefined') {
