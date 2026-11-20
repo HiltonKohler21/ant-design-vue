@@ -10,6 +10,7 @@ import type { Locale } from '../../interface';
 import useCellClassName from '../../hooks/useCellClassName';
 import PanelBody from '../PanelBody';
 import type { VueNode } from '../../../_util/type';
+import classNames from '../../../_util/classNames';
 import { useInjectRange } from '../../RangeContext';
 import useMergeProps from '../../hooks/useMergeProps';
 
@@ -22,6 +23,8 @@ export type DateBodyPassProps<DateType> = {
   // Used for week panel
   prefixColumn?: (date: DateType) => VueNode;
   rowClassName?: (date: DateType) => string;
+  /** 月视图显示周数列（Calendar showWeek） */
+  showWeek?: boolean;
 };
 
 export type DateBodyProps<DateType> = {
@@ -36,8 +39,17 @@ export type DateBodyProps<DateType> = {
 
 function DateBody<DateType>(_props: DateBodyProps<DateType>) {
   const props = useMergeProps(_props);
-  const { prefixCls, generateConfig, prefixColumn, locale, rowCount, viewDate, value, dateRender } =
-    props;
+  const {
+    prefixCls,
+    generateConfig,
+    prefixColumn,
+    locale,
+    rowCount,
+    viewDate,
+    value,
+    dateRender,
+    showWeek,
+  } = props;
 
   const { rangedValue, hoverRangedValue } = useInjectRange();
 
@@ -54,8 +66,8 @@ function DateBody<DateType>(_props: DateBodyProps<DateType>) {
       ? generateConfig.locale.getShortWeekDays(locale.locale)
       : []);
 
-  if (prefixColumn) {
-    headerCells.push(<th key="empty" aria-label="empty cell" />);
+  if (prefixColumn || showWeek) {
+    headerCells.push(<th key="week" aria-label="week" />);
   }
   for (let i = 0; i < WEEK_DAY_COUNT; i += 1) {
     headerCells.push(<th key={i}>{weekDaysLocale[(i + weekFirstDay) % WEEK_DAY_COUNT]}</th>);
@@ -78,12 +90,23 @@ function DateBody<DateType>(_props: DateBodyProps<DateType>) {
     ? (date: DateType) => dateRender({ current: date, today })
     : undefined;
 
+  // showWeek 时生成周数列（区别于 week 面板的 prefixColumn）
+  const weekPrefixColumn = showWeek
+    ? (date: DateType) => (
+        <td key="week" class={classNames(cellPrefixCls, `${cellPrefixCls}-week`)}>
+          {generateConfig.locale.getWeek(locale.locale, date)}
+        </td>
+      )
+    : undefined;
+  const mergedPrefixColumn = prefixColumn || weekPrefixColumn;
+
   return (
     <PanelBody
       {...props}
       rowNum={rowCount}
       colNum={WEEK_DAY_COUNT}
       baseDate={baseDate}
+      prefixColumn={mergedPrefixColumn}
       getCellNode={getCellNode}
       getCellText={generateConfig.getDate}
       getCellClassName={getCellClassName}
@@ -115,5 +138,6 @@ DateBody.props = [
   // Used for week panel
   'prefixColumn?',
   'rowClassName?',
+  'showWeek?',
 ];
 export default DateBody;

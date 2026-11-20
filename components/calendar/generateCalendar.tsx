@@ -60,6 +60,9 @@ export interface CalendarProps<DateType> {
   dateCellRender?: CustomRenderType<DateType>;
   monthFullCellRender?: CustomRenderType<DateType>;
   monthCellRender?: CustomRenderType<DateType>;
+  cellRender?: (date: DateType, info: any) => any;
+  fullCellRender?: (date: DateType, info: any) => any;
+  showWeek?: boolean;
   headerRender?: HeaderRender<DateType>;
   value?: DateType | string;
   defaultValue?: DateType | string;
@@ -111,6 +114,11 @@ function generateCalendar<
         default: undefined,
       },
       monthCellRender: { type: Function as PropType<Props['monthCellRender']>, default: undefined },
+      /** 5.4+ 替代 dateCellRender/monthCellRender */
+      cellRender: { type: Function, default: undefined },
+      /** 5.4+ 替代 dateFullCellRender/monthFullCellRender */
+      fullCellRender: { type: Function, default: undefined },
+      showWeek: { type: Boolean, default: undefined },
       headerRender: { type: Function as PropType<Props['headerRender']>, default: undefined },
       value: {
         type: [Object, String] as PropType<Props['value']>,
@@ -249,12 +257,18 @@ function generateCalendar<
           dateCellRender = slots?.dateCellRender,
           monthFullCellRender = slots?.monthFullCellRender,
           monthCellRender = slots?.monthCellRender,
+          cellRender = slots?.cellRender,
+          fullCellRender = slots?.fullCellRender,
+          showWeek,
           headerRender = slots?.headerRender,
           fullscreen = true,
           validRange,
         } = props;
         // ====================== Render ======================
-        const dateRender = ({ current: date }) => {
+        const dateRender = ({ current: date }, info?: any) => {
+          if (fullCellRender) {
+            return fullCellRender(date, info);
+          }
           if (dateFullCellRender) {
             return dateFullCellRender({ current: date });
           }
@@ -272,13 +286,18 @@ function generateCalendar<
                 {String(generateConfig.getDate(date)).padStart(2, '0')}
               </div>
               <div class={`${calendarPrefixCls.value}-date-content`}>
-                {dateCellRender && dateCellRender({ current: date })}
+                {cellRender
+                  ? cellRender(date, info)
+                  : dateCellRender && dateCellRender({ current: date })}
               </div>
             </div>
           );
         };
 
-        const monthRender = ({ current: date }, locale: Locale) => {
+        const monthRender = ({ current: date }, locale: Locale, info?: any) => {
+          if (fullCellRender) {
+            return fullCellRender(date, info);
+          }
           if (monthFullCellRender) {
             return monthFullCellRender({ current: date });
           }
@@ -299,7 +318,9 @@ function generateCalendar<
                 {months[generateConfig.getMonth(date)]}
               </div>
               <div class={`${calendarPrefixCls.value}-date-content`}>
-                {monthCellRender && monthCellRender({ current: date })}
+                {cellRender
+                  ? cellRender(date, info)
+                  : monthCellRender && monthCellRender({ current: date })}
               </div>
             </div>
           );
@@ -354,6 +375,7 @@ function generateCalendar<
               mode={panelMode.value}
               picker={panelMode.value}
               disabledDate={mergedDisabledDate.value}
+              showWeek={showWeek}
               hideHeader
             />
           </div>,

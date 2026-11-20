@@ -65,6 +65,8 @@ export type PickerPanelSharedProps<DateType> = {
 
   // Render
   dateRender?: DateRender<DateType>;
+  /** 月视图显示周数列（Calendar showWeek） */
+  showWeek?: boolean;
   monthCellRender?: MonthCellRender<DateType>;
   renderExtraFooter?: (mode: PanelMode) => VueNode;
 
@@ -136,6 +138,7 @@ function PickerPanel<DateType>() {
       tabindex: { type: [Number, String], default: 0 },
       showNow: { type: Boolean, default: undefined },
       showTime: [Boolean, Object],
+      showWeek: { type: Boolean, default: undefined },
       showToday: Boolean,
       renderExtraFooter: Function,
       dateRender: Function,
