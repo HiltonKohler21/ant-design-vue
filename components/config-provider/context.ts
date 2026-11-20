@@ -1,4 +1,11 @@
-import type { ComputedRef, ExtractPropTypes, InjectionKey, PropType, Ref, CSSProperties } from 'vue';
+import type {
+  ComputedRef,
+  ExtractPropTypes,
+  InjectionKey,
+  PropType,
+  Ref,
+  CSSProperties,
+} from 'vue';
 import { computed, inject, provide } from 'vue';
 import type { ValidateMessages } from '../form/interface';
 import type { RequiredMark } from '../form/Form';
@@ -120,6 +127,17 @@ export type TreeConfig = ComponentStyleConfig;
 export type TreeSelectConfig = ComponentStyleConfig & { variant?: Variant };
 export type TypographyConfig = ComponentStyleConfig;
 export type UploadConfig = ComponentStyleConfig;
+export type ImageConfig = ComponentStyleConfig & {
+  preview?: { closeIcon?: any };
+  fallback?: string;
+};
+export type EmptyConfig = ComponentStyleConfig & { image?: any };
+export type SwitchConfig = ComponentStyleConfig;
+export type MessageConfig = ComponentStyleConfig;
+export type TableConfig = ComponentStyleConfig & { expandable?: { expandIcon?: any } };
+export type NotificationConfig = ComponentStyleConfig & { closeIcon?: any };
+export type FlexConfig = ComponentStyleConfig & { vertical?: boolean };
+export type WarningConfig = { strict?: boolean };
 
 export type MappingAlgorithm = DerivativeFunc<SeedToken, MapToken>;
 
@@ -241,6 +259,14 @@ export const configProviderProps = () => ({
   treeSelect: objectType<TreeSelectConfig>(),
   typography: objectType<TypographyConfig>(),
   upload: objectType<UploadConfig>(),
+  image: objectType<ImageConfig>(),
+  empty: objectType<EmptyConfig>(),
+  switch: objectType<SwitchConfig>(),
+  message: objectType<MessageConfig>(),
+  table: objectType<TableConfig>(),
+  notification: objectType<NotificationConfig>(),
+  flex: objectType<FlexConfig>(),
+  warning: objectType<WarningConfig>(),
 });
 
 export type ConfigProviderProps = Partial<ExtractPropTypes<ReturnType<typeof configProviderProps>>>;
@@ -290,9 +316,14 @@ export interface ConfigProviderInnerProps {
   wave?: ComputedRef<{
     disabled?: boolean;
   }>;
-  flex?: ComputedRef<{
-    vertical?: boolean;
-  }>;
+  flex?: ComputedRef<FlexConfig>;
+  image?: ComputedRef<ImageConfig>;
+  empty?: ComputedRef<EmptyConfig>;
+  switch?: ComputedRef<SwitchConfig>;
+  message?: ComputedRef<MessageConfig>;
+  table?: ComputedRef<TableConfig>;
+  notification?: ComputedRef<NotificationConfig>;
+  warning?: ComputedRef<WarningConfig>;
   // ====================== 组件级默认配置 ======================
   alert?: ComputedRef<AlertConfig>;
   anchor?: ComputedRef<AnchorConfig>;

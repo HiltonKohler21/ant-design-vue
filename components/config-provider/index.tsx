@@ -259,6 +259,16 @@ const ConfigProvider = defineComponent({
     const treeSelect = computed(() => props.treeSelect ?? parentContext.treeSelect?.value);
     const typography = computed(() => props.typography ?? parentContext.typography?.value);
     const upload = computed(() => props.upload ?? parentContext.upload?.value);
+    const image = computed(() => props.image ?? parentContext.image?.value);
+    const empty = computed(() => props.empty ?? parentContext.empty?.value);
+    const switchConfig = computed(() => props.switch ?? parentContext.switch?.value);
+    const messageConfig = computed(() => props.message ?? parentContext.message?.value);
+    const table = computed(() => props.table ?? parentContext.table?.value);
+    const notificationConfig = computed(
+      () => props.notification ?? parentContext.notification?.value,
+    );
+    const flex = computed(() => props.flex ?? parentContext.flex?.value);
+    const warning = computed(() => props.warning ?? parentContext.warning?.value);
     const configProvider: ConfigProviderInnerProps = {
       csp,
       variant,
@@ -338,6 +348,14 @@ const ConfigProvider = defineComponent({
       treeSelect,
       typography,
       upload,
+      image,
+      empty,
+      switch: switchConfig,
+      message: messageConfig,
+      table,
+      notification: notificationConfig,
+      flex,
+      warning,
       transformCellText: computed(() => props.transformCellText),
       wave,
     };

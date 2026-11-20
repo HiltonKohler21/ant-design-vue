@@ -29,7 +29,23 @@ describe('ConfigProvider 组件级默认配置（camelCase）', () => {
         modal: { className: 'x' },
       },
     });
-    for (const k of ['button', 'card', 'tabs', 'modal', 'alert', 'upload', 'treeSelect']) {
+    for (const k of [
+      'button',
+      'card',
+      'tabs',
+      'modal',
+      'alert',
+      'upload',
+      'treeSelect',
+      'image',
+      'empty',
+      'switch',
+      'message',
+      'table',
+      'notification',
+      'flex',
+      'warning',
+    ]) {
       expect(k in wrapper.vm.$props).toBe(true);
     }
   });
