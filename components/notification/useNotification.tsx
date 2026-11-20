@@ -96,7 +96,8 @@ export function useInternalNotification(
     const { open: originOpen, prefixCls, hashId } = holderRef.value;
     const noticePrefixCls = `${prefixCls}-notice`;
 
-    const { message, description, icon, type, btn, class: className, ...restConfig } = config;
+    const { message, description, icon, type, btn, actions, class: className, ...restConfig } = config;
+    const mergedActions = actions ?? btn;
     return originOpen({
       placement: 'topRight',
       ...restConfig,
@@ -107,7 +108,7 @@ export function useInternalNotification(
           type={type}
           message={typeof message === 'function' ? message() : message}
           description={typeof description === 'function' ? description() : description}
-          btn={typeof btn === 'function' ? btn() : btn}
+          btn={typeof mergedActions === 'function' ? mergedActions() : mergedActions}
         />
       ),
       // @ts-ignore

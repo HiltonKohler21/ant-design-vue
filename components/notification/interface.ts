@@ -15,6 +15,10 @@ export interface ArgsProps {
   message: (() => VueNode) | VueNode;
   description?: (() => VueNode) | VueNode;
   btn?: (() => VueNode) | VueNode;
+  /** btn 的替代（支持多按钮） */
+  actions?: (() => VueNode) | VueNode;
+  showProgress?: boolean;
+  pauseOnHover?: boolean;
   key?: Key;
   onClose?: () => void;
   duration?: number | null;

@@ -32,6 +32,8 @@ export interface ConfigProps {
   placement?: NotificationPlacement;
   getContainer?: () => HTMLElement;
   closeIcon?: VueNode | (() => VueNode);
+  showProgress?: boolean;
+  pauseOnHover?: boolean;
   rtl?: boolean;
   maxCount?: number;
 }
