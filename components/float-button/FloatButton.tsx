@@ -6,6 +6,7 @@ import Content from './FloatButtonContent';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectFloatButtonGroupContext } from './context';
 import warning from '../_util/warning';
+import scrollTo from '../_util/scrollTo';
 import { initDefaultProps } from '../_util/props-util';
 import { floatButtonProps } from './interface';
 // import { useCompactItemContext } from '../space/Compact';
@@ -41,6 +42,13 @@ const FloatButton = defineComponent({
         badge = {},
         ...restProps
       } = props;
+
+      const handleClick = (e: MouseEvent) => {
+        if (props.backTop) {
+          scrollTo(0);
+        }
+        props.onClick?.(e);
+      };
 
       const classString = classNames(
         prefixCls.value,
@@ -89,7 +97,7 @@ const FloatButton = defineComponent({
 
       return wrapSSR(
         props.href ? (
-          <a ref={floatButtonRef} {...attrs} {...(restProps as any)} class={classString}>
+          <a ref={floatButtonRef} {...attrs} {...(restProps as any)} class={classString} onClick={handleClick}>
             {buttonNode}
           </a>
         ) : (
@@ -100,6 +108,7 @@ const FloatButton = defineComponent({
             class={classString}
             type={props.htmlType || 'button'}
             disabled={props.disabled}
+            onClick={handleClick}
           >
             {buttonNode}
           </button>

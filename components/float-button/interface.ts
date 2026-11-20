@@ -25,6 +25,8 @@ export const floatButtonProps = () => {
     badge: objectType<FloatButtonBadgeProps>(),
     disabled: { type: Boolean, default: undefined },
     htmlType: { type: String as PropType<'button' | 'submit' | 'reset'>, default: 'button' },
+    /** 5.28+ 点击回顶部 */
+    backTop: { type: Boolean, default: false },
     onClick: functionType<MouseEventHandler>(),
   };
 };

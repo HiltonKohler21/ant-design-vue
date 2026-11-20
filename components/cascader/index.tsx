@@ -115,6 +115,8 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     variant: { type: String as PropType<Variant> },
     /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
     onOpenChange: { type: Function as PropType<(open: boolean) => void> },
+    /** 选择后自动清除搜索值 */
+    autoClearSearchValue: { type: Boolean, default: true },
     rootClassName: String,
     /** 语义化 classNames（antd 5.25+） */
     classNames: { type: Object as PropType<SemanticClassNames>, default: undefined },
