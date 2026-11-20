@@ -10,6 +10,45 @@
 
 ---
 
+## 4.2.7
+
+`Align with the antd 5.29.3 component and props API surface`
+
+- 🌟 Add Splitter component, supporting `horizontal`/`vertical` layout, `lazy` dragging, `collapsible`, `min`/`max` constraints and `onResizeStart`/`onResize`/`onResizeEnd`/`onCollapse` events.
+- 🌟 Add ColorPicker component, supporting solid and gradient colors, `mode` switching, `format` switching (HEX/RGB/HSB), `presets`, `disabledAlpha`, `allowClear` and `onFormatChange`/`onChangeComplete`/`onClear`.
+- 🌟 Add BackTop component, supporting `target`/`visibilityHeight`/`duration`/`onClick`.
+- 🌟 Add Input.OTP component for one-time passwords, supporting `length`/`mask`/`separator`/`formatter`/`onActiveChange` with automatic focus moving.
+- 🌟 Input / InputNumber / Select / Cascader / TreeSelect / Mentions / AutoComplete support the `variant` prop (`outlined` / `borderless` / `filled` / `underlined`), and `ConfigProvider` supports global and per-component `variant` config.
+- 🌟 Select / TreeSelect / Cascader / AutoComplete support `popupMatchSelectWidth`, `popupRender` and `onOpenChange`; the legacy `dropdownMatchSelectWidth`/`dropdownRender`/`onDropdownVisibleChange` are kept and marked as deprecated.
+- 🌟 All components support `rootClassName` (aligned with antd 5.16+ for 50+ components).
+- 🌟 Select / TreeSelect / Cascader / AutoComplete / Modal / Drawer / Badge / Empty / Space / Tooltip / Button / Card / Descriptions / List / Input / Slider support semantic `classNames` and `styles`.
+- 🌟 Modal / Drawer / Tabs / Dropdown / Tooltip / Collapse support `destroyOnHidden`, compatible with legacy `destroyOnClose`/`destroyInactiveTabPane`/`destroyPopupOnHide`/`destroyTooltipOnHide`/`destroyInactivePanel`.
+- 🌟 ConfigProvider adds `popupMatchSelectWidth`, `popupOverflow`, `holderRender` and 60 per-component default configs (`button`/`card`/`tabs`/`modal`/`table`/`image`/`empty`/`switch`/`message`/`notification`/`flex`/`warning` etc.).
+- 🌟 Button supports `variant` (`outlined`/`dashed`/`solid`/`filled`/`text`/`link`), `color` and `iconPosition`.
+- 🌟 Card supports `variant` and `tabProps`; Modal supports `onConfirm`/`afterOpenChange`; Drawer supports `loading`/`ariaId`.
+- 🌟 Tabs supports config-driven `items` and `indicatorSize`; Calendar supports `cellRender`/`fullCellRender`/`showWeek`.
+- 🌟 Table supports `sortIcon`/`filterOnClose`/`filterDropdownProps`/`virtual`.
+- 🌟 Slider supports `formatter`/`onChangeComplete`/`handleRender`/`keyboard` and aria props; Progress supports `percentPosition`/`rounding`.
+- 🌟 Spin supports `percent`/`fullscreen`; QRCode supports `onRefresh`/`statusRender`.
+- 🌟 Switch supports `defaultValue`; Checkbox supports `required`; Radio.Group supports `defaultValue`; Avatar.Group supports `max`.
+- 🌟 Divider supports `variant` (`solid`/`dashed`/`dotted`) and `size`; Collapse supports `size`; Segmented supports `shape`/`vertical`.
+- 🌟 Tooltip supports `defaultOpen`/`afterOpenChange`; Typography supports `italic`; Watermark supports `inherit`; Tour supports `actionsRender`.
+- 🌟 Notification supports `actions`/`showProgress`/`pauseOnHover`; Upload supports `extra`; Transfer supports `deselectAll`/`selectionsIcon`.
+- 🌟 FloatButton supports `disabled`/`htmlType`/`backTop`; FloatButton.Group supports config-driven `items`.
+- 🌟 Select supports `prefix`; Tree supports `switcherLoadingIcon`; Form supports `feedbackIcons`; Carousel supports `waitForAnimate`.
+- 🌟 TreeSelect / Cascader / Dropdown support `dropdownRender`/`popupRender`/`dropdownStyle`; Dropdown.Button supports `buttonsRender`.
+- 🌟 Cascader supports `dropdownMenuColumnStyle`/`popupMenuColumnStyle`/`autoClearSearchValue`; Mentions supports `popupClassName`.
+- 🌟 Anchor.Link supports `replace`; Popconfirm supports `onPopupClick`; Empty / Layout / Calendar / Upload / Table / Form / Transfer / DatePicker / TimePicker / RangePicker add `rootClassName`.
+- 🐞 Fix Switch `defaultValue` not working (the `checked` type casting overrode the uncontrolled initial value).
+- 🐞 Fix `dropdownMatchSelectWidth` being overridden by the internal props spread.
+- 🐞 Fix Modal `dialogClass`/`dialogStyle` not applied to `.ant-modal-content`.
+- 🐞 Fix Dropdown still rendering popup content after closing (`destroyPopupOnHide` was not implemented).
+- 🐞 Fix Input `autoSize` type narrowing error and Table `useSorter` event type error.
+- 💄 Add Button `filled` variant style; add Collapse `small`/`large` size styles; add Segmented `shape-round` and `vertical` styles.
+- 💄 Progress supports inner percent text; Input adds `filled`/`underlined` variant styles (including disabled/error/warning states).
+- 📖 Add docs and demos for Splitter / ColorPicker / BackTop.
+- 🛠 Add `scripts/upstream-sync` upstream gap scanner with weekly CI tracking against the latest antd API surface.
+
 ## 4.2.6
 
 - 🐞 Fix Modal component aria-hidden error problem under chrome [#7823](https://github.com/vueComponent/ant-design-vue/issues/7823)

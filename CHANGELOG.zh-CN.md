@@ -10,7 +10,50 @@
 
 ---
 
+## 4.2.7
+
+`2026-11-20`
+
+`对齐 antd 5.29.3 的组件与属性 API 面`
+
+- 🌟 新增 Splitter 分隔面板组件，支持 `horizontal`/`vertical` 布局、`lazy` 拖拽、`collapsible` 折叠、`min`/`max` 约束与 `onResizeStart`/`onResize`/`onResizeEnd`/`onCollapse` 事件。
+- 🌟 新增 ColorPicker 颜色选择器组件，支持纯色与渐变、`mode` 单色/渐变切换、`format` HEX/RGB/HSB 切换、`presets` 预设色、`disabledAlpha`、`allowClear` 与 `onFormatChange`/`onChangeComplete`/`onClear`。
+- 🌟 新增 BackTop 回到顶部组件，支持 `target`/`visibilityHeight`/`duration`/`onClick`。
+- 🌟 新增 Input.OTP 一次性验证码输入组件，支持 `length`/`mask`/`separator`/`formatter`/`onActiveChange` 与自动跳转焦点。
+- 🌟 Input / InputNumber / Select / Cascader / TreeSelect / Mentions / AutoComplete 支持 `variant` 形态变体（`outlined` / `borderless` / `filled` / `underlined`），`ConfigProvider` 支持全局与组件级 `variant` 配置。
+- 🌟 Select / TreeSelect / Cascader / AutoComplete 支持 `popupMatchSelectWidth`、`popupRender`、`onOpenChange`，原 `dropdownMatchSelectWidth`/`dropdownRender`/`onDropdownVisibleChange` 保留并标记废弃。
+- 🌟 全部组件支持 `rootClassName`（对齐 antd 5.16+ 的 50 余个组件）。
+- 🌟 Select / TreeSelect / Cascader / AutoComplete / Modal / Drawer / Badge / Empty / Space / Tooltip / Button / Card / Descriptions / List / Input / Slider 支持语义化 `classNames` 与 `styles`。
+- 🌟 Modal / Drawer / Tabs / Dropdown / Tooltip / Collapse 支持 `destroyOnHidden`，兼容旧属性 `destroyOnClose`/`destroyInactiveTabPane`/`destroyPopupOnHide`/`destroyTooltipOnHide`/`destroyInactivePanel`。
+- 🌟 ConfigProvider 新增 `popupMatchSelectWidth`、`popupOverflow`、`holderRender`，并支持 60 项组件级默认配置（`button`/`card`/`tabs`/`modal`/`table`/`image`/`empty`/`switch`/`message`/`notification`/`flex`/`warning` 等）。
+- 🌟 Button 支持 `variant`（`outlined`/`dashed`/`solid`/`filled`/`text`/`link`）、`color` 与 `iconPosition`。
+- 🌟 Card 支持 `variant` 与 `tabProps`；Modal 支持 `onConfirm`/`afterOpenChange`；Drawer 支持 `loading`/`ariaId`。
+- 🌟 Tabs 支持配置式 `items` 与 `indicatorSize`；Calendar 支持 `cellRender`/`fullCellRender`/`showWeek`。
+- 🌟 Table 支持 `sortIcon`/`filterOnClose`/`filterDropdownProps`/`virtual`。
+- 🌟 Slider 支持 `formatter`/`onChangeComplete`/`handleRender`/`keyboard` 与 aria 属性；Progress 支持 `percentPosition`/`rounding`。
+- 🌟 Spin 支持 `percent`/`fullscreen`；QRCode 支持 `onRefresh`/`statusRender`。
+- 🌟 Switch 支持 `defaultValue`；Checkbox 支持 `required`；Radio.Group 支持 `defaultValue`；Avatar.Group 支持 `max`。
+- 🌟 Divider 支持 `variant`（`solid`/`dashed`/`dotted`）与 `size`；Collapse 支持 `size`；Segmented 支持 `shape`/`vertical`。
+- 🌟 Tooltip 支持 `defaultOpen`/`afterOpenChange`；Typography 支持 `italic`；Watermark 支持 `inherit`；Tour 支持 `actionsRender`。
+- 🌟 Notification 支持 `actions`/`showProgress`/`pauseOnHover`；Upload 支持 `extra`；Transfer 支持 `deselectAll`/`selectionsIcon`。
+- 🌟 FloatButton 支持 `disabled`/`htmlType`/`backTop`，FloatButton.Group 支持配置式 `items`。
+- 🌟 Select 支持 `prefix`；Tree 支持 `switcherLoadingIcon`；Form 支持 `feedbackIcons`；Carousel 支持 `waitForAnimate`。
+- 🌟 TreeSelect / Cascader / Dropdown 支持 `dropdownRender`/`popupRender`/`dropdownStyle`，Dropdown.Button 支持 `buttonsRender`。
+- 🌟 Cascader 支持 `dropdownMenuColumnStyle`/`popupMenuColumnStyle`/`autoClearSearchValue`；Mentions 支持 `popupClassName`。
+- 🌟 Anchor.Link 支持 `replace`；Popconfirm 支持 `onPopupClick`；Empty / Layout / Calendar / Upload / Table / Form / Transfer / DatePicker / TimePicker / RangePicker 等补齐 `rootClassName`。
+- 🐞 修复 Switch `defaultValue` 不生效（`checked` 类型转换覆盖非受控初值）。
+- 🐞 修复 `dropdownMatchSelectWidth` 传值被内部 props 展开覆盖为默认值。
+- 🐞 修复 Modal `dialogClass`/`dialogStyle` 未生效到 `.ant-modal-content`。
+- 🐞 修复 Dropdown 关闭后仍渲染弹层内容（`destroyPopupOnHide` 未实现）。
+- 🐞 修复 Input `autoSize` 类型收窄错误与 Table `useSorter` 事件类型错误。
+- 💄 Button 新增 `filled` 变体样式；Collapse 新增 `small`/`large` 尺寸样式；Segmented 新增 `shape-round` 与 `vertical` 样式。
+- 💄 Progress 支持百分比文字内显；Input 新增 `filled`/`underlined` 变体样式（含禁用/错误/警告状态）。
+- 📖 新增 Splitter / ColorPicker / BackTop 文档与示例，并补齐相关 API 说明。
+- 🛠 新增 `scripts/upstream-sync` 上游缺口扫描器与 CI 每周自动跟踪，持续对比 antd 最新版本的 API 面。
+
 ## 4.2.6
+
+`2024-09-22`
 
 - 🐞 修复 Modal 组件在 chrome 下，aria-hidden 报错问题 [#7823](https://github.com/vueComponent/ant-design-vue/issues/7823)
 - 🐞 修复 Safari 下自带输入法 input 组件输入中文时，自动填写小数点问题 [#7918](https://github.com/vueComponent/ant-design-vue/issues/7918)
@@ -19,19 +62,27 @@
 
 ## 4.2.5
 
+`2024-07-28`
+
 - 🐞 修复 Empty 组件内存泄漏问题
 - 🐞 修复 Image width & height 属性不生效问题
 
 ## 4.2.4
 
+`2024-07-07`
+
 - 🐞 修复 Wave 内存泄漏问题
 
 ## 4.2.3
+
+`2024-06-02`
 
 - 🌟 TourStep 自定义 Button，支持函数 children [#7628](https://github.com/vueComponent/ant-design-vue/pull/7628)
 - 🐞 修复 Select 和 Cascader 搜索多选模式下，输入值被隐藏问题 [#7640](https://github.com/vueComponent/ant-design-vue/issues/7640)
 
 ## 4.2.2
+
+`2024-05-12`
 
 - 🐞 修复 TreeSelect placeholder 插槽无效 [#7545](https://github.com/vueComponent/ant-design-vue/issues/7545)
 - 🐞 修复 Tree 插槽响应式无效问题 [40ad45](https://github.com/vueComponent/ant-design-vue/commit/40ad45bc05b2bf9d0a2445d9f6ff365468ba90b7)
@@ -43,9 +94,13 @@
 
 ## 4.2.1
 
+`2024-04-14`
+
 - 🐞 修复 Input 清空操作才报错问题 [#7523](https://github.com/vueComponent/ant-design-vue/issues/7523)
 
 ## 4.2.0
+
+`2024-03-31`
 
 - 🌟 优化 layout 组件切换 dark 模式时 textColor 变化 [#7498](https://github.com/vueComponent/ant-design-vue/issues/7498)
 - 🌟 Tooltip 新增 arrow 隐藏配置 [#7459](https://github.com/vueComponent/ant-design-vue/issues/7459)
