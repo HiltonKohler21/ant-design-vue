@@ -1,4 +1,4 @@
-import type { App, ExtractPropTypes } from 'vue';
+import type { App, CSSProperties, ExtractPropTypes } from 'vue';
 import { computed, ref, defineComponent } from 'vue';
 import VcTreeSelect, {
   TreeNode,
@@ -94,6 +94,10 @@ export function treeSelectProps<
     popupClassName: String,
     /** @deprecated Please use `popupClassName` instead */
     dropdownClassName: String,
+    /** 自定义下拉内容渲染（popupRender 别名） */
+    dropdownRender: functionType<(menu: any) => any>(),
+    popupRender: functionType<(menu: any) => any>(),
+    dropdownStyle: objectType<CSSProperties>(),
     'onUpdate:value': functionType<(value: any) => void>(),
     'onUpdate:treeExpandedKeys': functionType<(keys: Key[]) => void>(),
     'onUpdate:searchValue': functionType<(value: string) => void>(),
@@ -368,6 +372,8 @@ const TreeSelect = defineComponent({
             getPopupContainer={getPopupContainer?.value}
             treeMotion={null}
             dropdownClassName={mergedDropdownClassName.value}
+            dropdownRender={props.popupRender ?? props.dropdownRender}
+            dropdownStyle={props.dropdownStyle}
             choiceTransitionName={choiceTransitionName.value}
             onChange={handleChange}
             onBlur={handleBlur}

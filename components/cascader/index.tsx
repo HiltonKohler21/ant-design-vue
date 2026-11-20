@@ -12,7 +12,7 @@ import type { VueNode } from '../_util/type';
 import { withInstall } from '../_util/type';
 import omit from '../_util/omit';
 import { computed, defineComponent, ref, watchEffect } from 'vue';
-import type { ExtractPropTypes, PropType } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import PropTypes from '../_util/vue-types';
 import { initDefaultProps } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
@@ -129,6 +129,10 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     popupClassName: String,
     /** @deprecated Please use `popupClassName` instead */
     dropdownClassName: String,
+    /** 自定义下拉内容渲染（popupRender 别名） */
+    dropdownRender: { type: Function as PropType<(menu: any) => any>, default: undefined },
+    popupRender: { type: Function as PropType<(menu: any) => any>, default: undefined },
+    dropdownStyle: { type: Object as PropType<CSSProperties>, default: undefined },
     'onUpdate:value': Function as PropType<(value: ValueType) => void>,
   };
 }
@@ -317,7 +321,7 @@ const Cascader = defineComponent({
               'classNames',
               'styles',
             ])}
-            dropdownStyle={props.styles?.popup?.root}
+            dropdownStyle={{ ...props.styles?.popup?.root, ...props.dropdownStyle }}
             style={[props.styles?.root, attrs.style as any]}
             onDropdownVisibleChange={handleOpenChange}
             {...attrs}
@@ -358,6 +362,7 @@ const Cascader = defineComponent({
             loadingIcon={loadingIcon}
             checkable={!!multiple}
             dropdownClassName={mergedDropdownClassName.value}
+            dropdownRender={props.popupRender ?? props.dropdownRender}
             dropdownPrefixCls={cascaderPrefixCls.value}
             choiceTransitionName={getTransitionName(rootPrefixCls.value, '', choiceTransitionName)}
             transitionName={getTransitionName(
