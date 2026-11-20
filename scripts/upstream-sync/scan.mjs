@@ -271,7 +271,6 @@ const WHITELIST = {
   layout: ['displayName'], // 内部实现
   collapse: [], // 已补齐
   watermark: ['add'], // antd 6.x，不在 5.x 基线
-  'config-provider': '*', // ThemeConfig.components 组件 key（camelCase），本地 ComponentTokenMap 已 PascalCase 完整覆盖
   'color-picker': [
     'gradientDragging',
     'modeOptions',

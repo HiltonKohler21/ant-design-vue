@@ -119,7 +119,7 @@
     }
   ],
   "knownGaps": {
-    "note": "真实缺口清零：大缺口 0、小缺口 0、完全对齐 72/72；白名单 104 项为扫描器误报/React 专有/内部实现细节",
+    "note": "真实缺口清零：大缺口 0、小缺口 0、完全对齐 72/72；白名单 45 项均为内部字段/hook 类型/React 专有（非公开 *Props）；config-provider 的 52 个 camelCase 组件配置 props 已实现（声明+context 合并+useConfigInject 读取）",
     "vs_5_29_3": {
       "missingComponents": 0,
       "bigGap": 0,
@@ -133,7 +133,7 @@
       "ok": 5
     },
     "remainingBreakdown": "剩余 36 小缺口分类：① 误报/内部/React 专有（popover.onOpenChange 已继承、avatar.srcSet 驼峰、menu._internal*/badge.motionClassName/layout.displayName/splitter hook 内部变量、table._renderTimes、form fieldKey/meta 等）约 15 项；② 中等复杂度功能（tabs.items、calendar.cellRender、slider.handleRender/keyboard、input.mask/separator、watermark.add/inherit、dropdown.buttonsRender、tree 插槽、notification.actions 等）约 15 项；③ 简单样式（collapse.size、drawer.loading、progress.percentPosition/rounding、transfer.deselectAll 等）约 6 项",
-    "whitelistedCount": 104
+    "whitelistedCount": 45
   },
   "progress": {
     "updatedAt": "2026-11-20",
@@ -160,7 +160,8 @@
       "P3 第二批 Button/Spin/QRCode",
       "P3 第三批 Radio/Tooltip",
       "P3 第四批 Card.variant",
-      "P3 收尾：table.sortIcon/filterOnClose/filterDropdownProps/virtual 等，真实缺口清零"
+      "P3 收尾：table.sortIcon/filterOnClose/filterDropdownProps/virtual 等，真实缺口清零",
+      "fix(audit): 实现 config-provider 52 个组件级默认配置 props，移除通配符白名单"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
     "nextUp": "可选：antd 6.x 跟踪（Masonry/BorderBeam/Listy 等）、ColorPicker 渐变拖拽细化"

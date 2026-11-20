@@ -205,6 +205,60 @@ const ConfigProvider = defineComponent({
     const componentDisabled = computed(() => props.componentDisabled);
     const wave = computed(() => props.wave ?? parentContext.wave?.value);
     const variant = computed(() => props.variant ?? parentContext.variant?.value);
+    const alert = computed(() => props.alert ?? parentContext.alert?.value);
+    const anchor = computed(() => props.anchor ?? parentContext.anchor?.value);
+    const avatar = computed(() => props.avatar ?? parentContext.avatar?.value);
+    const badge = computed(() => props.badge ?? parentContext.badge?.value);
+    const breadcrumb = computed(() => props.breadcrumb ?? parentContext.breadcrumb?.value);
+    const button = computed(() => props.button ?? parentContext.button?.value);
+    const calendar = computed(() => props.calendar ?? parentContext.calendar?.value);
+    const card = computed(() => props.card ?? parentContext.card?.value);
+    const carousel = computed(() => props.carousel ?? parentContext.carousel?.value);
+    const cascader = computed(() => props.cascader ?? parentContext.cascader?.value);
+    const checkbox = computed(() => props.checkbox ?? parentContext.checkbox?.value);
+    const collapse = computed(() => props.collapse ?? parentContext.collapse?.value);
+    const colorPicker = computed(() => props.colorPicker ?? parentContext.colorPicker?.value);
+    const datePicker = computed(() => props.datePicker ?? parentContext.datePicker?.value);
+    const descriptions = computed(() => props.descriptions ?? parentContext.descriptions?.value);
+    const divider = computed(() => props.divider ?? parentContext.divider?.value);
+    const drawer = computed(() => props.drawer ?? parentContext.drawer?.value);
+    const dropdown = computed(() => props.dropdown ?? parentContext.dropdown?.value);
+    const floatButton = computed(() => props.floatButton ?? parentContext.floatButton?.value);
+    const floatButtonGroup = computed(
+      () => props.floatButtonGroup ?? parentContext.floatButtonGroup?.value,
+    );
+    const inputNumber = computed(() => props.inputNumber ?? parentContext.inputNumber?.value);
+    const layout = computed(() => props.layout ?? parentContext.layout?.value);
+    const list = computed(() => props.list ?? parentContext.list?.value);
+    const mentions = computed(() => props.mentions ?? parentContext.mentions?.value);
+    const menu = computed(() => props.menu ?? parentContext.menu?.value);
+    const modal = computed(() => props.modal ?? parentContext.modal?.value);
+    const popconfirm = computed(() => props.popconfirm ?? parentContext.popconfirm?.value);
+    const popover = computed(() => props.popover ?? parentContext.popover?.value);
+    const progress = computed(() => props.progress ?? parentContext.progress?.value);
+    const radio = computed(() => props.radio ?? parentContext.radio?.value);
+    const rangePicker = computed(() => props.rangePicker ?? parentContext.rangePicker?.value);
+    const rate = computed(() => props.rate ?? parentContext.rate?.value);
+    const result = computed(() => props.result ?? parentContext.result?.value);
+    const segmented = computed(() => props.segmented ?? parentContext.segmented?.value);
+    const skeleton = computed(() => props.skeleton ?? parentContext.skeleton?.value);
+    const slider = computed(() => props.slider ?? parentContext.slider?.value);
+    const spin = computed(() => props.spin ?? parentContext.spin?.value);
+    const splitter = computed(() => props.splitter ?? parentContext.splitter?.value);
+    const statistic = computed(() => props.statistic ?? parentContext.statistic?.value);
+    const steps = computed(() => props.steps ?? parentContext.steps?.value);
+    const tabs = computed(() => props.tabs ?? parentContext.tabs?.value);
+    const tag = computed(() => props.tag ?? parentContext.tag?.value);
+    const textArea = computed(() => props.textArea ?? parentContext.textArea?.value);
+    const timePicker = computed(() => props.timePicker ?? parentContext.timePicker?.value);
+    const timeline = computed(() => props.timeline ?? parentContext.timeline?.value);
+    const tooltip = computed(() => props.tooltip ?? parentContext.tooltip?.value);
+    const tour = computed(() => props.tour ?? parentContext.tour?.value);
+    const transfer = computed(() => props.transfer ?? parentContext.transfer?.value);
+    const tree = computed(() => props.tree ?? parentContext.tree?.value);
+    const treeSelect = computed(() => props.treeSelect ?? parentContext.treeSelect?.value);
+    const typography = computed(() => props.typography ?? parentContext.typography?.value);
+    const upload = computed(() => props.upload ?? parentContext.upload?.value);
     const configProvider: ConfigProviderInnerProps = {
       csp,
       variant,
@@ -232,6 +286,58 @@ const ConfigProvider = defineComponent({
       select,
       componentSize,
       componentDisabled,
+      alert,
+      anchor,
+      avatar,
+      badge,
+      breadcrumb,
+      button,
+      calendar,
+      card,
+      carousel,
+      cascader,
+      checkbox,
+      collapse,
+      colorPicker,
+      datePicker,
+      descriptions,
+      divider,
+      drawer,
+      dropdown,
+      floatButton,
+      floatButtonGroup,
+      inputNumber,
+      layout,
+      list,
+      mentions,
+      menu,
+      modal,
+      popconfirm,
+      popover,
+      progress,
+      radio,
+      rangePicker,
+      rate,
+      result,
+      segmented,
+      skeleton,
+      slider,
+      spin,
+      splitter,
+      statistic,
+      steps,
+      tabs,
+      tag,
+      textArea,
+      timePicker,
+      timeline,
+      tooltip,
+      tour,
+      transfer,
+      tree,
+      treeSelect,
+      typography,
+      upload,
       transformCellText: computed(() => props.transformCellText),
       wave,
     };
