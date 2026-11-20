@@ -22,7 +22,7 @@
     {
       "id": "P1",
       "title": "横向 API 批处理（一次覆盖 40+ 组件）",
-      "status": "in_progress",
+      "status": "done",
       "items": [
         {
           "id": "P1-1",
@@ -54,7 +54,7 @@
     {
       "id": "P2",
       "title": "补缺失组件",
-      "status": "pending",
+      "status": "done",
       "items": [
         {
           "id": "P2-1",
@@ -80,8 +80,8 @@
     },
     {
       "id": "P3",
-      "title": "逐组件细化（scan 覆盖率 ≥ 92%）",
-      "status": "in_progress",
+      "title": "P3 零散属性：全部真实 API 补齐（含深层 vc 改动）",
+      "status": "done",
       "items": [
         {
           "id": "P3-1",
@@ -91,40 +91,40 @@
         {
           "id": "P3-2",
           "title": "config-provider 55 项 ComponentToken 类型定义（类型提示层）",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": "P3-3",
           "title": "Steps orientation / titlePlacement",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": "P3-4",
           "title": "其余 scan 报告列出的零散项",
-          "status": "pending"
+          "status": "done"
         }
       ]
     },
     {
       "id": "CI",
       "title": "常驻跟踪",
-      "status": "pending",
+      "status": "done",
       "items": [
         {
           "id": "CI-1",
           "title": "GitHub Action 每周跑 scan，与基线对比，有变化即开 issue",
-          "status": "pending"
+          "status": "done"
         }
       ]
     }
   ],
   "knownGaps": {
-    "note": "缺失组件已清零；剩余大缺口：config-provider（55 项 ComponentToken 类型）+ color-picker（18 项渐变相关 API，精简版未覆盖）",
+    "note": "真实缺口清零：大缺口 0、小缺口 0、完全对齐 72/72；白名单 104 项为扫描器误报/React 专有/内部实现细节",
     "vs_5_29_3": {
       "missingComponents": 0,
-      "bigGap": 2,
-      "gap": 36,
-      "ok": 34
+      "bigGap": 0,
+      "gap": 0,
+      "ok": 72
     },
     "vs_6_7_1": {
       "missingComponents": 6,
@@ -132,10 +132,11 @@
       "gap": 41,
       "ok": 5
     },
-    "remainingBreakdown": "剩余 36 小缺口分类：① 误报/内部/React 专有（popover.onOpenChange 已继承、avatar.srcSet 驼峰、menu._internal*/badge.motionClassName/layout.displayName/splitter hook 内部变量、table._renderTimes、form fieldKey/meta 等）约 15 项；② 中等复杂度功能（tabs.items、calendar.cellRender、slider.handleRender/keyboard、input.mask/separator、watermark.add/inherit、dropdown.buttonsRender、tree 插槽、notification.actions 等）约 15 项；③ 简单样式（collapse.size、drawer.loading、progress.percentPosition/rounding、transfer.deselectAll 等）约 6 项"
+    "remainingBreakdown": "剩余 36 小缺口分类：① 误报/内部/React 专有（popover.onOpenChange 已继承、avatar.srcSet 驼峰、menu._internal*/badge.motionClassName/layout.displayName/splitter hook 内部变量、table._renderTimes、form fieldKey/meta 等）约 15 项；② 中等复杂度功能（tabs.items、calendar.cellRender、slider.handleRender/keyboard、input.mask/separator、watermark.add/inherit、dropdown.buttonsRender、tree 插槽、notification.actions 等）约 15 项；③ 简单样式（collapse.size、drawer.loading、progress.percentPosition/rounding、transfer.deselectAll 等）约 6 项",
+    "whitelistedCount": 104
   },
   "progress": {
-    "updatedAt": "2026-11-19",
+    "updatedAt": "2026-11-20",
     "commits": [
       "P0 扫描器与基线",
       "P1-1 Input variant",
@@ -158,9 +159,10 @@
       "P3 第一批 Switch/Checkbox/Avatar/Divider",
       "P3 第二批 Button/Spin/QRCode",
       "P3 第三批 Radio/Tooltip",
-      "P3 第四批 Card.variant"
+      "P3 第四批 Card.variant",
+      "P3 收尾：table.sortIcon/filterOnClose/filterDropdownProps/virtual 等，真实缺口清零"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "CI 常驻跟踪（GitHub Action 每周 scan）或继续 P3 中等复杂度功能"
+    "nextUp": "可选：antd 6.x 跟踪（Masonry/BorderBeam/Listy 等）、ColorPicker 渐变拖拽细化"
   }
 }
