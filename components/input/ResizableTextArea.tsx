@@ -58,7 +58,7 @@ const ResizableTextArea = defineComponent({
     const maxRows = ref<number>();
     watchEffect(() => {
       const autoSize = props.autoSize || props.autosize;
-      if (autoSize) {
+      if (autoSize && typeof autoSize === 'object') {
         minRows.value = autoSize.minRows;
         maxRows.value = autoSize.maxRows;
       } else {

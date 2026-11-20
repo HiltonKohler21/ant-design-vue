@@ -80,6 +80,9 @@ export interface BlockProps extends TypographyProps {
   delete?: boolean;
   strong?: boolean;
   keyboard?: boolean;
+  italic?: boolean;
+  loading?: boolean;
+  maxLength?: number;
   content?: string;
 }
 
@@ -120,6 +123,9 @@ export const baseProps = () => ({
   delete: { type: Boolean, default: undefined },
   strong: { type: Boolean, default: undefined },
   keyboard: { type: Boolean, default: undefined },
+  italic: { type: Boolean, default: undefined },
+  loading: { type: Boolean, default: undefined },
+  maxLength: { type: Number, default: undefined },
   content: String,
   'onUpdate:content': Function as PropType<(content: string) => void>,
 });
@@ -366,7 +372,7 @@ const Base = defineComponent({
     };
 
     function wrapperDecorations(
-      { mark, code, underline, delete: del, strong, keyboard }: BlockProps,
+      { mark, code, underline, delete: del, strong, keyboard, italic }: BlockProps,
       content,
     ) {
       let currentContent = content;
@@ -383,6 +389,7 @@ const Base = defineComponent({
       wrap(code, 'code');
       wrap(mark, 'mark');
       wrap(keyboard, 'kbd');
+      wrap(italic, 'i');
 
       return currentContent;
     }
