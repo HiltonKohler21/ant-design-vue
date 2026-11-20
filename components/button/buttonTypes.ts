@@ -25,6 +25,10 @@ export const buttonProps = () => ({
   classNames: { type: Object as PropType<SemanticNames<'icon'>>, default: undefined },
   /** 图标位置（antd 5.17+） */
   iconPosition: { type: String as PropType<'start' | 'end'>, default: 'start' },
+  /** 5.21+ 替代 type，可选 outlined/dashed/solid/filled/text/link */
+  variant: String as PropType<'outlined' | 'dashed' | 'solid' | 'filled' | 'text' | 'link'>,
+  /** 5.21+ 按钮颜色（primary/danger/default） */
+  color: String as PropType<'primary' | 'danger' | 'default'>,
   /** 语义化 styles（antd 5.25+）：icon */
   styles: { type: Object as PropType<SemanticStylesMap<'icon'>>, default: undefined },
   prefixCls: String,

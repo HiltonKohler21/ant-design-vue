@@ -42,6 +42,7 @@ export const popconfirmProps = () => ({
   showCancel: { type: Boolean, default: true },
   onConfirm: Function as PropType<(e: MouseEvent) => void>,
   onCancel: Function as PropType<(e: MouseEvent) => void>,
+  onPopupClick: Function as PropType<(e: MouseEvent) => void>,
 });
 
 export type PopconfirmProps = Partial<ExtractPropTypes<ReturnType<typeof popconfirmProps>>>;
@@ -160,7 +161,7 @@ const Popconfirm = defineComponent({
         ...okButtonProps,
       };
       return (
-        <div class={`${prefixClsConfirm.value}-inner-content`}>
+        <div class={`${prefixClsConfirm.value}-inner-content`} onClick={props.onPopupClick}>
           <div class={`${prefixClsConfirm.value}-message`}>
             {icon && <span class={`${prefixClsConfirm.value}-message-icon`}>{icon}</span>}
             <div

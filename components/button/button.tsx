@@ -29,6 +29,25 @@ type Loading = boolean | number;
 const rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/;
 const isTwoCNChar = rxTwoCNChar.test.bind(rxTwoCNChar);
 
+const variantToType = (variant?: string): ButtonType | undefined => {
+  switch (variant) {
+    case 'solid':
+      return 'primary';
+    case 'dashed':
+      return 'dashed';
+    case 'text':
+      return 'text';
+    case 'link':
+      return 'link';
+    case 'outlined':
+      return 'default';
+    case 'filled':
+      return 'default';
+    default:
+      return undefined;
+  }
+};
+
 function isUnBorderedButtonType(type: ButtonType | undefined) {
   return type === 'text' || type === 'link';
 }
@@ -85,7 +104,18 @@ export default defineComponent({
     );
 
     const classes = computed(() => {
-      const { type, shape = 'default', ghost, block, danger, iconPosition = 'start' } = props;
+      const {
+        type,
+        shape = 'default',
+        ghost,
+        block,
+        danger,
+        iconPosition = 'start',
+        variant,
+        color,
+      } = props;
+      const mergedType = variant !== undefined ? variantToType(variant) : type;
+      const mergedDanger = danger || color === 'danger';
       const pre = prefixCls.value;
 
       const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
@@ -98,13 +128,14 @@ export default defineComponent({
           [hashId.value]: true,
           [`${pre}`]: true,
           [`${pre}-${shape}`]: shape !== 'default' && shape,
-          [`${pre}-${type}`]: type,
+          [`${pre}-${mergedType}`]: mergedType,
+          [`${pre}-filled`]: variant === 'filled',
           [`${pre}-${sizeCls}`]: sizeCls,
           [`${pre}-loading`]: innerLoading.value,
           [`${pre}-background-ghost`]: ghost && !isUnBorderedButtonType(type),
           [`${pre}-two-chinese-chars`]: hasTwoCNChar.value && autoInsertSpace.value,
           [`${pre}-block`]: block,
-          [`${pre}-dangerous`]: !!danger,
+          [`${pre}-dangerous`]: !!mergedDanger,
           [`${pre}-icon-end`]: iconPosition === 'end',
           [`${pre}-rtl`]: direction.value === 'rtl',
         },

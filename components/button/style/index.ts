@@ -54,6 +54,14 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
         ...genFocusStyle(token),
       },
 
+      '&-filled': {
+        backgroundColor: token.colorFillSecondary,
+        borderColor: 'transparent',
+        '&:hover': {
+          backgroundColor: token.colorFill,
+        },
+      },
+
       '&-icon-end': {
         flexDirection: 'row-reverse',
       },
