@@ -115,6 +115,9 @@ export interface ColumnType<RecordType = DefaultRecordType>
   defaultSortOrder?: SortOrder;
   sortDirections?: SortOrder[];
   showSorterTooltip?: boolean | TooltipProps;
+  sortIcon?: (props: { sortOrder: SortOrder | null }) => any;
+  filterOnClose?: boolean;
+  filterDropdownProps?: Record<string, any>;
 
   // Filter
   filtered?: boolean;

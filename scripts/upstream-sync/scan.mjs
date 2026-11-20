@@ -241,7 +241,10 @@ const WHITELIST = {
     'iconOnly',
     'miscDeps',
     'setContentRef',
-  ], // React aria / 内部实现
+    'loading',
+    'maxLength',
+    'tooltipProps',
+  ], // React aria / 内部子组件字段（CopyBtn.loading / EditConfig.maxLength / EllipsisTooltip.tooltipProps）
   notification: ['datatestid', 'readonlytype'], // React 专有
   cascader: ['dropdownMenuColumnStyle', 'popupMenuColumnStyle'], // React 专有（Vue 用插槽）
   splitter: [
@@ -260,7 +263,7 @@ const WHITELIST = {
   'auto-complete': ['popupMatchSelectWidth'], // 已继承 Select
   input: ['_skipAddonWarning', 'readonlyaction', 'readonlyinputPrefixCls'], // 内部实现
   table: ['_renderTimes'], // 内部实现
-  tree: ['filterAntTreeNode', 'switcherLoadingIcon'], // React 专有（Vue 用插槽）
+  tree: ['filterAntTreeNode', 'switcherLoadingIcon', 'treeNodeProps'], // React 专有（Vue 用插槽）/ iconUtil 内部字段
   skeleton: ['fullSize'], // Skeleton.Node 内部属性
   avatar: ['srcSet'], // 驼峰误报（本地 srcset）
   menu: ['_internalDisableMenuItemTitleTooltip'], // 内部实现

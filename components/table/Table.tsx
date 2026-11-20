@@ -123,6 +123,8 @@ export const tableProps = () => {
   return {
     prefixCls: stringType<string>(),
     rootClassName: String,
+    /** 虚拟滚动 */
+    virtual: { type: Boolean, default: undefined },
     columns: arrayType<ColumnsType>(),
     rowKey: someType<TableProps['rowKey']>([String, Function]),
     tableLayout: stringType<TableProps['tableLayout']>(),

@@ -110,6 +110,8 @@ export interface FilterDropdownProps<RecordType> {
   filterMultiple: boolean;
   filterMode?: 'menu' | 'tree';
   filterSearch?: FilterSearchType<ColumnFilterItem | TreeColumnFilterItem>;
+  filterOnClose?: boolean;
+  filterDropdownProps?: Record<string, any>;
   columnKey: Key;
   triggerFilter: (filterState: FilterState<RecordType>) => void;
   locale: TableLocale;
@@ -128,6 +130,8 @@ export default defineComponent<FilterDropdownProps<any>>({
     'filterMultiple',
     'filterMode',
     'filterSearch',
+    'filterOnClose',
+    'filterDropdownProps',
     'columnKey',
     'triggerFilter',
     'locale',

@@ -146,6 +146,15 @@ function injectSorter<RecordType>(
           })}
         />
       );
+      const customSortIcon = (newColumn as ColumnType<RecordType>).sortIcon;
+      const sorterNode = customSortIcon ? (
+        customSortIcon({ sortOrder: sorterOrder })
+      ) : (
+        <span class={`${prefixCls}-column-sorter-inner`} aria-hidden="true">
+          {upNode}
+          {downNode}
+        </span>
+      );
       const { cancelSort, triggerAsc, triggerDesc } = tableLocale || {};
       let sortTip: string | undefined = cancelSort;
       if (nextSortOrder === DESCEND) {
@@ -169,10 +178,7 @@ function injectSorter<RecordType>(
                   [`${prefixCls}-column-sorter-full`]: !!(upNode && downNode),
                 })}
               >
-                <span class={`${prefixCls}-column-sorter-inner`}>
-                  {upNode}
-                  {downNode}
-                </span>
+                {sorterNode}
               </span>
             </div>
           );
@@ -195,7 +201,7 @@ function injectSorter<RecordType>(
             });
 
             if (originOnClick) {
-              originOnClick(event);
+              originOnClick(event as any);
             }
           };
           cell.onKeydown = (event: KeyboardEvent) => {

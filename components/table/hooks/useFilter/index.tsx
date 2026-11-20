@@ -81,7 +81,13 @@ function injectFilter<RecordType>(
 ): ColumnsType<RecordType> {
   return columns.map((column, index) => {
     const columnPos = getColumnPos(index, pos);
-    const { filterMultiple = true, filterMode, filterSearch } = column as ColumnType<RecordType>;
+    const {
+      filterMultiple = true,
+      filterMode,
+      filterSearch,
+      filterOnClose,
+      filterDropdownProps,
+    } = column as ColumnType<RecordType>;
 
     let newColumn: ColumnsType<RecordType>[number] = column;
     const hasFilterDropdown =
@@ -103,6 +109,8 @@ function injectFilter<RecordType>(
             filterMultiple={filterMultiple}
             filterMode={filterMode}
             filterSearch={filterSearch}
+            filterOnClose={filterOnClose}
+            filterDropdownProps={filterDropdownProps}
             triggerFilter={triggerFilter}
             locale={locale}
             getPopupContainer={getPopupContainer}
