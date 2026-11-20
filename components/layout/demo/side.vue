@@ -1,7 +1,6 @@
 <docs>
 ---
 order: 4
-iframe: 360
 title:
   zh-CN: 侧边布局
   en-US: Sider
@@ -20,9 +19,9 @@ The level of the aside navigation is scalable. The first, second, and third leve
 
 </docs>
 <template>
-  <a-layout style="min-height: 100vh">
+  <a-layout style="min-height: 360px">
     <a-layout-sider v-model:collapsed="collapsed" collapsible>
-      <div class="logo" />
+      <div class="demo-logo-vertical" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item key="1">
           <pie-chart-outlined />
@@ -90,10 +89,11 @@ const selectedKeys = ref<string[]>(['1']);
 </script>
 
 <style scoped>
-#components-layout-demo-side .logo {
+.demo-logo-vertical {
   height: 32px;
   margin: 16px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
 }
 
 .site-layout .site-layout-background {

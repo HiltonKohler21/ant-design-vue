@@ -1,7 +1,6 @@
 <docs>
 ---
 order: 2
-iframe: 360
 title:
   zh-CN: 形状
   en-US: Shape

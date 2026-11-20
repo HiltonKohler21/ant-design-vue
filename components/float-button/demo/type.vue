@@ -1,7 +1,6 @@
 <docs>
 ---
 order: 1
-iframe: 360
 title:
   zh-CN: 类型
   en-US: Type

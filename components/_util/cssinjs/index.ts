@@ -1,6 +1,8 @@
 import useCacheToken from './hooks/useCacheToken';
 import type { CSSInterpolation, CSSObject } from './hooks/useStyleRegister';
 import useStyleRegister, { extractStyle } from './hooks/useStyleRegister';
+import useCSSVarRegister from './hooks/useCSSVarRegister';
+import type { CSSVarRegisterConfig } from './hooks/useCSSVarRegister';
 import Keyframes from './Keyframes';
 import type { Linter } from './linters';
 import { legacyNotSelectorLinter, logicalPropertiesLinter, parentSelectorLinter } from './linters';
@@ -12,11 +14,15 @@ import type { Transformer } from './transformers/interface';
 import legacyLogicalPropertiesTransformer from './transformers/legacyLogicalProperties';
 import px2remTransformer from './transformers/px2rem';
 import { supportLogicProps, supportWhere } from './util';
+import { serializeCSSVar, token2CSSVar, transformToken } from './util/css-variables';
+import genCalc from './util/calc';
+import type { AbstractCalculator } from './util/calc';
 
 const cssinjs = {
   Theme,
   createTheme,
   useStyleRegister,
+  useCSSVarRegister,
   useCacheToken,
   createCache,
   useStyleInject,
@@ -32,6 +38,12 @@ const cssinjs = {
   logicalPropertiesLinter,
   legacyNotSelectorLinter,
   parentSelectorLinter,
+
+  // CSS Variables（antd v6 纯变量架构）
+  token2CSSVar,
+  serializeCSSVar,
+  transformToken,
+  genCalc,
 
   // cssinjs
   StyleProvider,
@@ -40,6 +52,7 @@ export {
   Theme,
   createTheme,
   useStyleRegister,
+  useCSSVarRegister,
   useCacheToken,
   createCache,
   useStyleInject,
@@ -55,6 +68,12 @@ export {
   logicalPropertiesLinter,
   legacyNotSelectorLinter,
   parentSelectorLinter,
+
+  // CSS Variables（antd v6 纯变量架构）
+  token2CSSVar,
+  serializeCSSVar,
+  transformToken,
+  genCalc,
 
   // cssinjs
   StyleProvider,
@@ -68,6 +87,8 @@ export type {
   Linter,
   StyleContextProps,
   StyleProviderProps,
+  AbstractCalculator,
+  CSSVarRegisterConfig,
 };
 
 export const _experimental = {

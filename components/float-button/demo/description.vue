@@ -1,7 +1,6 @@
 <docs>
 ---
 order: 3
-iframe: 360
 title:
   zh-CN: 描述
   en-US: Description

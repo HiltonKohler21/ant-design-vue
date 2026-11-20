@@ -25,7 +25,7 @@ Layout.Sider supports responsive layout.
       @collapse="onCollapse"
       @breakpoint="onBreakpoint"
     >
-      <div class="logo" />
+      <div class="demo-logo-vertical" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item key="1">
           <user-outlined />
@@ -71,10 +71,11 @@ const selectedKeys = ref<string[]>(['4']);
 </script>
 
 <style scoped>
-#components-layout-demo-responsive .logo {
+.demo-logo-vertical {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+  border-radius: 6px;
 }
 
 .site-layout-sub-header-background {

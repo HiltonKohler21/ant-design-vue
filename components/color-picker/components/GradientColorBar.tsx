@@ -1,4 +1,5 @@
-import { computed, defineComponent, onBeforeUnmount, ref, type PropType } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, ref } from 'vue';
+import type { PropType } from 'vue';
 import classNames from '../../_util/classNames';
 import { AggregationColor, getGradientPercentColor } from '../color';
 import type { GradientColorPoint } from '../color';

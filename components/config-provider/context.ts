@@ -147,6 +147,15 @@ export interface ThemeConfig {
   algorithm?: MappingAlgorithm | MappingAlgorithm[];
   hashed?: boolean;
   inherit?: boolean;
+  /**
+   * 开启纯 CSS 变量模式（对齐 antd v6）：
+   * 样式只生成一次，主题切换仅修改变量值，不再重新序列化样式。
+   */
+  cssVar?: boolean | { prefix?: string; key?: string };
+  /**
+   * 关闭运行时样式生成（需配合预先提取的静态 CSS 使用，对齐 antd v6 zeroRuntime）。
+   */
+  zeroRuntime?: boolean;
 }
 
 export const configProviderProps = () => ({

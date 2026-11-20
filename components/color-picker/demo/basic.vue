@@ -2,8 +2,8 @@
 ---
 order: 0
 title:
-  zh-CN: 基本
-  en-US: Basic
+  zh-CN: 基本使用
+  en-US: Basic Usage
 ---
 
 ## zh-CN
@@ -16,10 +16,7 @@ The most basic usage.
 
 </docs>
 <template>
-  <a-color-picker v-model:value="value" />
-  <div style="margin-top: 12px">当前值：{{ value }}</div>
+  <a-space direction="vertical">
+    <a-color-picker defaultValue="#1677ff" />
+  </a-space>
 </template>
-<script lang="ts" setup>
-import { ref } from 'vue';
-const value = ref('#1677ff');
-</script>

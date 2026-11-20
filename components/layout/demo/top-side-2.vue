@@ -16,21 +16,21 @@ Both the top navigation and the sidebar, commonly used in application site.
 
 </docs>
 <template>
-  <a-layout>
-    <a-layout-header class="header">
-      <div class="logo" />
+  <a-layout style="border-radius: 8px; overflow: hidden">
+    <a-layout-header class="header" style="display: flex; align-items: center">
+      <div class="demo-logo" />
       <a-menu
         v-model:selectedKeys="selectedKeys1"
         theme="dark"
         mode="horizontal"
-        :style="{ lineHeight: '64px' }"
+        :style="{ lineHeight: '64px', flex: 1, minWidth: 0 }"
       >
         <a-menu-item key="1">nav 1</a-menu-item>
         <a-menu-item key="2">nav 2</a-menu-item>
         <a-menu-item key="3">nav 3</a-menu-item>
       </a-menu>
     </a-layout-header>
-    <a-layout>
+    <a-layout has-sider>
       <a-layout-sider width="200" style="background: #fff">
         <a-menu
           v-model:selectedKeys="selectedKeys2"
@@ -83,7 +83,7 @@ Both the top navigation and the sidebar, commonly used in application site.
           <a-breadcrumb-item>App</a-breadcrumb-item>
         </a-breadcrumb>
         <a-layout-content
-          :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+          :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px', borderRadius: '8px' }"
         >
           Content
         </a-layout-content>
@@ -98,22 +98,17 @@ const selectedKeys1 = ref<string[]>(['2']);
 const selectedKeys2 = ref<string[]>(['1']);
 const openKeys = ref<string[]>(['sub1']);
 </script>
-
 <style scoped>
-#components-layout-demo-top-side-2 .logo {
+.demo-logo {
   float: left;
   width: 120px;
   height: 31px;
   margin: 16px 24px 16px 0;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
 }
-
-.ant-row-rtl #components-layout-demo-top-side-2 .logo {
+.ant-row-rtl .demo-logo {
   float: right;
   margin: 16px 0 16px 24px;
-}
-
-.site-layout-background {
-  background: #fff;
 }
 </style>

@@ -1,7 +1,6 @@
 <docs>
 ---
 order: 8
-iframe: 360
 title:
   zh-CN: 徽标数
   en-US: Badge

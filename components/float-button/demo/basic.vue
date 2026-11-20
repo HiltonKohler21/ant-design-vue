@@ -1,7 +1,6 @@
 <docs>
 ---
 order: 0
-iframe: 360
 title:
   zh-CN: 基本
   en-US: Basic Usage

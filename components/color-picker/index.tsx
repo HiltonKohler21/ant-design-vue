@@ -1,4 +1,5 @@
-import { computed, defineComponent, ref, watch, type PropType } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
+import type { PropType } from 'vue';
 import classNames from '../_util/classNames';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { withInstall } from '../_util/type';
@@ -17,18 +18,24 @@ export const colorPickerProps = () => ({
   open: { type: Boolean, default: undefined },
   disabled: { type: Boolean, default: undefined },
   disabledAlpha: { type: Boolean, default: false },
-  showText: { type: Boolean, default: false },
+  disabledFormat: { type: Boolean, default: false },
+  showText: {
+    type: [Boolean, Function] as PropType<boolean | ((color: AggregationColor) => any)>,
+    default: false,
+  },
   presets: {
     type: Array as PropType<{ label: string; colors: string[] }[]>,
     default: undefined,
   },
   allowClear: { type: Boolean, default: false },
-  format: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
+  format: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: undefined },
   defaultFormat: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
   onFormatChange: Function as PropType<(format: 'hex' | 'rgb' | 'hsb') => void>,
-  mode: { type: String as PropType<'single' | 'gradient'>, default: 'single' },
+  mode: {
+    type: [String, Array] as PropType<'single' | 'gradient' | ('single' | 'gradient')[]>,
+    default: 'single',
+  },
   onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
-  disabledFormat: { type: Boolean, default: undefined },
   onClear: Function as PropType<() => void>,
   onChangeComplete: Function as PropType<(color: string) => void>,
   panelRender: Function as PropType<(panel: any) => any>,
@@ -40,6 +47,12 @@ export const colorPickerProps = () => ({
   onOpenChange: Function as PropType<(open: boolean) => void>,
   size: String as PropType<'large' | 'middle' | 'small'>,
   status: String as PropType<'error' | 'warning'>,
+  trigger: { type: String as PropType<'click' | 'hover'>, default: 'click' },
+  placement: { type: String as PropType<any>, default: 'bottomLeft' },
+  arrow: {
+    type: [Boolean, Object] as PropType<boolean | { pointAtCenter: boolean }>,
+    default: false,
+  },
 });
 
 const ColorPicker = defineComponent({
@@ -47,12 +60,18 @@ const ColorPicker = defineComponent({
   name: 'AColorPicker',
   inheritAttrs: false,
   props: colorPickerProps(),
-  setup(props, { attrs, emit }) {
-    const { prefixCls } = useConfigInject('color-picker', props);
+  setup(props, { attrs, emit, slots }) {
+    const {
+      prefixCls,
+      direction,
+      size,
+      disabled: mergedDisabled,
+    } = useConfigInject('color-picker', props);
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const formItemInputContext = FormItemInputContext.useInject();
     const mergedStatus = computed(() => getMergedStatus(formItemInputContext.status, props.status));
+    const mergedSize = computed(() => props.size ?? size.value);
 
     // 内部颜色状态（受控/非受控）
     const innerValue = ref<string>(props.value ?? props.defaultValue);
@@ -64,15 +83,22 @@ const ColorPicker = defineComponent({
     );
     const color = computed(() => generateColor(innerValue.value));
 
-    // mode 状态（非受控）
-    const mergedMode = ref<'single' | 'gradient'>(props.mode);
+    // mode 状态
+    const initialMode = computed<'single' | 'gradient'>(() => {
+      if (Array.isArray(props.mode)) {
+        return props.mode[0] ?? 'single';
+      }
+      return props.mode ?? 'single';
+    });
+    const mergedMode = ref<'single' | 'gradient'>(initialMode.value);
     watch(
       () => props.mode,
-      v => {
-        mergedMode.value = v;
+      () => {
+        mergedMode.value = initialMode.value;
       },
     );
-    const mergedFormat = ref<'hex' | 'rgb' | 'hsb'>(props.format ?? props.defaultFormat);
+
+    const mergedFormat = ref<'hex' | 'rgb' | 'hsb'>(props.format ?? props.defaultFormat ?? 'hex');
     watch(
       () => props.format,
       v => {
@@ -107,6 +133,7 @@ const ColorPicker = defineComponent({
     );
 
     const setOpen = (next: boolean) => {
+      if (mergedDisabled.value) return;
       open.value = next;
       emit('update:open', next);
       props.onOpenChange?.(next);
@@ -119,33 +146,47 @@ const ColorPicker = defineComponent({
       emit('update:value', val);
       props.onChange?.(val);
     };
+
     const setColorComplete = (nextColor: AggregationColor) => {
       const raw = nextColor.isGradient() ? nextColor.toCssString() : nextColor.toHexString();
       props.onChangeComplete?.(raw);
     };
 
     return () => {
-      const { disabled, disabledAlpha, presets, showText, allowClear, rootClassName } = props;
-      const display = color.value.toCssString();
+      const { disabledAlpha, presets, showText, allowClear, rootClassName } = props;
+      const isCleared = color.value.cleared;
+      const display = isCleared ? 'transparent' : color.value.toCssString();
 
-      const trigger = (
+      const triggerNode = slots.default ? (
+        slots.default()
+      ) : (
         <div
           class={classNames(
             `${prefixCls.value}-trigger`,
-            rootClassName,
             {
-              [`${prefixCls.value}-trigger-disabled`]: disabled,
+              [`${prefixCls.value}-trigger-disabled`]: mergedDisabled.value,
+              [`${prefixCls.value}-trigger-active`]: open.value,
             },
             getStatusClassNames(`${prefixCls.value}-trigger`, mergedStatus.value),
           )}
         >
           {props.prefix && <span class={`${prefixCls.value}-trigger-prefix`}>{props.prefix}</span>}
-          <div
-            class={`${prefixCls.value}-trigger-color`}
-            style={{ background: color.value.cleared ? 'transparent' : display }}
-          />
-          {showText && <span class={`${prefixCls.value}-trigger-text`}>{display}</span>}
-          {allowClear && color.value.cleared === false && (
+          <div class={`${prefixCls.value}-color-block`}>
+            <div
+              class={classNames(
+                `${prefixCls.value}-color-block-inner`,
+                `${prefixCls.value}-trigger-color`,
+              )}
+              style={{ background: display }}
+            />
+            {isCleared && <span class={`${prefixCls.value}-clear`}>/</span>}
+          </div>
+          {showText && (
+            <span class={`${prefixCls.value}-trigger-text`}>
+              {typeof showText === 'function' ? showText(color.value) : isCleared ? '' : display}
+            </span>
+          )}
+          {allowClear && !isCleared && (
             <span
               class={`${prefixCls.value}-trigger-clear`}
               onClick={e => {
@@ -161,33 +202,59 @@ const ColorPicker = defineComponent({
       );
 
       return wrapSSR(
-        <Popover
-          {...attrs}
-          class={classNames(prefixCls.value, rootClassName, hashId.value, attrs.class)}
-          open={open.value}
-          trigger="click"
-          placement="bottomLeft"
-          onOpenChange={setOpen}
-          v-slots={{
-            default: () => trigger,
-            content: () => (
-              <ColorPickerPanel
-                prefixCls={prefixCls.value}
-                value={color.value}
-                onChange={setColor}
-                onChangeComplete={setColorComplete}
-                disabledAlpha={disabledAlpha}
-                presets={presets}
-                mode={mergedMode.value}
-                onModeChange={setMode}
-                panelRender={props.panelRender}
-                format={mergedFormat.value}
-                onFormatChange={setFormat}
-                disabledFormat={props.disabledFormat}
-              />
-            ),
-          }}
-        />,
+        <div
+          class={classNames(
+            prefixCls.value,
+            rootClassName,
+            hashId.value,
+            {
+              [`${prefixCls.value}-disabled`]: mergedDisabled.value,
+              [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
+              [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
+              [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+            },
+            attrs.class,
+          )}
+          style={attrs.style as any}
+        >
+          <Popover
+            open={open.value}
+            trigger={props.trigger}
+            placement={props.placement}
+            arrow={props.arrow}
+            overlayClassName={classNames(
+              `${prefixCls.value}-popover`,
+              rootClassName,
+              hashId.value,
+            )}
+            onOpenChange={setOpen}
+            v-slots={{
+              default: () => triggerNode,
+              content: () => (
+                <ColorPickerPanel
+                  class={hashId.value}
+                  prefixCls={prefixCls.value}
+                  value={color.value}
+                  onChange={setColor}
+                  onChangeComplete={setColorComplete}
+                  disabledAlpha={disabledAlpha}
+                  presets={presets}
+                  mode={mergedMode.value}
+                  allowMode={
+                    Array.isArray(props.mode)
+                      ? props.mode.includes('gradient')
+                      : props.mode === 'gradient'
+                  }
+                  onModeChange={setMode}
+                  panelRender={props.panelRender}
+                  format={mergedFormat.value}
+                  onFormatChange={setFormat}
+                  disabledFormat={props.disabledFormat}
+                />
+              ),
+            }}
+          />
+        </div>,
       );
     };
   },

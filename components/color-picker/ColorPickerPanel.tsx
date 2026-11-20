@@ -1,4 +1,5 @@
-import { computed, defineComponent, onBeforeUnmount, ref, type PropType } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, ref } from 'vue';
+import type { PropType } from 'vue';
 import classNames from '../_util/classNames';
 import Segmented from '../segmented';
 import { AggregationColor, generateColor, type HsbType } from './color';
@@ -6,11 +7,13 @@ import GradientColorBar from './components/GradientColorBar';
 
 const colorPickerPanelProps = () => ({
   prefixCls: String,
+  class: String,
   value: { type: Object as PropType<AggregationColor>, required: true },
   onChange: Function as PropType<(color: AggregationColor) => void>,
   disabledAlpha: { type: Boolean, default: false },
   presets: { type: Array as PropType<{ label: string; colors: string[] }[]>, default: undefined },
   mode: { type: String as PropType<'single' | 'gradient'>, default: 'single' },
+  allowMode: { type: Boolean, default: false },
   onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
   onChangeComplete: Function as PropType<(color: AggregationColor) => void>,
   panelRender: Function as PropType<(panel: any) => any>,
@@ -22,8 +25,9 @@ const colorPickerPanelProps = () => ({
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ColorPickerPanel',
+  inheritAttrs: false,
   props: colorPickerPanelProps(),
-  setup(props) {
+  setup(props, { attrs }) {
     const panelPrefixCls = computed(() => `${props.prefixCls}-panel`);
 
     // 拖拽状态：null 表示未拖拽，否则记录拖拽的维度
@@ -144,8 +148,8 @@ export default defineComponent({
       const { h, s, b, a } = hsv.value;
       const isGradient = mode === 'gradient';
 
-      return (
-        <div class={panelPrefixCls.value}>
+      const panelContent = (
+        <div class={classNames(panelPrefixCls.value, props.class, attrs.class)}>
           {/* mode 切换 */}
           <Segmented
             size="small"
@@ -252,6 +256,11 @@ export default defineComponent({
           ))}
         </div>
       );
+
+      if (props.panelRender) {
+        return props.panelRender(panelContent);
+      }
+      return panelContent;
     };
   },
 });

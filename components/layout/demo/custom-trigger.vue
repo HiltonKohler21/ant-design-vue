@@ -18,7 +18,7 @@ If you want to use a customized trigger, you can hide the default one by setting
 <template>
   <a-layout>
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
-      <div class="logo" />
+      <div class="demo-logo-vertical" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item key="1">
           <user-outlined />
@@ -63,8 +63,8 @@ import {
 const selectedKeys = ref<string[]>(['1']);
 const collapsed = ref<boolean>(false);
 </script>
-<style>
-#components-layout-demo-custom-trigger .trigger {
+<style scoped>
+.trigger {
   font-size: 18px;
   line-height: 64px;
   padding: 0 24px;
@@ -72,14 +72,15 @@ const collapsed = ref<boolean>(false);
   transition: color 0.3s;
 }
 
-#components-layout-demo-custom-trigger .trigger:hover {
+.trigger:hover {
   color: #1890ff;
 }
 
-#components-layout-demo-custom-trigger .logo {
+.demo-logo-vertical {
   height: 32px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+  border-radius: 6px;
 }
 
 .site-layout .site-layout-background {

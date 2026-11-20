@@ -1,5 +1,11 @@
 import type { CSSInterpolation, Theme } from '../_util/cssinjs';
-import { createTheme, useCacheToken, useStyleRegister } from '../_util/cssinjs';
+import { createTheme, transformToken, useCacheToken, useStyleRegister } from '../_util/cssinjs';
+import useCSSVarRegister from '../_util/cssinjs/hooks/useCSSVarRegister';
+import {
+  ignore as CSS_VAR_IGNORE,
+  preserve as CSS_VAR_PRESERVE,
+  unitless as CSS_VAR_UNITLESS,
+} from './util/unitless';
 
 import version from '../version';
 import type {
@@ -62,11 +68,20 @@ export const defaultConfig = {
   hashed: true,
 };
 
+export interface CssVarConfig {
+  prefix?: string;
+  key?: string;
+}
+
 export interface DesignTokenContext {
   token: Partial<AliasToken>;
   theme?: Theme<SeedToken, MapToken>;
   components?: OverrideToken;
   hashed?: string | boolean;
+  /** 开启纯 CSS 变量模式（antd v6 行为）：样式只生成一次，主题切换只改变量值 */
+  cssVar?: boolean | CssVarConfig;
+  /** 关闭运行时样式生成，需配合静态 CSS 提取 */
+  zeroRuntime?: boolean;
 }
 //defaultConfig
 const DesignTokenContextKey: InjectionKey<ComputedRef<DesignTokenContext>> =
@@ -104,10 +119,19 @@ export const DesignTokenProvider = defineComponent({
   },
 });
 // ================================== Hook ==================================
+export interface CssVarResolvedConfig {
+  prefix: string;
+  key: string;
+}
+
 export function useToken(): [
   ComputedRef<Theme<SeedToken, MapToken>>,
   ComputedRef<GlobalToken>,
   ComputedRef<string>,
+  /** 原始 token（未变量化，用于 JS 数值运算与变量声明） */
+  ComputedRef<GlobalToken>,
+  /** CSS 变量配置；null 表示处于 hash 模式 */
+  ComputedRef<CssVarResolvedConfig | null>,
 ] {
   const designTokenContext = inject<ComputedRef<DesignTokenContext>>(
     DesignTokenContextKey,
@@ -131,10 +155,53 @@ export function useToken(): [
     })),
   );
 
+  const realToken = computed(() => cacheToken.value[0]);
+  const cssVarConfig = computed<CssVarResolvedConfig | null>(() => {
+    const cssVar = designTokenContext.value.cssVar;
+    if (!cssVar) {
+      return null;
+    }
+    const cfg = typeof cssVar === 'object' ? cssVar : {};
+    return {
+      prefix: cfg.prefix || 'ant',
+      key: cfg.key || `css-var-${salt.value}`,
+    };
+  });
+  // cssVar 模式下把 token 值替换成 var(--ant-xxx)，样式因此只生成一次
+  const token = computed(() => {
+    if (!cssVarConfig.value) {
+      return realToken.value;
+    }
+    const [transformed] = transformToken(realToken.value as any, cssVarConfig.value.key, {
+      prefix: cssVarConfig.value.prefix,
+      unitless: CSS_VAR_UNITLESS,
+      ignore: CSS_VAR_IGNORE,
+      preserve: CSS_VAR_PRESERVE,
+    });
+    return transformed as unknown as GlobalToken;
+  });
+
+  // cssVar 模式下注册全局 token 变量（挂到 :root，所有组件可读）
+  useCSSVarRegister(
+    computed(() => ({
+      path: ['global-token'],
+      prefix: cssVarConfig.value?.prefix || 'ant',
+      scope: cssVarConfig.value ? ':root' : '',
+      unitless: CSS_VAR_UNITLESS,
+      ignore: CSS_VAR_IGNORE,
+      preserve: CSS_VAR_PRESERVE,
+      tokenKey: (realToken.value as any)?._tokenKey,
+      zeroRuntime: (designTokenContext.value as any)?.zeroRuntime,
+    })),
+    () => realToken.value,
+  );
+
   return [
     mergedTheme,
-    computed(() => cacheToken.value[0]),
+    token,
     computed(() => (designTokenContext.value.hashed ? cacheToken.value[1] : '')),
+    realToken,
+    cssVarConfig,
   ];
 }
 
