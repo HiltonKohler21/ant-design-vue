@@ -171,6 +171,11 @@ const ConfigProvider = defineComponent({
     const dropdownMatchSelectWidth = computed(
       () => props.dropdownMatchSelectWidth ?? parentContext.dropdownMatchSelectWidth?.value,
     );
+    const popupMatchSelectWidth = computed(
+      () => props.popupMatchSelectWidth ?? dropdownMatchSelectWidth.value,
+    );
+    const popupOverflow = computed(() => props.popupOverflow ?? parentContext.popupOverflow?.value);
+    const holderRender = computed(() => props.holderRender ?? parentContext.holderRender?.value);
     const getTargetContainer = computed(() =>
       props.getTargetContainer !== undefined
         ? props.getTargetContainer
@@ -209,6 +214,9 @@ const ConfigProvider = defineComponent({
       space,
       virtual,
       dropdownMatchSelectWidth,
+      popupMatchSelectWidth,
+      popupOverflow,
+      holderRender,
       getPrefixCls,
       iconPrefixCls,
       theme: computed(() => {

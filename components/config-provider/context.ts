@@ -102,6 +102,12 @@ export const configProviderProps = () => ({
   space: objectType<{ size?: SizeType | number }>(),
   virtual: { type: Boolean, default: undefined },
   dropdownMatchSelectWidth: { type: [Number, Boolean], default: true },
+  /** 5.25+ 替代 dropdownMatchSelectWidth */
+  popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
+  /** 5.25+ 弹层溢出配置 */
+  popupOverflow: { type: String as PropType<'viewport' | 'scroll'>, default: undefined },
+  /** 5.25+ 静态方法占位容器渲染 */
+  holderRender: { type: Function as PropType<(children: any) => any>, default: undefined },
   form: objectType<{
     validateMessages?: ValidateMessages;
     requiredMark?: RequiredMark;
@@ -133,6 +139,9 @@ export interface ConfigProviderInnerProps {
   }>;
   virtual?: ComputedRef<boolean>;
   dropdownMatchSelectWidth?: ComputedRef<number | boolean>;
+  popupMatchSelectWidth?: ComputedRef<number | boolean>;
+  popupOverflow?: ComputedRef<'viewport' | 'scroll'>;
+  holderRender?: ComputedRef<(children: any) => any>;
   getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string;
   iconPrefixCls: ComputedRef<string>;
   theme?: ComputedRef<ThemeConfig>;

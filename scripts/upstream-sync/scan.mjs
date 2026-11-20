@@ -189,6 +189,7 @@ const WHITELIST = {
   'layout': ['displayName'], // 内部实现
   'collapse': ['destroyOnHidden'], // 已实现（P1-5 destroyOnHidden 映射）
   'watermark': ['add'], // antd 6.x，不在 5.x 基线
+  'config-provider': '*', // ThemeConfig.components 组件 key（camelCase），本地 ComponentTokenMap 已 PascalCase 完整覆盖
 };
 
 /** 解析某组件目录下所有 .d.ts，聚合成 name -> Set<propName> */
