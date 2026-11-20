@@ -138,7 +138,14 @@ export function useToken(): [
     computed(() => globalDesignTokenApi.value || defaultConfig),
   );
 
-  const salt = computed(() => `${version}-${designTokenContext.value.hashed || ''}`);
+  // salt 需要区分 hash / cssVar 模式，否则两种模式的样式缓存会互相命中
+  const salt = computed(() => {
+    const cssVar = designTokenContext.value.cssVar;
+    const cssVarMark = cssVar
+      ? `-cssvar-${typeof cssVar === 'object' && cssVar.key ? cssVar.key : 'default'}`
+      : '';
+    return `${version}-${designTokenContext.value.hashed || ''}${cssVarMark}`;
+  });
 
   const mergedTheme = computed(() => designTokenContext.value.theme || defaultTheme);
 
