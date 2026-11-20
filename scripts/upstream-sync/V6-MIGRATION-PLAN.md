@@ -285,6 +285,36 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 - SizeType `middle` → `medium`（全组件）
 - Tag margin、Form `onFinish`、弹层 mask blur
 
+## 3.2b P1-4b 实施记录：token 算术与 calc()（★ 待决策）
+
+**现状**：cssVar 模式下 token 值变为 `var(--ant-xxx)` 字符串，本地样式中有 **177 处** token 参与 JS 算术，会得到 NaN 或非法 CSS。用检测器 `tests/bench/cssvar-illegal-check.test.js` 实测：**41 处 NaN**。
+
+**已尝试并回退**：用脚本批量把 `token.x * N` 替换为 `token.calc(token.x).mul(N).equal()`。
+
+- 自动改到 114 处，但产生 **43 个 tsc 错误**：
+  - `string not assignable to number`（约 20 处）：这些位置在 `getDefaultToken` / `prepareComponentToken` 回调里，拿到的是 **realToken（原始数字）**，本就不需要 calc；
+  - `Property calc does not exist on GlobalToken`（约 20 处）：部分 style 函数的 token 参数类型是 `GlobalToken` 而不是 `FullToken<'X'>`，没有注入 calc。
+- 结论：**纯文本批量替换不可靠**，需要按「上下文语义」区分处理。已全部回退。
+
+**三条可选路线**：
+
+| 路线 | 做法 | 覆盖度 | 工作量 | 风险 |
+| --- | --- | --- | --- | --- |
+| **A. 逐处改 calc()（对齐 antd v6）** | 仅在 styleFn 上下文内把算术改为 `token.calc(...).mul(...).equal()`；同时把用 `GlobalToken` 类型的 style 改为 `FullToken<'X'>` | 100%（含主题化） | 大（177 处 + 约 20 处类型修正，分 5~8 批） | 中（每批可测） |
+| **B. CssVarValue + 序列化器识别** | token 值包装为带 `toString()`/`valueOf()` 的对象，并让 cssinjs 序列化器识别该类型：字符串化取 `var()`、算术取真实值 | 100% 不 NaN，但**参与算术的值退化为字面量**（不随主题变化） | 小（约 100 行，改 cssinjs 核心） | 中高（动序列化器，影响所有样式） |
+| **C. 接受限制** | cssVar 作为「预览/实验特性」，文档标注：参与算术的 token 在 cssVar 模式下不生效 | 受限 | 0 | 低 |
+
+**推荐**：**A**。理由：antd v6 本身就是用 calc() 表达（`token.calc(...)`），照做才能与上游一致、后续升级无债； B 虽省事但会留下「部分样式不随主题变化」的隐性行为差异，长期更难维护。A 可分批交付、每批可验证。
+
+**批次划分建议（A 路线）**：
+
+1. 基础组件：button / affix / back-top / badge / segmented / spin（约 30 处）
+2. 表单类：checkbox / radio / switch / select / input-number / slider（约 40 处）
+3. 数据展示：calendar / card / descriptions / table / tabs / steps（约 50 处）
+4. 其余：modal / notification / message / pagination / menu / progress / skeleton / rate / image / dropdown / mentions / date-picker / tree / tree-select / tour / upload / typography（约 57 处）
+
+验收（每批）：`npx tsc --noEmit` 无新增错误 + 该批组件 jest 对照基线零回归 + `cssvar-illegal-check` 的 NaN 数量单调下降。
+
 ## 3.3 工作量汇总
 
 | 阶段          | 工作量         | 风险                   | 交付价值                 |
