@@ -18,6 +18,7 @@ import type { ComponentToken as DrawerComponentToken } from '../../drawer/style'
 import type { ComponentToken as EmptyComponentToken } from '../../empty/style';
 import type { ComponentToken as ImageComponentToken } from '../../image/style';
 import type { ComponentToken as InputNumberComponentToken } from '../../input-number/style';
+import type { ComponentToken as OtpComponentToken } from '../../input/style/otp';
 import type { ComponentToken as LayoutComponentToken } from '../../layout/style';
 import type { ComponentToken as ListComponentToken } from '../../list/style';
 import type { ComponentToken as MentionsComponentToken } from '../../mentions/style';
@@ -80,6 +81,7 @@ export interface ComponentTokenMap {
   Grid?: {};
   Image?: ImageComponentToken;
   Input?: {};
+  OTP?: OtpComponentToken;
   InputNumber?: InputNumberComponentToken;
   Layout?: LayoutComponentToken;
   List?: ListComponentToken;
