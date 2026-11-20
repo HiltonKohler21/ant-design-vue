@@ -163,6 +163,34 @@ const REACT_ONLY = new Set([
   'onLoad', 'href', 'target', 'rel', 'autoFocus', 'dangerouslySetInnerHTML',
 ]);
 
+/**
+ * 白名单：扫描器误报 / React 专有 / 内部实现细节 / 已通过别名或继承覆盖的属性。
+ * 这些属性在 Vue 侧不构成真实缺口，从报告中排除。
+ * - 值为 `'*'` 时排除该组件全部剩余缺口。
+ */
+const WHITELIST = {
+  'popover': ['onOpenChange'], // 已继承 tooltip 的 abstractTooltipProps
+  'typography': ['arialabel', 'enableEllipsis', 'enableMeasure', 'iconOnly', 'miscDeps', 'setContentRef'], // React aria / 内部实现
+  'notification': ['datatestid', 'readonlytype'], // React 专有
+  'cascader': ['dropdownMenuColumnStyle', 'popupMenuColumnStyle'], // React 专有（Vue 用插槽）
+  'splitter': ['basicsState', 'containerRef', 'panelsRef', 'setBasicsState', 'setOffset', 'setResizing', 'setSize'], // hook 内部变量误报
+  'float-button': ['arialabel'], // React aria-label 驼峰
+  'carousel': ['waitForAnimate'], // 内部实现
+  'form': ['feedbackIcons', 'fieldKey', 'meta', 'onSubItemMetaChange', 'onVisibleChanged'], // Field 内部
+  'modal': ['cancelTextLocale', 'okTextLocale', 'isSilent'], // 内部实现
+  'auto-complete': ['popupMatchSelectWidth'], // 已继承 Select
+  'input': ['_skipAddonWarning', 'readonlyaction', 'readonlyinputPrefixCls'], // 内部实现
+  'table': ['_renderTimes'], // 内部实现
+  'tree': ['filterAntTreeNode', 'switcherLoadingIcon'], // React 专有（Vue 用插槽）
+  'skeleton': ['fullSize'], // Skeleton.Node 内部属性
+  'avatar': ['srcSet'], // 驼峰误报（本地 srcset）
+  'menu': ['_internalDisableMenuItemTitleTooltip'], // 内部实现
+  'badge': ['motionClassName'], // 内部实现
+  'layout': ['displayName'], // 内部实现
+  'collapse': ['destroyOnHidden'], // 已实现（P1-5 destroyOnHidden 映射）
+  'watermark': ['add'], // antd 6.x，不在 5.x 基线
+};
+
 /** 解析某组件目录下所有 .d.ts，聚合成 name -> Set<propName> */
 function collectAntdProps(compDir) {
   const files = [];
@@ -251,7 +279,11 @@ for (const ac of antdComps) {
   }
   const antdProps = collectAntdProps(path.join(antdEs, ac));
   const src = projectSourceText(lcDir);
-  const missing = [...antdProps].filter(p => !new RegExp(`\\b${p.replace(/\$/g, '\\$')}\\b`).test(src)).sort();
+  const wl = WHITELIST[ac] || [];
+  const isWildcard = wl === '*' || wl.includes('*');
+  const allMissing = [...antdProps].filter(p => !new RegExp(`\\b${p.replace(/\$/g, '\\$')}\\b`).test(src)).sort();
+  const whitelisted = isWildcard ? allMissing : allMissing.filter(p => wl.includes(p));
+  const missing = isWildcard ? [] : allMissing.filter(p => !wl.includes(p));
   const coverage = antdProps.size ? 1 - missing.length / antdProps.size : 1;
   rows.push({
     antd: ac,
@@ -259,6 +291,7 @@ for (const ac of antdComps) {
     status: missing.length ? (coverage < 0.7 ? 'BIG_GAP' : 'GAP') : 'OK',
     total: antdProps.size,
     missing,
+    whitelisted,
     coverage,
   });
 }
@@ -277,6 +310,7 @@ const summary = {
   bigGap: rows.filter(r => r.status === 'BIG_GAP').length,
   gap: rows.filter(r => r.status === 'GAP').length,
   ok: rows.filter(r => r.status === 'OK').length,
+  whitelistedCount: rows.reduce((s, r) => s + (r.whitelisted?.length || 0), 0),
   generatedAt: new Date().toISOString(),
 };
 
@@ -303,6 +337,7 @@ md.push(`| 本地完全缺失 | ${missingComponents.length} |`);
 md.push(`| 属性大缺口(<70% 覆盖) | ${summary.bigGap} |`);
 md.push(`| 属性小缺口 | ${summary.gap} |`);
 md.push(`| 完全对齐 | ${summary.ok} |`, '');
+md.push(`| 白名单排除项（误报/内部/React 专有） | ${summary.whitelistedCount} |`, '');
 md.push(`### 完全缺失的组件`, '');
 md.push(missingComponents.length ? missingComponents.map(c => `\`${c}\``).join('、 ') : '（无）', '');
 md.push(`### 本地独有（上游已移除或本项目自建）`, '');
@@ -319,6 +354,7 @@ for (const r of rows.slice(0, top)) {
 }
 md.push('', `> 说明：本地侧采用「词元存在性」启发式判断（源码里连名字都没出现过 ≈ 一定没实现），`);
 md.push(`> 因此结果是**下限缺口**（可能存在同名变量干扰造成的假阳性，不会漏报）。`);
+md.push(`> 白名单排除项为扫描器误报 / React 专有 / 内部实现细节（见 WHITELIST），不构成真实缺口。`, '');
 
 const mdPath = path.join(outDir, `report-${version}.md`);
 fs.writeFileSync(mdPath, md.join('\n'));

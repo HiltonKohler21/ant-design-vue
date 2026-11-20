@@ -53,6 +53,8 @@ export const cardProps = () => ({
     type: Array as PropType<CardTabListType[]>,
   },
   tabBarExtraContent: PropTypes.any,
+  /** 透传给内部 Tabs 的额外属性 */
+  tabProps: { type: Object as PropType<Record<string, any>>, default: undefined },
   activeTabKey: String,
   defaultActiveTabKey: String,
   cover: PropTypes.any,
@@ -121,6 +123,7 @@ const Card = defineComponent({
         activeTabKey,
         defaultActiveTabKey,
         tabBarExtraContent = filterEmptyWithUndefined(slots.tabBarExtraContent?.()),
+        tabProps,
         title = filterEmptyWithUndefined(slots.title?.()),
         extra = filterEmptyWithUndefined(slots.extra?.()),
         actions = filterEmptyWithUndefined(slots.actions?.()),
@@ -149,6 +152,7 @@ const Card = defineComponent({
 
       const hasActiveTabKey = activeTabKey !== undefined;
       const tabsProps = {
+        ...tabProps,
         size: 'large' as SizeType,
         [hasActiveTabKey ? 'activeKey' : 'defaultActiveKey']: hasActiveTabKey
           ? activeTabKey

@@ -50,6 +50,7 @@ export const drawerProps = () => ({
   /** 语义化 classNames（antd 5.25+）：mask / wrapper / content / header / body / footer */
   classNames: objectType<DialogSemanticClassNames>(),
   loading: { type: Boolean, default: false },
+  ariaId: String,
   /** 语义化 styles（antd 5.25+）：mask / wrapper / content / header / body / footer */
   styles: objectType<DialogSemanticStyles>(),
   destroyOnClose: { type: Boolean, default: undefined },

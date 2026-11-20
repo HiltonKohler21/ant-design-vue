@@ -50,6 +50,10 @@ export const modalProps = () => ({
   closable: { type: Boolean, default: undefined },
   closeIcon: PropTypes.any,
   onOk: Function as PropType<(e: MouseEvent) => void>,
+  /** onOk 别名 */
+  onConfirm: Function as PropType<(e: MouseEvent) => void>,
+  /** open 变化后的回调（替代 afterClose） */
+  afterOpenChange: Function as PropType<(open: boolean) => void>,
   onCancel: Function as PropType<(e: MouseEvent) => void>,
   'onUpdate:visible': Function as PropType<(visible: boolean) => void>,
   'onUpdate:open': Function as PropType<(open: boolean) => void>,
@@ -188,6 +192,7 @@ export default defineComponent({
 
     const handleOk = (e: MouseEvent) => {
       emit('ok', e);
+      props.onConfirm?.(e);
     };
 
     const renderFooter = () => {
@@ -255,6 +260,10 @@ export default defineComponent({
           dialogStyle={semanticStyles?.content}
           visible={open ?? visible}
           onClose={handleCancel}
+          afterClose={() => {
+            props.afterClose?.();
+            props.afterOpenChange?.(false);
+          }}
           focusTriggerAfterClose={focusTriggerAfterClose}
           destroyOnClose={destroyOnHidden ?? props.destroyOnClose}
           transitionName={getTransitionName(rootPrefixCls.value, 'zoom', props.transitionName)}
