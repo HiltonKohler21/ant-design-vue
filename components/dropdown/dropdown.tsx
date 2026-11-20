@@ -122,7 +122,8 @@ const Dropdown = defineComponent({
           })
         : overlayNode;
 
-      return fixedModeOverlay;
+      const mergedPopupRender = props.popupRender || props.dropdownRender;
+      return mergedPopupRender ? mergedPopupRender(fixedModeOverlay) : fixedModeOverlay;
     };
 
     const placement = computed(() => {

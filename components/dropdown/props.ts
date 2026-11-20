@@ -4,7 +4,7 @@ import PropTypes from '../_util/vue-types';
 import buttonTypes from '../button/buttonTypes';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import type { MenuProps } from '../menu';
-import { booleanType, eventType, objectType, someType } from '../_util/type';
+import { booleanType, eventType, functionType, objectType, someType } from '../_util/type';
 
 export type Align = {
   points?: [string, string];
@@ -26,6 +26,9 @@ export type DropdownArrowOptions = {
 };
 const dropdownProps = () => ({
   rootClassName: String,
+  /** 自定义下拉内容渲染（popupRender 别名） */
+  dropdownRender: functionType<(menu: any) => any>(),
+  popupRender: functionType<(menu: any) => any>(),
   arrow: someType<boolean | DropdownArrowOptions>([Boolean, Object]),
   trigger: {
     type: [Array, String] as PropType<Trigger[] | Trigger>,
@@ -60,6 +63,8 @@ const dropdownProps = () => ({
   openClassName: String,
   minOverlayWidthMatchTrigger: booleanType(),
   destroyPopupOnHide: booleanType(),
+  /** 5.14+ 自定义左右按钮渲染 */
+  buttonsRender: functionType<(buttons: any[]) => any[]>(),
   /** @deprecated Please use `destroyOnHidden` instead */
   destroyOnHidden: booleanType(),
   /** @deprecated Please use `onOpenChange` instead */

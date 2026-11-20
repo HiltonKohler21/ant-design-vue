@@ -68,6 +68,7 @@ export default defineComponent({
         overlayStyle,
         destroyPopupOnHide,
         onClick,
+        buttonsRender,
         'onUpdate:open': _updateVisible,
         ...restProps
       } = { ...props, ...attrs } as DropdownButtonProps & HTMLAttributes;
@@ -79,6 +80,7 @@ export default defineComponent({
         placement,
         getPopupContainer: getPopupContainer?.value,
         onOpenChange: handleVisibleChange,
+        buttonsRender,
         mouseEnterDelay,
         mouseLeaveDelay,
         open: open ?? visible,
@@ -103,14 +105,18 @@ export default defineComponent({
 
       const rightButton = <Button danger={danger} type={type} icon={icon} />;
 
+      const [leftButtonToRender, rightButtonToRender] = buttonsRender
+        ? buttonsRender([leftButton, rightButton])
+        : [leftButton, rightButton];
+
       return wrapSSR(
         <ButtonGroup
           {...restProps}
           class={classNames(buttonPrefixCls.value, className, hashId.value)}
         >
-          {slots.leftButton ? slots.leftButton({ button: leftButton }) : leftButton}
+          {slots.leftButton ? slots.leftButton({ button: leftButtonToRender }) : leftButtonToRender}
           <Dropdown {...dropdownProps} v-slots={{ overlay: () => overlay }}>
-            {slots.rightButton ? slots.rightButton({ button: rightButton }) : rightButton}
+            {slots.rightButton ? slots.rightButton({ button: rightButtonToRender }) : rightButtonToRender}
           </Dropdown>
         </ButtonGroup>,
       );
