@@ -39,6 +39,7 @@ export default function createSlider(Component) {
     dotStyle: PropTypes.object,
     activeDotStyle: PropTypes.object,
     autofocus: { type: Boolean, default: undefined },
+    keyboard: { type: Boolean, default: true },
     draggableTrack: { type: Boolean, default: undefined },
   };
   return defineComponent({
@@ -197,7 +198,11 @@ export default function createSlider(Component) {
         this.onMove(e, position - this.dragOffset, this.dragTrack, this.startBounds);
       },
       onKeyDown(e) {
-        if (this.sliderRef && utils.isEventFromHandle(e, this.handlesRefs)) {
+        if (
+          this.keyboard !== false &&
+          this.sliderRef &&
+          utils.isEventFromHandle(e, this.handlesRefs)
+        ) {
           this.onKeyboard(e);
         }
       },

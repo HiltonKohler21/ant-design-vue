@@ -80,6 +80,12 @@ export const sliderProps = () => ({
   getTooltipPopupContainer: functionType<(triggerNode: HTMLElement) => HTMLElement>(),
   autofocus: booleanType(),
   handleStyle: someType<CSSProperties[] | CSSProperties>([Array, Object]),
+  keyboard: { type: Boolean, default: true },
+  ariaLabelForHandle: String,
+  ariaLabelledByForHandle: String,
+  ariaRequired: { type: Boolean, default: undefined },
+  ariaValueTextFormatterForHandle: functionType<(value: number) => string>(),
+  autoAdjustOverflow: { type: Boolean, default: undefined },
   trackStyle: someType<CSSProperties[] | CSSProperties>([Array, Object]),
   /** 语义化 classNames（antd 5.25+）：root / tracks / track / rail / handle */
   classNames: objectType<SemanticNames<SliderSemanticName>>(),
@@ -87,6 +93,13 @@ export const sliderProps = () => ({
   styles: objectType<SemanticStylesMap<SliderSemanticName>>(),
   onChange: functionType<(value: Value) => void>(),
   onAfterChange: functionType<(value: Value) => void>(),
+  /** 5.0+ 拖拽结束回调（onAfterChange 别名） */
+  onChangeComplete: functionType<(value: Value) => void>(),
+  /** 5.20+ tooltip 格式化（tipFormatter 别名） */
+  formatter: functionType<(value?: number) => any>(),
+  /** 5.20+ 自定义 handle 渲染 */
+  handleRender:
+    functionType<(node: any, info: { index: number; value: number; dragging: boolean }) => any>(),
   onFocus: functionType<FocusEventHandler>(),
   onBlur: functionType<FocusEventHandler>(),
   'onUpdate:value': functionType<(value: Value) => void>(),
@@ -152,6 +165,11 @@ const Slider = defineComponent({
     const handleBlur = (e: FocusEvent) => {
       emit('blur', e);
     };
+    const handleAfterChange = (val: Value) => {
+      props.onAfterChange?.(val);
+      props.onChangeComplete?.(val);
+      emit('afterChange', val);
+    };
     expose({
       focus,
       blur,
@@ -160,13 +178,20 @@ const Slider = defineComponent({
       tooltipPrefixCls,
       info: { value, dragging, index, ...restProps },
     }) => {
-      const { tipFormatter, tooltipOpen = props.tooltipVisible, getTooltipPopupContainer } = props;
-      const isTipFormatter = tipFormatter ? visibles.value[index] || dragging : false;
+      const {
+        tipFormatter,
+        tooltipOpen = props.tooltipVisible,
+        getTooltipPopupContainer,
+        formatter,
+        handleRender,
+      } = props;
+      const mergedFormatter = formatter ?? tipFormatter;
+      const isTipFormatter = mergedFormatter ? visibles.value[index] || dragging : false;
       const open = tooltipOpen || (tooltipOpen === undefined && isTipFormatter);
-      return (
+      const handleNode = (
         <SliderTooltip
           prefixCls={tooltipPrefixCls}
-          title={tipFormatter ? tipFormatter(value) : ''}
+          title={mergedFormatter ? mergedFormatter(value) : ''}
           open={open}
           placement={tooltipPlacement.value}
           transitionName={`${rootPrefixCls.value}-zoom-down`}
@@ -182,6 +207,10 @@ const Slider = defineComponent({
           />
         </SliderTooltip>
       );
+      if (handleRender) {
+        return handleRender(handleNode, { index, value, dragging });
+      }
+      return handleNode;
     };
     return () => {
       const {
@@ -190,6 +219,10 @@ const Slider = defineComponent({
         id = formItemContext.id.value,
         classNames: semanticClassNames,
         styles: semanticStyles,
+        onAfterChange,
+        onChangeComplete,
+        formatter,
+        handleRender,
         ...restProps
       } = props;
       const tooltipPrefixCls = configProvider.getPrefixCls('tooltip', customizeTooltipPrefixCls);
@@ -247,6 +280,7 @@ const Slider = defineComponent({
             }
             prefixCls={prefixCls.value}
             onChange={handleChange}
+            {...{ onAfterChange: handleAfterChange }}
             onBlur={handleBlur}
             v-slots={{ mark: slots.mark }}
           />,
@@ -280,6 +314,7 @@ const Slider = defineComponent({
           }
           prefixCls={prefixCls.value}
           onChange={handleChange}
+          {...{ onAfterChange: handleAfterChange }}
           onBlur={handleBlur}
           v-slots={{ mark: slots.mark }}
         />,
