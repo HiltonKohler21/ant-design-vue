@@ -93,7 +93,14 @@ const FloatButton = defineComponent({
             {buttonNode}
           </a>
         ) : (
-          <button ref={floatButtonRef} {...attrs} {...restProps} class={classString} type="button">
+          <button
+            ref={floatButtonRef}
+            {...attrs}
+            {...restProps}
+            class={classString}
+            type={props.htmlType || 'button'}
+            disabled={props.disabled}
+          >
             {buttonNode}
           </button>
         ),

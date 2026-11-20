@@ -30,6 +30,8 @@ export const watermarkProps = () => ({
   font: objectType<WatermarkFontType>(),
   rootClassName: String,
   gap: arrayType<[number, number]>(),
+  /** 子组件是否继承水印（默认 true） */
+  inherit: { type: Boolean, default: true },
   offset: arrayType<[number, number]>(),
 });
 export type WatermarkProps = Partial<ExtractPropTypes<ReturnType<typeof watermarkProps>>>;

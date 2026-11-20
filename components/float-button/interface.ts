@@ -1,4 +1,4 @@
-import type { ExtractPropTypes } from 'vue';
+import type { ExtractPropTypes, PropType } from 'vue';
 import PropTypes from '../_util/vue-types';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import { stringType, booleanType, functionType, objectType } from '../_util/type';
@@ -23,6 +23,8 @@ export const floatButtonProps = () => {
     href: String,
     target: String,
     badge: objectType<FloatButtonBadgeProps>(),
+    disabled: { type: Boolean, default: undefined },
+    htmlType: { type: String as PropType<'button' | 'submit' | 'reset'>, default: 'button' },
     onClick: functionType<MouseEventHandler>(),
   };
 };

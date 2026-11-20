@@ -46,6 +46,7 @@ const panelRender = defineComponent({
 
       const prevButtonProps = props.prevButtonProps as TourBtnProps;
       const nextButtonProps = props.nextButtonProps as TourBtnProps;
+      const actionsRender = props.actionsRender;
 
       let headerNode: VueNode;
       if (title) {
@@ -111,34 +112,44 @@ const panelRender = defineComponent({
                   {total.value > 1 && (
                     <div class={`${prefixCls}-indicators`}>{mergeIndicatorNode}</div>
                   )}
-                  <div class={`${prefixCls}-buttons`}>
-                    {current.value !== 0 ? (
-                      <Button
-                        {...secondaryBtnProps}
-                        {...prevButtonProps}
-                        onClick={prevBtnClick}
-                        size="small"
-                        class={classNames(`${prefixCls}-prev-btn`, prevButtonProps?.className)}
-                      >
-                        {isFunction(prevButtonProps?.children)
-                          ? prevButtonProps.children()
-                          : prevButtonProps?.children ?? contextLocale.Previous}
-                      </Button>
-                    ) : null}
-                    <Button
-                      type={mainBtnType}
-                      {...nextButtonProps}
-                      onClick={nextBtnClick}
-                      size="small"
-                      class={classNames(`${prefixCls}-next-btn`, nextButtonProps?.className)}
-                    >
-                      {isFunction(nextButtonProps?.children)
-                        ? nextButtonProps?.children()
-                        : isLastStep.value
-                        ? contextLocale.Finish
-                        : contextLocale.Next}
-                    </Button>
-                  </div>
+                  {(() => {
+                    const defaultActionsNode = (
+                      <div class={`${prefixCls}-buttons`}>
+                        {current.value !== 0 ? (
+                          <Button
+                            {...secondaryBtnProps}
+                            {...prevButtonProps}
+                            onClick={prevBtnClick}
+                            size="small"
+                            class={classNames(`${prefixCls}-prev-btn`, prevButtonProps?.className)}
+                          >
+                            {isFunction(prevButtonProps?.children)
+                              ? prevButtonProps.children()
+                              : prevButtonProps?.children ?? contextLocale.Previous}
+                          </Button>
+                        ) : null}
+                        <Button
+                          type={mainBtnType}
+                          {...nextButtonProps}
+                          onClick={nextBtnClick}
+                          size="small"
+                          class={classNames(`${prefixCls}-next-btn`, nextButtonProps?.className)}
+                        >
+                          {isFunction(nextButtonProps?.children)
+                            ? nextButtonProps?.children()
+                            : isLastStep.value
+                            ? contextLocale.Finish
+                            : contextLocale.Next}
+                        </Button>
+                      </div>
+                    );
+                    return actionsRender
+                      ? actionsRender(defaultActionsNode, {
+                          current: current.value,
+                          total: total.value,
+                        })
+                      : defaultActionsNode;
+                  })()}
                 </div>
               </div>
             </div>
