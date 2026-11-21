@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { InputToken } from '../../input/style';
 import {
   genActiveStyle,
@@ -60,7 +61,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
         width: controlWidth,
         margin: 0,
         padding: 0,
-        border: `${lineWidth}px ${lineType} ${colorBorder}`,
+        border: `${unit(lineWidth)} ${lineType} ${colorBorder}`,
         borderRadius,
 
         '&-rtl': {
@@ -87,7 +88,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
 
           [`input${componentCls}-input`]: {
             height: controlHeightSM - 2 * lineWidth,
-            padding: `0 ${inputPaddingHorizontalSM}px`,
+            padding: `0 ${unit(inputPaddingHorizontalSM)}`,
           },
         },
 
@@ -145,7 +146,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
           '&-input': {
             width: '100%',
             height: controlHeight - 2 * lineWidth,
-            padding: `0 ${inputPaddingHorizontal}px`,
+            padding: `0 ${unit(inputPaddingHorizontal)}`,
             textAlign: 'start',
             backgroundColor: 'transparent',
             border: 0,
@@ -222,7 +223,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
           lineHeight: 0,
           textAlign: 'center',
           cursor: 'pointer',
-          borderInlineStart: `${lineWidth}px ${lineType} ${colorBorder}`,
+          borderInlineStart: `${unit(lineWidth)} ${lineType} ${colorBorder}`,
           transition: `all ${motionDurationMid} linear`,
           '&:active': {
             background: token.colorFillAlter,
@@ -254,7 +255,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
         },
 
         [`${componentCls}-handler-down`]: {
-          borderBlockStart: `${lineWidth}px ${lineType} ${colorBorder}`,
+          borderBlockStart: `${unit(lineWidth)} ${lineType} ${colorBorder}`,
           borderEndEndRadius: borderRadius,
         },
 
@@ -317,7 +318,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
       },
       [`${componentCls}-underlined, ${componentCls}-affix-wrapper-underlined`]: {
         backgroundColor: token.colorBgContainer,
-        borderWidth: `${token.lineWidth}px 0`,
+        borderWidth: `${unit(token.lineWidth)} 0`,
         borderStyle: `${token.lineType} none`,
         borderColor: `transparent transparent ${token.colorBorder} transparent`,
         borderRadius: 0,

@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { mergeToken, genComponentStyleHook } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -20,7 +21,7 @@ const genQRCodeStyle: GenerateStyle<QRCodeToken> = token => {
       padding: token.paddingSM,
       backgroundColor: token.colorWhite,
       borderRadius: token.borderRadiusLG,
-      border: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
       position: 'relative',
       width: '100%',
       height: '100%',

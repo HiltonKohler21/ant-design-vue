@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { initZoomMotion } from '../../style/motion';
 import type { FullToken, GenerateStyle, PresetColorType } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken, PresetColors } from '../../theme/internal';
@@ -147,12 +148,12 @@ const genWireframeStyle: GenerateStyle<PopoverToken> = token => {
 
       [`${componentCls}-title`]: {
         margin: 0,
-        padding: `${popoverTitlePaddingBlockTop}px ${popoverPaddingHorizontal}px ${popoverTitlePaddingBlockBottom}px`,
-        borderBottom: `${lineWidth}px ${lineType} ${colorSplit}`,
+        padding: `${unit(popoverTitlePaddingBlockTop)} ${unit(popoverPaddingHorizontal)} ${unit(popoverTitlePaddingBlockBottom)}`,
+        borderBottom: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
       },
 
       [`${componentCls}-inner-content`]: {
-        padding: `${paddingSM}px ${popoverPaddingHorizontal}px`,
+        padding: `${unit(paddingSM)} ${unit(popoverPaddingHorizontal)}`,
       },
     },
   };

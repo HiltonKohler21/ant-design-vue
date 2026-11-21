@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { StepsToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
@@ -16,7 +17,7 @@ const genStepsCustomIconStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           width: stepsIconCustomSize,
           height: stepsIconCustomSize,
           fontSize: stepsIconCustomFontSize,
-          lineHeight: `${stepsIconCustomSize}px`,
+          lineHeight: `${unit(stepsIconCustomSize)}`,
         },
       },
     },

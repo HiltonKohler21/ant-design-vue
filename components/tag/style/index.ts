@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -61,7 +62,7 @@ const genPresetStyle = (token: TagToken) =>
 const genBaseStyle = (token: TagToken): CSSObject => {
   const { paddingXXS, lineWidth, tagPaddingHorizontal, componentCls } = token;
   const paddingInline = token.calc(tagPaddingHorizontal).sub(lineWidth).equal();
-  const iconMarginInline = paddingXXS - lineWidth;
+  const iconMarginInline = token.calc(paddingXXS).sub(lineWidth).equal();
 
   return {
     // Result
@@ -72,10 +73,10 @@ const genBaseStyle = (token: TagToken): CSSObject => {
       marginInlineEnd: token.marginXS,
       paddingInline,
       fontSize: token.tagFontSize,
-      lineHeight: `${token.tagLineHeight}px`,
+      lineHeight: `${unit(token.tagLineHeight)}`,
       whiteSpace: 'nowrap',
       background: token.tagDefaultBg,
-      border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+      border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
       borderRadius: token.borderRadiusSM,
       opacity: 1,
       transition: `all ${token.motionDurationMid}`,

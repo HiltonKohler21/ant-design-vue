@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { UploadToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 import { clearFix, textEllipsis } from '../../style';
@@ -30,7 +31,7 @@ const genListStyle: GenerateStyle<UploadToken> = token => {
 
           [`${itemCls}-name`]: {
             ...textEllipsis,
-            padding: `0 ${token.paddingXS}px`,
+            padding: `0 ${unit(token.paddingXS)}`,
             lineHeight,
             flex: 'auto',
             transition: `all ${token.motionDurationSlow}`,

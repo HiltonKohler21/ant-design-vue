@@ -112,11 +112,43 @@ const App = {
   },
 };
 
+/**
+ * 找出「未被 calc() 包裹」的变量算术（真非法）：
+ * calc(100% - var(--x) * 2) 合法；var(--x) * 2 非法。
+ */
+const findBareVarArithmetic = css => {
+  const re = /var\(--ant-[a-z0-9-]+\)\s*[*/+-]\s*[-0-9]/g;
+  const hits = [];
+  let m = re.exec(css);
+  while (m) {
+    const idx = m.index;
+    // 向前扫描括号深度，判断是否位于 calc(...) / var(...) 等函数内部
+    let depth = 0;
+    let insideCalc = false;
+    for (let i = idx - 1; i >= 0; i -= 1) {
+      const ch = css[i];
+      if (ch === ')') depth += 1;
+      else if (ch === '(') {
+        if (depth === 0) {
+          if (css.slice(Math.max(0, i - 4), i) === 'calc') {
+            insideCalc = true;
+            break;
+          }
+        } else depth -= 1;
+      } else if (ch === ';' || ch === '{' || ch === '}') {
+        if (depth === 0) break;
+      }
+    }
+    if (!insideCalc) hits.push(css.slice(Math.max(0, idx - 30), idx + 30));
+    m = re.exec(css);
+  }
+  return hits;
+};
+
 const ILLEGAL = [
   { name: 'NaN', re: /\bNaN\b/g },
   { name: 'undefined', re: /\bundefined\b/g },
   { name: '[object Object]', re: /\[object Object\]/g },
-  { name: 'var() 裸算术', re: /(?<!calc\()var\(--ant-[a-z0-9-]+\)\s*[*/+-]\s*[-0-9]/g },
 ];
 
 describe('cssVar 非法 CSS 检测', () => {
@@ -140,28 +172,28 @@ describe('cssVar 非法 CSS 检测', () => {
       }
     }
 
-    // 打印 NaN 产生的「选择器 :: 属性」清单（去重）
+    const bareVarHits = findBareVarArithmetic(css);
+    if (bareVarHits.length) hits.push(`var() 裸算术 × ${bareVarHits.length}`);
+
+    // 打印非法值（NaN / undefined）产生的「选择器 :: 属性」清单（去重）
     const uniq = new Set();
-    const reRule = /([^{}]+)\{([^{}]*NaN[^{}]*)\}/g;
+    const reRule = /([^{}]+)\{([^{}]*(?:NaN|undefined)[^{}]*)\}/g;
     let rm = reRule.exec(css);
     while (rm) {
-      const sel = rm[1]
-        .trim()
-        .split(',')
-        .pop()
-        .trim();
+      const sel = rm[1].trim().split(',').pop().trim();
       rm[2]
         .split(';')
-        .filter(d => d.includes('NaN'))
+        .filter(d => d.includes('NaN') || d.includes('undefined'))
         .forEach(d => uniq.add(`${sel} :: ${d.trim().split(':')[0]}`));
       rm = reRule.exec(css);
     }
     const list = [...uniq];
     // eslint-disable-next-line no-console
-    console.log(`[illegal-check] CSS ${css.length} B，命中 ${hits.length} 类，NaN 来源 ${list.length} 处`);
+    console.log(
+      `[illegal-check] CSS ${css.length} B，命中 ${hits.length} 类，非法值来源 ${list.length} 处`,
+    );
     hits.forEach(h => console.log('  ✗ ' + h));
     list.slice(0, 40).forEach(x => console.log('  src: ' + x));
-
     expect(hits).toEqual([]);
   });
 });

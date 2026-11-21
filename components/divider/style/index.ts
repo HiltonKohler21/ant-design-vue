@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -21,7 +22,7 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
   return {
     [componentCls]: {
       ...resetComponent(token),
-      borderBlockStart: `${lineWidth}px solid ${colorSplit}`,
+      borderBlockStart: `${unit(lineWidth)} solid ${colorSplit}`,
 
       // vertical
       '&-vertical': {
@@ -29,10 +30,10 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         top: '-0.06em',
         display: 'inline-block',
         height: '0.9em',
-        margin: `0 ${token.dividerVerticalGutterMargin}px`,
+        margin: `0 ${unit(token.dividerVerticalGutterMargin)}`,
         verticalAlign: 'middle',
         borderTop: 0,
-        borderInlineStart: `${lineWidth}px solid ${colorSplit}`,
+        borderInlineStart: `${unit(lineWidth)} solid ${colorSplit}`,
       },
 
       '&-horizontal': {
@@ -40,13 +41,13 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         clear: 'both',
         width: '100%',
         minWidth: '100%', // Fix https://github.com/ant-design/ant-design/issues/10914
-        margin: `${token.dividerHorizontalGutterMargin}px 0`,
+        margin: `${unit(token.dividerHorizontalGutterMargin)} 0`,
       },
 
       [`&-horizontal${componentCls}-with-text`]: {
         display: 'flex',
         alignItems: 'center',
-        margin: `${token.dividerHorizontalWithTextGutterMargin}px 0`,
+        margin: `${unit(token.dividerHorizontalWithTextGutterMargin)} 0`,
         color: token.colorTextHeading,
         fontWeight: 500,
         fontSize: token.fontSizeLG,
@@ -57,7 +58,7 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         '&::before, &::after': {
           position: 'relative',
           width: '50%',
-          borderBlockStart: `${lineWidth}px solid transparent`,
+          borderBlockStart: `${unit(lineWidth)} solid transparent`,
           // Chrome not accept `inherit` in `border-top`
           borderBlockStartColor: 'inherit',
           borderBlockEnd: 0,
@@ -95,14 +96,14 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         background: 'none',
         borderColor: colorSplit,
         borderStyle: 'dashed',
-        borderWidth: `${lineWidth}px 0 0`,
+        borderWidth: `${unit(lineWidth)} 0 0`,
       },
 
       '&-dotted': {
         background: 'none',
         borderColor: colorSplit,
         borderStyle: 'dotted',
-        borderWidth: `${lineWidth}px 0 0`,
+        borderWidth: `${unit(lineWidth)} 0 0`,
       },
 
       [`&-horizontal${componentCls}-with-text${componentCls}-dashed`]: {

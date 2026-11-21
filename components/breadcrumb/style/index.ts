@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -38,7 +39,7 @@ const genBreadcrumbStyle: GenerateStyle<BreadcrumbToken, CSSObject> = token => {
       a: {
         color: token.breadcrumbLinkColor,
         transition: `color ${token.motionDurationMid}`,
-        padding: `0 ${token.paddingXXS}px`,
+        padding: `0 ${unit(token.paddingXXS)}`,
         borderRadius: token.borderRadiusSM,
         height: token.calc(token.lineHeight).mul(token.fontSize).equal(),
         display: 'inline-block',
@@ -78,7 +79,7 @@ const genBreadcrumbStyle: GenerateStyle<BreadcrumbToken, CSSObject> = token => {
         borderRadius: token.borderRadiusSM,
         height: token.calc(token.lineHeight).mul(token.fontSize).equal(),
         display: 'inline-block',
-        padding: `0 ${token.paddingXXS}px`,
+        padding: `0 ${unit(token.paddingXXS)}`,
         marginInline: token.calc(token.marginXXS).mul(-1).equal(),
 
         [`> ${iconCls}`]: {

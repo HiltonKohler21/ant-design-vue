@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { Keyframes } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -115,7 +116,7 @@ export const genCheckboxStyle: GenerateStyle<CheckboxToken> = token => {
           height: token.checkboxSize,
           direction: 'ltr',
           backgroundColor: token.colorBgContainer,
-          border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+          border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
           borderRadius: token.borderRadiusSM,
           borderCollapse: 'separate',
           transition: `all ${token.motionDurationSlow}`,
@@ -126,9 +127,9 @@ export const genCheckboxStyle: GenerateStyle<CheckboxToken> = token => {
             top: '50%',
             insetInlineStart: '21.5%',
             display: 'table',
-            width: (token.checkboxSize / 14) * 5,
-            height: (token.checkboxSize / 14) * 8,
-            border: `${token.lineWidthBold}px solid ${token.colorWhite}`,
+            width: token.calc(token.checkboxSize).div(14).mul(5).equal(),
+            height: token.calc(token.checkboxSize).div(14).mul(8).equal(),
+            border: `${unit(token.lineWidthBold)} solid ${token.colorWhite}`,
             borderTop: 0,
             borderInlineStart: 0,
             transform: 'rotate(45deg) scale(0) translate(-50%,-50%)',
@@ -221,7 +222,7 @@ export const genCheckboxStyle: GenerateStyle<CheckboxToken> = token => {
           height: '100%',
           borderRadius: token.borderRadiusSM,
           visibility: 'hidden',
-          border: `${token.lineWidthBold}px solid ${token.colorPrimary}`,
+          border: `${unit(token.lineWidthBold)} solid ${token.colorPrimary}`,
           animationName: antCheckboxEffect,
           animationDuration: token.motionDurationSlow,
           animationTimingFunction: 'ease-in-out',

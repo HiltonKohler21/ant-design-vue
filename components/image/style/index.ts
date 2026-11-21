@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { CSSObject } from '../../_util/cssinjs';
 import { TinyColor } from '@ctrl/tinycolor';
 import { genModalMaskStyle } from '../../modal/style';
@@ -42,7 +43,7 @@ export const genImageMaskStyle = (token: ImageToken): CSSObject => {
 
     [`.${prefixCls}-mask-info`]: {
       ...textEllipsis,
-      padding: `0 ${paddingXXS}px`,
+      padding: `0 ${unit(paddingXXS)}`,
       [iconCls]: {
         marginInlineEnd: marginXXS,
         svg: {

@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import { TinyColor } from '@ctrl/tinycolor';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
@@ -93,7 +94,7 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
     tableFooterBg,
     paddingContentVerticalLG,
   } = token;
-  const tableBorder = `${lineWidth}px ${lineType} ${tableBorderColor}`;
+  const tableBorder = `${unit(lineWidth)} ${lineType} ${tableBorderColor}`;
   return {
     [`${componentCls}-wrapper`]: {
       clear: 'both',
@@ -104,13 +105,13 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
         ...resetComponent(token),
         fontSize: tableFontSize,
         background: tableBg,
-        borderRadius: `${tableRadius}px ${tableRadius}px 0 0`,
+        borderRadius: `${unit(tableRadius)} ${unit(tableRadius)} 0 0`,
       },
       // https://github.com/ant-design/ant-design/issues/17611
       table: {
         width: '100%',
         textAlign: 'start',
-        borderRadius: `${tableRadius}px ${tableRadius}px 0 0`,
+        borderRadius: `${unit(tableRadius)} ${unit(tableRadius)} 0 0`,
         borderCollapse: 'separate',
         borderSpacing: 0,
       },
@@ -123,13 +124,13 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
           tfoot > tr > td
         `]: {
         position: 'relative',
-        padding: `${paddingContentVerticalLG}px ${tablePaddingHorizontal}px`,
+        padding: `${unit(paddingContentVerticalLG)} ${unit(tablePaddingHorizontal)}`,
         overflowWrap: 'break-word',
       },
 
       // ============================ Title =============================
       [`${componentCls}-title`]: {
-        padding: `${tablePaddingVertical}px ${tablePaddingHorizontal}px`,
+        padding: `${unit(tablePaddingVertical)} ${unit(tablePaddingHorizontal)}`,
       },
 
       // ============================ Header ============================
@@ -215,10 +216,10 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
               > ${componentCls}-expanded-row-fixed > ${componentCls}-wrapper:only-child
             `]: {
               [componentCls]: {
-                marginBlock: `-${tablePaddingVertical}px`,
+                marginBlock: `-${unit(tablePaddingVertical)}`,
                 marginInline: `${
                   token.tableExpandColumnWidth - tablePaddingHorizontal
-                }px -${tablePaddingHorizontal}px`,
+                }px -${unit(tablePaddingHorizontal)}`,
                 [`${componentCls}-tbody > tr:last-child > td`]: {
                   borderBottom: 0,
                   '&:first-child, &:last-child': {
@@ -250,7 +251,7 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
       // ============================ Footer ============================
       [`${componentCls}-footer`]: {
-        padding: `${tablePaddingVertical}px ${tablePaddingHorizontal}px`,
+        padding: `${unit(tablePaddingVertical)} ${unit(tablePaddingHorizontal)}`,
         color: tableFooterTextColor,
         background: tableFooterBg,
       },

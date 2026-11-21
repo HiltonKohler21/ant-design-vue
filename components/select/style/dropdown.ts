@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { SelectToken } from '.';
 import {
@@ -18,9 +19,17 @@ const genItemStyle: GenerateStyle<SelectToken, CSSObject> = token => {
     position: 'relative',
     display: 'block',
     minHeight: token.controlHeight,
-    padding: `${
-      (token.controlHeight - token.fontSize * token.lineHeight) / 2
-    }px ${controlPaddingHorizontal}px`,
+    padding: `${unit(
+      token
+        .calc(
+          token
+            .calc(token.controlHeight)
+            .sub(token.calc(token.fontSize).mul(token.lineHeight).equal())
+            .equal(),
+        )
+        .div(2)
+        .equal(),
+    )} ${controlPaddingHorizontal}`,
     color: token.colorText,
     fontWeight: 'normal',
     fontSize: token.fontSize,

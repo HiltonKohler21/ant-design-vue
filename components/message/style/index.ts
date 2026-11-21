@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 // deps-lint-skip-all
 import { Keyframes } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
@@ -171,7 +172,7 @@ export default genComponentStyleHook(
     const combinedToken = mergeToken<MessageToken>(token, {
       messageNoticeContentPadding: `${
         (rawToken.controlHeightLG - rawToken.fontSize * rawToken.lineHeight) / 2
-      }px ${token.paddingSM}px`,
+      }px ${unit(token.paddingSM)}`,
     });
     return [genMessageStyle(combinedToken)];
   },

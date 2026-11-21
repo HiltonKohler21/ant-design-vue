@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -24,7 +25,7 @@ const genSelectorStyle: GenerateStyle<SelectToken, CSSObject> = token => {
   return {
     position: 'relative',
     backgroundColor: token.colorBgContainer,
-    border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+    border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
     transition: `all ${token.motionDurationMid} ${token.motionEaseInOut}`,
 
     input: {
@@ -65,7 +66,8 @@ const genStatusStyle = (
     borderHoverColor: string;
     outlineColor: string;
     controlOutlineWidth: number;
-    controlLineWidth: number;
+    controlLineWidth: number | string;
+    lineWidth: number | string;
   },
   overwriteDefaultBorder: boolean = false,
 ): CSSObject => {
@@ -87,14 +89,14 @@ const genStatusStyle = (
 
           [`${componentCls}-focused& ${componentCls}-selector`]: {
             borderColor: borderHoverColor,
-            boxShadow: `0 0 0 ${token.controlOutlineWidth}px ${outlineColor}`,
-            borderInlineEndWidth: `${token.controlLineWidth}px !important`,
+            boxShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${outlineColor}`,
+            borderInlineEndWidth: `${unit(token.lineWidth)} !important`,
             outline: 0,
           },
 
           [`&:hover ${componentCls}-selector`]: {
             borderColor: borderHoverColor,
-            borderInlineEndWidth: `${token.controlLineWidth}px !important`,
+            borderInlineEndWidth: `${unit(token.lineWidth)} !important`,
           },
         },
     },

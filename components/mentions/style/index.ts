@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { InputToken } from '../../input/style';
 import {
   genActiveStyle,
@@ -82,9 +83,9 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
       [`> textarea, ${componentCls}-measure`]: {
         color: colorText,
         boxSizing: 'border-box',
-        minHeight: controlHeight - 2,
+        minHeight: token.calc(controlHeight).sub(2).equal(),
         margin: 0,
-        padding: `${inputPaddingVertical}px ${inputPaddingHorizontal}px`,
+        padding: `${unit(inputPaddingVertical)} ${unit(inputPaddingHorizontal)}`,
         overflow: 'inherit',
         overflowX: 'hidden',
         overflowY: 'auto',
@@ -165,7 +166,7 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
             position: 'relative',
             display: 'block',
             minWidth: token.controlItemWidth,
-            padding: `${itemPaddingVertical}px ${controlPaddingHorizontal}px`,
+            padding: `${unit(itemPaddingVertical)} ${unit(controlPaddingHorizontal)}`,
             color: colorText,
             fontWeight: 'normal',
             lineHeight,

@@ -38,7 +38,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
           margin: 0,
           padding: tabsCardHorizontalPadding,
           background: tabsCardHeadBackground,
-          border: `${token.lineWidth}px ${token.lineType} ${colorSplit}`,
+          border: `${unit(token.lineWidth)} ${token.lineType} ${colorSplit}`,
           transition: `all ${token.motionDurationSlow} ${token.motionEaseInOut}`,
         },
 
@@ -70,7 +70,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
           [`${componentCls}-tab + ${componentCls}-tab`]: {
             marginLeft: {
               _skip_check_: true,
-              value: `${tabsCardGutter}px`,
+              value: `${unit(tabsCardGutter)}`,
             },
           },
         },
@@ -79,7 +79,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-top`]: {
         [`> ${componentCls}-nav, > div > ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            borderRadius: `${token.borderRadiusLG}px ${token.borderRadiusLG}px 0 0`,
+            borderRadius: `${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} 0 0`,
           },
 
           [`${componentCls}-tab-active`]: {
@@ -91,7 +91,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-bottom`]: {
         [`> ${componentCls}-nav, > div > ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
+            borderRadius: `0 0 ${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)}`,
           },
 
           [`${componentCls}-tab-active`]: {
@@ -104,7 +104,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-left, &${componentCls}-right`]: {
         [`> ${componentCls}-nav, > div > ${componentCls}-nav`]: {
           [`${componentCls}-tab + ${componentCls}-tab`]: {
-            marginTop: `${tabsCardGutter}px`,
+            marginTop: `${unit(tabsCardGutter)}`,
           },
         },
       },
@@ -114,7 +114,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
           [`${componentCls}-tab`]: {
             borderRadius: {
               _skip_check_: true,
-              value: `${token.borderRadiusLG}px 0 0 ${token.borderRadiusLG}px`,
+              value: `${unit(token.borderRadiusLG)} 0 0 ${unit(token.borderRadiusLG)}`,
             },
           },
 
@@ -132,7 +132,7 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
           [`${componentCls}-tab`]: {
             borderRadius: {
               _skip_check_: true,
-              value: `0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px 0`,
+              value: `0 ${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} 0`,
             },
           },
 
@@ -170,7 +170,7 @@ const genDropdownStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
       [`${componentCls}-dropdown-menu`]: {
         maxHeight: token.tabsDropdownHeight,
         margin: 0,
-        padding: `${dropdownEdgeChildVerticalPadding}px 0`,
+        padding: `${unit(dropdownEdgeChildVerticalPadding)} 0`,
         overflowX: 'hidden',
         overflowY: 'auto',
         textAlign: {
@@ -190,7 +190,7 @@ const genDropdownStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
           alignItems: 'center',
           minWidth: token.tabsDropdownWidth,
           margin: 0,
-          padding: `${token.paddingXXS}px ${token.paddingSM}px`,
+          padding: `${unit(token.paddingXXS)} ${unit(token.paddingSM)}`,
           color: token.colorText,
           fontWeight: 'normal',
           fontSize: token.fontSize,
@@ -245,7 +245,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
       flexDirection: 'column',
 
       [`> ${componentCls}-nav, > div > ${componentCls}-nav`]: {
-        margin: `0 0 ${margin}px 0`,
+        margin: `0 0 ${unit(margin)} 0`,
 
         '&::before': {
           position: 'absolute',
@@ -257,7 +257,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
             _skip_check_: true,
             value: 0,
           },
-          borderBottom: `${token.lineWidth}px ${token.lineType} ${colorSplit}`,
+          borderBottom: `${unit(token.lineWidth)} ${token.lineType} ${colorSplit}`,
           content: "''",
         },
 
@@ -319,7 +319,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
     [`${componentCls}-bottom`]: {
       [`> ${componentCls}-nav, > div > ${componentCls}-nav`]: {
         order: 1,
-        marginTop: `${margin}px`,
+        marginTop: `${unit(margin)}`,
         marginBottom: 0,
 
         '&::before': {
@@ -344,12 +344,12 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
 
         // >>>>>>>>>>> Tab
         [`${componentCls}-tab`]: {
-          padding: `${token.paddingXS}px ${token.paddingLG}px`,
+          padding: `${unit(token.paddingXS)} ${unit(token.paddingLG)}`,
           textAlign: 'center',
         },
 
         [`${componentCls}-tab + ${componentCls}-tab`]: {
-          margin: `${token.margin}px 0 0 0`,
+          margin: `${unit(token.margin)} 0 0 0`,
         },
 
         // >>>>>>>>>>> Nav
@@ -416,11 +416,11 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
       [`> ${componentCls}-content-holder, > div > ${componentCls}-content-holder`]: {
         marginLeft: {
           _skip_check_: true,
-          value: `-${token.lineWidth}px`,
+          value: `-${unit(token.lineWidth)}`,
         },
         borderLeft: {
           _skip_check_: true,
-          value: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+          value: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
         },
 
         [`> ${componentCls}-content > ${componentCls}-tabpane`]: {
@@ -452,7 +452,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
         },
         borderRight: {
           _skip_check_: true,
-          value: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+          value: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
         },
 
         [`> ${componentCls}-content > ${componentCls}-tabpane`]: {
@@ -473,7 +473,7 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       '&-small': {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${token.paddingXS}px 0`,
+            padding: `${unit(token.paddingXS)} 0`,
             fontSize: token.fontSize,
           },
         },
@@ -482,7 +482,7 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       '&-large': {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${padding}px 0`,
+            padding: `${unit(padding)} 0`,
             fontSize: token.fontSizeLG,
           },
         },
@@ -493,24 +493,24 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-small`]: {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${unit(token.calc(token.paddingXXS).mul(1.5).equal())} ${padding}px`,
+            padding: `${unit(token.calc(token.paddingXXS).mul(1.5).equal())} ${unit(padding)}`,
           },
         },
         [`&${componentCls}-bottom`]: {
           [`> ${componentCls}-nav ${componentCls}-tab`]: {
-            borderRadius: `0 0 ${token.borderRadius}px ${token.borderRadius}px`,
+            borderRadius: `0 0 ${unit(token.borderRadius)} ${unit(token.borderRadius)}`,
           },
         },
         [`&${componentCls}-top`]: {
           [`> ${componentCls}-nav ${componentCls}-tab`]: {
-            borderRadius: `${token.borderRadius}px ${token.borderRadius}px 0 0`,
+            borderRadius: `${unit(token.borderRadius)} ${unit(token.borderRadius)} 0 0`,
           },
         },
         [`&${componentCls}-right`]: {
           [`> ${componentCls}-nav ${componentCls}-tab`]: {
             borderRadius: {
               _skip_check_: true,
-              value: `0 ${token.borderRadius}px ${token.borderRadius}px 0`,
+              value: `0 ${unit(token.borderRadius)} ${unit(token.borderRadius)} 0`,
             },
           },
         },
@@ -518,7 +518,7 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
           [`> ${componentCls}-nav ${componentCls}-tab`]: {
             borderRadius: {
               _skip_check_: true,
-              value: `${token.borderRadius}px 0 0 ${token.borderRadius}px`,
+              value: `${unit(token.borderRadius)} 0 0 ${unit(token.borderRadius)}`,
             },
           },
         },
@@ -527,7 +527,7 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-large`]: {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${token.paddingXS}px ${padding}px ${unit(token.calc(token.paddingXXS).mul(1.5).equal())}`,
+            padding: `${unit(token.paddingXS)} ${unit(padding)} ${unit(token.calc(token.paddingXXS).mul(1.5).equal())}`,
           },
         },
       },
@@ -545,8 +545,8 @@ const genTabStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
       position: 'relative',
       display: 'inline-flex',
       alignItems: 'center',
-      padding: `${token.paddingSM}px 0`,
-      fontSize: `${token.fontSize}px`,
+      padding: `${unit(token.paddingSM)} 0`,
+      fontSize: `${unit(token.fontSize)}`,
       background: 'transparent',
       border: 0,
       outline: 'none',
@@ -614,7 +614,7 @@ const genTabStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
     [`${tabCls} + ${tabCls}`]: {
       margin: {
         _skip_check_: true,
-        value: `0 0 0 ${tabsHorizontalGutter}px`,
+        value: `0 0 0 ${unit(tabsHorizontalGutter)}`,
       },
     },
   };
@@ -631,7 +631,7 @@ const genRtlStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
         [`${componentCls}-tab`]: {
           margin: {
             _skip_check_: true,
-            value: `0 0 0 ${tabsHorizontalGutter}px`,
+            value: `0 0 0 ${unit(tabsHorizontalGutter)}`,
           },
 
           [`${componentCls}-tab:last-of-type`]: {
@@ -648,18 +648,18 @@ const genRtlStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
             },
             marginLeft: {
               _skip_check_: true,
-              value: `${token.marginSM}px`,
+              value: `${unit(token.marginSM)}`,
             },
           },
 
           [`${componentCls}-tab-remove`]: {
             marginRight: {
               _skip_check_: true,
-              value: `${token.marginXS}px`,
+              value: `${unit(token.marginXS)}`,
             },
             marginLeft: {
               _skip_check_: true,
-              value: `-${token.marginXXS}px`,
+              value: `-${unit(token.marginXXS)}`,
             },
 
             [iconCls]: {
@@ -695,7 +695,7 @@ const genRtlStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
           [`${componentCls}-tab + ${componentCls}-tab`]: {
             marginRight: {
               _skip_check_: true,
-              value: `${tabsCardGutter}px`,
+              value: `${unit(tabsCardGutter)}`,
             },
             marginLeft: { _skip_check_: true, value: 0 },
           },
@@ -803,15 +803,15 @@ const genTabsStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
         },
 
         [`${componentCls}-nav-add`]: {
-          minWidth: `${tabsCardHeight}px`,
+          minWidth: `${unit(tabsCardHeight)}`,
           marginLeft: {
             _skip_check_: true,
-            value: `${tabsCardGutter}px`,
+            value: `${unit(tabsCardGutter)}`,
           },
-          padding: `0 ${token.paddingXS}px`,
+          padding: `0 ${unit(token.paddingXS)}`,
           background: 'transparent',
-          border: `${token.lineWidth}px ${token.lineType} ${colorSplit}`,
-          borderRadius: `${token.borderRadiusLG}px ${token.borderRadiusLG}px 0 0`,
+          border: `${unit(token.lineWidth)} ${token.lineType} ${colorSplit}`,
+          borderRadius: `${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} 0 0`,
           outline: 'none',
           cursor: 'pointer',
           color: token.colorText,
@@ -891,9 +891,9 @@ export default genComponentStyleHook(
       tabsHoverColor: token.colorPrimaryHover,
       tabsActiveColor: token.colorPrimaryActive,
 
-      tabsCardHorizontalPadding: `${
-        (tabsCardHeight - Math.round(rawToken.fontSize * rawToken.lineHeight)) / 2 - rawToken.lineWidth
-      }px ${token.padding}px`,
+      tabsCardHorizontalPadding: `${unit(
+        (rawToken.controlHeightLG - Math.round(rawToken.fontSize * rawToken.lineHeight)) / 2 - rawToken.lineWidth,
+      )} ${unit(token.padding)}`,
       tabsCardHeight,
       tabsCardGutter: rawToken.marginXXS / 2,
       tabsHorizontalGutter: 32, // Fixed Value

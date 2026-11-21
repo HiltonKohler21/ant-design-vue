@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { mergeToken, genComponentStyleHook } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -24,7 +25,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
         alignItems: 'center',
         boxSizing: 'border-box',
         borderRadius: token.borderRadiusSM,
-        border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+        border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
         background: token.colorBgContainer,
         cursor: 'pointer',
         transition: `all ${token.motionDurationMid}`,
@@ -76,7 +77,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
 
         // Text
         [`${componentCls}-trigger-text`]: {
-          margin: `0 ${token.marginXS}px 0 ${token.marginXS}px`,
+          margin: `0 ${unit(token.marginXS)} 0 ${unit(token.marginXS)}`,
           fontSize: token.fontSizeSM,
           color: token.colorText,
           lineHeight: 1,
@@ -259,8 +260,8 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
           flex: 1,
           minWidth: 0,
           height: token.controlHeightSM,
-          padding: `0 ${token.paddingXS}px`,
-          border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+          padding: `0 ${unit(token.paddingXS)}`,
+          border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
           borderRadius: token.borderRadiusXS,
           fontSize: token.fontSizeSM,
           color: token.colorText,
@@ -278,7 +279,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
       // Presets
       [`${panelCls}-presets`]: {
         marginTop: token.marginSM,
-        borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+        borderTop: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
         paddingTop: token.paddingXS,
 
         [`${panelCls}-presets-label`]: {
@@ -296,7 +297,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
           width: 20,
           height: 20,
           borderRadius: token.borderRadiusXS,
-          border: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+          border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
           cursor: 'pointer',
           boxSizing: 'border-box',
           transition: `all ${token.motionDurationFast}`,

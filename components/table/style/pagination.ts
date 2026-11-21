@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { GenerateStyle } from '../../theme/internal';
 import type { TableToken } from './index';
@@ -8,7 +9,7 @@ const genPaginationStyle: GenerateStyle<TableToken, CSSObject> = token => {
     [`${componentCls}-wrapper`]: {
       // ========================== Pagination ==========================
       [`${componentCls}-pagination${antCls}-pagination`]: {
-        margin: `${token.margin}px 0`,
+        margin: `${unit(token.margin)} 0`,
       },
 
       [`${componentCls}-pagination`]: {

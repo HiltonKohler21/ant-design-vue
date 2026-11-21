@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { InputToken } from './index';
 
@@ -86,7 +87,7 @@ export const genOutlinedStyle = (token: InputToken): CSSObject => ({
     borderColor: token.colorBorder,
     hoverBorderColor: token.inputBorderHoverColor,
     activeBorderColor: token.inputBorderActiveColor,
-    activeShadow: `0 0 0 ${token.controlOutlineWidth}px ${token.controlOutline}`,
+    activeShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
   }),
   [`&${token.componentCls}-disabled, &[disabled]`]: {
     ...genVariantDisabledStyle(token),
@@ -96,14 +97,14 @@ export const genOutlinedStyle = (token: InputToken): CSSObject => ({
     borderColor: token.colorError,
     hoverBorderColor: token.colorErrorBorderHover,
     activeBorderColor: token.colorError,
-    activeShadow: `0 0 0 ${token.controlOutlineWidth}px ${token.colorErrorOutline}`,
+    activeShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.colorErrorOutline}`,
   }),
   ...genOutlinedStatusStyle(token, {
     status: 'warning',
     borderColor: token.colorWarning,
     hoverBorderColor: token.colorWarningBorderHover,
     activeBorderColor: token.colorWarning,
-    activeShadow: `0 0 0 ${token.controlOutlineWidth}px ${token.colorWarningOutline}`,
+    activeShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.colorWarningOutline}`,
   }),
 });
 

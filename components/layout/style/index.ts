@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -71,7 +72,7 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
         height: layoutHeaderHeight,
         paddingInline: layoutHeaderPaddingInline,
         color: layoutHeaderColor,
-        lineHeight: `${layoutHeaderHeight}px`,
+        lineHeight: `${unit(layoutHeaderHeight)}`,
         background: colorBgHeader,
         // Other components/menu/style/index.less line:686
         // Integration with header element so menu items have the same height
@@ -129,7 +130,7 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
           zIndex: 1,
           height: layoutTriggerHeight,
           color: colorTextLightSolid,
-          lineHeight: `${layoutTriggerHeight}px`,
+          lineHeight: `${unit(layoutTriggerHeight)}`,
           textAlign: 'center',
           background: colorBgTrigger,
           cursor: 'pointer',
@@ -207,7 +208,7 @@ export default genComponentStyleHook(
       layoutHeaderHeight: controlHeight * 2,
       layoutHeaderPaddingInline,
       layoutHeaderColor: colorText,
-      layoutFooterPadding: `${controlHeightSM}px ${layoutHeaderPaddingInline}px`,
+      layoutFooterPadding: `${unit(controlHeightSM)} ${unit(layoutHeaderPaddingInline)}`,
       layoutTriggerHeight: controlHeightLG + marginXXS * 2, // = item height + margin
       layoutZeroTriggerSize: controlHeightLG,
     });

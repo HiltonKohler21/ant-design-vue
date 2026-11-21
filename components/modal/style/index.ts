@@ -169,7 +169,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
           borderRadius: token.borderRadiusLG,
           boxShadow: token.boxShadowSecondary,
           pointerEvents: 'auto',
-          padding: `${token.paddingMD}px ${token.paddingContentHorizontalLG}px`,
+          padding: `${unit(token.paddingMD)} ${unit(token.paddingContentHorizontalLG)}`,
         },
 
         [`${componentCls}-close`]: {
@@ -195,7 +195,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
             display: 'block',
             fontSize: token.fontSizeLG,
             fontStyle: 'normal',
-            lineHeight: `${token.modalCloseBtnSize}px`,
+            lineHeight: `${unit(token.modalCloseBtnSize)}`,
             textAlign: 'center',
             textTransform: 'none',
             textRendering: 'auto',
@@ -217,7 +217,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
         [`${componentCls}-header`]: {
           color: token.colorText,
           background: token.modalHeaderBg,
-          borderRadius: `${token.borderRadiusLG}px ${token.borderRadiusLG}px 0 0`,
+          borderRadius: `${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} 0 0`,
           marginBottom: token.marginXS,
         },
 
@@ -388,7 +388,7 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
 
       [`${componentCls}-header`]: {
         padding: token.modalHeaderPadding,
-        borderBottom: `${token.modalHeaderBorderWidth}px ${token.modalHeaderBorderStyle} ${token.modalHeaderBorderColorSplit}`,
+        borderBottom: `${unit(token.modalHeaderBorderWidth)} ${token.modalHeaderBorderStyle} ${token.modalHeaderBorderColorSplit}`,
         marginBottom: 0,
       },
 
@@ -397,16 +397,16 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
       },
 
       [`${componentCls}-footer`]: {
-        padding: `${token.modalFooterPaddingVertical}px ${token.modalFooterPaddingHorizontal}px`,
-        borderTop: `${token.modalFooterBorderWidth}px ${token.modalFooterBorderStyle} ${token.modalFooterBorderColorSplit}`,
-        borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
+        padding: `${unit(token.modalFooterPaddingVertical)} ${unit(token.modalFooterPaddingHorizontal)}`,
+        borderTop: `${unit(token.modalFooterBorderWidth)} ${token.modalFooterBorderStyle} ${token.modalFooterBorderColorSplit}`,
+        borderRadius: `0 0 ${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)}`,
         marginTop: 0,
       },
     },
 
     [confirmComponentCls]: {
       [`${antCls}-modal-body`]: {
-        padding: `${unit(token.calc(token.padding).mul(2).equal())} ${unit(token.calc(token.padding).mul(2).equal())} ${token.paddingLG}px`,
+        padding: `${unit(token.calc(token.padding).mul(2).equal())} ${unit(token.calc(token.padding).mul(2).equal())} ${unit(token.paddingLG)}`,
       },
       [`${confirmComponentCls}-body`]: {
         [`> ${token.iconCls}`]: {
@@ -436,7 +436,7 @@ export default genComponentStyleHook('Modal', token => {
   const modalToken = mergeToken<ModalToken>(token, {
     modalBodyPadding: token.paddingLG,
     modalHeaderBg: token.colorBgElevated,
-    modalHeaderPadding: `${headerPaddingVertical}px ${token.paddingLG}px`,
+    modalHeaderPadding: `${unit(headerPaddingVertical)} ${unit(token.paddingLG)}`,
     modalHeaderBorderWidth: token.lineWidth,
     modalHeaderBorderStyle: token.lineType,
     modalHeaderTitleLineHeight: headerLineHeight,

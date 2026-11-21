@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -38,7 +39,7 @@ const genRateStarStyle: GenerateStyle<RateToken, CSSObject> = token => {
         },
 
         '&:focus-visible': {
-          outline: `${token.lineWidth}px dashed ${token.rateStarColor}`,
+          outline: `${unit(token.lineWidth)} dashed ${token.rateStarColor}`,
           transform: token.rateStarHoverScale,
         },
       },

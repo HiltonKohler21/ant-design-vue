@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -81,7 +82,8 @@ const genBaseStyle: GenerateStyle<AvatarToken> = token => {
   const avatarSizeStyle = (size: number, fontSize: number, radius: number): CSSObject => ({
     width: size,
     height: size,
-    lineHeight: `${size - lineWidth * 2}px`,
+    // cssVar 模式下 size 是 var() 字符串，算术需走 calc 链
+    lineHeight: token.calc(size).sub(token.calc(lineWidth).mul(2).equal()).equal(),
     borderRadius: '50%',
 
     [`&${componentCls}-square`]: {
@@ -116,7 +118,7 @@ const genBaseStyle: GenerateStyle<AvatarToken> = token => {
       textAlign: 'center',
       verticalAlign: 'middle',
       background: avatarBg,
-      border: `${lineWidth}px ${lineType} transparent`,
+      border: `${unit(lineWidth)} ${lineType} transparent`,
 
       [`&-image`]: {
         background: 'transparent',

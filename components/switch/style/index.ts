@@ -36,7 +36,7 @@ const genSwitchSmallStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
       [`&${componentCls}-small`]: {
         minWidth: token.switchMinWidthSM,
         height: token.switchHeightSM,
-        lineHeight: `${token.switchHeightSM}px`,
+        lineHeight: `${unit(token.switchHeightSM)}`,
 
         [`${componentCls}-inner`]: {
           paddingInlineStart: token.switchInnerMarginMaxSM,
@@ -63,7 +63,11 @@ const genSwitchSmallStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
         },
 
         [`${componentCls}-loading-icon`]: {
-          top: (token.switchPinSizeSM - token.switchLoadingIconSize) / 2,
+          top: token
+            .calc(token.switchPinSizeSM)
+            .sub(token.switchLoadingIconSize)
+            .div(2)
+            .equal(),
           fontSize: token.switchLoadingIconSize,
         },
 
@@ -118,7 +122,7 @@ const genSwitchLoadingStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
     [componentCls]: {
       [`${componentCls}-loading-icon${token.iconCls}`]: {
         position: 'relative',
-        top: (token.switchPinSize - token.fontSize) / 2,
+        top: token.calc(token.switchPinSize).sub(token.fontSize).div(2).equal(),
         color: token.switchLoadingIconColor,
         verticalAlign: 'top',
       },
@@ -265,7 +269,7 @@ const genSwitchStyle = (token: SwitchToken): CSSObject => {
       boxSizing: 'border-box',
       minWidth: token.switchMinWidth,
       height: token.switchHeight,
-      lineHeight: `${token.switchHeight}px`,
+      lineHeight: `${unit(token.switchHeight)}`,
       verticalAlign: 'middle',
       background: token.colorTextQuaternary,
       border: '0',
@@ -308,14 +312,13 @@ const genSwitchStyle = (token: SwitchToken): CSSObject => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Switch', token => {
-  const switchHeight = token.fontSize * token.lineHeight;
-  const switchHeightSM = token.controlHeight / 2;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
+  const switchHeight = rawToken.fontSize * rawToken.lineHeight;
+  const switchHeightSM = rawToken.controlHeight / 2;
   const switchPadding = 2; // This is magic
   const switchPinSize = switchHeight - switchPadding * 2;
   const switchPinSizeSM = switchHeightSM - switchPadding * 2;
-
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
   const switchToken = mergeToken<SwitchToken>(token, {
     switchMinWidth: switchPinSize * 2 + switchPadding * 4,
     switchHeight,

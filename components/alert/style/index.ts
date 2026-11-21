@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSInterpolation, CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -18,7 +19,7 @@ const genAlertTypeStyle = (
   alertCls: string,
 ): CSSObject => ({
   backgroundColor: bgColor,
-  border: `${token.lineWidth}px ${token.lineType} ${borderColor}`,
+  border: `${unit(token.lineWidth)} ${token.lineType} ${borderColor}`,
   [`${alertCls}-icon`]: {
     color: iconColor,
   },
@@ -49,7 +50,7 @@ export const genBaseStyle: GenerateStyle<AlertToken> = (token: AlertToken): CSSO
       position: 'relative',
       display: 'flex',
       alignItems: 'center',
-      padding: `${paddingContentVerticalSM}px ${alertPaddingHorizontal}px`, // Fixed horizontal padding here.
+      padding: `${unit(paddingContentVerticalSM)} ${unit(alertPaddingHorizontal)}`, // Fixed horizontal padding here.
       wordWrap: 'break-word',
       borderRadius,
 
@@ -196,7 +197,7 @@ export const genActionStyle: GenerateStyle<AlertToken> = (token: AlertToken): CS
         padding: 0,
         overflow: 'hidden',
         fontSize: fontSizeIcon,
-        lineHeight: `${fontSizeIcon}px`,
+        lineHeight: `${unit(fontSizeIcon)}`,
         backgroundColor: 'transparent',
         border: 'none',
         outline: 'none',

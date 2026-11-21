@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { StepsToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
@@ -27,19 +28,19 @@ const genStepsSmallStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         // margin: stepsSmallIconMargin,
         marginTop: 0,
         marginBottom: 0,
-        marginInline: `0 ${token.marginXS}px`,
+        marginInline: `0 ${unit(token.marginXS)}`,
         fontSize: fontSizeSM,
-        lineHeight: `${stepsSmallIconSize}px`,
+        lineHeight: `${unit(stepsSmallIconSize)}`,
         textAlign: 'center',
         borderRadius: stepsSmallIconSize,
       },
       [`${componentCls}-item-title`]: {
         paddingInlineEnd: token.paddingSM,
         fontSize,
-        lineHeight: `${stepsSmallIconSize}px`,
+        lineHeight: `${unit(stepsSmallIconSize)}`,
 
         '&::after': {
-          top: stepsSmallIconSize / 2,
+          top: token.calc(token.stepsSmallIconSize).div(2).equal(),
         },
       },
       [`${componentCls}-item-description`]: {
@@ -47,7 +48,7 @@ const genStepsSmallStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         fontSize,
       },
       [`${componentCls}-item-tail`]: {
-        top: stepsSmallIconSize / 2 - token.paddingXXS,
+        top: token.calc(token.calc(token.stepsSmallIconSize).div(2).equal()).sub(token.paddingXXS).equal(),
       },
       [`${componentCls}-item-custom ${componentCls}-item-icon`]: {
         width: 'inherit',
@@ -58,7 +59,7 @@ const genStepsSmallStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         borderRadius: 0,
         [`> ${componentCls}-icon`]: {
           fontSize: stepsSmallIconSize,
-          lineHeight: `${stepsSmallIconSize}px`,
+          lineHeight: `${unit(stepsSmallIconSize)}`,
           transform: 'none',
         },
       },

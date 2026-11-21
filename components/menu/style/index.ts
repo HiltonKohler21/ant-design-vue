@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { TinyColor } from '@ctrl/tinycolor';
 import type { CSSObject } from '../../_util/cssinjs';
 import { genCollapseMotion, initSlideMotion, initZoomMotion } from '../../style/motion';
@@ -269,7 +270,7 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
         },
 
         [`${componentCls}-item-group-title`]: {
-          padding: `${paddingXS}px ${padding}px`,
+          padding: `${unit(paddingXS)} ${unit(padding)}`,
           fontSize,
           lineHeight,
           transition: `all ${motionDurationSlow}`,
@@ -339,7 +340,7 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
             padding: 0,
 
             [`${componentCls}-item, ${componentCls}-submenu-title`]: {
-              paddingInline: `${fontSize * 2}px ${padding}px`,
+              paddingInline: `${fontSize * 2}px ${unit(padding)}`,
             },
           },
         },
@@ -357,7 +358,7 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
             // https://github.com/ant-design/ant-design/issues/13955
             '&::before': {
               position: 'absolute',
-              inset: `${menuPanelMaskInset}px 0 0`,
+              inset: `${unit(menuPanelMaskInset)} 0 0`,
               zIndex: -1,
               width: '100%',
               height: '100%',

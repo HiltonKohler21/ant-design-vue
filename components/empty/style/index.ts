@@ -67,13 +67,15 @@ const genSharedEmptyStyle: GenerateStyle<EmptyToken> = (token): CSSObject => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Empty', token => {
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const { componentCls, controlHeightLG } = token;
 
   const emptyToken: EmptyToken = mergeToken<EmptyToken>(token, {
     emptyImgCls: `${componentCls}-img`,
-    emptyImgHeight: controlHeightLG * 2.5,
+    emptyImgHeight: rawToken.controlHeightLG * 2.5,
     emptyImgHeightMD: controlHeightLG,
-    emptyImgHeightSM: controlHeightLG * 0.875,
+    emptyImgHeightSM: rawToken.controlHeightLG * 0.875,
   });
 
   return [genSharedEmptyStyle(emptyToken)];

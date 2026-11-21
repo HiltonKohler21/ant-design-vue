@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSInterpolation, CSSObject } from '../../_util/cssinjs';
 import { resetComponent } from '../../style';
 import type { SelectToken } from '.';
@@ -96,7 +97,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         [`${componentCls}-selector`]: {
           width: '100%',
           height: token.controlHeight,
-          padding: `0 ${inputPaddingHorizontalBase}px`,
+          padding: `0 ${unit(inputPaddingHorizontalBase)}`,
 
           [`${componentCls}-selection-search-input`]: {
             height: selectHeightWithoutBorder,
@@ -123,7 +124,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
             position: 'absolute',
             insetInlineStart: 0,
             insetInlineEnd: 0,
-            padding: `0 ${inputPaddingHorizontalBase}px`,
+            padding: `0 ${unit(inputPaddingHorizontalBase)}`,
 
             '&:after': {
               display: 'none',
@@ -163,7 +164,7 @@ export default function genSingleStyle(token: SelectToken): CSSInterpolation {
           },
 
           [`${componentCls}-selector`]: {
-            padding: `0 ${inputPaddingHorizontalSM}px`,
+            padding: `0 ${unit(inputPaddingHorizontalSM)}`,
           },
 
           // With arrow should provides `padding-right` to show the arrow

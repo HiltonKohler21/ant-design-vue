@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -28,14 +29,14 @@ const genBorderedStyle = (token: ListToken): CSSObject => {
   } = token;
   return {
     [`${listBorderedCls}`]: {
-      border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+      border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
       borderRadius: borderRadiusLG,
       [`${componentCls}-header,${componentCls}-footer,${componentCls}-item`]: {
         paddingInline: paddingLG,
       },
 
       [`${componentCls}-pagination`]: {
-        margin: `${margin}px ${marginLG}px`,
+        margin: `${unit(margin)} ${unit(marginLG)}`,
       },
     },
     [`${listBorderedCls}${componentCls}-sm`]: {
@@ -46,7 +47,7 @@ const genBorderedStyle = (token: ListToken): CSSObject => {
 
     [`${listBorderedCls}${componentCls}-lg`]: {
       [`${componentCls}-item,${componentCls}-header,${componentCls}-footer`]: {
-        padding: `${padding}px ${paddingLG}px`,
+        padding: `${unit(padding)} ${unit(paddingLG)}`,
       },
     },
   };
@@ -92,7 +93,7 @@ const genResponsiveStyle = (token: ListToken): CSSObject => {
           },
 
           [`${componentCls}-item-extra`]: {
-            margin: `auto auto ${margin}px`,
+            margin: `auto auto ${unit(margin)}`,
           },
         },
       },
@@ -210,7 +211,7 @@ const genBaseStyle: GenerateStyle<ListToken> = token => {
           [`& > li`]: {
             position: 'relative',
             display: 'inline-block',
-            padding: `0 ${paddingXS}px`,
+            padding: `0 ${unit(paddingXS)}`,
             color: colorTextDescription,
             fontSize: token.fontSize,
             lineHeight: token.lineHeight,
@@ -226,7 +227,11 @@ const genBaseStyle: GenerateStyle<ListToken> = token => {
             insetBlockStart: '50%',
             insetInlineEnd: 0,
             width: lineWidth,
-            height: Math.ceil(token.fontSize * token.lineHeight) - token.marginXXS * 2,
+            height: token
+              .calc(token.fontSize)
+              .mul(token.lineHeight)
+              .sub(token.calc(token.marginXXS).mul(2).equal())
+              .equal(),
             transform: 'translateY(-50%)',
             backgroundColor: token.colorSplit,
           },
@@ -234,7 +239,7 @@ const genBaseStyle: GenerateStyle<ListToken> = token => {
       },
 
       [`${componentCls}-empty`]: {
-        padding: `${padding}px 0`,
+        padding: `${unit(padding)} 0`,
         color: colorTextDescription,
         fontSize: token.fontSizeSM,
         textAlign: 'center',
@@ -287,7 +292,7 @@ const genBaseStyle: GenerateStyle<ListToken> = token => {
         marginInlineStart: 'auto',
 
         '> li': {
-          padding: `0 ${padding}px`,
+          padding: `0 ${unit(padding)}`,
 
           [`&:first-child`]: {
             paddingInlineStart: 0,
@@ -297,7 +302,7 @@ const genBaseStyle: GenerateStyle<ListToken> = token => {
     },
 
     [`${componentCls}-split ${componentCls}-item`]: {
-      borderBlockEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      borderBlockEnd: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
 
       [`&:last-child`]: {
         borderBlockEnd: 'none',
@@ -305,17 +310,17 @@ const genBaseStyle: GenerateStyle<ListToken> = token => {
     },
 
     [`${componentCls}-split ${componentCls}-header`]: {
-      borderBlockEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      borderBlockEnd: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
     },
     [`${componentCls}-split${componentCls}-empty ${componentCls}-footer`]: {
-      borderTop: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      borderTop: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
     },
     [`${componentCls}-loading ${componentCls}-spin-nested-loading`]: {
       minHeight: controlHeight,
     },
     [`${componentCls}-split${componentCls}-something-after-last-item ${antCls}-spin-container > ${componentCls}-items > ${componentCls}-item:last-child`]:
       {
-        borderBlockEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+        borderBlockEnd: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
       },
     [`${componentCls}-lg ${componentCls}-item`]: {
       padding: listItemPaddingLG,
@@ -341,9 +346,9 @@ export default genComponentStyleHook(
     const listToken = mergeToken<ListToken>(token, {
       listBorderedCls: `${token.componentCls}-bordered`,
       minHeight: token.controlHeightLG,
-      listItemPadding: `${token.paddingContentVertical}px ${token.paddingContentHorizontalLG}px`,
-      listItemPaddingSM: `${token.paddingContentVerticalSM}px ${token.paddingContentHorizontal}px`,
-      listItemPaddingLG: `${token.paddingContentVerticalLG}px ${token.paddingContentHorizontalLG}px`,
+      listItemPadding: `${unit(token.paddingContentVertical)} ${unit(token.paddingContentHorizontalLG)}`,
+      listItemPaddingSM: `${unit(token.paddingContentVerticalSM)} ${unit(token.paddingContentHorizontal)}`,
+      listItemPaddingLG: `${unit(token.paddingContentVerticalLG)} ${unit(token.paddingContentHorizontalLG)}`,
     });
 
     return [genBaseStyle(listToken), genBorderedStyle(listToken), genResponsiveStyle(listToken)];

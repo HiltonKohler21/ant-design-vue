@@ -1,9 +1,10 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { StepsToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 
 const genStepsLabelPlacementStyle: GenerateStyle<StepsToken, CSSObject> = token => {
-  const { componentCls, stepsIconSize, lineHeight, stepsSmallIconSize } = token;
+  const { componentCls, lineHeight } = token;
 
   return {
     [`&${componentCls}-label-vertical`]: {
@@ -11,13 +12,13 @@ const genStepsLabelPlacementStyle: GenerateStyle<StepsToken, CSSObject> = token 
         overflow: 'visible',
 
         '&-tail': {
-          marginInlineStart: stepsIconSize / 2 + token.controlHeightLG,
-          padding: `${token.paddingXXS}px ${token.paddingLG}px`,
+          marginInlineStart: token.calc(token.calc(token.stepsIconSize).div(2).equal()).add(token.controlHeightLG).equal(),
+          padding: `${unit(token.paddingXXS)} ${unit(token.paddingLG)}`,
         },
 
         '&-content': {
           display: 'block',
-          width: (stepsIconSize / 2 + token.controlHeightLG) * 2,
+          width: token.calc(token.calc(token.calc(token.stepsIconSize).div(2).equal()).add(token.controlHeightLG).equal()).mul(2).equal(),
           marginTop: token.marginSM,
           textAlign: 'center',
         },
@@ -46,7 +47,7 @@ const genStepsLabelPlacementStyle: GenerateStyle<StepsToken, CSSObject> = token 
       [`&${componentCls}-small:not(${componentCls}-dot)`]: {
         [`${componentCls}-item`]: {
           '&-icon': {
-            marginInlineStart: token.controlHeightLG + (stepsIconSize - stepsSmallIconSize) / 2,
+            marginInlineStart: token.calc(token.controlHeightLG).add(token.calc(token.calc(token.stepsIconSize).sub(token.stepsSmallIconSize).equal()).div(2).equal()).equal(),
           },
         },
       },

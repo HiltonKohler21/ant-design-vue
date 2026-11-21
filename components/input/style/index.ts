@@ -40,7 +40,7 @@ export const genHoverStyle = (token: InputToken): CSSObject => ({
 
 export const genActiveStyle = (token: InputToken) => ({
   borderColor: token.inputBorderHoverColor,
-  boxShadow: `0 0 0 ${token.controlOutlineWidth}px ${token.controlOutline}`,
+  boxShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
   borderInlineEndWidth: token.lineWidth,
   outline: 0,
 });
@@ -68,7 +68,7 @@ const genInputLargeStyle = (token: InputToken): CSSObject => {
   } = token;
 
   return {
-    padding: `${inputPaddingVerticalLG}px ${inputPaddingHorizontalLG}px`,
+    padding: `${unit(inputPaddingVerticalLG)} ${unit(inputPaddingHorizontalLG)}`,
     fontSize: fontSizeLG,
     lineHeight: lineHeightLG,
     borderRadius: borderRadiusLG,
@@ -76,7 +76,7 @@ const genInputLargeStyle = (token: InputToken): CSSObject => {
 };
 
 export const genInputSmallStyle = (token: InputToken): CSSObject => ({
-  padding: `${token.inputPaddingVerticalSM}px ${unit(token.calc(token.controlPaddingHorizontalSM).sub(1).equal())}`,
+  padding: `${unit(token.inputPaddingVerticalSM)} ${unit(token.calc(token.controlPaddingHorizontalSM).sub(1).equal())}`,
   borderRadius: token.borderRadiusSM,
 });
 
@@ -142,7 +142,7 @@ export const genBasicInputStyle = (token: InputToken): CSSObject => ({
   display: 'inline-block',
   width: '100%',
   minWidth: 0,
-  padding: `${token.inputPaddingVertical}px ${token.inputPaddingHorizontal}px`,
+  padding: `${unit(token.inputPaddingVertical)} ${unit(token.inputPaddingHorizontal)}`,
   color: token.colorText,
   fontSize: token.fontSize,
   lineHeight: token.lineHeight,
@@ -258,25 +258,25 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
       '&-addon': {
         position: 'relative',
-        padding: `0 ${token.inputPaddingHorizontal}px`,
+        padding: `0 ${unit(token.inputPaddingHorizontal)}`,
         color: token.colorText,
         fontWeight: 'normal',
         fontSize: token.fontSize,
         textAlign: 'center',
         backgroundColor: token.colorFillAlter,
-        border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+        border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
         borderRadius: token.borderRadius,
         transition: `all ${token.motionDurationSlow}`,
         lineHeight: 1,
 
         // Reset Select's style in addon
         [`${antCls}-select`]: {
-          margin: `-${unit(token.calc(token.inputPaddingVertical).add(1).equal())} -${token.inputPaddingHorizontal}px`,
+          margin: `-${unit(token.calc(token.inputPaddingVertical).add(1).equal())} -${unit(token.inputPaddingHorizontal)}`,
 
           [`&${antCls}-select-single:not(${antCls}-select-customize-input)`]: {
             [`${antCls}-select-selector`]: {
               backgroundColor: 'inherit',
-              border: `${token.lineWidth}px ${token.lineType} transparent`,
+              border: `${unit(token.lineWidth)} ${token.lineType} transparent`,
               boxShadow: 'none',
             },
           },
@@ -290,7 +290,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
         // https://github.com/ant-design/ant-design/issues/31333
         [`${antCls}-cascader-picker`]: {
-          margin: `-9px -${token.inputPaddingHorizontal}px`,
+          margin: `-9px -${unit(token.inputPaddingHorizontal)}`,
           backgroundColor: 'transparent',
           [`${antCls}-cascader-input`]: {
             textAlign: 'start',
@@ -509,7 +509,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
     // Fix https://github.com/ant-design/ant-design/issues/5754
     [`&&-lg ${antCls}-select-single ${antCls}-select-selector`]: {
-      height: `${token.controlHeightLG}px`,
+      height: `${unit(token.controlHeightLG)}`,
 
       [`${antCls}-select-selection-item, ${antCls}-select-selection-placeholder`]: {
         // -2 is for the border size & override default
@@ -517,12 +517,12 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
       },
 
       [`${antCls}-select-selection-search-input`]: {
-        height: `${token.controlHeightLG}px`,
+        height: `${unit(token.controlHeightLG)}`,
       },
     },
 
     [`&&-sm ${antCls}-select-single ${antCls}-select-selector`]: {
-      height: `${token.controlHeightSM}px`,
+      height: `${unit(token.controlHeightSM)}`,
 
       [`${antCls}-select-selection-item, ${antCls}-select-selection-placeholder`]: {
         // -2 is for the border size & override default
@@ -530,7 +530,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
       },
 
       [`${antCls}-select-selection-search-input`]: {
-        height: `${token.controlHeightSM}px`,
+        height: `${unit(token.controlHeightSM)}`,
       },
     },
   };
@@ -596,7 +596,7 @@ const genAllowClearStyle = (token: InputToken): CSSObject => {
       },
 
       '&-has-suffix': {
-        margin: `0 ${token.inputAffixPadding}px`,
+        margin: `0 ${unit(token.inputAffixPadding)}`,
       },
     },
 

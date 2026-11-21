@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { GenerateStyle } from '../../theme/internal';
 import type { TableToken } from './index';
@@ -27,7 +28,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
   const halfInnerSize = checkboxSize / 2 - lineWidth;
   // must be odd number, unless it cannot align center
   const expandIconSize = halfInnerSize * 2 + lineWidth * 3;
-  const tableBorder = `${lineWidth}px ${lineType} ${tableBorderColor}`;
+  const tableBorder = `${unit(lineWidth)} ${lineType} ${tableBorderColor}`;
   const expandIconLineOffset = paddingXXS - lineWidth;
 
   return {
@@ -60,7 +61,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
         height: expandIconSize,
         padding: 0,
         color: 'inherit',
-        lineHeight: `${expandIconSize}px`,
+        lineHeight: `${unit(expandIconSize)}`,
         background: tableExpandIconBg,
         border: tableBorder,
         borderRadius,
@@ -142,8 +143,8 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
       // With fixed
       [`${componentCls}-expanded-row-fixed`]: {
         position: 'relative',
-        margin: `-${tablePaddingVertical}px -${tablePaddingHorizontal}px`,
-        padding: `${tablePaddingVertical}px ${tablePaddingHorizontal}px`,
+        margin: `-${unit(tablePaddingVertical)} -${unit(tablePaddingHorizontal)}`,
+        padding: `${unit(tablePaddingVertical)} ${unit(tablePaddingHorizontal)}`,
       },
     },
   };

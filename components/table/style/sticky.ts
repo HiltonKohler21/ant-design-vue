@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { GenerateStyle } from '../../theme/internal';
 import type { TableToken } from './index';
@@ -12,7 +13,7 @@ const genStickyStyle: GenerateStyle<TableToken, CSSObject> = token => {
     tableScrollBg,
     zIndexTableSticky,
   } = token;
-  const tableBorder = `${token.lineWidth}px ${token.lineType} ${token.tableBorderColor}`;
+  const tableBorder = `${unit(token.lineWidth)} ${token.lineType} ${token.tableBorderColor}`;
   return {
     [`${componentCls}-wrapper`]: {
       [`${componentCls}-sticky`]: {
@@ -25,7 +26,7 @@ const genStickyStyle: GenerateStyle<TableToken, CSSObject> = token => {
         '&-scroll': {
           position: 'sticky',
           bottom: 0,
-          height: `${tableScrollThumbSize}px !important`,
+          height: `${unit(tableScrollThumbSize)} !important`,
           zIndex: zIndexTableSticky,
           display: 'flex',
           alignItems: 'center',

@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { mergeToken, genComponentStyleHook } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -49,7 +50,7 @@ const genSharedBackTopStyle: GenerateStyle<BackTopToken> = token => {
       },
       [`${componentCls}-icon`]: {
         fontSize: backTopFontSize,
-        lineHeight: `${backTopSize}px`,
+        lineHeight: `${unit(backTopSize)}`,
       },
     },
   };
@@ -58,12 +59,12 @@ const genSharedBackTopStyle: GenerateStyle<BackTopToken> = token => {
 const genMediaBackTopStyle: GenerateStyle<BackTopToken> = token => {
   const { componentCls, screenMD, screenXS, backTopInlineEndMD, backTopInlineEndXS } = token;
   return {
-    [`@media (max-width: ${screenMD}px)`]: {
+    [`@media (max-width: ${unit(screenMD)})`]: {
       [componentCls]: {
         insetInlineEnd: backTopInlineEndMD,
       },
     },
-    [`@media (max-width: ${screenXS}px)`]: {
+    [`@media (max-width: ${unit(screenXS)})`]: {
       [componentCls]: {
         insetInlineEnd: backTopInlineEndXS,
       },

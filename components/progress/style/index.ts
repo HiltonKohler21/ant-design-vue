@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import { Keyframes } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
@@ -11,8 +12,8 @@ interface ProgressToken extends FullToken<'Progress'> {
   progressInfoTextColor: string;
   progressRemainingColor: string;
   progressDefaultColor: string;
-  progressStepMinWidth: number;
-  progressStepMarginInlineEnd: number;
+  progressStepMinWidth: number | string;
+  progressStepMarginInlineEnd: number | string;
   progressActiveMotionDuration: string;
 }
 
@@ -59,8 +60,8 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
 
       [`&${progressCls}-show-info`]: {
         [`${progressCls}-outer`]: {
-          marginInlineEnd: `calc(-2em - ${token.marginXS}px)`,
-          paddingInlineEnd: `calc(2em + ${token.paddingXS}px)`,
+          marginInlineEnd: `calc(-2em - ${unit(token.marginXS)})`,
+          paddingInlineEnd: `calc(2em + ${unit(token.paddingXS)})`,
         },
       },
 
@@ -264,7 +265,7 @@ const genSmallLine: GenerateStyle<ProgressToken> = (token: ProgressToken): CSSOb
 };
 
 export default genComponentStyleHook('Progress', token => {
-  const progressStepMarginInlineEnd = token.marginXXS / 2;
+  const progressStepMarginInlineEnd = token.calc(token.marginXXS).div(2).equal();
 
   const progressToken = mergeToken<ProgressToken>(token, {
     progressLineRadius: 100, // magic for capsule shape, should be a very large number

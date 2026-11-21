@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -43,7 +44,7 @@ const genSharedAnchorStyle: GenerateStyle<AnchorToken> = (token): CSSObject => {
 
         [`${componentCls}-link`]: {
           paddingBlock: token.anchorPaddingBlock,
-          paddingInline: `${token.anchorPaddingInline}px 0`,
+          paddingInline: `${unit(token.anchorPaddingInline)} 0`,
 
           '&-title': {
             ...textEllipsis,
@@ -79,7 +80,7 @@ const genSharedAnchorStyle: GenerateStyle<AnchorToken> = (token): CSSObject => {
             },
             top: 0,
             height: '100%',
-            borderInlineStart: `${lineWidthBold}px ${lineType} ${colorSplit}`,
+            borderInlineStart: `${unit(lineWidthBold)} ${lineType} ${colorSplit}`,
             content: '" "',
           },
 

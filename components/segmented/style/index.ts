@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -75,7 +76,7 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         [`${componentCls}-thumb`]: {
           width: '100%',
           height: 0,
-          padding: `0 ${token.paddingXXS}px`,
+          padding: `0 ${unit(token.paddingXXS)}`,
         },
       },
 
@@ -123,9 +124,9 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         },
 
         '&-label': {
-          minHeight: token.controlHeight - token.segmentedContainerPadding * 2,
-          lineHeight: `${token.controlHeight - token.segmentedContainerPadding * 2}px`,
-          padding: `0 ${token.segmentedPaddingHorizontal}px`,
+          minHeight: token.calc(token.controlHeight).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          lineHeight: token.calc(token.controlHeight).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          padding: `0 ${unit(token.segmentedPaddingHorizontal)}`,
           ...segmentedTextEllipsisCss,
         },
 
@@ -154,7 +155,7 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         insetInlineStart: 0,
         width: 0,
         height: '100%',
-        padding: `${token.paddingXXS}px 0`,
+        padding: `${unit(token.paddingXXS)} 0`,
         borderRadius: token.borderRadiusSM,
 
         [`& ~ ${componentCls}-item:not(${componentCls}-item-selected):not(${componentCls}-item-disabled)::after`]:
@@ -167,9 +168,9 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
       [`&${componentCls}-lg`]: {
         borderRadius: token.borderRadiusLG,
         [`${componentCls}-item-label`]: {
-          minHeight: token.controlHeightLG - token.segmentedContainerPadding * 2,
-          lineHeight: `${token.controlHeightLG - token.segmentedContainerPadding * 2}px`,
-          padding: `0 ${token.segmentedPaddingHorizontal}px`,
+          minHeight: token.calc(token.controlHeightLG).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          lineHeight: token.calc(token.controlHeightLG).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          padding: `0 ${unit(token.segmentedPaddingHorizontal)}`,
           fontSize: token.fontSizeLG,
         },
         [`${componentCls}-item, ${componentCls}-thumb`]: {
@@ -187,9 +188,9 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
       [`&${componentCls}-sm`]: {
         borderRadius: token.borderRadiusSM,
         [`${componentCls}-item-label`]: {
-          minHeight: token.controlHeightSM - token.segmentedContainerPadding * 2,
-          lineHeight: `${token.controlHeightSM - token.segmentedContainerPadding * 2}px`,
-          padding: `0 ${token.segmentedPaddingHorizontalSM}px`,
+          minHeight: token.calc(token.controlHeightSM).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          lineHeight: token.calc(token.controlHeightSM).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          padding: `0 ${unit(token.segmentedPaddingHorizontalSM)}`,
         },
         [`${componentCls}-item, ${componentCls}-thumb`]: {
           borderRadius: token.borderRadiusXS,
@@ -213,7 +214,6 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
 export default genComponentStyleHook('Segmented', token => {
   const {
     lineWidthBold,
-    lineWidth,
     colorTextLabel,
     colorText,
     colorFillSecondary,
@@ -224,8 +224,8 @@ export default genComponentStyleHook('Segmented', token => {
   // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
   const rawToken: any = (token as any)._realToken ?? token;
   const segmentedToken = mergeToken<SegmentedToken>(token, {
-    segmentedPaddingHorizontal: rawToken.controlPaddingHorizontal - lineWidth,
-    segmentedPaddingHorizontalSM: rawToken.controlPaddingHorizontalSM - lineWidth,
+    segmentedPaddingHorizontal: rawToken.controlPaddingHorizontal - rawToken.lineWidth,
+    segmentedPaddingHorizontalSM: rawToken.controlPaddingHorizontalSM - rawToken.lineWidth,
     segmentedContainerPadding: lineWidthBold,
     labelColor: colorTextLabel,
     labelColorHover: colorText,

@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { getStyle as getCheckboxStyle } from '../../checkbox/style';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook } from '../../theme/internal';
@@ -86,7 +87,7 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
               '-ms-overflow-style': '-ms-autohiding-scrollbar', // https://github.com/ant-design/ant-design/issues/11857
 
               '&:not(:last-child)': {
-                borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+                borderInlineEnd: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
               },
 
               '&-item': {
@@ -94,7 +95,7 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
                 display: 'flex',
                 flexWrap: 'nowrap',
                 alignItems: 'center',
-                padding: `${itemPaddingVertical}px ${token.paddingSM}px`,
+                padding: `${unit(itemPaddingVertical)} ${unit(token.paddingSM)}`,
                 lineHeight: token.lineHeight,
                 cursor: 'pointer',
                 transition: `all ${token.motionDurationMid}`,

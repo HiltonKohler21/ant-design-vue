@@ -77,10 +77,10 @@ const genStepsNavStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           display: 'inline-block',
           width: token.fontSizeIcon,
           height: token.fontSizeIcon,
-          borderTop: `${token.lineWidth}px ${token.lineType} ${stepsNavArrowColor}`,
+          borderTop: `${unit(token.lineWidth)} ${token.lineType} ${stepsNavArrowColor}`,
           borderBottom: 'none',
           borderInlineStart: 'none',
-          borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${stepsNavArrowColor}`,
+          borderInlineEnd: `${unit(token.lineWidth)} ${token.lineType} ${stepsNavArrowColor}`,
           transform: 'translateY(-50%) translateX(-50%) rotate(45deg)',
           content: '""',
         },
@@ -118,7 +118,7 @@ const genStepsNavStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           insetInlineStart: 'unset',
           display: 'block',
           width: token.calc(token.lineWidth).mul(3).equal(),
-          height: `calc(100% - ${token.marginLG}px)`,
+          height: `calc(100% - ${unit(token.marginLG)})`,
         },
 
         '&::after': {

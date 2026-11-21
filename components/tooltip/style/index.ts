@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { initZoomMotion } from '../../style/motion';
 import type { FullToken, GenerateStyle, UseComponentStyleResult } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -34,6 +35,9 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
     tooltipRadiusOuter,
   } = token;
 
+  // Math.min 需要真实数值（cssVar 模式下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
+
   return [
     {
       [componentCls]: {
@@ -54,7 +58,7 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
         [`${componentCls}-inner`]: {
           minWidth: controlHeight,
           minHeight: controlHeight,
-          padding: `${paddingSM / 2}px ${paddingXS}px`,
+          padding: `${unit(token.calc(paddingSM).div(2).equal())} ${unit(paddingXS)}`,
           color: tooltipColor,
           textAlign: 'start',
           textDecoration: 'none',
@@ -74,7 +78,7 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
           `&-placement-rightBottom`,
         ].join(',')]: {
           [`${componentCls}-inner`]: {
-            borderRadius: Math.min(tooltipBorderRadius, MAX_VERTICAL_CONTENT_RADIUS),
+            borderRadius: Math.min(rawToken.tooltipBorderRadius ?? rawToken.borderRadius, MAX_VERTICAL_CONTENT_RADIUS),
           },
         },
 

@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { Keyframes } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -272,7 +273,7 @@ export default genComponentStyleHook(
       notificationPaddingVertical,
       notificationPaddingHorizontal,
       // index.less variables
-      notificationPadding: `${token.paddingMD}px ${token.paddingContentHorizontalLG}px`,
+      notificationPadding: `${unit(token.paddingMD)} ${unit(token.paddingContentHorizontalLG)}`,
       notificationMarginBottom: token.margin,
       notificationMarginEdge: token.marginLG,
       animationMaxHeight: 150,

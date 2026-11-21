@@ -21,7 +21,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         flex: 'none',
 
         '&-container': {
-          padding: `${containerPaddingTop}px ${token.paddingXXS}px 0`,
+          padding: `${unit(containerPaddingTop)} ${unit(token.paddingXXS)} 0`,
           margin: `0 ${unit(token.calc(token.marginXXS).div(2).equal())}`,
           borderRadius: token.borderRadiusSM,
           cursor: 'pointer',
@@ -37,7 +37,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         '&-icon': {
           width: inlineDotSize,
           height: inlineDotSize,
-          marginInlineStart: `calc(50% - ${inlineDotSize / 2}px)`,
+          marginInlineStart: `calc(50% - ${unit(token.calc(token.inlineDotSize).div(2).equal())})`,
           [`> ${componentCls}-icon`]: {
             top: 0,
           },
@@ -63,7 +63,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
 
         '&-tail': {
           marginInlineStart: 0,
-          top: containerPaddingTop + inlineDotSize / 2,
+          top: token.calc(containerPaddingTop).add(token.calc(token.inlineDotSize).div(2).equal()).equal(),
           transform: `translateY(-50%)`,
           '&:after': {
             width: '100%',
@@ -86,7 +86,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         '&-wait': {
           [`${componentCls}-item-icon ${componentCls}-icon ${componentCls}-icon-dot`]: {
             backgroundColor: token.colorBorderBg,
-            border: `${token.lineWidth}px ${token.lineType} ${inlineTailColor}`,
+            border: `${unit(token.lineWidth)} ${token.lineType} ${inlineTailColor}`,
           },
           ...titleStyle,
         },
@@ -96,7 +96,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           },
           [`${componentCls}-item-icon ${componentCls}-icon ${componentCls}-icon-dot`]: {
             backgroundColor: inlineTailColor,
-            border: `${token.lineWidth}px ${token.lineType} ${inlineTailColor}`,
+            border: `${unit(token.lineWidth)} ${token.lineType} ${inlineTailColor}`,
           },
           ...titleStyle,
         },
@@ -105,7 +105,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           [`${componentCls}-item-icon`]: {
             width: inlineDotSize,
             height: inlineDotSize,
-            marginInlineStart: `calc(50% - ${inlineDotSize / 2}px)`,
+            marginInlineStart: `calc(50% - ${unit(token.calc(token.inlineDotSize).div(2).equal())})`,
             top: 0,
           },
           ...titleStyle,

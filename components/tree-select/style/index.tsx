@@ -21,7 +21,7 @@ const genBaseStyle: GenerateStyle<TreeSelectToken> = token => {
     {
       [`${componentCls}-dropdown`]: [
         {
-          padding: `${token.paddingXS}px ${unit(token.calc(token.paddingXS).div(2).equal())}`,
+          padding: `${unit(token.paddingXS)} ${unit(token.calc(token.paddingXS).div(2).equal())}`,
         },
 
         // ====================== Tree ======================

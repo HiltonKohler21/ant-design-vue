@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import { genCollapseMotion, zoomIn } from '../../style/motion';
 import type { AliasToken, FullToken, GenerateStyle } from '../../theme/internal';
@@ -20,7 +21,7 @@ const resetForm = (token: AliasToken): CSSObject => ({
     fontSize: token.fontSizeLG,
     lineHeight: 'inherit',
     border: 0,
-    borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+    borderBottom: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
   },
 
   label: {
@@ -56,7 +57,7 @@ const resetForm = (token: AliasToken): CSSObject => ({
   input[type='radio']:focus,
   input[type='checkbox']:focus`]: {
     outline: 0,
-    boxShadow: `0 0 0 ${token.controlOutlineWidth}px ${token.controlOutline}`,
+    boxShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
   },
 
   // Adjust output element
@@ -387,7 +388,7 @@ const genInlineStyle: GenerateStyle<FormToken> = token => {
 
 const makeVerticalLayoutLabel = (token: FormToken): CSSObject => ({
   margin: 0,
-  padding: `0 0 ${token.paddingXS}px`,
+  padding: `0 0 ${unit(token.paddingXS)}`,
   whiteSpace: 'initial',
   textAlign: 'start',
 
@@ -443,7 +444,7 @@ const genVerticalStyle: GenerateStyle<FormToken> = token => {
       .${rootPrefixCls}-col-24${formItemCls}-label,
       .${rootPrefixCls}-col-xl-24${formItemCls}-label`]: makeVerticalLayoutLabel(token),
 
-    [`@media (max-width: ${token.screenXSMax}px)`]: [
+    [`@media (max-width: ${unit(token.screenXSMax)})`]: [
       makeVerticalLayout(token),
       {
         [componentCls]: {
@@ -452,19 +453,19 @@ const genVerticalStyle: GenerateStyle<FormToken> = token => {
       },
     ],
 
-    [`@media (max-width: ${token.screenSMMax}px)`]: {
+    [`@media (max-width: ${unit(token.screenSMMax)})`]: {
       [componentCls]: {
         [`.${rootPrefixCls}-col-sm-24${formItemCls}-label`]: makeVerticalLayoutLabel(token),
       },
     },
 
-    [`@media (max-width: ${token.screenMDMax}px)`]: {
+    [`@media (max-width: ${unit(token.screenMDMax)})`]: {
       [componentCls]: {
         [`.${rootPrefixCls}-col-md-24${formItemCls}-label`]: makeVerticalLayoutLabel(token),
       },
     },
 
-    [`@media (max-width: ${token.screenLGMax}px)`]: {
+    [`@media (max-width: ${unit(token.screenLGMax)})`]: {
       [componentCls]: {
         [`.${rootPrefixCls}-col-lg-24${formItemCls}-label`]: makeVerticalLayoutLabel(token),
       },

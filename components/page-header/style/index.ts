@@ -24,7 +24,7 @@ const genPageHeaderStyle: GenerateStyle<PageHeaderToken, CSSObject> = token => {
     [componentCls]: {
       ...resetComponent(token),
       position: 'relative',
-      padding: `${token.pageHeaderPaddingVertical}px ${token.pageHeaderPadding}px`,
+      padding: `${unit(token.pageHeaderPaddingVertical)} ${unit(token.pageHeaderPadding)}`,
       backgroundColor: token.colorBgContainer,
 
       [`&${componentCls}-ghost`]: {
@@ -74,7 +74,7 @@ const genPageHeaderStyle: GenerateStyle<PageHeaderToken, CSSObject> = token => {
           color: token.colorTextHeading,
           fontWeight: 600,
           fontSize: token.pageHeaderHeadingTitle,
-          lineHeight: `${token.controlHeight}px`,
+          lineHeight: `${unit(token.controlHeight)}`,
           ...textEllipsis,
         },
 

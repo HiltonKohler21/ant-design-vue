@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSInterpolation } from '../../_util/cssinjs';
 import { genFocusOutline } from '../../style';
 import type { MenuToken } from '.';
@@ -174,7 +175,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
             position: 'absolute',
             insetInline: menuItemPaddingInline,
             bottom: 0,
-            borderBottom: `${colorActiveBarHeight}px solid transparent`,
+            borderBottom: `${unit(colorActiveBarHeight)} solid transparent`,
             transition: `border-color ${motionDurationSlow} ${motionEaseInOut}`,
             content: '""',
           },
@@ -200,7 +201,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
       //
       [`&${componentCls}-root`]: {
         [`&${componentCls}-inline, &${componentCls}-vertical`]: {
-          borderInlineEnd: `${colorActiveBarBorderSize}px ${lineType} ${colorSplit}`,
+          borderInlineEnd: `${unit(colorActiveBarBorderSize)} ${lineType} ${colorSplit}`,
         },
       },
 
@@ -215,7 +216,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
         [`${componentCls}-item, ${componentCls}-submenu-title`]:
           colorActiveBarBorderSize && colorActiveBarWidth
             ? {
-                width: `calc(100% + ${colorActiveBarBorderSize}px)`,
+                width: `calc(100% + ${unit(colorActiveBarBorderSize)})`,
               }
             : {},
 
@@ -226,7 +227,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
             position: 'absolute',
             insetBlock: 0,
             insetInlineEnd: 0,
-            borderInlineEnd: `${colorActiveBarWidth}px solid ${colorItemTextSelected}`,
+            borderInlineEnd: `${unit(colorActiveBarWidth)} solid ${colorItemTextSelected}`,
             transform: 'scaleY(0.0001)',
             opacity: 0,
             transition: [

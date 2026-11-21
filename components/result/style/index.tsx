@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -37,7 +38,7 @@ const genBaseStyle: GenerateStyle<ResultToken> = (token): CSSObject => {
   return {
     // Result
     [componentCls]: {
-      padding: `${paddingLG * 2}px ${paddingXL}px`,
+      padding: `${unit(token.calc(paddingLG).mul(2).equal())} ${unit(paddingXL)}`,
 
       // RTL
       '&-rtl': {
@@ -78,7 +79,7 @@ const genBaseStyle: GenerateStyle<ResultToken> = (token): CSSObject => {
 
     [`${componentCls} ${componentCls}-content`]: {
       marginTop: paddingLG,
-      padding: `${paddingLG}px ${padding * 2.5}px`,
+      padding: `${unit(paddingLG)} ${unit(token.calc(padding).mul(2.5).equal())}`,
       backgroundColor: token.colorFillAlter,
     },
 
@@ -128,9 +129,11 @@ export default genComponentStyleHook(
   'Result',
   token => {
     const { paddingLG, fontSizeHeading3 } = token;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
 
     const resultSubtitleFontSize = token.fontSize;
-    const resultExtraMargin = `${paddingLG}px 0 0 0`;
+    const resultExtraMargin = `${unit(paddingLG)} 0 0 0`;
 
     const resultInfoIconColor = token.colorInfo;
     const resultErrorIconColor = token.colorError;
@@ -140,7 +143,7 @@ export default genComponentStyleHook(
     const resultToken = mergeToken<ResultToken>(token, {
       resultTitleFontSize: fontSizeHeading3,
       resultSubtitleFontSize,
-      resultIconFontSize: fontSizeHeading3 * 3,
+      resultIconFontSize: rawToken.fontSizeHeading3 * 3,
       resultExtraMargin,
       resultInfoIconColor,
       resultErrorIconColor,

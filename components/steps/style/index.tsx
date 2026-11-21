@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -150,10 +151,10 @@ const genStepsItemStyle: GenerateStyle<StepsToken, CSSObject> = token => {
       marginInlineEnd: token.marginXS,
       fontSize: token.stepsIconFontSize,
       fontFamily: token.fontFamily,
-      lineHeight: `${token.stepsIconSize}px`,
+      lineHeight: `${unit(token.stepsIconSize)}`,
       textAlign: 'center',
       borderRadius: token.stepsIconSize,
-      border: `${token.lineWidth}px ${token.lineType} transparent`,
+      border: `${unit(token.lineWidth)} ${token.lineType} transparent`,
       transition: `background-color ${motionDurationSlow}, border-color ${motionDurationSlow}`,
       [`${componentCls}-icon`]: {
         position: 'relative',
@@ -164,7 +165,7 @@ const genStepsItemStyle: GenerateStyle<StepsToken, CSSObject> = token => {
     },
     [`${stepsItemCls}-tail`]: {
       position: 'absolute',
-      top: token.stepsIconSize / 2 - token.paddingXXS,
+      top: token.calc(token.stepsIconSize).div(2).sub(token.paddingXXS).equal(),
       insetInlineStart: 0,
       width: '100%',
 
@@ -184,7 +185,7 @@ const genStepsItemStyle: GenerateStyle<StepsToken, CSSObject> = token => {
       paddingInlineEnd: token.padding,
       color: token.colorText,
       fontSize: token.fontSizeLG,
-      lineHeight: `${token.stepsTitleLineHeight}px`,
+      lineHeight: `${unit(token.stepsTitleLineHeight)}`,
 
       '&::after': {
         position: 'absolute',
@@ -346,6 +347,8 @@ export default genComponentStyleHook(
       colorBorderSecondary,
     } = token;
 
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const stepsIconSize = token.controlHeight;
     const processTailColor = token.colorSplit;
 
@@ -356,13 +359,13 @@ export default genComponentStyleHook(
       stepsIconSize,
       stepsIconCustomSize: stepsIconSize,
       stepsIconCustomTop: 0,
-      stepsIconCustomFontSize: controlHeightLG / 2,
+      stepsIconCustomFontSize: rawToken.controlHeightLG / 2,
       stepsIconTop: -0.5, // magic for ui experience
       stepsIconFontSize: fontSize,
       stepsTitleLineHeight: controlHeight,
       stepsSmallIconSize: fontSizeHeading3,
-      stepsDotSize: controlHeight / 4,
-      stepsCurrentDotSize: controlHeightLG / 4,
+      stepsDotSize: rawToken.controlHeight / 4,
+      stepsCurrentDotSize: rawToken.controlHeightLG / 4,
       stepsNavContentMaxWidth: 'auto',
       // Steps component less variable
       processIconColor: colorTextLightSolid,

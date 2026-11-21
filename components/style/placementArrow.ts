@@ -37,26 +37,32 @@ export default function getArrowStyle<Token extends TokenWithCommonCls<AliasToke
   const {
     componentCls,
     sizePopupArrow,
-    marginXXS,
     borderRadiusXS,
-    borderRadiusOuter,
     boxShadowPopoverArrow,
   } = token;
+
+  // 箭头几何是纯数值计算（cssVar 模式下 token 值是 var() 字符串），
+  // 因此统一从 _realToken 取原始数值。
+  const rawToken: any = (token as any)._realToken ?? token;
 
   const {
     colorBg,
     showArrowCls,
-    contentRadius = token.borderRadiusLG,
+    contentRadius = rawToken.borderRadiusLG,
     limitVerticalRadius,
   } = options;
 
+  const numericContentRadius =
+    typeof contentRadius === 'number' ? contentRadius : rawToken.borderRadiusLG;
+  const arrowSize = typeof sizePopupArrow === 'number' ? sizePopupArrow : rawToken.sizePopupArrow;
+
   const { dropdownArrowOffsetVertical, dropdownArrowOffset } = getArrowOffset({
-    sizePopupArrow,
-    contentRadius,
-    borderRadiusOuter,
+    sizePopupArrow: rawToken.sizePopupArrow,
+    contentRadius: numericContentRadius,
+    borderRadiusOuter: rawToken.borderRadiusOuter,
     limitVerticalRadius,
   });
-  const dropdownArrowDistance = sizePopupArrow / 2 + marginXXS;
+  const dropdownArrowDistance = rawToken.sizePopupArrow / 2 + rawToken.marginXXS;
 
   return {
     [componentCls]: {
@@ -68,9 +74,9 @@ export default function getArrowStyle<Token extends TokenWithCommonCls<AliasToke
           display: 'block',
 
           ...roundedArrow(
-            sizePopupArrow,
-            borderRadiusXS,
-            borderRadiusOuter,
+            arrowSize,
+            typeof borderRadiusXS === 'number' ? borderRadiusXS : rawToken.borderRadiusXS,
+            rawToken.borderRadiusOuter,
             colorBg,
             boxShadowPopoverArrow,
           ),

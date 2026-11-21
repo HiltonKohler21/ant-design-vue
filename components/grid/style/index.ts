@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -145,7 +146,7 @@ const genGridMediaStyle = (
   screenSize: number,
   sizeCls: string,
 ): CSSObject => ({
-  [`@media (min-width: ${screenSize}px)`]: {
+  [`@media (min-width: ${unit(screenSize)})`]: {
     ...genGridStyle(token, sizeCls),
   },
 });

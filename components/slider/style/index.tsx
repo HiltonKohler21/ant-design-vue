@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { CSSProperties } from 'vue';
 import { TinyColor } from '@ctrl/tinycolor';
@@ -38,13 +39,13 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
 
       position: 'relative',
       height: controlSize,
-      margin: `${marginPart}px ${marginFull}px`,
+      margin: `${unit(marginPart)} ${unit(marginFull)}`,
       padding: 0,
       cursor: 'pointer',
       touchAction: 'none',
 
       [`&-vertical`]: {
-        margin: `${marginFull}px ${marginPart}px`,
+        margin: `${unit(marginFull)} ${unit(marginPart)}`,
       },
 
       [`${componentCls}-rail`]: {
@@ -75,7 +76,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         },
 
         [`${componentCls}-handle::after`]: {
-          boxShadow: `0 0 0 ${token.handleLineWidth}px ${token.colorPrimaryBorderHover}`,
+          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${token.colorPrimaryBorderHover}`,
         },
 
         [`${componentCls}-dot-active`]: {
@@ -99,8 +100,14 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           position: 'absolute',
           insetInlineStart: token.calc(token.handleLineWidth).mul(-1).equal(),
           insetBlockStart: token.calc(token.handleLineWidth).mul(-1).equal(),
-          width: token.handleSize + token.handleLineWidth * 2,
-          height: token.handleSize + token.handleLineWidth * 2,
+          width: token
+            .calc(token.handleSize)
+            .add(token.calc(token.handleLineWidth).mul(2).equal())
+            .equal(),
+          height: token
+            .calc(token.handleSize)
+            .add(token.calc(token.handleLineWidth).mul(2).equal())
+            .equal(),
           backgroundColor: 'transparent',
         },
 
@@ -112,7 +119,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           width: token.handleSize,
           height: token.handleSize,
           backgroundColor: token.colorBgElevated,
-          boxShadow: `0 0 0 ${token.handleLineWidth}px ${token.colorPrimaryBorder}`,
+          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${token.colorPrimaryBorder}`,
           borderRadius: '50%',
           cursor: 'pointer',
           transition: `
@@ -126,24 +133,52 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
 
         '&:hover, &:active, &:focus': {
           '&::before': {
-            insetInlineStart: -(
-              (token.handleSizeHover - token.handleSize) / 2 +
-              token.handleLineWidthHover
-            ),
-            insetBlockStart: -(
-              (token.handleSizeHover - token.handleSize) / 2 +
-              token.handleLineWidthHover
-            ),
-            width: token.handleSizeHover + token.handleLineWidthHover * 2,
-            height: token.handleSizeHover + token.handleLineWidthHover * 2,
+            insetInlineStart: token
+              .calc(
+                token
+                  .calc(token.handleSizeHover)
+                  .sub(token.handleSize)
+                  .equal(),
+              )
+              .div(2)
+              .add(token.handleLineWidthHover)
+              .mul(-1)
+              .equal(),
+            insetBlockStart: token
+              .calc(
+                token
+                  .calc(token.handleSizeHover)
+                  .sub(token.handleSize)
+                  .equal(),
+              )
+              .div(2)
+              .add(token.handleLineWidthHover)
+              .mul(-1)
+              .equal(),
+            width: token
+              .calc(token.handleSizeHover)
+              .add(token.calc(token.handleLineWidthHover).mul(2).equal())
+              .equal(),
+            height: token
+              .calc(token.handleSizeHover)
+              .add(token.calc(token.handleLineWidthHover).mul(2).equal())
+              .equal(),
           },
 
           '&::after': {
-            boxShadow: `0 0 0 ${token.handleLineWidthHover}px ${token.colorPrimary}`,
+            boxShadow: `0 0 0 ${unit(token.handleLineWidthHover)} ${token.colorPrimary}`,
             width: token.handleSizeHover,
             height: token.handleSizeHover,
-            insetInlineStart: (token.handleSize - token.handleSizeHover) / 2,
-            insetBlockStart: (token.handleSize - token.handleSizeHover) / 2,
+            insetInlineStart: token
+              .calc(token.handleSize)
+              .sub(token.handleSizeHover)
+              .div(2)
+              .equal(),
+            insetBlockStart: token
+              .calc(token.handleSize)
+              .sub(token.handleSizeHover)
+              .div(2)
+              .equal(),
           },
         },
       },
@@ -178,7 +213,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         width: dotSize,
         height: dotSize,
         backgroundColor: token.colorBgElevated,
-        border: `${token.handleLineWidth}px solid ${token.colorBorderSecondary}`,
+        border: `${unit(token.handleLineWidth)} solid ${token.colorBorderSecondary}`,
         borderRadius: '50%',
         cursor: 'pointer',
         transition: `border-color ${token.motionDurationSlow}`,
@@ -214,7 +249,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           cursor: 'not-allowed',
           width: token.handleSize,
           height: token.handleSize,
-          boxShadow: `0 0 0 ${token.handleLineWidth}px ${new TinyColor(token.colorTextDisabled)
+          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${new TinyColor(token.colorTextDisabled)
             .onBackground(token.colorBgContainer)
             .toHexString()}`,
           insetInlineStart: 0,
@@ -244,7 +279,7 @@ const genDirectionStyle = (token: SliderToken, horizontal: boolean): CSSObject =
 
   return {
     [railPadding]: railSize,
-    [part]: railSize * 3,
+    [part]: token.calc(railSize).mul(3).equal(),
 
     [`${componentCls}-rail`]: {
       [full]: '100%',
@@ -256,7 +291,11 @@ const genDirectionStyle = (token: SliderToken, horizontal: boolean): CSSObject =
     },
 
     [`${componentCls}-handle`]: {
-      [handlePos]: (railSize * 3 - handleSize) / 2,
+      [handlePos]: token
+        .calc(token.calc(railSize).mul(3).equal())
+        .sub(handleSize)
+        .div(2)
+        .equal(),
     },
 
     [`${componentCls}-mark`]: {
@@ -278,7 +317,7 @@ const genDirectionStyle = (token: SliderToken, horizontal: boolean): CSSObject =
 
     [`${componentCls}-dot`]: {
       position: 'absolute',
-      [handlePos]: (railSize - dotSize) / 2,
+      [handlePos]: token.calc(railSize).sub(dotSize).div(2).equal(),
     },
   };
 };

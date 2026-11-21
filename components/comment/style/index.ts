@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 
@@ -143,7 +144,7 @@ const genBaseStyle: GenerateStyle<CommentToken> = token => {
 export default genComponentStyleHook('Comment', token => {
   const commentToken = mergeToken<CommentToken>(token, {
     commentBg: 'inherit',
-    commentPaddingBase: `${token.paddingMD}px 0`,
+    commentPaddingBase: `${unit(token.paddingMD)} 0`,
     commentNestIndent: `44px`,
     commentFontSizeBase: token.fontSize,
     commentFontSizeSm: token.fontSizeSM,

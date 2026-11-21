@@ -77,12 +77,12 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
           position: 'absolute',
           top: '50%',
           width: '100%',
-          paddingTop: (token.spinDotSize - token.fontSize) / 2 + 2,
+          paddingTop: token.calc(token.spinDotSize).sub(token.fontSize).div(2).add(2).equal(),
           textShadow: `0 1px 2px ${token.colorBgContainer}`, // FIXME: shadow
         },
 
         [`&${token.componentCls}-show-text ${token.componentCls}-dot`]: {
-          marginTop: -(token.spinDotSize / 2) - 10,
+          marginTop: token.calc(token.spinDotSize).div(2).add(10).mul(-1).equal(),
         },
 
         '&-sm': {
@@ -90,22 +90,22 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
             margin: token.calc(token.spinDotSizeSM).div(2).mul(-1).equal(),
           },
           [`${token.componentCls}-text`]: {
-            paddingTop: (token.spinDotSizeSM - token.fontSize) / 2 + 2,
+            paddingTop: token.calc(token.spinDotSizeSM).sub(token.fontSize).div(2).add(2).equal(),
           },
           [`&${token.componentCls}-show-text ${token.componentCls}-dot`]: {
-            marginTop: -(token.spinDotSizeSM / 2) - 10,
+            marginTop: token.calc(token.spinDotSizeSM).div(2).add(10).mul(-1).equal(),
           },
         },
 
         '&-lg': {
           [`${token.componentCls}-dot`]: {
-            margin: -(token.spinDotSizeLG / 2),
+            margin: token.calc(token.spinDotSizeLG).div(2).mul(-1).equal(),
           },
           [`${token.componentCls}-text`]: {
-            paddingTop: (token.spinDotSizeLG - token.fontSize) / 2 + 2,
+            paddingTop: token.calc(token.spinDotSizeLG).sub(token.fontSize).div(2).add(2).equal(),
           },
           [`&${token.componentCls}-show-text ${token.componentCls}-dot`]: {
-            marginTop: -(token.spinDotSizeLG / 2) - 10,
+            marginTop: token.calc(token.spinDotSizeLG).div(2).add(10).mul(-1).equal(),
           },
         },
       },
@@ -162,8 +162,8 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
       '&-item': {
         position: 'absolute',
         display: 'block',
-        width: (token.spinDotSize - token.marginXXS / 2) / 2,
-        height: (token.spinDotSize - token.marginXXS / 2) / 2,
+        width: token.calc(token.spinDotSize).sub(token.calc(token.marginXXS).div(2).equal()).div(2).equal(),
+        height: token.calc(token.spinDotSize).sub(token.calc(token.marginXXS).div(2).equal()).div(2).equal(),
         backgroundColor: token.colorPrimary,
         borderRadius: '100%',
         transform: 'scale(0.75)',
@@ -216,8 +216,8 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
       fontSize: token.spinDotSizeSM,
 
       i: {
-        width: (token.spinDotSizeSM - token.marginXXS / 2) / 2,
-        height: (token.spinDotSizeSM - token.marginXXS / 2) / 2,
+        width: token.calc(token.spinDotSizeSM).sub(token.calc(token.marginXXS).div(2).equal()).div(2).equal(),
+        height: token.calc(token.spinDotSizeSM).sub(token.calc(token.marginXXS).div(2).equal()).div(2).equal(),
       },
     },
 
@@ -226,8 +226,8 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
       fontSize: token.spinDotSizeLG,
 
       i: {
-        width: (token.spinDotSizeLG - token.marginXXS) / 2,
-        height: (token.spinDotSizeLG - token.marginXXS) / 2,
+        width: token.calc(token.spinDotSizeLG).sub(token.marginXXS).div(2).equal(),
+        height: token.calc(token.spinDotSizeLG).sub(token.marginXXS).div(2).equal(),
       },
     },
 

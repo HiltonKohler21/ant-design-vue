@@ -1,3 +1,4 @@
+import { unit } from '../_util/cssinjs';
 /* eslint-disable import/prefer-default-export */
 import type { CSSObject } from '../_util/cssinjs';
 import type { DerivativeToken } from '../theme/internal';
@@ -127,7 +128,7 @@ export const genCommonStyle = (token: DerivativeToken, componentPrefixCls: strin
 };
 
 export const genFocusOutline = (token: DerivativeToken): CSSObject => ({
-  outline: `${token.lineWidthBold}px solid ${token.colorPrimaryBorder}`,
+  outline: `${unit(token.lineWidthBold)} solid ${token.colorPrimaryBorder}`,
   outlineOffset: 1,
   transition: 'outline-offset 0s, outline 0s',
 });

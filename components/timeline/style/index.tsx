@@ -35,9 +35,13 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         '&-tail': {
           position: 'absolute',
           insetBlockStart: token.timeLineItemHeadSize,
-          insetInlineStart: (token.timeLineItemHeadSize - token.timeLineItemTailWidth) / 2,
-          height: `calc(100% - ${token.timeLineItemHeadSize}px)`,
-          borderInlineStart: `${token.timeLineItemTailWidth}px ${token.lineType} ${token.colorSplit}`,
+          insetInlineStart: token
+            .calc(token.timeLineItemHeadSize)
+            .sub(token.timeLineItemTailWidth)
+            .div(2)
+            .equal(),
+          height: `calc(100% - ${unit(token.timeLineItemHeadSize)})`,
+          borderInlineStart: `${unit(token.timeLineItemTailWidth)} ${token.lineType} ${token.colorSplit}`,
         },
 
         '&-pending': {
@@ -56,7 +60,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           width: token.timeLineItemHeadSize,
           height: token.timeLineItemHeadSize,
           backgroundColor: token.colorBgContainer,
-          border: `${token.timeLineHeadBorderWidth}px ${token.lineType} transparent`,
+          border: `${unit(token.timeLineHeadBorderWidth)} ${token.lineType} transparent`,
           borderRadius: '50%',
 
           '&-blue': {
@@ -97,7 +101,12 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
 
         '&-content': {
           position: 'relative',
-          insetBlockStart: -(token.fontSize * token.lineHeight - token.fontSize) + token.lineWidth,
+          insetBlockStart: token
+            .calc(token.calc(token.fontSize).mul(token.lineHeight).equal())
+            .sub(token.fontSize)
+            .add(token.lineWidth)
+            .mul(-1)
+            .equal(),
           marginInlineStart: token.calc(token.margin).add(token.timeLineItemHeadSize).equal(),
           marginInlineEnd: 0,
           marginBlockStart: 0,
@@ -125,7 +134,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           },
 
           '&-head': {
-            marginInlineStart: `-${token.marginXXS}px`,
+            marginInlineStart: `-${unit(token.marginXXS)}`,
 
             '&-custom': {
               marginInlineStart: token.calc(token.timeLineItemTailWidth).div(2).equal(),
@@ -134,15 +143,15 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
 
           '&-left': {
             [`${componentCls}-item-content`]: {
-              insetInlineStart: `calc(50% - ${token.marginXXS}px)`,
-              width: `calc(50% - ${token.marginSM}px)`,
+              insetInlineStart: `calc(50% - ${unit(token.marginXXS)})`,
+              width: `calc(50% - ${unit(token.marginSM)})`,
               textAlign: 'start',
             },
           },
 
           '&-right': {
             [`${componentCls}-item-content`]: {
-              width: `calc(50% - ${token.marginSM}px)`,
+              width: `calc(50% - ${unit(token.marginSM)})`,
               margin: 0,
               textAlign: 'end',
             },
@@ -155,9 +164,9 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           [`${componentCls}-item-tail,
             ${componentCls}-item-head,
             ${componentCls}-item-head-custom`]: {
-            insetInlineStart: `calc(100% - ${
-              (token.timeLineItemHeadSize + token.timeLineItemTailWidth) / 2
-            }px)`,
+            insetInlineStart: `calc(100% - ${unit(
+              token.calc(token.timeLineItemHeadSize).add(token.timeLineItemTailWidth).div(2).equal(),
+            )})`,
           },
 
           [`${componentCls}-item-content`]: {
@@ -170,8 +179,8 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         ${componentCls}-item-last
         ${componentCls}-item-tail`]: {
         display: 'block',
-        height: `calc(100% - ${token.margin}px)`,
-        borderInlineStart: `${token.timeLineItemTailWidth}px dotted ${token.colorSplit}`,
+        height: `calc(100% - ${unit(token.margin)})`,
+        borderInlineStart: `${unit(token.timeLineItemTailWidth)} dotted ${token.colorSplit}`,
       },
 
       [`&${componentCls}-reverse
@@ -184,8 +193,8 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         [`${componentCls}-item-tail`]: {
           insetBlockStart: token.margin,
           display: 'block',
-          height: `calc(100% - ${token.margin}px)`,
-          borderInlineStart: `${token.timeLineItemTailWidth}px dotted ${token.colorSplit}`,
+          height: `calc(100% - ${unit(token.margin)})`,
+          borderInlineStart: `${unit(token.timeLineItemTailWidth)} dotted ${token.colorSplit}`,
         },
 
         [`${componentCls}-item-content`]: {
@@ -197,15 +206,20 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         [`${componentCls}-item-label`]: {
           position: 'absolute',
           insetBlockStart:
-            -(token.fontSize * token.lineHeight - token.fontSize) + token.timeLineItemTailWidth,
-          width: `calc(50% - ${token.marginSM}px)`,
+            token
+              .calc(token.calc(token.fontSize).mul(token.lineHeight).equal())
+              .sub(token.fontSize)
+              .add(token.timeLineItemTailWidth)
+              .mul(-1)
+              .equal(),
+          width: `calc(50% - ${unit(token.marginSM)})`,
           textAlign: 'end',
         },
 
         [`${componentCls}-item-right`]: {
           [`${componentCls}-item-label`]: {
-            insetInlineStart: `calc(50% + ${token.marginSM}px)`,
-            width: `calc(50% - ${token.marginSM}px)`,
+            insetInlineStart: `calc(50% + ${unit(token.marginSM)})`,
+            width: `calc(50% - ${unit(token.marginSM)})`,
             textAlign: 'start',
           },
         },

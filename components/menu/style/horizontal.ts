@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { MenuToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 
@@ -14,9 +15,9 @@ const getHorizontalStyle: GenerateStyle<MenuToken> = token => {
 
   return {
     [`${componentCls}-horizontal`]: {
-      lineHeight: `${menuHorizontalHeight}px`,
+      lineHeight: `${unit(menuHorizontalHeight)}`,
       border: 0,
-      borderBottom: `${lineWidth}px ${lineType} ${colorSplit}`,
+      borderBottom: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
       boxShadow: 'none',
 
       '&::after': {

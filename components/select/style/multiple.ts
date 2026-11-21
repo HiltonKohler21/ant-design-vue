@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSInterpolation, CSSObject } from '../../_util/cssinjs';
 import type { SelectToken } from '.';
 import { mergeToken } from '../../theme/internal';
@@ -69,7 +70,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         '&:after': {
           display: 'inline-block',
           width: 0,
-          margin: `${FIXED_ITEM_MARGIN}px 0`,
+          margin: `${unit(FIXED_ITEM_MARGIN)} 0`,
           lineHeight: selectItemHeight,
           content: '"\\a0"',
         },
@@ -97,7 +98,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
             .sub(token.calc(token.lineWidth).mul(2).equal())
             .equal(),
         background: token.colorFillSecondary,
-        border: `${token.lineWidth}px solid ${token.colorSplit}`,
+        border: `${unit(token.lineWidth)} solid ${token.colorSplit}`,
         borderRadius: token.borderRadiusSM,
         cursor: 'default',
         transition: `font-size ${token.motionDurationSlow}, line-height ${token.motionDurationSlow}, height ${token.motionDurationSlow}`,

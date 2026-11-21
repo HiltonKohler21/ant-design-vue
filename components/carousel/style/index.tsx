@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -282,7 +283,7 @@ const genCarouselVerticalStyle: GenerateStyle<CarouselToken> = token => {
         li: {
           // reverse width and height in vertical situation
           ...reverseSizeOfDot,
-          margin: `${marginXXS}px 0`,
+          margin: `${unit(marginXXS)} 0`,
           verticalAlign: 'baseline',
 
           button: reverseSizeOfDot,

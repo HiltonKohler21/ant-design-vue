@@ -1,10 +1,11 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent, textEllipsis } from '../../style';
 
 interface DescriptionsToken extends FullToken<'Descriptions'> {
-  descriptionsTitleMarginBottom: number;
+  descriptionsTitleMarginBottom: number | string;
   descriptionsExtraColor: string;
   descriptionItemPaddingBottom: number;
   descriptionsDefaultPadding: string;
@@ -12,7 +13,7 @@ interface DescriptionsToken extends FullToken<'Descriptions'> {
   descriptionsMiddlePadding: string;
   descriptionsSmallPadding: string;
   descriptionsItemLabelColonMarginRight: number;
-  descriptionsItemLabelColonMarginLeft: number;
+  descriptionsItemLabelColonMarginLeft: number | string;
 }
 
 const genBorderedStyle = (token: DescriptionsToken): CSSObject => {
@@ -26,7 +27,7 @@ const genBorderedStyle = (token: DescriptionsToken): CSSObject => {
   return {
     [`&${componentCls}-bordered`]: {
       [`${componentCls}-view`]: {
-        border: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+        border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
         '> table': {
           tableLayout: 'auto',
           borderCollapse: 'collapse',
@@ -34,7 +35,7 @@ const genBorderedStyle = (token: DescriptionsToken): CSSObject => {
       },
       [`${componentCls}-item-label, ${componentCls}-item-content`]: {
         padding: descriptionsDefaultPadding,
-        borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+        borderInlineEnd: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
         '&:last-child': {
           borderInlineEnd: 'none',
         },
@@ -46,7 +47,7 @@ const genBorderedStyle = (token: DescriptionsToken): CSSObject => {
         },
       },
       [`${componentCls}-row`]: {
-        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+        borderBottom: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
         '&:last-child': {
           borderBottom: 'none',
         },
@@ -126,7 +127,7 @@ const genDescriptionStyles: GenerateStyle<DescriptionsToken> = (token: Descripti
           content: '":"',
           position: 'relative',
           top: -0.5, // magic for position
-          marginInline: `${descriptionsItemLabelColonMarginLeft}px ${descriptionsItemLabelColonMarginRight}px`,
+          marginInline: `${unit(descriptionsItemLabelColonMarginLeft)} ${unit(descriptionsItemLabelColonMarginRight)}`,
         },
 
         [`&${componentCls}-item-no-colon::after`]: {
@@ -183,14 +184,14 @@ const genDescriptionStyles: GenerateStyle<DescriptionsToken> = (token: Descripti
 // ============================== Export ==============================
 export default genComponentStyleHook('Descriptions', token => {
   const descriptionsBg = token.colorFillAlter;
-  const descriptionsTitleMarginBottom = token.fontSizeSM * token.lineHeightSM;
+  const descriptionsTitleMarginBottom = token.calc(token.fontSizeSM).mul(token.lineHeightSM).equal();
   const descriptionsExtraColor = token.colorText;
-  const descriptionsSmallPadding = `${token.paddingXS}px ${token.padding}px`;
-  const descriptionsDefaultPadding = `${token.padding}px ${token.paddingLG}px`;
-  const descriptionsMiddlePadding = `${token.paddingSM}px ${token.paddingLG}px`;
+  const descriptionsSmallPadding = `${unit(token.paddingXS)} ${unit(token.padding)}`;
+  const descriptionsDefaultPadding = `${unit(token.padding)} ${unit(token.paddingLG)}`;
+  const descriptionsMiddlePadding = `${unit(token.paddingSM)} ${unit(token.paddingLG)}`;
   const descriptionItemPaddingBottom = token.padding;
   const descriptionsItemLabelColonMarginRight = token.marginXS;
-  const descriptionsItemLabelColonMarginLeft = token.marginXXS / 2;
+  const descriptionsItemLabelColonMarginLeft = token.calc(token.marginXXS).div(2).equal();
 
   const descriptionToken = mergeToken<DescriptionsToken>(token, {
     descriptionsBg,

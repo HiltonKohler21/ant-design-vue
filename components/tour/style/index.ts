@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { TinyColor } from '@ctrl/tinycolor';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -103,13 +104,13 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
           [`${componentCls}-cover`]: {
             textAlign: 'center',
-            padding: `${padding + tourCloseSize + paddingXS}px ${padding}px 0`,
+            padding: `${padding + tourCloseSize + paddingXS}px ${unit(padding)} 0`,
             img: {
               width: '100%',
             },
           },
           [`${componentCls}-header`]: {
-            padding: `${padding}px ${padding}px ${paddingXS}px`,
+            padding: `${unit(padding)} ${unit(padding)} ${unit(paddingXS)}`,
 
             [`${componentCls}-title`]: {
               lineHeight,
@@ -119,15 +120,15 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
           },
 
           [`${componentCls}-description`]: {
-            padding: `0 ${padding}px`,
+            padding: `0 ${unit(padding)}`,
             lineHeight,
             wordWrap: 'break-word',
           },
 
           [`${componentCls}-footer`]: {
-            padding: `${paddingXS}px ${padding}px ${padding}px`,
+            padding: `${unit(paddingXS)} ${unit(padding)} ${unit(padding)}`,
             textAlign: 'end',
-            borderRadius: `0 0 ${borderRadiusXS}px ${borderRadiusXS}px`,
+            borderRadius: `0 0 ${unit(borderRadiusXS)} ${unit(borderRadiusXS)}`,
             display: 'flex',
             [`${componentCls}-indicators`]: {
               display: 'inline-block',

@@ -30,7 +30,7 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
       textAlign: 'center',
       backgroundImage: 'none',
       backgroundColor: 'transparent',
-      border: `${token.lineWidth}px ${token.lineType} transparent`,
+      border: `${unit(token.lineWidth)} ${token.lineType} transparent`,
       cursor: 'pointer',
       transition: `all ${token.motionDurationMid} ${token.motionEaseInOut}`,
       userSelect: 'none',
@@ -201,7 +201,7 @@ const genDefaultButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   backgroundColor: token.colorBgContainer,
   borderColor: token.colorBorder,
 
-  boxShadow: `0 ${token.controlOutlineWidth}px 0 ${token.controlTmpOutline}`,
+  boxShadow: `0 ${unit(token.controlOutlineWidth)} 0 ${token.controlTmpOutline}`,
 
   ...genHoverActiveButtonStyle(
     {
@@ -255,7 +255,7 @@ const genPrimaryButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   color: token.colorTextLightSolid,
   backgroundColor: token.colorPrimary,
 
-  boxShadow: `0 ${token.controlOutlineWidth}px 0 ${token.controlOutline}`,
+  boxShadow: `0 ${unit(token.controlOutlineWidth)} 0 ${token.controlOutline}`,
 
   ...genHoverActiveButtonStyle(
     {
@@ -286,7 +286,7 @@ const genPrimaryButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
 
   [`&${token.componentCls}-dangerous`]: {
     backgroundColor: token.colorError,
-    boxShadow: `0 ${token.controlOutlineWidth}px 0 ${token.colorErrorOutline}`,
+    boxShadow: `0 ${unit(token.controlOutlineWidth)} 0 ${token.colorErrorOutline}`,
 
     ...genHoverActiveButtonStyle(
       {
@@ -435,7 +435,7 @@ const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls: string = ''): CSS
       [`${componentCls}${sizePrefixCls}`]: {
         fontSize,
         height: controlHeight,
-        padding: `${paddingVertical}px ${paddingHorizontal}px`,
+        padding: `${unit(paddingVertical)} ${unit(paddingHorizontal)}`,
         borderRadius,
 
         [`&${iconOnlyCls}`]: {

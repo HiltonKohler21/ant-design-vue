@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 /*
 .typography-title(@fontSize; @fontWeight; @lineHeight; @headingColor; @headingMarginBottom;) {
   margin-bottom: @headingMarginBottom;
@@ -195,7 +196,7 @@ export const getEditableStyles: GenerateStyle<TypographyToken, CSSObject> = toke
       'div&': {
         insetInlineStart: token.calc(token.paddingSM).mul(-1).equal(),
         marginTop: -inputShift,
-        marginBottom: `calc(1em - ${inputShift}px)`,
+        marginBottom: `calc(1em - ${unit(inputShift)})`,
       },
 
       [`${componentCls}-edit-content-confirm`]: {

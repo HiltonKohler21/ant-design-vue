@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { SelectToken } from './index';
 
@@ -86,7 +87,7 @@ export const genOutlinedVariantStyle = (token: SelectToken): CSSObject => {
       hover: { borderColor: token.colorPrimaryHover },
       focus: {
         borderColor: token.colorPrimary,
-        boxShadow: `0 0 0 ${token.controlOutlineWidth}px ${token.controlOutline}`,
+        boxShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
         outline: 0,
       },
     }),

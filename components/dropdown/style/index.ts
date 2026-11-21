@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import { getArrowOffset } from '../../style/placementArrow';
 import {
   initMoveMotion,
@@ -29,6 +30,8 @@ export interface DropdownToken extends FullToken<'Dropdown'> {
 
 // =============================== Base ===============================
 const genBaseStyle: GenerateStyle<DropdownToken> = token => {
+  // 箭头几何是纯数值计算（cssVar 下 token 值是 var() 字符串）
+  const rawGenToken: any = (token as any)._realToken ?? token;
   const {
     componentCls,
     menuCls,
@@ -126,9 +129,9 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
           display: 'block',
 
           ...roundedArrow(
-            sizePopupArrow,
-            token.borderRadiusXS,
-            token.borderRadiusOuter,
+            rawGenToken.sizePopupArrow,
+            rawGenToken.borderRadiusXS,
+            rawGenToken.borderRadiusOuter,
             colorBgElevated,
             boxShadowPopoverArrow,
           ),
@@ -274,7 +277,7 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
           ...genFocusStyle(token),
 
           [`${menuCls}-item-group-title`]: {
-            padding: `${dropdownPaddingVertical}px ${controlPaddingHorizontal}px`,
+            padding: `${unit(dropdownPaddingVertical)} ${unit(controlPaddingHorizontal)}`,
             color: token.colorTextDescription,
             transition: `all ${motionDurationMid}`,
           },
@@ -316,11 +319,10 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
           [`${menuCls}-item, ${menuCls}-submenu-title`]: {
             clear: 'both',
             margin: 0,
-            padding: `${dropdownPaddingVertical}px ${controlPaddingHorizontal}px`,
+            padding: `${unit(dropdownPaddingVertical)} ${unit(controlPaddingHorizontal)}`,
             color: token.colorText,
             fontWeight: 'normal',
-            fontSize,
-            lineHeight: token.lineHeight,
+                  lineHeight: token.lineHeight,
             cursor: 'pointer',
             transition: `all ${motionDurationMid}`,
 
@@ -355,7 +357,7 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
 
             '&-divider': {
               height: 1, // By design
-              margin: `${token.marginXXS}px 0`,
+              margin: `${unit(token.marginXXS)} 0`,
               overflow: 'hidden',
               lineHeight: 0,
               backgroundColor: token.colorSplit,
@@ -375,7 +377,7 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
           },
 
           [`${menuCls}-item-group-list`]: {
-            margin: `0 ${token.marginXS}px`,
+            margin: `0 ${unit(token.marginXS)}`,
             padding: 0,
             listStyle: 'none',
           },
@@ -419,29 +421,21 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
 export default genComponentStyleHook(
   'Dropdown',
   (token, { rootPrefixCls }) => {
-    const {
-      marginXXS,
-      sizePopupArrow,
-      controlHeight,
-      fontSize,
-      lineHeight,
-      paddingXXS,
-      componentCls,
-      borderRadiusOuter,
-      borderRadiusLG,
-    } = token;
+    const { paddingXXS, componentCls } = token;
 
-    const dropdownPaddingVertical = (controlHeight - fontSize * lineHeight) / 2;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const dropdownPaddingVertical = (rawToken.controlHeight - rawToken.fontSize * rawToken.lineHeight) / 2;
     const { dropdownArrowOffset } = getArrowOffset({
-      sizePopupArrow,
-      contentRadius: borderRadiusLG,
-      borderRadiusOuter,
+      sizePopupArrow: rawToken.sizePopupArrow,
+      contentRadius: rawToken.borderRadiusLG,
+      borderRadiusOuter: rawToken.borderRadiusOuter,
     });
 
     const dropdownToken = mergeToken<DropdownToken>(token, {
       menuCls: `${componentCls}-menu`,
       rootPrefixCls,
-      dropdownArrowDistance: sizePopupArrow / 2 + marginXXS,
+      dropdownArrowDistance: rawToken.sizePopupArrow / 2 + rawToken.marginXXS,
       dropdownArrowOffset,
       dropdownPaddingVertical,
       dropdownEdgeChildPadding: paddingXXS,

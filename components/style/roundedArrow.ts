@@ -1,3 +1,4 @@
+import { unit } from '../_util/cssinjs';
 /* eslint-disable import/prefer-default-export */
 import type { CSSObject } from '../_util/cssinjs';
 
@@ -42,7 +43,7 @@ export const roundedArrow = (
       margin: 'auto',
       borderRadius: {
         _skip_check_: true,
-        value: `0 0 ${innerRadius}px 0`,
+        value: `0 0 ${unit(innerRadius)} 0`,
       },
       transform: 'translateY(50%) rotate(-135deg)',
       boxShadow,
@@ -60,9 +61,9 @@ export const roundedArrow = (
       clipPath: {
         _multi_value_: true,
         value: [
-          `polygon(${polygonOffset}px 100%, 50% ${polygonOffset}px, ${
+          `polygon(${unit(polygonOffset)} 100%, 50% ${unit(polygonOffset)}, ${
             2 * unitWidth - polygonOffset
-          }px 100%, ${polygonOffset}px 100%)`,
+          }px 100%, ${unit(polygonOffset)} 100%)`,
           `path('M ${ax} ${ay} A ${outerRadius} ${outerRadius} 0 0 0 ${bx} ${by} L ${cx} ${cy} A ${innerRadius} ${innerRadius} 0 0 1 ${dx} ${dy} L ${ex} ${ey} A ${outerRadius} ${outerRadius} 0 0 0 ${fx} ${fy} Z')`,
         ],
       } as any,

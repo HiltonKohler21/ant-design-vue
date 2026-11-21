@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 
 import type { FullToken, GenerateStyle } from '../../theme/internal';
@@ -47,7 +48,7 @@ const genTransferCustomizeStyle: GenerateStyle<TransferToken> = (
         },
 
         [`${tableCls}-pagination${tableCls}-pagination`]: {
-          margin: `${margin}px 0 ${marginXXS}px`,
+          margin: `${unit(margin)} 0 ${unit(marginXXS)}`,
         },
       },
 
@@ -112,7 +113,7 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
     flexDirection: 'column',
     width: listWidth,
     height: listHeight,
-    border: `${lineWidth}px ${lineType} ${colorBorder}`,
+    border: `${unit(lineWidth)} ${lineType} ${colorBorder}`,
     borderRadius: token.borderRadiusLG,
 
     '&-with-pagination': {
@@ -132,13 +133,13 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
       alignItems: 'center',
       height: transferHeaderHeight,
       // border-top is on the transfer dom. We should minus 1px for this
-      padding: `${
-        transferHeaderVerticalPadding - lineWidth
-      }px ${paddingSM}px ${transferHeaderVerticalPadding}px`,
+      padding: `${unit(
+        token.calc(transferHeaderVerticalPadding).sub(lineWidth).equal(),
+      )} ${unit(paddingSM)} ${unit(transferHeaderVerticalPadding)}`,
       color: token.colorText,
       background: token.colorBgContainer,
-      borderBottom: `${lineWidth}px ${lineType} ${colorSplit}`,
-      borderRadius: `${token.borderRadiusLG}px ${token.borderRadiusLG}px 0 0`,
+      borderBottom: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
+      borderRadius: `${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} 0 0`,
 
       '> *:not(:last-child)': {
         marginInlineEnd: 4, // This is magic and fixed number, DO NOT use token since it may change.
@@ -192,7 +193,7 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
         display: 'flex',
         alignItems: 'center',
         minHeight: transferItemHeight,
-        padding: `${transferItemPaddingVertical}px ${paddingSM}px`,
+        padding: `${unit(transferItemPaddingVertical)} ${unit(paddingSM)}`,
         transition: `all ${motionDurationSlow}`,
 
         '> *:not(:last-child)': {
@@ -221,7 +222,7 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
 
           '&::after': {
             position: 'absolute',
-            insert: `-${transferItemPaddingVertical}px -50%`,
+            insert: `-${unit(transferItemPaddingVertical)} -50%`,
             content: '""',
           },
         },
@@ -256,9 +257,9 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
     },
 
     '&-pagination': {
-      padding: `${token.paddingXS}px 0`,
+      padding: `${unit(token.paddingXS)} 0`,
       textAlign: 'end',
-      borderTop: `${lineWidth}px ${lineType} ${colorSplit}`,
+      borderTop: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
     },
 
     '&-body-not-found': {
@@ -270,7 +271,7 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
     },
 
     '&-footer': {
-      borderTop: `${lineWidth}px ${lineType} ${colorSplit}`,
+      borderTop: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
     },
 
     '&-checkbox': {
@@ -313,7 +314,7 @@ const genTransferStyle: GenerateStyle<TransferToken> = (token: TransferToken): C
         flex: 'none',
         flexDirection: 'column',
         alignSelf: 'center',
-        margin: `0 ${marginXS}px`,
+        margin: `0 ${unit(marginXS)}`,
         verticalAlign: 'middle',
 
         [`${antCls}-btn`]: {
@@ -349,16 +350,16 @@ const genTransferRTLStyle: GenerateStyle<TransferToken> = (token: TransferToken)
 export default genComponentStyleHook(
   'Transfer',
   token => {
-    const { fontSize, lineHeight, lineWidth, controlHeightLG, controlHeight } = token;
-
-    const fontHeight = Math.round(fontSize * lineHeight);
-    const transferHeaderHeight = controlHeightLG;
-    const transferItemHeight = controlHeight;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const fontHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
+    const transferHeaderHeight = rawToken.controlHeightLG;
+    const transferItemHeight = rawToken.controlHeight;
 
     const transferToken = mergeToken<TransferToken>(token, {
       transferItemHeight,
       transferHeaderHeight,
-      transferHeaderVerticalPadding: Math.ceil((transferHeaderHeight - lineWidth - fontHeight) / 2),
+      transferHeaderVerticalPadding: Math.ceil((transferHeaderHeight - rawToken.lineWidth - fontHeight) / 2),
       transferItemPaddingVertical: (transferItemHeight - fontHeight) / 2,
     });
 

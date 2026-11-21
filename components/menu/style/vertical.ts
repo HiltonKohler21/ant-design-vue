@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import { textEllipsis } from '../../style';
 import type { MenuToken } from '.';
@@ -23,7 +24,7 @@ const getVerticalInlineStyle: GenerateStyle<MenuToken, CSSObject> = token => {
 
     [`${componentCls}-item, ${componentCls}-submenu-title`]: {
       height: menuItemHeight,
-      lineHeight: `${menuItemHeight}px`,
+      lineHeight: `${unit(menuItemHeight)}`,
       paddingInline: padding,
       overflow: 'hidden',
       textOverflow: 'ellipsis',
@@ -41,7 +42,7 @@ const getVerticalInlineStyle: GenerateStyle<MenuToken, CSSObject> = token => {
     [`> ${componentCls}-item,
             > ${componentCls}-submenu > ${componentCls}-submenu-title`]: {
       height: menuItemHeight,
-      lineHeight: `${menuItemHeight}px`,
+      lineHeight: `${unit(menuItemHeight)}`,
     },
 
     [`${componentCls}-item-group-list ${componentCls}-submenu-title,
@@ -71,7 +72,7 @@ const getVerticalStyle: GenerateStyle<MenuToken> = token => {
 
   const inlineItemStyle: CSSObject = {
     height: menuItemHeight,
-    lineHeight: `${menuItemHeight}px`,
+    lineHeight: `${unit(menuItemHeight)}`,
     listStylePosition: 'inside',
     listStyleType: 'disc',
   };
@@ -181,7 +182,7 @@ const getVerticalStyle: GenerateStyle<MenuToken> = token => {
           > ${componentCls}-item-group > ${componentCls}-item-group-list > ${componentCls}-submenu > ${componentCls}-submenu-title,
           > ${componentCls}-submenu > ${componentCls}-submenu-title`]: {
           insetInlineStart: 0,
-          paddingInline: `calc(50% - ${fontSizeSM}px)`,
+          paddingInline: `calc(50% - ${unit(fontSizeSM)})`,
           textOverflow: 'clip',
 
           [`
@@ -194,7 +195,7 @@ const getVerticalStyle: GenerateStyle<MenuToken> = token => {
           [`${componentCls}-item-icon, ${iconCls}`]: {
             margin: 0,
             fontSize: fontSizeLG,
-            lineHeight: `${menuItemHeight}px`,
+            lineHeight: `${unit(menuItemHeight)}`,
 
             '+ span': {
               display: 'inline-block',

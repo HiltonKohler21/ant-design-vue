@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { GenerateStyle } from '../../theme/internal';
 import type { TableToken } from './index';
@@ -20,7 +21,7 @@ const genSizeStyle: GenerateStyle<TableToken, CSSObject> = token => {
         tfoot > tr > th,
         tfoot > tr > td
       `]: {
-        padding: `${paddingVertical}px ${paddingHorizontal}px`,
+        padding: `${unit(paddingVertical)} ${unit(paddingHorizontal)}`,
       },
 
       [`${componentCls}-filter-trigger`]: {
@@ -28,16 +29,16 @@ const genSizeStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-expanded-row-fixed`]: {
-        margin: `-${paddingVertical}px -${paddingHorizontal}px`,
+        margin: `-${unit(paddingVertical)} -${unit(paddingHorizontal)}`,
       },
 
       [`${componentCls}-tbody`]: {
         // ========================= Nest Table ===========================
         [`${componentCls}-wrapper:only-child ${componentCls}`]: {
-          marginBlock: `-${paddingVertical}px`,
+          marginBlock: `-${unit(paddingVertical)}`,
           marginInline: `${
             token.tableExpandColumnWidth - paddingHorizontal
-          }px -${paddingHorizontal}px`,
+          }px -${unit(paddingHorizontal)}`,
         },
       },
 

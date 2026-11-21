@@ -47,7 +47,7 @@ const getDropIndicatorStyle = (prefixCls: string, token: DerivativeToken) => ({
       width: 8,
       height: 8,
       backgroundColor: 'transparent',
-      border: `${token.lineWidthBold}px solid ${token.colorPrimary}`,
+      border: `${unit(token.lineWidthBold)} solid ${token.colorPrimary}`,
       borderRadius: '50%',
       content: '""',
     },
@@ -133,7 +133,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
       [`${treeNodeCls}`]: {
         display: 'flex',
         alignItems: 'flex-start',
-        padding: `0 0 ${treeNodePadding}px 0`,
+        padding: `0 0 ${unit(treeNodePadding)} 0`,
         outline: 'none',
 
         '&-rtl': {
@@ -164,7 +164,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
         '&-draggable': {
           [`${treeCls}-draggable-icon`]: {
             width: treeTitleHeight,
-            lineHeight: `${treeTitleHeight}px`,
+            lineHeight: `${unit(treeTitleHeight)}`,
             textAlign: 'center',
             visibility: 'visible',
             opacity: 0.2,
@@ -207,7 +207,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
         alignSelf: 'stretch',
         width: treeTitleHeight,
         margin: 0,
-        lineHeight: `${treeTitleHeight}px`,
+        lineHeight: `${unit(treeTitleHeight)}`,
         textAlign: 'center',
         cursor: 'pointer',
         userSelect: 'none',
@@ -272,7 +272,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
         margin: 0,
         padding: `0 ${unit(token.paddingXS / 2)}`,
         color: 'inherit',
-        lineHeight: `${treeTitleHeight}px`,
+        lineHeight: `${unit(treeTitleHeight)}`,
         background: 'transparent',
         borderRadius: token.borderRadius,
         cursor: 'pointer',
@@ -291,7 +291,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
           display: 'inline-block',
           width: treeTitleHeight,
           height: treeTitleHeight,
-          lineHeight: `${treeTitleHeight}px`,
+          lineHeight: `${unit(treeTitleHeight)}`,
           textAlign: 'center',
           verticalAlign: 'top',
 
@@ -308,7 +308,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
 
       // ==================== Draggable =====================
       [`${treeCls}-node-content-wrapper`]: {
-        lineHeight: `${treeTitleHeight}px`,
+        lineHeight: `${unit(treeTitleHeight)}`,
         userSelect: 'none',
 
         ...getDropIndicatorStyle(prefixCls, token),

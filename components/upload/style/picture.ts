@@ -17,7 +17,7 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
           position: 'relative',
           height: uploadThumbnailSize + token.calc(token.lineWidth).mul(2).equal() + token.calc(token.paddingXS).mul(2).equal(),
           padding: token.paddingXS,
-          border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
+          border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
           borderRadius: token.borderRadiusLG,
 
           '&:hover': {
@@ -101,7 +101,7 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
         textAlign: 'center',
         verticalAlign: 'top',
         backgroundColor: token.colorFillAlter,
-        border: `${token.lineWidth}px dashed ${token.colorBorder}`,
+        border: `${unit(token.lineWidth)} dashed ${token.colorBorder}`,
         borderRadius: token.borderRadiusLG,
         cursor: 'pointer',
         transition: `border-color ${token.motionDurationSlow}`,
@@ -125,8 +125,8 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
           display: 'inline-block',
           width: uploadPictureCardSize,
           height: uploadPictureCardSize,
-          marginBlock: `0 ${token.marginXS}px`,
-          marginInline: `0 ${token.marginXS}px`,
+          marginBlock: `0 ${unit(token.marginXS)}`,
+          marginInline: `0 ${unit(token.marginXS)}`,
           verticalAlign: 'top',
         },
 
@@ -169,7 +169,7 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
           [`${iconCls}-eye, ${iconCls}-download, ${iconCls}-delete`]: {
             zIndex: 10,
             width: fontSizeLG,
-            margin: `0 ${token.marginXXS}px`,
+            margin: `0 ${unit(token.marginXXS)}`,
             fontSize: fontSizeLG,
             cursor: 'pointer',
             transition: `all ${token.motionDurationSlow}`,

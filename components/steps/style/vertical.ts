@@ -27,7 +27,7 @@ const genStepsVerticalStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           overflow: 'hidden',
         },
         [`${componentCls}-item-title`]: {
-          lineHeight: `${stepsIconSize}px`,
+          lineHeight: `${unit(stepsIconSize)}`,
         },
         [`${componentCls}-item-description`]: {
           paddingBottom: token.paddingSM,
@@ -36,10 +36,10 @@ const genStepsVerticalStyle: GenerateStyle<StepsToken, CSSObject> = token => {
       [`> ${componentCls}-item > ${componentCls}-item-container > ${componentCls}-item-tail`]: {
         position: 'absolute',
         top: 0,
-        insetInlineStart: token.stepsIconSize / 2 - token.lineWidth,
+        insetInlineStart: token.calc(token.calc(token.stepsIconSize).div(2).equal()).sub(token.lineWidth).equal(),
         width: token.lineWidth,
         height: '100%',
-        padding: `${stepsIconSize + token.calc(token.marginXXS).mul(1.5).equal()}px 0 ${unit(token.calc(token.marginXXS).mul(1.5).equal())}`,
+        padding: `${unit(token.calc(stepsIconSize).add(token.calc(token.marginXXS).mul(1.5).equal()).equal())} 0 ${unit(token.calc(token.marginXXS).mul(1.5).equal())}`,
 
         '&::after': {
           width: token.lineWidth,
@@ -60,11 +60,11 @@ const genStepsVerticalStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         [`${componentCls}-item-tail`]: {
           position: 'absolute',
           top: 0,
-          insetInlineStart: token.stepsSmallIconSize / 2 - token.lineWidth,
-          padding: `${stepsSmallIconSize + token.calc(token.marginXXS).mul(1.5).equal()}px 0 ${unit(token.calc(token.marginXXS).mul(1.5).equal())}`,
+          insetInlineStart: token.calc(token.calc(token.stepsSmallIconSize).div(2).equal()).sub(token.lineWidth).equal(),
+          padding: `${unit(token.calc(stepsSmallIconSize).add(token.calc(token.marginXXS).mul(1.5).equal()).equal())} 0 ${unit(token.calc(token.marginXXS).mul(1.5).equal())}`,
         },
         [`${componentCls}-item-title`]: {
-          lineHeight: `${stepsSmallIconSize}px`,
+          lineHeight: `${unit(stepsSmallIconSize)}`,
         },
       },
     },

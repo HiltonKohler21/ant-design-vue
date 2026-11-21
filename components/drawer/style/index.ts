@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import genMotionStyle from './motion';
@@ -138,10 +139,10 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
         display: 'flex',
         flex: 0,
         alignItems: 'center',
-        padding: `${padding}px ${paddingLG}px`,
+        padding: `${unit(padding)} ${unit(paddingLG)}`,
         fontSize: fontSizeLG,
         lineHeight: lineHeightLG,
-        borderBottom: `${lineWidth}px ${lineType} ${colorSplit}`,
+        borderBottom: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
 
         '&-title': {
           display: 'flex',
@@ -201,8 +202,8 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
       // Footer
       [`${componentCls}-footer`]: {
         flexShrink: 0,
-        padding: `${drawerFooterPaddingVertical}px ${drawerFooterPaddingHorizontal}px`,
-        borderTop: `${lineWidth}px ${lineType} ${colorSplit}`,
+        padding: `${unit(drawerFooterPaddingVertical)} ${unit(drawerFooterPaddingHorizontal)}`,
+        borderTop: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
       },
 
       // ====================== RTL =======================
