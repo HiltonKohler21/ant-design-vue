@@ -87,3 +87,6 @@ components/version/version.tsx
 components/version/token.json
 components/version/token-meta.json
 ~component-api.json
+
+# pi goal/agent 运行时状态
+.pi/
