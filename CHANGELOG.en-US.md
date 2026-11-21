@@ -23,6 +23,7 @@
 - 🛠 Distinguish "plain numbers" from "CSS variables" contexts internally (`_realToken`) so rounding, ratios and color mixing stay correct in variable mode.
 - 🐞 Fix Table header background turning solid black in variable mode (`TinyColor` cannot parse `var()` strings).
 - 🐞 Fix Select status border width, which referenced an undefined token.
+- 🐞 Fix runtime logic that depends on real color/number values after enabling CSS variables: Empty dark-mode detection (spurious opacity), Empty/Table colors turning solid black, QRCode size and foreground color, Steps dimensions, and Watermark canvas font size/color.
 
 ## 4.2.7
 

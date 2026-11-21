@@ -72,7 +72,8 @@ const Steps = defineComponent({
     const { prefixCls, direction: rtlDirection, configProvider } = useConfigInject('steps', props);
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
-    const [, token] = useToken();
+    // realToken：未变量化的原始 token（cssVar 下 token 值是 var() 字符串，尺寸计算需真实值）
+    const [, , , realToken] = useToken();
 
     const screens = useBreakpoint();
     const direction = computed(() =>
@@ -99,7 +100,9 @@ const Steps = defineComponent({
         // currently it's hard-coded, since we can't easily read the actually width of icon
 
         const progressWidth =
-          props.size === 'small' ? token.value.controlHeight : token.value.controlHeightLG;
+          props.size === 'small'
+            ? Number(realToken.value.controlHeight)
+            : Number(realToken.value.controlHeightLG);
 
         const iconWithProgress = (
           <div class={`${prefixCls.value}-progress-icon`}>

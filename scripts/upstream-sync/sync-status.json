@@ -248,13 +248,25 @@
         "components/theme/__tests__/cssvar-token-chain.test.js",
         "tests/bench/cssvar-illegal-check.test.js",
         "tests/bench/zero-runtime-extract.test.js",
-        "tests/bench/visual-parity.test.js"
+        "tests/bench/visual-parity.test.js",
+        "tests/bench/runtime-token-values.test.js"
       ],
       "assertions": [
         "cssVar 多主题增量 < hash 增量的 15%",
         "3 主题 cssVar 总体积 < hash 总体积",
         "`.ant-btn{` 份数不随主题数增长（cssVar 恒为 7，hash 7/14/21）",
         "cssVar 规则增量 < hash 规则增量的 20%"
+      ],
+      "falsification": [
+        "回退 _tokenKey 主题无关化 → cssvar-bench 失败（多主题增量 379033 B > 阈值 78046 B）",
+        "回退 Empty realToken → runtime-token-values 失败（svg 被误加 opacity 0.65）"
+      ],
+      "runtimeValueFixes": [
+        "Empty: 暗色判断 + SVG 配色（TinyColor）",
+        "QRCode: 尺寸算术 + Canvas 前景色",
+        "Steps: controlHeight 数值",
+        "Watermark: Canvas 字号与颜色",
+        "Table: 实色表头背景（TinyColor.onBackground）"
       ]
     },
     "knownIssues": [

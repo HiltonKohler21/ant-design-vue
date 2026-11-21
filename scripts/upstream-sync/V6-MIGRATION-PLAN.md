@@ -288,6 +288,7 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 | token 算术 calc 化 | 全库 `components/**/style/**` | `cssvar-illegal-check`：NaN / undefined / 裸变量算术 均为 0 |
 | zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 235 KB（约 230 KiB） |
 | 视觉一致性 | `tests/bench/visual-parity.test.js` | 7 组选择器差异 0 |
+| 运行时取值守卫 | `tests/bench/runtime-token-values.test.js` | Empty 暗色判断/SVG 配色、QRCode 尺寸、Steps 产物无 NaN |
 | 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -50.6%；多主题增量降低 90.4%；组件规则份数不随主题数增长（已写入性能契约断言） |
 
 ### 使用方式
@@ -318,6 +319,28 @@ npm run static-style-extract   # 产出 dist/static-style/antdv.css
 - `cssVar` **默认开启**（对齐 antd v6）：需要在存量项目里保持旧行为时，显式传 `theme: { cssVar: false }`；
 - 两种模式共用同一套 styleFn，仅 token 表示形式不同，因此不存在双份样式代码；
 - `zeroRuntime` 仅影响「是否注入 DOM」，样式计算与缓存逻辑不变。
+
+### 反证实验（证明测试不是弱验证）
+
+| 用例 | 人为回退修复 | 结果 |
+| --- | --- | --- |
+| `cssvar-bench`（性能契约） | 去掉 `_tokenKey` 主题无关化 | **失败**：多主题增量 379033 B > 阈值 78046 B |
+| `runtime-token-values`（Empty 暗色判断） | 把 `realToken` 改回 `token` | **失败**：svg 被误加 `opacity: 0.65` |
+
+恢复修复后两者均通过，说明断言确实能捕捉对应回归。
+
+### 运行时取值退化（cssVar 下必须用 `realToken` 的清单）
+
+cssVar 模式下 token 值是 `var(--ant-*)` 字符串，以下位置的取值参与 JS 计算 / Canvas / SVG 绘制，必须使用 `useToken()` 返回的 `realToken`：
+
+| 组件 | 位置 | 退化表现 |
+| --- | --- | --- |
+| Empty | `empty.tsx` 暗色判断 `TinyColor(colorBgBase).toHsl().l` | 恒判为暗色，误加 `opacity: 0.65` |
+| Empty | `simple.tsx` SVG 配色（TinyColor 混合） | 边框/阴影/内容色变 `#000000` |
+| QRCode | `index.tsx` 尺寸 `size - (paddingSM + lineWidth) * 2`、默认前景色 | 尺寸 NaN / 前景变黑 |
+| Steps | `index.tsx` `controlHeight` 数值 | 尺寸计算 NaN |
+| Watermark | `index.tsx` Canvas 字号与颜色 | 字号 NaN / 文字变黑 |
+| Table | `style/index.ts` 实色背景 `TinyColor().onBackground()` | 表头背景变 `#000000` |
 
 ### 已知限制（不阻塞本阶段验收）
 
