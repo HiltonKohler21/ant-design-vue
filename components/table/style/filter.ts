@@ -48,8 +48,10 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
-          marginBlock: -paddingXXS,
-          marginInline: `${unit(paddingXXS)} ${-tablePaddingHorizontal / 2}px`,
+          marginBlock: token.calc(paddingXXS).mul(-1).equal(),
+          marginInline: `${unit(paddingXXS)} ${unit(
+            token.calc(tablePaddingHorizontal).div(2).mul(-1).equal(),
+          )}`,
           padding: `0 ${unit(paddingXXS)}`,
           color: tableHeaderIconColor,
           fontSize: fontSizeSM,
@@ -141,7 +143,7 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
           [`${tableFilterDropdownPrefixCls}-btns`]: {
             display: 'flex',
             justifyContent: 'space-between',
-            padding: `${paddingXS - lineWidth}px ${unit(paddingXS)}`,
+            padding: `${unit(token.calc(paddingXS).sub(lineWidth).equal())} ${unit(paddingXS)}`,
             overflow: 'hidden',
             backgroundColor: 'inherit',
             borderTop: tableBorder,

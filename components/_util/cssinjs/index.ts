@@ -1,7 +1,7 @@
 import useCacheToken from './hooks/useCacheToken';
 import type { CSSInterpolation, CSSObject } from './hooks/useStyleRegister';
 import useStyleRegister, { extractStyle } from './hooks/useStyleRegister';
-import useCSSVarRegister from './hooks/useCSSVarRegister';
+import useCSSVarRegister, { clearCSSVarRegistry, extractCSSVarStyle } from './hooks/useCSSVarRegister';
 import type { CSSVarRegisterConfig } from './hooks/useCSSVarRegister';
 import Keyframes from './Keyframes';
 import type { Linter } from './linters';
@@ -29,6 +29,8 @@ const cssinjs = {
   useStyleProvider,
   Keyframes,
   extractStyle,
+  extractCSSVarStyle,
+  clearCSSVarRegistry,
 
   // Transformer
   legacyLogicalPropertiesTransformer,
@@ -60,6 +62,8 @@ export {
   useStyleProvider,
   Keyframes,
   extractStyle,
+  extractCSSVarStyle,
+  clearCSSVarRegistry,
 
   // Transformer
   legacyLogicalPropertiesTransformer,

@@ -416,7 +416,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
       [`> ${componentCls}-content-holder, > div > ${componentCls}-content-holder`]: {
         marginLeft: {
           _skip_check_: true,
-          value: `-${unit(token.lineWidth)}`,
+          value: `${unit(token.calc(token.lineWidth).mul(-1).equal())}`,
         },
         borderLeft: {
           _skip_check_: true,
@@ -659,7 +659,7 @@ const genRtlStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
             },
             marginLeft: {
               _skip_check_: true,
-              value: `-${unit(token.marginXXS)}`,
+              value: `${unit(token.calc(token.marginXXS).mul(-1).equal())}`,
             },
 
             [iconCls]: {

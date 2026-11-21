@@ -21,7 +21,7 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-bordered ${componentCls}-selection-col`]: {
-        width: token.tableSelectionColumnWidth + paddingXS * 2,
+        width: token.calc(token.tableSelectionColumnWidth).add(token.calc(paddingXS).mul(2).equal()).equal(),
       },
 
       [`

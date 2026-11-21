@@ -25,26 +25,26 @@ const genSizeStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-filter-trigger`]: {
-        marginInlineEnd: `-${paddingHorizontal / 2}px`,
+        marginInlineEnd: `-${unit(token.calc(paddingHorizontal).div(2).equal())}`,
       },
 
       [`${componentCls}-expanded-row-fixed`]: {
-        margin: `-${unit(paddingVertical)} -${unit(paddingHorizontal)}`,
+        margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} ${unit(token.calc(paddingHorizontal).mul(-1).equal())}`,
       },
 
       [`${componentCls}-tbody`]: {
         // ========================= Nest Table ===========================
         [`${componentCls}-wrapper:only-child ${componentCls}`]: {
-          marginBlock: `-${unit(paddingVertical)}`,
+          marginBlock: `${unit(token.calc(paddingVertical).mul(-1).equal())}`,
           marginInline: `${
-            token.tableExpandColumnWidth - paddingHorizontal
-          }px -${unit(paddingHorizontal)}`,
+            token.calc(token.tableExpandColumnWidth).sub(paddingHorizontal).equal()
+          }px ${unit(token.calc(paddingHorizontal).mul(-1).equal())}`,
         },
       },
 
       // https://github.com/ant-design/ant-design/issues/35167
       [`${componentCls}-selection-column`]: {
-        paddingInlineStart: `${paddingHorizontal / 4}px`,
+        paddingInlineStart: `${unit(token.calc(paddingHorizontal).div(4).equal())}`,
       },
     },
   });

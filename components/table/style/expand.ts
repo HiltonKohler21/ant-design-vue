@@ -8,7 +8,6 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
   const {
     componentCls,
     antCls,
-    controlInteractiveSize: checkboxSize,
     motionDurationSlow,
     lineWidth,
     paddingXS,
@@ -17,19 +16,17 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
     tableExpandIconBg,
     tableExpandColumnWidth,
     borderRadius,
-    fontSize,
-    fontSizeSM,
-    lineHeight,
     tablePaddingVertical,
     tablePaddingHorizontal,
     tableExpandedRowBg,
-    paddingXXS,
   } = token;
-  const halfInnerSize = checkboxSize / 2 - lineWidth;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
+  const halfInnerSize = rawToken.controlInteractiveSize / 2 - rawToken.lineWidth;
   // must be odd number, unless it cannot align center
-  const expandIconSize = halfInnerSize * 2 + lineWidth * 3;
+  const expandIconSize = halfInnerSize * 2 + rawToken.lineWidth * 3;
   const tableBorder = `${unit(lineWidth)} ${lineType} ${tableBorderColor}`;
-  const expandIconLineOffset = paddingXXS - lineWidth;
+  const expandIconLineOffset = rawToken.paddingXXS - rawToken.lineWidth;
 
   return {
     [`${componentCls}-wrapper`]: {
@@ -65,7 +62,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
         background: tableExpandIconBg,
         border: tableBorder,
         borderRadius,
-        transform: `scale(${checkboxSize / expandIconSize})`,
+        transform: `scale(${rawToken.controlInteractiveSize / expandIconSize})`,
         transition: `all ${motionDurationSlow}`,
         userSelect: 'none',
 
@@ -117,8 +114,8 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
       [`${componentCls}-row-indent + ${componentCls}-row-expand-icon`]: {
         marginTop:
-          (fontSize * lineHeight - lineWidth * 3) / 2 -
-          Math.ceil((fontSizeSM * 1.4 - lineWidth * 3) / 2),
+          (rawToken.fontSize * rawToken.lineHeight - rawToken.lineWidth * 3) / 2 -
+          Math.ceil((rawToken.fontSizeSM * 1.4 - rawToken.lineWidth * 3) / 2),
         marginInlineEnd: paddingXS,
       },
 
@@ -143,7 +140,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
       // With fixed
       [`${componentCls}-expanded-row-fixed`]: {
         position: 'relative',
-        margin: `-${unit(tablePaddingVertical)} -${unit(tablePaddingHorizontal)}`,
+        margin: `${unit(token.calc(tablePaddingVertical).mul(-1).equal())} ${unit(token.calc(tablePaddingHorizontal).mul(-1).equal())}`,
         padding: `${unit(tablePaddingVertical)} ${unit(tablePaddingHorizontal)}`,
       },
     },

@@ -37,7 +37,7 @@ const genFixedStyle: GenerateStyle<TableToken, CSSObject> = token => {
           _skip_check_: true,
           value: 0,
         },
-        bottom: -lineWidth,
+        bottom: token.calc(lineWidth).mul(-1).equal(),
         width: 30,
         transform: 'translateX(100%)',
         transition: `box-shadow ${motionDurationSlow}`,
@@ -55,7 +55,7 @@ const genFixedStyle: GenerateStyle<TableToken, CSSObject> = token => {
       `]: {
         position: 'absolute',
         top: 0,
-        bottom: -lineWidth,
+        bottom: token.calc(lineWidth).mul(-1).equal(),
         left: {
           _skip_check_: true,
           value: 0,

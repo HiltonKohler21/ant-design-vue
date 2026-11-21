@@ -3,7 +3,7 @@ import { resetIcon } from '../../style';
 import { useToken } from '../../theme/internal';
 import { computed, Ref } from 'vue';
 
-const useStyle = (iconPrefixCls: Ref<string>) => {
+const useStyle = (iconPrefixCls: Ref<string>, zeroRuntime?: Ref<boolean>) => {
   const [theme, token] = useToken();
   // Generate style for icons
   return useStyleRegister(
@@ -12,6 +12,7 @@ const useStyle = (iconPrefixCls: Ref<string>) => {
       token: token.value,
       hashId: '',
       path: ['ant-design-icons', iconPrefixCls.value],
+      zeroRuntime: zeroRuntime?.value,
     })),
     () => [
       {

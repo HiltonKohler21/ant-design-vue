@@ -222,7 +222,7 @@ const genTransferListStyle: GenerateStyle<TransferToken> = (token: TransferToken
 
           '&::after': {
             position: 'absolute',
-            insert: `-${unit(transferItemPaddingVertical)} -50%`,
+            insert: `${unit(token.calc(transferItemPaddingVertical).mul(-1).equal())} -50%`,
             content: '""',
           },
         },

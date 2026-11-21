@@ -174,8 +174,16 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
 
         [`${componentCls}-close`]: {
           position: 'absolute',
-          top: (token.modalHeaderCloseSize - token.modalCloseBtnSize) / 2,
-          insetInlineEnd: (token.modalHeaderCloseSize - token.modalCloseBtnSize) / 2,
+          top: token
+            .calc(token.modalHeaderCloseSize)
+            .sub(token.modalCloseBtnSize)
+            .div(2)
+            .equal(),
+          insetInlineEnd: token
+            .calc(token.modalHeaderCloseSize)
+            .sub(token.modalCloseBtnSize)
+            .div(2)
+            .equal(),
           zIndex: token.calc(token.zIndexPopupBase).add(10).equal(),
           padding: 0,
           color: token.modalCloseColor,
@@ -442,7 +450,9 @@ export default genComponentStyleHook('Modal', token => {
     modalHeaderTitleLineHeight: headerLineHeight,
     modalHeaderTitleFontSize: headerFontSize,
     modalHeaderBorderColorSplit: token.colorSplit,
-    modalHeaderCloseSize: headerLineHeight * headerFontSize + headerPaddingVertical * 2,
+    modalHeaderCloseSize:
+      rawToken.lineHeightHeading5 * rawToken.fontSizeHeading5 + rawToken.padding * 2,
+
     modalContentBg: token.colorBgElevated,
     modalHeadingColor: token.colorTextHeading,
     modalCloseColor: token.colorTextDescription,

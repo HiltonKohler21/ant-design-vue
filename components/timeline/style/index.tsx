@@ -134,7 +134,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           },
 
           '&-head': {
-            marginInlineStart: `-${unit(token.marginXXS)}`,
+            marginInlineStart: `${unit(token.calc(token.marginXXS).mul(-1).equal())}`,
 
             '&-custom': {
               marginInlineStart: token.calc(token.timeLineItemTailWidth).div(2).equal(),

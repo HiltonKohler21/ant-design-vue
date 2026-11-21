@@ -17,7 +17,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
         [`> ${componentCls}-content, > ${componentCls}-body`]: {
           '> table > tbody > tr > td': {
             [`> ${componentCls}-expanded-row-fixed`]: {
-              margin: `-${unit(paddingVertical)} -${paddingHorizontal + token.lineWidth}px`,
+              margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} -${paddingHorizontal + token.lineWidth}px`,
             },
           },
         },
@@ -80,7 +80,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
               // ========================== Expandable ==========================
               '> tbody > tr > td': {
                 [`> ${componentCls}-expanded-row-fixed`]: {
-                  margin: `-${unit(token.tablePaddingVertical)} -${
+                  margin: `${unit(token.calc(token.tablePaddingVertical).mul(-1).equal())} -${
                     token.calc(token.tablePaddingHorizontal).add(token.lineWidth).equal()
                   }px`,
 

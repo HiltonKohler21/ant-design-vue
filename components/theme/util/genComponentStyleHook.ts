@@ -133,6 +133,7 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
         token: token.value,
         hashId: hashId.value,
         path: ['Shared', rootPrefixCls.value],
+        zeroRuntime: (designTokenContext.value as any)?.zeroRuntime,
       };
     });
     // Generate style for all a tags in antd component.
@@ -148,6 +149,7 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
         token: token.value,
         hashId: hashId.value,
         path: [component, prefixCls.value, iconPrefixCls.value],
+        zeroRuntime: (designTokenContext.value as any)?.zeroRuntime,
       };
     });
     return [

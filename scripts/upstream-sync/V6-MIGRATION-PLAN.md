@@ -315,6 +315,46 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 
 验收（每批）：`npx tsc --noEmit` 无新增错误 + 该批组件 jest 对照基线零回归 + `cssvar-illegal-check` 的 NaN 数量单调下降。
 
+## 3.2c zeroRuntime 与静态样式提取（P1-4c）
+
+**目标**：cssVar 模式下样式只需生成一次。开启 `zeroRuntime` 后运行时完全不注入 `<style>`，样式由构建期一次性提取成静态 CSS 文件，客户端只承担 class 计算。
+
+### 用法
+
+```bash
+npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 240 KB，含 :root 变量声明）
+```
+
+```vue
+<!-- 入口引入静态 CSS（或交给打包器内联） -->
+<a-config-provider :theme="{ cssVar: true, zeroRuntime: true }">
+  <app />
+</a-config-provider>
+```
+
+### 实现要点
+
+| 层 | 改动 |
+| --- | --- |
+| `useStyleRegister` | info 新增 `zeroRuntime`；为真时仍计算样式并写入 cssinjs cache，只是跳过 `updateCSS`（含 effect 样式） |
+| `useCSSVarRegister` | 变量声明登记进模块级 registry；`extractCSSVarStyle()` 汇总输出，供静态提取使用 |
+| `genComponentStyleHook` | 把 `designTokenContext.zeroRuntime` 透传到每个组件的 style info |
+| `config-provider/style` | 图标样式在 DesignTokenContext provide **之前**生成，故由外层显式传入 zeroRuntime（此前会漏注入一条 `anticon` 样式） |
+
+### 提取流程
+
+1. `StyleProvider(cache)` + `ConfigProvider(theme: {cssVar: true, zeroRuntime: true})` 挂载目标组件树；
+2. 组件样式进入 cache，但 DOM 无任何 `style[data-css-hash]` / `style[data-css-var-id]`；
+3. `extractStyle(cache, true) + extractCSSVarStyle()` 拼成完整 CSS 落盘；
+4. 用例 `tests/bench/zero-runtime-extract.test.js` 同时断言「零注入」与「产物非空且含 :root 变量」。
+
+> 组件源码是 Vue JSX，需经项目 babel 编译，故提取逻辑跑在 jest 环境下； `scripts/static-style-extract.mjs` 是对外稳定入口（npm script / CI 均可调用）。
+
+### 已知边界
+
+- 提取产物面向「主题固定」的应用；若需要运行时切换主题，请回到常规模式（cssVar 开、zeroRuntime 关），此时样式仍只生成一次，只是注入动作发生在浏览器。
+- 提取覆盖多少组件取决于提取脚本里挂载的组件树；默认覆盖 Button/Input/Select/Table/Modal/Tag/Card/Tabs/Space，业务侧可按需扩充。
+
 ## 3.3 工作量汇总
 
 | 阶段          | 工作量         | 风险                   | 交付价值                 |

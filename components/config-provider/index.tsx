@@ -141,7 +141,9 @@ const ConfigProvider = defineComponent({
     const shouldWrapSSR = computed(() => iconPrefixCls.value !== parentContext.iconPrefixCls.value);
     const csp = computed(() => props.csp || parentContext.csp?.value);
 
-    const wrapSSR = useStyle(iconPrefixCls);
+    // 图标样式在 DesignTokenContext provide 之前生成，需显式传入 zeroRuntime
+    const zeroRuntime = computed(() => (props.theme as any)?.zeroRuntime ?? false);
+    const wrapSSR = useStyle(iconPrefixCls, zeroRuntime);
 
     const mergedTheme = useTheme(
       computed(() => props.theme),

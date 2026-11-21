@@ -321,6 +321,11 @@ export default function useStyleRegister(
      * before other style to overwrite for the same selector priority.
      */
     order?: number;
+    /**
+     * 关闭运行时样式注入（zeroRuntime 模式）。
+     * 样式仍会计算并进入缓存，供 extractStyle 预提取，但不会写入 DOM。
+     */
+    zeroRuntime?: boolean;
   }>,
   styleFn: () => CSSInterpolation,
 ) {
@@ -330,8 +335,8 @@ export default function useStyleRegister(
 
   const fullPath = computed(() => [tokenKey.value, ...info.value.path]);
 
-  // Check if need insert style
-  let isMergedClientSide = isClientSide;
+  // Check if need insert style（zeroRuntime 模式下不注入 DOM，交给预提取的静态 CSS）
+  let isMergedClientSide = isClientSide && !info.value.zeroRuntime;
   if (process.env.NODE_ENV !== 'production' && styleContext.value.mock !== undefined) {
     isMergedClientSide = styleContext.value.mock === 'client';
   }

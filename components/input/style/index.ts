@@ -271,7 +271,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
         // Reset Select's style in addon
         [`${antCls}-select`]: {
-          margin: `-${unit(token.calc(token.inputPaddingVertical).add(1).equal())} -${unit(token.inputPaddingHorizontal)}`,
+          margin: `${unit(token.calc(token.calc(token.inputPaddingVertical).add(1).equal()).mul(-1).equal())} ${unit(token.calc(token.inputPaddingHorizontal).mul(-1).equal())}`,
 
           [`&${antCls}-select-single:not(${antCls}-select-customize-input)`]: {
             [`${antCls}-select-selector`]: {
@@ -290,7 +290,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
         // https://github.com/ant-design/ant-design/issues/31333
         [`${antCls}-cascader-picker`]: {
-          margin: `-9px -${unit(token.inputPaddingHorizontal)}`,
+          margin: `-9px ${unit(token.calc(token.inputPaddingHorizontal).mul(-1).equal())}`,
           backgroundColor: 'transparent',
           [`${antCls}-cascader-input`]: {
             textAlign: 'start',

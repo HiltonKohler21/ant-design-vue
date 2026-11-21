@@ -5,6 +5,23 @@ import { token2CSSVar } from '../util/css-variables';
 
 export const CSS_VAR_PREFIX = 'cssVar';
 
+/**
+ * 变量声明登记表（styleId → CSS 文本）。
+ * 运行时正常模式下用于去重注入；zeroRuntime 模式下由 extractCSSVarStyle 汇总输出，
+ * 供静态 CSS 提取脚本使用。
+ */
+const cssVarRegistry = new Map<string, string>();
+
+/** 汇总所有已登记的变量声明 CSS（供静态提取使用） */
+export function extractCSSVarStyle(): string {
+  return Array.from(cssVarRegistry.values()).join('\n');
+}
+
+/** 清空登记表（测试/多次提取时使用） */
+export function clearCSSVarRegistry(): void {
+  cssVarRegistry.clear();
+}
+
 const uniqueHash = (path: (string | number)[], styleStr: string) =>
   hash(`${path.join('%')}${styleStr}`);
 
@@ -75,7 +92,12 @@ export default function useCSSVarRegister(
   // 副作用：把变量声明注入 DOM
   watchEffect(() => {
     const { cssVarsStr, styleId, zeroRuntime } = built.value;
-    if (!cssVarsStr || zeroRuntime || typeof document === 'undefined') {
+    if (!cssVarsStr) {
+      return;
+    }
+    // 无论是否 zeroRuntime 都登记，保证静态提取能拿到变量声明
+    cssVarRegistry.set(styleId, cssVarsStr);
+    if (zeroRuntime || typeof document === 'undefined') {
       return;
     }
     const selector = `style[data-css-var-id="${styleId}"]`;

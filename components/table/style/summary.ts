@@ -21,7 +21,7 @@ const genSummaryStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`div${componentCls}-summary`]: {
-        boxShadow: `0 -${unit(lineWidth)} 0 ${tableBorderColor}`,
+        boxShadow: `0 ${unit(token.calc(lineWidth).mul(-1).equal())} 0 ${tableBorderColor}`,
       },
     },
   };

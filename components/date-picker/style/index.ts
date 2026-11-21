@@ -1134,7 +1134,7 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
 
           // Active bar
           [`${componentCls}-active-bar`]: {
-            bottom: -lineWidth,
+            bottom: token.calc(lineWidth).mul(-1).equal(),
             height: lineWidthBold,
             marginInlineStart: inputPaddingHorizontal,
             background: colorPrimary,

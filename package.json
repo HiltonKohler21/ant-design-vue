@@ -64,7 +64,8 @@
     "pub:site": "npm run site && node site/scripts/pushToOSS.js",
     "prepare": "husky install",
     "version": "node ./scripts/generate-version",
-    "sort-api": "node antd-tools/cli/run.js sort-api-table"
+    "sort-api": "node antd-tools/cli/run.js sort-api-table",
+    "static-style-extract": "node scripts/static-style-extract.mjs"
   },
   "browserslist": [
     "> 0.5%",

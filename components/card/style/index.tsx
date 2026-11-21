@@ -159,7 +159,7 @@ const genCardActionsStyle: GenerateStyle<CardToken> = (token): CSSObject => {
 
 // ============================== Meta ==============================
 const genCardMetaStyle: GenerateStyle<CardToken> = (token): CSSObject => ({
-  margin: `-${unit(token.marginXXS)} 0`,
+  margin: `${unit(token.calc(token.marginXXS).mul(-1).equal())} 0`,
   display: 'flex',
   ...clearFix(),
 
