@@ -71,6 +71,15 @@ import Table from '../../components/table';
 import Affix from '../../components/affix';
 import Grid from '../../components/grid';
 import App from '../../components/app';
+import TimePicker from '../../components/time-picker';
+import Calendar from '../../components/calendar';
+import Comment from '../../components/comment';
+import PageHeader from '../../components/page-header';
+import AutoComplete from '../../components/auto-complete';
+import TreeSelect from '../../components/tree-select';
+import Popover from '../../components/popover';
+import Splitter from '../../components/splitter';
+import ColorPicker from '../../components/color-picker';
 
 const collectCss = () =>
   Array.from(document.querySelectorAll('style'))
@@ -232,6 +241,30 @@ const CASES = [
       </App>
     ),
   ],
+  ['TimePicker(open)', () => <TimePicker open value={null} />],
+  ['Calendar', () => <Calendar />],
+  ['Comment', () => <Comment author="a" content="c" />],
+  ['PageHeader', () => <PageHeader title="t" />],
+  ['AutoComplete(open)', () => <AutoComplete open options={[{ value: 'a' }]} />],
+  ['TreeSelect(open)', () => <TreeSelect open treeData={[{ value: 'a', title: 'A' }]} />],
+  [
+    'Popover(open)',
+    () => (
+      <Popover open title="t" content="c">
+        <span>x</span>
+      </Popover>
+    ),
+  ],
+  [
+    'Splitter',
+    () => (
+      <Splitter>
+        <Splitter.Panel>a</Splitter.Panel>
+        <Splitter.Panel>b</Splitter.Panel>
+      </Splitter>
+    ),
+  ],
+  ['ColorPicker(open)', () => <ColorPicker open value="#1677ff" />],
   ['Image', () => <Image src="https://antdv.com/x.png" />],
   [
     'Layout',

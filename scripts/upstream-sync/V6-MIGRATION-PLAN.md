@@ -186,32 +186,39 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 
 | theme count | hash 体积 (B) | cssVar 体积 (B) | 体积变化 | hash 规则字节 (B) | cssVar 规则字节 (B) | hash 耗时 (ms) | cssVar 耗时 (ms) | 耗时变化 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 156896 | 190643 | +21.5% | 156896 | 179604 | 73.9 | 86.8 | +17.5% |
-| 2 | 312947 | 211293 | -32.5% | 312947 | 189209 | 160.2 | 167.3 | +4.4% |
-| 3 | 469025 | 231942 | -50.5% | 469025 | 198810 | 224.3 | 254.8 | +13.6% |
+| 1 | 156896 | 190643 | +21.5% | 156896 | 179604 | 95.5 | 91.3 | -4.4% |
+| 2 | 312947 | 211293 | -32.5% | 312947 | 189209 | 175.6 | 197.5 | +12.5% |
+| 3 | 469025 | 231942 | -50.5% | 469025 | 198810 | 276.1 | 272.3 | -1.4% |
 
-> 绝对字节随组件样式演进会变化；本表由 `scripts/upstream-sync/sync-bench-doc.mjs` 从 `.cache/cssvar-bench.json` 直接生成，与实测同源。耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。
+> 绝对字节随组件样式演进会变化；本表由 `scripts/upstream-sync/sync-bench-doc.mjs`
+> 从 `.cache/cssvar-bench.json` 直接生成，与实测同源。耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。
 
 `cssVar` 增量拆解（1 → 2 → 3 套主题）：
 
-| 指标                 | theme 1 | theme 2 | theme 3 | 1→3 增量   |
-| -------------------- | ------- | ------- | ------- | ---------- |
-| CSS 体积 (B)         | 190643  | 211293  | 231942  | **+41299** |
-| 组件规则 (B)         | 179604  | 189209  | 198810  | +19206     |
-| 变量声明 (B)         | 11039   | 22084   | 33132   | +22093     |
-| `.ant-btn{` 规则份数 | 7       | 7       | 7       | **0**      |
+| 指标 | theme 1 | theme 2 | theme 3 | 1→3 增量 |
+| --- | --- | --- | --- | --- |
+| CSS 体积 (B) | 190643 | 211293 | 231942 | **+41299** |
+| 组件规则 (B) | 179604 | 189209 | 198810 | +19206 |
+| 变量声明 (B) | 11039 | 22084 | 33132 | +22093 |
+| `.ant-btn{` 规则份数 | 7 | 7 | 7 | **0** |
 
-对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份）， 1→3 的 CSS 增量为 **+312129 B**。
+对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份），
+1→3 的 CSS 增量为 **+312129 B**。
 
 **结论（实测，非估算）**：
 
 - **组件样式确实只生成一份**：`.ant-btn{` 在 cssVar 下恒为 7 份；hash 下随主题数线性增长；
 - **多主题增量**（1→3）：hash +312129 B ｜ cssVar **+41299 B** → **增量降低 86.8%**；
-- **单主题是净负收益**：cssVar 体积 +21.5%（多出的变量声明 + calc 表达）； **从 2 个主题起反超**（-32.5%），3 个主题 **-50.5%**；
+- **单主题是净负收益**：cssVar 体积 +21.5%（多出的变量声明 + calc 表达）；
+  **从 2 个主题起反超**（-32.5%），3 个主题 **-50.5%**；
 - 单主题且不换主题的应用可显式 `theme: { cssVar: false }` 回到 hash 模式；
-- cssVar 下组件规则仍有小幅增量（+19206 B）：来自必须实干色/实数值的规则（带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
+- cssVar 下组件规则仍有小幅增量（+19206 B）：来自必须实干色/实数值的规则
+  （带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
 
-> 方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题用 token 覆盖表达，因为 `theme.algorithm` 本地存量不生效），14 个代表组件，warmup + 3 轮取中位数。复现：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js` → `.cache/cssvar-bench.{json,md}` → `node scripts/upstream-sync/sync-bench-doc.mjs`。
+> 方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题用 token 覆盖表达，因为
+> `theme.algorithm` 本地存量不生效），14 个代表组件，warmup + 3 轮取中位数。
+> 复现：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js` → `.cache/cssvar-bench.{json,md}`
+> → `node scripts/upstream-sync/sync-bench-doc.mjs`。
 
 **基准本身就是回归门禁**（断言，非仅打印）：
 
@@ -366,7 +373,7 @@ cssVar 模式下 token 值是 `var(--ant-*)` 字符串，以下位置的取值�
 2. 组件级变量的 scope 采用组件根类名（未叠加 hash 隔离类），嵌套 `ConfigProvider` 的局部主题场景下变量声明会相互覆盖；
 3. 静态提取的组件覆盖范围取决于提取脚本挂载的组件树，业务侧可按需扩充；
 4. `getTargetScrollBarSize` 与 `vc-util/Dom/css` 的 `getComputedStyle` 在未挂载节点/不支持伪元素的环境下已加 try/catch 兜底（jsdom、SSR 场景）；
-5. 非法 CSS 检测已从「手挑组件一次性挂载」升级为「**67 个组件/状态逐个挂载**」（含 DatePicker/Menu 暗色/Tree/Cascader/Dropdown 弹层、Upload 三形态、Tour 打开态、Image 预览、Table expandable、Layout/Form/InputNumber/Carousel/Anchor/BackTop/Popconfirm/Modal/Drawer/Affix/Grid）；检测类别也补齐为 `NaN` / `undefined` / `[object Object]` / 裸变量算术 / `-var()` / `var() 拼数字`（如 `var(--x)32`）。历史上的 NaN 盲区（DatePicker 50 处、Menu 28 处、Tree 12 处、Layout/Upload/Carousel/Form/Image 等）均由此前「覆盖不足 + 检测类别不全」导致，现已全部修复并纳入门禁。
+5. 非法 CSS 检测已从「手挑组件一次性挂载」升级为「**67 个组件/状态逐个挂载**」（含 DatePicker/TimePicker/Menu 暗色/Tree/TreeSelect/Cascader/AutoComplete/Popover/Dropdown 弹层、Upload 三形态、Tour 打开态、Image 预览、Table expandable、Layout/Form/InputNumber/Carousel/Anchor/BackTop/Popconfirm/Modal/Drawer/Affix/Grid/Splitter/ColorPicker/Calendar/Comment/PageHeader/App）；检测类别也补齐为 `NaN` / `undefined` / `[object Object]` / 裸变量算术 / `-var()` / `var() 拼数字`（如 `var(--x)32`）。历史上的 NaN 盲区（DatePicker 50 处、Menu 28 处、Tree 12 处、Layout/Upload/Carousel/Form/Image 等）均由此前「覆盖不足 + 检测类别不全」导致，现已全部修复并纳入门禁。
 
 ## 3.3 工作量汇总
 

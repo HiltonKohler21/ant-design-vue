@@ -227,8 +227,16 @@
           }
         },
         "btnRuleCount": {
-          "cssVar": [7, 7, 7],
-          "hash": [7, 14, 21]
+          "cssVar": [
+            7,
+            7,
+            7
+          ],
+          "hash": [
+            7,
+            14,
+            21
+          ]
         },
         "delta": {
           "theme1CssSize": "+21.5%（单主题净负：变量声明 + calc）",
@@ -241,7 +249,7 @@
       "tests": [
         "tests/bench/cssvar-bench.test.js（性能契约 4 条断言）",
         "components/theme/__tests__/cssvar-token-chain.test.js",
-        "tests/bench/cssvar-illegal-check.test.js（67 个组件/状态逐组件，6 类非法值检测）",
+        "tests/bench/cssvar-illegal-check.test.js（77 个组件/状态逐组件，6 类非法值检测）",
         "tests/bench/zero-runtime-extract.test.js",
         "tests/bench/visual-parity.test.js（9 组选择器，含暗色 Menu）",
         "tests/bench/runtime-token-values.test.js（5 用例，含源码级守卫）"
@@ -275,10 +283,11 @@
         "Carousel/Anchor/BackTop/InputNumber: 尺寸派生"
       ],
       "notes": [
-        "非法 CSS 检测覆盖 67 个组件/状态（含弹层打开态/暗色态/禁用态/Upload 三形态/Table expandable）",
+        "非法 CSS 检测覆盖 77 个组件/状态（含弹层打开态/暗色态/禁用态/Upload 三形态/Table expandable/App）",
         "检测类别：NaN / undefined / [object Object] / 裸变量算术 / -var() / var() 拼数字",
+        "NaN 检测已改为无词边界（NaNpx 可命中）——此前 \\bNaN\\b 会漏检",
         "视觉一致性抽检 9 组选择器（含 .ant-menu-dark）",
-        "运行时取值守卫含源码级断言，防止「声称已修复但未落地」"
+        "运行时取值守卫含源码级断言"
       ]
     },
     "knownIssues": [
