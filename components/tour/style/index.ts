@@ -19,7 +19,7 @@ interface TourToken extends FullToken<'Tour'> {
 const genBaseStyle: GenerateStyle<TourToken> = token => {
   const {
     componentCls,
-    lineHeight,
+
     padding,
     paddingXS,
     borderRadius,
@@ -31,7 +31,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
     indicatorWidth,
     boxShadowTertiary,
     tourZIndexPopup,
-    fontSize,
+
     colorBgContainer,
     fontWeightStrong,
     marginXS,
@@ -42,6 +42,8 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
     tourCloseSize,
     motionDurationSlow,
     antCls,
+    fontSize,
+    lineHeight,
   } = token;
 
   return [
@@ -223,7 +225,10 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
         '&-placement-rightBottom',
       ].join(',')]: {
         [`${componentCls}-inner`]: {
-          borderRadius: Math.min(tourBorderRadius, MAX_VERTICAL_CONTENT_RADIUS),
+          borderRadius: Math.min(
+            (token as any)._realToken?.borderRadiusLG ?? Number(tourBorderRadius),
+            MAX_VERTICAL_CONTENT_RADIUS,
+          ),
         },
       },
     },
@@ -239,7 +244,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Tour', token => {
-  const { borderRadiusLG, fontSize, lineHeight } = token;
+  const { borderRadiusLG } = token;
   // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
   const rawToken: any = (token as any)._realToken ?? token;
   const TourToken = mergeToken<TourToken>(token, {
@@ -247,7 +252,7 @@ export default genComponentStyleHook('Tour', token => {
     indicatorWidth: 6,
     indicatorHeight: 6,
     tourBorderRadius: borderRadiusLG,
-    tourCloseSize: fontSize * lineHeight,
+    tourCloseSize: rawToken.fontSize * rawToken.lineHeight,
   });
   return [genBaseStyle(TourToken)];
 });

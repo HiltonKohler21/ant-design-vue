@@ -78,7 +78,7 @@ export default genComponentStyleHook<'BackTop'>('BackTop', token => {
     colorTextDescription,
     colorTextLightSolid,
     colorText,
-    controlHeightLG,
+
   } = token;
   // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
   const rawToken: any = (token as any)._realToken ?? token;
@@ -88,11 +88,11 @@ export default genComponentStyleHook<'BackTop'>('BackTop', token => {
     backTopColor: colorTextLightSolid,
     backTopHoverBackground: colorText,
     backTopFontSize: fontSizeHeading3,
-    backTopSize: controlHeightLG,
-    backTopBlockEnd: controlHeightLG * 1.25,
-    backTopInlineEnd: controlHeightLG * 2.5,
-    backTopInlineEndMD: controlHeightLG * 1.5,
-    backTopInlineEndXS: controlHeightLG * 0.5,
+    backTopSize: rawToken.controlHeightLG,
+    backTopBlockEnd: rawToken.controlHeightLG * 1.25,
+    backTopInlineEnd: rawToken.controlHeightLG * 2.5,
+    backTopInlineEndMD: rawToken.controlHeightLG * 1.5,
+    backTopInlineEndXS: rawToken.controlHeightLG * 0.5,
   });
   return [genSharedBackTopStyle(backTopToken), genMediaBackTopStyle(backTopToken)];
 });

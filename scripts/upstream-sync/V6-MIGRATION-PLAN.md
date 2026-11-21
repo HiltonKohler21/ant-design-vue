@@ -182,43 +182,47 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 
 > 脚本：`tests/bench/cssvar-bench.test.js`（14 个代表性组件 × theme count 1/2/3，warmup + 3 轮取中位数）运行：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js`
 
+<!-- BENCH:BEGIN（由 scripts/upstream-sync/sync-bench-doc.mjs 生成，勿手改） -->
+
 | theme count | hash 体积 (B) | cssVar 体积 (B) | 体积变化 | hash 规则字节 (B) | cssVar 规则字节 (B) | hash 耗时 (ms) | cssVar 耗时 (ms) | 耗时变化 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 168537 | 201923 | +19.8% | 157615 | 179953 | 94.3 | 90.7 | -3.8% |
-| 2 | 312947 | 211293 | -32.5% | 312947 | 189209 | 157.5 | 178.8 | +13.5% |
-| 3 | 469025 | 231942 | **-50.5%** | 469025 | 198810 | 242.4 | 263.2 | +8.6% |
+| 1 | 156896 | 190643 | +21.5% | 156896 | 179604 | 73.9 | 86.8 | +17.5% |
+| 2 | 312947 | 211293 | -32.5% | 312947 | 189209 | 160.2 | 167.3 | +4.4% |
+| 3 | 469025 | 231942 | -50.5% | 469025 | 198810 | 224.3 | 254.8 | +13.6% |
 
-> 绝对字节随组件样式演进会小幅变化（本表对应提交 `cd4da76cc` 之后的实测）； **体积/规则字节在同一提交内可复现**，耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。
+> 绝对字节随组件样式演进会变化；本表由 `scripts/upstream-sync/sync-bench-doc.mjs` 从 `.cache/cssvar-bench.json` 直接生成，与实测同源。耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。
 
 `cssVar` 增量拆解（1 → 2 → 3 套主题）：
 
 | 指标                 | theme 1 | theme 2 | theme 3 | 1→3 增量   |
 | -------------------- | ------- | ------- | ------- | ---------- |
-| CSS 体积 (B)         | 201923  | 211293  | 231942  | **+30019** |
-| 组件规则 (B)         | 179953  | 189209  | 198810  | +18857     |
-| 变量声明 (B)         | 21970   | 22084   | 33132   | +11162     |
+| CSS 体积 (B)         | 190643  | 211293  | 231942  | **+41299** |
+| 组件规则 (B)         | 179604  | 189209  | 198810  | +19206     |
+| 变量声明 (B)         | 11039   | 22084   | 33132   | +22093     |
 | `.ant-btn{` 规则份数 | 7       | 7       | 7       | **0**      |
 
-对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份）， 1→3 的 CSS 增量为 **+300488 B**。
+对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份）， 1→3 的 CSS 增量为 **+312129 B**。
 
 **结论（实测，非估算）**：
 
 - **组件样式确实只生成一份**：`.ant-btn{` 在 cssVar 下恒为 7 份；hash 下随主题数线性增长；
-- **多主题增量**（1→3）：hash +300488 B ｜ cssVar **+30019 B** → **增量降低 90.0%**；
-- **单主题是净负收益**：cssVar 体积 +19.8%（多出的变量声明 + calc 表达）； **从 2 个主题起反超**（-32.5%），3 个主题 **-50.5%**；
+- **多主题增量**（1→3）：hash +312129 B ｜ cssVar **+41299 B** → **增量降低 86.8%**；
+- **单主题是净负收益**：cssVar 体积 +21.5%（多出的变量声明 + calc 表达）； **从 2 个主题起反超**（-32.5%），3 个主题 **-50.5%**；
 - 单主题且不换主题的应用可显式 `theme: { cssVar: false }` 回到 hash 模式；
-- cssVar 下组件规则仍有小幅增量（+18857 B）：来自必须实干色/实数值的规则（带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
+- cssVar 下组件规则仍有小幅增量（+19206 B）：来自必须实干色/实数值的规则（带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
 
-> 方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题用 token 覆盖表达，因为 `theme.algorithm` 本地存量不生效），14 个代表组件，warmup + 3 轮取中位数，每轮前清空 `<style>` 与 body。数据可复现：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js` （同时写入 `.cache/cssvar-bench.json` 与 `.cache/cssvar-bench.md`）。
+> 方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题用 token 覆盖表达，因为 `theme.algorithm` 本地存量不生效），14 个代表组件，warmup + 3 轮取中位数。复现：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js` → `.cache/cssvar-bench.{json,md}` → `node scripts/upstream-sync/sync-bench-doc.mjs`。
 
 **基准本身就是回归门禁**（断言，非仅打印）：
 
 1. cssVar 多主题增量 < hash 增量的 15%；
 2. 3 主题时 cssVar 总体积 < hash 总体积；
-3. `.ant-btn{` 份数不随主题数增长（cssVar 恒为 7；hash ≥ 2 倍）；
+3. `.ant-btn{` 份数不随主题数增长（cssVar 恒定；hash ≥ 2 倍）；
 4. cssVar 规则增量 < hash 规则增量的 20%。
 
-> 反证：临时去掉「`_tokenKey` 主题无关化」后，本用例立即失败（增量 379033 B > 阈值 78046 B），证明断言有效。
+> 反证：临时去掉「`_tokenKey` 主题无关化」后，本用例立即失败，证明断言有效。
+
+<!-- BENCH:END -->
 
 ## 3.2c zeroRuntime 与静态样式提取（P1-4c）
 
@@ -301,7 +305,7 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 | zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 235 KB（约 230 KiB） |
 | 视觉一致性 | `tests/bench/visual-parity.test.js` | 9 组选择器（含暗色 Menu）差异 0 |
 | 运行时取值守卫 | `tests/bench/runtime-token-values.test.js` | 5 个用例：Empty 暗色判断/SVG、QRCode 尺寸、Steps、Watermark 语义、源码级 realToken 守卫 |
-| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -50.6%；多主题增量 312185 B → 41299 B（降低 86.8%）；组件规则份数不随主题数增长（已写入性能契约断言） |
+| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题 CSS 体积 -50.5%；多主题增量 hash +312129 B → cssVar +41299 B（降低 86.8%）；组件规则份数不随主题数增长（已写入性能契约断言） |
 
 ### 使用方式
 

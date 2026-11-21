@@ -191,7 +191,7 @@
       "fix(audit): 补齐 ConfigProvider 剩余 8 个组件配置 props（image/empty/switch/message/table/notification/flex/warning）",
       "C 阶段：cssinjs 变量基础设施",
       "C 阶段：Button PoC 打通 cssVar 模式",
-      "C 阶段：基准实测（3 主题 CSS -50.6%，增量 312185→41299 B / -86.8%）",
+      "C 阶段：基准实测（3 主题 CSS -50.5%，增量 312129→41299 B / -86.8%）",
       "C 阶段：修复 3 处变量失效缺陷 + 重构变量注入",
       "C 阶段：非法 CSS 检测器 + P1-4b 路线评估",
       "C 阶段：P1-4b 第一批（calc 化 + _realToken）",
@@ -206,21 +206,22 @@
       "zeroRuntime": "theme.zeroRuntime 开启后运行时零 style 注入",
       "benchmarks": {
         "method": "挂载 N 个 ConfigProvider 子树（token 覆盖表达主题差异）、14 组件、warmup + 3 轮中位数",
+        "generatedFrom": ".cache/cssvar-bench.json（由 sync-bench-doc.mjs 同步）",
         "cssBytes": {
           "hash": {
-            "theme1": 168537,
+            "theme1": 156896,
             "theme2": 312947,
             "theme3": 469025
           },
           "cssVar": {
-            "theme1": 201923,
+            "theme1": 190643,
             "theme2": 211293,
             "theme3": 231942
           }
         },
         "ruleBytes": {
           "cssVar": {
-            "theme1": 179953,
+            "theme1": 179604,
             "theme2": 189209,
             "theme3": 198810
           }
@@ -230,11 +231,10 @@
           "hash": [7, 14, 21]
         },
         "delta": {
-          "theme1CssSize": "+19.8%（单主题净负：变量声明 + calc）",
+          "theme1CssSize": "+21.5%（单主题净负：变量声明 + calc）",
           "theme3CssSize": "-50.5%",
-          "multiThemeIncrement": "hash +300488 B vs cssVar +30019 B → 降低 90.0%"
+          "multiThemeIncrement": "hash +312129 B vs cssVar +41299 B → 降低 86.8%"
         },
-        "staticExtractSize": "235663 B（约 230 KiB）",
         "illegalCss": 0,
         "visualParityDiffs": 0
       },

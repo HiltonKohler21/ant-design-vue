@@ -70,6 +70,7 @@ import Modal from '../../components/modal';
 import Table from '../../components/table';
 import Affix from '../../components/affix';
 import Grid from '../../components/grid';
+import App from '../../components/app';
 
 const collectCss = () =>
   Array.from(document.querySelectorAll('style'))
@@ -89,8 +90,9 @@ const findNegatedVar = css => (css.match(/(?<![\w)])\-var\(--ant-/g) || []).leng
 const findVarConcat = css => (css.match(/var\(--ant-[a-z0-9-]+\)(?=[A-Za-z0-9.-]+)/g) || []).length;
 
 const ILLEGAL = [
-  { name: 'NaN', re: /\bNaN\b/g },
-  { name: 'undefined', re: /\bundefined\b/g },
+  // 注意：不能用 \bNaN\b —— NaNpx 中 N→p 之间没有词边界，会漏检
+  { name: 'NaN', re: /NaN/g },
+  { name: 'undefined', re: /undefined/g },
   { name: '[object Object]', re: /\[object Object\]/g },
 ];
 
@@ -220,6 +222,14 @@ const CASES = [
       <Dropdown open menu={{ items: [{ key: '1', label: 'd' }] }}>
         <span>dd</span>
       </Dropdown>
+    ),
+  ],
+  [
+    'App',
+    () => (
+      <App>
+        <div>app</div>
+      </App>
     ),
   ],
   ['Image', () => <Image src="https://antdv.com/x.png" />],
@@ -376,7 +386,11 @@ const check = async slot => {
     let cm = reC.exec(css);
     let cnt = 0;
     while (cm && cnt < 5) {
-      console.log('    concat: …' + css.slice(Math.max(0, cm.index - 40), cm.index + 40).replace(/\n/g, ' ') + '…');
+      console.log(
+        '    concat: …' +
+          css.slice(Math.max(0, cm.index - 40), cm.index + 40).replace(/\n/g, ' ') +
+          '…',
+      );
       cm = reC.exec(css);
       cnt += 1;
     }

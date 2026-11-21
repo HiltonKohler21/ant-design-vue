@@ -190,12 +190,12 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
 
         [`${noticeCls}-with-icon ${noticeCls}-message`]: {
           marginBottom: token.marginXS,
-          marginInlineStart: token.marginSM + notificationIconSize,
+          marginInlineStart: token.calc(token.marginSM).add(notificationIconSize).equal(),
           fontSize: fontSizeLG,
         },
 
         [`${noticeCls}-with-icon ${noticeCls}-description`]: {
-          marginInlineStart: token.marginSM + notificationIconSize,
+          marginInlineStart: token.calc(token.marginSM).add(notificationIconSize).equal(),
           fontSize,
         },
 

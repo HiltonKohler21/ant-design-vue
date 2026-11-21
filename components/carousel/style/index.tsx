@@ -228,7 +228,7 @@ const genCarouselStyle: GenerateStyle<CarouselToken> = token => {
 
             '&::after': {
               position: 'absolute',
-              inset: -carouselDotMargin,
+              inset: token.calc(carouselDotMargin).mul(-1).equal(),
               content: '""',
             },
           },
@@ -331,10 +331,11 @@ const genCarouselRtlStyle: GenerateStyle<CarouselToken> = token => {
 export default genComponentStyleHook(
   'Carousel',
   token => {
-    const { controlHeightLG, controlHeightSM } = token;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawCarouselToken: any = (token as any)._realToken ?? token;
     const carouselToken = mergeToken<CarouselToken>(token, {
-      carouselArrowSize: controlHeightLG / 2,
-      carouselDotOffset: controlHeightSM / 2,
+      carouselArrowSize: rawCarouselToken.controlHeightLG / 2,
+      carouselDotOffset: rawCarouselToken.controlHeightSM / 2,
     });
 
     return [

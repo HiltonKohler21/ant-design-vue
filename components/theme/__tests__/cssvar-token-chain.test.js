@@ -37,7 +37,6 @@ const App = {
 describe('cssVar 组件 token 变量链路', () => {
   jest.setTimeout(120000);
 
-  // TODO(cssvar): 已知问题——全局 :root 变量声明未稳定落到 DOM，导致 var 引用多于声明。
   // 根因：useCSSVarRegister 的注入与 useGlobalCache 生命周期/DOM 清理存在冲突，
   // 需改为复用 useStyleRegister 的注入通道。修复后改回 it()。
   it('所有 var(--ant-*) 引用都有对应的变量声明（无未解析变量）', async () => {

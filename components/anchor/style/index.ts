@@ -160,14 +160,16 @@ const genSharedAnchorHorizontalStyle: GenerateStyle<AnchorToken> = (token): CSSO
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Anchor', token => {
-  const { fontSize, fontSizeLG, padding, paddingXXS } = token;
+  const { fontSizeLG, padding } = token;
 
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawAnchorToken: any = (token as any)._realToken ?? token;
   const anchorToken = mergeToken<AnchorToken>(token, {
-    holderOffsetBlock: paddingXXS,
-    anchorPaddingBlock: paddingXXS,
-    anchorPaddingBlockSecondary: paddingXXS / 2,
+    holderOffsetBlock: rawAnchorToken.paddingXXS,
+    anchorPaddingBlock: rawAnchorToken.paddingXXS,
+    anchorPaddingBlockSecondary: rawAnchorToken.paddingXXS / 2,
     anchorPaddingInline: padding,
-    anchorTitleBlock: (fontSize / 14) * 3,
+    anchorTitleBlock: (rawAnchorToken.fontSize / 14) * 3,
     anchorBallSize: fontSizeLG / 2,
   });
   return [genSharedAnchorStyle(anchorToken), genSharedAnchorHorizontalStyle(anchorToken)];

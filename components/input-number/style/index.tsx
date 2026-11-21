@@ -78,7 +78,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
           borderRadius: borderRadiusLG,
 
           [`input${componentCls}-input`]: {
-            height: controlHeightLG - 2 * lineWidth,
+            height: token.calc(controlHeightLG).sub(token.calc(lineWidth).mul(2).equal()).equal(),
           },
         },
 
@@ -87,7 +87,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
           borderRadius: borderRadiusSM,
 
           [`input${componentCls}-input`]: {
-            height: controlHeightSM - 2 * lineWidth,
+            height: token.calc(controlHeightSM).sub(token.calc(lineWidth).mul(2).equal()).equal(),
             padding: `0 ${unit(inputPaddingHorizontalSM)}`,
           },
         },
@@ -145,7 +145,7 @@ const genInputNumberStyles: GenerateStyle<InputNumberToken> = (token: InputNumbe
         [componentCls]: {
           '&-input': {
             width: '100%',
-            height: controlHeight - 2 * lineWidth,
+            height: token.calc(controlHeight).sub(token.calc(lineWidth).mul(2).equal()).equal(),
             padding: `0 ${unit(inputPaddingHorizontal)}`,
             textAlign: 'start',
             backgroundColor: 'transparent',
@@ -446,7 +446,9 @@ export default genComponentStyleHook(
   },
   token => ({
     controlWidth: 90,
-    handleWidth: token.controlHeightSM - token.lineWidth * 2,
+    handleWidth:
+      ((token as any)._realToken?.controlHeightSM ?? Number(token.controlHeightSM)) -
+      ((token as any)._realToken?.lineWidth ?? Number(token.lineWidth)) * 2,
     handleFontSize: token.fontSize / 2,
     handleVisible: 'auto',
   }),
