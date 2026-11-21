@@ -43,7 +43,13 @@ const genBaseStyle: GenerateStyle<PopconfirmToken> = token => {
           fontSize,
           flex: 'none',
           lineHeight: 1,
-          paddingTop: (Math.round(fontSize * lineHeight) - fontSize) / 2,
+          paddingTop:
+            (Math.round(
+              ((token as any)._realToken?.fontSize ?? Number(fontSize)) *
+                ((token as any)._realToken?.lineHeight ?? Number(lineHeight)),
+            ) -
+              ((token as any)._realToken?.fontSize ?? Number(fontSize))) /
+            2,
         },
 
         '&-title': {
@@ -58,7 +64,7 @@ const genBaseStyle: GenerateStyle<PopconfirmToken> = token => {
 
       [`${componentCls}-description`]: {
         position: 'relative',
-        marginInlineStart: fontSize + marginXS,
+        marginInlineStart: token.calc(fontSize).add(marginXS).equal(),
         marginBottom: marginXS,
         color: colorText,
         fontSize,

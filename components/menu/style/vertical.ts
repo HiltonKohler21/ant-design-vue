@@ -15,7 +15,8 @@ const getVerticalInlineStyle: GenerateStyle<MenuToken, CSSObject> = token => {
     marginXXS,
   } = token;
 
-  const paddingWithArrow = padding + menuArrowSize + marginXS;
+  // 变量化 token 之间不能直接相加（会拼成 var(--x)10var(--y)），必须走 calc 链
+  const paddingWithArrow = token.calc(padding).add(menuArrowSize).add(marginXS).equal();
 
   return {
     [`${componentCls}-item`]: {

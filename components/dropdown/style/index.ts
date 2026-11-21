@@ -387,7 +387,7 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
           },
 
           [`${menuCls}-submenu-title`]: {
-            paddingInlineEnd: controlPaddingHorizontal + token.fontSizeSM,
+            paddingInlineEnd: token.calc(controlPaddingHorizontal).add(token.fontSizeSM).equal(),
           },
 
           [`${menuCls}-submenu-vertical`]: {

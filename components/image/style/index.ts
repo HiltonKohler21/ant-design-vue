@@ -125,7 +125,7 @@ export const genPreviewSwitchStyle = (token: ImageToken): CSSObject => {
     [`${previewCls}-switch-left, ${previewCls}-switch-right`]: {
       position: 'fixed',
       insetBlockStart: '50%',
-      zIndex: zIndexPopup + 1,
+      zIndex: (token as any)._realToken?.zIndexPopup ?? zIndexPopup + 1,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

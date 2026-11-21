@@ -16,7 +16,7 @@
 
 `引入 antd v6 的性能层：CSS 变量与零运行时`
 
-- 🌟 新增 CSS 变量模式并**默认开启**（对齐 antd v6），样式只生成一次，多主题场景下组件样式只生成一份（14 组件实测：3 套主题 CSS 体积 -50.6%，多主题增量 312185 B → 41299 B（降低 86.8%））。若需保持旧行为，传 `theme: { cssVar: false }` 即可回到 hash 模式。
+- 🌟 新增 CSS 变量模式并**默认开启**（对齐 antd v6），样式只生成一次，多主题场景下组件样式只生成一份（14 组件实测：3 套主题 CSS 体积 -50.5%，多主题增量 hash +300488 B vs cssVar +30019 B（降低 90.0%）；单主题为 +19.8%（换取主题可切换性））。若需保持旧行为，传 `theme: { cssVar: false }` 即可回到 hash 模式。
 - 🌟 新增 `theme.zeroRuntime`，开启后运行时不再注入 `<style>`，需配合预提取的静态 CSS 使用。
 - 🌟 新增 `npm run static-style-extract` 静态样式提取命令，产出 `dist/static-style/antdv.css`。
 - 🛠 样式层全量改为 `calc()` 表达尺寸派生，新增 `unit()` 工具处理「数值补 px / 变量原样返回」，修复开启变量后出现的 `NaN`、`undefined` 与非法 `var()px` 值。
@@ -24,7 +24,7 @@
 - 🐞 修复 Table 表头背景在变量模式下变为纯黑的问题（`TinyColor` 无法解析 `var()` 字符串）。
 - 🐞 修复 Select 状态样式引用了未定义变量导致边框宽度失效的问题。
 - 🐞 修复开启 CSS 变量后，依赖真实色值/数值的运行时逻辑出现退化：Empty 暗色判断失效并误加透明度、Empty/Table/Menu 暗色/DatePicker/Slider/Tour/Image 部分配色变纯黑、QRCode 尺寸与前景色、Steps 尺寸、Watermark Canvas 字号与颜色。
-- 🐞 修复 DatePicker、Menu（暗色）、Tree、Cascader、Transfer、Dropdown 在 CSS 变量模式下产生 `NaN` 非法 CSS 的问题（度量派生统一改用 calc 链或真实数值 token）。
+- 🐞 修复 Layout、Upload、Carousel、BackTop、Anchor、Form、InputNumber、Popconfirm、Tour、DatePicker、Menu（暗色）、Tree、Cascader、Transfer、Dropdown、Table、Image 在 CSS 变量模式下产生 `NaN` / `var() 拼数字` 等非法 CSS 的问题（尺寸派生统一改用 calc 链或真实数值 token）。
 
 ## 4.2.7
 

@@ -278,7 +278,6 @@ export default genComponentStyleHook('Table', token => {
     colorBgContainer,
     borderRadiusLG,
     colorFillContent,
-    controlInteractiveSize: checkboxSize,
   } = token;
 
   // 颜色运算需要真实色值（cssVar 下 token 值是 var() 字符串，TinyColor 无法解析会得到 #000000）
@@ -341,7 +340,7 @@ export default genComponentStyleHook('Table', token => {
     tableFontSizeSmall: fontSize,
     tableSelectionColumnWidth: controlHeight,
     tableExpandIconBg: colorBgContainer,
-    tableExpandColumnWidth: checkboxSize + 2 * rawToken.padding,
+    tableExpandColumnWidth: rawToken.controlInteractiveSize + 2 * rawToken.padding,
     tableExpandedRowBg: colorFillAlter,
 
     // Dropdown

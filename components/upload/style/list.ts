@@ -4,11 +4,13 @@ import type { GenerateStyle } from '../../theme/internal';
 import { clearFix, textEllipsis } from '../../style';
 
 const genListStyle: GenerateStyle<UploadToken> = token => {
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawListToken: any = (token as any)._realToken ?? token;
   const { componentCls, antCls, iconCls, fontSize, lineHeight } = token;
   const itemCls = `${componentCls}-list-item`;
   const actionsCls = `${itemCls}-actions`;
   const actionCls = `${itemCls}-action`;
-  const listItemHeightSM = Math.round(fontSize * lineHeight);
+  const listItemHeightSM = Math.round(rawListToken.fontSize * rawListToken.lineHeight);
 
   return {
     [`${componentCls}-wrapper`]: {
@@ -18,7 +20,7 @@ const genListStyle: GenerateStyle<UploadToken> = token => {
 
         [itemCls]: {
           position: 'relative',
-          height: token.lineHeight * fontSize,
+          height: token.calc(token.lineHeight).mul(fontSize).equal(),
           marginTop: token.marginXS,
           fontSize,
           display: 'flex',
@@ -78,7 +80,7 @@ const genListStyle: GenerateStyle<UploadToken> = token => {
             position: 'absolute',
             bottom: token.calc(token.uploadProgressOffset).mul(-1).equal(),
             width: '100%',
-            paddingInlineStart: fontSize + token.paddingXS,
+            paddingInlineStart: token.calc(fontSize).add(token.paddingXS).equal(),
             fontSize,
             lineHeight: 0,
             pointerEvents: 'none',

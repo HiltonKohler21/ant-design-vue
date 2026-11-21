@@ -16,7 +16,7 @@
 
 `Adopt the antd v6 performance layer: CSS variables and zero runtime`
 
-- 🌟 Add CSS variable mode and enable it **by default** (aligned with antd v6). Styles are generated once, cutting CSS size by 50.6% with three themes and reducing multi-theme increments from 312185 B to 41299 B (-86.8%). Pass `theme: { cssVar: false }` to keep the previous hashed-mode behavior.
+- 🌟 Add CSS variable mode and enable it **by default** (aligned with antd v6). Styles are generated once, cutting CSS size by 50.5% with three themes and reducing multi-theme increments from 300488 B to 30019 B (-90.0%); a single theme costs +19.8% in exchange for theme switching. Pass `theme: { cssVar: false }` to keep the previous hashed-mode behavior.
 - 🌟 Add `theme.zeroRuntime`. When enabled, no `<style>` is injected at runtime; pair it with pre-extracted static CSS.
 - 🌟 Add `npm run static-style-extract`, which emits `dist/static-style/antdv.css`.
 - 🛠 Express all dimension derivations with `calc()`, and add a `unit()` helper that appends `px` for numbers and returns strings untouched, fixing `NaN`, `undefined` and invalid `var()px` values.
@@ -24,7 +24,7 @@
 - 🐞 Fix Table header background turning solid black in variable mode (`TinyColor` cannot parse `var()` strings).
 - 🐞 Fix Select status border width, which referenced an undefined token.
 - 🐞 Fix runtime logic that depends on real color/number values after enabling CSS variables: Empty dark-mode detection (spurious opacity), Empty/Table/dark Menu/DatePicker/Slider/Tour/Image colors turning solid black, QRCode size and foreground color, Steps dimensions, and Watermark canvas font size/color.
-- 🐞 Fix DatePicker, dark Menu, Tree, Cascader, Transfer and Dropdown emitting invalid `NaN` CSS in CSS-variable mode.
+- 🐞 Fix Layout, Upload, Carousel, BackTop, Anchor, Form, InputNumber, Popconfirm, Tour, DatePicker, dark Menu, Tree, Cascader, Transfer, Dropdown, Table and Image emitting invalid `NaN` / concatenated `var()` CSS in CSS-variable mode.
 
 ## 4.2.7
 

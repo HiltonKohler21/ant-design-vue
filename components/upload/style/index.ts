@@ -44,13 +44,14 @@ const genBaseStyle: GenerateStyle<UploadToken> = token => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Upload', token => {
-  const { fontSizeHeading3, fontSize, lineHeight, lineWidth, controlHeightLG } = token;
-  const listItemHeightSM = Math.round(fontSize * lineHeight);
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawUploadToken: any = (token as any)._realToken ?? token;
+  const listItemHeightSM = Math.round(rawUploadToken.fontSize * rawUploadToken.lineHeight);
 
   const uploadToken = mergeToken<UploadToken>(token, {
-    uploadThumbnailSize: fontSizeHeading3 * 2,
-    uploadProgressOffset: listItemHeightSM / 2 + lineWidth,
-    uploadPicCardSize: controlHeightLG * 2.55,
+    uploadThumbnailSize: rawUploadToken.fontSizeHeading3 * 2,
+    uploadProgressOffset: listItemHeightSM / 2 + rawUploadToken.lineWidth,
+    uploadPicCardSize: rawUploadToken.controlHeightLG * 2.55,
   });
 
   return [

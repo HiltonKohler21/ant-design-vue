@@ -200,17 +200,19 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
 export default genComponentStyleHook(
   'Layout',
   token => {
-    const { colorText, controlHeightSM, controlHeight, controlHeightLG, marginXXS } = token;
-    const layoutHeaderPaddingInline = controlHeightLG * 1.25;
+    const { colorText, controlHeightSM } = token;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawLayoutToken: any = (token as any)._realToken ?? token;
+    const layoutHeaderPaddingInline = rawLayoutToken.controlHeightLG * 1.25;
 
     const layoutToken = mergeToken<LayoutToken>(token, {
       // Layout
-      layoutHeaderHeight: controlHeight * 2,
+      layoutHeaderHeight: rawLayoutToken.controlHeight * 2,
       layoutHeaderPaddingInline,
       layoutHeaderColor: colorText,
       layoutFooterPadding: `${unit(controlHeightSM)} ${unit(layoutHeaderPaddingInline)}`,
-      layoutTriggerHeight: controlHeightLG + marginXXS * 2, // = item height + margin
-      layoutZeroTriggerSize: controlHeightLG,
+      layoutTriggerHeight: rawLayoutToken.controlHeightLG + rawLayoutToken.marginXXS * 2, // = item height + margin
+      layoutZeroTriggerSize: rawLayoutToken.controlHeightLG,
     });
 
     return [genLayoutStyle(layoutToken)];

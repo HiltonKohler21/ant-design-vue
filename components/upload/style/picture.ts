@@ -49,7 +49,10 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
             bottom: uploadProgressOffset,
             width: `calc(100% - ${unit(token.calc(token.paddingSM).mul(2).equal())})`,
             marginTop: 0,
-            paddingInlineStart: uploadThumbnailSize + token.paddingXS,
+            paddingInlineStart: token
+              .calc(uploadThumbnailSize)
+              .add(token.paddingXS)
+              .equal(),
           },
         },
 

@@ -58,6 +58,18 @@ import Cascader from '../../components/cascader';
 import Dropdown from '../../components/dropdown';
 import Image from '../../components/image';
 import Watermark from '../../components/watermark';
+import Layout from '../../components/layout';
+import Form from '../../components/form';
+import InputNumber from '../../components/input-number';
+import Carousel from '../../components/carousel';
+import Anchor from '../../components/anchor';
+import BackTop from '../../components/back-top';
+import Popconfirm from '../../components/popconfirm';
+import Drawer from '../../components/drawer';
+import Modal from '../../components/modal';
+import Table from '../../components/table';
+import Affix from '../../components/affix';
+import Grid from '../../components/grid';
 
 const collectCss = () =>
   Array.from(document.querySelectorAll('style'))
@@ -66,6 +78,15 @@ const collectCss = () =>
 
 // 「一元负号直接作用在 var() 上」也是非法值（无法对变量取负，必须用 calc）
 const findNegatedVar = css => (css.match(/(?<![\w)])\-var\(--ant-/g) || []).length;
+
+/**
+ * 找出「var() 后直接拼接数字/字母」的非法值，例如：
+ *   var(--ant-control-interactive-size)32
+ *   var(--ant-control-height-lg)NaN
+ *   var(--ant-image-z-index-popup)1
+ * 合法：var(--x)、var(--x) var(--y)、var(--x);、var(--x))、var(--x)!
+ */
+const findVarConcat = css => (css.match(/var\(--ant-[a-z0-9-]+\)(?=[A-Za-z0-9.-]+)/g) || []).length;
 
 const ILLEGAL = [
   { name: 'NaN', re: /\bNaN\b/g },
@@ -203,6 +224,121 @@ const CASES = [
   ],
   ['Image', () => <Image src="https://antdv.com/x.png" />],
   [
+    'Layout',
+    () => (
+      <Layout>
+        <Layout.Header>h</Layout.Header>
+        <Layout>
+          <Layout.Sider collapsible />
+          <Layout.Content>c</Layout.Content>
+        </Layout>
+      </Layout>
+    ),
+  ],
+  [
+    'Layout(hasSider)',
+    () => (
+      <Layout hasSider>
+        <Layout.Sider />
+        <Layout.Content>c</Layout.Content>
+      </Layout>
+    ),
+  ],
+  [
+    'Form(vertical)',
+    () => (
+      <Form layout="vertical">
+        <Form.Item label="l" required>
+          <Input />
+        </Form.Item>
+      </Form>
+    ),
+  ],
+  [
+    'Form(horizontal)',
+    () => (
+      <Form>
+        <Form.Item label="l">
+          <Input />
+        </Form.Item>
+      </Form>
+    ),
+  ],
+  ['InputNumber', () => <InputNumber min={0} max={10} value={1} />],
+  [
+    'Carousel',
+    () => (
+      <Carousel arrows dots>
+        <div>a</div>
+        <div>b</div>
+      </Carousel>
+    ),
+  ],
+  ['Anchor', () => <Anchor items={[{ key: '1', href: '#a', title: 'a' }]} />],
+  ['BackTop', () => <BackTop visible />],
+  [
+    'Popconfirm(open)',
+    () => (
+      <Popconfirm open title="t" description="d">
+        <span>x</span>
+      </Popconfirm>
+    ),
+  ],
+  ['Upload(list)', () => <Upload fileList={[]} />],
+  ['Upload(picture-card)', () => <Upload listType="picture-card" fileList={[]} />],
+  [
+    'Upload(dragger)',
+    () => (
+      <Upload.Dragger fileList={[]}>
+        <p>drag</p>
+      </Upload.Dragger>
+    ),
+  ],
+  ['Tour(open)', () => <Tour open steps={[{ title: 'a', description: 'b' }]} />],
+  ['Image(preview)', () => <Image src="https://antdv.com/x.png" preview={{ open: true }} />],
+  [
+    'Table(expandable)',
+    () => (
+      <Table
+        columns={[{ title: 'A', dataIndex: 'a' }]}
+        dataSource={[{ key: 1, a: 1 }]}
+        expandable={{ expandedRowRender: () => <div>x</div> }}
+      />
+    ),
+  ],
+  [
+    'Modal(open)',
+    () => (
+      <Modal open title="m">
+        body
+      </Modal>
+    ),
+  ],
+  [
+    'Drawer(open)',
+    () => (
+      <Drawer open title="d">
+        body
+      </Drawer>
+    ),
+  ],
+  [
+    'Affix',
+    () => (
+      <Affix>
+        <span>a</span>
+      </Affix>
+    ),
+  ],
+  [
+    'Grid',
+    () => (
+      <Grid.Row gutter={16}>
+        <Grid.Col span={12}>a</Grid.Col>
+      </Grid.Row>
+    ),
+  ],
+  [
     'Watermark',
     () => (
       <Watermark content="w">
@@ -233,6 +369,18 @@ const check = async slot => {
   if (bareVar.length) hits.push(`var() 裸算术 × ${bareVar.length}`);
   const negVar = findNegatedVar(css);
   if (negVar) hits.push(`-var() × ${negVar}`);
+  const varConcat = findVarConcat(css);
+  if (varConcat) {
+    hits.push(`var() 拼数字 × ${varConcat}`);
+    const reC = /var\(--ant-[a-z0-9-]+\)(?=[A-Za-z0-9.-]+)/g;
+    let cm = reC.exec(css);
+    let cnt = 0;
+    while (cm && cnt < 5) {
+      console.log('    concat: …' + css.slice(Math.max(0, cm.index - 40), cm.index + 40).replace(/\n/g, ' ') + '…');
+      cm = reC.exec(css);
+      cnt += 1;
+    }
+  }
 
   if (hits.length) {
     const uniq = new Set();
