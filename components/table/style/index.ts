@@ -274,35 +274,33 @@ export default genComponentStyleHook('Table', token => {
     paddingSM,
     controlHeight,
     colorFillAlter,
-    colorIcon,
-    colorIconHover,
     opacityLoading,
     colorBgContainer,
     borderRadiusLG,
     colorFillContent,
-    colorFillSecondary,
     controlInteractiveSize: checkboxSize,
   } = token;
 
-  const baseColorAction = new TinyColor(colorIcon);
-  const baseColorActionHover = new TinyColor(colorIconHover);
+  // 颜色运算需要真实色值（cssVar 下 token 值是 var() 字符串，TinyColor 无法解析会得到 #000000）
+  const rawToken: any = (token as any)._realToken ?? token;
+
+  const baseColorAction = new TinyColor(rawToken.colorIcon);
+  const baseColorActionHover = new TinyColor(rawToken.colorIconHover);
 
   const tableSelectedRowBg = controlItemBgActive;
   const zIndexTableFixed: number = 2;
 
-  const colorFillSecondarySolid = new TinyColor(colorFillSecondary)
-    .onBackground(colorBgContainer)
+  const colorFillSecondarySolid = new TinyColor(rawToken.colorFillSecondary)
+    .onBackground(rawToken.colorBgContainer)
     .toHexString();
-  const colorFillContentSolid = new TinyColor(colorFillContent)
-    .onBackground(colorBgContainer)
-    .toHexString();
-
-  const colorFillAlterSolid = new TinyColor(colorFillAlter)
-    .onBackground(colorBgContainer)
+  const colorFillContentSolid = new TinyColor(rawToken.colorFillContent)
+    .onBackground(rawToken.colorBgContainer)
     .toHexString();
 
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
+  const colorFillAlterSolid = new TinyColor(rawToken.colorFillAlter)
+    .onBackground(rawToken.colorBgContainer)
+    .toHexString();
+
   const tableToken = mergeToken<TableToken>(token, {
     tableFontSize: fontSize,
     tableBg: colorBgContainer,

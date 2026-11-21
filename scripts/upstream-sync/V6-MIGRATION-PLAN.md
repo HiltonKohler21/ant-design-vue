@@ -355,6 +355,35 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 - 提取产物面向「主题固定」的应用；若需要运行时切换主题，请回到常规模式（cssVar 开、zeroRuntime 关），此时样式仍只生成一次，只是注入动作发生在浏览器。
 - 提取覆盖多少组件取决于提取脚本里挂载的组件树；默认覆盖 Button/Input/Select/Table/Modal/Tag/Card/Tabs/Space，业务侧可按需扩充。
 
+## 3.2d 视觉一致性抽检（P1-5）
+
+**目的**：在不渲染截图的前提下，证明 cssVar 模式与 hash 模式产出的视觉要素一致。
+
+**做法**（）：
+
+1. 分别在 （hash）与 （cssVar）下挂载同一组件树；
+2. 从生成的 CSS 中按选择器抽取关键属性；
+3. 把 cssVar 侧的 逐层解析为具体值，并对 做四则求值；
+4. 归一化后逐项比对，差异必须修复或解释。
+
+**覆盖**（7 组选择器）：
+
+| 组件 | 选择器 | 比对属性 |
+| --- | --- | --- |
+| Button |  | font-size / height / border-radius / padding / color / background / border-color |
+| Button(primary) |  | color / background / border-color / box-shadow |
+| Input |  | font-size / height / border-radius / padding / color / background |
+| Select |  | border-radius / background / border-color |
+| Table |  | font-size / background / border-radius |
+| TableHeader |  | color / background / font-weight / text-align |
+| Modal |  | border-radius / background / padding |
+
+**抽检发现并修复的真实缺陷**：
+
+- `.ant-table-thead >tr>th` 在 cssVar 模式下 `background` 变成 `#000000`（hash 模式为 `#fafafa`）。根因：表格用 `new TinyColor(colorFillAlter).onBackground(colorBgContainer)` 计算实色背景，而 cssVar 模式下这些 token 是 `var(--ant-*)` 字符串，TinyColor 解析失败退化成黑色。修复：颜色运算改用 `_realToken`（真实色值），CSS 输出仍走变量。
+
+结论：抽检差异 0 项；jsdom 不支持 测量，测试内对 做了打桩。
+
 ## 3.3 工作量汇总
 
 | 阶段          | 工作量         | 风险                   | 交付价值                 |
