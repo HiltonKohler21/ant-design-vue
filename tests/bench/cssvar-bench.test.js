@@ -79,7 +79,10 @@ async function runScenario(mode, themeCount) {
   const hosts = [];
   const t0 = now();
   for (let i = 0; i < themeCount; i += 1) {
-    const theme = cssVar ? { cssVar: true, ...THEME_CONFIGS[i] } : { ...THEME_CONFIGS[i] };
+    // cssVar 已默认开启，hash 侧需显式关闭
+    const theme = cssVar
+      ? { cssVar: true, ...THEME_CONFIGS[i] }
+      : { cssVar: false, ...THEME_CONFIGS[i] };
     hosts.push(
       mount(ConfigProvider, {
         props: { theme },

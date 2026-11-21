@@ -146,6 +146,11 @@
           "id": "C-5",
           "title": "四套基准测试：基准实测 / 变量链路 / 非法 CSS 检测 / 视觉一致性抽检",
           "status": "done"
+        },
+        {
+          "id": "C-6",
+          "title": "cssVar 默认开启（对齐 antd v6），支持 theme.cssVar: false 回退 hash 模式",
+          "status": "done"
         }
       ]
     }
@@ -197,7 +202,7 @@
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
     "nextUp": "可选：antd 6.x 跟踪（Masonry/BorderBeam/Listy 等）、ColorPicker 渐变拖拽细化",
     "v6Perf": {
-      "cssVar": "experimental（默认关闭，theme.cssVar 开启）",
+      "cssVar": "default-on（theme.cssVar: false 可回退 hash 模式）",
       "zeroRuntime": "theme.zeroRuntime 开启后运行时零 style 注入",
       "benchmarks": {
         "themeCount3CssSize": {

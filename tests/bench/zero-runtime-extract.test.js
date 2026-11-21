@@ -78,7 +78,12 @@ describe('zeroRuntime 静态样式提取', () => {
     const injected = document.querySelectorAll('style[data-css-hash], style[data-css-var-id]');
     if (injected.length) {
       // eslint-disable-next-line no-console
-      console.log('[zero-runtime] 注入项:', Array.from(injected).map(el => el.outerHTML.slice(0, 160)).join('\n---\n'));
+      console.log(
+        '[zero-runtime] 注入项:',
+        Array.from(injected)
+          .map(el => el.outerHTML.slice(0, 160))
+          .join('\n---\n'),
+      );
     }
     expect(injected.length).toBe(0);
 

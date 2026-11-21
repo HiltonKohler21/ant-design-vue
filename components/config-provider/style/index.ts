@@ -4,7 +4,7 @@ import { useToken } from '../../theme/internal';
 import { computed, Ref } from 'vue';
 
 const useStyle = (iconPrefixCls: Ref<string>, zeroRuntime?: Ref<boolean>) => {
-  const [theme, token] = useToken();
+  const [theme, token] = useToken({ zeroRuntime });
   // Generate style for icons
   return useStyleRegister(
     computed(() => ({

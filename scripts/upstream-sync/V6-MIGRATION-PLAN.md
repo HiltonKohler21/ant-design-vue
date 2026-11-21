@@ -400,8 +400,13 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 ### 使用方式
 
 ```vue
-<!-- 运行时模式：样式只生成一次，注入仍发生在浏览器 -->
-<a-config-provider :theme="{ cssVar: true }">
+<!-- 默认即为运行时模式：样式只生成一次，注入发生在浏览器（无需配置） -->
+<a-config-provider>
+  <app />
+</a-config-provider>
+
+<!-- 需要回退到 4.x 的 hash 模式时 -->
+<a-config-provider :theme="{ cssVar: false }">
   <app />
 </a-config-provider>
 
@@ -417,7 +422,7 @@ npm run static-style-extract   # 产出 dist/static-style/antdv.css
 
 ### 兼容性
 
-- `cssVar` 默认关闭：不配置 `theme.cssVar` 时行为与 4.x 完全一致（hash 模式、无 CSS 变量）；
+- `cssVar` **默认开启**（对齐 antd v6）：需要在存量项目里保持旧行为时，显式传 `theme: { cssVar: false }`；
 - 两种模式共用同一套 styleFn，仅 token 表示形式不同，因此不存在双份样式代码；
 - `zeroRuntime` 仅影响「是否注入 DOM」，样式计算与缓存逻辑不变。
 

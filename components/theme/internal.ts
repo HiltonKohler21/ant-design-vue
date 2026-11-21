@@ -124,7 +124,14 @@ export interface CssVarResolvedConfig {
   key: string;
 }
 
-export function useToken(): [
+export function useToken(options?: {
+  /**
+   * 外部显式指定的 zeroRuntime。
+   * ConfigProvider 自身的 useToken 发生在 DesignTokenContext provide 之前，
+   * 此时读不到 theme.zeroRuntime，需要由调用方显式传入。
+   */
+  zeroRuntime?: Ref<boolean>;
+}): [
   ComputedRef<Theme<SeedToken, MapToken>>,
   ComputedRef<GlobalToken>,
   ComputedRef<string>,
@@ -141,8 +148,10 @@ export function useToken(): [
   // salt 需要区分 hash / cssVar 模式，否则两种模式的样式缓存会互相命中
   const salt = computed(() => {
     const cssVar = designTokenContext.value.cssVar;
-    const cssVarMark = cssVar
-      ? `-cssvar-${typeof cssVar === 'object' && cssVar.key ? cssVar.key : 'default'}`
+    // cssVar 默认开启（对齐 antd v6）：只有显式传 false 才回到 hash 模式
+    const cssVarEnabled = cssVar !== false;
+    const cssVarMark = cssVarEnabled
+      ? `-cssvar-${typeof cssVar === 'object' && cssVar && cssVar.key ? cssVar.key : 'default'}`
       : '';
     return `${version}-${designTokenContext.value.hashed || ''}${cssVarMark}`;
   });
@@ -165,10 +174,11 @@ export function useToken(): [
   const realToken = computed(() => cacheToken.value[0]);
   const cssVarConfig = computed<CssVarResolvedConfig | null>(() => {
     const cssVar = designTokenContext.value.cssVar;
-    if (!cssVar) {
+    // 默认开启（对齐 antd v6）；显式 false 时回退到 hash 模式
+    if (cssVar === false) {
       return null;
     }
-    const cfg = typeof cssVar === 'object' ? cssVar : {};
+    const cfg = typeof cssVar === 'object' && cssVar ? cssVar : {};
     return {
       prefix: cfg.prefix || 'ant',
       key: cfg.key || `css-var-${salt.value}`,
@@ -198,7 +208,7 @@ export function useToken(): [
       ignore: CSS_VAR_IGNORE,
       preserve: CSS_VAR_PRESERVE,
       tokenKey: (realToken.value as any)?._tokenKey,
-      zeroRuntime: (designTokenContext.value as any)?.zeroRuntime,
+      zeroRuntime: options?.zeroRuntime?.value ?? (designTokenContext.value as any)?.zeroRuntime,
     })),
     () => realToken.value,
   );

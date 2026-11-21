@@ -16,7 +16,7 @@
 
 `Adopt the antd v6 performance layer: CSS variables and zero runtime`
 
-- 🌟 Add CSS variable mode, enabled via `theme.cssVar` on `ConfigProvider`. Styles are generated once, cutting CSS size by 61.4% with three themes and reducing multi-theme increments by 96.3%.
+- 🌟 Add CSS variable mode and enable it **by default** (aligned with antd v6). Styles are generated once, cutting CSS size by 61.4% with three themes and reducing multi-theme increments by 96.3%. Pass `theme: { cssVar: false }` to keep the previous hashed-mode behavior.
 - 🌟 Add `theme.zeroRuntime`. When enabled, no `<style>` is injected at runtime; pair it with pre-extracted static CSS.
 - 🌟 Add `npm run static-style-extract`, which emits `dist/static-style/antdv.css`.
 - 🛠 Express all dimension derivations with `calc()`, and add a `unit()` helper that appends `px` for numbers and returns strings untouched, fixing `NaN`, `undefined` and invalid `var()px` values.

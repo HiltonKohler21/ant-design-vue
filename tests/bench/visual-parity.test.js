@@ -164,7 +164,7 @@ const snapshot = async cssVar => {
   document.head.innerHTML = '';
   document.body.innerHTML = '';
   mount(ConfigProvider, {
-    props: { theme: cssVar ? { cssVar: true } : {} },
+    props: { theme: cssVar ? { cssVar: true } : { cssVar: false } },
     slots: { default: () => <App /> },
     attachTo: 'body',
   });
