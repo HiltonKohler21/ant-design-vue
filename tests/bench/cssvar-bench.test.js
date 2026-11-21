@@ -139,9 +139,9 @@ describe('cssVar 基准实测（theme count 口径）', () => {
     const lines = [];
     lines.push('');
     lines.push(
-      '| theme count | hash 体积 (B) | cssVar 体积 (B) | 体积变化 | hash 耗时 (ms) | cssVar 耗时 (ms) | 耗时变化 |',
+      '| theme count | hash 体积 (B) | cssVar 体积 (B) | 体积变化 | hash 规则字节 (B) | cssVar 规则字节 (B) | hash 耗时 (ms) | cssVar 耗时 (ms) | 耗时变化 |',
     );
-    lines.push('| --- | --- | --- | --- | --- | --- | --- |');
+    lines.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- |');
     for (const count of [1, 2, 3]) {
       const h = runs.hash[count];
       const c = runs.cssVar[count];
@@ -164,7 +164,11 @@ describe('cssVar 基准实测（theme count 口径）', () => {
 
     const table = lines.join('\n');
     // eslint-disable-next-line no-console
-    console.log('\n===== cssVar 基准实测（theme count 口径）=====\n' + table + '\n');
+    console.log(
+      '\n===== cssVar 基准实测（theme count 口径）=====\n' +
+        table +
+        '\n> 体积/规则字节为确定性指标；耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。\n',
+    );
 
     try {
       const fs = require('fs');
