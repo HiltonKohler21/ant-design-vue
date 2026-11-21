@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import type { CSSObject } from '../../_util/cssinjs';
 import { mergeToken, genComponentStyleHook } from '../../theme/internal';
@@ -38,7 +39,7 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
   const splitBarCls = `${componentCls}-bar`;
   const splitMaskCls = `${componentCls}-mask`;
   const splitPanelCls = `${componentCls}-panel`;
-  const halfTriggerSize = `${splitTriggerSize / 2}px`;
+  const halfTriggerSize = `${unit(token.calc(splitTriggerSize).div(2).equal())}`;
   const splitterBarPreviewOffsetVar = `${prefixCls}-bar-preview-offset`;
 
   const splitterBarPreviewStyle: CSSObject = {

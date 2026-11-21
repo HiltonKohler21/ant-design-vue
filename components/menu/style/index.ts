@@ -105,7 +105,7 @@ const genMenuItemStyle = (token: MenuToken): CSSObject => {
         ].join(','),
 
         '+ span': {
-          marginInlineStart: controlHeightSM - fontSize,
+          marginInlineStart: token.calc(controlHeightSM).sub(fontSize).equal(),
           opacity: 1,
           transition: [
             `opacity ${motionDurationSlow} ${motionEaseInOut}`,
@@ -173,8 +173,8 @@ const genSubMenuArrowStyle = (token: MenuToken): CSSObject => {
         // →
         '&::before, &::after': {
           position: 'absolute',
-          width: menuArrowSize * 0.6,
-          height: menuArrowSize * 0.15,
+          width: token.calc(menuArrowSize).mul(0.6).equal(),
+          height: token.calc(menuArrowSize).mul(0.15).equal(),
           backgroundColor: 'currentcolor',
           borderRadius,
           transition: [
@@ -340,7 +340,7 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
             padding: 0,
 
             [`${componentCls}-item, ${componentCls}-submenu-title`]: {
-              paddingInline: `${fontSize * 2}px ${unit(padding)}`,
+              paddingInline: `${unit(token.calc(fontSize).mul(2).equal())} ${unit(padding)}`,
             },
           },
         },
@@ -406,7 +406,7 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
         [`${componentCls}-submenu-open${componentCls}-submenu-inline > ${componentCls}-submenu-title > ${componentCls}-submenu-arrow`]:
           {
             // ↑
-            transform: `translateY(-${menuArrowSize * 0.2}px)`,
+            transform: `translateY(-${unit(token.calc(menuArrowSize).mul(0.2).equal())})`,
 
             '&::after': {
               transform: `rotate(-45deg) translateX(-${menuArrowOffset})`,
@@ -443,22 +443,27 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
       const { colorBgElevated, colorPrimary, colorError, colorErrorHover, colorTextLightSolid } =
         token;
 
-      const { controlHeightLG, fontSize } = token;
+      const { controlHeightLG } = token;
 
-      const menuArrowSize = (fontSize / 7) * 5;
+      // 尺寸/颜色派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+      const rawToken: any = (token as any)._realToken ?? token;
+
+      const menuArrowSize = (rawToken.fontSize / 7) * 5;
 
       // Menu Token
       const menuToken = mergeToken<MenuToken>(token, {
         menuItemHeight: controlHeightLG,
         menuItemPaddingInline: token.margin,
         menuArrowSize,
-        menuHorizontalHeight: controlHeightLG * 1.15,
-        menuArrowOffset: `${menuArrowSize * 0.25}px`,
+        menuHorizontalHeight: rawToken.controlHeightLG * 1.15,
+        menuArrowOffset: `${unit(token.calc(menuArrowSize).mul(0.25).equal())}`,
         menuPanelMaskInset: -7, // Still a hardcode here since it's offset by rc-align
         menuSubMenuBg: colorBgElevated,
       });
 
-      const colorTextDark = new TinyColor(colorTextLightSolid).setAlpha(0.65).toRgbString();
+      const colorTextDark = new TinyColor(rawToken.colorTextLightSolid)
+        .setAlpha(0.65)
+        .toRgbString();
 
       const menuDarkToken = mergeToken<MenuToken>(
         menuToken,
@@ -476,7 +481,9 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
           colorActiveBarBorderSize: 0,
 
           // Disabled
-          colorItemTextDisabled: new TinyColor(colorTextLightSolid).setAlpha(0.25).toRgbString(),
+          colorItemTextDisabled: new TinyColor(rawToken.colorTextLightSolid)
+            .setAlpha(0.25)
+            .toRgbString(),
 
           // Danger
           colorDangerItemText: colorError,

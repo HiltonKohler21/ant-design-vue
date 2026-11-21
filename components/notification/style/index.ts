@@ -157,7 +157,7 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
       [noticeCls]: {
         position: 'relative',
         width,
-        maxWidth: `calc(100vw - ${notificationMarginEdge * 2}px)`,
+        maxWidth: `calc(100vw - ${unit(token.calc(notificationMarginEdge).mul(2).equal())})`,
         marginBottom: notificationMarginBottom,
         marginInlineStart: 'auto',
         padding: notificationPadding,

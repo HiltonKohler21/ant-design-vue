@@ -42,10 +42,8 @@ const genSwitchSmallStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
           paddingInlineStart: token.switchInnerMarginMaxSM,
           paddingInlineEnd: token.switchInnerMarginMinSM,
           [`${switchInnerCls}-checked`]: {
-            marginInlineStart: `calc(-100% + ${
-              token.switchPinSizeSM + token.switchPadding * 2
-            }px - ${unit(token.calc(token.switchInnerMarginMaxSM).mul(2).equal())})`,
-            marginInlineEnd: `calc(100% - ${token.switchPinSizeSM + token.switchPadding * 2}px + ${
+            marginInlineStart: `calc(-100% + ${unit(token.calc(token.switchPinSizeSM).add(token.calc(token.switchPadding).mul(2).equal()).equal())} - ${unit(token.calc(token.switchInnerMarginMaxSM).mul(2).equal())})`,
+            marginInlineEnd: `calc(100% - ${unit(token.calc(token.switchPinSizeSM).add(token.calc(token.switchPadding).mul(2).equal()).equal())} + ${
               token.calc(token.switchInnerMarginMaxSM).mul(2).equal()
             }px)`,
           },
@@ -81,12 +79,8 @@ const genSwitchSmallStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
             },
 
             [`${switchInnerCls}-unchecked`]: {
-              marginInlineStart: `calc(100% - ${
-                token.switchPinSizeSM + token.switchPadding * 2
-              }px + ${unit(token.calc(token.switchInnerMarginMaxSM).mul(2).equal())})`,
-              marginInlineEnd: `calc(-100% + ${
-                token.switchPinSizeSM + token.switchPadding * 2
-              }px - ${unit(token.calc(token.switchInnerMarginMaxSM).mul(2).equal())})`,
+              marginInlineStart: `calc(100% - ${unit(token.calc(token.switchPinSizeSM).add(token.calc(token.switchPadding).mul(2).equal()).equal())} + ${unit(token.calc(token.switchInnerMarginMaxSM).mul(2).equal())})`,
+              marginInlineEnd: `calc(-100% + ${unit(token.calc(token.switchPinSizeSM).add(token.calc(token.switchPadding).mul(2).equal()).equal())} - ${unit(token.calc(token.switchInnerMarginMaxSM).mul(2).equal())})`,
             },
           },
 
@@ -205,10 +199,10 @@ const genSwitchInnerStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
         },
 
         [`${switchInnerCls}-checked`]: {
-          marginInlineStart: `calc(-100% + ${token.switchPinSize + token.switchPadding * 2}px - ${
+          marginInlineStart: `calc(-100% + ${unit(token.calc(token.switchPinSize).add(token.calc(token.switchPadding).mul(2).equal()).equal())} - ${
             token.calc(token.switchInnerMarginMax).mul(2).equal()
           }px)`,
-          marginInlineEnd: `calc(100% - ${token.switchPinSize + token.switchPadding * 2}px + ${
+          marginInlineEnd: `calc(100% - ${unit(token.calc(token.switchPinSize).add(token.calc(token.switchPadding).mul(2).equal()).equal())} + ${
             token.calc(token.switchInnerMarginMax).mul(2).equal()
           }px)`,
         },
@@ -229,10 +223,10 @@ const genSwitchInnerStyle: GenerateStyle<SwitchToken, CSSObject> = token => {
         },
 
         [`${switchInnerCls}-unchecked`]: {
-          marginInlineStart: `calc(100% - ${token.switchPinSize + token.switchPadding * 2}px + ${
+          marginInlineStart: `calc(100% - ${unit(token.calc(token.switchPinSize).add(token.calc(token.switchPadding).mul(2).equal()).equal())} + ${
             token.calc(token.switchInnerMarginMax).mul(2).equal()
           }px)`,
-          marginInlineEnd: `calc(-100% + ${token.switchPinSize + token.switchPadding * 2}px - ${
+          marginInlineEnd: `calc(-100% + ${unit(token.calc(token.switchPinSize).add(token.calc(token.switchPadding).mul(2).equal()).equal())} - ${
             token.calc(token.switchInnerMarginMax).mul(2).equal()
           }px)`,
         },

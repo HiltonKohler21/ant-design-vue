@@ -54,9 +54,15 @@ export function getTargetScrollBarSize(target: HTMLElement) {
     return { width: 0, height: 0 };
   }
 
-  const { width, height } = getComputedStyle(target, '::-webkit-scrollbar');
-  return {
-    width: ensureSize(width),
-    height: ensureSize(height),
-  };
+  // 目标未挂载到文档、或环境不支持伪元素 getComputedStyle（如 jsdom / 分离节点）时，
+  // getComputedStyle 会抛异常，这里安全兜底为 0（后续 ensureSize 会回退到通用测量）。
+  try {
+    const { width, height } = getComputedStyle(target, '::-webkit-scrollbar');
+    return {
+      width: ensureSize(width),
+      height: ensureSize(height),
+    };
+  } catch {
+    return { width: 0, height: 0 };
+  }
 }

@@ -58,7 +58,7 @@ export const genPreviewOperationsStyle = (token: ImageToken): CSSObject => {
   const { previewCls, modalMaskBg, paddingSM, previewOperationColorDisabled, motionDurationSlow } =
     token;
 
-  const operationBg = new TinyColor(modalMaskBg).setAlpha(0.1);
+  const operationBg = new TinyColor((token as any)._realToken?.modalMaskBg ?? modalMaskBg).setAlpha(0.1);
   const operationBgHover = operationBg.clone().setAlpha(0.2);
 
   return {
@@ -116,7 +116,9 @@ export const genPreviewSwitchStyle = (token: ImageToken): CSSObject => {
     motionDurationSlow,
   } = token;
 
-  const operationBg = new TinyColor(modalMaskBg).setAlpha(0.1);
+  const operationBg = new TinyColor((token as any)._realToken?.modalMaskBg ?? modalMaskBg).setAlpha(
+    0.1,
+  );
   const operationBgHover = operationBg.clone().setAlpha(0.2);
 
   return {

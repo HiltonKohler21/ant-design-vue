@@ -13,6 +13,7 @@ import ConfigProvider from '../../components/config-provider';
 import Empty from '../../components/empty';
 import QRCode from '../../components/qrcode';
 import Steps from '../../components/steps';
+import Watermark from '../../components/watermark';
 
 const mountWith = async (theme, slot) => {
   document.body.innerHTML = '';
@@ -55,19 +56,6 @@ describe('运行时取值（cssVar 模式）', () => {
     });
   });
 
-  it('Empty simple 变体的配色仍为浅灰而非黑色', async () => {
-    await mountWith({}, () => <Empty description="none" />);
-
-    // simple 变体通过 ConfigProvider.renderEmpty 注入，这里直接断言默认 SVG 的描边
-    const strokes = Array.from(document.querySelectorAll('.ant-empty-image [stroke]')).map(el =>
-      el.getAttribute('stroke'),
-    );
-    if (strokes.length) {
-      strokes.forEach(stroke => expect(stroke.toLowerCase()).not.toBe('#000000'));
-    }
-    expect(true).toBe(true);
-  });
-
   it('QRCode 的尺寸计算不是 NaN（SVG 输出）', async () => {
     await mountWith({}, () => <QRCode value="https://antdv.com" type="svg" />);
 
@@ -88,5 +76,78 @@ describe('运行时取值（cssVar 模式）', () => {
     const html = document.body.innerHTML;
     expect(html).not.toContain('NaN');
     expect(html).not.toContain('undefined');
+  });
+
+  /**
+   * Watermark 用 Canvas 绘制水印，字号与颜色必须来自 realToken。
+   * jsdom 无真实 Canvas 时无法断言绘制结果，因此这里同时校验「语义契约」：
+   * token（变量化）必须是 var() 字符串，而 realToken 必须是真实数值/色值。
+   * 一旦 Watermark 错用 token，其 fontSize 会变成 NaN、颜色变成 var() → 黑。
+   */
+  it('Watermark 及运行时取值依赖的 realToken 语义成立', async () => {
+    const { useToken } = require('../../components/theme/internal');
+    let captured;
+    const Probe = {
+      setup() {
+        const [, token, , realToken] = useToken();
+        captured = { token: token.value, real: realToken.value };
+        return () => <div class="probe" />;
+      },
+    };
+    await mountWith({}, () => <Probe />);
+
+    // 变量化 token：必须是 var() 字符串（用于 CSS）
+    expect(String(captured.token.fontSizeLG)).toContain('var(');
+    // realToken：必须是真实数值/色值（用于 JS / Canvas / SVG）
+    expect(typeof captured.real.fontSizeLG).toBe('number');
+    expect(String(captured.real.colorFill)).not.toContain('var(');
+    expect(String(captured.real.colorTextLightSolid)).not.toContain('var(');
+
+    // Watermark 渲染产物中不得出现 NaN / undefined
+    document.body.innerHTML = '';
+    const wrapper = mountWith({}, () => (
+      <Watermark content="w">
+        <div style="height: 120px">wm</div>
+      </Watermark>
+    ));
+    await wrapper;
+    await nextTick();
+    expect(document.body.innerHTML).not.toContain('NaN');
+    expect(document.body.innerHTML).not.toContain('undefined');
+  });
+
+  /**
+   * 源码级守卫：这些位置必须使用真实数值/色值（realToken / _realToken），
+   * 否则在 cssVar 默认开启时会出现 NaN 或颜色退化为黑色。
+   * 用静态断言锁定，避免「声称已修复但实际只改了别处」的情况再次发生。
+   */
+  it('运行时取值位置必须使用 realToken（源码级守卫）', () => {
+    const fsMod = require('fs');
+    const pathMod = require('path');
+    const root = pathMod.resolve(__dirname, '../..');
+    const read = rel => fsMod.readFileSync(pathMod.join(root, rel), 'utf8');
+
+    // 1) Watermark：Canvas 字号与颜色
+    const wm = read('components/watermark/index.tsx');
+    expect(wm).toContain('realToken');
+    expect(wm).not.toMatch(/token\.value\.fontSizeLG/);
+    expect(wm).not.toMatch(/token\.value\.colorFill/);
+
+    // 2) QRCode / Empty / Steps：尺寸与配色
+    expect(read('components/qrcode/index.tsx')).toContain('realToken');
+    expect(read('components/empty/empty.tsx')).toContain('realToken');
+    expect(read('components/empty/simple.tsx')).toContain('realToken');
+
+    // 3) 样式层颜色混合：这些位置曾用变量化 token 直接喂给 TinyColor（会退化为黑色）
+    const forbidden = [
+      ['components/menu/style/index.ts', /new TinyColor\(colorTextLightSolid\)/],
+      ['components/slider/style/index.tsx', /new TinyColor\(token\.colorTextDisabled\)/],
+      ['components/tour/style/index.ts', /new TinyColor\(colorTextLightSolid\)/],
+      ['components/image/style/index.ts', /new TinyColor\(modalMaskBg\)/],
+      ['components/table/style/index.ts', /new TinyColor\(colorFillAlter\)/],
+      ['components/date-picker/style/index.ts', /new TinyColor\(colorPrimary\)/],
+    ];
+    const violations = forbidden.filter(([rel, re]) => re.test(read(rel))).map(([rel]) => rel);
+    expect(violations).toEqual([]);
   });
 });

@@ -45,7 +45,9 @@ const Watermark = defineComponent({
     gap: [100, 100],
   }),
   setup(props, { slots, attrs }) {
-    const [, token] = useToken();
+    // realToken：未变量化的原始 token（Canvas 绘制需要真实字号与颜色，
+    // cssVar 模式下 token 值是 var() 字符串，会导致 NaN / 黑色）
+    const [, , , realToken] = useToken();
     const containerRef = shallowRef<HTMLDivElement>();
     const watermarkRef = shallowRef<HTMLDivElement>();
     const stopObservation = shallowRef(false);
@@ -55,11 +57,13 @@ const Watermark = defineComponent({
     const gapYCenter = computed(() => gapY.value / 2);
     const offsetLeft = computed(() => props.offset?.[0] ?? gapXCenter.value);
     const offsetTop = computed(() => props.offset?.[1] ?? gapYCenter.value);
-    const fontSize = computed(() => props.font?.fontSize ?? token.value.fontSizeLG);
+    const fontSize = computed(
+      () => props.font?.fontSize ?? Number(realToken.value.fontSizeLG),
+    );
     const fontWeight = computed(() => props.font?.fontWeight ?? 'normal');
     const fontStyle = computed(() => props.font?.fontStyle ?? 'normal');
     const fontFamily = computed(() => props.font?.fontFamily ?? 'sans-serif');
-    const color = computed(() => props.font?.color ?? token.value.colorFill);
+    const color = computed(() => props.font?.color ?? realToken.value.colorFill);
     const markStyle = computed(() => {
       const markStyle: CSSProperties = {
         zIndex: props.zIndex ?? 9,
@@ -214,7 +218,7 @@ const Watermark = defineComponent({
       renderWatermark();
     });
     watch(
-      () => [props, token.value.colorFill, token.value.fontSizeLG],
+      () => [props, realToken.value.colorFill, realToken.value.fontSizeLG],
       () => {
         renderWatermark();
       },

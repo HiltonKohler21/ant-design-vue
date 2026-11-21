@@ -69,7 +69,11 @@ const genBaseStyle: GenerateStyle<DropdownToken> = token => {
         // A placeholder out of dropdown visible range to avoid close when user moving
         '&::before': {
           position: 'absolute',
-          insetBlock: -dropdownArrowDistance + sizePopupArrow / 2,
+          insetBlock: token
+            .calc(dropdownArrowDistance)
+            .mul(-1)
+            .add(token.calc(sizePopupArrow).div(2).equal())
+            .equal(),
           // insetInlineStart: -7, // FIXME: Seems not work for hidden element
           zIndex: -9999,
           opacity: 0.0001,

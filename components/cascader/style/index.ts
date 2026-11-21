@@ -22,8 +22,10 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
     ${cascaderMenuItemCls}-loading-icon
   `;
 
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const itemPaddingVertical = Math.round(
-    (token.controlHeight - token.fontSize * token.lineHeight) / 2,
+    (rawToken.controlHeight - rawToken.fontSize * rawToken.lineHeight) / 2,
   );
 
   return [

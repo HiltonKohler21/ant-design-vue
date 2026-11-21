@@ -274,7 +274,7 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: `${floatButtonBodyPadding / 2}px ${unit(floatButtonBodyPadding)}`,
+          padding: `${unit(token.calc(floatButtonBodyPadding).div(2).equal())} ${unit(floatButtonBodyPadding)}`,
           [`${componentCls}-icon`]: {
             textAlign: 'center',
             margin: 'auto',

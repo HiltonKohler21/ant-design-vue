@@ -249,7 +249,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           cursor: 'not-allowed',
           width: token.handleSize,
           height: token.handleSize,
-          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${new TinyColor(token.colorTextDisabled)
+          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${new TinyColor((token as any)._realToken?.colorTextDisabled ?? token.colorTextDisabled)
             .onBackground(token.colorBgContainer)
             .toHexString()}`,
           insetInlineStart: 0,

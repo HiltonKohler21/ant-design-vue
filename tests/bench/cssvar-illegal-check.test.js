@@ -1,12 +1,13 @@
 /**
- * cssVar 模式非法 CSS 检测器
+ * cssVar 模式下「非法 CSS」检测器
  *
- * 目的：定位 token 算术未改 calc() 时产生的非法值：
+ * 逐组件挂载（含弹层打开态 / 暗色态 / 禁用态），断言生成 CSS 中不存在：
  *   - NaN（var() 字符串参与 JS 算术）
- *   - undefined / [object Object]
- *   - var() 裸算术（未被 calc() 包裹）
+ *   - undefined
+ *   - [object Object]
+ *   - 未被 calc() 包裹的变量算术（var(--ant-x) * 2）
  *
- * 作为 P1-4b（token 算术改 calc）的验收工具与进度计量。
+ * 逐组件拆分的意义：既能定位到具体组件，也避免某个组件的渲染问题掩盖其它组件的检查结果。
  */
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
@@ -50,67 +51,27 @@ import Mentions from '../../components/mentions';
 import Transfer from '../../components/transfer';
 import Upload from '../../components/upload';
 import Tour from '../../components/tour';
+import DatePicker from '../../components/date-picker';
+import Menu from '../../components/menu';
+import Tree from '../../components/tree';
+import Cascader from '../../components/cascader';
+import Dropdown from '../../components/dropdown';
+import Image from '../../components/image';
+import Watermark from '../../components/watermark';
 
 const collectCss = () =>
   Array.from(document.querySelectorAll('style'))
     .map(s => s.innerHTML)
     .join('\n');
 
-const App = {
-  setup() {
-    return () => (
-      <div>
-        <Button type="primary">btn</Button>
-        <Button shape="circle">c</Button>
-        <Input placeholder="i" />
-        <Input.Search placeholder="s" />
-        <Select options={[{ value: 'a', label: 'A' }]} />
-        <Tag color="blue">tag</Tag>
-        <Card title="c">b</Card>
-        <Switch />
-        <Rate />
-        <Slider defaultValue={30} />
-        <Steps current={1} items={[{ title: 'a' }, { title: 'b' }]} />
-        <Tabs items={[{ key: '1', label: 'A', children: 'a' }]} />
-        <Spin />
-        <Divider />
-        <Typography.Text strong>t</Typography.Text>
-        <Descriptions items={[{ key: '1', label: 'L', children: 'C' }]} />
-        <Checkbox>c</Checkbox>
-        <Radio>r</Radio>
-        <Collapse items={[{ key: '1', label: 'L', children: 'C' }]} />
-        <Badge count={5} />
-        <Avatar>A</Avatar>
-        <Breadcrumb items={[{ title: 'a' }]} />
-        <Timeline items={[{ content: 'x' }]} />
-        <Alert message="m" />
-        <Segmented options={['a', 'b']} value="a" />
-        <Skeleton />
-        <Progress percent={30} />
-        <Space>
-          <span>a</span>
-        </Space>
-        <Flex gap={8}>
-          <span>a</span>
-        </Flex>
-        <List dataSource={['a']} renderItem={i => <List.Item>{i}</List.Item>} />
-        <Pagination total={50} />
-        <Statistic value={1} />
-        <Result status="success" title="ok" />
-        <Empty />
-        <QRCode value="https://antdv.com" />
-        <FloatButton />
-        <Tooltip title="t">
-          <span>h</span>
-        </Tooltip>
-        <Mentions options={[]} />
-        <Transfer dataSource={[]} targetKeys={[]} />
-        <Upload />
-        <Tour open={false} steps={[{ title: 'a' }]} />
-      </div>
-    );
-  },
-};
+// 「一元负号直接作用在 var() 上」也是非法值（无法对变量取负，必须用 calc）
+const findNegatedVar = css => (css.match(/(?<![\w)])\-var\(--ant-/g) || []).length;
+
+const ILLEGAL = [
+  { name: 'NaN', re: /\bNaN\b/g },
+  { name: 'undefined', re: /\bundefined\b/g },
+  { name: '[object Object]', re: /\[object Object\]/g },
+];
 
 /**
  * 找出「未被 calc() 包裹」的变量算术（真非法）：
@@ -122,7 +83,6 @@ const findBareVarArithmetic = css => {
   let m = re.exec(css);
   while (m) {
     const idx = m.index;
-    // 向前扫描括号深度，判断是否位于 calc(...) / var(...) 等函数内部
     let depth = 0;
     let insideCalc = false;
     for (let i = idx - 1; i >= 0; i -= 1) {
@@ -145,55 +105,162 @@ const findBareVarArithmetic = css => {
   return hits;
 };
 
-const ILLEGAL = [
-  { name: 'NaN', re: /\bNaN\b/g },
-  { name: 'undefined', re: /\bundefined\b/g },
-  { name: '[object Object]', re: /\[object Object\]/g },
+const CASES = [
+  ['Button', () => <Button type="primary">b</Button>],
+  ['Input', () => <Input placeholder="i" />],
+  ['Select', () => <Select open options={[{ value: 'a', label: 'A' }]} />],
+  ['Tag', () => <Tag color="blue">t</Tag>],
+  ['Card', () => <Card title="c">b</Card>],
+  ['Switch', () => <Switch />],
+  ['Rate', () => <Rate />],
+  ['Slider', () => <Slider defaultValue={30} />],
+  ['Slider(disabled)', () => <Slider disabled defaultValue={30} />],
+  ['Steps', () => <Steps current={1} items={[{ title: 'a' }, { title: 'b' }]} />],
+  ['Tabs', () => <Tabs items={[{ key: '1', label: 'A', children: 'a' }]} />],
+  ['Spin', () => <Spin />],
+  ['Divider', () => <Divider />],
+  ['Typography', () => <Typography.Text strong>t</Typography.Text>],
+  ['Descriptions', () => <Descriptions items={[{ key: '1', label: 'L', children: 'C' }]} />],
+  ['Checkbox', () => <Checkbox>c</Checkbox>],
+  ['Radio', () => <Radio>r</Radio>],
+  ['Collapse', () => <Collapse items={[{ key: '1', label: 'L', children: 'C' }]} />],
+  ['Badge', () => <Badge count={5} />],
+  ['Avatar', () => <Avatar>A</Avatar>],
+  ['Breadcrumb', () => <Breadcrumb items={[{ title: 'a' }]} />],
+  ['Timeline', () => <Timeline items={[{ content: 'x' }]} />],
+  ['Alert', () => <Alert message="m" />],
+  ['Segmented', () => <Segmented options={['a', 'b']} value="a" />],
+  ['Skeleton', () => <Skeleton />],
+  ['Progress', () => <Progress percent={30} />],
+  [
+    'Space',
+    () => (
+      <Space>
+        <span>a</span>
+      </Space>
+    ),
+  ],
+  [
+    'Flex',
+    () => (
+      <Flex gap={8}>
+        <span>a</span>
+      </Flex>
+    ),
+  ],
+  ['List', () => <List dataSource={['a']} renderItem={i => <List.Item>{i}</List.Item>} />],
+  ['Pagination', () => <Pagination total={50} />],
+  ['Statistic', () => <Statistic value={1} />],
+  ['Result', () => <Result status="success" title="ok" />],
+  ['Empty', () => <Empty />],
+  ['QRCode', () => <QRCode value="https://antdv.com" />],
+  ['FloatButton', () => <FloatButton />],
+  [
+    'Tooltip',
+    () => (
+      <Tooltip title="t" open>
+        <span>h</span>
+      </Tooltip>
+    ),
+  ],
+  ['Mentions', () => <Mentions options={[]} />],
+  ['Transfer', () => <Transfer dataSource={[]} targetKeys={[]} />],
+  ['Upload', () => <Upload />],
+  ['Tour', () => <Tour open={false} steps={[{ title: 'a' }]} />],
+  ['DatePicker(open)', () => <DatePicker open value={null} />],
+  [
+    'Menu(dark)',
+    () => (
+      <Menu
+        theme="dark"
+        mode="horizontal"
+        items={[{ key: '1', label: 'a' }]}
+        selectedKeys={['1']}
+      />
+    ),
+  ],
+  ['Menu(inline)', () => <Menu theme="light" mode="inline" items={[{ key: '1', label: 'b' }]} />],
+  [
+    'Tree',
+    () => <Tree treeData={[{ key: '1', title: 'a', children: [{ key: '2', title: 'b' }] }]} />,
+  ],
+  [
+    'Cascader(open)',
+    () => (
+      <Cascader
+        open
+        options={[{ value: 'a', label: 'A', children: [{ value: 'b', label: 'B' }] }]}
+      />
+    ),
+  ],
+  [
+    'Dropdown(open)',
+    () => (
+      <Dropdown open menu={{ items: [{ key: '1', label: 'd' }] }}>
+        <span>dd</span>
+      </Dropdown>
+    ),
+  ],
+  ['Image', () => <Image src="https://antdv.com/x.png" />],
+  [
+    'Watermark',
+    () => (
+      <Watermark content="w">
+        <div>wm</div>
+      </Watermark>
+    ),
+  ],
 ];
 
-describe('cssVar 非法 CSS 检测', () => {
-  jest.setTimeout(240000);
+const check = async slot => {
+  document.head.innerHTML = '';
+  document.body.innerHTML = '';
+  mount(ConfigProvider, {
+    props: { theme: { cssVar: true } },
+    slots: { default: slot },
+    attachTo: 'body',
+  });
+  await nextTick();
+  await new Promise(r => setTimeout(r, 80));
 
-  it('cssVar 模式下无 NaN / undefined / 裸变量算术', async () => {
-    mount(ConfigProvider, {
-      props: { theme: { cssVar: true } },
-      slots: { default: () => <App /> },
-      attachTo: 'body',
-    });
-    await nextTick();
-    await new Promise(r => setTimeout(r, 100));
+  const css = collectCss();
+  const hits = [];
+  for (const { name, re } of ILLEGAL) {
+    const m = css.match(re);
+    if (m && m.length) hits.push(`${name} × ${m.length}`);
+  }
+  const bareVar = findBareVarArithmetic(css);
+  if (bareVar.length) hits.push(`var() 裸算术 × ${bareVar.length}`);
+  const negVar = findNegatedVar(css);
+  if (negVar) hits.push(`-var() × ${negVar}`);
 
-    const css = collectCss();
-    const hits = [];
-    for (const { name, re } of ILLEGAL) {
-      const m = css.match(re);
-      if (m && m.length) {
-        hits.push(`${name} × ${m.length}`);
-      }
-    }
-
-    const bareVarHits = findBareVarArithmetic(css);
-    if (bareVarHits.length) hits.push(`var() 裸算术 × ${bareVarHits.length}`);
-
-    // 打印非法值（NaN / undefined）产生的「选择器 :: 属性」清单（去重）
+  if (hits.length) {
     const uniq = new Set();
-    const reRule = /([^{}]+)\{([^{}]*(?:NaN|undefined)[^{}]*)\}/g;
+    const reRule = /([^{}]+)\{([^{}]*(?:NaN|undefined|\[object Object\])[^{}]*)\}/g;
     let rm = reRule.exec(css);
     while (rm) {
       const sel = rm[1].trim().split(',').pop().trim();
       rm[2]
         .split(';')
-        .filter(d => d.includes('NaN') || d.includes('undefined'))
+        .filter(d => /NaN|undefined|\[object Object\]/.test(d))
         .forEach(d => uniq.add(`${sel} :: ${d.trim().split(':')[0]}`));
       rm = reRule.exec(css);
     }
-    const list = [...uniq];
-    // eslint-disable-next-line no-console
-    console.log(
-      `[illegal-check] CSS ${css.length} B，命中 ${hits.length} 类，非法值来源 ${list.length} 处`,
-    );
-    hits.forEach(h => console.log('  ✗ ' + h));
-    list.slice(0, 40).forEach(x => console.log('  src: ' + x));
+    [...uniq].slice(0, 10).forEach(x => console.log(`    src: ${x}`));
+  }
+
+  return { cssBytes: css.length, hits };
+};
+
+describe('cssVar 非法 CSS 检测（逐组件）', () => {
+  jest.setTimeout(600000);
+
+  it.each(CASES)('%s 不产生非法 CSS', async (name, slot) => {
+    const { cssBytes, hits } = await check(slot);
     expect(hits).toEqual([]);
+    // 顺带记录体积，便于发现「样式没生成」的异常
+    expect(cssBytes).toBeGreaterThan(100);
+    // eslint-disable-next-line no-console
+    console.log(`  ✓ ${name}（${cssBytes} B）`);
   });
 });

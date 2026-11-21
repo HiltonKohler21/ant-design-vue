@@ -65,7 +65,9 @@ type TreeToken = DerivativeToken & {
 export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => {
   const { treeCls, treeNodeCls, treeNodePadding, treeTitleHeight } = token;
 
-  const treeCheckBoxMarginVertical = (treeTitleHeight - token.fontSizeLG) / 2;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawTreeToken: any = (token as any)._realToken ?? token;
+  const treeCheckBoxMarginVertical = (treeTitleHeight - rawTreeToken.fontSizeLG) / 2;
   const treeCheckBoxMarginHorizontal = token.paddingXS;
 
   return {
@@ -270,7 +272,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
         zIndex: 'auto',
         minHeight: treeTitleHeight,
         margin: 0,
-        padding: `0 ${unit(token.paddingXS / 2)}`,
+        padding: `0 ${unit(rawTreeToken.paddingXS / 2)}`,
         color: 'inherit',
         lineHeight: `${unit(treeTitleHeight)}`,
         background: 'transparent',
@@ -454,8 +456,10 @@ export const genTreeStyle = (prefixCls: string, token: DerivativeToken): CSSInte
   const treeCls = `.${prefixCls}`;
   const treeNodeCls = `${treeCls}-treenode`;
 
-  const treeNodePadding = token.paddingXS / 2;
-  const treeTitleHeight = token.controlHeightSM;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
+  const treeNodePadding = rawToken.paddingXS / 2;
+  const treeTitleHeight = rawToken.controlHeightSM;
 
   const treeToken = mergeToken<TreeToken>(token, {
     treeCls,

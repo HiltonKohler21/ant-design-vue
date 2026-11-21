@@ -23,6 +23,11 @@ import Input from '../../components/input';
 import Select from '../../components/select';
 import Table from '../../components/table';
 import Modal from '../../components/modal';
+import Menu from '../../components/menu';
+import Tree from '../../components/tree';
+import DatePicker from '../../components/date-picker';
+import Slider from '../../components/slider';
+import Empty from '../../components/empty';
 
 const TARGETS = [
   {
@@ -65,6 +70,16 @@ const TARGETS = [
     props: ['color', 'background', 'font-weight', 'text-align'],
   },
   {
+    name: 'MenuDark',
+    selector: '.ant-menu-dark',
+    props: ['color', 'background'],
+  },
+  {
+    name: 'MenuDarkItem',
+    selector: '.ant-menu-dark .ant-menu-item-selected',
+    props: ['color', 'background'],
+  },
+  {
     name: 'Modal',
     selector: '.ant-modal .ant-modal-content',
     props: ['border-radius', 'background-color', 'padding'],
@@ -80,6 +95,12 @@ const App = {
         <Input placeholder="i" />
         <Select options={[{ value: 'a', label: 'A' }]} />
         <Table columns={[{ title: 'A', dataIndex: 'a' }]} dataSource={[{ key: 1, a: 1 }]} />
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          items={[{ key: '1', label: 'a' }]}
+          selectedKeys={['1']}
+        />
         <Modal open={false} title="m">
           body
         </Modal>

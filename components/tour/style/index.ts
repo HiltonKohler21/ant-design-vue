@@ -104,7 +104,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
           [`${componentCls}-cover`]: {
             textAlign: 'center',
-            padding: `${padding + tourCloseSize + paddingXS}px ${unit(padding)} 0`,
+            padding: `${unit(token.calc(token.calc(padding).add(tourCloseSize).equal()).add(paddingXS).equal())} ${unit(padding)} 0`,
             img: {
               width: '100%',
             },
@@ -175,7 +175,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
             [`${componentCls}-indicators`]: {
               [`${componentCls}-indicator`]: {
-                background: new TinyColor(colorTextLightSolid).setAlpha(0.15).toRgbString(),
+                background: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid).setAlpha(0.15).toRgbString(),
                 '&-active': {
                   background: colorTextLightSolid,
                 },
@@ -184,11 +184,11 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
             [`${componentCls}-prev-btn`]: {
               color: colorTextLightSolid,
-              borderColor: new TinyColor(colorTextLightSolid).setAlpha(0.15).toRgbString(),
+              borderColor: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid).setAlpha(0.15).toRgbString(),
               backgroundColor: colorPrimary,
 
               '&:hover': {
-                backgroundColor: new TinyColor(colorTextLightSolid).setAlpha(0.15).toRgbString(),
+                backgroundColor: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid).setAlpha(0.15).toRgbString(),
                 borderColor: 'transparent',
               },
             },

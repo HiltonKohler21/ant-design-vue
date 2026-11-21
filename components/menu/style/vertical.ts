@@ -31,7 +31,7 @@ const getVerticalInlineStyle: GenerateStyle<MenuToken, CSSObject> = token => {
 
       marginInline: itemMarginInline,
       marginBlock: marginXXS,
-      width: `calc(100% - ${itemMarginInline * 2}px)`,
+      width: `calc(100% - ${unit(token.calc(itemMarginInline).mul(2).equal())})`,
     },
 
     // disable margin collapsed
@@ -101,7 +101,7 @@ const getVerticalStyle: GenerateStyle<MenuToken> = token => {
     {
       [`${componentCls}-submenu-popup ${componentCls}-vertical${componentCls}-sub`]: {
         minWidth: dropdownWidth,
-        maxHeight: `calc(100vh - ${controlHeightLG * 2.5}px)`,
+        maxHeight: `calc(100vh - ${unit(token.calc(controlHeightLG).mul(2.5).equal())})`,
         padding: '0',
         overflow: 'hidden',
         borderInlineEnd: 0,
@@ -166,7 +166,7 @@ const getVerticalStyle: GenerateStyle<MenuToken> = token => {
     // Inline Collapse Only
     {
       [`${componentCls}-inline-collapsed`]: {
-        width: menuItemHeight * 2,
+        width: token.calc(menuItemHeight).mul(2).equal(),
 
         [`&${componentCls}-root`]: {
           [`${componentCls}-item, ${componentCls}-submenu ${componentCls}-submenu-title`]: {

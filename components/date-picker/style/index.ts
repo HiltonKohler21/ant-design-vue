@@ -59,11 +59,17 @@ const genPikerPadding = (
   fontSize: number,
   paddingHorizontal: number,
 ): CSSObject => {
-  const { lineHeight } = token;
+  const rawForPadding: any = (token as any)._realToken ?? token;
 
-  const fontHeight = Math.floor(fontSize * lineHeight) + 2;
-  const paddingTop = Math.max((inputHeight - fontHeight) / 2, 0);
-  const paddingBottom = Math.max(inputHeight - fontHeight - paddingTop, 0);
+  // cssVar 模式下 inputHeight / fontSize / lineHeight 可能是 var() 字符串，
+  // 取整与 Math.max 需要真实数值，这里统一转成数字。
+  const numInputHeight = Number(inputHeight);
+  const numFontSize = Number(fontSize);
+  const numLineHeight = Number(rawForPadding.lineHeight);
+
+  const fontHeight = Math.floor(numFontSize * numLineHeight) + 2;
+  const paddingTop = Math.max((numInputHeight - fontHeight) / 2, 0);
+  const paddingBottom = Math.max(numInputHeight - fontHeight - paddingTop, 0);
 
   return {
     padding: `${unit(paddingTop)} ${unit(paddingHorizontal)} ${unit(paddingBottom)}`,
@@ -331,10 +337,19 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
     marginXXS,
   } = token;
 
-  const pickerPanelWidth = pickerPanelCellWidth * 7 + paddingSM * 2 + 4;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawPickerToken: any = (token as any)._realToken ?? token;
+
+  // 这些派生 token 不在 _realToken 中，直接从基础真实 token 现算
+  const panelCellWidth = rawPickerToken.controlHeightSM * 1.5;
+  const yearMonthCellWidth = rawPickerToken.controlHeightLG * 1.5;
+
+  const pickerPanelWidth = panelCellWidth * 7 + rawPickerToken.paddingSM * 2 + 4;
 
   const hoverCellFixedDistance =
-    (pickerPanelWidth - paddingXS * 2) / 3 - pickerYearMonthCellWidth - paddingSM;
+    (pickerPanelWidth - rawPickerToken.paddingXS * 2) / 3 -
+    yearMonthCellWidth -
+    rawPickerToken.paddingSM;
 
   return {
     [componentCls]: {
@@ -498,7 +513,10 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
         },
 
         th: {
-          height: pickerPanelCellHeight + pickerCellPaddingVertical * 2,
+          height: token
+            .calc(pickerPanelCellHeight)
+            .add(token.calc(pickerCellPaddingVertical).mul(2).equal())
+            .equal(),
           color: colorText,
           verticalAlign: 'middle',
         },
@@ -577,12 +595,12 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
       '&-footer': {
         width: 'min-content',
         minWidth: '100%',
-        lineHeight: `${pickerTextHeight - 2 * lineWidth}px`,
+        lineHeight: `${unit(token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal())}`,
         textAlign: 'center',
 
         '&-extra': {
           padding: `0 ${paddingSM}`,
-          lineHeight: `${pickerTextHeight - 2 * lineWidth}px`,
+          lineHeight: `${unit(token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal())}`,
           textAlign: 'start',
 
           '&:not(:last-child)': {
@@ -619,7 +637,7 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
       // ===================== Decade Panel =====================
       '&-decade-panel': {
         [pickerCellInnerCls]: {
-          padding: `0 ${paddingXS / 2}px`,
+          padding: `0 ${unit(token.calc(paddingXS).div(2).equal())}`,
         },
 
         [`${componentCls}-cell::before`]: {
@@ -714,7 +732,9 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
             background: colorPrimary,
 
             [`&${componentCls}-cell-week`]: {
-              color: new TinyColor(colorTextLightSolid).setAlpha(0.5).toHexString(),
+              color: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid)
+                .setAlpha(0.5)
+                .toHexString(),
             },
 
             [`&${componentCls}-cell-today ${pickerCellInnerCls}::before`]: {
@@ -735,7 +755,7 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
         },
 
         [`${componentCls}-content`]: {
-          width: pickerPanelCellWidth * 7,
+          width: token.calc(pickerPanelCellWidth).mul(7).equal(),
 
           th: {
             width: pickerPanelCellWidth,
@@ -803,7 +823,9 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
           },
 
           '&-active': {
-            background: new TinyColor(controlItemBgActive).setAlpha(0.2).toHexString(),
+            background: new TinyColor((token as any)._realToken?.controlItemBgActive ?? controlItemBgActive)
+              .setAlpha(0.2)
+              .toHexString(),
           },
 
           '&:hover': {
@@ -818,7 +840,10 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
               marginInline: marginXXS,
               [`${componentCls}-time-panel-cell-inner`]: {
                 display: 'block',
-                width: pickerTimePanelColumnWidth - 2 * marginXXS,
+                width: token
+                  .calc(pickerTimePanelColumnWidth)
+                  .sub(token.calc(marginXXS).mul(2).equal())
+                  .equal(),
                 height: pickerTimePanelCellHeight,
                 margin: 0,
                 paddingBlock: 0,
@@ -854,7 +879,10 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
       },
       // https://github.com/ant-design/ant-design/issues/39227
       [`&-datetime-panel ${componentCls}-time-panel-column:after`]: {
-        height: pickerTimePanelColumnHeight - pickerTimePanelCellHeight + paddingXXS * 2,
+        height:
+          pickerTimePanelColumnHeight -
+          pickerTimePanelCellHeight +
+          ((token as any)._realToken?.paddingXXS ?? Number(paddingXXS)) * 2,
       },
     },
   };
@@ -918,11 +946,12 @@ const genPickerStatusStyle: GenerateStyle<PickerToken> = token => {
 };
 
 const genPickerStyle: GenerateStyle<PickerToken> = token => {
+  // Math.max / Math.floor 等数值运算需要真实数值 token（cssVar 下是 var() 字符串）
+  const rawPicker: any = (token as any)._realToken ?? token;
   const {
     componentCls,
     antCls,
     boxShadowPopoverArrow,
-    controlHeight,
     fontSize,
     inputPaddingHorizontal,
     colorBgContainer,
@@ -934,7 +963,6 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
     colorBgContainerDisabled,
     colorTextDisabled,
     colorTextPlaceholder,
-    controlHeightLG,
     fontSizeLG,
     controlHeightSM,
     inputPaddingHorizontalSM,
@@ -968,7 +996,12 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
     {
       [componentCls]: {
         ...resetComponent(token),
-        ...genPikerPadding(token, controlHeight, fontSize, inputPaddingHorizontal),
+        ...genPikerPadding(
+          token,
+          rawPicker.controlHeight,
+          rawPicker.fontSize,
+          rawPicker.paddingSM - rawPicker.lineWidth,
+        ),
         position: 'relative',
         display: 'inline-flex',
         alignItems: 'center',
@@ -1045,7 +1078,12 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
 
         // Size
         '&-large': {
-          ...genPikerPadding(token, controlHeightLG, fontSizeLG, inputPaddingHorizontal),
+          ...genPikerPadding(
+            token,
+            rawPicker.controlHeightLG,
+            rawPicker.fontSizeLG,
+            rawPicker.paddingSM - rawPicker.lineWidth,
+          ),
 
           [`${componentCls}-input > input`]: {
             fontSize: fontSizeLG,
@@ -1053,14 +1091,19 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
         },
 
         '&-small': {
-          ...genPikerPadding(token, controlHeightSM, fontSize, inputPaddingHorizontalSM),
+          ...genPikerPadding(
+            token,
+            rawPicker.controlHeightSM,
+            rawPicker.fontSize,
+            rawPicker.paddingXS - rawPicker.lineWidth,
+          ),
         },
 
         [`${componentCls}-suffix`]: {
           display: 'flex',
           flex: 'none',
           alignSelf: 'center',
-          marginInlineStart: paddingXS / 2,
+          marginInlineStart: token.calc(paddingXS).div(2).equal(),
           color: colorTextDisabled,
           lineHeight: 1,
           pointerEvents: 'none',
@@ -1238,7 +1281,7 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
             marginBottom: 0,
             padding: `${unit(paddingXXS)} ${unit(paddingSM)}`,
             overflow: 'hidden',
-            lineHeight: `${pickerTextHeight - 2 * lineWidth - paddingXS / 2}px`,
+            lineHeight: `${unit(token.calc(token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal()).sub(token.calc(paddingXS).div(2).equal()).equal())}`,
             textAlign: 'start',
             listStyle: 'none',
             display: 'flex',
@@ -1270,12 +1313,12 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
             position: 'absolute',
             zIndex: 1,
             display: 'none',
-            marginInlineStart: inputPaddingHorizontal * 1.5,
+            marginInlineStart: token.calc(inputPaddingHorizontal).mul(1.5).equal(),
             transition: `left ${motionDurationSlow} ease-out`,
             ...roundedArrow(
-              sizePopupArrow,
-              borderRadiusXS,
-              borderRadiusOuter,
+              (token as any)._realToken?.sizePopupArrow ?? sizePopupArrow,
+              (token as any)._realToken?.borderRadiusXS ?? borderRadiusXS,
+              (token as any)._realToken?.borderRadiusOuter ?? borderRadiusOuter,
               colorBgElevated,
               boxShadowPopoverArrow,
             ),
@@ -1316,7 +1359,13 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
                   ...textEllipsis,
                   borderRadius: borderRadiusSM,
                   paddingInline: paddingXS,
-                  paddingBlock: (controlHeightSM - Math.round(fontSize * lineHeight)) / 2,
+                  paddingBlock:
+                    ((token as any)._realToken?.controlHeightSM ?? Number(controlHeightSM)) / 2 -
+                    Math.round(
+                      ((token as any)._realToken?.fontSize ?? Number(fontSize)) *
+                        ((token as any)._realToken?.lineHeight ?? Number(lineHeight)),
+                    ) /
+                      2,
                   cursor: 'pointer',
                   transition: `all ${motionDurationSlow}`,
 
@@ -1367,7 +1416,7 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
         },
 
         '&-dropdown-range': {
-          padding: `${(sizePopupArrow * 2) / 3}px 0`,
+          padding: `${unit(token.calc(token.calc(sizePopupArrow).mul(2).equal()).div(3).equal())} 0`,
 
           '&-hidden': {
             display: 'none',
@@ -1400,23 +1449,27 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
 
 export const initPickerPanelToken = (token: TokenWithCommonCls<GlobalToken>): PickerPanelToken => {
   const pickerTimePanelCellHeight = 28;
-  const { componentCls, controlHeightLG, controlHeightSM, colorPrimary, paddingXXS } = token;
+  // 尺寸派生与颜色运算都需要真实数值/色值（cssVar 下 token 值是 var() 字符串）
+  const raw: any = (token as any)._realToken ?? token;
+  const { componentCls } = token;
 
   return {
     pickerCellCls: `${componentCls}-cell`,
     pickerCellInnerCls: `${componentCls}-cell-inner`,
-    pickerTextHeight: controlHeightLG,
-    pickerPanelCellWidth: controlHeightSM * 1.5,
-    pickerPanelCellHeight: controlHeightSM,
-    pickerDateHoverRangeBorderColor: new TinyColor(colorPrimary).lighten(20).toHexString(),
-    pickerBasicCellHoverWithRangeColor: new TinyColor(colorPrimary).lighten(35).toHexString(),
-    pickerPanelWithoutTimeCellHeight: controlHeightLG * 1.65,
-    pickerYearMonthCellWidth: controlHeightLG * 1.5,
+    pickerTextHeight: raw.controlHeightLG,
+    pickerPanelCellWidth: raw.controlHeightSM * 1.5,
+    pickerPanelCellHeight: raw.controlHeightSM,
+    pickerDateHoverRangeBorderColor: new TinyColor(raw.colorPrimary).lighten(20).toHexString(),
+    pickerBasicCellHoverWithRangeColor: new TinyColor(raw.colorPrimary)
+      .lighten(35)
+      .toHexString(),
+    pickerPanelWithoutTimeCellHeight: raw.controlHeightLG * 1.65,
+    pickerYearMonthCellWidth: raw.controlHeightLG * 1.5,
     pickerTimePanelColumnHeight: pickerTimePanelCellHeight * 8,
-    pickerTimePanelColumnWidth: controlHeightLG * 1.4,
+    pickerTimePanelColumnWidth: raw.controlHeightLG * 1.4,
     pickerTimePanelCellHeight,
-    pickerQuarterPanelContentHeight: controlHeightLG * 1.4,
-    pickerCellPaddingVertical: paddingXXS,
+    pickerQuarterPanelContentHeight: raw.controlHeightLG * 1.4,
+    pickerCellPaddingVertical: raw.paddingXXS,
     pickerCellBorderGap: 2, // Magic for gap between cells
     pickerControlIconSize: 7,
     pickerControlIconBorderWidth: 1.5,

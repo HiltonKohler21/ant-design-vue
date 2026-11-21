@@ -191,7 +191,7 @@
       "fix(audit): 补齐 ConfigProvider 剩余 8 个组件配置 props（image/empty/switch/message/table/notification/flex/warning）",
       "C 阶段：cssinjs 变量基础设施",
       "C 阶段：Button PoC 打通 cssVar 模式",
-      "C 阶段：基准实测（3 主题 CSS -50.6%，增量降低 90.4%）",
+      "C 阶段：基准实测（3 主题 CSS -50.6%，增量 312185→41299 B / -86.8%）",
       "C 阶段：修复 3 处变量失效缺陷 + 重构变量注入",
       "C 阶段：非法 CSS 检测器 + P1-4b 路线评估",
       "C 阶段：P1-4b 第一批（calc 化 + _realToken）",
@@ -237,19 +237,19 @@
         "delta": {
           "theme1CssSize": "+21.3%（单主题净负：变量声明 + calc）",
           "theme3CssSize": "-50.6%",
-          "multiThemeIncrement": "hash +312185 B vs cssVar +30019 B → 降低 90.4%"
+          "multiThemeIncrement": "hash +312185 B vs cssVar +41299 B → 降低 86.8%"
         },
-        "staticExtractSize": "235295 B（约 230 KiB）",
+        "staticExtractSize": "235795 B（约 230 KiB）",
         "illegalCss": 0,
         "visualParityDiffs": 0
       },
       "tests": [
-        "tests/bench/cssvar-bench.test.js",
+        "tests/bench/cssvar-bench.test.js（性能契约 4 条断言）",
         "components/theme/__tests__/cssvar-token-chain.test.js",
-        "tests/bench/cssvar-illegal-check.test.js",
+        "tests/bench/cssvar-illegal-check.test.js（48 个组件/状态逐组件）",
         "tests/bench/zero-runtime-extract.test.js",
-        "tests/bench/visual-parity.test.js",
-        "tests/bench/runtime-token-values.test.js"
+        "tests/bench/visual-parity.test.js（9 组选择器，含暗色 Menu）",
+        "tests/bench/runtime-token-values.test.js（5 用例，含源码级守卫）"
       ],
       "assertions": [
         "cssVar 多主题增量 < hash 增量的 15%",
@@ -258,15 +258,25 @@
         "cssVar 规则增量 < hash 规则增量的 20%"
       ],
       "falsification": [
-        "回退 _tokenKey 主题无关化 → cssvar-bench 失败（多主题增量 379033 B > 阈值 78046 B）",
-        "回退 Empty realToken → runtime-token-values 失败（svg 被误加 opacity 0.65）"
+        "回退 _tokenKey 主题无关化 → cssvar-bench 失败（增量 379033 B > 阈值 78046 B）",
+        "回退 Empty realToken → runtime-token-values 失败（svg 被误加 opacity 0.65）",
+        "把 Watermark 改回 token.value → 编译期/断言失败",
+        "回退 DatePicker/Menu/Tree 等 calc 化 → cssvar-illegal-check 逐组件用例命中 NaN"
       ],
       "runtimeValueFixes": [
         "Empty: 暗色判断 + SVG 配色（TinyColor）",
         "QRCode: 尺寸算术 + Canvas 前景色",
         "Steps: controlHeight 数值",
-        "Watermark: Canvas 字号与颜色",
-        "Table: 实色表头背景（TinyColor.onBackground）"
+        "Watermark: Canvas 字号与颜色（真实修复，含源码级守卫）",
+        "Table: 实色表头背景（TinyColor.onBackground）",
+        "Menu: 暗色菜单禁用文字色（TinyColor）",
+        "DatePicker: 面板尺寸、内边距、range-arrow 几何、hover 色（TinyColor）",
+        "Slider/Tour/Image: TinyColor 混合色"
+      ],
+      "notes": [
+        "非法 CSS 检测已覆盖 48 个组件/状态（含弹层打开态/暗色态/禁用态）",
+        "视觉一致性抽检覆盖 9 组选择器（含 .ant-menu-dark）",
+        "运行时取值守卫含源码级断言，防止「声称已修复但未落地」"
       ]
     },
     "knownIssues": [

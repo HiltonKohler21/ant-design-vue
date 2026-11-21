@@ -167,7 +167,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
 
         [`> ${componentCls}-item, > ${componentCls}-submenu`]: {
           top: colorActiveBarBorderSize,
-          marginTop: -colorActiveBarBorderSize,
+          marginTop: token.calc(colorActiveBarBorderSize).mul(-1).equal(),
           marginBottom: 0,
           borderRadius: 0,
 

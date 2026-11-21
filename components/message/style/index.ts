@@ -170,9 +170,7 @@ export default genComponentStyleHook(
     // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
     const rawToken: any = (token as any)._realToken ?? token;
     const combinedToken = mergeToken<MessageToken>(token, {
-      messageNoticeContentPadding: `${
-        (rawToken.controlHeightLG - rawToken.fontSize * rawToken.lineHeight) / 2
-      }px ${unit(token.paddingSM)}`,
+      messageNoticeContentPadding: `${unit(token.calc(token.calc(rawToken.controlHeightLG).sub(token.calc(rawToken.fontSize).mul(rawToken.lineHeight).equal()).equal()).div(2).equal())} ${unit(token.paddingSM)}`,
     });
     return [genMessageStyle(combinedToken)];
   },

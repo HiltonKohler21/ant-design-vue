@@ -11,7 +11,15 @@ const floatMap = {
 };
 
 function getComputedStyle(node: HTMLElement) {
-  return node.nodeType === 1 ? node.ownerDocument.defaultView.getComputedStyle(node, null) : {};
+  if (node?.nodeType !== 1 || !node.ownerDocument?.defaultView) {
+    return {} as CSSStyleDeclaration;
+  }
+  // 某些环境（jsdom / 分离节点）下 getComputedStyle 会因选择器匹配抛错，安全兜底
+  try {
+    return node.ownerDocument.defaultView.getComputedStyle(node, null);
+  } catch {
+    return {} as CSSStyleDeclaration;
+  }
 }
 
 function getStyleValue(node: HTMLElement, type: string, value: string) {

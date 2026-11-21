@@ -192,18 +192,19 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 
 `cssVar` 增量拆解（1 → 2 → 3 套主题）：
 
-| 指标                 | theme 1 | theme 2 | theme 3 | 1→3 增量 |
-| -------------------- | ------- | ------- | ------- | -------- |
-| CSS 变量声明 (B)     | 11039   | 22084   | 33132   | +22093   |
-| 组件规则 (B)         | 179362  | 188967  | 198568  | +19206   |
-| `.ant-btn{` 规则份数 | 7       | 7       | 7       | **0**    |
+| 指标                 | theme 1 | theme 2 | theme 3 | 1→3 增量   |
+| -------------------- | ------- | ------- | ------- | ---------- |
+| CSS 变量声明 (B)     | 11039   | 22084   | 33132   | +22093     |
+| 组件规则 (B)         | 179362  | 188967  | 198568  | +19206     |
+| 规则字节合计 (B)     | 190401  | 211051  | 231700  | **+41299** |
+| `.ant-btn{` 规则份数 | 7       | 7       | 7       | **0**      |
 
-对照 hash 模式的 `.ant-btn{` 份数：7 / 14 / 21（每套主题各生成一整份）。 hash 侧 1→3 的 CSS 增量为 +312185 B。
+对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份）， 1→3 的 CSS 增量为 **+312185 B**。
 
 **结论（实测，非估算）**：
 
 - **组件样式确实只生成一份**：`.ant-btn{` 在 cssVar 下恒为 7 份；hash 下随主题数线性增长；
-- **多主题增量**（1→3）：hash +312185 B ｜ cssVar +30019 B → **增量降低 90.4%**；
+- **多主题增量**（1→3）：hash +312185 B ｜ cssVar **+41299 B** → **增量降低 86.8%** （`1 - 41299 / 312185`）；
 - **单主题是净负收益**：cssVar 体积 +21.3%、耗时 +21.1%（多出的变量声明 + calc 表达）； **从 2 个主题起反超**（-32.6%），3 个主题 **-50.6%**；
 - 所以 cssVar 默认开启的取舍是「单主题多 ~21% CSS，换主题可切换性与多主题大幅节省」；单主题且不换主题的应用可显式 `theme: { cssVar: false }` 回到 hash 模式；
 - cssVar 下组件规则仍有小幅增量（+19206 B）：来自必须实干色/实数值的规则（带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
@@ -298,9 +299,9 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 | 主题层接线 | `components/theme/internal.ts`（useToken 五元组）、`util/genComponentStyleHook.ts`、`util/unitless.ts` | Button PoC + 40 组件冒烟 |
 | token 算术 calc 化 | 全库 `components/**/style/**` | `cssvar-illegal-check`：NaN / undefined / 裸变量算术 均为 0 |
 | zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 235 KB（约 230 KiB） |
-| 视觉一致性 | `tests/bench/visual-parity.test.js` | 7 组选择器差异 0 |
-| 运行时取值守卫 | `tests/bench/runtime-token-values.test.js` | Empty 暗色判断/SVG 配色、QRCode 尺寸、Steps 产物无 NaN |
-| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -50.6%；多主题增量降低 90.4%；组件规则份数不随主题数增长（已写入性能契约断言） |
+| 视觉一致性 | `tests/bench/visual-parity.test.js` | 9 组选择器（含暗色 Menu）差异 0 |
+| 运行时取值守卫 | `tests/bench/runtime-token-values.test.js` | 5 个用例：Empty 暗色判断/SVG、QRCode 尺寸、Steps、Watermark 语义、源码级 realToken 守卫 |
+| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -50.6%；多主题增量 312185 B → 41299 B（降低 86.8%）；组件规则份数不随主题数增长（已写入性能契约断言） |
 
 ### 使用方式
 
@@ -337,6 +338,8 @@ npm run static-style-extract   # 产出 dist/static-style/antdv.css
 | --- | --- | --- |
 | `cssvar-bench`（性能契约） | 去掉 `_tokenKey` 主题无关化 | **失败**：多主题增量 379033 B > 阈值 78046 B |
 | `runtime-token-values`（Empty 暗色判断） | 把 `realToken` 改回 `token` | **失败**：svg 被误加 `opacity: 0.65` |
+| `runtime-token-values`（Watermark 语义） | 把 Watermark 改回 `token.value` | **失败**：编译期/断言即报错（realToken 缺失） |
+| `cssvar-illegal-check`（全量探针） | 回退 DatePicker/Menu/Tree 的 calc 化 | **失败**：命中 Nanpx / `var()px` 计数 > 0 |
 
 恢复修复后两者均通过，说明断言确实能捕捉对应回归。
 
@@ -357,7 +360,9 @@ cssVar 模式下 token 值是 `var(--ant-*)` 字符串，以下位置的取值�
 
 1. `ConfigProvider` 的 `theme.algorithm`（`darkAlgorithm` / `compactAlgorithm`）在本地不生效，属存量缺陷，与 cssVar 无关，需单独排查；
 2. 组件级变量的 scope 采用组件根类名（未叠加 hash 隔离类），嵌套 `ConfigProvider` 的局部主题场景下变量声明会相互覆盖；
-3. 静态提取的组件覆盖范围取决于提取脚本挂载的组件树，业务侧可按需扩充。
+3. 静态提取的组件覆盖范围取决于提取脚本挂载的组件树，业务侧可按需扩充；
+4. `getTargetScrollBarSize` 与 `vc-util/Dom/css` 的 `getComputedStyle` 在未挂载节点/不支持伪元素的环境下已加 try/catch 兜底（jsdom、SSR 场景）；
+5. 非法 CSS 检测已从「40 个手挑组件一次性挂载」升级为「48 个组件/状态逐个挂载」——此前 DatePicker/Menu 暗色/Tree/Cascader/Dropdown 弹层、Transfer、Watermark 的 NaN 正是因为这个盲区而未被发现，现已全部修复并纳入门禁。
 
 ## 3.3 工作量汇总
 
