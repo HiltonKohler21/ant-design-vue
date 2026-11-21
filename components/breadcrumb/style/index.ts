@@ -40,9 +40,9 @@ const genBreadcrumbStyle: GenerateStyle<BreadcrumbToken, CSSObject> = token => {
         transition: `color ${token.motionDurationMid}`,
         padding: `0 ${token.paddingXXS}px`,
         borderRadius: token.borderRadiusSM,
-        height: token.lineHeight * token.fontSize,
+        height: token.calc(token.lineHeight).mul(token.fontSize).equal(),
         display: 'inline-block',
-        marginInline: -token.marginXXS,
+        marginInline: token.calc(token.marginXXS).mul(-1).equal(),
 
         '&:hover': {
           color: token.breadcrumbLinkColorHover,
@@ -76,10 +76,10 @@ const genBreadcrumbStyle: GenerateStyle<BreadcrumbToken, CSSObject> = token => {
 
       [`${componentCls}-overlay-link`]: {
         borderRadius: token.borderRadiusSM,
-        height: token.lineHeight * token.fontSize,
+        height: token.calc(token.lineHeight).mul(token.fontSize).equal(),
         display: 'inline-block',
         padding: `0 ${token.paddingXXS}px`,
-        marginInline: -token.marginXXS,
+        marginInline: token.calc(token.marginXXS).mul(-1).equal(),
 
         [`> ${iconCls}`]: {
           marginInlineStart: token.marginXXS,

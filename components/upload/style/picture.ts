@@ -1,4 +1,5 @@
 import { TinyColor } from '@ctrl/tinycolor';
+import { unit } from '../../_util/cssinjs';
 import type { UploadToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 import { clearFix, textEllipsis } from '../../style';
@@ -14,7 +15,7 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
       [`${listCls}${listCls}-picture, ${listCls}${listCls}-picture-card`]: {
         [itemCls]: {
           position: 'relative',
-          height: uploadThumbnailSize + token.lineWidth * 2 + token.paddingXS * 2,
+          height: uploadThumbnailSize + token.calc(token.lineWidth).mul(2).equal() + token.calc(token.paddingXS).mul(2).equal(),
           padding: token.paddingXS,
           border: `${token.lineWidth}px ${token.lineType} ${token.colorBorder}`,
           borderRadius: token.borderRadiusLG,
@@ -46,7 +47,7 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
 
           [`${itemCls}-progress`]: {
             bottom: uploadProgressOffset,
-            width: `calc(100% - ${token.paddingSM * 2}px)`,
+            width: `calc(100% - ${unit(token.calc(token.paddingSM).mul(2).equal())})`,
             marginTop: 0,
             paddingInlineStart: uploadThumbnailSize + token.paddingXS,
           },
@@ -140,8 +141,8 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
           '&::before': {
             position: 'absolute',
             zIndex: 1,
-            width: `calc(100% - ${token.paddingXS * 2}px)`,
-            height: `calc(100% - ${token.paddingXS * 2}px)`,
+            width: `calc(100% - ${unit(token.calc(token.paddingXS).mul(2).equal())})`,
+            height: `calc(100% - ${unit(token.calc(token.paddingXS).mul(2).equal())})`,
             backgroundColor: token.colorBgMask,
             opacity: 0,
             transition: `all ${token.motionDurationSlow}`,
@@ -201,7 +202,7 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
           position: 'absolute',
           bottom: token.margin,
           display: 'block',
-          width: `calc(100% - ${token.paddingXS * 2}px)`,
+          width: `calc(100% - ${unit(token.calc(token.paddingXS).mul(2).equal())})`,
         },
 
         [`${itemCls}-uploading`]: {
@@ -216,7 +217,7 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
 
         [`${itemCls}-progress`]: {
           bottom: token.marginXL,
-          width: `calc(100% - ${token.paddingXS * 2}px)`,
+          width: `calc(100% - ${unit(token.calc(token.paddingXS).mul(2).equal())})`,
           paddingInlineStart: 0,
         },
       },

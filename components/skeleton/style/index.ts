@@ -359,6 +359,8 @@ export default genComponentStyleHook(
   token => {
     const { componentCls } = token;
 
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const skeletonToken = mergeToken<SkeletonToken>(token, {
       skeletonAvatarCls: `${componentCls}-avatar`,
       skeletonTitleCls: `${componentCls}-title`,
@@ -366,11 +368,11 @@ export default genComponentStyleHook(
       skeletonButtonCls: `${componentCls}-button`,
       skeletonInputCls: `${componentCls}-input`,
       skeletonImageCls: `${componentCls}-image`,
-      imageSizeBase: token.controlHeight * 1.5,
-      skeletonTitleHeight: token.controlHeight / 2,
+      imageSizeBase: rawToken.controlHeight * 1.5,
+      skeletonTitleHeight: rawToken.controlHeight / 2,
       skeletonBlockRadius: token.borderRadiusSM,
-      skeletonParagraphLineHeight: token.controlHeight / 2,
-      skeletonParagraphMarginTop: token.marginLG + token.marginXXS,
+      skeletonParagraphLineHeight: rawToken.controlHeight / 2,
+      skeletonParagraphMarginTop: rawToken.marginLG + rawToken.marginXXS,
       borderRadius: 100, // Large number to make capsule shape
       skeletonLoadingBackground: `linear-gradient(90deg, ${token.color} 25%, ${token.colorGradientEnd} 37%, ${token.color} 63%)`,
       skeletonLoadingMotionDuration: '1.4s',

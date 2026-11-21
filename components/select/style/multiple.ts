@@ -5,12 +5,11 @@ import { resetIcon } from '../../style';
 
 const FIXED_ITEM_MARGIN = 2;
 
-function getSelectItemStyle({
-  controlHeightSM,
-  controlHeight,
-  lineWidth: borderWidth,
-}: SelectToken) {
-  const selectItemDist = (controlHeight - controlHeightSM) / 2 - borderWidth;
+function getSelectItemStyle(token: SelectToken) {
+  // 尺寸派生需要真实数值（cssVar 模式下 token 值为 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
+  const selectItemDist =
+    (rawToken.controlHeight - rawToken.controlHeightSM) / 2 - rawToken.lineWidth;
   const selectItemMargin = Math.ceil(selectItemDist / 2);
   return [selectItemDist, selectItemMargin];
 }
@@ -71,7 +70,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
           display: 'inline-block',
           width: 0,
           margin: `${FIXED_ITEM_MARGIN}px 0`,
-          lineHeight: `${selectItemHeight}px`,
+          lineHeight: selectItemHeight,
           content: '"\\a0"',
         },
       },
@@ -80,7 +79,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         &${componentCls}-show-arrow ${componentCls}-selector,
         &${componentCls}-allow-clear ${componentCls}-selector
       `]: {
-        paddingInlineEnd: token.fontSizeIcon + token.controlPaddingHorizontal,
+        paddingInlineEnd: token.calc(token.fontSizeIcon).add(token.controlPaddingHorizontal).equal(),
       },
 
       // ======================== Selections ========================
@@ -93,7 +92,10 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         height: selectItemHeight,
         marginTop: FIXED_ITEM_MARGIN,
         marginBottom: FIXED_ITEM_MARGIN,
-        lineHeight: `${selectItemHeight - token.lineWidth * 2}px`,
+        lineHeight: token
+            .calc(selectItemHeight)
+            .sub(token.calc(token.lineWidth).mul(2).equal())
+            .equal(),
         background: token.colorFillSecondary,
         border: `${token.lineWidth}px solid ${token.colorSplit}`,
         borderRadius: token.borderRadiusSM,
@@ -102,7 +104,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         userSelect: 'none',
         marginInlineEnd: FIXED_ITEM_MARGIN * 2,
         paddingInlineStart: token.paddingXS,
-        paddingInlineEnd: token.paddingXS / 2,
+        paddingInlineEnd: token.calc(token.paddingXS).div(2).equal(),
 
         [`${componentCls}-disabled&`]: {
           color: token.colorTextDisabled,
@@ -113,7 +115,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         // It's ok not to do this, but 24px makes bottom narrow in view should adjust
         '&-content': {
           display: 'inline-block',
-          marginInlineEnd: token.paddingXS / 2,
+          marginInlineEnd: token.calc(token.paddingXS).div(2).equal(),
           overflow: 'hidden',
           whiteSpace: 'pre', // fix whitespace wrapping. custom tags display all whitespace within.
           textOverflow: 'ellipsis',
@@ -150,7 +152,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         display: 'inline-flex',
         position: 'relative',
         maxWidth: '100%',
-        marginInlineStart: token.inputPaddingHorizontalBase - selectItemDist,
+        marginInlineStart: token.calc(token.inputPaddingHorizontalBase).sub(selectItemDist).equal(),
 
         [`
           &-input,
@@ -158,7 +160,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         `]: {
           height: selectItemHeight,
           fontFamily: token.fontFamily,
-          lineHeight: `${selectItemHeight}px`,
+          lineHeight: selectItemHeight,
           transition: `all ${token.motionDurationSlow}`,
         },
 
@@ -212,8 +214,8 @@ export default function genMultipleStyle(token: SelectToken): CSSInterpolation {
     {
       [`${componentCls}-multiple${componentCls}-sm`]: {
         [`${componentCls}-selection-placeholder`]: {
-          insetInlineStart: token.controlPaddingHorizontalSM - token.lineWidth,
-          insetInlineEnd: token.controlPaddingHorizontalSM - token.lineWidth,
+          insetInlineStart: token.calc(token.controlPaddingHorizontalSM).sub(token.lineWidth).equal(),
+          insetInlineEnd: token.calc(token.controlPaddingHorizontalSM).sub(token.lineWidth).equal(),
         },
 
         // https://github.com/ant-design/ant-design/issues/29559

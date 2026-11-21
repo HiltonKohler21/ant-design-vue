@@ -13,7 +13,7 @@ import { createTheme, Theme } from './theme';
 import type { Transformer } from './transformers/interface';
 import legacyLogicalPropertiesTransformer from './transformers/legacyLogicalProperties';
 import px2remTransformer from './transformers/px2rem';
-import { supportLogicProps, supportWhere } from './util';
+import { supportLogicProps, supportWhere, unit } from './util';
 import { serializeCSSVar, token2CSSVar, transformToken } from './util/css-variables';
 import genCalc from './util/calc';
 import type { AbstractCalculator } from './util/calc';
@@ -44,6 +44,7 @@ const cssinjs = {
   serializeCSSVar,
   transformToken,
   genCalc,
+  unit,
 
   // cssinjs
   StyleProvider,
@@ -74,6 +75,7 @@ export {
   serializeCSSVar,
   transformToken,
   genCalc,
+  unit,
 
   // cssinjs
   StyleProvider,

@@ -31,7 +31,7 @@ function compactItemBorder(
     .join(',');
   return {
     [`&-item:not(${parentCls}-last-item)`]: {
-      marginInlineEnd: -token.lineWidth,
+      marginInlineEnd: (token as any).calc(token.lineWidth).mul(-1).equal(),
     },
 
     '&-item': {

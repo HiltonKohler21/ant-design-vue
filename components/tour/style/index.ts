@@ -239,8 +239,10 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 // ============================== Export ==============================
 export default genComponentStyleHook('Tour', token => {
   const { borderRadiusLG, fontSize, lineHeight } = token;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const TourToken = mergeToken<TourToken>(token, {
-    tourZIndexPopup: token.zIndexPopupBase + 70,
+    tourZIndexPopup: rawToken.zIndexPopupBase + 70,
     indicatorWidth: 6,
     indicatorHeight: 6,
     tourBorderRadius: borderRadiusLG,

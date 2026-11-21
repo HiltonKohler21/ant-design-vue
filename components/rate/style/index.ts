@@ -125,9 +125,11 @@ const genRateStyle: GenerateStyle<RateToken> = token => {
 export default genComponentStyleHook('Rate', token => {
   const { colorFillContent } = token;
 
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const rateToken = mergeToken<RateToken>(token, {
     rateStarColor: token['yellow-6'],
-    rateStarSize: token.controlHeightLG * 0.5,
+    rateStarSize: rawToken.controlHeightLG * 0.5,
     rateStarHoverScale: 'scale(1.1)',
     defaultColor: colorFillContent,
   });

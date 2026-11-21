@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { GenerateStyle } from '../../theme/internal';
 import type { TableToken } from './index';
 
@@ -37,7 +38,7 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`table tr th${componentCls}-selection-column${componentCls}-cell-fix-left`]: {
-        zIndex: token.zIndexTableFixed + 1,
+        zIndex: token.calc(token.zIndexTableFixed).add(1).equal(),
       },
 
       [`table tr th${componentCls}-selection-column::after`]: {
@@ -57,7 +58,7 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
         cursor: 'pointer',
         transition: `all ${token.motionDurationSlow}`,
         marginInlineStart: '100%',
-        paddingInlineStart: `${token.tablePaddingHorizontal / 4}px`,
+        paddingInlineStart: `${unit(token.calc(token.tablePaddingHorizontal).div(4).equal())}`,
 
         [iconCls]: {
           color: tableHeaderIconColor,

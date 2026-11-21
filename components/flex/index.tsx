@@ -25,7 +25,7 @@ const AFlex = defineComponent({
       {
         [`${prefixCls.value}-rtl`]: ctxDirection.value === 'rtl',
         [`${prefixCls.value}-gap-${props.gap}`]: isPresetSize(props.gap),
-        [`${prefixCls.value}-vertical`]: props.vertical ?? ctxFlex?.value.vertical,
+        [`${prefixCls.value}-vertical`]: props.vertical ?? ctxFlex?.value?.vertical,
       },
     ]);
     return () => {

@@ -75,7 +75,7 @@ const genListStyle: GenerateStyle<UploadToken> = token => {
 
           [`${itemCls}-progress`]: {
             position: 'absolute',
-            bottom: -token.uploadProgressOffset,
+            bottom: token.calc(token.uploadProgressOffset).mul(-1).equal(),
             width: '100%',
             paddingInlineStart: fontSize + token.paddingXS,
             fontSize,

@@ -70,7 +70,7 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
           position: 'absolute',
           top: '50%',
           insetInlineStart: '50%',
-          margin: -token.spinDotSize / 2,
+          margin: token.calc(token.spinDotSize).div(2).mul(-1).equal(),
         },
 
         [`${token.componentCls}-text`]: {
@@ -87,7 +87,7 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
 
         '&-sm': {
           [`${token.componentCls}-dot`]: {
-            margin: -token.spinDotSizeSM / 2,
+            margin: token.calc(token.spinDotSizeSM).div(2).mul(-1).equal(),
           },
           [`${token.componentCls}-text`]: {
             paddingTop: (token.spinDotSizeSM - token.fontSize) / 2 + 2,
@@ -241,10 +241,12 @@ const genSpinStyle: GenerateStyle<SpinToken> = (token: SpinToken): CSSObject => 
 export default genComponentStyleHook(
   'Spin',
   token => {
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const spinToken = mergeToken<SpinToken>(token, {
       spinDotDefault: token.colorTextDescription,
-      spinDotSize: token.controlHeightLG / 2,
-      spinDotSizeSM: token.controlHeightLG * 0.35,
+      spinDotSize: rawToken.controlHeightLG / 2,
+      spinDotSizeSM: rawToken.controlHeightLG * 0.35,
       spinDotSizeLG: token.controlHeight,
     });
     return [genSpinStyle(spinToken)];

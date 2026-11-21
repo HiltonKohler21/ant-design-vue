@@ -1,10 +1,11 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { StepsToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 
 const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
   const { componentCls, inlineDotSize, inlineTitleColor, inlineTailColor } = token;
-  const containerPaddingTop = token.paddingXS + token.lineWidth;
+  const containerPaddingTop = token.calc(token.paddingXS).add(token.lineWidth).equal();
   const titleStyle = {
     [`${componentCls}-item-container ${componentCls}-item-content ${componentCls}-item-title`]: {
       color: inlineTitleColor,
@@ -21,7 +22,7 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
 
         '&-container': {
           padding: `${containerPaddingTop}px ${token.paddingXXS}px 0`,
-          margin: `0 ${token.marginXXS / 2}px`,
+          margin: `0 ${unit(token.calc(token.marginXXS).div(2).equal())}`,
           borderRadius: token.borderRadiusSM,
           cursor: 'pointer',
           transition: `background-color ${token.motionDurationMid}`,
@@ -41,20 +42,20 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
             top: 0,
           },
           [`${componentCls}-icon-dot`]: {
-            borderRadius: token.fontSizeSM / 4,
+            borderRadius: token.calc(token.fontSizeSM).div(4).equal(),
           },
         },
 
         '&-content': {
           width: 'auto',
-          marginTop: token.marginXS - token.lineWidth,
+          marginTop: token.calc(token.marginXS).sub(token.lineWidth).equal(),
         },
         '&-title': {
           color: inlineTitleColor,
           fontSize: token.fontSizeSM,
           lineHeight: token.lineHeightSM,
           fontWeight: 'normal',
-          marginBottom: token.marginXXS / 2,
+          marginBottom: token.calc(token.marginXXS).div(2).equal(),
         },
         '&-description': {
           display: 'none',

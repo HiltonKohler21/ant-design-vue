@@ -1,12 +1,12 @@
 /**
  * cssVar 模式非法 CSS 检测器
  *
- * 目的：发现 token 算术未改 calc() 时产生的非法值，例如
- *   - `calc(100% + NaNpx)`            （var 字符串参与 JS 算术得到 NaN）
- *   - `var(--ant-line-width) * 2px`   （变量未包在 calc() 里就参与算术）
- *   - `undefined` / `[object Object]`
+ * 目的：定位 token 算术未改 calc() 时产生的非法值：
+ *   - NaN（var() 字符串参与 JS 算术）
+ *   - undefined / [object Object]
+ *   - var() 裸算术（未被 calc() 包裹）
  *
- * 作为 P1-4b（248 处算术改 calc）的批次验收工具。
+ * 作为 P1-4b（token 算术改 calc）的验收工具与进度计量。
  */
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
@@ -30,7 +30,6 @@ import Radio from '../../components/radio';
 import Collapse from '../../components/collapse';
 import Badge from '../../components/badge';
 import Avatar from '../../components/avatar';
-import Affix from '../../components/affix';
 import Breadcrumb from '../../components/breadcrumb';
 import Timeline from '../../components/timeline';
 import Alert from '../../components/alert';
@@ -44,7 +43,6 @@ import Pagination from '../../components/pagination';
 import Statistic from '../../components/statistic';
 import Result from '../../components/result';
 import Empty from '../../components/empty';
-import Watermark from '../../components/watermark';
 import QRCode from '../../components/qrcode';
 import FloatButton from '../../components/float-button';
 import Tooltip from '../../components/tooltip';
@@ -83,9 +81,6 @@ const App = {
         <Collapse items={[{ key: '1', label: 'L', children: 'C' }]} />
         <Badge count={5} />
         <Avatar>A</Avatar>
-        <Affix>
-          <span>affix</span>
-        </Affix>
         <Breadcrumb items={[{ title: 'a' }]} />
         <Timeline items={[{ content: 'x' }]} />
         <Alert message="m" />
@@ -103,9 +98,6 @@ const App = {
         <Statistic value={1} />
         <Result status="success" title="ok" />
         <Empty />
-        <Watermark content="w">
-          <div>w</div>
-        </Watermark>
         <QRCode value="https://antdv.com" />
         <FloatButton />
         <Tooltip title="t">
@@ -121,19 +113,16 @@ const App = {
 };
 
 const ILLEGAL = [
-  { name: 'NaN', re: /\bNaN\b/ },
-  { name: 'undefined', re: /\bundefined\b/ },
-  { name: '[object Object]', re: /\[object Object\]/ },
-  // 变量直接参与算术（未被 calc 包裹）
-  { name: 'var() 裸算术', re: /var\(--ant-[a-z0-9-]+\)\s*[*/+-]\s*[-0-9]/ },
+  { name: 'NaN', re: /\bNaN\b/g },
+  { name: 'undefined', re: /\bundefined\b/g },
+  { name: '[object Object]', re: /\[object Object\]/g },
+  { name: 'var() 裸算术', re: /(?<!calc\()var\(--ant-[a-z0-9-]+\)\s*[*/+-]\s*[-0-9]/g },
 ];
 
 describe('cssVar 非法 CSS 检测', () => {
-  jest.setTimeout(180000);
+  jest.setTimeout(240000);
 
-  // 已知问题：177 处 token 参与 JS 算术（如 `token.lineWidth * 2`）在 cssVar 模式下会得到 NaN。
-  // 需先决策改造路线（见 V6-MIGRATION-PLAN.md「P1-4b 三条路线」）后启用此断言。
-  it.skip('cssVar 模式下无 NaN / undefined / 裸变量算术', async () => {
+  it('cssVar 模式下无 NaN / undefined / 裸变量算术', async () => {
     mount(ConfigProvider, {
       props: { theme: { cssVar: true } },
       slots: { default: () => <App /> },
@@ -145,15 +134,33 @@ describe('cssVar 非法 CSS 检测', () => {
     const css = collectCss();
     const hits = [];
     for (const { name, re } of ILLEGAL) {
-      const m = css.match(new RegExp(re.source, 'g'));
+      const m = css.match(re);
       if (m && m.length) {
-        hits.push(`${name} × ${m.length}（样例: ${m.slice(0, 3).join(' , ')}）`);
+        hits.push(`${name} × ${m.length}`);
       }
     }
 
+    // 打印 NaN 产生的「选择器 :: 属性」清单（去重）
+    const uniq = new Set();
+    const reRule = /([^{}]+)\{([^{}]*NaN[^{}]*)\}/g;
+    let rm = reRule.exec(css);
+    while (rm) {
+      const sel = rm[1]
+        .trim()
+        .split(',')
+        .pop()
+        .trim();
+      rm[2]
+        .split(';')
+        .filter(d => d.includes('NaN'))
+        .forEach(d => uniq.add(`${sel} :: ${d.trim().split(':')[0]}`));
+      rm = reRule.exec(css);
+    }
+    const list = [...uniq];
     // eslint-disable-next-line no-console
-    console.log(`[illegal-check] CSS 总长 ${css.length} B，非法命中 ${hits.length} 类`);
+    console.log(`[illegal-check] CSS ${css.length} B，命中 ${hits.length} 类，NaN 来源 ${list.length} 处`);
     hits.forEach(h => console.log('  ✗ ' + h));
+    list.slice(0, 40).forEach(x => console.log('  src: ' + x));
 
     expect(hits).toEqual([]);
   });

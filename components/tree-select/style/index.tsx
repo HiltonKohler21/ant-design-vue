@@ -1,4 +1,5 @@
 import type { Ref } from 'vue';
+import { unit } from '../../_util/cssinjs';
 import { getStyle as getCheckboxStyle } from '../../checkbox/style';
 import type { AliasToken, FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -20,7 +21,7 @@ const genBaseStyle: GenerateStyle<TreeSelectToken> = token => {
     {
       [`${componentCls}-dropdown`]: [
         {
-          padding: `${token.paddingXS}px ${token.paddingXS / 2}px`,
+          padding: `${token.paddingXS}px ${unit(token.calc(token.paddingXS).div(2).equal())}`,
         },
 
         // ====================== Tree ======================

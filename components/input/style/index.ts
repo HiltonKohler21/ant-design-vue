@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import type { GlobalToken } from '../../theme/interface';
@@ -75,7 +76,7 @@ const genInputLargeStyle = (token: InputToken): CSSObject => {
 };
 
 export const genInputSmallStyle = (token: InputToken): CSSObject => ({
-  padding: `${token.inputPaddingVerticalSM}px ${token.controlPaddingHorizontalSM - 1}px`,
+  padding: `${token.inputPaddingVerticalSM}px ${unit(token.calc(token.controlPaddingHorizontalSM).sub(1).equal())}`,
   borderRadius: token.borderRadiusSM,
 });
 
@@ -270,7 +271,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
         // Reset Select's style in addon
         [`${antCls}-select`]: {
-          margin: `-${token.inputPaddingVertical + 1}px -${token.inputPaddingHorizontal}px`,
+          margin: `-${unit(token.calc(token.inputPaddingVertical).add(1).equal())} -${token.inputPaddingHorizontal}px`,
 
           [`&${antCls}-select-single:not(${antCls}-select-customize-input)`]: {
             [`${antCls}-select-selector`]: {
@@ -414,7 +415,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
       },
 
       '& > *:not(:last-child)': {
-        marginInlineEnd: -token.lineWidth,
+        marginInlineEnd: token.calc(token.lineWidth).mul(-1).equal(),
         borderInlineEndWidth: token.lineWidth,
       },
 
@@ -472,7 +473,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
       },
 
       [`${componentCls}-group-wrapper + ${componentCls}-group-wrapper`]: {
-        marginInlineStart: -token.lineWidth,
+        marginInlineStart: token.calc(token.lineWidth).mul(-1).equal(),
         [`${componentCls}-affix-wrapper`]: {
           borderRadius: 0,
         },
@@ -512,7 +513,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
       [`${antCls}-select-selection-item, ${antCls}-select-selection-placeholder`]: {
         // -2 is for the border size & override default
-        lineHeight: `${token.controlHeightLG - 2}px`,
+        lineHeight: `${unit(token.calc(token.controlHeightLG).sub(2).equal())}`,
       },
 
       [`${antCls}-select-selection-search-input`]: {
@@ -525,7 +526,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
       [`${antCls}-select-selection-item, ${antCls}-select-selection-placeholder`]: {
         // -2 is for the border size & override default
-        lineHeight: `${token.controlHeightSM - 2}px`,
+        lineHeight: `${unit(token.calc(token.controlHeightSM).sub(2).equal())}`,
       },
 
       [`${antCls}-select-selection-search-input`]: {
@@ -539,7 +540,12 @@ const genInputStyle: GenerateStyle<InputToken> = (token: InputToken) => {
   const { componentCls, controlHeightSM, lineWidth } = token;
 
   const FIXED_CHROME_COLOR_HEIGHT = 16;
-  const colorSmallPadding = (controlHeightSM - lineWidth * 2 - FIXED_CHROME_COLOR_HEIGHT) / 2;
+  const colorSmallPadding = token
+    .calc(controlHeightSM)
+    .sub(token.calc(lineWidth).mul(2).equal())
+    .sub(FIXED_CHROME_COLOR_HEIGHT)
+    .div(2)
+    .equal();
 
   return {
     [componentCls]: {
@@ -783,7 +789,7 @@ const genSearchInputStyle: GenerateStyle<InputToken> = (token: InputToken) => {
       // fix slight height diff in Firefox:
       // https://ant.design/components/auto-complete-cn/#components-auto-complete-demo-certain-category
       [`${componentCls}-lg`]: {
-        lineHeight: token.lineHeightLG - 0.0002,
+        lineHeight: token.calc(token.lineHeightLG).sub(0.0002).equal(),
       },
 
       [`> ${componentCls}-group`]: {
@@ -847,7 +853,7 @@ const genSearchInputStyle: GenerateStyle<InputToken> = (token: InputToken) => {
         [`&:not(${componentCls}-compact-last-item)`]: {
           [`${componentCls}-group-addon`]: {
             [`${componentCls}-search-button`]: {
-              marginInlineEnd: -token.lineWidth,
+              marginInlineEnd: token.calc(token.lineWidth).mul(-1).equal(),
               borderRadius: 0,
             },
           },
@@ -876,25 +882,27 @@ const genSearchInputStyle: GenerateStyle<InputToken> = (token: InputToken) => {
 };
 
 export function initInputToken<T extends GlobalToken = GlobalToken>(token: T): InputToken<T> {
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   // @ts-ignore
   return mergeToken<InputToken<T>>(token, {
     inputAffixPadding: token.paddingXXS,
     inputPaddingVertical: Math.max(
-      Math.round(((token.controlHeight - token.fontSize * token.lineHeight) / 2) * 10) / 10 -
-        token.lineWidth,
+      Math.round(((rawToken.controlHeight - rawToken.fontSize * rawToken.lineHeight) / 2) * 10) / 10 -
+        rawToken.lineWidth,
       3,
     ),
     inputPaddingVerticalLG:
-      Math.ceil(((token.controlHeightLG - token.fontSizeLG * token.lineHeightLG) / 2) * 10) / 10 -
-      token.lineWidth,
+      Math.ceil(((rawToken.controlHeightLG - rawToken.fontSizeLG * rawToken.lineHeightLG) / 2) * 10) / 10 -
+      rawToken.lineWidth,
     inputPaddingVerticalSM: Math.max(
-      Math.round(((token.controlHeightSM - token.fontSize * token.lineHeight) / 2) * 10) / 10 -
-        token.lineWidth,
+      Math.round(((rawToken.controlHeightSM - rawToken.fontSize * rawToken.lineHeight) / 2) * 10) / 10 -
+        rawToken.lineWidth,
       0,
     ),
-    inputPaddingHorizontal: token.paddingSM - token.lineWidth,
-    inputPaddingHorizontalSM: token.paddingXS - token.lineWidth,
-    inputPaddingHorizontalLG: token.controlPaddingHorizontal - token.lineWidth,
+    inputPaddingHorizontal: rawToken.paddingSM - rawToken.lineWidth,
+    inputPaddingHorizontalSM: rawToken.paddingXS - rawToken.lineWidth,
+    inputPaddingHorizontalLG: rawToken.controlPaddingHorizontal - rawToken.lineWidth,
     inputBorderHoverColor: token.colorPrimaryHover,
     inputBorderActiveColor: token.colorPrimaryHover,
   });
@@ -956,7 +964,22 @@ const genTextAreaStyle: GenerateStyle<InputToken> = token => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Input', token => {
-  const inputToken = initInputToken<FullToken<'Input'>>(token);
+  // 尺寸派生需要真实数值（cssVar 模式下 token 值是 var() 字符串），
+  // 因此内边距类 token 从 realToken 派生，其余 token 仍走 CSS 变量。
+  const rawToken = (token as any)._realToken ?? token;
+  const numericPaddings = initInputToken<FullToken<'Input'>>(rawToken);
+  const inputToken = mergeToken<InputToken<FullToken<'Input'>>>(
+    initInputToken<FullToken<'Input'>>(token),
+    {
+      inputPaddingVertical: numericPaddings.inputPaddingVertical,
+      inputPaddingVerticalLG: numericPaddings.inputPaddingVerticalLG,
+      inputPaddingVerticalSM: numericPaddings.inputPaddingVerticalSM,
+      inputPaddingHorizontal: numericPaddings.inputPaddingHorizontal,
+      inputPaddingHorizontalLG: numericPaddings.inputPaddingHorizontalLG,
+      inputPaddingHorizontalSM: numericPaddings.inputPaddingHorizontalSM,
+    },
+  );
+
 
   return [
     genInputStyle(inputToken),

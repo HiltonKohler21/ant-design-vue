@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { clearFix, resetComponent, textEllipsis } from '../../style';
@@ -121,7 +122,7 @@ const genCardActionsStyle: GenerateStyle<CardToken> = (token): CSSObject => {
       '> span': {
         position: 'relative',
         display: 'block',
-        minWidth: token.cardActionsIconSize * 2,
+        minWidth: token.calc(token.cardActionsIconSize).mul(2).equal(),
         fontSize: token.fontSize,
         lineHeight: token.lineHeight,
         cursor: 'pointer',
@@ -135,7 +136,7 @@ const genCardActionsStyle: GenerateStyle<CardToken> = (token): CSSObject => {
           display: 'inline-block',
           width: '100%',
           color: token.colorTextDescription,
-          lineHeight: `${token.fontSize * token.lineHeight}px`,
+          lineHeight: `${unit(token.calc(token.fontSize).mul(token.lineHeight).equal())}`,
           transition: `color ${token.motionDurationMid}`,
 
           '&:hover': {
@@ -304,8 +305,8 @@ const genCardStyle: GenerateStyle<CardToken> = (token): CSSObject => {
       },
 
       [`&:not(${componentCls}-loading) ${componentCls}-body`]: {
-        marginBlockStart: -token.lineWidth,
-        marginInlineStart: -token.lineWidth,
+        marginBlockStart: token.calc(token.lineWidth).mul(-1).equal(),
+        marginInlineStart: token.calc(token.lineWidth).mul(-1).equal(),
         padding: 0,
       },
     },
@@ -365,13 +366,15 @@ const genCardSizeStyle: GenerateStyle<CardToken> = (token): CSSObject => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Card', token => {
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const cardToken = mergeToken<CardToken>(token, {
     cardShadow: token.boxShadowCard,
-    cardHeadHeight: token.fontSizeLG * token.lineHeightLG + token.padding * 2,
-    cardHeadHeightSM: token.fontSize * token.lineHeight + token.paddingXS * 2,
+    cardHeadHeight: rawToken.fontSizeLG * rawToken.lineHeightLG + rawToken.padding * 2,
+    cardHeadHeightSM: rawToken.fontSize * rawToken.lineHeight + rawToken.paddingXS * 2,
     cardHeadPadding: token.padding,
     cardPaddingBase: token.paddingLG,
-    cardHeadTabsMarginBottom: -token.padding - token.lineWidth,
+    cardHeadTabsMarginBottom: rawToken.lineWidth - rawToken.padding,
     cardActionsLiMargin: `${token.paddingSM}px 0`,
     cardActionsIconSize: token.fontSize,
     cardPaddingSM: 12, // Fixed padding.

@@ -1,4 +1,5 @@
 import { initFadeMotion, initZoomMotion } from '../../style/motion';
+import { unit } from '../../_util/cssinjs';
 import type { AliasToken, FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import type { TokenWithCommonCls } from '../../theme/util/genComponentStyleHook';
@@ -147,7 +148,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
         position: 'relative',
         top: 100,
         width: 'auto',
-        maxWidth: `calc(100vw - ${token.margin * 2}px)`,
+        maxWidth: `calc(100vw - ${unit(token.calc(token.margin).mul(2).equal())})`,
         margin: '0 auto',
         paddingBottom: token.paddingLG,
 
@@ -175,7 +176,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
           position: 'absolute',
           top: (token.modalHeaderCloseSize - token.modalCloseBtnSize) / 2,
           insetInlineEnd: (token.modalHeaderCloseSize - token.modalCloseBtnSize) / 2,
-          zIndex: token.zIndexPopupBase + 10,
+          zIndex: token.calc(token.zIndexPopupBase).add(10).equal(),
           padding: 0,
           color: token.modalCloseColor,
           fontWeight: token.fontWeightStrong,
@@ -301,7 +302,7 @@ const genModalConfirmStyle: GenerateStyle<ModalToken> = token => {
           [`+ ${confirmComponentCls}-content`]: {
             marginBlockStart: token.marginXS,
             flexBasis: '100%',
-            maxWidth: `calc(100% - ${token.modalConfirmIconSize + token.marginSM}px)`,
+            maxWidth: `calc(100% - ${unit(token.calc(token.modalConfirmIconSize).add(token.marginSM).equal())})`,
           },
         },
 
@@ -321,7 +322,7 @@ const genModalConfirmStyle: GenerateStyle<ModalToken> = token => {
 
           // `content` after `icon` should set marginLeft
           [`+ ${confirmComponentCls}-title + ${confirmComponentCls}-content`]: {
-            marginInlineStart: token.modalConfirmIconSize + token.marginSM,
+            marginInlineStart: token.calc(token.modalConfirmIconSize).add(token.marginSM).equal(),
           },
         },
       },
@@ -405,7 +406,7 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
 
     [confirmComponentCls]: {
       [`${antCls}-modal-body`]: {
-        padding: `${token.padding * 2}px ${token.padding * 2}px ${token.paddingLG}px`,
+        padding: `${unit(token.calc(token.padding).mul(2).equal())} ${unit(token.calc(token.padding).mul(2).equal())} ${token.paddingLG}px`,
       },
       [`${confirmComponentCls}-body`]: {
         [`> ${token.iconCls}`]: {
@@ -413,7 +414,7 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
 
           // `content` after `icon` should set marginLeft
           [`+ ${confirmComponentCls}-title + ${confirmComponentCls}-content`]: {
-            marginInlineStart: token.modalConfirmIconSize + token.margin,
+            marginInlineStart: token.calc(token.modalConfirmIconSize).add(token.margin).equal(),
           },
         },
       },
@@ -430,6 +431,8 @@ export default genComponentStyleHook('Modal', token => {
   const headerFontSize = token.fontSizeHeading5;
   const headerLineHeight = token.lineHeightHeading5;
 
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const modalToken = mergeToken<ModalToken>(token, {
     modalBodyPadding: token.paddingLG,
     modalHeaderBg: token.colorBgElevated,
@@ -451,8 +454,8 @@ export default genComponentStyleHook('Modal', token => {
     modalFooterBorderWidth: token.lineWidth,
     modalConfirmTitleFontSize: token.fontSizeLG,
     modalIconHoverColor: token.colorIconHover,
-    modalConfirmIconSize: token.fontSize * token.lineHeight,
-    modalCloseBtnSize: token.controlHeightLG * 0.55,
+    modalConfirmIconSize: rawToken.fontSize * rawToken.lineHeight,
+    modalCloseBtnSize: rawToken.controlHeightLG * 0.55,
   });
   return [
     genModalStyle(modalToken),

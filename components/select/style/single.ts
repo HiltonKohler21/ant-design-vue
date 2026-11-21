@@ -6,9 +6,12 @@ import { mergeToken } from '../../theme/internal';
 function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
   const { componentCls, inputPaddingHorizontalBase, borderRadius } = token;
 
-  const selectHeightWithoutBorder = token.controlHeight - token.lineWidth * 2;
+  const selectHeightWithoutBorder = token
+    .calc(token.controlHeight)
+    .sub(token.calc(token.lineWidth).mul(2).equal())
+    .equal();
 
-  const selectionItemPadding = Math.ceil(token.fontSize * 1.25);
+  const selectionItemPadding = token.calc(token.fontSize).mul(1.25).equal();
 
   const suffixCls = suffix ? `${componentCls}-${suffix}` : '';
 
@@ -40,12 +43,12 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
           ${componentCls}-selection-placeholder
         `]: {
           padding: 0,
-          lineHeight: `${selectHeightWithoutBorder}px`,
+          lineHeight: selectHeightWithoutBorder,
           transition: `all ${token.motionDurationSlow}`,
 
           // Firefox inline-block position calculation is not same as Chrome & Safari. Patch this:
           '@supports (-moz-appearance: meterbar)': {
-            lineHeight: `${selectHeightWithoutBorder}px`,
+            lineHeight: selectHeightWithoutBorder,
           },
         },
 
@@ -100,7 +103,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
           },
 
           '&:after': {
-            lineHeight: `${selectHeightWithoutBorder}px`,
+            lineHeight: selectHeightWithoutBorder,
           },
         },
       },
@@ -135,7 +138,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
 export default function genSingleStyle(token: SelectToken): CSSInterpolation {
   const { componentCls } = token;
 
-  const inputPaddingHorizontalSM = token.controlPaddingHorizontalSM - token.lineWidth;
+  const inputPaddingHorizontalSM = token.calc(token.controlPaddingHorizontalSM).sub(token.lineWidth).equal();
 
   return [
     genSizeStyle(token),
@@ -165,14 +168,14 @@ export default function genSingleStyle(token: SelectToken): CSSInterpolation {
 
           // With arrow should provides `padding-right` to show the arrow
           [`&${componentCls}-show-arrow ${componentCls}-selection-search`]: {
-            insetInlineEnd: inputPaddingHorizontalSM + token.fontSize * 1.5,
+            insetInlineEnd: inputPaddingHorizontalSM + token.calc(token.fontSize).mul(1.5).equal(),
           },
 
           [`
             &${componentCls}-show-arrow ${componentCls}-selection-item,
             &${componentCls}-show-arrow ${componentCls}-selection-placeholder
           `]: {
-            paddingInlineEnd: token.fontSize * 1.5,
+            paddingInlineEnd: token.calc(token.fontSize).mul(1.5).equal(),
           },
         },
       },

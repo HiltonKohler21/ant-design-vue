@@ -116,3 +116,8 @@ export function supportLogicProps(): boolean {
 
   return canLogic!;
 }
+
+
+/** 数值补 px（字符串原样返回）；用于 calc() 嵌套表达式 */
+export const unit = (value: number | string): string =>
+  typeof value === 'number' ? `${value}px` : value;

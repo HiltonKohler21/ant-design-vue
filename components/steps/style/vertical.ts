@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { StepsToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 
@@ -22,7 +23,7 @@ const genStepsVerticalStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         },
         [`${componentCls}-item-content`]: {
           display: 'block',
-          minHeight: token.controlHeight * 1.5,
+          minHeight: token.calc(token.controlHeight).mul(1.5).equal(),
           overflow: 'hidden',
         },
         [`${componentCls}-item-title`]: {
@@ -38,7 +39,7 @@ const genStepsVerticalStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         insetInlineStart: token.stepsIconSize / 2 - token.lineWidth,
         width: token.lineWidth,
         height: '100%',
-        padding: `${stepsIconSize + token.marginXXS * 1.5}px 0 ${token.marginXXS * 1.5}px`,
+        padding: `${stepsIconSize + token.calc(token.marginXXS).mul(1.5).equal()}px 0 ${unit(token.calc(token.marginXXS).mul(1.5).equal())}`,
 
         '&::after': {
           width: token.lineWidth,
@@ -60,7 +61,7 @@ const genStepsVerticalStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           position: 'absolute',
           top: 0,
           insetInlineStart: token.stepsSmallIconSize / 2 - token.lineWidth,
-          padding: `${stepsSmallIconSize + token.marginXXS * 1.5}px 0 ${token.marginXXS * 1.5}px`,
+          padding: `${stepsSmallIconSize + token.calc(token.marginXXS).mul(1.5).equal()}px 0 ${unit(token.calc(token.marginXXS).mul(1.5).equal())}`,
         },
         [`${componentCls}-item-title`]: {
           lineHeight: `${stepsSmallIconSize}px`,

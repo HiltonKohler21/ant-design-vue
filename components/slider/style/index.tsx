@@ -97,8 +97,8 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         '&::before': {
           content: '""',
           position: 'absolute',
-          insetInlineStart: -token.handleLineWidth,
-          insetBlockStart: -token.handleLineWidth,
+          insetInlineStart: token.calc(token.handleLineWidth).mul(-1).equal(),
+          insetBlockStart: token.calc(token.handleLineWidth).mul(-1).equal(),
           width: token.handleSize + token.handleLineWidth * 2,
           height: token.handleSize + token.handleLineWidth * 2,
           backgroundColor: 'transparent',
@@ -313,10 +313,12 @@ const genVerticalStyle: GenerateStyle<SliderToken> = token => {
 export default genComponentStyleHook(
   'Slider',
   token => {
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const sliderToken = mergeToken<SliderToken>(token, {
-      marginPart: (token.controlHeight - token.controlSize) / 2,
-      marginFull: token.controlSize / 2,
-      marginPartWithMark: token.controlHeightLG - token.controlSize,
+      marginPart: (rawToken.controlHeight - rawToken.controlSize) / 2,
+      marginFull: rawToken.controlSize / 2,
+      marginPartWithMark: rawToken.controlHeightLG - rawToken.controlSize,
     });
     return [
       genBaseStyle(sliderToken),

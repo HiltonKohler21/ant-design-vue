@@ -217,7 +217,7 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
             content: '":"',
             position: 'relative',
             marginBlock: 0,
-            marginInlineStart: token.marginXXS / 2,
+            marginInlineStart: token.calc(token.marginXXS).div(2).equal(),
             marginInlineEnd: token.marginXS,
           },
 

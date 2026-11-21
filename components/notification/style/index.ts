@@ -264,6 +264,8 @@ export default genComponentStyleHook(
     const notificationPaddingVertical = token.paddingMD;
     const notificationPaddingHorizontal = token.paddingLG;
 
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const notificationToken = mergeToken<NotificationToken>(token, {
       // default.less variables
       notificationBg: token.colorBgElevated,
@@ -274,8 +276,8 @@ export default genComponentStyleHook(
       notificationMarginBottom: token.margin,
       notificationMarginEdge: token.marginLG,
       animationMaxHeight: 150,
-      notificationIconSize: token.fontSizeLG * token.lineHeightLG,
-      notificationCloseButtonSize: token.controlHeightLG * 0.55,
+      notificationIconSize: rawToken.fontSizeLG * rawToken.lineHeightLG,
+      notificationCloseButtonSize: rawToken.controlHeightLG * 0.55,
     });
 
     return [genNotificationStyle(notificationToken)];

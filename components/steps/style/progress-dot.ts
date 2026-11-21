@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { StepsToken } from '.';
 import type { GenerateStyle } from '../../theme/internal';
 
@@ -28,8 +29,8 @@ const genStepsProgressDotStyle: GenerateStyle<StepsToken, CSSObject> = token => 
           padding: 0,
 
           '&::after': {
-            width: `calc(100% - ${token.marginSM * 2}px)`,
-            height: token.lineWidth * 3,
+            width: `calc(100% - ${unit(token.calc(token.marginSM).mul(2).equal())})`,
+            height: token.calc(token.lineWidth).mul(3).equal(),
             marginInlineStart: token.marginSM,
           },
         },
@@ -53,9 +54,9 @@ const genStepsProgressDotStyle: GenerateStyle<StepsToken, CSSObject> = token => 
             /* expand hover area */
             '&::after': {
               position: 'absolute',
-              top: -token.marginSM,
+              top: token.calc(token.marginSM).mul(-1).equal(),
               insetInlineStart: (stepsDotSize - token.controlHeightLG * 1.5) / 2,
-              width: token.controlHeightLG * 1.5,
+              width: token.calc(token.controlHeightLG).mul(1.5).equal(),
               height: token.controlHeight,
               background: 'transparent',
               content: '""',

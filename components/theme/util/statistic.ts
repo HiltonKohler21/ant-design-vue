@@ -11,7 +11,16 @@ let recording = true;
 export function merge<T extends object>(...objs: Partial<T>[]): T {
   /* istanbul ignore next */
   if (!enableStatistic) {
-    return Object.assign({}, ...objs);
+    const ret = Object.assign({}, ...objs);
+    const realToken = (objs as any[]).find(o => o && (o as any)._realToken)?._realToken;
+    if (realToken) {
+      Object.defineProperty(ret, '_realToken', {
+        value: realToken,
+        enumerable: false,
+        configurable: true,
+      });
+    }
+    return ret;
   }
 
   recording = false;
@@ -31,6 +40,16 @@ export function merge<T extends object>(...objs: Partial<T>[]): T {
   });
 
   recording = true;
+  // 传播真实数值 token（cssVar 模式下 token 值是 var() 字符串，
+  // 尺寸派生 / 取整等数值运算需要原始数值）
+  const realToken = (objs as any[]).find(o => o && (o as any)._realToken)?._realToken;
+  if (realToken) {
+    Object.defineProperty(ret, '_realToken', {
+      value: realToken,
+      enumerable: false,
+      configurable: true,
+    });
+  }
   return ret;
 }
 

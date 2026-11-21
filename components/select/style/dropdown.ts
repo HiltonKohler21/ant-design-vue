@@ -143,7 +143,7 @@ const genSingleStyle: GenerateStyle<SelectToken> = token => {
             },
 
             '&-grouped': {
-              paddingInlineStart: token.controlPaddingHorizontal * 2,
+              paddingInlineStart: token.calc(token.controlPaddingHorizontal).mul(2).equal(),
             },
           },
         },

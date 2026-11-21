@@ -1,4 +1,5 @@
 import type { CSSInterpolation, CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import genGroupStyle from './group';
@@ -78,11 +79,11 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
 
             '&:before': {
               position: 'absolute',
-              top: -token.lineWidth,
-              insetInlineStart: -token.lineWidth,
+              top: token.calc(token.lineWidth).mul(-1).equal(),
+              insetInlineStart: token.calc(token.lineWidth).mul(-1).equal(),
               display: 'inline-block',
               width: token.lineWidth,
-              height: `calc(100% + ${token.lineWidth * 2}px)`,
+              height: `calc(100% + ${unit(token.calc(token.lineWidth).mul(2).equal())})`,
               backgroundColor: token.colorPrimaryHover,
               content: '""',
             },
@@ -97,10 +98,10 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
 
               '&:before': {
                 position: 'absolute',
-                top: -token.lineWidth,
-                insetInlineStart: -token.lineWidth,
+                top: token.calc(token.lineWidth).mul(-1).equal(),
+                insetInlineStart: token.calc(token.lineWidth).mul(-1).equal(),
                 display: 'inline-block',
-                width: `calc(100% + ${token.lineWidth * 2}px)`,
+                width: `calc(100% + ${unit(token.calc(token.lineWidth).mul(2).equal())})`,
                 height: token.lineWidth,
                 backgroundColor: token.colorPrimaryHover,
                 content: '""',
@@ -129,8 +130,8 @@ const genCircleButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
 
 const genRoundButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   borderRadius: token.controlHeight,
-  paddingInlineStart: token.controlHeight / 2,
-  paddingInlineEnd: token.controlHeight / 2,
+  paddingInlineStart: token.calc(token.controlHeight).div(2).equal(),
+  paddingInlineEnd: token.calc(token.controlHeight).div(2).equal(),
 });
 
 // =============================== Type ===============================
@@ -418,8 +419,13 @@ const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls: string = ''): CSS
     buttonPaddingHorizontal,
   } = token;
 
-  const paddingVertical = Math.max(0, (controlHeight - fontSize * lineHeight) / 2 - lineWidth);
-  const paddingHorizontal = buttonPaddingHorizontal - lineWidth;
+  // cssVar 模式下 token 值是 var() 字符串，算术必须走 calc 链
+  const paddingVertical = token
+    .calc(token.calc(controlHeight).sub(token.calc(fontSize).mul(lineHeight).equal()).equal())
+    .div(2)
+    .sub(lineWidth)
+    .equal();
+  const paddingHorizontal = token.calc(buttonPaddingHorizontal).sub(lineWidth).equal();
 
   const iconOnlyCls = `${componentCls}-icon-only`;
 

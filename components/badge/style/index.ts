@@ -108,7 +108,7 @@ const genSharedBadgeStyle: GenerateStyle<BadgeToken> = (token: BadgeToken): CSSO
         whiteSpace: 'nowrap',
         textAlign: 'center',
         background: token.badgeColor,
-        borderRadius: token.badgeHeight / 2,
+        borderRadius: token.calc(token.badgeHeight).div(2).equal(),
         boxShadow: `0 0 0 ${badgeShadowSize}px ${token.badgeShadowColor}`,
         transition: `background ${token.motionDurationMid}`,
 

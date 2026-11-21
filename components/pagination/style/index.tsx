@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import {
   genBasicInputStyle,
   genInputSmallStyle,
@@ -149,7 +150,7 @@ const genPaginationMiniStyle: GenerateStyle<PaginationToken, CSSObject> = token 
       minWidth: token.paginationItemSizeSM,
       height: token.paginationItemSizeSM,
       margin: 0,
-      lineHeight: `${token.paginationItemSizeSM - 2}px`,
+      lineHeight: `${unit(token.calc(token.paginationItemSizeSM).sub(2).equal())}`,
     },
 
     [`&${componentCls}-mini ${componentCls}-item:not(${componentCls}-item-active)`]: {
@@ -446,7 +447,7 @@ const genPaginationJumpStyle: GenerateStyle<PaginationToken, CSSObject> = token 
         input: {
           ...genBasicInputStyle(token),
 
-          width: token.controlHeightLG * 1.25,
+          width: token.calc(token.controlHeightLG).mul(1.25).equal(),
           height: token.controlHeight,
           boxSizing: 'border-box',
           margin: 0,
@@ -468,7 +469,7 @@ const genPaginationItemStyle: GenerateStyle<PaginationToken, CSSObject> = token 
       height: token.paginationItemSize,
       marginInlineEnd: token.marginXS,
       fontFamily: token.paginationFontFamily,
-      lineHeight: `${token.paginationItemSize - 2}px`,
+      lineHeight: `${unit(token.calc(token.paginationItemSize).sub(2).equal())}`,
       textAlign: 'center',
       verticalAlign: 'middle',
       listStyle: 'none',
@@ -552,7 +553,7 @@ const genPaginationStyle: GenerateStyle<PaginationToken, CSSObject> = token => {
         display: 'inline-block',
         height: token.paginationItemSize,
         marginInlineEnd: token.marginXS,
-        lineHeight: `${token.paginationItemSize - 2}px`,
+        lineHeight: `${unit(token.calc(token.paginationItemSize).sub(2).equal())}`,
         verticalAlign: 'middle',
       },
 
@@ -692,6 +693,8 @@ const genBorderedStyle: GenerateStyle<PaginationToken> = token => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Pagination', token => {
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const paginationToken = mergeToken<PaginationToken>(
     token,
     {
@@ -707,10 +710,10 @@ export default genComponentStyleHook('Pagination', token => {
       paginationItemDisabledColorActive: token.colorTextDisabled,
       paginationItemLinkBg: token.colorBgContainer,
       inputOutlineOffset: '0 0',
-      paginationMiniOptionsMarginInlineStart: token.marginXXS / 2,
-      paginationMiniQuickJumperInputWidth: token.controlHeightLG * 1.1,
-      paginationItemPaddingInline: token.marginXXS * 1.5,
-      paginationEllipsisLetterSpacing: token.marginXXS / 2,
+      paginationMiniOptionsMarginInlineStart: rawToken.marginXXS / 2,
+      paginationMiniQuickJumperInputWidth: rawToken.controlHeightLG * 1.1,
+      paginationItemPaddingInline: rawToken.marginXXS * 1.5,
+      paginationEllipsisLetterSpacing: rawToken.marginXXS / 2,
       paginationSlashMarginInlineStart: token.marginXXS,
       paginationSlashMarginInlineEnd: token.marginSM,
       paginationEllipsisTextIndent: '0.13em', // magic for ui experience

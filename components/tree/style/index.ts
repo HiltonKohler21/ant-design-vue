@@ -1,5 +1,5 @@
 import type { CSSInterpolation, CSSObject } from '../../_util/cssinjs';
-import { Keyframes } from '../../_util/cssinjs';
+import { Keyframes, unit } from '../../_util/cssinjs';
 import { genCollapseMotion } from '../../style/motion';
 import { getStyle as getCheckboxStyle } from '../../checkbox/style';
 import type { DerivativeToken } from '../../theme/internal';
@@ -270,7 +270,7 @@ export const genBaseStyle = (prefixCls: string, token: TreeToken): CSSObject => 
         zIndex: 'auto',
         minHeight: treeTitleHeight,
         margin: 0,
-        padding: `0 ${token.paddingXS / 2}px`,
+        padding: `0 ${unit(token.paddingXS / 2)}`,
         color: 'inherit',
         lineHeight: `${treeTitleHeight}px`,
         background: 'transparent',

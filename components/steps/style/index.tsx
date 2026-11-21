@@ -188,7 +188,7 @@ const genStepsItemStyle: GenerateStyle<StepsToken, CSSObject> = token => {
 
       '&::after': {
         position: 'absolute',
-        top: token.stepsTitleLineHeight / 2,
+        top: token.calc(token.stepsTitleLineHeight).div(2).equal(),
         insetInlineStart: '100%',
         display: 'block',
         width: 9999,

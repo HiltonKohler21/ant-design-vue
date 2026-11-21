@@ -131,7 +131,7 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
 
         // syntactic sugar to add `icon` for Segmented Item
         '&-icon + *': {
-          marginInlineStart: token.marginSM / 2,
+          marginInlineStart: token.calc(token.marginSM).div(2).equal(),
         },
 
         '&-input': {
@@ -221,9 +221,11 @@ export default genComponentStyleHook('Segmented', token => {
     colorBgElevated,
   } = token;
 
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const segmentedToken = mergeToken<SegmentedToken>(token, {
-    segmentedPaddingHorizontal: token.controlPaddingHorizontal - lineWidth,
-    segmentedPaddingHorizontalSM: token.controlPaddingHorizontalSM - lineWidth,
+    segmentedPaddingHorizontal: rawToken.controlPaddingHorizontal - lineWidth,
+    segmentedPaddingHorizontalSM: rawToken.controlPaddingHorizontalSM - lineWidth,
     segmentedContainerPadding: lineWidthBold,
     labelColor: colorTextLabel,
     labelColorHover: colorText,

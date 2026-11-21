@@ -79,8 +79,10 @@ export default genComponentStyleHook<'BackTop'>('BackTop', token => {
     colorText,
     controlHeightLG,
   } = token;
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const backTopToken = mergeToken<BackTopToken>(token, {
-    zIndexPopup: token.zIndexPopupBase + 10,
+    zIndexPopup: rawToken.zIndexPopupBase + 10,
     backTopBackground: colorTextDescription,
     backTopColor: colorTextLightSolid,
     backTopHoverBackground: colorText,

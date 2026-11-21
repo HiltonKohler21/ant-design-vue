@@ -197,7 +197,7 @@ const genCircleStyle: GenerateStyle<ProgressToken> = token => {
         transform: 'translateY(-50%)',
 
         [iconPrefixCls]: {
-          fontSize: `${token.fontSize / token.fontSizeSM}em`,
+          fontSize: `${token.calc(token.fontSize).div(token.fontSizeSM).equal()}em`,
         },
       },
 

@@ -155,8 +155,8 @@ export const genCheckboxStyle: GenerateStyle<CheckboxToken> = token => {
             '&:after': {
               top: '50%',
               insetInlineStart: '50%',
-              width: token.fontSizeLG / 2,
-              height: token.fontSizeLG / 2,
+              width: token.calc(token.fontSizeLG).div(2).equal(),
+              height: token.calc(token.fontSizeLG).div(2).equal(),
               backgroundColor: token.colorPrimary,
               border: 0,
               transform: 'translate(-50%, -50%) scale(1)',

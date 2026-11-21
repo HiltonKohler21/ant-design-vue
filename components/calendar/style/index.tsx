@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import { resetComponent } from '../../style';
 import type { PickerPanelToken } from '../../date-picker/style';
 import { genPanelStyle, initPickerPanelToken } from '../../date-picker/style';
@@ -136,8 +137,8 @@ export const genCalendarStyles = (token: CalendarToken): CSSObject => {
         display: 'block',
         width: 'auto',
         height: 'auto',
-        margin: `0 ${token.marginXS / 2}px`,
-        padding: `${token.paddingXS / 2}px ${token.paddingXS}px 0`,
+        margin: `0 ${unit(token.calc(token.marginXS).div(2).equal())}`,
+        padding: `${unit(token.calc(token.paddingXS).div(2).equal())} ${token.paddingXS}px 0`,
         border: 0,
         borderTop: `${token.lineWidthBold}px ${token.lineType} ${token.colorSplit}`,
         borderRadius: 0,
@@ -192,6 +193,8 @@ export default genComponentStyleHook(
   'Calendar',
   token => {
     const calendarCls = `${token.componentCls}-calendar`;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const calendarToken = mergeToken<CalendarToken>(
       initInputToken<FullToken<'Calendar'>>(token),
       initPickerPanelToken(token),
@@ -202,9 +205,9 @@ export default genComponentStyleHook(
         calendarFullPanelBg: token.colorBgContainer,
         calendarItemActiveBg: token.controlItemBgActive,
         dateValueHeight: token.controlHeightSM,
-        weekHeight: token.controlHeightSM * 0.75,
+        weekHeight: rawToken.controlHeightSM * 0.75,
         dateContentHeight:
-          (token.fontSizeSM * token.lineHeightSM + token.marginXS) * 3 + token.lineWidth * 2,
+          (rawToken.fontSizeSM * rawToken.lineHeightSM + rawToken.marginXS) * 3 + rawToken.lineWidth * 2,
       },
     );
 

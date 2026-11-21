@@ -7,7 +7,7 @@ function compactItemVerticalBorder(token: DerivativeToken, parentCls: string): C
   return {
     // border collapse
     [`&-item:not(${parentCls}-last-item)`]: {
-      marginBottom: -token.lineWidth,
+      marginBottom: (token as any).calc(token.lineWidth).mul(-1).equal(),
     },
 
     '&-item': {

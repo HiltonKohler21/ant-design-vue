@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -81,8 +82,8 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
 
         '&-head-custom': {
           position: 'absolute',
-          insetBlockStart: token.timeLineItemHeadSize / 2,
-          insetInlineStart: token.timeLineItemHeadSize / 2,
+          insetBlockStart: token.calc(token.timeLineItemHeadSize).div(2).equal(),
+          insetInlineStart: token.calc(token.timeLineItemHeadSize).div(2).equal(),
           width: 'auto',
           height: 'auto',
           marginBlockStart: 0,
@@ -97,7 +98,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         '&-content': {
           position: 'relative',
           insetBlockStart: -(token.fontSize * token.lineHeight - token.fontSize) + token.lineWidth,
-          marginInlineStart: token.margin + token.timeLineItemHeadSize,
+          marginInlineStart: token.calc(token.margin).add(token.timeLineItemHeadSize).equal(),
           marginInlineEnd: 0,
           marginBlockStart: 0,
           marginBlockEnd: 0,
@@ -110,7 +111,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           },
 
           [`> ${componentCls}-item-content`]: {
-            minHeight: token.controlHeightLG * 1.2,
+            minHeight: token.calc(token.controlHeightLG).mul(1.2).equal(),
           },
         },
       },
@@ -127,7 +128,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
             marginInlineStart: `-${token.marginXXS}px`,
 
             '&-custom': {
-              marginInlineStart: token.timeLineItemTailWidth / 2,
+              marginInlineStart: token.calc(token.timeLineItemTailWidth).div(2).equal(),
             },
           },
 
@@ -160,7 +161,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           },
 
           [`${componentCls}-item-content`]: {
-            width: `calc(100% - ${token.timeLineItemHeadSize + token.marginXS}px)`,
+            width: `calc(100% - ${unit(token.calc(token.timeLineItemHeadSize).add(token.marginXS).equal())})`,
           },
         },
       },
@@ -188,7 +189,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         },
 
         [`${componentCls}-item-content`]: {
-          minHeight: token.controlHeightLG * 1.2,
+          minHeight: token.calc(token.controlHeightLG).mul(1.2).equal(),
         },
       },
 
@@ -224,13 +225,15 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Timeline', token => {
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const timeLineToken = mergeToken<TimelineToken>(token, {
-    timeLineItemPaddingBottom: token.padding * 1.25,
+    timeLineItemPaddingBottom: rawToken.padding * 1.25,
     timeLineItemHeadSize: 10,
     timeLineItemCustomHeadPaddingVertical: token.paddingXXS,
     timeLinePaddingInlineEnd: 2,
     timeLineItemTailWidth: token.lineWidthBold,
-    timeLineHeadBorderWidth: token.wireframe ? token.lineWidthBold : token.lineWidth * 3,
+    timeLineHeadBorderWidth: rawToken.wireframe ? rawToken.lineWidthBold : rawToken.lineWidth * 3,
   });
 
   return [genTimelineStyle(timeLineToken)];

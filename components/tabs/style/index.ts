@@ -1,4 +1,4 @@
-import { CSSObject } from '../../_util/cssinjs';
+import { CSSObject, unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { genFocusStyle, resetComponent, textEllipsis } from '../../style';
@@ -340,7 +340,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
     [`${componentCls}-left, ${componentCls}-right`]: {
       [`> ${componentCls}-nav, > div > ${componentCls}-nav`]: {
         flexDirection: 'column',
-        minWidth: token.controlHeight * 1.25,
+        minWidth: token.calc(token.controlHeight).mul(1.25).equal(),
 
         // >>>>>>>>>>> Tab
         [`${componentCls}-tab`]: {
@@ -448,7 +448,7 @@ const genPositionStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject
         order: 0,
         marginRight: {
           _skip_check_: true,
-          value: -token.lineWidth,
+          value: token.calc(token.lineWidth).mul(-1).equal(),
         },
         borderRight: {
           _skip_check_: true,
@@ -493,7 +493,7 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-small`]: {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${token.paddingXXS * 1.5}px ${padding}px`,
+            padding: `${unit(token.calc(token.paddingXXS).mul(1.5).equal())} ${padding}px`,
           },
         },
         [`&${componentCls}-bottom`]: {
@@ -527,7 +527,7 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-large`]: {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${token.paddingXS}px ${padding}px ${token.paddingXXS * 1.5}px`,
+            padding: `${token.paddingXS}px ${padding}px ${unit(token.calc(token.paddingXXS).mul(1.5).equal())}`,
           },
         },
       },
@@ -565,7 +565,7 @@ const genTabStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
         flex: 'none',
         marginRight: {
           _skip_check_: true,
-          value: -token.marginXXS,
+          value: token.calc(token.marginXXS).mul(-1).equal(),
         },
         marginLeft: {
           _skip_check_: true,
@@ -796,7 +796,7 @@ const genTabsStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
               _skip_check_: true,
               value: 0,
             },
-            height: token.controlHeightLG / 8,
+            height: token.calc(token.controlHeightLG).div(8).equal(),
             transform: 'translateY(100%)',
             content: "''",
           },
@@ -885,15 +885,17 @@ export default genComponentStyleHook(
   token => {
     const tabsCardHeight = token.controlHeightLG;
 
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
     const tabsToken = mergeToken<TabsToken>(token, {
       tabsHoverColor: token.colorPrimaryHover,
       tabsActiveColor: token.colorPrimaryActive,
 
       tabsCardHorizontalPadding: `${
-        (tabsCardHeight - Math.round(token.fontSize * token.lineHeight)) / 2 - token.lineWidth
+        (tabsCardHeight - Math.round(rawToken.fontSize * rawToken.lineHeight)) / 2 - rawToken.lineWidth
       }px ${token.padding}px`,
       tabsCardHeight,
-      tabsCardGutter: token.marginXXS / 2,
+      tabsCardGutter: rawToken.marginXXS / 2,
       tabsHorizontalGutter: 32, // Fixed Value
       tabsCardHeadBackground: token.colorFillAlter,
       dropdownEdgeChildVerticalPadding: token.paddingXXS,

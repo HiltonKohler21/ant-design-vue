@@ -60,7 +60,7 @@ const genPresetStyle = (token: TagToken) =>
 
 const genBaseStyle = (token: TagToken): CSSObject => {
   const { paddingXXS, lineWidth, tagPaddingHorizontal, componentCls } = token;
-  const paddingInline = tagPaddingHorizontal - lineWidth;
+  const paddingInline = token.calc(tagPaddingHorizontal).sub(lineWidth).equal();
   const iconMarginInline = paddingXXS - lineWidth;
 
   return {
@@ -154,11 +154,12 @@ const genBaseStyle = (token: TagToken): CSSObject => {
 
 // ============================== Export ==============================
 export default genComponentStyleHook('Tag', token => {
-  const { fontSize, lineHeight, lineWidth, fontSizeIcon } = token;
-  const tagHeight = Math.round(fontSize * lineHeight);
+  // 尺寸派生需要真实数值（cssVar 模式下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
+  const tagHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
 
   const tagFontSize = token.fontSizeSM;
-  const tagLineHeight = tagHeight - lineWidth * 2;
+  const tagLineHeight = tagHeight - rawToken.lineWidth * 2;
   const tagDefaultBg = token.colorFillAlter;
   const tagDefaultColor = token.colorText;
 
@@ -167,7 +168,7 @@ export default genComponentStyleHook('Tag', token => {
     tagLineHeight,
     tagDefaultBg,
     tagDefaultColor,
-    tagIconSize: fontSizeIcon - 2 * lineWidth, // Tag icon is much more smaller
+    tagIconSize: rawToken.fontSizeIcon - 2 * rawToken.lineWidth, // Tag icon is much more smaller
     tagPaddingHorizontal: 8, // Fixed padding.
     tagBorderlessBg: token.colorFillTertiary,
   });

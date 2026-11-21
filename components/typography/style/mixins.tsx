@@ -193,14 +193,14 @@ export const getEditableStyles: GenerateStyle<TypographyToken, CSSObject> = toke
       position: 'relative',
 
       'div&': {
-        insetInlineStart: -token.paddingSM,
+        insetInlineStart: token.calc(token.paddingSM).mul(-1).equal(),
         marginTop: -inputShift,
         marginBottom: `calc(1em - ${inputShift}px)`,
       },
 
       [`${componentCls}-edit-content-confirm`]: {
         position: 'absolute',
-        insetInlineEnd: token.marginXS + 2,
+        insetInlineEnd: token.calc(token.marginXS).add(2).equal(),
         insetBlockEnd: token.marginXS,
         color: token.colorTextDescription,
         // default style

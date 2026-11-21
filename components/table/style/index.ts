@@ -300,6 +300,8 @@ export default genComponentStyleHook('Table', token => {
     .onBackground(colorBgContainer)
     .toHexString();
 
+  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+  const rawToken: any = (token as any)._realToken ?? token;
   const tableToken = mergeToken<TableToken>(token, {
     tableFontSize: fontSize,
     tableBg: colorBgContainer,
@@ -340,7 +342,7 @@ export default genComponentStyleHook('Table', token => {
     tableFontSizeSmall: fontSize,
     tableSelectionColumnWidth: controlHeight,
     tableExpandIconBg: colorBgContainer,
-    tableExpandColumnWidth: checkboxSize + 2 * token.padding,
+    tableExpandColumnWidth: checkboxSize + 2 * rawToken.padding,
     tableExpandedRowBg: colorFillAlter,
 
     // Dropdown

@@ -1,4 +1,5 @@
 import type { CSSObject } from '../../_util/cssinjs';
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent, textEllipsis } from '../../style';
@@ -63,7 +64,7 @@ const genPageHeaderStyle: GenerateStyle<PageHeaderToken, CSSObject> = token => {
         [`&-left`]: {
           display: 'flex',
           alignItems: 'center',
-          margin: `${token.marginXS / 2}px 0`,
+          margin: `${unit(token.calc(token.marginXS).div(2).equal())} 0`,
           overflow: 'hidden',
         },
 
@@ -90,7 +91,7 @@ const genPageHeaderStyle: GenerateStyle<PageHeaderToken, CSSObject> = token => {
         },
 
         [`&-extra`]: {
-          margin: `${token.marginXS / 2}px 0`,
+          margin: `${unit(token.calc(token.marginXS).div(2).equal())} 0`,
           whiteSpace: 'nowrap',
 
           [`> *`]: {

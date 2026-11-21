@@ -172,6 +172,13 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
           },
           mergedComponentToken,
         );
+        // 供「数值派生」场景（Math.round / 取整 / 比较）使用真实数值 token；
+        // cssVar 模式下 token 值是 var() 字符串，无法参与 JS 数值运算。
+        Object.defineProperty(mergedToken, '_realToken', {
+          value: realToken.value,
+          enumerable: false,
+          configurable: true,
+        });
         const styleInterpolation = styleFn(mergedToken as unknown as FullToken<ComponentName>, {
           hashId: hashId.value,
           prefixCls: prefixCls.value,

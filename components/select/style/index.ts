@@ -14,7 +14,7 @@ export interface ComponentToken {
 
 export interface SelectToken extends FullToken<'Select'> {
   rootPrefixCls: string;
-  inputPaddingHorizontalBase: number;
+  inputPaddingHorizontalBase: number | string;
 }
 
 // ============================= Selector =============================
@@ -166,7 +166,7 @@ const genBaseStyle: GenerateStyle<SelectToken> = token => {
         insetInlineStart: 'auto',
         insetInlineEnd: inputPaddingHorizontalBase,
         height: token.fontSizeIcon,
-        marginTop: -token.fontSizeIcon / 2,
+        marginTop: token.calc(token.fontSizeIcon).div(2).mul(-1).equal(),
         color: token.colorTextQuaternary,
         fontSize: token.fontSizeIcon,
         lineHeight: 1,
@@ -207,7 +207,7 @@ const genBaseStyle: GenerateStyle<SelectToken> = token => {
         display: 'inline-block',
         width: token.fontSizeIcon,
         height: token.fontSizeIcon,
-        marginTop: -token.fontSizeIcon / 2,
+        marginTop: token.calc(token.fontSizeIcon).div(2).mul(-1).equal(),
         color: token.colorTextQuaternary,
         fontSize: token.fontSizeIcon,
         fontStyle: 'normal',
@@ -239,7 +239,7 @@ const genBaseStyle: GenerateStyle<SelectToken> = token => {
     // ========================= Feedback ==========================
     [`${componentCls}-has-feedback`]: {
       [`${componentCls}-clear`]: {
-        insetInlineEnd: inputPaddingHorizontalBase + token.fontSize + token.paddingXXS,
+        insetInlineEnd: token.calc(inputPaddingHorizontalBase).add(token.calc(token.fontSize).add(token.paddingXXS).equal()).equal(),
       },
     },
   };
@@ -336,7 +336,7 @@ export default genComponentStyleHook(
   (token, { rootPrefixCls }) => {
     const selectToken: SelectToken = mergeToken<SelectToken>(token, {
       rootPrefixCls,
-      inputPaddingHorizontalBase: token.paddingSM - 1,
+      inputPaddingHorizontalBase: token.calc(token.paddingSM).sub(1).equal(),
     });
 
     return [genSelectStyle(selectToken)];
