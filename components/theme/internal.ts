@@ -195,6 +195,11 @@ export function useToken(options?: {
       ignore: CSS_VAR_IGNORE,
       preserve: CSS_VAR_PRESERVE,
     });
+    // 关键：cssVar 模式下 token 值（var 引用）与主题无关，样式只需生成一份。
+    // useStyleRegister 用 _tokenKey 作为样式缓存前缀，若保留「随主题变化」的 _tokenKey，
+    // 每个主题都会重新生成一整份样式（缓存永不命中）。
+    // 因此这里改为与主题无关的常量（对齐 antd cssinjs@2 的 hashId = hash(salt_prefix)）。
+    (transformed as any)._tokenKey = `css-var-${cssVarConfig.value.key}`;
     return transformed as unknown as GlobalToken;
   });
 

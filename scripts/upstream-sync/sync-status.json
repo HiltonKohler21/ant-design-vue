@@ -191,7 +191,7 @@
       "fix(audit): 补齐 ConfigProvider 剩余 8 个组件配置 props（image/empty/switch/message/table/notification/flex/warning）",
       "C 阶段：cssinjs 变量基础设施",
       "C 阶段：Button PoC 打通 cssVar 模式",
-      "C 阶段：基准实测（多主题 CSS 体积 -96.3%）",
+      "C 阶段：基准实测（3 主题 CSS -50.6%，增量降低 90.4%）",
       "C 阶段：修复 3 处变量失效缺陷 + 重构变量注入",
       "C 阶段：非法 CSS 检测器 + P1-4b 路线评估",
       "C 阶段：P1-4b 第一批（calc 化 + _realToken）",
@@ -205,17 +205,41 @@
       "cssVar": "default-on（theme.cssVar: false 可回退 hash 模式）",
       "zeroRuntime": "theme.zeroRuntime 开启后运行时零 style 注入",
       "benchmarks": {
-        "themeCount3CssSize": {
-          "hash": "481820 B",
-          "cssVar": "185819 B",
-          "delta": "-61.4%"
+        "method": "挂载 N 个 ConfigProvider 子树（token 覆盖表达主题差异）、14 组件、warmup + 3 轮中位数",
+        "cssBytes": {
+          "hash": {
+            "theme1": 156924,
+            "theme2": 313003,
+            "theme3": 469109
+          },
+          "cssVar": {
+            "theme1": 190401,
+            "theme2": 211051,
+            "theme3": 231700
+          }
         },
-        "multiThemeIncrement": {
-          "hash": "+313100 B",
-          "cssVar": "+11608 B",
-          "delta": "-96.3%"
+        "ruleBytes": {
+          "cssVar": {
+            "theme1": 179362,
+            "theme2": 188967,
+            "theme3": 198568
+          },
+          "hash": {
+            "theme1": 156924,
+            "theme2": 313003,
+            "theme3": 469109
+          }
         },
-        "staticExtractSize": "240.8 KB",
+        "btnRuleCount": {
+          "cssVar": [7, 7, 7],
+          "hash": [7, 14, 21]
+        },
+        "delta": {
+          "theme1CssSize": "+21.3%（单主题净负：变量声明 + calc）",
+          "theme3CssSize": "-50.6%",
+          "multiThemeIncrement": "hash +312185 B vs cssVar +30019 B → 降低 90.4%"
+        },
+        "staticExtractSize": "235295 B（约 230 KiB）",
         "illegalCss": 0,
         "visualParityDiffs": 0
       },
@@ -225,6 +249,12 @@
         "tests/bench/cssvar-illegal-check.test.js",
         "tests/bench/zero-runtime-extract.test.js",
         "tests/bench/visual-parity.test.js"
+      ],
+      "assertions": [
+        "cssVar 多主题增量 < hash 增量的 15%",
+        "3 主题 cssVar 总体积 < hash 总体积",
+        "`.ant-btn{` 份数不随主题数增长（cssVar 恒为 7，hash 7/14/21）",
+        "cssVar 规则增量 < hash 规则增量的 20%"
       ]
     },
     "knownIssues": [

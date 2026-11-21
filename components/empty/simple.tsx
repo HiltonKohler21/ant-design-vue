@@ -5,10 +5,12 @@ import { useToken } from '../theme/internal';
 const Simple = defineComponent({
   compatConfig: { MODE: 3 },
   setup() {
-    const [, token] = useToken();
+    // realToken：未变量化的原始 token（cssVar 下 token 值是 var() 字符串，颜色运算需真实色值）
+    const [, , , realToken] = useToken();
 
     const color = computed(() => {
-      const { colorFill, colorFillTertiary, colorFillQuaternary, colorBgContainer } = token.value;
+      const { colorFill, colorFillTertiary, colorFillQuaternary, colorBgContainer } =
+        realToken.value;
 
       return {
         borderColor: new TinyColor(colorFill).onBackground(colorBgContainer).toHexString(),

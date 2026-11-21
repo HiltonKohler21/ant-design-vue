@@ -184,136 +184,29 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 
 | theme count | hash 体积 (B) | cssVar 体积 (B) | 体积变化 | hash 耗时 (ms) | cssVar 耗时 (ms) | 耗时变化 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 168720 | 174211 | 3.3% | 113.2 | 84.3 | -25.5% |
-| 2 | 325259 | 185689 | -42.9% | 196 | 170 | -13.3% |
-| 3 | 481820 | 185819 | -61.4% | 262.2 | 266 | 1.4% |
+| 1 | 156924 | 190401 | +21.3% | 76.9 | 92.3 | +20.0% |
+| 2 | 313003 | 211051 | -32.6% | 164.7 | 172.1 | +4.5% |
+| 3 | 469109 | 231700 | **-50.6%** | 229.3 | 254.5 | +11.0% |
 
-**多主题增量（theme 1 → 3）**：hash +313100 B ｜ cssVar +11608 B ｜ 增量降低 -96.3%
+`cssVar` 侧体积拆解（组件规则 vs 变量声明）：
 
-**结论**：
+| theme count | cssVar 组件规则 (B) | cssVar 变量声明 (B) | `.ant-btn{` 规则份数 |
+| ----------- | ------------------- | ------------------- | -------------------- |
+| 1           | 179362              | 11039               | 7                    |
+| 2           | 188967              | 22084               | 7                    |
+| 3           | 198568              | 33132               | 7                    |
 
-- 单主题时 cssVar 体积略大（+3.3%，多出变量声明），但**首次生成更快**（jsdom 下 -25.5%）；
-- 从 2 个主题开始 cssVar 反超（-42.9%），3 个主题时 **-61.4%**；
-- 多主题增量（1→3）hash 要再增 313 KB，cssVar 只增 11.6 KB，**增量降低 96.3%** —— 与 antd 官方 benchmark 的「theme count 越大优势越大」完全一致；
-- 这说明收益来自 **多主题/动态主题**；单主题项目收益有限，但也不倒扣。
+对照 hash 模式的 `.ant-btn{` 份数：7 / 14 / 21（每套主题各生成一份）。
 
-> ⚠️ 基准过程中发现一个既有缺陷（与本次改造无关）：本地 `ConfigProvider` 的 `theme.algorithm`（darkAlgorithm / compactAlgorithm）**实测不生效**，因此基准改用 token 覆盖表达不同主题。该缺陷需单独排查（建议纳入后续任务）。
+**结论（实测，非估算）**：
 
-## 5. 对我们（Vue）的收益估算（定性补充）
+- **组件样式确实只生成一份**：`.ant-btn{` 在 cssVar 下恒为 7 份，hash 下随主题数线性增长（7→14→21）；
+- **多主题增量**（1 → 3）：hash +312185 B ｜ cssVar +30019 B → **增量降低 90.4%**；
+- **单主题是净负收益**：cssVar 体积 +21.3%、耗时 +20.0%（多出的变量声明 + calc 表达）；从 **2 个主题起反超**（-32.6%），3 个主题 **-50.6%**；
+- 因此 `cssVar` 默认开启对「单主题应用」是**用一点体积换主题可切换性**，单主题且不换主题的场景可显式 `theme: { cssVar: false }` 换回 hash 模式；
+- cssVar 下 `ruleBytes` 仍有小幅增长（+19206 B）：来自少量必须实干色/实数值的规则（如带透明度混合的 box-shadow、实色表头背景），这部分无法用变量表达，属预期。
 
-## 4. 对我们（Vue）的收益估算
-
-> 以下为**基于代码结构的估算**，正式决策前需做基准实测（见 3.5 验收方案）。
-
-| 场景 | 现状（v5 hash 模式） | v6（cssVar + zeroRuntime） | 收益 |
-| --- | --- | --- | --- |
-| 单主题首屏 | 运行时解析 133 个 style 文件（26.6k 行）→ stylis 转 CSS → 插入 `<style>` | 构建时提取静态 CSS，运行时 0 解析 | JS 主线程 ↓、bundle ↓ |
-| 暗色 / 紧凑切换 | 主题 token 变化 → **全部组件 style 函数重跑 + stylis 序列化 + style 替换** | 仅改写 `--ant-*` 变量值 | 主题切换**明显更快** |
-| 多品牌 / 多主题共存 | 每主题一份完整样式（体积 × N） | 1 份样式 + N 组变量 | 体积**显著下降** |
-| 3000 组件纯渲染 | 取决于 Vue 虚拟 DOM | 相同 | **无收益** |
-| 单组件首次挂载 | 有样式生成开销 | zeroRuntime 后为 0 | 微降 |
-
-**结论一句话**：v6 的性能收益对我们**真实存在，但集中在「样式生成 / 主题切换 / 包体积」，不在「组件渲染」**。如果我们的目标是"主题切换卡顿、首屏样式体积"，值得做；如果目标是"长列表渲染更快"，迁 v6 无用。
-
----
-
-# 第三部分 · 迁移规划
-
-## 3.1 三条候选路线（必须先选一条）
-
-| 路线 | 内容 | 收益 | 成本/风险 | 版本 |
-| --- | --- | --- | --- | --- |
-| **A. 完整追平 v6** | cssVar + 语义化 DOM + API 改名 + 新组件 + 废弃入口 | 全量对齐，可宣称"支持 antd 6 API" | 最大（133 样式文件 + 60 组件 DOM + 60 组件 API） | 5.0.0 |
-| **B. 仅 API 层追平** | API 改名/新增 + 新组件 + 废弃入口，**跳过 cssVar 与语义化 DOM** | API 兼容量 100% | 中（无架构改动，可保留 4.x 兼容） | 4.3.0 |
-| **C. 仅性能优先** | cssVar + zeroRuntime，**API 保持 5.x** | 拿到全部**可落地**性能收益 | 中（133 样式文件） | 4.3.0 |
-
-### 推荐：**C → B 两期走**（语义化 DOM 作为长期项 P4）
-
-理由：
-
-1. **C 是唯一能拿到 v6 承诺性能的路径**（也是用户最关心的点），且与 API 解耦、可独立交付；
-2. **B 复用我们已完成 5.29.3 全量对齐的基础**，机械改名 + 补 44 项新 API，风险可控；
-3. **语义化 DOM（A 的核心工作量）收益是可定制性，不是功能或性能**，可延后；且 v6 语义位命名（section/container）还在演进，早做易返工。
-
-## 3.2 分阶段实施计划
-
-### P0 · 基线切换（0.5 天）
-
-- 把 `scripts/upstream-sync/sync-status.json` 基线切到 `6.7.1`，`bump` 出新的缺口矩阵
-- CI（`.github/workflows/upstream-sync.yml`）目标版本改为 6.7.1
-- **验收**：`node scripts/upstream-sync/scan.mjs --antd 6.7.1` 能稳定产出报告并入库
-
-### P1 · CSS 变量架构（性能，5~8 天）★ 收益最高
-
-范围：
-
-1. `components/_util/cssinjs`：升级到支持纯 CSS 变量（对齐 cssinjs v2 行为），保留 `extractStyle`
-2. `components/theme/internal.ts`：`useToken` 输出 `cssVar` 映射；`genComponentStyleHook` 支持变量模式
-3. `ConfigProvider.theme`：新增 `cssVar: { prefix, key } | boolean`、`zeroRuntime: boolean`
-4. **133 个 `components/*/style/index.ts`**：token 引用从字面值改为 `token.cssVar.xxx`（可用 codemod 辅助）
-5. 新增 Vue 侧静态提取脚本（对标 `@ant-design/static-style-extract`）
-
-**验收**：
-
-- 主题切换（light ↔ dark）不产生新的 `<style>` 插入（可用 MutationObserver 断言）
-- `zeroRuntime` 模式下运行时无 style 生成
-- 提供基准数据对比（首屏 style 解析耗时、切换耗时、bundle 体积）
-
-### P2 · API 改名批处理（3~5 天）
-
-按官方 v6 迁移文档清单，**机械执行 + 兼容别名**：
-
-- 每个废弃项：新增 v6 命名 → 旧命名保留并 `deprecated()` 告警（走我们已有的 `_util/warning.deprecated`）
-- 优先级：高频组件先做（Select 族 / Modal / Drawer / Table / Steps / Timeline / Tooltip / Space / Divider）
-- 补 44 项全新 API（新功能）
-
-**验收**：每批一个 commit，新增用例 + 既有用例零回归（沿用前几轮的 stash 基线对照法）
-
-### P3 · 新组件（3~4 天）
-
-`Masonry` → `BorderBeam` → `Listy`（含 demo、文档、单测）
-
-### P4 · 语义化 DOM（长期，10~15 天，可延后）
-
-- 重建语义类型层（对标 `GenerateSemantic` / `XxxSemanticType`）
-- 按族推进：Select 族 → 弹层族 → 数据展示族 → 表单族 → 其余
-- 语义位命名跟随 v6（`section` / `container`），旧名双写兼容
-
-### P5 · 废弃入口与行为调整（2~3 天）
-
-- BackTop / Button.Group / Input.Group / Dropdown.Button / Statistic.Countdown 标废弃并引导
-- SizeType `middle` → `medium`（全组件）
-- Tag margin、Form `onFinish`、弹层 mask blur
-
-## 3.2b P1-4b 实施记录：token 算术与 calc()（★ 待决策）
-
-**现状**：cssVar 模式下 token 值变为 `var(--ant-xxx)` 字符串，本地样式中有 **177 处** token 参与 JS 算术，会得到 NaN 或非法 CSS。用检测器 `tests/bench/cssvar-illegal-check.test.js` 实测：**41 处 NaN**。
-
-**已尝试并回退**：用脚本批量把 `token.x * N` 替换为 `token.calc(token.x).mul(N).equal()`。
-
-- 自动改到 114 处，但产生 **43 个 tsc 错误**：
-  - `string not assignable to number`（约 20 处）：这些位置在 `getDefaultToken` / `prepareComponentToken` 回调里，拿到的是 **realToken（原始数字）**，本就不需要 calc；
-  - `Property calc does not exist on GlobalToken`（约 20 处）：部分 style 函数的 token 参数类型是 `GlobalToken` 而不是 `FullToken<'X'>`，没有注入 calc。
-- 结论：**纯文本批量替换不可靠**，需要按「上下文语义」区分处理。已全部回退。
-
-**三条可选路线**：
-
-| 路线 | 做法 | 覆盖度 | 工作量 | 风险 |
-| --- | --- | --- | --- | --- |
-| **A. 逐处改 calc()（对齐 antd v6）** | 仅在 styleFn 上下文内把算术改为 `token.calc(...).mul(...).equal()`；同时把用 `GlobalToken` 类型的 style 改为 `FullToken<'X'>` | 100%（含主题化） | 大（177 处 + 约 20 处类型修正，分 5~8 批） | 中（每批可测） |
-| **B. CssVarValue + 序列化器识别** | token 值包装为带 `toString()`/`valueOf()` 的对象，并让 cssinjs 序列化器识别该类型：字符串化取 `var()`、算术取真实值 | 100% 不 NaN，但**参与算术的值退化为字面量**（不随主题变化） | 小（约 100 行，改 cssinjs 核心） | 中高（动序列化器，影响所有样式） |
-| **C. 接受限制** | cssVar 作为「预览/实验特性」，文档标注：参与算术的 token 在 cssVar 模式下不生效 | 受限 | 0 | 低 |
-
-**推荐**：**A**。理由：antd v6 本身就是用 calc() 表达（`token.calc(...)`），照做才能与上游一致、后续升级无债； B 虽省事但会留下「部分样式不随主题变化」的隐性行为差异，长期更难维护。A 可分批交付、每批可验证。
-
-**批次划分建议（A 路线）**：
-
-1. 基础组件：button / affix / back-top / badge / segmented / spin（约 30 处）
-2. 表单类：checkbox / radio / switch / select / input-number / slider（约 40 处）
-3. 数据展示：calendar / card / descriptions / table / tabs / steps（约 50 处）
-4. 其余：modal / notification / message / pagination / menu / progress / skeleton / rate / image / dropdown / mentions / date-picker / tree / tree-select / tour / upload / typography（约 57 处）
-
-验收（每批）：`npx tsc --noEmit` 无新增错误 + 该批组件 jest 对照基线零回归 + `cssvar-illegal-check` 的 NaN 数量单调下降。
+> 基准方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题，主题差异用 token 覆盖表达，因为 `theme.algorithm` 本地存量不生效），14 个代表组件，warmup + 3 轮取中位数。断言已升级为性能契约：cssVar 的多主题增量 < hash 增量的 15%、3 主题总体积小于 hash、 `.ant-btn{` 份数不随主题数增长、规则增量 < hash 规则增量的 20%。
 
 ## 3.2c zeroRuntime 与静态样式提取（P1-4c）
 
@@ -322,7 +215,7 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 ### 用法
 
 ```bash
-npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 240 KB，含 :root 变量声明）
+npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 235 KB，含 :root 变量声明）
 ```
 
 ```vue
@@ -393,9 +286,9 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 | CSS 变量架构 | `components/_util/cssinjs/util/css-variables.ts`、`hooks/useCSSVarRegister.ts`、`util/calc/*` | `cssvar-token-chain` 用例：未解析变量 0 |
 | 主题层接线 | `components/theme/internal.ts`（useToken 五元组）、`util/genComponentStyleHook.ts`、`util/unitless.ts` | Button PoC + 40 组件冒烟 |
 | token 算术 calc 化 | 全库 `components/**/style/**` | `cssvar-illegal-check`：NaN / undefined / 裸变量算术 均为 0 |
-| zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 240.8 KB |
+| zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 235 KB（约 230 KiB） |
 | 视觉一致性 | `tests/bench/visual-parity.test.js` | 7 组选择器差异 0 |
-| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -61.4%，多主题增量 -96.3% |
+| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -50.6%；多主题增量降低 90.4%；组件规则份数不随主题数增长（已写入性能契约断言） |
 
 ### 使用方式
 

@@ -6,10 +6,12 @@ import { defineComponent, computed } from 'vue';
 const Empty = defineComponent({
   compatConfig: { MODE: 3 },
   setup() {
-    const [, token] = useToken();
+    // realToken：未变量化的原始 token。cssVar 模式下 token 值是 var() 字符串，
+    // TinyColor / HSL 等颜色运算必须用真实色值，否则会退化成 #000000。
+    const [, , , realToken] = useToken();
 
     const themeStyle = computed<CSSProperties>(() => {
-      const bgColor = new TinyColor(token.value.colorBgBase);
+      const bgColor = new TinyColor(realToken.value.colorBgBase);
 
       // Dark Theme need more dark of this
       if (bgColor.toHsl().l < 0.5) {

@@ -94,12 +94,19 @@ async function runScenario(mode, themeCount) {
   await flush();
   const elapsed = now() - t0;
   const css = collectCss();
+  // 变量声明（:root{--ant-a:...} / .ant-x{--ant-y:...}）单独计量：
+  // 多主题下变量值必然不同，但「组件规则」必须只生成一份。
+  const varDeclBytes = (css.match(/--ant-[a-z0-9-]+:[^;}]+/g) || []).join('').length;
   const result = {
     mode,
     themeCount,
     elapsedMs: +elapsed.toFixed(1),
     cssBytes: css.length,
+    varDeclBytes,
+    ruleBytes: css.length - varDeclBytes,
     styleTags: document.querySelectorAll('style').length,
+    // 关键去重指标：代表性组件规则出现次数（跨主题应恒为 1）
+    btnRuleCount: (css.match(/\.ant-btn\{/g) || []).length,
   };
   hosts.forEach(h => h.unmount());
   document.querySelectorAll('style').forEach(s => s.remove());
@@ -140,8 +147,8 @@ describe('cssVar 基准实测（theme count 口径）', () => {
       const c = runs.cssVar[count];
       lines.push(
         `| ${count} | ${h.cssBytes} | ${c.cssBytes} | ${pct(h.cssBytes, c.cssBytes)} | ${
-          h.elapsedMs
-        } | ${c.elapsedMs} | ${pct(h.elapsedMs, c.elapsedMs)} |`,
+          h.ruleBytes
+        } | ${c.ruleBytes} | ${h.elapsedMs} | ${c.elapsedMs} | ${pct(h.elapsedMs, c.elapsedMs)} |`,
       );
     }
     // 增长斜率：theme=3 相对 theme=1 的增量
@@ -175,5 +182,26 @@ describe('cssVar 基准实测（theme count 口径）', () => {
 
     expect(runs.hash[1].cssBytes).toBeGreaterThan(0);
     expect(runs.cssVar[1].cssBytes).toBeGreaterThan(0);
+
+    // ===== 性能契约断言（防止「样式没复用」的回归静默通过）=====
+    const hashGrowth = runs.hash[3].cssBytes - runs.hash[1].cssBytes;
+    const cssVarGrowth = runs.cssVar[3].cssBytes - runs.cssVar[1].cssBytes;
+
+    // 1) cssVar 的多主题增量必须显著小于 hash：样式只生成一份，主题只差异在变量值
+    expect(cssVarGrowth).toBeLessThan(hashGrowth * 0.25);
+
+    // 2) 3 主题时 cssVar 的总 CSS 体积必须小于 hash
+    expect(runs.cssVar[3].cssBytes).toBeLessThan(runs.hash[3].cssBytes);
+
+    // 3) 组件规则必须真正复用：cssVar 的规则增量应远小于 hash 的规则增量
+    //    （少量依赖色值实算的规则如阴影/实色仍会随主题变化，属预期）
+    const cRuleGrowth = runs.cssVar[3].ruleBytes - runs.cssVar[1].ruleBytes;
+    const hRuleGrowth = runs.hash[3].ruleBytes - runs.hash[1].ruleBytes;
+    expect(cRuleGrowth).toBeLessThan(hRuleGrowth * 0.2);
+    // 4) 代表性组件规则不随主题数增长（cssVar 复用）；hash 模式则线性增长
+    expect(runs.cssVar[3].btnRuleCount).toBe(runs.cssVar[1].btnRuleCount);
+    expect(runs.hash[3].btnRuleCount).toBeGreaterThanOrEqual(runs.hash[1].btnRuleCount * 2);
+    // 5) cssVar 的总增量应远小于 hash（样式复用 + 每主题仅新增变量块与少量实色规则）
+    expect(cssVarGrowth).toBeLessThan(hashGrowth * 0.15);
   });
 });
