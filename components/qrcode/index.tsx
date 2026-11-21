@@ -30,7 +30,9 @@ const QRCode = defineComponent({
     const [locale] = useLocaleReceiver('QRCode');
     const { prefixCls } = useConfigInject('qrcode', props);
     const [wrapSSR, hashId] = useStyle(prefixCls);
-    const [, token] = useToken();
+    // realToken：未变量化的原始 token。QR 码尺寸/画布颜色参与 JS 计算与 Canvas 绘制，
+    // cssVar 模式下 token 值是 var() 字符串，必须使用真实值。
+    const [, , , realToken] = useToken();
     const qrCodeCanvas = ref();
     expose({
       toDataURL: (type?: string, quality?: any) => {
@@ -43,7 +45,7 @@ const QRCode = defineComponent({
         icon = '',
         size = 160,
         iconSize = 40,
-        color = token.value.colorText,
+        color = realToken.value.colorText,
         bgColor = 'transparent',
         errorLevel = 'M',
       } = props;
@@ -57,7 +59,8 @@ const QRCode = defineComponent({
       };
       return {
         value,
-        size: size - (token.value.paddingSM + token.value.lineWidth) * 2,
+        size:
+          size - (Number(realToken.value.paddingSM) + Number(realToken.value.lineWidth)) * 2,
         level: errorLevel,
         bgColor,
         fgColor: color,
