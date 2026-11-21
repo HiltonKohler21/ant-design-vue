@@ -116,6 +116,38 @@
           "status": "done"
         }
       ]
+    },
+    {
+      "id": "C",
+      "title": "antd v6 性能层（CSS 变量 + zeroRuntime）",
+      "status": "done",
+      "items": [
+        {
+          "id": "C-1",
+          "title": "cssinjs 变量基础设施：token2CSSVar / serializeCSSVar / transformToken / genCalc / useCSSVarRegister / unit",
+          "status": "done"
+        },
+        {
+          "id": "C-2",
+          "title": "主题层接入：useToken 五元组（token / realToken / cssVarConfig）、:root 全局变量、组件级变量注册、calc 注入 FullToken",
+          "status": "done"
+        },
+        {
+          "id": "C-3",
+          "title": "token 算术 calc 化 + unit() 兜底：非法 CSS（NaN / undefined / 裸变量算术）归零",
+          "status": "done"
+        },
+        {
+          "id": "C-4",
+          "title": "zeroRuntime + 静态样式提取：npm run static-style-extract 产出 dist/static-style/antdv.css",
+          "status": "done"
+        },
+        {
+          "id": "C-5",
+          "title": "四套基准测试：基准实测 / 变量链路 / 非法 CSS 检测 / 视觉一致性抽检",
+          "status": "done"
+        }
+      ]
     }
   ],
   "knownGaps": {
@@ -136,19 +168,8 @@
     "whitelistedCount": 45
   },
   "progress": {
-    "updatedAt": "2026-11-20",
+    "updatedAt": "2026-11-21",
     "commits": [
-      "P0 扫描器与基线",
-      "P1-1 Input variant",
-      "P1-1 续 select 家族 variant",
-      "P1-5 destroyOnHidden",
-      "P1-2 Select popup API",
-      "P1-2 余 TreeSelect/Cascader/AutoComplete",
-      "P1-4 rootClassName 首批",
-      "P1-3 第1组 Select 族语义化",
-      "P1-3 第2组 Modal 语义化",
-      "P1-3 第2组 Drawer 语义化",
-      "P1-3 Badge/Empty/Space/Tooltip 语义化",
       "P1-4 rootClassName 第二批 Input/Mentions/Tabs/Tooltip",
       "P1-3 完成（18 组件 classNames/styles）",
       "P1-4 完成（46 组件 rootClassName）",
@@ -162,9 +183,48 @@
       "P3 第四批 Card.variant",
       "P3 收尾：table.sortIcon/filterOnClose/filterDropdownProps/virtual 等，真实缺口清零",
       "fix(audit): 实现 config-provider 52 个组件级默认配置 props，移除通配符白名单",
-      "fix(audit): 补齐 ConfigProvider 剩余 8 个组件配置 props（image/empty/switch/message/table/notification/flex/warning）"
+      "fix(audit): 补齐 ConfigProvider 剩余 8 个组件配置 props（image/empty/switch/message/table/notification/flex/warning）",
+      "C 阶段：cssinjs 变量基础设施",
+      "C 阶段：Button PoC 打通 cssVar 模式",
+      "C 阶段：基准实测（多主题 CSS 体积 -96.3%）",
+      "C 阶段：修复 3 处变量失效缺陷 + 重构变量注入",
+      "C 阶段：非法 CSS 检测器 + P1-4b 路线评估",
+      "C 阶段：P1-4b 第一批（calc 化 + _realToken）",
+      "C 阶段：P1-4b 完成（非法 CSS 归零）",
+      "C 阶段：P1-4c zeroRuntime + 静态样式提取",
+      "C 阶段：P1-5 视觉一致性抽检（差异 0）"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "可选：antd 6.x 跟踪（Masonry/BorderBeam/Listy 等）、ColorPicker 渐变拖拽细化"
+    "nextUp": "可选：antd 6.x 跟踪（Masonry/BorderBeam/Listy 等）、ColorPicker 渐变拖拽细化",
+    "v6Perf": {
+      "cssVar": "experimental（默认关闭，theme.cssVar 开启）",
+      "zeroRuntime": "theme.zeroRuntime 开启后运行时零 style 注入",
+      "benchmarks": {
+        "themeCount3CssSize": {
+          "hash": "481820 B",
+          "cssVar": "185819 B",
+          "delta": "-61.4%"
+        },
+        "multiThemeIncrement": {
+          "hash": "+313100 B",
+          "cssVar": "+11608 B",
+          "delta": "-96.3%"
+        },
+        "staticExtractSize": "240.8 KB",
+        "illegalCss": 0,
+        "visualParityDiffs": 0
+      },
+      "tests": [
+        "tests/bench/cssvar-bench.test.js",
+        "components/theme/__tests__/cssvar-token-chain.test.js",
+        "tests/bench/cssvar-illegal-check.test.js",
+        "tests/bench/zero-runtime-extract.test.js",
+        "tests/bench/visual-parity.test.js"
+      ]
+    },
+    "knownIssues": [
+      "ConfigProvider theme.algorithm（darkAlgorithm / compactAlgorithm）本地不生效（存量缺陷，独立于 cssVar，需单独排查）",
+      "cssVar 模式下嵌套 ConfigProvider 的局部主题变量声明会相互覆盖（scope 简化带来的已知限制）"
+    ]
   }
 }

@@ -10,6 +10,20 @@
 
 ---
 
+## 4.3.0
+
+`2026-11-21`
+
+`Adopt the antd v6 performance layer: CSS variables and zero runtime`
+
+- 🌟 Add CSS variable mode, enabled via `theme.cssVar` on `ConfigProvider`. Styles are generated once, cutting CSS size by 61.4% with three themes and reducing multi-theme increments by 96.3%.
+- 🌟 Add `theme.zeroRuntime`. When enabled, no `<style>` is injected at runtime; pair it with pre-extracted static CSS.
+- 🌟 Add `npm run static-style-extract`, which emits `dist/static-style/antdv.css`.
+- 🛠 Express all dimension derivations with `calc()`, and add a `unit()` helper that appends `px` for numbers and returns strings untouched, fixing `NaN`, `undefined` and invalid `var()px` values.
+- 🛠 Distinguish "plain numbers" from "CSS variables" contexts internally (`_realToken`) so rounding, ratios and color mixing stay correct in variable mode.
+- 🐞 Fix Table header background turning solid black in variable mode (`TinyColor` cannot parse `var()` strings).
+- 🐞 Fix Select status border width, which referenced an undefined token.
+
 ## 4.2.7
 
 `Align with the antd 5.29.3 component and props API surface`

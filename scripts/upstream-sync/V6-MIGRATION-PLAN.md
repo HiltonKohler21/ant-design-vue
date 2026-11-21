@@ -384,6 +384,49 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 
 结论：抽检差异 0 项；jsdom 不支持 测量，测试内对 做了打桩。
 
+## 3.4 阶段 C 收尾（antd v6 性能层）
+
+**状态：已完成并可通过测试验证。**
+
+| 交付物 | 位置 | 验收 |
+| --- | --- | --- |
+| CSS 变量架构 | `components/_util/cssinjs/util/css-variables.ts`、`hooks/useCSSVarRegister.ts`、`util/calc/*` | `cssvar-token-chain` 用例：未解析变量 0 |
+| 主题层接线 | `components/theme/internal.ts`（useToken 五元组）、`util/genComponentStyleHook.ts`、`util/unitless.ts` | Button PoC + 40 组件冒烟 |
+| token 算术 calc 化 | 全库 `components/**/style/**` | `cssvar-illegal-check`：NaN / undefined / 裸变量算术 均为 0 |
+| zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 240.8 KB |
+| 视觉一致性 | `tests/bench/visual-parity.test.js` | 7 组选择器差异 0 |
+| 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题时 CSS 体积 -61.4%，多主题增量 -96.3% |
+
+### 使用方式
+
+```vue
+<!-- 运行时模式：样式只生成一次，注入仍发生在浏览器 -->
+<a-config-provider :theme="{ cssVar: true }">
+  <app />
+</a-config-provider>
+
+<!-- 零运行时模式：配合预提取 CSS（主题固定时使用） -->
+<a-config-provider :theme="{ cssVar: true, zeroRuntime: true }">
+  <app />
+</a-config-provider>
+```
+
+```bash
+npm run static-style-extract   # 产出 dist/static-style/antdv.css
+```
+
+### 兼容性
+
+- `cssVar` 默认关闭：不配置 `theme.cssVar` 时行为与 4.x 完全一致（hash 模式、无 CSS 变量）；
+- 两种模式共用同一套 styleFn，仅 token 表示形式不同，因此不存在双份样式代码；
+- `zeroRuntime` 仅影响「是否注入 DOM」，样式计算与缓存逻辑不变。
+
+### 已知限制（不阻塞本阶段验收）
+
+1. `ConfigProvider` 的 `theme.algorithm`（`darkAlgorithm` / `compactAlgorithm`）在本地不生效，属存量缺陷，与 cssVar 无关，需单独排查；
+2. 组件级变量的 scope 采用组件根类名（未叠加 hash 隔离类），嵌套 `ConfigProvider` 的局部主题场景下变量声明会相互覆盖；
+3. 静态提取的组件覆盖范围取决于提取脚本挂载的组件树，业务侧可按需扩充。
+
 ## 3.3 工作量汇总
 
 | 阶段          | 工作量         | 风险                   | 交付价值                 |
