@@ -16,6 +16,9 @@
 
 `Adopt the antd v6 performance layer: CSS variables and zero runtime`
 
+- 🌟 Add `Masonry` layout component (responsive `columns`/`gutter`, `itemRender`, `onLayoutChange`, shortest-column packing).
+- 🌟 Add `BorderBeam` component (animated gradient beam along the border; `color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`).
+- 🌟 Add `Listy` list component (row hover, semantic `classNames`/`styles`, virtual scrolling via `height`+`itemHeight`, `scrollTo`).
 - 🌟 Add CSS variable mode and enable it **by default** (aligned with antd v6). Styles are generated once, cutting CSS size by 50.5% with three themes and reducing multi-theme increments from 312129 B to 41299 B (-86.8%); a single theme costs +21.5% in exchange for theme switching. Pass `theme: { cssVar: false }` to keep the previous hashed-mode behavior.
 - 🐞 Fix theme customization being silently ignored in CSS-variable mode (`theme.token`, `theme.algorithm` and runtime theme switching had no effect): variable blocks were prepended to `<head>`, so the outer default `:root` won the cascade. Blocks are now appended in registration order.
 - 🌟 Add `theme.zeroRuntime`. When enabled, no `<style>` is injected at runtime; pair it with pre-extracted static CSS.

@@ -43,7 +43,21 @@ export default {
       'vue-router',
       'vue-i18n',
       'async-validator',
+      '@ctrl/tinycolor',
+      'shallowequal',
+      'resize-observer-polyfill',
     ],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vue-vendor': ['vue', 'vue-router', 'vue-i18n'],
+          // 注意：cssinjs 已内联到 components/_util/cssinjs，不再是独立依赖
+          'antd-vendor': ['@ant-design/icons-vue', 'dayjs'],
+        },
+      },
+    },
   },
   css: {
     preprocessorOptions: {

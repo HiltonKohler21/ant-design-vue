@@ -10,7 +10,7 @@
 
 v6 是**技术架构升级**，不是功能大爆发：
 
-- 组件只多 3 个（Masonry / BorderBeam / Listy）
+- 组件多 3 个（Masonry / BorderBeam / Listy）—— **已在本分支补齐实现**（见 §3.5）
 - props 总量 1307 → 1473（**+12.7%**），但其中 44 项是全新 API、约 60 个组件是**废弃改名**
 - 真正的体量在**三件架构级重构**：纯 CSS 变量、语义化 DOM（100% 组件）、样式零运行时
 - 官方承诺「v5 → v6 平滑迁移」指的是 **React 生态的 API 兼容性**，对我们（Vue 移植）反而要重做大量「命名 + 语义结构」
@@ -292,6 +292,18 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 - `.ant-table-thead >tr>th` 在 cssVar 模式下 `background` 变成 `#000000`（hash 模式为 `#fafafa`）。根因：表格用 `new TinyColor(colorFillAlter).onBackground(colorBgContainer)` 计算实色背景，而 cssVar 模式下这些 token 是 `var(--ant-*)` 字符串，TinyColor 解析失败退化成黑色。修复：颜色运算改用 `_realToken`（真实色值），CSS 输出仍走变量。
 
 结论：抽检差异 0 项；jsdom 不支持 测量，测试内对 做了打桩。
+
+## 3.5 v6 新增组件补齐（Masonry / BorderBeam / Listy）
+
+| 组件 | 位置 | 关键能力 | 门禁 |
+| --- | --- | --- | --- |
+| `Masonry` | `components/masonry` | `items` / `columns`（支持断点）/ `gutter`（数字、二元组、断点对象）/ `itemRender` / `onLayoutChange` / `fresh` / 语义化 `classNames`·`styles`；按最短列分配 + ResizeObserver 重排 | `components/masonry/__tests__/index.test.js`（3 例） |
+| `BorderBeam` | `components/border-beam` | `color`（纯色 / 渐变色标）/ `count` / `duration` / `items` / `lineWidth` / `outset` / `size`；`conic-gradient` + mask 环 + Keyframes 旋转 | `components/border-beam/__tests__/index.test.js`（3 例） |
+| `Listy` | `components/listy` | `data` / `itemRender` / `itemKey` / `rowHoverable` / 语义化 `classNames`·`styles`；`height`+`itemHeight` 时走 `vc-virtual-list` 虚拟滚动，暴露 `scrollTo`/`scrollToIndex` | `components/listy/__tests__/index.test.js`（3 例） |
+
+- 三个组件均已注册到 `components/components.ts`（`export * from './components'` 自动进入库导出与 `app.use` 安装），并补充中英文档（`index.zh-CN.md` / `index.en-US.md`）与 demo；
+- 站点信息同步：`npm run routes` 重新生成 `site/src/router/demoRoutes.js`，侧边栏与「组件总览」由路由元信息驱动，自动出现新组件；
+- 构建修复：`site/vite.config.ts` 中 `@ant-design/cssinjs` 已内联进 `components/_util/cssinjs`，从 `manualChunks`/`optimizeDeps` 移除，站点可正常 `npm run build`。
 
 ## 3.4 阶段 C 收尾（antd v6 性能层）
 

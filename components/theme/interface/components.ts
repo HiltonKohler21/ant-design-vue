@@ -53,6 +53,9 @@ import type { ComponentToken as QRCodeComponentToken } from '../../qrcode/style'
 import type { ComponentToken as AppComponentToken } from '../../app/style';
 import type { ComponentToken as WaveToken } from '../../_util/wave/style';
 import type { ComponentToken as FlexToken } from '../../flex/style';
+import type { ComponentToken as MasonryComponentToken } from '../../masonry/style';
+import type { ComponentToken as BorderBeamComponentToken } from '../../border-beam/style';
+import type { ComponentToken as ListyComponentToken } from '../../listy/style';
 
 export interface ComponentTokenMap {
   Affix?: {};
@@ -127,6 +130,9 @@ export interface ComponentTokenMap {
   QRCode?: QRCodeComponentToken;
   App?: AppComponentToken;
   Flex?: FlexToken;
+  Masonry?: MasonryComponentToken;
+  BorderBeam?: BorderBeamComponentToken;
+  Listy?: ListyComponentToken;
 
   //   /** @private Internal TS definition. Do not use. */
   Wave?: WaveToken;

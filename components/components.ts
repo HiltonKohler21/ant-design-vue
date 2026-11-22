@@ -93,6 +93,21 @@ export { default as Splitter } from './splitter';
 export type { colorPickerProps as ColorPickerProps } from './color-picker';
 export { default as ColorPicker } from './color-picker';
 
+// ========================== antd v6 新增组件 ==========================
+export type { MasonryProps, MasonryItemType, MasonryColumns, MasonryGutter } from './masonry';
+export { default as Masonry } from './masonry';
+
+export type {
+  BorderBeamProps,
+  BorderBeamItem,
+  BorderBeamColor,
+  BorderBeamGradient,
+} from './border-beam';
+export { default as BorderBeam } from './border-beam';
+
+export type { ListyProps, ListyRef, ListyScrollToConfig, ScrollAlign } from './listy';
+export { default as Listy } from './listy';
+
 export type { FormProps, FormItemProps, FormInstance, FormItemInstance } from './form';
 export { default as Form, FormItem, FormItemRest } from './form';
 

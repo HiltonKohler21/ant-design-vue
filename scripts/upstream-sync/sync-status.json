@@ -73,7 +73,7 @@
         },
         {
           "id": "P2-4",
-          "title": "Masonry / BorderBeam / Listy（antd 6.x，不在 5.29.3 基线内，跳过）",
+          "title": "Masonry / BorderBeam / Listy（antd 6.x 新增组件，已在兼容层补齐；不属 5.29.3 基线）",
           "status": "done"
         }
       ]
@@ -200,7 +200,7 @@
       "C 阶段：P1-5 视觉一致性抽检（差异 0）"
     ],
     "notes": "大缺口组件从 15 降到 4（config-provider/auto-complete/segmented/slider）；Table 等组件上游无 classNames/styles，已从 P1-3 目标中剔除",
-    "nextUp": "可选：antd 6.x 跟踪（Masonry/BorderBeam/Listy 等）、ColorPicker 渐变拖拽细化",
+    "nextUp": "可选：antd 6.x 语义化 DOM / API 改名跟踪；ColorPicker 渐变拖拽细化（Masonry/BorderBeam/Listy 已补齐，见 §3.5）",
     "v6Perf": {
       "cssVar": "default-on（theme.cssVar: false 可回退 hash 模式）",
       "zeroRuntime": "theme.zeroRuntime 开启后运行时零 style 注入",
