@@ -190,35 +190,28 @@ antd 官方 issue **#57294《AntD v6 is still slow - Just as slow as AntD v5》*
 | 2 | 312947 | 211293 | -32.5% | 312947 | 189209 | 175.6 | 197.5 | +12.5% |
 | 3 | 469025 | 231942 | -50.5% | 469025 | 198810 | 276.1 | 272.3 | -1.4% |
 
-> 绝对字节随组件样式演进会变化；本表由 `scripts/upstream-sync/sync-bench-doc.mjs`
-> 从 `.cache/cssvar-bench.json` 直接生成，与实测同源。耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。
+> 绝对字节随组件样式演进会变化；本表由 `scripts/upstream-sync/sync-bench-doc.mjs` 从 `.cache/cssvar-bench.json` 直接生成，与实测同源。耗时受 jsdom 调度影响有 ±20% 抖动，仅作参考。
 
 `cssVar` 增量拆解（1 → 2 → 3 套主题）：
 
-| 指标 | theme 1 | theme 2 | theme 3 | 1→3 增量 |
-| --- | --- | --- | --- | --- |
-| CSS 体积 (B) | 190643 | 211293 | 231942 | **+41299** |
-| 组件规则 (B) | 179604 | 189209 | 198810 | +19206 |
-| 变量声明 (B) | 11039 | 22084 | 33132 | +22093 |
-| `.ant-btn{` 规则份数 | 7 | 7 | 7 | **0** |
+| 指标                 | theme 1 | theme 2 | theme 3 | 1→3 增量   |
+| -------------------- | ------- | ------- | ------- | ---------- |
+| CSS 体积 (B)         | 190643  | 211293  | 231942  | **+41299** |
+| 组件规则 (B)         | 179604  | 189209  | 198810  | +19206     |
+| 变量声明 (B)         | 11039   | 22084   | 33132   | +22093     |
+| `.ant-btn{` 规则份数 | 7       | 7       | 7       | **0**      |
 
-对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份），
-1→3 的 CSS 增量为 **+312129 B**。
+对照 hash 模式：`.ant-btn{` 份数 7 / 14 / 21（每套主题各生成一整份）， 1→3 的 CSS 增量为 **+312129 B**。
 
 **结论（实测，非估算）**：
 
 - **组件样式确实只生成一份**：`.ant-btn{` 在 cssVar 下恒为 7 份；hash 下随主题数线性增长；
 - **多主题增量**（1→3）：hash +312129 B ｜ cssVar **+41299 B** → **增量降低 86.8%**；
-- **单主题是净负收益**：cssVar 体积 +21.5%（多出的变量声明 + calc 表达）；
-  **从 2 个主题起反超**（-32.5%），3 个主题 **-50.5%**；
+- **单主题是净负收益**：cssVar 体积 +21.5%（多出的变量声明 + calc 表达）； **从 2 个主题起反超**（-32.5%），3 个主题 **-50.5%**；
 - 单主题且不换主题的应用可显式 `theme: { cssVar: false }` 回到 hash 模式；
-- cssVar 下组件规则仍有小幅增量（+19206 B）：来自必须实干色/实数值的规则
-  （带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
+- cssVar 下组件规则仍有小幅增量（+19206 B）：来自必须实干色/实数值的规则（带透明度混合的 box-shadow、实色表头背景等），这部分无法用变量表达，属预期。
 
-> 方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题用 token 覆盖表达，因为
-> `theme.algorithm` 本地存量不生效），14 个代表组件，warmup + 3 轮取中位数。
-> 复现：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js` → `.cache/cssvar-bench.{json,md}`
-> → `node scripts/upstream-sync/sync-bench-doc.mjs`。
+> 方法：挂载 N 个独立 `ConfigProvider` 子树（N 套主题用 token 覆盖表达，因为基准用 token 覆盖表达主题差异），14 个代表组件，warmup + 3 轮取中位数。复现：`npx jest --config .jest.js tests/bench/cssvar-bench.test.js` → `.cache/cssvar-bench.{json,md}` → `node scripts/upstream-sync/sync-bench-doc.mjs`。
 
 **基准本身就是回归门禁**（断言，非仅打印）：
 
@@ -311,6 +304,7 @@ npm run static-style-extract      # 产物：dist/static-style/antdv.css（约 2
 | token 算术 calc 化 | 全库 `components/**/style/**` | `cssvar-illegal-check`：NaN / undefined / 裸变量算术 均为 0 |
 | zeroRuntime + 静态提取 | `scripts/static-style-extract.mjs`、`npm run static-style-extract` | `zero-runtime-extract`：运行时零注入、产物 235 KB（约 230 KiB） |
 | 视觉一致性 | `tests/bench/visual-parity.test.js` | 9 组选择器（含暗色 Menu）差异 0 |
+| 主题生效性 | `tests/bench/theme-effect.test.js` | token 覆盖 / darkAlgorithm / 运行时切换 / hash 对照 全部以「层叠后生效值」断言通过 |
 | 运行时取值守卫 | `tests/bench/runtime-token-values.test.js` | 5 个用例：Empty 暗色判断/SVG、QRCode 尺寸、Steps、Watermark 语义、源码级 realToken 守卫 |
 | 基准实测 | `tests/bench/cssvar-bench.test.js` | 3 主题 CSS 体积 -50.5%；多主题增量 hash +312129 B → cssVar +41299 B（降低 86.8%）；组件规则份数不随主题数增长（已写入性能契约断言） |
 
@@ -369,7 +363,7 @@ cssVar 模式下 token 值是 `var(--ant-*)` 字符串，以下位置的取值�
 
 ### 已知限制（不阻塞本阶段验收）
 
-1. `ConfigProvider` 的 `theme.algorithm`（`darkAlgorithm` / `compactAlgorithm`）在本地不生效，属存量缺陷，与 cssVar 无关，需单独排查；
+1. ~~`theme.algorithm` 本地不生效~~ —— **已修复**：这是 cssVar 模式引入的真实回归，不是存量缺陷。根因是 `useCSSVarRegister` 用 `insertBefore(firstChild)` **前插**变量块，使外层 ConfigProvider 的默认 `:root` 反而排在自定义主题块之后、同特异性下胜出，导致 `theme.token` / `theme.algorithm` / 运行时切主题全部静默失效。改为按注册顺序 `appendChild` 后恢复正常；新增 `tests/bench/theme-effect.test.js` 以「层叠后生效值」为断言口径做门禁。
 2. 组件级变量的 scope 采用组件根类名（未叠加 hash 隔离类），嵌套 `ConfigProvider` 的局部主题场景下变量声明会相互覆盖；
 3. 静态提取的组件覆盖范围取决于提取脚本挂载的组件树，业务侧可按需扩充；
 4. `getTargetScrollBarSize` 与 `vc-util/Dom/css` 的 `getComputedStyle` 在未挂载节点/不支持伪元素的环境下已加 try/catch 兜底（jsdom、SSR 场景）；

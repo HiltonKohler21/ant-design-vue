@@ -227,16 +227,8 @@
           }
         },
         "btnRuleCount": {
-          "cssVar": [
-            7,
-            7,
-            7
-          ],
-          "hash": [
-            7,
-            14,
-            21
-          ]
+          "cssVar": [7, 7, 7],
+          "hash": [7, 14, 21]
         },
         "delta": {
           "theme1CssSize": "+21.5%（单主题净负：变量声明 + calc）",
@@ -252,7 +244,8 @@
         "tests/bench/cssvar-illegal-check.test.js（77 个组件/状态逐组件，6 类非法值检测）",
         "tests/bench/zero-runtime-extract.test.js",
         "tests/bench/visual-parity.test.js（9 组选择器，含暗色 Menu）",
-        "tests/bench/runtime-token-values.test.js（5 用例，含源码级守卫）"
+        "tests/bench/runtime-token-values.test.js（5 用例，含源码级守卫）",
+        "tests/bench/theme-effect.test.js（token 覆盖 / darkAlgorithm / 运行时切换）"
       ],
       "assertions": [
         "cssVar 多主题增量 < hash 增量的 15%",
@@ -287,11 +280,12 @@
         "检测类别：NaN / undefined / [object Object] / 裸变量算术 / -var() / var() 拼数字",
         "NaN 检测已改为无词边界（NaNpx 可命中）——此前 \\bNaN\\b 会漏检",
         "视觉一致性抽检 9 组选择器（含 .ant-menu-dark）",
-        "运行时取值守卫含源码级断言"
+        "运行时取值守卫含源码级断言",
+        "主题生效性按「层叠后生效值」断言（此前 visual-parity 两侧均默认主题，无法发现该失效）"
       ]
     },
     "knownIssues": [
-      "ConfigProvider theme.algorithm（darkAlgorithm / compactAlgorithm）本地不生效（存量缺陷，独立于 cssVar，需单独排查）",
+      "已修复：cssVar 模式下 theme.token / theme.algorithm / 运行时切主题静默失效（根因：变量块 insertBefore 前插导致默认 :root 胜出；改为 appendChild 后恢复，并由 tests/bench/theme-effect.test.js 守卫）",
       "cssVar 模式下嵌套 ConfigProvider 的局部主题变量声明会相互覆盖（scope 简化带来的已知限制）"
     ]
   }

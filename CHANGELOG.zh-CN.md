@@ -17,6 +17,7 @@
 `引入 antd v6 的性能层：CSS 变量与零运行时`
 
 - 🌟 新增 CSS 变量模式并**默认开启**（对齐 antd v6），样式只生成一次，多主题场景下组件样式只生成一份（14 组件实测：3 套主题 CSS 体积 -50.5%，多主题增量 hash +312129 B vs cssVar +41299 B（降低 86.8%）；单主题为 +21.5%（换取主题可切换性））。若需保持旧行为，传 `theme: { cssVar: false }` 即可回到 hash 模式。
+- 🐞 修复 CSS 变量模式下主题定制静默失效的问题（`theme.token`、`theme.algorithm` 与运行时切换主题均不生效）：变量声明块原先前插到 `<head>`，导致外层默认 `:root` 在层叠中胜出；改为按注册顺序追加后恢复。
 - 🌟 新增 `theme.zeroRuntime`，开启后运行时不再注入 `<style>`，需配合预提取的静态 CSS 使用。
 - 🌟 新增 `npm run static-style-extract` 静态样式提取命令，产出 `dist/static-style/antdv.css`。
 - 🛠 样式层全量改为 `calc()` 表达尺寸派生，新增 `unit()` 工具处理「数值补 px / 变量原样返回」，修复开启变量后出现的 `NaN`、`undefined` 与非法 `var()px` 值。

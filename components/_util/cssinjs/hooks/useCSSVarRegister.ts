@@ -105,7 +105,11 @@ export default function useCSSVarRegister(
     if (!el) {
       el = document.createElement('style');
       el.setAttribute('data-css-var-id', styleId);
-      document.head.insertBefore(el, document.head.firstChild);
+      // 必须「按注册顺序追加」：外层 ConfigProvider（默认主题）先注册，
+      // 内层/自定义主题后注册，后者在 DOM 中更靠后，同特异性下才能覆盖默认值。
+      // （此前用 insertBefore(firstChild) 前插，导致先注册的默认块反而胜出，
+      //   表现为 theme.token / theme.algorithm 静默失效。）
+      document.head.appendChild(el);
     }
     if (el.innerHTML !== cssVarsStr) {
       el.innerHTML = cssVarsStr;
