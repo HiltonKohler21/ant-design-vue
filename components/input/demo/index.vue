@@ -15,10 +15,12 @@
     <textarea-resize />
     <borderlessVue />
     <statusVue />
+    <variant />
   </demo-sort>
 </template>
 
 <script>
+import Variant from './variant.vue';
 import Basic from './basic.vue';
 import AutosizeTextarea from './autosize-textarea.vue';
 import Presuffix from './presuffix.vue';
@@ -42,6 +44,7 @@ export default defineComponent({
   CN,
   US,
   components: {
+    Variant,
     statusVue,
     Basic,
     AutosizeTextarea,

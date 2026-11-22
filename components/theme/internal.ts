@@ -89,6 +89,10 @@ const DesignTokenContextKey: InjectionKey<ComputedRef<DesignTokenContext>> =
 
 export const globalDesignTokenApi = shallowRef<DesignTokenContext>();
 
+/** 主题代号：token 每次重算（切主题/改 token）自增，用于让变量声明块重新排序 */
+let themeSeq = 0;
+export const getThemeSeq = () => themeSeq;
+
 export const useDesignTokenProvider = (value: ComputedRef<DesignTokenContext>) => {
   provide(DesignTokenContextKey, value);
   watch(
@@ -143,6 +147,13 @@ export function useToken(options?: {
   /** CSS 变量配置；null 表示处于 hash 模式 */
   ComputedRef<CssVarResolvedConfig | null>,
 ] {
+  // 是否处在上层 DesignToken Provider 之内（决定变量块的插入优先级）：
+  // ConfigProvider 自身的 useToken（provide 之前）拿不到 Provider，属兜底块。
+  const parentDesignTokenContext = inject<ComputedRef<DesignTokenContext> | null>(
+    DesignTokenContextKey,
+    null,
+  );
+
   const designTokenContext = inject<ComputedRef<DesignTokenContext>>(
     DesignTokenContextKey,
     computed(() => globalDesignTokenApi.value || defaultConfig),
@@ -173,6 +184,15 @@ export function useToken(options?: {
       formatToken,
     })),
   );
+
+  // token 重算即视为主题变化（用于变量块排序，避免每次渲染都搬 DOM）
+  const themeSeqRef = computed(() => {
+    // 依赖 cacheToken，值变化时序号 +1
+    // eslint-disable-next-line no-unused-expressions
+    cacheToken.value;
+    themeSeq += 1;
+    return themeSeq;
+  });
 
   const realToken = computed(() => cacheToken.value[0]);
   const cssVarConfig = computed<CssVarResolvedConfig | null>(() => {
@@ -217,6 +237,8 @@ export function useToken(options?: {
       preserve: CSS_VAR_PRESERVE,
       tokenKey: (realToken.value as any)?._tokenKey,
       zeroRuntime: options?.zeroRuntime?.value ?? (designTokenContext.value as any)?.zeroRuntime,
+      priority: parentDesignTokenContext ? 'high' : 'low',
+      themeSeq: themeSeqRef.value,
     })),
     () => realToken.value,
   );

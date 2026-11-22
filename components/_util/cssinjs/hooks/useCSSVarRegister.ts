@@ -39,6 +39,14 @@ export interface CSSVarRegisterConfig {
   tokenKey?: string;
   /** 关闭运行时注入（zeroRuntime 模式） */
   zeroRuntime?: boolean;
+  /**
+   * 插入优先级：low 表示「无上层 DesignToken Provider 的兜底块」，
+   * 会插到 head 最前面；high（默认）表示「Provider 提供的主题块」，追加到末尾。
+   * 这样默认主题永远无法覆盖 Provider 声明的主题。
+   */
+  priority?: 'low' | 'high';
+  /** 主题代号：变化时重新定位该变量块（切主题生效顺序） */
+  themeSeq?: number;
 }
 
 /**
@@ -82,7 +90,7 @@ export default function useCSSVarRegister(
         : '';
 
     const styleId = uniqueHash(
-      [c.path.join('-'), c.prefix || 'ant', c.scope || '', c.tokenKey || ''],
+      [c.path.join('-'), c.prefix || 'ant', c.scope || '', c.tokenKey || '', c.priority || 'high'],
       cssVarsStr,
     );
 
@@ -105,14 +113,24 @@ export default function useCSSVarRegister(
     if (!el) {
       el = document.createElement('style');
       el.setAttribute('data-css-var-id', styleId);
-      // 必须「按注册顺序追加」：外层 ConfigProvider（默认主题）先注册，
-      // 内层/自定义主题后注册，后者在 DOM 中更靠后，同特异性下才能覆盖默认值。
-      // （此前用 insertBefore(firstChild) 前插，导致先注册的默认块反而胜出，
-      //   表现为 theme.token / theme.algorithm 静默失效。）
-      document.head.appendChild(el);
+      // 便于排查「哪个组件注册了变量块」（仅属性，无副作用）
+      el.setAttribute('data-css-var-path', config.value.path.join('|'));
+      el.setAttribute('data-css-var-priority', config.value.priority || 'high');
     }
     if (el.innerHTML !== cssVarsStr) {
       el.innerHTML = cssVarsStr;
+    }
+    // 仅在「主题 token 变化」时重定位（做一次），避免每次渲染都搬动 DOM 造成样式重算风暴。
+    // - high（Provider 主题块）追加到末尾 → 最近生效的主题胜出（支持来回切换）
+    // - low（无 Provider 的兜底块）保持在最前面 → 不会盖住主题块
+    const tokenKeyMark = `${config.value.tokenKey || ''}#${config.value.themeSeq ?? 0}`;
+    if (el.getAttribute('data-css-var-token') !== tokenKeyMark) {
+      el.setAttribute('data-css-var-token', tokenKeyMark);
+      if ((config.value.priority || 'high') === 'low') {
+        document.head.insertBefore(el, document.head.firstChild);
+      } else {
+        document.head.appendChild(el);
+      }
     }
   });
 

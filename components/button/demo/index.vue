@@ -9,9 +9,11 @@
     <size />
     <block />
     <danger />
+    <button-group />
   </demo-sort>
 </template>
 <script lang="ts">
+import ButtonGroup from './button-group.vue';
 import Basic from './basic.vue';
 import Disabled from './disabled.vue';
 import Ghost from './ghost.vue';
@@ -29,6 +31,7 @@ export default defineComponent({
   CN,
   US,
   components: {
+    ButtonGroup,
     Basic,
     Disabled,
     Ghost,

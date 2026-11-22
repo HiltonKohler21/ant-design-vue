@@ -73,7 +73,7 @@ const useSiteToken = () => {
         --error-color: ${tokenValue.colorError};
         --white: ${tokenValue.colorWhite};
         --green-6: ${tokenValue['green-6']};
-        --gray-8: ${tokenValue['gray-8']};
+        --gray-8: ${tokenValue['gray-8'] ?? raw.value.colorTextSecondary};
         --magenta-7: ${tokenValue['magenta-7']};
         --line-height-base: ${tokenValue.lineHeight};
         --screen-md-min: ${tokenValue.screenMDMin}px;

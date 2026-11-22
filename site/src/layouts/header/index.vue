@@ -84,6 +84,9 @@ export default defineComponent({
       searching.value = value;
     };
     const initDocSearch = () => {
+      if (typeof window.docsearch !== 'function') {
+        return;
+      }
       window.docsearch({
         apiKey: '92003c1d1d07beef165b08446f4224a3',
         indexName: 'antdv',

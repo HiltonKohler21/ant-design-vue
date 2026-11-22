@@ -12,10 +12,12 @@
     <Suffix />
     <statusVue />
     <placementVue />
+    <value />
   </demo-sort>
 </template>
 
 <script>
+import Value from './value.vue';
 import Hours from './12hours.vue';
 import Addon from './addon.vue';
 import Basic from './basic.vue';
@@ -35,6 +37,7 @@ export default {
   CN,
   US,
   components: {
+    Value,
     placementVue,
     statusVue,
     Hours,

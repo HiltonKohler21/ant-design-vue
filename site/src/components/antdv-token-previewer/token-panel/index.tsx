@@ -209,7 +209,7 @@ export default defineComponent({
                 onChange={e => {
                   search.value = e.target.value;
                 }}
-                bordered={false}
+                variant="borderless"
                 addonBefore={
                   <>
                     <Dropdown

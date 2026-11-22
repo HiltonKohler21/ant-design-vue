@@ -166,7 +166,7 @@ const TokenInput = defineComponent({
       if (typeof valueRef.value === 'string' && isColor(valueRef.value)) {
         inputNode = (
           <Input
-            bordered={false}
+            variant="borderless"
             addonAfter={addonAfter}
             value={String(tokenValue.value)}
             disabled={readonly.value}
@@ -209,7 +209,7 @@ const TokenInput = defineComponent({
         inputNode = (
           <InputNumber
             addonAfter={addonAfter}
-            bordered={false}
+            variant="borderless"
             value={tokenValue.value}
             disabled={readonly.value}
             onChange={newValue => {
@@ -221,7 +221,7 @@ const TokenInput = defineComponent({
         inputNode = (
           <Input
             addonAfter={addonAfter}
-            bordered={false}
+            variant="borderless"
             value={String(tokenValue.value)}
             disabled={readonly.value}
             onChange={e => {

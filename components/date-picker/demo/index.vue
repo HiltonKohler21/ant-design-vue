@@ -17,9 +17,13 @@
     <Suffix />
     <statusVue />
     <placementVue />
+    <start-end />
+    <text-demo />
   </demo-sort>
 </template>
 <script>
+import StartEnd from './start-end.vue';
+import TextDemo from './text.vue';
 import Basic from './basic.vue';
 import DateRender from './date-render.vue';
 import DisabledDate from './disabled-date.vue';
@@ -45,6 +49,8 @@ export default defineComponent({
   CN,
   US,
   components: {
+    TextDemo,
+    StartEnd,
     statusVue,
     placementVue,
     Basic,

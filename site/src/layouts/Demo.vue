@@ -2,14 +2,32 @@
   <article>
     <section class="markdown">
       <h1>
-        {{ frontmatter.title }}
-        <span v-if="isZhCN" class="subtitle">{{ frontmatter.subtitle }}</span>
+        {{ docTitle }}
+        <span v-if="isZhCN" class="subtitle">{{ docSubtitle }}</span>
       </h1>
       <section class="markdown" v-html="description"></section>
     </section>
-    <section class="markdown" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <section
+      class="markdown"
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      "
+    >
       <h2 style="margin: 0">{{ $t('app.component.examples') }}</h2>
-      <a-tooltip :title="isAllExpanded ? (isZhCN ? '收起全部代码' : 'Collapse All') : (isZhCN ? '展开全部代码' : 'Expand All')">
+      <a-tooltip
+        :title="
+          isAllExpanded
+            ? isZhCN
+              ? '收起全部代码'
+              : 'Collapse All'
+            : isZhCN
+            ? '展开全部代码'
+            : 'Expand All'
+        "
+      >
         <a-button size="small" shape="circle" class="expand-all-btn" @click="toggleExpandAll">
           <CodeOutlined style="font-size: 14px" />
         </a-button>
@@ -45,6 +63,9 @@ export default defineComponent({
     };
 
     const frontmatter = computed(() => props?.pageData?.frontmatter || {});
+    // 兜底：pageData 在懒加载完成前可能为空，此时用路由 meta 保证标题不缺失
+    const docTitle = computed(() => frontmatter.value.title || route.meta?.title || '');
+    const docSubtitle = computed(() => frontmatter.value.subtitle || route.meta?.subtitle || '');
     const docHtml = computed(() => {
       return props?.pageData?.html || '';
     });
@@ -57,7 +78,18 @@ export default defineComponent({
       ${docHtml.value.split('<h2 id="api">API <a class="header-anchor" href="#api">')[1]}
       `;
     });
-    return { frontmatter, description, api, route, showAd, docHtml, isAllExpanded, toggleExpandAll };
+    return {
+      frontmatter,
+      docTitle,
+      docSubtitle,
+      description,
+      api,
+      route,
+      showAd,
+      docHtml,
+      isAllExpanded,
+      toggleExpandAll,
+    };
   },
 });
 </script>

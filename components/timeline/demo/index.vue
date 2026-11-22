@@ -6,9 +6,11 @@
     <custom />
     <alternate />
     <right />
+    <label-demo />
   </demo-sort>
 </template>
 <script lang="ts">
+import LabelDemo from './label.vue';
 import Basic from './basic.vue';
 import Color from './color.vue';
 import Pending from './pending.vue';
@@ -22,6 +24,7 @@ export default defineComponent({
   CN,
   US,
   components: {
+    LabelDemo,
     Basic,
     Color,
     Pending,

@@ -320,8 +320,8 @@ const ColorPanel = defineComponent({
                   .filter(item => alpha.value || item === 'HEX' || item === 'RGB')
                   .map(item => ({ value: item, key: item }))}
                 size="small"
-                bordered={false}
-                dropdownMatchSelectWidth={false}
+                variant="borderless"
+                popupMatchSelectWidth={false}
               />
             </div>
             {colorMode.value === 'HEX' && (

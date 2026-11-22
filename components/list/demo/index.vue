@@ -1,10 +1,12 @@
 <template>
-  <basic />
-  <simple />
-  <loadmore />
-  <vertical />
-  <grid />
-  <resposive />
+  <demo-sort>
+    <basic />
+    <simple />
+    <loadmore />
+    <vertical />
+    <grid />
+    <resposive />
+  </demo-sort>
 </template>
 <script lang="ts">
 import Basic from './basic.vue';

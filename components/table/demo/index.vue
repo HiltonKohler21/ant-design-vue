@@ -30,10 +30,14 @@
     <Summary />
     <Responsive />
     <TemplateCom />
+    <big-data />
+    <order-column />
   </demo-sort>
 </template>
 
 <script lang="ts">
+import OrderColumn from './order-column.vue';
+import BigData from './big-data.vue';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Ajax from './ajax.vue';
 import Basic from './basic.vue';
@@ -73,6 +77,8 @@ export default defineComponent({
   CN,
   US,
   components: {
+    OrderColumn,
+    BigData,
     filterInTreeVue,
     filterSearchVue,
     Basic,

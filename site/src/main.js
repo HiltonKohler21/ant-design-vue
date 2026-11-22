@@ -34,6 +34,33 @@ app.component('VNodes', function (_, { attrs: { value } }) {
 //   },
 // });
 
+// 开发态：依赖预构建重启会让首次模块请求被中断，导致深链接首屏空白。
+// 这里对「动态导入失败」做一次自动重试，避免用户点开链接看到空白页。
+let lazyRetried = 0;
+router.onError(error => {
+  const message = String((error && error.message) || error);
+  if (
+    lazyRetried < 2 &&
+    /dynamically imported module|Failed to fetch|Importing a module script failed/i.test(message)
+  ) {
+    lazyRetried += 1;
+    const target = window.location.pathname + window.location.search + window.location.hash;
+    window.setTimeout(() => {
+      // eslint-disable-next-line no-console
+      router
+        .replace(target)
+        .then(fail =>
+          console.log(
+            '[site] retry nav result',
+            JSON.stringify(fail),
+            router.currentRoute.value.fullPath,
+          ),
+        )
+        .catch(e => console.error('[site] retry nav error', e));
+    }, 300);
+  }
+});
+
 router.beforeEach((to, from, next) => {
   if (to.path !== from.path) {
     NProgress.start();
@@ -46,6 +73,11 @@ router.afterEach((to, from) => {
     NProgress.done();
     document.documentElement.scrollTop = 0;
   }
+  // 与 ant.design 站点保持一致：页面标题体现当前组件/文档名
+  const metaTitle = to.meta?.title || to.meta?.enTitle;
+  document.title = metaTitle
+    ? `${metaTitle} - Ant Design Vue`
+    : 'Ant Design Vue — An enterprise-class UI components based on Ant Design and Vue.js';
 });
 
 app.use(router);
@@ -53,7 +85,23 @@ app.use(i18n);
 
 app.config.globalProperties.$i18n = i18n;
 
-app.mount('#app');
+const ensureInitialRoute = () => {
+  if (router.currentRoute.value.matched.length > 0) return;
+  const target = window.location.pathname + window.location.search + window.location.hash;
+  if (target && target !== '/') {
+    router.replace(target).catch(() => {});
+  }
+};
+
+// 深链接首屏：等首次导航完成后再挂载，避免出现「路由还没解析完就渲染」导致的白屏。
+router
+  .isReady()
+  .catch(() => {})
+  .finally(() => {
+    app.mount('#app');
+    ensureInitialRoute();
+    window.setTimeout(ensureInitialRoute, 600);
+  });
 
 // setTimeout(() => {
 //   const clicked = localStorage.getItem('surveybyantdv_22_03_14');

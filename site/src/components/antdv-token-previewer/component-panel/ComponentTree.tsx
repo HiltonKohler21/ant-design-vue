@@ -178,7 +178,7 @@ const ComponentTree = defineComponent({
             value={search.value}
             onChange={e => (search.value = e.target.value)}
             prefix={<SearchOutlined />}
-            bordered={false}
+            variant="borderless"
             class="component-tree-search"
           />
           <div ref={treeRef} style={{ overflow: 'auto', flex: 1 }}>
