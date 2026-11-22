@@ -26,16 +26,16 @@
     >
       {{ $t('app.header.lang') }}
     </a-button>
-    <More />
+    <ThemeSwitch />
     <Github />
   </template>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import Github from './Github.vue';
-import More from './More.vue';
 import Navigation from './Navigation.vue';
 import Ecosystem from './Ecosystem.vue';
+import ThemeSwitch from './ThemeSwitch.vue';
 import { version } from 'ant-design-vue';
 import { isZhCN, getLocalizedPathname } from '../../utils/util';
 import { useRoute } from 'vue-router';
@@ -44,8 +44,8 @@ export default defineComponent({
   components: {
     Navigation,
     Github,
-    More,
     Ecosystem,
+    ThemeSwitch,
   },
   props: ['isMobile'],
   setup() {
@@ -79,4 +79,3 @@ export default defineComponent({
   },
 });
 </script>
-<style lang="less" scoped></style>

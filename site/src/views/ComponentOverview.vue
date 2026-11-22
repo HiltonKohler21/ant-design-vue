@@ -11,33 +11,15 @@
         }}
       </p>
     </section>
-    <a-divider></a-divider>
-    <a-affix :offset-top="32" @change="handleAffixChange">
-      <div
-        class="components-overview-affix"
-        :class="{ 'components-overview-affixed': searchBarAffixed }"
-      >
-        <a-input
-          ref="inputRef"
-          v-model:value="search"
-          :placeholder="$t('app.components.overview.search')"
-          class="components-overview-search"
-          auto-focus
-          :style="{ fontSize: searchBarAffixed ? '18px' : '' }"
-        >
-          <template #suffix>
-            <SearchOutlined />
-          </template>
-        </a-input>
-      </div>
-    </a-affix>
-    <a-divider></a-divider>
+    <a-divider />
     <template v-for="group in menuItems" :key="group.title">
       <div class="components-overview">
         <h2 class="ant-typography components-overview-group-title">
           <a-space align="center">
             {{ isZhCN ? group.title : group.enTitle }}
-            <a-tag style="display: block">{{ group.children.length }}</a-tag>
+            <a-tag :bordered="false" color="processing" class="components-overview-tag">
+              {{ group.children.length }}
+            </a-tag>
           </a-space>
         </h2>
         <a-row :gutter="[24, 24]">
@@ -54,15 +36,14 @@
                 <a-card size="small" class="components-overview-card">
                   <template #title>
                     <div class="components-overview-title">
-                      {{ component.title }}
-                      {{ isZhCN ? component.subtitle : '' }}
+                      <span class="components-overview-en">{{ component.title }}</span>
+                      <span v-if="isZhCN && component.subtitle" class="components-overview-cn">
+                        {{ component.subtitle }}
+                      </span>
                     </div>
                   </template>
                   <div class="components-overview-img">
-                    <img
-                      :src="isDark && component.coverDark ? component.coverDark : component.cover"
-                      :alt="component.title"
-                    />
+                    <img :src="component.cover" :alt="component.title" />
                   </div>
                 </a-card>
               </component>
@@ -75,79 +56,25 @@
 </template>
 <script lang="ts">
 import type { GlobalConfig } from '../type';
-import { computed, defineComponent, inject, onMounted, ref } from 'vue';
-import { SearchOutlined } from '@ant-design/icons-vue';
+import { computed, defineComponent, inject } from 'vue';
 import { GLOBAL_CONFIG } from '../SymbolKey';
-import useMenus from '../hooks/useMenus';
 import { getLocalizedPathname } from '../utils/util';
+import useMenus from '../hooks/useMenus';
+
 export default defineComponent({
   name: 'ComponentOverview',
-  components: {
-    SearchOutlined,
-  },
   setup() {
     const globalConfig = inject<GlobalConfig>(GLOBAL_CONFIG);
-    const themeMode = inject('themeMode');
-    const isDark = computed<boolean>(() => (themeMode as any).theme.value === 'dark');
-    const search = ref('');
-    const inputRef = ref();
     const { dataSource } = useMenus();
 
-    const searchBarAffixed = ref(false);
-    function handleAffixChange(affixed?: boolean) {
-      searchBarAffixed.value = affixed;
-    }
-
     const menuItems = computed(() => {
-      return [
-        {
-          children: [
-            {
-              category: 'Components',
-              cols: 1,
-              cover: 'https://gw.alipayobjects.com/zos/alicdn/f-SbcX2Lx/Table.svg',
-              coverDark: 'https://gw.alipayobjects.com/zos/alicdn/f-SbcX2Lx/Table.svg',
-              path: 'https://surelyvue.com/',
-              subtitle: '更强大的表格',
-              title: 'Surely Table',
-              type: 'Advanced And Powerful',
-              target: '_blank',
-            },
-          ],
-          enTitle: 'Advanced And Powerful',
-          title: '更强大',
-          order: 0,
-        },
-      ].concat(
-        dataSource.value
-          .filter(i => i.order > -1)
-          .map(group => {
-            const components = group.children.filter(
-              (component: any) =>
-                !search.value.trim() ||
-                component.title.toLowerCase().includes(search.value.trim().toLowerCase()) ||
-                (component.subtitle || '')
-                  .toLowerCase()
-                  .includes(search.value.trim().toLowerCase()),
-            );
-            return { ...group, children: components };
-          })
-          .filter(i => i.children.length),
-      );
+      return (dataSource.value || []).filter(i => i.order !== -1);
     });
-    onMounted(() => {
-      inputRef.value.focus();
-    });
+
     return {
-      globalConfig,
-      search,
-      menuItems,
+      isZhCN: globalConfig.isZhCN,
       getLocalizedPathname,
-      inputRef,
-      isZhCN: globalConfig?.isZhCN,
-      isDark,
-      searchBarAffixed,
-      handleAffixChange,
+      menuItems,
     };
   },
 });

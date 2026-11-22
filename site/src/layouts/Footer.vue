@@ -88,19 +88,14 @@
               <span>{{ isCN ? '友情链接' : 'Links' }}</span>
             </h2>
             <div>
-              <a href="https://mentorbook.ai" target="_blank" rel="noopener">MentorBook</a>
+              <a href="https://ant.design" target="_blank" rel="noopener">Ant Design</a>
               <span>-</span>
-              <span>{{ isCN ? 'AI 个性化学习平台' : 'AI Learning Platform & Mentor' }}</span>
+              <span>{{ isCN ? '企业级产品设计系统' : 'Enterprise Design System' }}</span>
             </div>
             <div>
-              <a href="https://pireel.com" target="_blank" rel="noopener">Pireel</a>
+              <a href="https://vuejs.org" target="_blank" rel="noopener">Vue.js</a>
               <span>-</span>
-              <span>{{ isCN ? 'AI 视频剪辑工具' : 'The AI Video Editor' }}</span>
-            </div>
-            <div>
-              <a href="https://songdio.ai" target="_blank" rel="noopener">Songdio</a>
-              <span>-</span>
-              <span>{{ isCN ? 'AI 音乐生成器' : 'AI Music Generator' }}</span>
+              <span>{{ isCN ? '渐进式 JavaScript 框架' : 'The Progressive JavaScript Framework' }}</span>
             </div>
           </div>
         </a-col>

@@ -142,7 +142,6 @@ import { Button } from 'ant-design-vue';
 - [CodeSandbox template](https://codesandbox.io/s/agitated-franklin-1w72v) for bug reports
 - [Customize Theme](/docs/vue/customize-theme)
 - [FAQ](/docs/vue/faq)
-- [Support US](/docs/vue/sponsor)
 - [Awesome Ant Design](https://github.com/vueComponent/ant-design-vue-awesome)
 
 ## Contributing

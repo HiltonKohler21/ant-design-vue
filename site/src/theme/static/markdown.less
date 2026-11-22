@@ -118,12 +118,30 @@
 }
 
 .markdown code {
-  margin: 0 1px;
-  padding: 0.2em 0.4em;
-  font-size: 0.9em;
+  margin: 0 2px;
+  padding: 2px 6px;
+  font-size: 0.88em;
   background: var(--site-markdown-code-bg);
   border: 1px solid var(--site-border-color-split);
-  border-radius: 3px;
+  border-radius: 4px;
+  font-family: var(--code-family);
+}
+
+.markdown h2 + p:has(> code:only-child) {
+  margin-top: -8px;
+  margin-bottom: 16px;
+
+  code:only-child {
+    display: inline-block;
+    background: rgba(22, 119, 255, 0.08);
+    color: #1677ff;
+    border: 1px solid rgba(22, 119, 255, 0.2);
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
 }
 
 .markdown pre {
@@ -140,7 +158,7 @@
   font-size: var(--font-size-max);
   direction: ltr;
   text-align: left;
-  background: #f5f5f5;
+  background: transparent;
   border: none;
 }
 
@@ -154,23 +172,29 @@
   margin: 8px 0 16px;
   direction: ltr;
   empty-cells: show;
-  border: 1px solid var(--site-border-color-split);
+  border: none;
+  border-top: 1px solid var(--site-border-color-split);
+  border-bottom: 1px solid var(--site-border-color-split);
   border-collapse: collapse;
   border-spacing: 0;
 }
 
 .markdown > table th {
-  color: #5c6b77;
-  font-weight: 500;
+  color: var(--site-text-color);
+  font-weight: 600;
   white-space: nowrap;
-  background: rgba(0, 0, 0, 0.02);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--site-border-color-split);
+  padding: 12px 16px;
+  text-align: left;
 }
 
-.markdown > table th,
 .markdown > table td {
-  padding: 16px 24px;
+  padding: 12px 16px;
   text-align: left;
-  border: 1px solid var(--site-border-color-split);
+  border: none;
+  border-bottom: 1px solid var(--site-border-color-split);
 }
 
 .markdown table td > a:not(:last-child) {
@@ -182,16 +206,18 @@
 
 .markdown blockquote {
   margin: 1em 0;
-  padding-left: 0.8em;
-  color: var(--site-text-color-secondary);
-  font-size: 90%;
-  border-left: 4px solid var(--site-border-color-split);
+  padding: 12px 16px;
+  color: var(--site-text-color);
+  font-size: 14px;
+  background: rgba(22, 119, 255, 0.03);
+  border-left: 3px solid var(--primary-color, #1677ff);
+  border-radius: 0 6px 6px 0;
 
   .rtl & {
-    padding-right: 0.8em;
-    padding-left: 0;
-    border-right: 4px solid var(--site-border-color-split);
+    padding: 12px 16px;
+    border-right: 3px solid var(--primary-color, #1677ff);
     border-left: none;
+    border-radius: 6px 0 0 6px;
   }
 }
 

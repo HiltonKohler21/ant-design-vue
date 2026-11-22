@@ -26,29 +26,6 @@
         </template>
       </a-popover>
     </a-row>
-    <a-modal
-      title="新版发布，邀您体验"
-      :open="visibleAlertBanner"
-      :footer="null"
-      @update:open="visibleAlertBanner = false"
-    >
-      <ul>
-        <li class="alert-list-item">
-          <strong>Ant Design Vue 4</strong>
-          ：五大新组件，全新 Design Token
-        </li>
-        <li class="alert-list-item">
-          <strong>Surely Table</strong>
-          ：支持高性能编辑模式了
-          <a target="_blank" href="https://www.surelyvue.com/">立即体验</a>
-        </li>
-        <li class="alert-list-item">
-          <strong>Admin Pro</strong>
-          ：已同步更新 v4 版本
-          <a target="_blank" href="https://store.antdv.com/pro/preview/workplace">立即体验</a>
-        </li>
-      </ul>
-    </a-modal>
   </header>
 </template>
 <script lang="ts">

@@ -9,25 +9,29 @@ const useSiteToken = () => {
   const result = useToken();
   const { getPrefixCls, iconPrefixCls } = useConfigContextInject();
   const rootPrefixCls = computed(() => getPrefixCls());
-  const { token } = result;
+  // cssVar 模式下 token 的值是 `var(--ant-*)` 字符串，直接参与 JS 运算会得到 NaN，
+  // 拼 `${x}px` 会得到 `var(--x)px`，TinyColor 解析会得到黑色。
+  // 站点自身的 CSS 变量都由 JS 拼装，因此统一使用 realToken（原始数值/色值）。
+  const { token, realToken } = result;
+  const raw = realToken ?? token;
 
   const mergedToken = computed(() => ({
     theme: result.theme.value,
     hashId: result.hashId.value,
     token: {
-      ...token.value,
+      ...raw.value,
       headerHeight: 64,
       menuItemBorder: 2,
       mobileMaxWidth: 767.99,
-      siteMarkdownCodeBg: token.value.colorFillTertiary,
+      siteMarkdownCodeBg: raw.value.colorFillTertiary,
       antCls: `.${rootPrefixCls.value}`,
       iconCls: `.${iconPrefixCls.value}`,
       /** 56 */
-      marginFarXS: (token.value.marginXXL / 6) * 7,
+      marginFarXS: (raw.value.marginXXL / 6) * 7,
       /** 80 */
-      marginFarSM: (token.value.marginXXL / 3) * 5,
+      marginFarSM: (raw.value.marginXXL / 3) * 5,
       /** 96 */
-      marginFar: token.value.marginXXL * 2,
+      marginFar: raw.value.marginXXL * 2,
       codeFamily: `'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace`,
     },
   }));
@@ -37,7 +41,7 @@ const useSiteToken = () => {
     () => {
       styleDom = styleDom || document.createElement('style');
       const tokenValue = mergedToken.value.token;
-      const demoGridColor = token.value.colorPrimary;
+      const demoGridColor = raw.value.colorPrimary;
       styleDom.innerHTML = `
       :root {
         --header-height: ${tokenValue.headerHeight}px;

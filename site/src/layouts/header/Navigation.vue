@@ -6,55 +6,30 @@
     :selected-keys="[activeMenuItem]"
     disabled-overflow
   >
+    <a-menu-item key="design">
+      <router-link :to="getLocalizedPathname('/docs/vue/design', isZhCN)">
+        {{ isZhCN ? '设计' : 'Design' }}
+      </router-link>
+    </a-menu-item>
     <a-menu-item key="docs/vue">
       <router-link :to="getLocalizedPathname('/docs/vue/introduce', isZhCN)">
-        {{ $t('app.header.menu.documentation') }}
+        {{ isZhCN ? '研发' : 'Development' }}
       </router-link>
     </a-menu-item>
     <a-menu-item key="components">
       <router-link :to="getLocalizedPathname('/components/overview/', isZhCN)">
-        {{ $t('app.header.menu.components') }}
+        {{ isZhCN ? '组件' : 'Components' }}
       </router-link>
     </a-menu-item>
-    <a-sub-menu v-if="isZhCN" key="advanced">
-      <template #title>
+    <a-menu-item key="for-agents">
+      <router-link :to="getLocalizedPathname('/docs/vue/for-agents', isZhCN)">
         <span style="position: relative">
-          高级组件
-          <a-badge color="red" style="position: absolute; top: -35px; right: -15px" />
+          For Agents
+          <a-tag color="blue" :bordered="false" style="font-size: 10px; line-height: 14px; padding: 0 4px; margin-left: 4px; vertical-align: text-top; border-radius: 4px;">
+            AI
+          </a-tag>
         </span>
-      </template>
-      <a-menu-item key="surely-table">
-        <a
-          href="https://www.surelyvue.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          style="position: relative"
-        >
-          Surely Table
-        </a>
-      </a-menu-item>
-    </a-sub-menu>
-    <a-menu-item key="store">
-      <a
-        href="https://store.antdv.com/pro/"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="position: relative"
-      >
-        {{ $t('app.header.menu.store') }}
-        <!-- <a-badge color="red" style="position: absolute; top: -35px; right: -15px" /> -->
-      </a>
-    </a-menu-item>
-    <a-menu-item v-if="isZhCN" key="geektime">
-      <a
-        href="https://time.geekbang.org/course/intro/100024601?code=KHKYcoBU6vZa8nMglg7AWfDxxi3BWrz9INAzAY3umPk%3D"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="position: relative"
-      >
-        实战课程
-        <!-- <a-badge color="red" style="position: absolute; top: -35px; right: -15px" /> -->
-      </a>
+      </router-link>
     </a-menu-item>
     <template v-if="isMobile">
       <a-menu-item key="switch-lang" @click="$emit('langChange')">
@@ -91,8 +66,10 @@ export default defineComponent({
       () => route.path,
       pathname => {
         const modules = pathname.split('/');
-        if (pathname === '/docs/resources' || pathname === '/docs/resources-cn') {
-          activeMenuItem.value = 'docs/resources';
+        if (pathname.includes('/design')) {
+          activeMenuItem.value = 'design';
+        } else if (pathname.includes('/for-agents')) {
+          activeMenuItem.value = 'for-agents';
         } else if (modules[1] === 'components') {
           activeMenuItem.value = 'components';
         } else if (modules[1] === 'docs') {
@@ -131,22 +108,43 @@ export default defineComponent({
       line-height: var(--header-height);
 
       &::after {
-        top: 0;
+        content: '';
+        position: absolute;
+        top: auto;
         right: 12px;
-        bottom: auto;
+        bottom: 0;
         left: 12px;
-        border-width: var(--menu-item-border);
+        border-bottom: 2px solid transparent !important;
+        transition: border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      }
+
+      &:hover::after {
+        border-bottom-color: var(--primary-color) !important;
+      }
+
+      &.ant-menu-item-selected::after,
+      &.ant-menu-submenu-selected::after {
+        border-bottom-color: var(--primary-color) !important;
+      }
+
+      a {
+        color: var(--site-text-color);
+        transition: color 0.3s;
+      }
+
+      &:hover a {
+        color: var(--primary-color);
+      }
+
+      &.ant-menu-item-selected a,
+      &.ant-menu-submenu-selected a {
+        color: var(--primary-color);
+        font-weight: 500;
       }
     }
 
     & .ant-menu-submenu-title .anticon {
       margin: 0;
-    }
-
-    & > .ant-menu-item-selected {
-      a {
-        color: var(--primary-color);
-      }
     }
   }
 

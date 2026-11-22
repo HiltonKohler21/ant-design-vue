@@ -101,6 +101,9 @@ export const useDesignTokenProvider = (value: ComputedRef<DesignTokenContext>) =
   );
 };
 
+/** 读取父级 DesignToken 上下文；无上层 Provider 时返回 null（用于区分「顶层 / 嵌套」） */
+export const useDesignTokenOptionalInject = () => inject(DesignTokenContextKey, null);
+
 export const useDesignTokenInject = () => {
   return inject(
     DesignTokenContextKey,

@@ -13,6 +13,7 @@ const typeOrder: any = {
   反馈: { order: 5, en: 'Feedback' },
   其他: { order: 6, en: 'Other' },
   废弃: { order: 7, en: 'Deprecated' },
+  'AI & Agent': { order: 8, en: 'AI & Agent' },
 };
 const useMenus = (): {
   menus: ComputedRef<any[]>;

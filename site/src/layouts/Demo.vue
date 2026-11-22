@@ -7,8 +7,13 @@
       </h1>
       <section class="markdown" v-html="description"></section>
     </section>
-    <section class="markdown">
-      <h2>{{ $t('app.component.examples') }}</h2>
+    <section class="markdown" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h2 style="margin: 0">{{ $t('app.component.examples') }}</h2>
+      <a-tooltip :title="isAllExpanded ? (isZhCN ? '收起全部代码' : 'Collapse All') : (isZhCN ? '展开全部代码' : 'Expand All')">
+        <a-button size="small" shape="circle" class="expand-all-btn" @click="toggleExpandAll">
+          <CodeOutlined style="font-size: 14px" />
+        </a-button>
+      </a-tooltip>
     </section>
     <slot />
     <!-- <GoogleAds v-if="showAd" :key="`goo-${route.path}`" /> -->
@@ -17,21 +22,28 @@
   </article>
 </template>
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, ref, provide } from 'vue';
 import { useRoute } from 'vue-router';
-// import GoogleAds from '../components/rice/GoogleAds.vue';
+import { CodeOutlined } from '@ant-design/icons-vue';
 import Contributor from '../components/Contributors/index.vue';
 
 const showAd = location.host.indexOf('antdv.com') > -1;
 export default defineComponent({
   name: 'Demo',
   components: {
-    // GoogleAds,
     Contributor,
+    CodeOutlined,
   },
   props: ['pageData', 'isZhCN'],
   setup(props) {
     const route = useRoute();
+    const isAllExpanded = ref(false);
+    provide('isAllExpanded', isAllExpanded);
+
+    const toggleExpandAll = () => {
+      isAllExpanded.value = !isAllExpanded.value;
+    };
+
     const frontmatter = computed(() => props?.pageData?.frontmatter || {});
     const docHtml = computed(() => {
       return props?.pageData?.html || '';
@@ -45,7 +57,7 @@ export default defineComponent({
       ${docHtml.value.split('<h2 id="api">API <a class="header-anchor" href="#api">')[1]}
       `;
     });
-    return { frontmatter, description, api, route, showAd, docHtml };
+    return { frontmatter, description, api, route, showAd, docHtml, isAllExpanded, toggleExpandAll };
   },
 });
 </script>

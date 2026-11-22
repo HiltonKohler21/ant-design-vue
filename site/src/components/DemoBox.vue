@@ -52,28 +52,11 @@
           <SnippetsOutlined class="code-box-code-copy code-box-code-action" @click="warning" />
         </a-tooltip>
         <a-tooltip :title="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)">
-          <span class="code-expand-icon code-box-code-action">
-            <img
-              alt="expand code"
-              :src="
-                theme === 'dark'
-                  ? 'https://gw.alipayobjects.com/zos/antfincdn/btT3qDZn1U/wSAkBuJFbdxsosKKpqyq.svg'
-                  : 'https://gw.alipayobjects.com/zos/antfincdn/Z5c7kzvi30/expand.svg'
-              "
-              :class="codeExpand ? 'code-expand-icon-hide' : 'code-expand-icon-show'"
-              @click="handleCodeExpand"
-            />
-            <img
-              alt="expand code"
-              :src="
-                theme === 'dark'
-                  ? 'https://gw.alipayobjects.com/zos/antfincdn/CjZPwcKUG3/OpROPHYqWmrMDBFMZtKF.svg'
-                  : 'https://gw.alipayobjects.com/zos/antfincdn/4zAaozCvUH/unexpand.svg'
-              "
-              :class="codeExpand ? 'code-expand-icon-show' : 'code-expand-icon-hide'"
-              @click="handleCodeExpand"
-            />
-          </span>
+          <CodeOutlined
+            class="code-box-code-action"
+            :style="{ fontSize: '15px' }"
+            @click="handleCodeExpand"
+          />
         </a-tooltip>
       </div>
     </section>
@@ -84,18 +67,11 @@
       </div>
       <div class="code-box-actions code-box-actions-bottom">
         <a-tooltip :title="$t(`app.demo.code.hide`)">
-          <span class="code-expand-icon code-box-code-action">
-            <img
-              alt="expand code"
-              :src="
-                theme === 'dark'
-                  ? 'https://gw.alipayobjects.com/zos/antfincdn/CjZPwcKUG3/OpROPHYqWmrMDBFMZtKF.svg'
-                  : 'https://gw.alipayobjects.com/zos/antfincdn/4zAaozCvUH/unexpand.svg'
-              "
-              :class="'code-expand-icon-show'"
-              @click="handleCodeExpand($event, sectionId)"
-            />
-          </span>
+          <CodeOutlined
+            class="code-box-code-action"
+            :style="{ fontSize: '15px' }"
+            @click="handleCodeExpand($event, sectionId)"
+          />
         </a-tooltip>
       </div>
     </section>
@@ -105,18 +81,18 @@
 <script lang="ts">
 import type { GlobalConfig } from '../type';
 import { GLOBAL_CONFIG } from '../SymbolKey';
-import { computed, defineComponent, inject, onMounted, ref } from 'vue';
-import { CheckOutlined, SnippetsOutlined, CodeSandboxOutlined } from '@ant-design/icons-vue';
+import { computed, defineComponent, inject, onMounted, ref, watch } from 'vue';
+import { CheckOutlined, SnippetsOutlined, CodeSandboxOutlined, CodeOutlined } from '@ant-design/icons-vue';
 import { getCodeSandboxParams } from '../utils/generateOnlineDemo';
 import packageInfo from '../../../package.json';
 
-// import { Modal } from 'ant-design-vue';
 export default defineComponent({
   name: 'DemoBox',
   components: {
     CheckOutlined,
     SnippetsOutlined,
     CodeSandboxOutlined,
+    CodeOutlined,
   },
   props: {
     jsfiddle: Object,
@@ -132,6 +108,15 @@ export default defineComponent({
       return `${relativePath.split('/').join('-').replace('.vue', '')}`.toLocaleLowerCase();
     });
     const inIframe = inject('inIframe', false);
+    const isAllExpanded = inject<any>('isAllExpanded', ref(false));
+    watch(
+      () => isAllExpanded?.value,
+      val => {
+        if (typeof val === 'boolean') {
+          codeExpand.value = val;
+        }
+      },
+    );
     const iframeHeight = computed(() => props.jsfiddle?.iframe);
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const addDemosInfo: any = inject('addDemosInfo', () => {});

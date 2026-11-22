@@ -26,7 +26,7 @@ import {
 import { useProviderSize } from './SizeContext';
 import { useProviderDisabled } from './DisabledContext';
 import { createTheme } from '../_util/cssinjs';
-import { DesignTokenProvider } from '../theme/internal';
+import { DesignTokenProvider, useDesignTokenOptionalInject } from '../theme/internal';
 
 export type {
   ConfigProviderProps,
@@ -379,6 +379,28 @@ const ConfigProvider = defineComponent({
         },
       };
     });
+    // ============================= CSS 变量作用域保护 =============================
+    // 变量块是全局 :root，无法按子树隔离；嵌套的 ConfigProvider 若自定义了主题，
+    // 其变量块会「后注册胜出」并泄漏到整页（典型场景：文档站里成百上千个 demo 各自
+    // 设置 token/algorithm）。因此：嵌套 + 本地自定义主题时，回退到 hash 模式。
+    const parentDesignToken = useDesignTokenOptionalInject();
+    const locallyCustomizedTheme = computed(() => {
+      const t: any = props.theme || {};
+      const hasToken = t.token && Object.keys(t.token).length > 0;
+      const hasComponents = t.components && Object.keys(t.components).length > 0;
+      const hasAlgorithm = Array.isArray(t.algorithm)
+        ? t.algorithm.length > 0
+        : !!t.algorithm;
+      return !!(hasToken || hasComponents || hasAlgorithm);
+    });
+    const resolvedDesignToken = computed(() => {
+      const base = memoTheme.value as any;
+      if (parentDesignToken && locallyCustomizedTheme.value) {
+        return { ...base, cssVar: false };
+      }
+      return base;
+    });
+
     const validateMessagesRef = computed(() => {
       // Additional Form provider
       let validateMessages: ValidateMessages = {};
@@ -402,7 +424,7 @@ const ConfigProvider = defineComponent({
     const renderProvider = (legacyLocale: Locale) => {
       let childNode = shouldWrapSSR.value ? wrapSSR(slots.default?.()) : slots.default?.();
       if (props.theme)
-        childNode = <DesignTokenProvider value={memoTheme.value}>{childNode}</DesignTokenProvider>;
+        childNode = <DesignTokenProvider value={resolvedDesignToken.value}>{childNode}</DesignTokenProvider>;
       return (
         <LocaleProvider locale={locale.value || legacyLocale} ANT_MARK__={ANT_MARK}>
           {childNode}

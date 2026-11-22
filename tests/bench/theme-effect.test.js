@@ -98,4 +98,43 @@ describe('主题在 cssVar 模式下真实生效', () => {
     expect(typeof themeApi.darkAlgorithm).toBe('function');
     expect(typeof darkAlgorithm).toBe('function');
   });
+
+  /**
+   * 嵌套 ConfigProvider 自定义主题时，不能把变量块泄漏到整页。
+   * 由于变量块是全局 :root，库层策略是「嵌套 + 本地自定义主题 → 该子树回退 hash 模式」。
+   */
+  it('嵌套自定义主题不泄漏到整页（子树回退 hash 模式）', async () => {
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+
+    mount(ConfigProvider, {
+      props: { theme: { cssVar: true } },
+      slots: {
+        default: () => (
+          <div>
+            <Button class="outer-btn" type="primary">
+              outer
+            </Button>
+            <ConfigProvider theme={{ token: { colorPrimary: '#ff0000' } }}>
+              <Button class="inner-btn" type="primary">
+                inner
+              </Button>
+            </ConfigProvider>
+          </div>
+        ),
+      },
+      attachTo: 'body',
+    });
+    await nextTick();
+    await new Promise(r => setTimeout(r, 120));
+
+    // 整页默认主题不被内层红色覆盖
+    expect(String(effectiveVar('--ant-color-primary')).toLowerCase()).toBe('#1677ff');
+
+    // 内层走 hash 模式：其红色以字面值出现在样式里
+    const css = stylesInOrder()
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css.toLowerCase()).toContain('#ff0000');
+  });
 });

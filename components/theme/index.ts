@@ -10,9 +10,12 @@ import compactAlgorithm from './themes/compact';
 // Please do not export internal `useToken` directly to avoid something export unexpected.
 /** Get current context Design Token. Will be different if you are using nest theme config. */
 function useToken() {
-  const [theme, token, hashId] = useInternalToken();
+  const [theme, token, hashId, realToken] = useInternalToken();
 
-  return { theme, token, hashId };
+  // realToken：未做 CSS 变量替换的原始 token。
+  // cssVar 模式下 token 的值是 `var(--ant-*)` 字符串，凡是需要参与 JS 数值/颜色运算
+  // （取整、比例、TinyColor、拼接 px 等）都必须使用 realToken，否则会产出 NaN / 黑色。
+  return { theme, token, hashId, realToken };
 }
 
 export { type GlobalToken };

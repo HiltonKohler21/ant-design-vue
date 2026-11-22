@@ -12,7 +12,9 @@ const makeStyle = (
   styleFn: (token: GlobalToken & { rootCls: string }) => CSSInterpolation,
 ) => {
   return (): UseComponentStyleResult => {
-    const { theme, token, hashId } = antdTheme.useToken();
+    // cssVar 模式下 token 的值是 `var(--ant-*)`；预览器自身的样式由 JS 拼装
+    // （`${token.x}px`、算术、TinyColor），必须使用 realToken 的原始数值/色值。
+    const { theme, token, hashId, realToken } = antdTheme.useToken();
 
     const { getPrefixCls } = useConfigInject('', {});
 
@@ -28,9 +30,11 @@ const makeStyle = (
     });
     return [
       useStyleRegister(componentInfo, () => {
-        const mergedToken = mergeToken<GlobalToken & { rootCls: string }>(token.value, {
-          rootCls: `.${rootCls}`,
-        });
+        const mergedToken = mergeToken<GlobalToken & { rootCls: string }>(
+          token.value,
+          (realToken?.value as GlobalToken) ?? {},
+          { rootCls: `.${rootCls}` },
+        );
         const styleInterpolation = styleFn(mergedToken);
 
         return [styleInterpolation];

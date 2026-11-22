@@ -13,7 +13,7 @@
   width: 100%;
   margin: 0 0 16px;
   border: 1px solid var(--site-border-color-split);
-  border-radius: var(--border-radius-base);
+  border-radius: 8px;
   transition: all 0.2s;
   .code-box-title {
     &,
@@ -115,7 +115,7 @@
   }
 
   &-demo {
-    padding: 42px 24px 50px;
+    padding: 24px;
     color: var(--site-text-color);
     border-bottom: 1px solid var(--site-border-color-split);
   }
@@ -243,17 +243,24 @@
 
   &-actions > &-code-action {
     position: relative;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    width: 16px;
-    height: 16px;
-    margin-left: 16px;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-left: 8px;
+    border-radius: 6px;
     color: var(--site-text-color-secondary);
     cursor: pointer;
     transition: all 0.24s;
 
+    &:hover {
+      color: var(--site-text-color);
+      background: rgba(0, 0, 0, 0.04);
+    }
+
     .ant-row-rtl & {
-      margin-right: 16px;
+      margin-right: 8px;
       margin-left: 0;
     }
 
@@ -357,3 +364,15 @@
     }
   }
 }
+
+[id^='components-float-button-demo-'] .code-box-demo {
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+
+  .ant-float-btn,
+  .ant-float-btn-group {
+    position: absolute;
+  }
+}
+

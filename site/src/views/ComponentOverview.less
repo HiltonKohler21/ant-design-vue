@@ -1,60 +1,98 @@
 .components-overview {
   padding: 0;
 
-  &-group-title {
-    margin-bottom: 24px !important;
-  }
+  .components-overview-group-title {
+    margin-top: 32px;
+    margin-bottom: 24px;
+    font-size: 20px;
+    font-weight: 600;
 
-  &-title {
-    overflow: hidden;
-    color: var(--text-color);
-    text-overflow: ellipsis;
-  }
-  &-img {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 152px;
-  }
-  &-card {
-    cursor: pointer;
-    transition: all 0.5s ease 0s;
-    &:hover {
-      box-shadow: var(--shadow-2);
+    .components-overview-tag {
+      margin-left: 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      padding: 0 8px;
+      font-weight: normal;
     }
   }
 
-  &-affix {
-    transition: all 0.25s;
+  .components-overview-card {
+    border-radius: 8px;
+    border: 1px solid var(--site-border-color-split);
+    background: var(--body-background);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 0 9px 28px 0 rgba(0, 0, 0, 0.05);
+      border-color: transparent;
+    }
+
+    .ant-card-head {
+      min-height: 44px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--site-border-color-split);
+    }
+
+    .ant-card-body {
+      padding: 12px;
+    }
   }
 
-  &-affixed {
-    padding: 12px;
-    margin: -8px;
+  .components-overview-title {
+    display: flex;
+    align-items: baseline;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    .components-overview-en {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--site-text-color);
+    }
+
+    .components-overview-cn {
+      margin-left: 8px;
+      font-size: 13px;
+      font-weight: normal;
+      color: var(--site-text-color-secondary);
+    }
+  }
+
+  .components-overview-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 140px;
     border-radius: 6px;
-    border: 1px solid var(--border-color-base);
-    background-color: var(--body-background);
+    background: var(--site-markdown-code-bg, #fafafa);
+    overflow: hidden;
+
+    img {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      transition: transform 0.3s;
+    }
+  }
+
+  .components-overview-card:hover .components-overview-img img {
+    transform: scale(1.05);
   }
 }
 
-.components-overview-search {
-  width: 100%;
-  padding: 0;
-  font-size: 20px;
-  border: 0;
-  box-shadow: none;
+:global([data-theme='dark']) {
+  .components-overview {
+    .components-overview-card {
+      &:hover {
+        box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.45), 0 9px 28px 0 rgba(0, 0, 0, 0.3);
+      }
+    }
 
-  input {
-    font-size: 20px;
+    .components-overview-img {
+      background: rgba(255, 255, 255, 0.04);
+    }
   }
-
-  .anticon {
-    color: #bbb;
-  }
-}
-
-.components-overview-img img {
-  object-fit: cover;
-  max-height: 100%;
-  max-width: 100%;
 }
