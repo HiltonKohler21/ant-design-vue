@@ -126,8 +126,13 @@ export default {
   'app.publish.old-version-tips': ', or switch the version via the dropdown in the header nav bar.',
   'app.docs.color.pick-primary': 'Pick your primary color',
   'app.docs.color.pick-background': 'Pick your background color',
-  'app.docs.components.icon.search.placeholder': 'Search icons here, click icon to copy code',
+  'app.docs.components.icon.search.placeholder':
+    'Search {total} icons here, click icon to copy code',
+  'app.docs.components.icon.search.placeholder.total':
+    'Search {total} icons here, click icon to copy code',
+  'app.docs.components.icon.copy-failed': 'Copy icon name failed, please try again.',
   'app.docs.components.icon.pick-theme': 'Select the Icon Theme',
+  'app.docs.components.icon.all': 'All',
   'app.docs.components.icon.outlined': 'Outlined',
   'app.docs.components.icon.filled': 'Filled',
   'app.docs.components.icon.two-tone': 'Two Tone',

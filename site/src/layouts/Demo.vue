@@ -78,7 +78,14 @@
           </tbody>
         </table>
       </div>
-      <section class="markdown" v-html="description"></section>
+      <section class="markdown doc-description" v-html="description"></section>
+    </section>
+    <section v-if="beforeExamples" class="markdown before-examples-section">
+      <h2 :id="beforeExamples.id">
+        <span>{{ isZhCN ? beforeExamples.title['zh-CN'] : beforeExamples.title['en-US'] }}</span>
+        <a :href="'#' + beforeExamples.id" class="anchor">#</a>
+      </h2>
+      <component :is="beforeExamples.component" />
     </section>
     <section class="markdown examples-header">
       <h2 id="examples" class="examples-title">
@@ -275,7 +282,7 @@ export default defineComponent({
     FileTextOutlined,
     GithubOutlined,
   },
-  props: ['pageData', 'isZhCN'],
+  props: ['pageData', 'isZhCN', 'beforeExamples'],
   setup(props, { slots }) {
     const route = useRoute();
     const isAllExpanded = ref(false);

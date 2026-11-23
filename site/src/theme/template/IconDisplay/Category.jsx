@@ -1,50 +1,84 @@
 import { message } from 'ant-design-vue';
-import { defineComponent } from 'vue';
+import { defineComponent, onBeforeUnmount, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import CopyableIcon from './CopyableIcon.vue';
 
 const Category = defineComponent({
-  props: ['icons', 'title', 'newIcons', 'theme'],
-  data() {
-    return {
-      justCopied: null,
-    };
+  name: 'IconCategory',
+  props: {
+    icons: {
+      type: Array,
+      default: () => [],
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    newIcons: {
+      type: Array,
+      default: () => [],
+    },
+    newIconVersion: {
+      type: String,
+      default: '',
+    },
+    theme: {
+      type: String,
+      default: 'All',
+    },
   },
-  methods: {
-    onCopied(type, text) {
+  setup(props) {
+    const { t } = useI18n();
+    const justCopied = ref(null);
+    let copyTimer = null;
+
+    const onCopied = (type, text) => {
       message.success(
         <span>
           <code class="copied-code">{text}</code> copied 🎉
         </span>,
       );
-      this.justCopied = type;
-      setTimeout(() => {
-        this.justCopied = null;
+      justCopied.value = type;
+      if (copyTimer) {
+        clearTimeout(copyTimer);
+      }
+      copyTimer = setTimeout(() => {
+        justCopied.value = null;
+        copyTimer = null;
       }, 2000);
-    },
-  },
-  render() {
-    const { icons, title, theme, newIcons } = this.$props;
-    const items = icons.map(name => {
-      return (
-        <CopyableIcon
-          key={name}
-          name={name}
-          type={name}
-          theme={theme}
-          isNew={newIcons.indexOf(name) >= 0}
-          justCopied={this.justCopied}
-          onCopied={this.onCopied}
-        />
-      );
+    };
+
+    onBeforeUnmount(() => {
+      if (copyTimer) {
+        clearTimeout(copyTimer);
+        copyTimer = null;
+      }
     });
-    return (
-      <div>
-        <h3 style="margin: 1.6em 0 .6em;">
-          {this.$t(`app.docs.components.icon.category.${title}`)}
-        </h3>
-        <ul class={'anticons-list'}>{items}</ul>
-      </div>
-    );
+
+    return () => {
+      const { icons, title, theme, newIcons, newIconVersion } = props;
+      const newIconSet = newIcons.length ? new Set(newIcons) : null;
+      const copiedName = justCopied.value;
+
+      return (
+        <div>
+          <h3>{t(`app.docs.components.icon.category.${title}`)}</h3>
+          <ul class="anticons-list">
+            {icons.map(name => (
+              <CopyableIcon
+                key={name}
+                name={name}
+                theme={theme}
+                isNew={Boolean(newIconSet && newIconSet.has(name))}
+                newIconVersion={newIconVersion}
+                justCopied={copiedName === name ? name : null}
+                onCopied={onCopied}
+              />
+            ))}
+          </ul>
+        </div>
+      );
+    };
   },
 });
 

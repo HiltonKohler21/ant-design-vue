@@ -8,43 +8,63 @@ cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*PdAYS7anRpoAAAAAAA
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*xEDOTJx2DEkAAAAAAAAAAAAADrJ8AQ/original
 ---
 
-语义化的矢量图形。使用图标组件，你需要安装 `@ant-design/icons-vue` 图标组件包：
+语义化的矢量图形。
+
+## 使用方法
+
+使用图标组件，你需要安装 [@ant-design/icons-vue](https://github.com/vueComponent/ant-design-icons-vue) 图标组件包：
 
 ```bash
+# npm
 npm install --save @ant-design/icons-vue
+
+# yarn
+yarn add @ant-design/icons-vue
+
+# pnpm
+pnpm add @ant-design/icons-vue
+
+# bun
+bun add @ant-design/icons-vue
 ```
 
 ## API
+
+从 2.0 开始，`ant-design-vue` 不再内置 Icon 组件，请使用独立的包 `@ant-design/icons-vue`。
 
 ### 通用图标
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| class | 设置图标的样式名 | string | - |  |
 | rotate | 图标旋转角度（IE9 无效） | number | - |  |
 | spin | 是否有旋转动画 | boolean | false |  |
 | style | 设置图标的样式，例如 `fontSize` 和 `color` | CSSProperties | - |  |
-| twoToneColor | 仅适用双色图标。设置双色图标的主要颜色 | string (十六进制颜色) | - |  |
+| twoToneColor | 仅适用双色图标。设置双色图标的主要颜色，或主要颜色和次要颜色 | string \| \[string, string] | - |  |
 
 其中我们提供了三种主题的图标，不同主题的 Icon 组件名为图标名加主题做为后缀。
 
-```jsx
-import { StarOutlined, StarFilled, StarTwoTone } from '@ant-design/icons-vue';
-
-<star-outlined />
-<star-filled />
-<star-two-tone two-tone-color="#eb2f96" />
+```html
+<template>
+  <StarOutlined />
+  <StarFilled />
+  <StarTwoTone two-tone-color="#eb2f96" />
+</template>
+<script lang="ts" setup>
+  import { StarOutlined, StarFilled, StarTwoTone } from '@ant-design/icons-vue';
+</script>
 ```
 
-### 自定义 Icon/Custom Icon
+### 自定义 Icon
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| component | 控制如何渲染图标，通常是一个渲染根标签为 `<svg>` 的 `Vue` 组件 | ComponentType&lt;CustomIconComponentProps> | - |  |
+| component | 控制如何渲染图标，通常是一个渲染根标签为 `<svg>` 的 Vue 组件，也可通过 `#component` 插槽传入 | Component \| slot | - |  |
 | rotate | 图标旋转角度（IE9 无效） | number | - |  |
 | spin | 是否有旋转动画 | boolean | false |  |
 | style | 设置图标的样式，例如 `fontSize` 和 `color` | CSSProperties | - |  |
 
-### SVG 图标
+### 关于 SVG 图标
 
 在 `1.2.0` 之后，我们使用了 SVG 图标替换了原先的 font 图标，从而带来了以下优势：
 
@@ -59,24 +79,18 @@ import { StarOutlined, StarFilled, StarTwoTone } from '@ant-design/icons-vue';
 
 ```html
 <template>
-  <message-outlined :style="{fontSize: '16px', color: '#08c'}" />
+  <MessageOutlined :style="{ fontSize: '16px', color: '#08c' }" />
 </template>
-<script>
+<script lang="ts" setup>
   import { MessageOutlined } from '@ant-design/icons-vue';
-  import { defineComponent } from 'vue';
-  export default defineComponent({
-    components: {
-      MessageOutlined,
-    },
-  });
 </script>
 ```
 
 ### 双色图标主色
 
-对于双色图标，可以通过使用 `Icon.getTwoToneColor()` 和 `Icon.setTwoToneColor(colorString)` 来全局设置图标主色。
+对于双色图标，可以通过使用 `getTwoToneColor()` 和 `setTwoToneColor(colorString)` 来全局设置图标主色。
 
-```jsx
+```ts
 import { getTwoToneColor, setTwoToneColor } from '@ant-design/icons-vue';
 
 setTwoToneColor('#eb2f96');
@@ -85,20 +99,19 @@ getTwoToneColor(); // #eb2f96
 
 ### 自定义 font 图标
 
-在 `1.2.0` 之后，我们提供了一个 `createFromIconfontCN` 方法，方便开发者调用在 [iconfont.cn](http://iconfont.cn/) 上自行管理的图标。
+在 `1.2.0` 之后，我们提供了一个 `createFromIconfontCN` 方法，方便开发者调用在 [iconfont.cn](https://iconfont.cn/) 上自行管理的图标。
 
-```jsx
-import { createFromIconfontCN } from '@ant-design/icons-vue';
-import { defineComponent } from 'vue';
-const MyIcon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js', // 在 iconfont.cn 上生成
-});
+```html
+<template>
+  <MyIcon type="icon-example" />
+</template>
+<script lang="ts" setup>
+  import { createFromIconfontCN } from '@ant-design/icons-vue';
 
-export default defineComponent({
-  setup() {
-    return () => <MyIcon type="icon-dianzan" />;
-  },
-});
+  const MyIcon = createFromIconfontCN({
+    scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js', // 在 iconfont.cn 上生成
+  });
+</script>
 ```
 
 其本质上是创建了一个使用 `<use>` 标签来渲染图标的组件。
@@ -107,18 +120,43 @@ export default defineComponent({
 
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| extraCommonProps | 给所有的 `svg` 图标 `<Icon />` 组件设置额外的属性 | `{ class, attrs, props, on, style }` | {} |
-| scriptUrl | [iconfont.cn](http://iconfont.cn/) 项目在线生成的 `js` 地址 | string | - |
+| extraCommonProps | 给所有的 `svg` 图标 `<Icon />` 组件设置额外的属性 | `{ [key: string]: any }` | `{}` |
+| scriptUrl | [iconfont.cn](https://iconfont.cn/) 项目在线生成的 `js` 地址，支持 `string[]` 类型 | string \| string\[] | - |
 
-在 `scriptUrl` 都设置有效的情况下，组件在渲染前会自动引入 [iconfont.cn](http://iconfont.cn/) 项目中的图标符号集，无需手动引入。
+在 `scriptUrl` 都设置有效的情况下，组件在渲染前会自动引入 [iconfont.cn](https://iconfont.cn/) 项目中的图标符号集，无需手动引入。
 
-见 [iconfont.cn 使用帮助](http://iconfont.cn/help/detail?spm=a313x.7781069.1998910419.15&helptype=code) 查看如何生成 `js` 地址。
+见 [iconfont.cn 使用帮助](https://iconfont.cn/help/detail?spm=a313x.7781069.1998910419.15&helptype=code) 查看如何生成 `js` 地址。
 
 ### 自定义 SVG 图标
 
-#### vue cli 3
+#### Vite
 
-可以通过配置 [vue-svg-loader](https://www.npmjs.com/package/vue-svg-loader) 来将 `svg` 图标作为 `Vue` 组件导入。更多`vue-svg-loader` 的使用方式请参阅 [文档](https://github.com/visualfanatic/vue-svg-loader)。
+如果使用 `Vite`，可以通过配置 [vite-svg-loader](https://www.npmjs.com/package/vite-svg-loader) 将 `svg` 文件直接作为 Vue 组件导入：
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import svgLoader from 'vite-svg-loader';
+
+export default defineConfig({
+  plugins: [vue(), svgLoader()],
+});
+```
+
+```html
+<template>
+  <Icon :component="MessageSvg" />
+</template>
+<script lang="ts" setup>
+  import Icon from '@ant-design/icons-vue';
+  import MessageSvg from './path/to/message.svg?component';
+</script>
+```
+
+#### Vue CLI
+
+如果使用 `Vue CLI`，可以通过配置 [vue-svg-loader](https://www.npmjs.com/package/vue-svg-loader) 来将 `svg` 图标作为 `Vue` 组件导入。更多 `vue-svg-loader` 的使用方式请参阅 [文档](https://github.com/visualfanatic/vue-svg-loader)。
 
 ```js
 // vue.config.js
@@ -133,23 +171,21 @@ module.exports = {
 };
 ```
 
-```jsx
-import { defineComponent } from 'vue';
-import Icon from '@ant-design/icons-vue';
-import MessageSvg from 'path/to/message.svg'; // '*.svg' 文件的路径
-
-export default defineComponent({
-  setup() {
-    return () => <Icon type={MessageSvg} />;
-  },
-});
+```html
+<template>
+  <Icon :component="MessageSvg" />
+</template>
+<script lang="ts" setup>
+  import Icon from '@ant-design/icons-vue';
+  import MessageSvg from 'path/to/message.svg'; // 你的 '*.svg' 文件路径
+</script>
 ```
 
 #### Rsbuild
 
 Rsbuild 是新一代构建工具，官网 https://rsbuild.dev/
 
-自己实现一个 `vue-svg-loader.js` 文件，好处是可以自定义美化 svg，然后在 `rsbuild.config.ts` 中配置：
+可以自定义一个 `vue-svg-loader.js` 文件，在 `rsbuild.config.ts` 中配置：
 
 ```js
 // vue-svg-loader.js
@@ -178,7 +214,6 @@ module.exports = async function (svg) {
         'removeDesc',
         'removeStyleElement',
         'removeXMLNS',
-        'removeXMLProcInst',
       ],
     }));
   } catch (error) {
@@ -194,17 +229,18 @@ module.exports = async function (svg) {
 };
 ```
 
-```js
+```ts
 // rsbuild.config.ts
 /* eslint-disable */
 import { defineConfig } from '@rsbuild/core';
 import { pluginVue } from '@rsbuild/plugin-vue';
 
 export default defineConfig({
+  plugins: [pluginVue()],
   tools: {
     bundlerChain(chain, { CHAIN_ID }) {
       chain.module
-        // 先给svg排除默认的规则，方便下面自定义loader
+        // 先给 svg 排除默认的规则，方便下面自定义 loader
         .rule(CHAIN_ID.RULE.SVG)
         .exclude.add(/\.svg$/);
     },
@@ -227,12 +263,39 @@ export default defineConfig({
 });
 ```
 
-`Icon` 中的 `component` 组件的接受的属性如下：
+`Icon` 中的 `component` 组件接受的属性如下：
 
 | 参数   | 说明                    | 类型             | 默认值         |
 | ------ | ----------------------- | ---------------- | -------------- |
 | class  | 计算后的 `svg` 类名     | string           | -              |
-| fill   | `svg` 元素填充的颜色    | string           | 'currentColor' |
-| height | `svg` 元素高度          | string \| number | '1em'          |
+| fill   | `svg` 元素填充的颜色    | string           | `currentColor` |
+| height | `svg` 元素高度          | string \| number | `1em`          |
 | style  | 计算后的 `svg` 元素样式 | CSSProperties    | -              |
-| width  | `svg` 元素宽度          | string \| number | '1em'          |
+| width  | `svg` 元素宽度          | string \| number | `1em`          |
+
+## FAQ
+
+### 为什么有时 icon 注入的样式会引起全局样式异常？
+
+相关 issue：[#54391](https://github.com/ant-design/ant-design/issues/54391)
+
+启用 CSS `layer` 时，动态注入的图标样式可能会影响 `@layer` 优先级，进而导致组件样式异常。
+
+可以通过以下方式解决：
+
+1. 确保使用最新版本的 `@ant-design/icons-vue` 配合当前版本的 `ant-design-vue`。
+2. 尽量避免直接调用 `message`、`Modal`、`notification` 的静态方法，优先使用 `useMessage`、`useModal`、`useNotification` 或 `<a-app>` 提供的上下文实例。
+
+如果无法避免使用静态方法，可以在 `<a-app>` 组件下提前渲染任意一个图标组件，以规避静态方法首次挂载时对样式注入顺序的影响：
+
+```diff
+ <a-style-provider layer>
+   <a-config-provider>
+     <a-app>
++      <!-- any icon -->
++      <RightOutlined />
+       <!-- your pages -->
+     </a-app>
+   </a-config-provider>
+ </a-style-provider>
+```

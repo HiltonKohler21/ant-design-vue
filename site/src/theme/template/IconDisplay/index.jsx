@@ -1,98 +1,243 @@
 import Icon, * as AntdIcons from '@ant-design/icons-vue';
-import { categories } from './fields';
+import { computed, defineComponent, markRaw, onBeforeUnmount, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { all, categories } from './fields';
+import metaInfo from './meta';
 import { FilledIcon, OutlinedIcon, TwoToneIcon } from './themeIcons';
 import Category from './Category';
-import { Radio } from 'ant-design-vue';
-import { defineComponent } from 'vue';
 
-const ThemeType = {
+export const ThemeType = {
+  All: 'All',
   Filled: 'Filled',
   Outlined: 'Outlined',
   TwoTone: 'TwoTone',
 };
 
-const allIcons = AntdIcons;
+const THEME_ORDER = [ThemeType.Outlined, ThemeType.Filled, ThemeType.TwoTone];
+const IGNORE_ICONS = new Set([
+  'CopyrightCircle', // same as Copyright
+  'DollarCircle', // same as Dollar
+]);
+const NEW_ICON_VERSION = '6.5.0';
+const NEW_ICON_NAMES = [];
+
+const allIcons = markRaw(AntdIcons);
+const AppstoreOutlined = markRaw(AntdIcons.AppstoreOutlined);
+
+function resolveIconNames(baseName, theme) {
+  if (theme === ThemeType.All) {
+    return THEME_ORDER.map(item => baseName + item).filter(iconName => Boolean(allIcons[iconName]));
+  }
+  const fullName = baseName + theme;
+  return allIcons[fullName] ? [fullName] : [];
+}
+
+function matchCategoriesFromTag(searchKey) {
+  if (!searchKey) {
+    return {};
+  }
+
+  return Object.keys(metaInfo).reduce((acc, key) => {
+    const icon = metaInfo[key];
+    const { category, tags } = icon;
+
+    if (tags.some(tag => tag.toLowerCase().includes(searchKey))) {
+      if (acc[category]) {
+        acc[category].icons.push(key);
+      } else {
+        acc[category] = { category, icons: [key] };
+      }
+    }
+
+    return acc;
+  }, {});
+}
+
+function mergeCategory(categoryA, categoryB) {
+  const merged = { ...categoryA };
+
+  Object.keys(categoryB).forEach(key => {
+    if (merged[key]) {
+      merged[key] = {
+        ...merged[key],
+        icons: Array.from(new Set([...merged[key].icons, ...categoryB[key].icons])),
+      };
+    } else {
+      merged[key] = categoryB[key];
+    }
+  });
+
+  return merged;
+}
 
 const IconDisplay = defineComponent({
-  cagetories: categories,
-  components: {
-    ARadio: Radio,
-    ARadioGroup: Radio.Group,
-    ARadioButton: Radio.Button,
-  },
-  newIconNames: [],
-  data() {
-    return {
-      theme: ThemeType.Outlined,
-      searchVal: '',
-      searchBarAffixed: false,
+  name: 'IconDisplay',
+  setup() {
+    const { t } = useI18n();
+    const theme = ref(ThemeType.All);
+    const searchInput = ref('');
+    const searchKey = ref('');
+    const searchBarAffixed = ref(false);
+
+    let searchTimer = null;
+    let scrollTimer = null;
+
+    const scheduleScrollToIcons = () => {
+      if (scrollTimer) {
+        clearTimeout(scrollTimer);
+      }
+      scrollTimer = setTimeout(() => {
+        scrollTimer = null;
+        if (typeof document === 'undefined') return;
+        const element = document.querySelector('#list-of-icons');
+        if (!element) return;
+        const rect = element.getBoundingClientRect();
+        if (rect.top < 72) {
+          const reducedMotion =
+            typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          element.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth' });
+        }
+      }, 300);
     };
-  },
-  methods: {
-    handleChangeTheme(e) {
-      this.theme = e.target.value;
-    },
-    handleAffixChange(affixed) {
-      this.searchBarAffixed = affixed;
-    },
-    renderCategories() {
-      const { theme } = this;
 
-      return Object.keys(categories)
-        .map(key => {
-          const iconList = categories[key];
+    const handleSearchIcon = e => {
+      const nextVal = e?.target?.value ?? '';
+      searchInput.value = nextVal;
+      if (searchTimer) {
+        clearTimeout(searchTimer);
+        searchTimer = null;
+      }
+      if (!nextVal.trim()) {
+        searchKey.value = '';
+      } else {
+        searchTimer = setTimeout(() => {
+          searchKey.value = nextVal;
+          searchTimer = null;
+        }, 120);
+      }
+      scheduleScrollToIcons();
+    };
 
-          return {
-            category: key,
-            icons: iconList
-              .map(iconName => iconName + theme)
-              .filter(iconName => {
-                if (iconName.toLowerCase().includes(this.searchVal.trim().toLowerCase()))
-                  return allIcons[iconName];
-              }),
-          };
-        })
-        .filter(({ icons }) => !!icons.length)
-        .map(({ category, icons }) => (
-          <Category
-            key={category}
-            title={category}
-            theme={theme}
-            icons={icons}
-            newIcons={IconDisplay.newIconNames}
-          />
-        ));
-    },
-  },
+    const handleChangeTheme = val => {
+      theme.value = val;
+    };
 
-  render() {
-    return (
-      <div>
-        <h3 style="margin: 1.6em 0 .6em;">{this.$t('app.docs.components.icon.pick-theme')}</h3>
-        <a-affix offset-top={72} onChange={this.handleAffixChange}>
-          <div class={this.searchBarAffixed ? 'icons-affix icons-affixed' : 'icons-affix'}>
-            <a-radio-group value={this.theme} onChange={this.handleChangeTheme}>
-              <a-radio-button value={ThemeType.Outlined}>
-                <Icon component={OutlinedIcon} /> {this.$t('app.docs.components.icon.outlined')}
-              </a-radio-button>
-              <a-radio-button value={ThemeType.Filled}>
-                <Icon component={FilledIcon} /> {this.$t('app.docs.components.icon.filled')}
-              </a-radio-button>
-              <a-radio-button value={ThemeType.TwoTone}>
-                <Icon component={TwoToneIcon} /> {this.$t('app.docs.components.icon.two-tone')}
-              </a-radio-button>
-            </a-radio-group>
+    const handleAffixChange = affixed => {
+      searchBarAffixed.value = Boolean(affixed);
+    };
+
+    onBeforeUnmount(() => {
+      if (searchTimer) clearTimeout(searchTimer);
+      if (scrollTimer) clearTimeout(scrollTimer);
+    });
+
+    const segmentedOptions = computed(() => [
+      {
+        value: ThemeType.All,
+        icon: () => <AppstoreOutlined />,
+        label: t('app.docs.components.icon.all'),
+        title: t('app.docs.components.icon.all'),
+      },
+      {
+        value: ThemeType.Outlined,
+        icon: () => <Icon component={OutlinedIcon} />,
+        label: t('app.docs.components.icon.outlined'),
+        title: t('app.docs.components.icon.outlined'),
+      },
+      {
+        value: ThemeType.Filled,
+        icon: () => <Icon component={FilledIcon} />,
+        label: t('app.docs.components.icon.filled'),
+        title: t('app.docs.components.icon.filled'),
+      },
+      {
+        value: ThemeType.TwoTone,
+        icon: () => <Icon component={TwoToneIcon} />,
+        label: t('app.docs.components.icon.two-tone'),
+        title: t('app.docs.components.icon.two-tone'),
+      },
+    ]);
+
+    const matchedCategories = computed(() => {
+      const currentTheme = theme.value;
+      let normalizedSearchKey = searchKey.value.trim();
+
+      if (normalizedSearchKey) {
+        normalizedSearchKey = normalizedSearchKey
+          .replace(/^<([a-z0-9-]+)\s*\/?>$/gi, (_, name) => name.replace(/-/g, ''))
+          .replace(/(Filled|Outlined|TwoTone)$/i, '')
+          .toLowerCase();
+      }
+
+      const tagMatchedCategoryObj = matchCategoriesFromTag(normalizedSearchKey);
+
+      const namedMatchedCategoryObj = Object.keys(categories).reduce((acc, key) => {
+        let iconList = categories[key];
+        if (normalizedSearchKey) {
+          iconList = iconList.filter(iconName =>
+            iconName.toLowerCase().includes(normalizedSearchKey),
+          );
+        }
+
+        iconList = iconList.filter(icon => !IGNORE_ICONS.has(icon));
+
+        acc[key] = {
+          category: key,
+          icons: iconList,
+        };
+
+        return acc;
+      }, {});
+
+      const merged = mergeCategory(namedMatchedCategoryObj, tagMatchedCategoryObj);
+
+      return Object.values(merged)
+        .map(item => ({
+          category: item.category,
+          icons: item.icons.flatMap(iconName => resolveIconNames(iconName, currentTheme)),
+        }))
+        .filter(({ icons }) => icons.length > 0);
+    });
+
+    return () => (
+      <div class="icon-display-wrapper">
+        <a-affix offsetTop={72} onChange={handleAffixChange}>
+          <div class={searchBarAffixed.value ? 'icons-affix icons-affixed' : 'icons-affix'}>
+            <a-segmented
+              size="large"
+              value={theme.value}
+              options={segmentedOptions.value}
+              onChange={handleChangeTheme}
+            />
             <a-input-search
-              style="flex: 1 1 0%; margin-inline-start: 16px;"
-              placeholder={this.$t('app.docs.components.icon.search.placeholder')}
-              v-model:value={this.searchVal}
+              class="icons-search-input"
+              placeholder={t('app.docs.components.icon.search.placeholder.total', {
+                total: all.length,
+              })}
+              style={{ flex: 1, marginInlineStart: '16px' }}
+              allowClear
+              size="large"
+              variant="filled"
+              value={searchInput.value}
+              onChange={handleSearchIcon}
             />
           </div>
         </a-affix>
-        {this.renderCategories().length === 0 ? (
-          <a-empty style="padding: 12px 0;" />
+        {matchedCategories.value.length === 0 ? (
+          <a-empty style={{ margin: '2em 0' }} />
         ) : (
-          this.renderCategories()
+          matchedCategories.value.map(({ category, icons }) => (
+            <Category
+              key={category}
+              title={category}
+              theme={theme.value}
+              icons={icons}
+              newIcons={NEW_ICON_NAMES}
+              newIconVersion={NEW_ICON_VERSION}
+            />
+          ))
         )}
       </div>
     );

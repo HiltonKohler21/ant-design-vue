@@ -1,29 +1,34 @@
 ul.anticons-list {
-  margin: 10px 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+  padding: 0;
   overflow: hidden;
   direction: ltr;
   list-style: none;
+
   li {
     position: relative;
-    float: left;
-    width: 16.66%;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     height: 100px;
-    margin: 3px 0;
-    padding: 10px 0 0;
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: hidden;
     color: var(--site-text-color);
     text-align: center;
-    list-style: none;
+    list-style: none !important;
     background-color: inherit;
-    border-radius: var(--border-radius-base);
+    border-radius: var(--border-radius-base, 6px);
     cursor: pointer;
-    transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
-    .rtl & {
-      margin: 3px 0;
-      padding: 10px 0 0;
-    }
+    transition: all 0.3s ease-in-out;
+
     .anticon {
-      margin: 12px 0 8px;
+      margin: 8px 0;
       font-size: 36px;
       transition: transform 0.3s ease-in-out;
       will-change: transform;
@@ -31,21 +36,44 @@ ul.anticons-list {
 
     .anticon-class {
       display: block;
-      font-family: var(--code-family);
+      box-sizing: border-box;
+      width: 100%;
+      padding: 0 4px;
+      overflow: hidden;
+      font-size: 11px;
+      line-height: 1.4;
+      font-family: 'Lucida Console', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
       white-space: nowrap;
       text-align: center;
-      transform: scale(0.83);
+      text-overflow: ellipsis;
+
       .ant-badge {
         transition: color 0.3s ease-in-out;
       }
     }
 
+    .new-icon-version {
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline-end: 0;
+      z-index: 1;
+      padding: 0 4px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.66667;
+      background-color: var(--ant-color-success, #52c41a);
+      border-start-end-radius: var(--border-radius-base, 6px);
+      border-end-start-radius: var(--border-radius-base, 6px);
+    }
+
     &:hover {
       color: #fff;
-      background-color: var(--primary-color);
+      background-color: var(--primary-color, #1677ff);
+
       .anticon {
-        transform: scale(1.4);
+        transform: scale(1.3);
       }
+
       .ant-badge {
         color: #fff;
       }
@@ -62,41 +90,76 @@ ul.anticons-list {
     &::after {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       width: 100%;
       height: 100%;
       color: #fff;
-      line-height: 110px;
+      line-height: 100px;
       text-align: center;
+      background-color: var(--primary-color, #1677ff);
       opacity: 0;
+      pointer-events: none;
       transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
       content: 'Copied!';
     }
 
     &.copied::after {
-      top: -10px;
       opacity: 1;
     }
   }
 }
 
+@media only screen and (max-width: 992px) {
+  ul.anticons-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  ul.anticons-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
 .copied-code {
-  padding: 2px 4px 2px;
+  padding: 0 4px;
   font-size: 12px;
-  background: transparent;
+  font-family: var(--code-family);
+  background-color: var(--site-markdown-code-bg, rgba(0, 0, 0, 0.04));
   border-radius: 2px;
 }
 
 .icons-affix {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  transition: all 0.25s;
+  transition: all 0.3s;
 }
 
 .icons-affixed {
-  padding: 12px;
+  padding: 8px;
   margin: -8px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color-base);
-  background-color: var(--body-background);
+  border-radius: var(--border-radius-base, 6px);
+  background-color: var(--ant-color-bg-container, var(--component-background));
+  box-shadow: rgba(50, 50, 93, 0.25) 0 6px 12px -2px, rgba(0, 0, 0, 0.3) 0 3px 7px -3px;
+}
+
+html[data-doc-theme='dark'] {
+  .icons-affixed {
+    border: 1px solid var(--site-border-color-split);
+    box-shadow: rgba(0, 0, 0, 0.45) 0 6px 16px -2px, rgba(0, 0, 0, 0.35) 0 3px 8px -3px;
+  }
+}
+
+@media only screen and (max-width: 767.99px) {
+  .icons-affix {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .icons-search-input {
+      margin-inline-start: 0 !important;
+    }
+  }
 }

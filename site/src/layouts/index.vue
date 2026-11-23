@@ -45,7 +45,12 @@
         <div class="content-layout">
           <div class="content-body">
             <section ref="mainContainerRef" :class="mainContainerClass" :style="mainContainerStyle">
-              <Demo v-if="isDemo" :page-data="pageData" :is-zh-c-n="isZhCN">
+              <Demo
+                v-if="isDemo"
+                :page-data="pageData"
+                :is-zh-c-n="isZhCN"
+                :before-examples="beforeExamples"
+              >
                 <component :is="matchCom" />
               </Demo>
               <router-view v-else />
@@ -101,6 +106,16 @@ import type { GlobalConfig } from '../type';
 
 const rControl = /[\u0000-\u001f]/g;
 const rSpecial = /[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'<>,.?/]+/g;
+const WHEN_TO_USE_RE = /^(何时使用|when to use)$/i;
+
+type BeforeExamplesConfig = {
+  id: string;
+  title: {
+    'zh-CN': string;
+    'en-US': string;
+  };
+  component: any;
+};
 
 type TocItem = {
   key: string;
@@ -165,6 +180,7 @@ export default defineComponent({
     const fallbackDemos = ref<PageDemoItem[]>([]);
     const hasDesignTokens = ref(false);
     const hasSemanticDom = ref(false);
+    const domBeforeSections = ref<TocItem[]>([]);
     const domApiSections = ref<TocItem[]>([]);
     const domSemanticItem = ref<TocItem | null>(null);
 
@@ -269,6 +285,7 @@ export default defineComponent({
       showDebugDemos.value = false;
       hasDesignTokens.value = false;
       hasSemanticDom.value = false;
+      domBeforeSections.value = [];
       domApiSections.value = [];
       domSemanticItem.value = null;
     });
@@ -300,6 +317,10 @@ export default defineComponent({
 
     const matchCom = computed(() => {
       return route.matched[route.matched.length - 1]?.components?.default;
+    });
+    const beforeExamples = computed<BeforeExamplesConfig | null>(() => {
+      if (!isDemo.value) return null;
+      return ((matchCom.value as any)?.beforeExamples as BeforeExamplesConfig) || null;
     });
     const isZhCN = globalConfig.isZhCN;
     const pageData = computed(() =>
@@ -367,8 +388,37 @@ export default defineComponent({
       return sections;
     };
 
+    const buildBeforeSectionsFromHeaders = (rawHeaders: any[]): TocItem[] => {
+      if (!Array.isArray(rawHeaders) || rawHeaders.length === 0) return [];
+      const sections: TocItem[] = [];
+      const seen = new Set<string>();
+
+      for (let i = 0; i < rawHeaders.length; i += 1) {
+        const header = rawHeaders[i];
+        if (!header || header.level !== 2) continue;
+        const title = String(unref(header.title) || '').trim();
+        if (!title) continue;
+        const slug = String(header.slug || slugifyTitle(title)).trim();
+        if (!slug) continue;
+        if (slug.toLowerCase() === 'api' || title.toLowerCase() === 'api') break;
+        if (WHEN_TO_USE_RE.test(title)) continue;
+        const href = `#${slug}`;
+        const lowerHref = href.toLowerCase();
+        if (seen.has(lowerHref)) continue;
+        seen.add(lowerHref);
+        sections.push({
+          key: href,
+          href,
+          title,
+        });
+      }
+
+      return sections;
+    };
+
     const collectComponentTocFromDom = async () => {
       if (!isDemo.value) {
+        domBeforeSections.value = [];
         domApiSections.value = [];
         domSemanticItem.value = null;
         return;
@@ -376,10 +426,33 @@ export default defineComponent({
       await nextTick();
       const container = mainContainerRef.value;
       if (!container) {
+        domBeforeSections.value = [];
         domApiSections.value = [];
         domSemanticItem.value = null;
         return;
       }
+
+      const descContainer = container.querySelector('.doc-description');
+      const beforeSections: TocItem[] = [];
+      const beforeSeen = new Set<string>();
+      if (descContainer) {
+        descContainer.querySelectorAll('h2[id]').forEach(node => {
+          const id = node.getAttribute('id')?.trim();
+          if (!id) return;
+          const title = extractHeadingText(node);
+          if (!title || WHEN_TO_USE_RE.test(title)) return;
+          const href = `#${id}`;
+          const lowerHref = href.toLowerCase();
+          if (beforeSeen.has(lowerHref)) return;
+          beforeSeen.add(lowerHref);
+          beforeSections.push({
+            key: href,
+            href,
+            title,
+          });
+        });
+      }
+      domBeforeSections.value = beforeSections;
 
       const apiContainer = container.querySelector('.api-container');
       const sections: TocItem[] = [];
@@ -469,14 +542,38 @@ export default defineComponent({
           })
           .filter(Boolean) as TocItem[];
 
-        const items: TocItem[] = [
-          {
-            key: '#examples',
-            href: '#examples',
-            title: isZhCN.value ? '代码演示' : 'Examples',
-            ...(demoItems.length ? { children: demoItems } : {}),
-          },
-        ];
+        const items: TocItem[] = [];
+
+        const beforeSections = domBeforeSections.value.length
+          ? domBeforeSections.value
+          : buildBeforeSectionsFromHeaders(pageData.value?.headers || []);
+        if (beforeSections.length) {
+          items.push(...beforeSections);
+        }
+
+        if (beforeExamples.value?.id) {
+          const beforeHref = `#${beforeExamples.value.id}`;
+          const beforeTitle = isZhCN.value
+            ? beforeExamples.value.title?.['zh-CN']
+            : beforeExamples.value.title?.['en-US'];
+          if (
+            beforeTitle &&
+            !items.some(item => item.href.toLowerCase() === beforeHref.toLowerCase())
+          ) {
+            items.push({
+              key: beforeHref,
+              href: beforeHref,
+              title: beforeTitle,
+            });
+          }
+        }
+
+        items.push({
+          key: '#examples',
+          href: '#examples',
+          title: isZhCN.value ? '代码演示' : 'Examples',
+          ...(demoItems.length ? { children: demoItems } : {}),
+        });
 
         const apiSections = domApiSections.value.length
           ? domApiSections.value
@@ -564,6 +661,7 @@ export default defineComponent({
       headers,
       isDemo,
       matchCom,
+      beforeExamples,
       pageData,
       dataSource,
       handleClickShowButton,

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 1
 title:
   zh-CN: 多色图标
   en-US: Two-tone icon and colorful icon
@@ -12,7 +12,7 @@ title:
 
 ## en-US
 
-You can set `two-tone-color` prop to specific primary color for two-tone icons.
+You can set the `two-tone-color` prop to a specific primary color for two-tone icons.
 
 </docs>
 
@@ -26,9 +26,3 @@ You can set `two-tone-color` prop to specific primary color for two-tone icons.
 <script lang="ts" setup>
 import { SmileTwoTone, HeartTwoTone, CheckCircleTwoTone } from '@ant-design/icons-vue';
 </script>
-<style scoped>
-.icons-list :deep(.anticon) {
-  margin-right: 6px;
-  font-size: 24px;
-}
-</style>

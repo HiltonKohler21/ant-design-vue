@@ -124,20 +124,23 @@ export default defineComponent({
         content: '';
         position: absolute;
         inset-inline: 14px;
-        top: 0;
-        bottom: auto;
-        border-bottom: none !important;
-        border-top: 2px solid transparent;
+        bottom: 0;
+        top: auto;
+        border-top: none !important;
+        border-bottom: 2px solid transparent;
         transition: border-color 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
       }
 
-      &:hover::after {
-        border-top-color: var(--primary-color);
+      &:hover::after,
+      &.ant-menu-item-active::after,
+      &.ant-menu-submenu-active::after,
+      &.ant-menu-submenu-open::after {
+        border-bottom-color: var(--primary-color) !important;
       }
 
       &.ant-menu-item-selected::after,
       &.ant-menu-submenu-selected::after {
-        border-top-color: var(--primary-color);
+        border-bottom-color: var(--primary-color) !important;
       }
 
       a {

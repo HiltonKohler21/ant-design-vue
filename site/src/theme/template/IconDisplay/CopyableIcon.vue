@@ -1,51 +1,95 @@
 <template>
-  <li
-    v-clipboard:copy="text"
-    v-clipboard:success="onCopied"
-    :class="justCopied === type ? 'copied' : ''"
-  >
-    <component :is="allIcons[name]"></component>
-    <span class="anticon-class">
-      <a-badge :dot="isNew">
-        {{ kebabCasedType }}
-      </a-badge>
-    </span>
+  <li :class="[themeClass, { copied: isCopied }]" @click="handleCopy">
+    <span v-if="isNew && newIconVersion" class="new-icon-version">{{ newIconVersion }}</span>
+    <component :is="iconComponent" />
+    <span class="anticon-class">{{ name }}</span>
   </li>
 </template>
 <script>
 import * as AntdIcons from '@ant-design/icons-vue';
-import { Badge } from 'ant-design-vue';
-import { defineComponent } from 'vue';
+import { message } from 'ant-design-vue';
+import { computed, defineComponent, markRaw } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const allIcons = AntdIcons;
+const allIcons = markRaw(AntdIcons);
 
-const kebabCase = function kebabCase(str) {
-  return str
-    .split(/(?=[A-Z])/)
-    .map(s => s.replace(s[0], s[0].toUpperCase()))
-    .join('');
-};
+async function copyText(text) {
+  if (!text) return false;
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // fallback below
+  }
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
 
 export default defineComponent({
-  components: {
-    'a-badge': Badge,
+  name: 'CopyableIcon',
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+    newIconVersion: {
+      type: String,
+      default: '',
+    },
+    theme: {
+      type: String,
+      default: 'All',
+    },
+    justCopied: {
+      type: String,
+      default: null,
+    },
   },
-  props: ['name', 'type', 'isNew', 'theme', 'justCopied'],
-  data() {
-    const kebabCasedName = kebabCase(this.name);
-    const kebabCasedType = kebabCase(this.type);
+  emits: ['copied'],
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-    this.allIcons = allIcons;
+    const iconComponent = computed(() => allIcons[props.name]);
+    const themeClass = computed(() => {
+      const match = props.name.match(/(Outlined|Filled|TwoTone)$/);
+      return match ? match[0] : props.theme;
+    });
+    const isCopied = computed(() => props.justCopied === props.name);
+
+    const handleCopy = async () => {
+      const text = `<${props.name} />`;
+      const ok = await copyText(text);
+      if (ok) {
+        emit('copied', props.name, text);
+      } else {
+        message.error(t('app.docs.components.icon.copy-failed'));
+      }
+    };
 
     return {
-      text: `<${kebabCasedName} />`,
-      kebabCasedType,
+      iconComponent,
+      themeClass,
+      isCopied,
+      handleCopy,
     };
-  },
-  methods: {
-    onCopied() {
-      this.$emit('copied', this.type, this.text);
-    },
   },
 });
 </script>
