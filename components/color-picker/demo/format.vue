@@ -2,7 +2,7 @@
 ---
 order: 8
 title:
-  zh-CN: 颜色格式
+  zh-CN: 颜色编码
   en-US: Color Format
 ---
 
@@ -27,7 +27,7 @@ Controlled color formats (HEX / RGB / HSB).
     <a-color-picker
       defaultValue="#1677ff"
       :format="format"
-      @formatChange="val => format = val"
+      @formatChange="val => (format = val)"
       showText
     />
   </a-space>

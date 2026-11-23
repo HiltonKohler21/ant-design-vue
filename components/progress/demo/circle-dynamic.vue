@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 14
 title:
   zh-CN: 进度圈动态展示
   en-US: Dynamic circular progress bar

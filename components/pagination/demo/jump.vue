@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 3
 title:
   zh-CN: 跳转
   en-US: Jumper

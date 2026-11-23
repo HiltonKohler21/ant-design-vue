@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 7
 title:
   zh-CN: 自定义触发器
   en-US: Custom Trigger
@@ -23,7 +23,7 @@ Customize the color picker trigger via the default slot.
       </a-button>
     </a-color-picker>
     <a-color-picker v-model:value="color">
-      <a-tag :color="color" style="cursor: pointer; padding: 4px 8px;">
+      <a-tag :color="color" style="cursor: pointer; padding: 4px 8px">
         {{ color }}
       </a-tag>
     </a-color-picker>

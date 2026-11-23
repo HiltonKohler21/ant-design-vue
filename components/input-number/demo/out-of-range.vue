@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 8
 title:
   zh-CN: 超出边界
   en-US: Out of range

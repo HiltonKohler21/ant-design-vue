@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 4
+order: 6
 title:
   zh-CN: 附加内容
-  en-US: Extra Content
+  en-US: Extra content
 ---
 
 ## zh-CN

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 30
+order: 29
 title:
   en-US: Responsive
   zh-CN: 响应式

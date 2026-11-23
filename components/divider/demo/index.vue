@@ -2,11 +2,11 @@
   <demo-sort>
     <horizontal />
     <with-text />
-    <plain />
-    <variant />
     <size />
+    <plain />
     <vertical />
     <customize-style />
+    <variant />
     <style-class />
   </demo-sort>
 </template>

@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 7
+order: 9
 title:
   zh-CN: 预设宽度
-  en-US: Presetted size
+  en-US: Preset size
 ---
 
 ## zh-CN

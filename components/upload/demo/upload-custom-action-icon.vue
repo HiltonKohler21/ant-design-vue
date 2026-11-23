@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 12
+order: 13
 title:
-  zh-CN: 自定义交互图标
-  en-US: custom action icon
+  zh-CN: 自定义交互图标和文件信息
+  en-US: Custom action icon and extra info
 ---
 
 ## zh-CN

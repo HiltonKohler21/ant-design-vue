@@ -1,7 +1,7 @@
 ---
 category: Components
 subtitle: 包裹组件
-cols: 1
+cols: 2
 type: 其他
 title: App
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HJz8SZos2wgAAAAAAAAAAAAADrJ8AQ/original

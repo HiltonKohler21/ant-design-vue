@@ -6,14 +6,14 @@
     <closable />
     <description />
     <icon />
-    <close-text />
     <banner />
-    <custom-icon />
+    <loop-banner />
     <smooth-closed />
     <error-boundary />
+    <custom-icon />
     <action />
-    <loop-banner />
     <custom-title-alignment />
+    <close-text />
   </demo-sort>
 </template>
 <script lang="ts">

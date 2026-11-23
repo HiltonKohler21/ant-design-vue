@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 28
+order: 17
 title:
   zh-CN: 弹出位置
-  en-US: Popup Placement
+  en-US: Placement
 ---
 
 ## zh-CN

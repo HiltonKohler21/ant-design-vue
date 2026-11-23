@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 8
+order: 3
 title:
   zh-CN: 胶囊形状
-  en-US: Round Shape
+  en-US: Round shape
 ---
 
 ## zh-CN

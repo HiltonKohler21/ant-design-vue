@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 高精度小数
   en-US: High precision decimals

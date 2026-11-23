@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 13
 title:
   zh-CN: 定制日期单元格
   en-US: Customized Date Rendering

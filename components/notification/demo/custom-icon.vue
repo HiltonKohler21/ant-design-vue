@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 自定义图标
   en-US: Customized Icon

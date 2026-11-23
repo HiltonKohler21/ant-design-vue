@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 13
 title:
   en-US: border, title and footer
   zh-CN: 带边框

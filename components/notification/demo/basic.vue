@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 0
+order: 9
 title:
-  zh-CN: 基本用法
-  en-US: Basic usage
+  zh-CN: 静态方法（不推荐）
+  en-US: Static Method (deprecated)
 ---
 
 ## zh-CN

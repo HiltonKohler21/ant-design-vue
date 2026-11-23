@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 22
 title:
   zh-CN: 表头分组
   en-US: Grouping table head

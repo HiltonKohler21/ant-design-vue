@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 11
+order: 13
 title:
   zh-CN: 自定义页签头
-  en-US: Customized
+  en-US: Customized bar of tab
 ---
 
 ## zh-CN

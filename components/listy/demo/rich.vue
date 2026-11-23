@@ -3,7 +3,7 @@
 order: 4
 title:
   zh-CN: 复杂内容
-  en-US: Rich Content
+  en-US: Rich content
 ---
 
 ## zh-CN

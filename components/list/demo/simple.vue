@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 0
 title:
   zh-CN: 简单列表
   en-US: Simple list

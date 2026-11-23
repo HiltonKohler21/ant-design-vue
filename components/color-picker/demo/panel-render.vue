@@ -2,8 +2,8 @@
 ---
 order: 10
 title:
-  zh-CN: 自定义面板渲染
-  en-US: Custom Panel Render
+  zh-CN: 自定义面板
+  en-US: Custom Render Panel
 ---
 
 ## zh-CN
@@ -16,11 +16,7 @@ Customize and extend the panel content layout via `panelRender`.
 
 </docs>
 <template>
-  <a-color-picker
-    v-model:value="color"
-    :panelRender="customPanelRender"
-    showText
-  />
+  <a-color-picker v-model:value="color" :panelRender="customPanelRender" showText />
 </template>
 <script lang="ts" setup>
 import { ref, h } from 'vue';
@@ -32,10 +28,18 @@ const customPanelRender = (panel: any) => {
   return h('div', [
     panel,
     h(Divider, { style: { margin: '8px 0' } }),
-    h(Space, { style: { padding: '0 8px 8px 8px', width: '100%', justifyContent: 'space-between' } }, () => [
-      h('span', { style: { fontSize: '12px', color: '#888' } }, '自定义操作'),
-      h(Button, { size: 'small', type: 'primary', onClick: () => alert(`当前颜色: ${color.value}`) }, () => '确定'),
-    ]),
+    h(
+      Space,
+      { style: { padding: '0 8px 8px 8px', width: '100%', justifyContent: 'space-between' } },
+      () => [
+        h('span', { style: { fontSize: '12px', color: '#888' } }, '自定义操作'),
+        h(
+          Button,
+          { size: 'small', type: 'primary', onClick: () => alert(`当前颜色: ${color.value}`) },
+          () => '确定',
+        ),
+      ],
+    ),
   ]);
 };
 </script>

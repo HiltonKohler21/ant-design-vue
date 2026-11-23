@@ -2,8 +2,8 @@
 ---
 order: 11
 title:
-  zh-CN: 后缀图标
-  en-US: Suffix
+  zh-CN: 前后缀
+  en-US: Prefix and Suffix
 ---
 
 ## zh-CN

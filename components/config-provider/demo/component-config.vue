@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 4
 title:
   zh-CN: 组件默认配置
   en-US: Component Config

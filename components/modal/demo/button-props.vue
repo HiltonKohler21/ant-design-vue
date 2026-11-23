@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 11
+order: 8
 title:
   zh-CN: 自定义页脚按钮属性
   en-US: Customize footer buttons props

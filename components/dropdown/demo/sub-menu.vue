@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 8
 title:
   zh-CN: 多级菜单
   en-US: Cascading menu

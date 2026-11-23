@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 16
+order: 13
 title:
   zh-CN: 时间类控件
   en-US: Time-related Controls

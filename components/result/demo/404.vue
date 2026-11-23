@@ -2,8 +2,8 @@
 ---
 order: 4
 title:
-  zh-CN: 404
-  en-US: 404
+  zh-CN: '404'
+  en-US: '404'
 ---
 
 ## zh-CN

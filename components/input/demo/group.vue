@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 15
 title:
   zh-CN: 输入框组合
   en-US: Input Group

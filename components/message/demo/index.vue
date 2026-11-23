@@ -1,12 +1,12 @@
 <template>
   <demo-sort>
     <Hook />
-    <info />
-    <duration />
     <other />
+    <duration />
     <loading />
     <thenable />
     <update />
+    <info />
     <customStyleVue />
   </demo-sort>
 </template>

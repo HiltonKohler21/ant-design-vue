@@ -3,9 +3,9 @@
     <basic />
     <unit />
     <card />
+    <timer />
     <countdown />
     <countdown-slot />
-    <timer />
   </demo-sort>
 </template>
 <script lang="ts">

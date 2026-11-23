@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 5
 title:
   zh-CN: 自定义分页
   en-US: Custom Paging

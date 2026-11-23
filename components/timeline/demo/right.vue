@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 6
 title:
   zh-CN: 右侧时间轴点
   en-US: Right alternate

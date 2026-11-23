@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 5
 title:
   zh-CN: 触发方式
   en-US: Trigger mode

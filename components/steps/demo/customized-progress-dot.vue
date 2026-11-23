@@ -4,6 +4,7 @@ order: 8
 title:
   zh-CN: 自定义点状步骤条
   en-US: Customized Dot Style
+debug: true
 ---
 
 ## zh-CN

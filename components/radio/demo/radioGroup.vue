@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 2
 title:
   zh-CN: 单选组合
   en-US: Radio Group

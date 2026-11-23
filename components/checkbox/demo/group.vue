@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 4
+order: 3
 title:
   zh-CN: Checkbox 组
-  en-US: Checkbox group
+  en-US: Checkbox Group
 ---
 
 ## zh-CN

@@ -1,16 +1,16 @@
 <template>
   <demo-sort>
     <basic />
-    <context-menu />
-    <dropdown-button />
-    <event />
-    <item />
-    <overlay-visible />
     <placement />
     <arrow-vue />
+    <item />
     <arrow-center-vue></arrow-center-vue>
-    <sub-menu />
     <trigger />
+    <event />
+    <dropdown-button />
+    <sub-menu />
+    <overlay-visible />
+    <context-menu />
     <loadingVue />
   </demo-sort>
 </template>

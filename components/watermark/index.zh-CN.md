@@ -1,7 +1,7 @@
 ---
 category: Components
 subtitle: 水印
-type: 其他
+type: 反馈
 title: Watermark
 cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*wr1ISY50SyYAAAAAAAAAAAAADrJ8AQ/original

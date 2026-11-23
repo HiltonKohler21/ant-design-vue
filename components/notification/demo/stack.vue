@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 7
 title:
   zh-CN: 堆叠
   en-US: Stack

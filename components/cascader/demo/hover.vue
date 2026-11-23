@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 2
 title:
   zh-CN: 移入展开
   en-US: Hover

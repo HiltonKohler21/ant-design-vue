@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 5
 title:
   zh-CN: 分组
   en-US: Option Group

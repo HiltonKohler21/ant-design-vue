@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 1
 title:
   zh-CN: 三种大小
   en-US: Three sizes of Input

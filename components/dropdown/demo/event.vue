@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 6
 title:
   zh-CN: 触发事件
   en-US: Click event

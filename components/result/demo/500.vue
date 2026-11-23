@@ -2,8 +2,8 @@
 ---
 order: 5
 title:
-  zh-CN: 500
-  en-US: 500
+  zh-CN: '500'
+  en-US: '500'
 ---
 
 ## zh-CN

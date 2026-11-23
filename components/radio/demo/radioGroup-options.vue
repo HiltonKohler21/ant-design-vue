@@ -2,8 +2,8 @@
 ---
 order: 5
 title:
-  zh-CN: RadioGroup 组合 - 配置方式
-  en-US: RadioGroup group - optional
+  zh-CN: Radio.Group 组合 - 配置方式
+  en-US: Radio.Group group - optional
 ---
 
 ## zh-CN

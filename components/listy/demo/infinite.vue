@@ -3,7 +3,7 @@
 order: 5
 title:
   zh-CN: 无限加载
-  en-US: Infinite Load
+  en-US: Infinite loading
 ---
 
 ## zh-CN

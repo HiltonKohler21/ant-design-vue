@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 11
 title:
   zh-CN: 额外的页脚
   en-US: Extra Footer

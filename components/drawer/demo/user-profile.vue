@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 7
 title:
   zh-CN: 信息预览抽屉
   en-US: Preview drawer

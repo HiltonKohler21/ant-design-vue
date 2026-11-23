@@ -1,15 +1,15 @@
 <template>
   <demo-sort>
     <basic />
-    <extra />
     <placement />
+    <resizable />
+    <loading />
+    <extra />
     <render-in-current />
     <form-in-drawer />
-    <multi-level-drawer />
     <user-profile />
+    <multi-level-drawer />
     <size />
-    <loading />
-    <resizable />
   </demo-sort>
 </template>
 <script lang="ts">

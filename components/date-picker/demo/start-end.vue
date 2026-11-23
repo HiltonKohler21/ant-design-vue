@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 11
+order: 18
 title:
   zh-CN: 自定义日期范围选择
   en-US: Customized Range Picker
+debug: true
 ---
 
 ## zh-CN

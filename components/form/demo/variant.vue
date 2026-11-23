@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3.5
+order: 3
 title:
   zh-CN: 表单变体
   en-US: Form variants

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 7
 title:
   zh-CN: 标签
   en-US: Label

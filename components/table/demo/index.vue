@@ -1,39 +1,39 @@
 <template>
   <demo-sort :cols="1">
     <Basic />
-    <Ajax />
-    <Bordered />
-    <Ellipsis />
-    <ColspanRowspan />
-    <EditCell />
-    <EditRow />
-    <ExpandChildren />
-    <Expand />
-    <FixedColumnsHeader />
-    <FixedColumns />
-    <FixedHeader />
-    <GroupingColumns />
-    <MultipleSorter />
-    <NestedTable />
-    <Head />
-    <CustomFilterPanel />
-    <ResetFilter />
-    <filterSearchVue />
-    <filterInTreeVue />
+    <TemplateCom />
+    <RowSelection />
     <RowSelectionAndOperation />
     <RowSelectionCustom />
-    <RowSelection />
+    <Head />
+    <filterInTreeVue />
+    <filterSearchVue />
+    <MultipleSorter />
+    <ResetFilter />
+    <CustomFilterPanel />
+    <Ajax />
+    <Size />
+    <Bordered />
+    <Expand />
+    <order-column />
+    <ColspanRowspan />
+    <ExpandChildren />
+    <FixedHeader />
+    <FixedColumns />
+    <FixedColumnsHeader />
+    <hidden-columns />
+    <GroupingColumns />
+    <EditCell />
+    <EditRow />
+    <NestedTable />
+    <Ellipsis />
+    <Summary />
+    <virtual-list />
+    <Responsive />
     <Sticky />
     <ResizableColumn />
-    <Size />
     <Stripe />
-    <Summary />
-    <Responsive />
-    <TemplateCom />
     <big-data />
-    <order-column />
-    <virtual-list />
-    <hidden-columns />
   </demo-sort>
 </template>
 

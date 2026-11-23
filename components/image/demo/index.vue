@@ -1,8 +1,8 @@
 <template>
-  <demo-sort>
+  <demo-sort :cols="1">
     <basic />
-    <fallback />
     <placeholder />
+    <fallback />
     <preview-group />
     <previewGroupVisibleVue />
     <previewSrc />

@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 3
+order: 5
 title:
   zh-CN: 无效或只读
-  en-US: disabled or readonly
+  en-US: disabled or readOnly
 ---
 
 ## zh-CN

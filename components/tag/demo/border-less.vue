@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 11
 title:
   zh-CN: 无边框
   en-US: Border Less

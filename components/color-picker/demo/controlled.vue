@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
   zh-CN: 受控模式
   en-US: Controlled Mode

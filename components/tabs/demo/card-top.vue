@@ -1,9 +1,12 @@
 <docs>
 ---
-order: 9
+order: 11
 title:
   zh-CN: 卡片式页签容器
   en-US: Container of card type Tab
+debug: true
+background: grey
+compact: true
 ---
 
 ## zh-CN

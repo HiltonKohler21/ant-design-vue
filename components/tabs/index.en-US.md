@@ -1,6 +1,6 @@
 ---
 category: Components
-type: Data Display
+type: Navigation
 title: Tabs
 cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*72NDQqXkyOEAAAAAAAAAAAAADrJ8AQ/original

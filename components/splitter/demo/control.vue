@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 5
+order: 1
 title:
-  zh-CN: 受控尺寸
-  en-US: Controlled Size
+  zh-CN: 受控模式
+  en-US: Control mode
 ---
 
 ## zh-CN

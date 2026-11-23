@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 9
 title:
   zh-CN: 卡片式页签
   en-US: Card type tab

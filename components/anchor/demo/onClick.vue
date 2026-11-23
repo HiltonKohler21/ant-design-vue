@@ -2,8 +2,8 @@
 ---
 order: 2
 title:
-  zh-CN: 自定义 click 事件
-  en-US: Customize the click event
+  zh-CN: 自定义 onClick 事件
+  en-US: Customize the onClick event
 ---
 
 ## zh-CN

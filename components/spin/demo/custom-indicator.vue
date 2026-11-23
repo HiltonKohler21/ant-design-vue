@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 5
 title:
   zh-CN: 自定义指示符
   en-US: Custom spinning indicator

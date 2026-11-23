@@ -3,19 +3,19 @@
     <basic />
     <async />
     <custom-footer />
-    <confirm />
-    <info />
+    <loading />
     <HookModal />
     <locale />
     <manual />
     <position />
+    <button-props />
+    <modalRenderVue />
+    <width />
+    <info />
+    <confirm />
     <confirm-router />
     <confirm-promise />
-    <width />
-    <button-props />
     <fullscreen />
-    <modalRenderVue />
-    <loading />
   </demo-sort>
 </template>
 <script lang="ts">

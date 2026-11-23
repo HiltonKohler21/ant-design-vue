@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 7
 title:
   zh-CN: 附加内容
   en-US: Addon

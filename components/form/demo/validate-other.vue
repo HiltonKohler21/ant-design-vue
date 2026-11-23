@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 24
+order: 16
 title:
   zh-CN: 校验其他组件
   en-US: Other Form Controls

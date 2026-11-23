@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1.1
+order: 4
 title:
   zh-CN: 切换不同的选择器
   en-US: Switchable picker

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 14
+order: 5
 title:
   zh-CN: 筛选和排序
   en-US: Filter and sorter

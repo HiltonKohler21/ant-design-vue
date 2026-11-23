@@ -2,7 +2,7 @@
 ---
 order: 2
 title:
-  zh-CN: 受控的 checkbox
+  zh-CN: 受控的 Checkbox
   en-US: Controlled Checkbox
 ---
 

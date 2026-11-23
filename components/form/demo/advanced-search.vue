@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 11
 title:
   zh-CN: 高级搜索
   en-US: Advanced search

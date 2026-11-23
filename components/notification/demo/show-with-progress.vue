@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 11
+order: 8
 title:
   zh-CN: 显示进度条
-  en-US: Show with Progress
+  en-US: Show with progress
 ---
 
 ## zh-CN

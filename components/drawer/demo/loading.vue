@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 3
 title:
   zh-CN: 加载中
   en-US: Loading

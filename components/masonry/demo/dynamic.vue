@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 动态更新
   en-US: Dynamic

@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 14
+order: 13
 title:
   zh-CN: 改变进度数值位置
-  en-US: Custom Percent Position
+  en-US: Change progress value position
 ---
 
 ## zh-CN

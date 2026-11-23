@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 7
 title:
   zh-CN: 单选组合 - 配合 name 使用
   en-US: Radio.Group with name

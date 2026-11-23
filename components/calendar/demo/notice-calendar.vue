@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 1
 title:
   zh-CN: 通知事项日历
   en-US: Notice Calendar

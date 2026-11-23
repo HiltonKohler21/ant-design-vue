@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 4
 title:
   zh-CN: 指示条
   en-US: Indicator

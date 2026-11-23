@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 分组与吸顶
-  en-US: Group & Sticky
+  en-US: Grouping and sticky headers
 ---
 
 ## zh-CN

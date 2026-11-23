@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 14
 title:
   zh-CN: 配置式标签页
   en-US: Items Config

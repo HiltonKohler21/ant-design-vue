@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 10
 title:
   zh-CN: 预设范围
   en-US: Preset Ranges

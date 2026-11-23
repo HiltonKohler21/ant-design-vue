@@ -3,7 +3,7 @@
 order: 5
 title:
   zh-CN: 自定义渲染
-  en-US: Custom
+  en-US: Custom Render
 ---
 
 ## zh-CN

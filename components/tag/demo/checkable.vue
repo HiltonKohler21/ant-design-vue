@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 3
 title:
   zh-CN: 可选择标签
   en-US: Checkable

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 10
 title:
   zh-CN: 无边框与变体
   en-US: Borderless & Variant

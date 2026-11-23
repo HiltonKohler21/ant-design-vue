@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 8
+order: 4
 title:
   zh-CN: Block 单选组合
-  en-US: Block RadioGroup
+  en-US: Block Radio.Group
 ---
 
 ## zh-CN

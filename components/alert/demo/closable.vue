@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 可关闭的警告提示
-  en-US: Customized Close Text
+  en-US: Closable
 ---
 
 ## zh-CN

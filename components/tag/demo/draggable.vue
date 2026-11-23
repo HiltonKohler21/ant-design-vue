@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 7
 title:
   zh-CN: 可拖拽标签
   en-US: Draggable Tag

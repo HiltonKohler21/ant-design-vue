@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 6
+order: 1
 title:
   zh-CN: 尺寸
-  en-US: Size
+  en-US: Sizes
 ---
 
 ## zh-CN

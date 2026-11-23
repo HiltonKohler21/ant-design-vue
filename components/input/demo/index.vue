@@ -1,22 +1,22 @@
 <template>
   <demo-sort>
     <basic />
-    <autosize-textarea />
-    <presuffix />
+    <size />
+    <variant />
+    <addon />
     <search-input />
     <search-input-loading />
-    <size />
-    <group />
-    <addon />
-    <tooltip />
-    <allow-clear />
-    <password-input />
-    <show-count />
     <textarea-resize />
-    <borderlessVue />
-    <statusVue />
-    <variant />
+    <autosize-textarea />
     <otp />
+    <tooltip />
+    <presuffix />
+    <password-input />
+    <allow-clear />
+    <show-count />
+    <statusVue />
+    <group />
+    <borderlessVue />
   </demo-sort>
 </template>
 

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 6
 title:
   zh-CN: 目录
   en-US: Directory

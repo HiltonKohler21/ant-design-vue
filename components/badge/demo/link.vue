@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 5
 title:
   zh-CN: 可点击
   en-US: Clickable

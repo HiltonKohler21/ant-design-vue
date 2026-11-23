@@ -1,11 +1,11 @@
 <template>
   <demo-sort :cols="1">
     <Basic />
-    <Ellipsis />
-    <Interactive />
-    <Text />
-    <Suffix />
     <Titlt />
+    <Text />
+    <Ellipsis />
+    <Suffix />
+    <Interactive />
   </demo-sort>
 </template>
 <script lang="ts">

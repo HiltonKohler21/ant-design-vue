@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 2.1
+order: 3
 title:
-  zh-CN: 按钮/头像/输入框/图像
-  en-US: Button/Avatar/Input/Image
+  zh-CN: 按钮/头像/输入框/图像/自定义节点
+  en-US: Button/Avatar/Input/Image/Node
 ---
 
 ## zh-CN

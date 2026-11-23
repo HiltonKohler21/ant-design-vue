@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 31
+order: 28
 title:
   zh-CN: 虚拟列表
-  en-US: Virtual List
+  en-US: Virtual list
 ---
 
 ## zh-CN

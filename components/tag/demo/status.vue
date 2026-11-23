@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 6
 title:
   zh-CN: 预设状态的标签
   en-US: Status Tag

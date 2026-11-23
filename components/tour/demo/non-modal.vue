@@ -3,7 +3,7 @@
 order: 1
 title:
   zh-CN: 非模态
-  en-US: Non modal
+  en-US: Non-modal
 ---
 
 ## zh-CN

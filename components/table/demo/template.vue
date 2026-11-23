@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 99
+order: 1
 title:
   en-US: template style API
   zh-CN: template 风格的 API

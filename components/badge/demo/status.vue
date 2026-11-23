@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 6
 title:
   zh-CN: 状态点
   en-US: Status

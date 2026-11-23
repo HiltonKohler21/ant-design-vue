@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 97
+order: 32
 title:
   en-US: Stripe Style
   zh-CN: 带斑马纹表格

@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
-  zh-CN: 垂直分割
+  zh-CN: 垂直方向
   en-US: Vertical
 ---
 

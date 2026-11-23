@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 9
 title:
   zh-CN: 填底的按钮样式
   en-US: Solid radio button

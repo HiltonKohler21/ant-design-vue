@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 配合 Form 使用
   en-US: With Form

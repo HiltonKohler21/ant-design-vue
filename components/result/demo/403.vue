@@ -2,8 +2,8 @@
 ---
 order: 3
 title:
-  zh-CN: 403
-  en-US: 403
+  zh-CN: '403'
+  en-US: '403'
 ---
 
 ## zh-CN

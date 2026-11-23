@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 6
 title:
   zh-CN: 更新消息内容
   en-US: Update Message Content

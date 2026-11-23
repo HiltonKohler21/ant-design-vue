@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 4
 title:
   zh-CN: 垂直分割线
   en-US: Vertical

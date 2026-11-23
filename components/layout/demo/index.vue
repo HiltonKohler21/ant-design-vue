@@ -2,13 +2,13 @@
   <demo-sort :cols="1">
     <basic />
     <top />
-    <top-side2 />
     <top-side />
+    <top-side2 />
     <Side />
     <custom-trigger />
     <responsive />
-    <FixedSider />
     <Fixed />
+    <FixedSider />
   </demo-sort>
 </template>
 

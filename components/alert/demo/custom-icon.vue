@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 7
+order: 10
 title:
   zh-CN: 自定义图标
   en-US: Custom Icon
+debug: true
 ---
 
 ## zh-CN

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 26
+order: 3
 title:
   zh-CN: 选择确认
   en-US: Need Confirm

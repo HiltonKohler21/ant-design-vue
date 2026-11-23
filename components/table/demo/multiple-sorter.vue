@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   en-US: Multiple sorter
   zh-CN: 多列排序

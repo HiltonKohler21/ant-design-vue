@@ -1,19 +1,19 @@
 <template>
   <demo-sort :cols="1">
     <Simple />
-    <SmallSize />
+    <Error />
+    <Vertical />
+    <Clickable />
     <Icon />
     <StepNext />
-    <Vertical />
-    <VerticalSmall />
-    <Error />
+    <LabelPlacement />
     <ProgressDot />
     <CustomizedProgressDot />
-    <Clickable />
     <Nav />
     <Progress />
-    <LabelPlacement />
     <Inline />
+    <SmallSize />
+    <VerticalSmall />
   </demo-sort>
 </template>
 <script lang="ts">

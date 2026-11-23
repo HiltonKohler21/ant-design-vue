@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 3
 title:
   zh-CN: 异步加载
   en-US: Asynchronous loading

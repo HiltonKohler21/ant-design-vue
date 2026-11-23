@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 1
 title:
   zh-CN: 其他提示类型
   en-US: Other types of message

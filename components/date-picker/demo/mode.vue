@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 10
+order: 17
 title:
   zh-CN: 受控面板
   en-US: Controlled Panels
+debug: true
 ---
 
 ## zh-CN

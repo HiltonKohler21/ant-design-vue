@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 13
 title:
   zh-CN: 带字数提示
   en-US: With character counting

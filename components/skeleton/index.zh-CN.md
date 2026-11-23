@@ -3,6 +3,7 @@ category: Components
 type: 反馈
 title: Skeleton
 subtitle: 骨架屏
+cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*uae3QbkNCm8AAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*VcjGQLSrYdcAAAAAAAAAAAAADrJ8AQ/original
 ---

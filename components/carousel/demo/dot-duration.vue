@@ -2,8 +2,8 @@
 ---
 order: 4
 title:
-  zh-CN: 自动切换进度条
-  en-US: Scroll automatically with dot duration
+  zh-CN: 进度条
+  en-US: Progress of dots
 ---
 
 ## zh-CN

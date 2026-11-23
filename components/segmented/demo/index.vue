@@ -1,13 +1,13 @@
 <template>
   <demo-sort>
     <basic />
+    <vertical />
     <block />
+    <shape />
     <disabled />
     <custom />
     <dynamic />
     <size />
-    <vertical />
-    <shape />
   </demo-sort>
 </template>
 

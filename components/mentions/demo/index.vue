@@ -1,13 +1,13 @@
 <template>
   <demo-sort>
     <basic />
+    <variant />
     <async />
+    <FormMentions />
     <prefix />
     <readonly />
     <placement />
-    <FormMentions />
     <statusVue />
-    <variant />
   </demo-sort>
 </template>
 <script>

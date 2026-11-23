@@ -2,8 +2,8 @@
 ---
 order: 0
 title:
-  zh-CN: 按钮类型
-  en-US: Type
+  zh-CN: 语法糖
+  en-US: Syntactic sugar
 ---
 
 ## zh-CN

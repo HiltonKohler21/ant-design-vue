@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 24
+order: 14
 title:
-  zh-CN: 最多显示多少个选项及选项最大长度
-  en-US: set maxTagCount or maxTagTextLength
+  zh-CN: 响应式 maxTagCount
+  en-US: Responsive maxTagCount
 ---
 
 ## zh-CN

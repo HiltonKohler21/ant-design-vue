@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 7
 title:
   zh-CN: 禁用
   en-US: Disabled

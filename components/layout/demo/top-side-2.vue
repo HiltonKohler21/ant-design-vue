@@ -1,9 +1,11 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 顶部-侧边布局-通栏
   en-US: Header Sider 2
+background: grey
+compact: true
 ---
 
 ## zh-CN

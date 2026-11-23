@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 4
 title:
   zh-CN: 全选
   en-US: Check all

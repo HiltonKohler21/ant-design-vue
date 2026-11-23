@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 18
 title:
   zh-CN: 内联登录栏
   en-US: Inline Login Form

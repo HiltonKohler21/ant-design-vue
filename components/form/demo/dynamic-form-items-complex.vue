@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4.2
+order: 6
 title:
   zh-CN: 复杂的动态增减表单项
   en-US: Complex Dynamic Form Item

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 5
 title:
   zh-CN: 简洁
   en-US: Simple mode

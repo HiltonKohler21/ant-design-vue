@@ -1,6 +1,6 @@
 ---
 category: Components
-type: Other
+type: Feedback
 title: Watermark
 cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*wr1ISY50SyYAAAAAAAAAAAAADrJ8AQ/original

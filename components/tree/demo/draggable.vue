@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 1
 title:
   zh-CN: 拖动示例
   en-US: draggable

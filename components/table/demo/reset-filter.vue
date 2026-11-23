@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 16
+order: 9
 title:
   zh-CN: 可控的筛选和排序
   en-US: Reset filters and sorters

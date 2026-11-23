@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 7
+order: 1
 title:
-  zh-CN: 平滑过渡（Tooltip.UniqueProvider）
-  en-US: Smooth Transition (Tooltip.UniqueProvider)
+  zh-CN: 平滑过渡
+  en-US: Smooth Transition
 ---
 
 ## zh-CN

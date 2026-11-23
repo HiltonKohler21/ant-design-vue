@@ -4,6 +4,8 @@ order: 1
 title:
   zh-CN: 上中下布局
   en-US: Header-Content-Footer
+background: grey
+compact: true
 ---
 
 ## zh-CN

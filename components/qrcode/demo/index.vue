@@ -3,13 +3,13 @@
     <Base />
     <Icon />
     <Status />
+    <CustomStatusRender />
     <CustomType />
     <CustomSize />
     <CustomColor />
     <Download />
     <ErrorLevel />
     <Popover />
-    <CustomStatusRender />
   </demo-sort>
 </template>
 

@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 13
+order: 10
 title:
   zh-CN: 带有进度的步骤
   en-US: Steps with progress
+debug: true
 ---
 
 ## zh-CN

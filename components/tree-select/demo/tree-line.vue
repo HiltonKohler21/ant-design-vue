@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 4
 title:
   zh-CN: 线性样式
   en-US: Show Tree Line

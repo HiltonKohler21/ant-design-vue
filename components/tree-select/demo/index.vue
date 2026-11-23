@@ -4,15 +4,15 @@
     <multiple />
     <!-- <tree-data /> -->
     <checkable />
-    <suffix />
     <async />
-    <Highlight />
     <treeLineVue />
+    <placementVue />
+    <statusVue />
+    <suffix />
+    <Highlight />
     <virtualScrollVue />
     <customTagRenderVue />
     <replaceFieldsVue />
-    <placementVue />
-    <statusVue />
   </demo-sort>
 </template>
 <script lang="ts">

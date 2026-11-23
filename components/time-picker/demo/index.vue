@@ -1,20 +1,20 @@
 <template>
   <demo-sort>
     <Basic />
-    <Variant />
+    <value />
+    <Size />
     <NeedConfirm />
-    <Bordered />
-    <RangePicker />
-    <Hours />
-    <Addon />
     <Disabled />
     <HideColumn />
     <IntervalOptions />
-    <Size />
-    <Suffix />
+    <Addon />
+    <Hours />
+    <RangePicker />
+    <Variant />
     <statusVue />
+    <Suffix />
+    <Bordered />
     <placementVue />
-    <value />
   </demo-sort>
 </template>
 

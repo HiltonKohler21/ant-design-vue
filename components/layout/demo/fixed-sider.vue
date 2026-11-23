@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   zh-CN: 固定侧边栏
   en-US: Fixed Sider

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 3
 title:
   zh-CN: 条件触发
   en-US: Conditional trigger

@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 6
+order: 1
 title:
-  zh-CN: 节点样式变体
+  zh-CN: 变体样式
   en-US: Variant
 ---
 

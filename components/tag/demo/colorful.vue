@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 1
 title:
   zh-CN: 多彩标签
   en-US: Colorful Tag

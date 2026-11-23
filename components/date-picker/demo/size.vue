@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 12
 title:
   zh-CN: 三种大小
   en-US: Three Sizes

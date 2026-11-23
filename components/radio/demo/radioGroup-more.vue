@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 4
+order: 3
 title:
-  zh-CN: RadioGroup 垂直
-  en-US: Vertical RadioGroup
+  zh-CN: Radio.Group 垂直
+  en-US: Vertical Radio.Group
 ---
 
 ## zh-CN

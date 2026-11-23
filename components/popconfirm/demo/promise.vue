@@ -1,10 +1,10 @@
 <docs>
 ---
-order: 7
+order: 5
 version: 3.0
 title:
-  zh-CN: 基于 Promise 的异步关闭 (3.0+)
-  en-US: Asynchronously close on Promise (3.0+)
+  zh-CN: 基于 Promise 的异步关闭
+  en-US: Asynchronously close on Promise
 ---
 
 ## zh-CN

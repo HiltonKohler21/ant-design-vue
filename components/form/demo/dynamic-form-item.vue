@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 动态增减表单项
   en-US: Dynamic Form Item

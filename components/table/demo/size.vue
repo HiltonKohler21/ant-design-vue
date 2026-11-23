@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 98
+order: 12
 title:
   en-US: size
   zh-CN: 紧凑型

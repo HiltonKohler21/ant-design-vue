@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 4
 title:
   zh-CN: 渲染文本
   en-US: Rendering Trigger Text

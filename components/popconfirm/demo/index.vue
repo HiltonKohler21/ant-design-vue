@@ -2,9 +2,9 @@
   <demo-sort>
     <basic />
     <local />
-    <icon />
     <placement />
     <dynamic-trigger />
+    <icon />
     <promiseVue />
   </demo-sort>
 </template>

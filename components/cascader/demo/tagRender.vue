@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 14
 title:
   zh-CN: 自定义 tag 内容
   en-US: Custom Tag Render

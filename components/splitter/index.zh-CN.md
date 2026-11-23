@@ -4,6 +4,7 @@ type: 布局
 title: Splitter
 subtitle: 分隔面板
 tag: 4.3.0
+cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*f0SISaETY0wAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*y92yRYhObU8AAAAAAAAAAAAADrJ8AQ/original
 ---

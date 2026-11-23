@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 6
 title:
   zh-CN: 变体
   en-US: Variant

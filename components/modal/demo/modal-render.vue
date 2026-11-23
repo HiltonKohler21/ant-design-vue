@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 9
 title:
   zh-CN: 自定义渲染对话框
   en-US: Custom modal content render

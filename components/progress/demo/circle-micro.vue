@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 3
 title:
   zh-CN: 响应式进度圈
   en-US: Responsive circular progress bar

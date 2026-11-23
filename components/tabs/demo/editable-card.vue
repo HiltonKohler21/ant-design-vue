@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 10
 title:
   zh-CN: 新增和关闭页签
   en-US: Add & close tab

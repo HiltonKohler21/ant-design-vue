@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 4
 title:
   zh-CN: 自定义触发字符
   en-US: Customize Trigger Token

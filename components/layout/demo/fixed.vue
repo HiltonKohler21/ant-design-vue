@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 7
 title:
   zh-CN: 固定头部
   en-US: Fixed Header

@@ -2,8 +2,8 @@
 ---
 order: 1
 title:
-  zh-CN: 横向 Anchor。
-  en-US: Horizontally aligned anchors
+  zh-CN: 横向 Anchor
+  en-US: Horizontal Anchor
 ---
 
 

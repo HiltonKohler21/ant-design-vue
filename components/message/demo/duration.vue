@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
   zh-CN: 修改延时
   en-US: Customize duration

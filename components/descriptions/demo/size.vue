@@ -3,7 +3,7 @@
 order: 2
 title:
   zh-CN: 自定义尺寸
-  en-US: Custom Size
+  en-US: Custom size
 ---
 
 ## zh-CN

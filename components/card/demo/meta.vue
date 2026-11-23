@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 9
 title:
   zh-CN: 支持更多内容配置
   en-US: Support more content configuration

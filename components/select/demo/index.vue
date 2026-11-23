@@ -1,26 +1,26 @@
 <template>
   <demo-sort>
     <Basic />
+    <Search />
+    <Multiple />
     <Size />
     <Tags />
-    <Responsive />
-    <AutomaticTokenization />
-    <LabelInValue />
-    <Multiple />
-    <Coordinate />
     <Optgroup />
-    <SearchBox />
-    <Search />
+    <Coordinate />
+    <LabelInValue />
+    <AutomaticTokenization />
     <SelectUsers />
     <Suffix />
-    <HideSelected />
     <CustomDropdownMenu />
-    <OptionLabelProp />
-    <BigData />
-    <fieldNamesVue />
-    <placementVue />
-    <statusVue />
+    <HideSelected />
     <Variant />
+    <Responsive />
+    <BigData />
+    <statusVue />
+    <placementVue />
+    <SearchBox />
+    <OptionLabelProp />
+    <fieldNamesVue />
   </demo-sort>
 </template>
 <script lang="ts">

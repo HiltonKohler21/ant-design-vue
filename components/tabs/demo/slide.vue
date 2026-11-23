@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 5
 title:
   zh-CN: 滑动
   en-US: Slide

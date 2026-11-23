@@ -4,12 +4,12 @@
     <NoWapper />
     <Overflow />
     <Dot />
-    <Status />
     <Change />
-    <Title />
+    <Link />
+    <Status />
     <Colors />
     <Ribbon />
-    <Link />
+    <Title />
   </demo-sort>
 </template>
 <script lang="ts">

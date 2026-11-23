@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 11
 title:
   en-US: Ajax
   zh-CN: 远程加载数据
@@ -80,7 +80,7 @@ type APIResult = {
 };
 
 const queryData = async (params: APIParams) => {
-  const res = await axios.get<APIResult>('https://randomuser.me/api?noinfo', { params })
+  const res = await axios.get<APIResult>('https://randomuser.me/api?noinfo', { params });
   return res.data.results;
 };
 

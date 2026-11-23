@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 8
 title:
   zh-CN: 圆圈颜色
   en-US: Color

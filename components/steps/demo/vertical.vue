@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 2
 title:
   zh-CN: 竖直方向的步骤条
   en-US: Vertical

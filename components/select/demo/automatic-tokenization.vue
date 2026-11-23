@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 8
 title:
   zh-CN: 自动分词
   en-US: Automatic tokenization

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 加载中
   en-US: Message with loading indicator

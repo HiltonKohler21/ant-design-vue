@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 3
+order: 2
 title:
   zh-CN: 横向滚动
-  en-US: Horizontal Scroll
+  en-US: Horizontal scrolling
 ---
 
 ## zh-CN

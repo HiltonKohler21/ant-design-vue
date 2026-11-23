@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 24
+order: 10
 title:
   zh-CN: 自定义选择标签
   en-US: Custom Tag Render

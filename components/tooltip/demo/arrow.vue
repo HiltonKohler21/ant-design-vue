@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 6
+order: 3
 title:
   zh-CN: 箭头展示
-  en-US: Arrow show
+  en-US: Arrow
 ---
 
 ## zh-CN

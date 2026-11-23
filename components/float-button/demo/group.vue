@@ -2,7 +2,7 @@
 ---
 order: 5
 title:
-  zh-CN: 浮动按钮组
+  zh-CN: 悬浮按钮组
   en-US: FloatButton Group
 ---
 

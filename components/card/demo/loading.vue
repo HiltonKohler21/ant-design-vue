@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 5
 title:
   zh-CN: 预加载的卡片
   en-US: Loading card

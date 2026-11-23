@@ -3,7 +3,7 @@
 order: 1
 title:
   zh-CN: 虚拟滚动
-  en-US: Virtual Scroll
+  en-US: Virtual scrolling
 ---
 
 ## zh-CN

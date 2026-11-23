@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 5
 title:
   zh-CN: 渲染在当前 DOM
   en-US: Render in current dom

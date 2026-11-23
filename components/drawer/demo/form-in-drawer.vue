@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 6
 title:
   zh-CN: 抽屉表单
   en-US: Submit form in drawer

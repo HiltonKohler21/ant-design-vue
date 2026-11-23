@@ -1,9 +1,9 @@
 <template>
-  <demo-sort :cols="1">
+  <demo-sort>
     <Basic />
     <Position />
-    <Fade />
     <Autoplay />
+    <Fade />
     <DotDuration />
     <CustomPaging />
     <CustomArrows />

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 11
 title:
   zh-CN: 信息提示
   en-US: Information modal dialog

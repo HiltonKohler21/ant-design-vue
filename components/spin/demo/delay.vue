@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 4
 title:
   zh-CN: 延迟
   en-US: delay

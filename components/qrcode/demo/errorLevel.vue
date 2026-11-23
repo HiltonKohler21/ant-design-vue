@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   zh-CN: 纠错比例
   en-US: Error Level

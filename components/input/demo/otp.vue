@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 21
+order: 8
 title:
   zh-CN: 一次性密码框
   en-US: OTP

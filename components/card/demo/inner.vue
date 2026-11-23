@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 7
 title:
   zh-CN: 内部卡片
   en-US: Inner card

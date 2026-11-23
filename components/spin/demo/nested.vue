@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 2
 title:
   zh-CN: 卡片加载中
   en-US: Embedded mode

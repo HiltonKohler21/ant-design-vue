@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 5
 title:
   zh-CN: 分隔符
   en-US: Split

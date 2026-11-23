@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 小型进度圈
   en-US: Mini size circular progress bar

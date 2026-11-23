@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 15
+order: 13
 title:
-  zh-CN: 级联面板
+  zh-CN: 面板使用
   en-US: Panel
 ---
 

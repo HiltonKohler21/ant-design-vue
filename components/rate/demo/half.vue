@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
   zh-CN: 半星
   en-US: Half star

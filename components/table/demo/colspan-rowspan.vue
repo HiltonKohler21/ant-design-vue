@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 16
 title:
   en-US: ColSpan and rowSpan
   zh-CN: 表格行/列合并

@@ -1,17 +1,17 @@
 <template>
   <demo-sort>
     <Basic />
-    <Checkable />
-    <CheckableGroup />
     <Colorful />
-    <Variant />
     <Control />
-    <HotTags />
+    <Checkable />
+    <Animation />
     <Icon />
     <Status />
-    <BorderLess />
-    <Animation />
     <Draggable />
+    <CheckableGroup />
+    <Variant />
+    <HotTags />
+    <BorderLess />
   </demo-sort>
 </template>
 

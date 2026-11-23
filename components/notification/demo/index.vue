@@ -1,16 +1,16 @@
 <template>
   <demo-sort>
     <hook />
-    <basic />
     <duratioin />
     <with-icon />
-    <custom-icon />
     <with-btn />
-    <custom-style />
+    <custom-icon />
     <placement />
     <update />
-    <show-with-progress />
     <stack />
+    <show-with-progress />
+    <basic />
+    <custom-style />
   </demo-sort>
 </template>
 <script lang="ts">

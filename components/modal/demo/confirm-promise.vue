@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 14
 title:
   zh-CN: 确认对话框(promise)
   en-US: Confirmation modal dialog use promise

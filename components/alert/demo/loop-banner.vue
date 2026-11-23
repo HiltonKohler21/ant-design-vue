@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 7
 title:
   zh-CN: 轮播的公告
   en-US: Loop Banner

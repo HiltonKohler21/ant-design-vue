@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 更灵活的内容展示
   en-US: Customized content

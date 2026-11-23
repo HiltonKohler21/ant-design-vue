@@ -1,10 +1,10 @@
 <template>
   <demo-sort>
     <basic />
-    <check-all />
-    <controller />
     <disabled />
+    <controller />
     <group />
+    <check-all />
     <layout />
   </demo-sort>
 </template>

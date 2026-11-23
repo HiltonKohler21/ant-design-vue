@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5.1
+order: 5
 version: 3.0.0
 title:
   zh-CN: 多选

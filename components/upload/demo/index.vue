@@ -6,15 +6,15 @@
     <PictureCard />
     <FileList />
     <Drag />
-    <PictureStyle />
-    <UploadManually />
     <Directory />
-    <PreviewFile />
-    <TransformFile />
-    <customizeProgressBarVue />
-    <maxCountVue />
-    <uploadCustomActionIconVue />
+    <UploadManually />
     <uploadPngOnlyVue />
+    <PictureStyle />
+    <PreviewFile />
+    <maxCountVue />
+    <TransformFile />
+    <uploadCustomActionIconVue />
+    <customizeProgressBarVue />
     <customRenderVue />
   </demo-sort>
 </template>

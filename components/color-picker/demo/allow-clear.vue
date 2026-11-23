@@ -3,7 +3,7 @@
 order: 6
 title:
   zh-CN: 清除颜色
-  en-US: Allow Clear
+  en-US: Clear Color
 ---
 
 ## zh-CN

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 2
 title:
   zh-CN: 自动切换
   en-US: Scroll automatically

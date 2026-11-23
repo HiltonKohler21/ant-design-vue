@@ -3,7 +3,7 @@
 order: 7
 title:
   zh-CN: 控制 ToolTip 的显示
-  en-US: Control visible of ToolTip
+  en-US: Control visibility of Tooltip
 ---
 
 ## zh-CN

@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 0
+order: 4
 title:
   zh-CN: 自动换行
-  en-US: Basic Usage
+  en-US: Wrap
 ---
 
 ## zh-CN

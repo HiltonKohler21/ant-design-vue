@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 8
 title:
   zh-CN: 虚拟滚动
   en-US: Virtual scroll

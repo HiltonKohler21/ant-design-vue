@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 8
+order: 7
 title:
-  zh-CN: 自定义语义化结构的样式和类
+  zh-CN: 自定义语义结构的样式和类
   en-US: Custom semantic dom styling
 ---
 

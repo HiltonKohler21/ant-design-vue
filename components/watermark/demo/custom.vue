@@ -3,7 +3,7 @@
 order: 0
 title:
   zh-CN: 自定义配置
-  en-US: Custom
+  en-US: Custom configuration
 ---
 
 ## zh-CN

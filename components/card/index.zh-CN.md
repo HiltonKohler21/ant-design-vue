@@ -3,6 +3,7 @@ category: Components
 type: 数据展示
 title: Card
 subtitle: 卡片
+cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*VXtCTp93KPAAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a-8zR6rrupgAAAAAAAAAAAAADrJ8AQ/original
 ---

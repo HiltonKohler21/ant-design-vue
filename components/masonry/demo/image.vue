@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 3
+order: 2
 title:
-  zh-CN: 图片瀑布流
-  en-US: Image Wall
+  zh-CN: 图片
+  en-US: Image
 ---
 
 ## zh-CN

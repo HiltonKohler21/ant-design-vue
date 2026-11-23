@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 0
 title:
   zh-CN: 国际化
   en-US: Locale

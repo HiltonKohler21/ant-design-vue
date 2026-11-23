@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 32
+order: 21
 title:
-  zh-CN: 动态隐藏列
+  zh-CN: 隐藏列
   en-US: Hidden Columns
 ---
 

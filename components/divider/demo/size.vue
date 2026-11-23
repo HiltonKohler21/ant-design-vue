@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 6
+order: 2
 title:
   zh-CN: 设置分割线的间距大小
-  en-US: Size
+  en-US: Set the spacing size of the divider
 ---
 
 ## zh-CN

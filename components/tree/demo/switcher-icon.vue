@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 7
 title:
   zh-CN: 自定义展开/折叠图标
   en-US: Customize collapse/expand icon

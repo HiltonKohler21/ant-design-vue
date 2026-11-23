@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 3
 title:
   zh-CN: 自定义按钮
   en-US: Custom close button

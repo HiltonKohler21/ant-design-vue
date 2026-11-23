@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 10
 title:
   en-US: Customized filter panel
   zh-CN: 自定义筛选菜单

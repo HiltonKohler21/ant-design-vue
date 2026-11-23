@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 10
 title:
   zh-CN: 自定义样式
   en-US: Customized style

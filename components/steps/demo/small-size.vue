@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 12
 title:
   zh-CN: 迷你版
   en-US: Mini version

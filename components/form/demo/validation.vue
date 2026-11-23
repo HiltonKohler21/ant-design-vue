@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 20
 title:
   zh-CN: 表单验证
   en-US: Validation

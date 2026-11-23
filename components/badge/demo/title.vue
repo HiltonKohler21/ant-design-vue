@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 6
+order: 9
 title:
   zh-CN: 自定义标题
   en-US: Title
+debug: true
 ---
 
 ## zh-CN

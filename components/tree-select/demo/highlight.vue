@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 8
 title:
   zh-CN: 高亮
   en-US: Highlight

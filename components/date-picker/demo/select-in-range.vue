@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 5
+order: 9
 title:
-  zh-CN: 选择不超过七天的范围
-  en-US: Select range dates in 7 days
+  zh-CN: 选择不超过一定的范围
+  en-US: Select range dates
 ---
 
 ## zh-CN

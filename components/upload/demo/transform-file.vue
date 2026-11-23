@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 12
 title:
   zh-CN: 上传前转换文件
   en-US: Transform file before request

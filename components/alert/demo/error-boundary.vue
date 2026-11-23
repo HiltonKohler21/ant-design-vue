@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 8.5
+order: 9
 title:
-  zh-CN: React/Vue 错误边界
-  en-US: ErrorBoundary
+  zh-CN: Vue 错误处理
+  en-US: Vue Error Boundary
 ---
 
 ## zh-CN

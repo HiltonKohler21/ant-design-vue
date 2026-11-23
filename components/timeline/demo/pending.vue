@@ -2,8 +2,8 @@
 ---
 order: 2
 title:
-  zh-CN: 最后一个及排序
-  en-US: Last node
+  zh-CN: 等待及排序
+  en-US: Loading and Reversing
 ---
 
 ## zh-CN

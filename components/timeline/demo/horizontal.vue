@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 7
+order: 4
 title:
-  zh-CN: 水平时间轴
+  zh-CN: 水平布局
   en-US: Horizontal
 ---
 

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 17
 title:
   en-US: Tree data
   zh-CN: 树形数据展示

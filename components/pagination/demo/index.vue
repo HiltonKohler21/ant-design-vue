@@ -3,12 +3,12 @@
     <Basic />
     <More />
     <Changer />
-    <CustomChanger />
     <Jump />
     <Mini />
     <Simple />
     <Total />
     <ItemRender />
+    <CustomChanger />
   </demo-sort>
 </template>
 <script lang="ts">

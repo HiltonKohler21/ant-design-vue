@@ -1,7 +1,7 @@
 <template>
-  <demo-sort>
-    <basic />
+  <demo-sort :cols="1">
     <simple />
+    <basic />
     <loadmore />
     <vertical />
     <grid />

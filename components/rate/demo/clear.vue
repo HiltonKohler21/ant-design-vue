@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 5
 title:
   zh-CN: 清除
   en-US: Clear star

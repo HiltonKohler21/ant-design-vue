@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 8
 title:
   zh-CN: 12 小时制
   en-US: 12 hours

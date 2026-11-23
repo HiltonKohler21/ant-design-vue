@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 8
 title:
   zh-CN: 不可选择日期和时间
   en-US: Disabled Date & Time

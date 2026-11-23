@@ -3,10 +3,9 @@
     <line-demo />
     <circle-demo />
     <line-mini />
-    <circle-mini />
     <circle-micro />
+    <circle-mini />
     <dynamic />
-    <circle-dynamic />
     <format />
     <dashboard />
     <segment />
@@ -15,6 +14,7 @@
     <steps />
     <Size />
     <info-position />
+    <circle-dynamic />
   </demo-sort>
 </template>
 <script lang="ts">

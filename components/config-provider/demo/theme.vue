@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 3
 version: 3.0
 title:
   zh-CN: 主题

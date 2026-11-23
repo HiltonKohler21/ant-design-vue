@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 11
 title:
   zh-CN: 自定义字段
   en-US: ReplaceFields

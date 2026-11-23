@@ -2,7 +2,7 @@
 category: Components
 type: 数据展示
 title: Carousel
-cols: 1
+cols: 2
 subtitle: 走马灯
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*bPMSSqbaTMkAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a-58QpYnqOsAAAAAAAAAAAAADrJ8AQ/original

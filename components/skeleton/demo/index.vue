@@ -1,11 +1,11 @@
 <template>
-  <demo-sort>
+  <demo-sort :cols="1">
     <basic />
     <complex />
     <active />
+    <elementVue />
     <children />
     <list />
-    <elementVue />
   </demo-sort>
 </template>
 <script lang="ts">

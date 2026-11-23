@@ -2,14 +2,14 @@
   <demo-sort>
     <basic />
     <disabled />
-    <radio-button />
-    <radio-button-solid />
-    <radio-group-more />
-    <radio-group-options />
-    <radio-group-with-name />
     <radio-group />
+    <radio-group-more />
     <radio-group-block />
+    <radio-group-options />
+    <radio-button />
+    <radio-group-with-name />
     <size />
+    <radio-button-solid />
   </demo-sort>
 </template>
 

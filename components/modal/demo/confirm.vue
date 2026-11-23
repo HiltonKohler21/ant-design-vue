@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 3
+order: 12
 title:
-  zh-CN: 确认对话框
-  en-US: Confirmation modal dialog
+  zh-CN: 静态确认对话框
+  en-US: Static confirmation
 ---
 
 ## zh-CN

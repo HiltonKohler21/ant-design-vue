@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 15
 title:
   zh-CN: 全屏
   en-US: full screen

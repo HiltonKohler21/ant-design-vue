@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 2
 title:
   zh-CN: 多选
   en-US: Multiple selection

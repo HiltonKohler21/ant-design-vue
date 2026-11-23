@@ -2,8 +2,8 @@
 ---
 order: 9
 title:
-  zh-CN: 圆角/方角边缘
-  en-US: Square linecaps
+  zh-CN: 边缘形状
+  en-US: Stroke Linecap
 ---
 
 ## zh-CN

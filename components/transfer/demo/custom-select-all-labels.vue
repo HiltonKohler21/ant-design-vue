@@ -4,6 +4,7 @@ order: 4
 title:
   zh-CN: 自定义全选文字
   en-US: Custom Select All Labels
+debug: true
 ---
 
 

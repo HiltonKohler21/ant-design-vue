@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 17
 title:
   zh-CN: 固定 Label 宽度
   en-US: Fixed lable width

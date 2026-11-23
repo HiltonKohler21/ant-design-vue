@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 渐显
   en-US: Fade in

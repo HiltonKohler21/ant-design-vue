@@ -3,7 +3,7 @@
 order: 4
 title:
   zh-CN: 自定义指示器
-  en-US: custom indicator
+  en-US: Custom indicator
 ---
 
 ## zh-CN

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 4
 title:
   zh-CN: 带图标的步骤条
   en-US: With icon

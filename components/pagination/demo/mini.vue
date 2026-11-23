@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 5
+order: 4
 title:
-  zh-CN: 迷你
-  en-US: Mini size
+  zh-CN: 尺寸
+  en-US: Size
 ---
 
 ## zh-CN

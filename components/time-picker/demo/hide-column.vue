@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 5
 title:
   zh-CN: 选择时分
   en-US: Hour and minute

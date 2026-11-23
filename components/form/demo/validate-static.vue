@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 20
+order: 14
 title:
   zh-CN: 自定义校验
   en-US: Customized Validation

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 6
 title:
   zh-CN: 文件夹上传
   en-US: Upload directory

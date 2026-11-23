@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 1.5
+order: 2
 title:
-  zh-CN: 填充风格
+  zh-CN: 无边框
   en-US: Filled
 ---
 

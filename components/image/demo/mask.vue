@@ -2,7 +2,7 @@
 ---
 order: 9
 title:
-  zh-CN: 预览遮罩效果
+  zh-CN: 预览遮罩
   en-US: Preview mask
 ---
 

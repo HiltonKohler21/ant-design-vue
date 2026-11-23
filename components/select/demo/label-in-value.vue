@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 7
 title:
   zh-CN: 获得选项的文本
   en-US: Get value of selected item

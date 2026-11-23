@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 29
+order: 13
 title:
-  zh-CN: 形态变体与前缀
-  en-US: Variants & Prefix
+  zh-CN: 形态变体
+  en-US: Variants
 ---
 
 ## zh-CN

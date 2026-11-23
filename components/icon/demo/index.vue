@@ -1,6 +1,6 @@
 <template>
   <icon-display />
-  <demo-sort>
+  <demo-sort :cols="1">
     <basic />
     <twotone />
     <custom />

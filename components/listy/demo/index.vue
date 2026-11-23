@@ -2,8 +2,8 @@
   <demo-sort :cols="1">
     <basic />
     <virtual />
-    <group />
     <horizontal />
+    <group />
     <rich />
     <infinite />
     <style-class />

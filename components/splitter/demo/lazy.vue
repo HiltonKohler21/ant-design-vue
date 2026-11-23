@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 5
 title:
   zh-CN: 延迟渲染模式
   en-US: Lazy

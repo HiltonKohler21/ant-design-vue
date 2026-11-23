@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 1
 debugger: true
 title:
   zh-CN: 受控组件

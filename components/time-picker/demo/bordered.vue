@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 14
+order: 13
 title:
   zh-CN: 无边框
   en-US: Bordered-less

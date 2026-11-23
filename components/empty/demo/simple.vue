@@ -3,7 +3,7 @@
 order: 2
 title:
   zh-CN: 选择图片
-  en-US: Chose image
+  en-US: Choose image
 ---
 
 ## zh-CN

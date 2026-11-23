@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 11
+order: 12
 title:
-  zh-CN: 进度条尺寸
-  en-US: Progress bar size
+  zh-CN: 尺寸
+  en-US: Progress size
 ---
 
 ## zh-CN

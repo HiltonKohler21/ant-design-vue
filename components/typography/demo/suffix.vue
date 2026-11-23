@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 100
+order: 4
 title:
   zh-CN: 后缀
   en-US: suffix

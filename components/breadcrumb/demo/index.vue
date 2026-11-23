@@ -1,11 +1,11 @@
 <template>
   <demo-sort>
     <basic />
-    <overlay />
-    <router />
-    <separator />
-    <separator-indepent />
     <with-icon />
+    <separator />
+    <overlay />
+    <separator-indepent />
+    <router />
   </demo-sort>
 </template>
 

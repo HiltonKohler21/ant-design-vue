@@ -1,18 +1,18 @@
 <template>
   <demo-sort>
     <basic />
-    <addonVue />
     <size />
+    <addonVue />
     <disabled />
     <digit />
     <formatter />
     <keyboardVue />
+    <changeOnWheelVue />
     <outOfRangeVue />
+    <presuffixVue />
+    <statusVue />
     <borderlessVue />
     <prefixVue />
-    <presuffixVue />
-    <changeOnWheelVue />
-    <statusVue />
     <iconVue />
   </demo-sort>
 </template>

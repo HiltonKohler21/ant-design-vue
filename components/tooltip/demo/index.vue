@@ -1,12 +1,12 @@
 <template>
   <demo-sort>
     <basic />
+    <SmoothTransition />
     <placement />
-    <arrow-point-at-center />
+    <Arrow />
     <auto-adjust-overflow />
     <color />
-    <Arrow />
-    <SmoothTransition />
+    <arrow-point-at-center />
   </demo-sort>
 </template>
 <script lang="ts">

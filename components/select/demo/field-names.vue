@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 20
 title:
   zh-CN: 自定义 label、value、options 字段
   en-US: Custom `label` `value` `options` field

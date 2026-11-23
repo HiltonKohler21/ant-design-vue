@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 6
 title:
   zh-CN: 按钮样式
   en-US: radio style

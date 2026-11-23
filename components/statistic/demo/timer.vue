@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 3
 title:
   zh-CN: 计时器
   en-US: Timer

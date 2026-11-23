@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 9
 title:
   zh-CN: 范围选择器
   en-US: Time Range Picker

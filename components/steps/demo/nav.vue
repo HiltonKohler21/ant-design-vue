@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 9
 title:
   zh-CN: 导航步骤
   en-US: Navigation Steps

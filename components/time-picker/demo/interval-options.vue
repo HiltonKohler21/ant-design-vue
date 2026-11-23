@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 6
 title:
   zh-CN: 步长选项
   en-US: Interval option

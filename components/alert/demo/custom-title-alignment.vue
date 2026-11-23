@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 10
+order: 12
 title:
   zh-CN: 自定义标题对齐
-  en-US: Custom Title Alignment
+  en-US: Custom title alignment
 ---
 
 ## zh-CN

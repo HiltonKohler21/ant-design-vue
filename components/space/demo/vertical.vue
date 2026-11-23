@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 1
 title:
   zh-CN: 垂直间距
   en-US: Vertical Space

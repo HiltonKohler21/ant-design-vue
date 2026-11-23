@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 33
 title:
   en-US: Virtualized Table
   zh-CN: 大数据渲染

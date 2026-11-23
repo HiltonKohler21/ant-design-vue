@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 11
+order: 19
 title:
   zh-CN: 登录框
   en-US: Login Form

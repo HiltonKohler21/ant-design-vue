@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 28
+order: 26
 title:
   en-US: ellipsis column
   zh-CN: 单元格自动省略

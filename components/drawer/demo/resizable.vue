@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 9
+order: 2
 title:
-  zh-CN: 可拖拽调整大小
+  zh-CN: 可调整大小
   en-US: Resizable
 ---
 

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 11
 title:
   zh-CN: 无边框
   en-US: Borderless

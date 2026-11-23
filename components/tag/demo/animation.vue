@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 4
 title:
   zh-CN: 添加动画
   en-US: Animate

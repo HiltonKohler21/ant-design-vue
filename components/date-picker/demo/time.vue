@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 6
 title:
   zh-CN: 日期时间选择
   en-US: Choose Time

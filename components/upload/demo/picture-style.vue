@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 9
 title:
   zh-CN: 图片列表样式
   en-US: Pictures with list style

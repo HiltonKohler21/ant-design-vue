@@ -1,15 +1,15 @@
 <template>
   <demo-sort :cols="1">
     <Base />
-    <Customize />
-    <Size />
     <Vertical />
+    <Size />
     <Align />
     <Wrap />
     <Split />
     <Compact />
     <CompactButtons />
     <CompactButtonVertical />
+    <Customize />
     <Addon />
   </demo-sort>
 </template>

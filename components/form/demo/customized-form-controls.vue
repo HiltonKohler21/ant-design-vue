@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6.1
+order: 8
 title:
   zh-CN: 自定义表单控件
   en-US: Customized Form Controls

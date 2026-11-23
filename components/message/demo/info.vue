@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 0
+order: 6
 title:
-  zh-CN: 普通提示
-  en-US: Normal prompt
+  zh-CN: 静态方法（不推荐）
+  en-US: Static method (deprecated)
 ---
 
 ## zh-CN

@@ -1,6 +1,6 @@
 ---
 category: Components
-cols: 1
+cols: 2
 type: Other
 title: App
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HJz8SZos2wgAAAAAAAAAAAAADrJ8AQ/original

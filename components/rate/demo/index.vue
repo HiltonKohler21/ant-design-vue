@@ -1,12 +1,12 @@
 <template>
   <demo-sort>
     <basic />
+    <size />
     <half />
     <Text />
     <disabled />
     <clear />
     <character />
-    <size />
   </demo-sort>
 </template>
 

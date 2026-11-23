@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 3
 title:
   zh-CN: 自定义状态渲染器
   en-US: Custom Status Render

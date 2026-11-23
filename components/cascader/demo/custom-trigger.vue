@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 1
 title:
   zh-CN: 可以自定义显示
   en-US: Custom trigger

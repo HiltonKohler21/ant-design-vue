@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 25
 title:
   zh-CN: useForm 合并错误信息
   en-US: useForm merge status info

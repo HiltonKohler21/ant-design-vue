@@ -1,8 +1,8 @@
 <template>
   <demo-sort :cols="1">
     <Locale />
-    <Size />
     <Direction />
+    <Size />
     <Theme />
     <ComponentConfig />
   </demo-sort>

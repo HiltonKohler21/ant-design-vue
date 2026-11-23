@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 8
+order: 3
 title:
   zh-CN: 前置/后置标签
   en-US: Pre / Post tab
+debug: true
 ---
 
 ## zh-CN

@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
-  zh-CN: Block分段控制器
+  zh-CN: Block 分段选择器
   en-US: Block Segmented
 ---
 

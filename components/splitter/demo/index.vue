@@ -1,13 +1,13 @@
 <template>
-  <demo-sort>
+  <demo-sort :cols="1">
     <basic />
-    <vertical />
-    <multiple />
-    <collapsible />
-    <nested />
     <control />
+    <vertical />
+    <collapsible />
+    <multiple />
     <lazy />
     <reset />
+    <nested />
   </demo-sort>
 </template>
 

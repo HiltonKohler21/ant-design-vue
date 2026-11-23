@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 2
 title:
   zh-CN: 表单禁用
   en-US: Form disabled

@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 3
+order: 5
 title:
   zh-CN: 样式自定义
   en-US: Style Customization
+debug: true
 ---
 
 ## zh-CN

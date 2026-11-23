@@ -1,14 +1,14 @@
 <template>
   <demo-sort>
     <basic />
-    <color />
+    <variant-demo />
     <pending />
-    <custom />
     <alternate />
+    <horizontal-demo />
+    <custom />
     <right />
     <label-demo />
-    <variant-demo />
-    <horizontal-demo />
+    <color />
   </demo-sort>
 </template>
 <script lang="ts">

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 15
+order: 14
 title:
   zh-CN: 自定义进度条样式
   en-US: Customize Progress Bar

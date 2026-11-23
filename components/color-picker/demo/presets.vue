@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 4
+order: 9
 title:
   zh-CN: 预设颜色
-  en-US: Presets
+  en-US: Preset Colors
 ---
 
 ## zh-CN
@@ -16,11 +16,7 @@ Preset colors for color picker via `presets` property.
 
 </docs>
 <template>
-  <a-color-picker
-    defaultValue="#1677ff"
-    :presets="presets"
-    showText
-  />
+  <a-color-picker defaultValue="#1677ff" :presets="presets" showText />
 </template>
 <script lang="ts" setup>
 const presets = [

@@ -3,14 +3,14 @@
     <basic />
     <draggable />
     <dynamic />
-    <custom-icon />
     <search />
     <show-line />
+    <custom-icon />
     <directory />
     <switcher-icon />
+    <virtual-scroll />
     <replace-fields />
     <context-menu />
-    <virtual-scroll />
     <accordion />
   </demo-sort>
 </template>

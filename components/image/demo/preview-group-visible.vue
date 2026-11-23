@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 4
 title:
   zh-CN: 相册模式
   en-US: Preview from one image

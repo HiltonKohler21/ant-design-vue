@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 3
+order: 11
 title:
-  zh-CN: 内联步骤条
+  zh-CN: 内联步骤
   en-US: Inline Steps
 ---
 

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 31
 title:
   en-US: Resizable column
   zh-CN: 可伸缩列

@@ -1,8 +1,8 @@
 <template>
   <demo-sort :cols="1">
     <Basic />
-    <Card />
     <NoticeCalendar />
+    <Card />
     <Select />
     <CustomizeHeader />
   </demo-sort>

@@ -1,16 +1,16 @@
 <template>
-  <demo-sort>
+  <demo-sort :cols="1">
     <Basic />
     <BorderLess />
-    <Variant />
-    <FlexibleContent />
-    <GridCard />
-    <InColumn />
-    <Inner />
-    <Loading />
-    <Meta />
     <Simple />
+    <FlexibleContent />
+    <InColumn />
+    <Loading />
+    <GridCard />
+    <Inner />
     <Tabs />
+    <Meta />
+    <Variant />
   </demo-sort>
 </template>
 

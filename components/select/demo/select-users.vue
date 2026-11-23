@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 9
 title:
   zh-CN: 搜索用户
   en-US: Search and Select Users

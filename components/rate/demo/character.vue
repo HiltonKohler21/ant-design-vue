@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 6
 title:
   zh-CN: 其他字符
   en-US: Other Character

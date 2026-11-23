@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 4
 title:
   zh-CN: 使用useModal获取上下文
   en-US: Use useModal to get context

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 18
 title:
   zh-CN: 搜索框
   en-US: Search Box

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6.1
+order: 6
 version: 3.0
 title:
   en-US: Filter in Tree

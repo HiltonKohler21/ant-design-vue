@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 6
 title:
   zh-CN: 标签放置位置
   en-US: Label Placement

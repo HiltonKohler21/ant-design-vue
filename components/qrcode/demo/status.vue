@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 2
 title:
   zh-CN: 不同的状态
   en-US: other status

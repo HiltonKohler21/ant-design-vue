@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 10
 title:
   zh-CN: 自定义预览
   en-US: Customize preview file

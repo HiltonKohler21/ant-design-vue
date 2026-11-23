@@ -4,6 +4,7 @@ order: 1
 title:
   zh-CN: 无边框
   en-US: No border
+background: grey
 ---
 
 ## zh-CN

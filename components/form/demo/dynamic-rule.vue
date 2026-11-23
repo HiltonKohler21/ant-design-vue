@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 23
+order: 15
 title:
   zh-CN: 动态校验规则
   en-US: Dynamic Rules

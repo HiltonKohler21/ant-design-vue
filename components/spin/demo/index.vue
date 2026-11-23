@@ -2,13 +2,13 @@
   <demo-sort>
     <basic />
     <size />
-    <inside />
     <nested />
     <tip />
     <delay />
     <custom-indicator />
     <percent />
     <fullscreen />
+    <inside />
   </demo-sort>
 </template>
 <script lang="ts">

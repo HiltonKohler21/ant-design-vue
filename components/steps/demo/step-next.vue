@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 3
+order: 5
 title:
   zh-CN: 步骤切换
   en-US: Switch Step
+debug: true
 ---
 
 ## zh-CN

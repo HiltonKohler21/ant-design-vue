@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 4
 title:
   zh-CN: 选择即改变
   en-US: Change on select

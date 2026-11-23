@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 5
+order: 1
 title:
-  zh-CN: 触发器尺寸
-  en-US: Sizes
+  zh-CN: 触发器尺寸大小
+  en-US: Trigger size
 ---
 
 ## zh-CN

@@ -3,7 +3,7 @@
 order: 5
 title: 
   zh-CN: 垂直带边框的
-  en-US: Vertical Border
+  en-US: Vertical border
 ---
 
 ## zh-CN

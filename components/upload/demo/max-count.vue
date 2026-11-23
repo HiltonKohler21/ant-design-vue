@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 11
 title:
   zh-CN: 限制数量
   en-US: Max Count

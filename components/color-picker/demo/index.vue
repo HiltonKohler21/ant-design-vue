@@ -1,15 +1,15 @@
 <template>
   <demo-sort>
     <basic />
-    <controlled />
-    <show-text />
-    <gradient />
-    <presets />
     <size />
-    <allow-clear />
+    <controlled />
+    <gradient />
+    <show-text />
     <disabled />
-    <format />
+    <allow-clear />
     <trigger />
+    <format />
+    <presets />
     <panel-render />
   </demo-sort>
 </template>

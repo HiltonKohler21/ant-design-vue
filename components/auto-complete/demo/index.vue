@@ -7,8 +7,8 @@
     <certain-category />
     <uncertain-category />
     <statusVue />
-    <border-less />
     <allow-clear />
+    <border-less />
   </demo-sort>
 </template>
 

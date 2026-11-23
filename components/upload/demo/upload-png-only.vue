@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7.1
+order: 8
 title:
   zh-CN: 只上传 png 图片
   en-US: Upload png file only

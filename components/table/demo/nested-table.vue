@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 15
+order: 25
 title:
   zh-CN: 嵌套子表格
   en-US: Nested tables

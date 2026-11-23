@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 9
 title:
   zh-CN: 多表单联动
   en-US: Control between forms

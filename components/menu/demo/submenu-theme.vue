@@ -3,7 +3,7 @@
 order: 2
 title:
   zh-CN: 子菜单主题
-  en-US: SubMenu theme
+  en-US: Sub-menu theme
 ---
 
 ## zh-CN

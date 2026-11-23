@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 13
 title:
   zh-CN: 竖直方向的小型步骤条
   en-US: Vertical mini version

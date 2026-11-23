@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 7
+order: 6
 title:
-  zh-CN: 双击重置尺寸
-  en-US: Double-click to Reset
+  zh-CN: 双击重置
+  en-US: Double-clicked reset
 ---
 
 ## zh-CN

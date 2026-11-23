@@ -1,8 +1,8 @@
 <docs>
 ---
-order: 16
+order: 12
 title:
-  zh-CN: 多种形态
+  zh-CN: 形态变体
   en-US: Variants
 ---
 

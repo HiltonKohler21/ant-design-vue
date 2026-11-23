@@ -1,9 +1,9 @@
 <docs>
 ---
-order: 7
+order: 5
 title:
-  zh-CN: 禁用与透明度
-  en-US: Disabled & Alpha
+  zh-CN: 禁用
+  en-US: Disable
 ---
 
 ## zh-CN

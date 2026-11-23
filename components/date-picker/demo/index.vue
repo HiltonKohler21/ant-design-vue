@@ -2,10 +2,9 @@
   <demo-sort>
     <Basic />
     <RangePicker />
-    <Variant />
     <Multiple />
     <NeedConfirm />
-    <Bordered />
+    <Switchable />
     <Format />
     <Time />
     <Disabled />
@@ -15,12 +14,13 @@
     <ExtraFooter />
     <Size />
     <DateRender />
-    <Mode />
-    <Switchable />
-    <Suffix />
     <statusVue />
+    <Variant />
     <placementVue />
+    <Mode />
     <start-end />
+    <Suffix />
+    <Bordered />
     <text-demo />
   </demo-sort>
 </template>

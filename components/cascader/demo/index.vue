@@ -5,16 +5,16 @@
     <hover />
     <disabled-option />
     <change-on-select />
+    <multipleVue />
     <size />
     <custom-render />
     <search />
     <lazy />
     <fields-name />
     <suffix />
-    <multipleVue />
-    <tagRender />
-    <panelVue />
     <variantVue />
+    <panelVue />
+    <tagRender />
   </demo-sort>
 </template>
 <script>

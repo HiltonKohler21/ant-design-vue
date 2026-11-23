@@ -1,9 +1,10 @@
 <docs>
 ---
-order: 4
+order: 3
 title:
-  zh-CN: 箭头指向
-  en-US: Arrow pointing
+  zh-CN: Arrow.pointAtCenter
+  en-US: Arrow.pointAtCenter
+debug: true
 ---
 
 ## zh-CN

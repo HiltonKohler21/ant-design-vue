@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 从浮层内关闭
   en-US: Controlling the close of the dialog

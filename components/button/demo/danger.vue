@@ -3,7 +3,7 @@
 order: 9
 title:
   zh-CN: 危险按钮
-  en-US: Danger Button
+  en-US: Danger Buttons
 ---
 
 ## zh-CN

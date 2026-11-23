@@ -4,6 +4,7 @@
     <Disabled />
     <Centered />
     <Icon />
+    <CustomIndicator />
     <Slide />
     <Extra />
     <Size />
@@ -14,7 +15,6 @@
     <CustomAddTrigger />
     <CustomTabBar />
     <Items />
-    <CustomIndicator />
   </demo-sort>
 </template>
 

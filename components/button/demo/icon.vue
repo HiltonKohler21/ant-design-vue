@@ -2,7 +2,7 @@
 ---
 order: 1
 title:
-  zh-CN: 图标按钮
+  zh-CN: 按钮图标
   en-US: Icon
 ---
 

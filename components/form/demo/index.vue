@@ -1,27 +1,27 @@
 <template>
   <demo-sort :cols="1">
     <Basic />
+    <Layout />
+    <Disabled />
+    <Variant />
+    <DynamicFormItem />
+    <dynamicFormItemsVue />
+    <dynamicFormItemsComplexVue />
+    <NestedForm />
+    <CustomizedFormControls />
+    <formContextVue />
+    <inlineLoginVue />
+    <advancedSearchVue />
+    <formInModalVue />
+    <timeRelatedControlsVue />
+    <validateStaticVue />
+    <dynamicRuleVue />
+    <validateOtherVue />
     <LabelWidth />
     <HorizontalLogin />
-    <Layout />
-    <Variant />
-    <Disabled />
-    <inlineLoginVue />
     <normalLoginVue />
     <validationVue />
     <CustomValidation />
-    <DynamicFormItem />
-    <NestedForm />
-    <CustomizedFormControls />
-    <advancedSearchVue />
-    <dynamicFormItemsComplexVue />
-    <dynamicFormItemsVue />
-    <dynamicRuleVue />
-    <formContextVue />
-    <formInModalVue />
-    <timeRelatedControlsVue />
-    <validateOtherVue />
-    <validateStaticVue />
     <UseFormBasic />
     <UseFormNested />
     <UseFormTrigger />

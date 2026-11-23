@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 99
+order: 30
 title:
   en-US: Fixed header and scroll bar with the page
   zh-CN: 随页面滚动的固定表头和滚动条

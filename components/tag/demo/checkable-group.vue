@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1.5
+order: 8
 title:
   zh-CN: 可选择标签组
   en-US: CheckableTagGroup

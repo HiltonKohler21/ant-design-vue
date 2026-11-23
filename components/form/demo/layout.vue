@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 1
 title:
   zh-CN: 表单布局
   en-US: Form Layout

@@ -2,8 +2,8 @@
   <demo-sort :cols="1">
     <basic />
     <responsive />
-    <dynamic />
     <image-demo />
+    <dynamic />
     <style-class />
   </demo-sort>
 </template>

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 24
 title:
   zh-CN: useForm 自定义触发时机
   en-US: useForm custom trigger

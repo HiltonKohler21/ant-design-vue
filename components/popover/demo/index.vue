@@ -3,8 +3,8 @@
     <basic />
     <trigger-type />
     <placement />
-    <control />
     <arrow-center />
+    <control />
     <hover-with-click />
   </demo-sort>
 </template>
