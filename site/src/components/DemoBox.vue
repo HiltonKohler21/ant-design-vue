@@ -2,196 +2,223 @@
   <template v-if="inIframe">
     <div :id="sectionId"><slot /></div>
   </template>
-  <section
-    v-else
-    v-show="!isDebug || showDebugDemos"
-    :id="sectionId"
-    :class="['code-box', { expand: codeExpand, 'code-box-debug': isDebug }]"
-  >
-    <section class="code-box-demo">
-      <template v-if="iframeDemo[iframeDemoKey]">
-        <div class="browser-mockup with-url">
-          <iframe :src="iframeDemo[iframeDemoKey]" :height="iframeHeight" />
+  <VersionRibbonWrapper v-else-if="!isDebug || showDebugDemos" :version="demoVersion">
+    <section
+      :id="sectionId"
+      :class="[
+        'code-box',
+        {
+          expand: codeExpand,
+          'code-box-debug': isDebug,
+          'code-box-simplify': isSimplify && !iframeSrc,
+        },
+      ]"
+    >
+      <section class="code-box-demo notranslate" translate="no" :style="codeBoxDemoStyle">
+        <template v-if="iframeSrc">
+          <div class="browser-mockup with-url">
+            <iframe
+              :src="iframeSrc"
+              :height="iframeHeight"
+              loading="lazy"
+              title="demo"
+              class="iframe-demo"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <slot />
+        </template>
+      </section>
+      <section v-if="!isSimplify || iframeSrc" class="code-box-meta markdown">
+        <div class="code-box-title">
+          <a-tooltip v-if="isDebug" :title="$t('app.demo.debug')">
+            <a :href="`#${sectionId}`">{{ title }}</a>
+          </a-tooltip>
+          <a v-else :href="`#${sectionId}`">{{ title }}</a>
+          <a-tooltip v-if="isDebug" :title="$t('app.demo.debug')">
+            <span class="code-box-debug-tag">Debug</span>
+          </a-tooltip>
+          <a-tooltip v-if="editGithubUrl" :title="$t('app.content.edit-demo')">
+            <a
+              class="edit-button"
+              :href="editGithubUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              :aria-label="$t('app.content.edit-demo')"
+            >
+              <EditOutlined />
+            </a>
+          </a-tooltip>
         </div>
-      </template>
-      <template v-else>
-        <slot />
-      </template>
-    </section>
-    <section class="code-box-meta markdown">
-      <div class="code-box-title">
-        <a :href="`#${sectionId}`">{{ title }}</a>
-        <a-tooltip v-if="isDebug" :title="$t('app.demo.debug')">
-          <span class="code-box-debug-tag">Debug</span>
-        </a-tooltip>
-        <a-tooltip v-if="editGithubUrl" :title="$t('app.content.edit-demo')">
-          <a
-            class="edit-button"
-            :href="editGithubUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            :aria-label="$t('app.content.edit-demo')"
-          >
-            <EditOutlined />
-          </a>
-        </a-tooltip>
-      </div>
-      <div class="code-box-description" v-html="docHtml"></div>
-      <div class="code-box-actions">
-        <a-tooltip :title="$t('app.demo.codesandbox')">
-          <span
-            class="code-box-code-action"
-            tabindex="0"
-            :aria-label="$t('app.demo.codesandbox')"
-            @click="handleCodeSandbox"
-            @keydown.enter="handleCodeSandbox"
-            @keydown.space.prevent="handleCodeSandbox"
-          >
-            <CodeSandboxOutlined />
-          </span>
-        </a-tooltip>
-        <a-tooltip :title="$t('app.demo.stackblitz')">
-          <span
-            class="code-box-code-action"
-            tabindex="0"
-            :aria-label="$t('app.demo.stackblitz')"
-            @click="handleStackBlitz"
-            @keydown.enter="handleStackBlitz"
-            @keydown.space.prevent="handleStackBlitz"
-          >
-            <ThunderboltOutlined />
-          </span>
-        </a-tooltip>
-        <a-tooltip
-          :title="$t(`app.demo.${copied ? 'copied' : 'copy'}`)"
-          :open="copyTooltipVisible"
-          @openChange="onCopyTooltipVisibleChange"
-        >
-          <span
-            class="code-box-code-action code-box-code-copy"
-            :class="{ 'code-box-code-copied': copied }"
-            tabindex="0"
-            :aria-label="$t('app.demo.copy')"
-            @click="handleCopyCode"
-            @keydown.enter="handleCopyCode"
-            @keydown.space.prevent="handleCopyCode"
-          >
-            <CheckOutlined v-if="copied" class="anticon-check" />
-            <CopyOutlined v-else />
-          </span>
-        </a-tooltip>
-        <a-tooltip :title="$t(`app.demo.type.${type === 'JS' ? 'js' : 'ts'}`)">
-          <span class="code-box-type-switch">
+        <div class="code-box-description" v-html="docHtml"></div>
+        <div class="code-box-actions">
+          <a-tooltip :title="$t('app.demo.codesandbox')">
             <span
-              class="code-box-type-item"
-              :class="{ active: type === 'TS' }"
+              class="code-box-code-action"
               tabindex="0"
-              @click="handleChangeType('TS')"
-              @keydown.enter="handleChangeType('TS')"
-              @keydown.space.prevent="handleChangeType('TS')"
+              :aria-label="$t('app.demo.codesandbox')"
+              @click="handleCodeSandbox"
+              @keydown.enter="handleCodeSandbox"
+              @keydown.space.prevent="handleCodeSandbox"
             >
-              TS
+              <CodeSandboxOutlined />
             </span>
+          </a-tooltip>
+          <a-tooltip :title="$t('app.demo.stackblitz')">
             <span
-              class="code-box-type-item"
-              :class="{ active: type === 'JS' }"
+              class="code-box-code-action"
               tabindex="0"
-              @click="handleChangeType('JS')"
-              @keydown.enter="handleChangeType('JS')"
-              @keydown.space.prevent="handleChangeType('JS')"
+              :aria-label="$t('app.demo.stackblitz')"
+              @click="handleStackBlitz"
+              @keydown.enter="handleStackBlitz"
+              @keydown.space.prevent="handleStackBlitz"
             >
-              JS
+              <ThunderboltOutlined />
             </span>
-          </span>
-        </a-tooltip>
-        <a-tooltip :title="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)">
-          <span
-            class="code-box-code-action code-box-expand-btn"
-            :class="{ 'code-box-expand-btn-active': codeExpand }"
-            tabindex="0"
-            :aria-expanded="codeExpand"
-            :aria-label="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)"
-            @click="handleCodeExpand"
-            @keydown.enter="handleCodeExpand"
-            @keydown.space.prevent="handleCodeExpand"
+          </a-tooltip>
+          <a-tooltip
+            :title="$t(`app.demo.${copied ? 'copied' : 'copy'}`)"
+            :open="copyTooltipVisible"
+            @openChange="onCopyTooltipVisibleChange"
           >
-            <svg
-              v-if="codeExpand"
-              viewBox="0 0 24 24"
-              width="15"
-              height="15"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+            <span
+              class="code-box-code-action code-box-code-copy"
+              :class="{ 'code-box-code-copied': copied }"
+              tabindex="0"
+              :aria-label="$t('app.demo.copy')"
+              @click="handleCopyCode"
+              @keydown.enter="handleCopyCode"
+              @keydown.space.prevent="handleCopyCode"
             >
-              <polyline points="8 6 2 12 8 18" />
-              <polyline points="16 6 22 12 16 18" />
-              <line x1="14" y1="4" x2="10" y2="20" />
-            </svg>
-            <svg
-              v-else
-              viewBox="0 0 24 24"
-              width="15"
-              height="15"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+              <CheckOutlined v-if="copied" class="anticon-check" />
+              <CopyOutlined v-else />
+            </span>
+          </a-tooltip>
+          <a-tooltip :title="$t(`app.demo.type.${type === 'JS' ? 'js' : 'ts'}`)">
+            <span class="code-box-type-switch">
+              <span
+                class="code-box-type-item"
+                :class="{ active: type === 'TS' }"
+                tabindex="0"
+                @click="handleChangeType('TS')"
+                @keydown.enter="handleChangeType('TS')"
+                @keydown.space.prevent="handleChangeType('TS')"
+              >
+                TS
+              </span>
+              <span
+                class="code-box-type-item"
+                :class="{ active: type === 'JS' }"
+                tabindex="0"
+                @click="handleChangeType('JS')"
+                @keydown.enter="handleChangeType('JS')"
+                @keydown.space.prevent="handleChangeType('JS')"
+              >
+                JS
+              </span>
+            </span>
+          </a-tooltip>
+          <a-tooltip :title="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)">
+            <span
+              class="code-box-code-action code-box-expand-btn"
+              :class="{ 'code-box-expand-btn-active': codeExpand }"
+              tabindex="0"
+              :aria-expanded="codeExpand"
+              :aria-label="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)"
+              @click="handleCodeExpand"
+              @keydown.enter="handleCodeExpand"
+              @keydown.space.prevent="handleCodeExpand"
             >
-              <polyline points="8 6 2 12 8 18" />
-              <polyline points="16 6 22 12 16 18" />
-            </svg>
-          </span>
-        </a-tooltip>
-      </div>
+              <svg
+                v-if="codeExpand"
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="8 6 2 12 8 18" />
+                <polyline points="16 6 22 12 16 18" />
+                <line x1="14" y1="4" x2="10" y2="20" />
+              </svg>
+              <svg
+                v-else
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="8 6 2 12 8 18" />
+                <polyline points="16 6 22 12 16 18" />
+              </svg>
+            </span>
+          </a-tooltip>
+        </div>
+      </section>
+      <section :class="highlightClass">
+        <div ref="codeRef" class="highlight">
+          <slot v-if="type === 'TS'" name="htmlCode" />
+          <slot v-else name="jsVersionHtml" />
+        </div>
+        <div class="code-box-actions code-box-actions-bottom">
+          <a-tooltip :title="$t('app.demo.code.hide')">
+            <span
+              class="code-box-code-action code-box-expand-btn code-box-expand-btn-active"
+              tabindex="0"
+              :aria-label="$t('app.demo.code.hide')"
+              @click="handleCodeExpand($event, sectionId)"
+              @keydown.enter="handleCodeExpand($event, sectionId)"
+              @keydown.space.prevent="handleCodeExpand($event, sectionId)"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="8 6 2 12 8 18" />
+                <polyline points="16 6 22 12 16 18" />
+                <line x1="14" y1="4" x2="10" y2="20" />
+              </svg>
+            </span>
+          </a-tooltip>
+        </div>
+      </section>
     </section>
-    <section :class="highlightClass">
-      <div ref="codeRef" class="highlight">
-        <slot v-if="type === 'TS'" name="htmlCode" />
-        <slot v-else name="jsVersionHtml" />
-      </div>
-      <div class="code-box-actions code-box-actions-bottom">
-        <a-tooltip :title="$t('app.demo.code.hide')">
-          <span
-            class="code-box-code-action code-box-expand-btn code-box-expand-btn-active"
-            tabindex="0"
-            :aria-label="$t('app.demo.code.hide')"
-            @click="handleCodeExpand($event, sectionId)"
-            @keydown.enter="handleCodeExpand($event, sectionId)"
-            @keydown.space.prevent="handleCodeExpand($event, sectionId)"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="15"
-              height="15"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="8 6 2 12 8 18" />
-              <polyline points="16 6 22 12 16 18" />
-              <line x1="14" y1="4" x2="10" y2="20" />
-            </svg>
-          </span>
-        </a-tooltip>
-      </div>
-    </section>
-  </section>
+  </VersionRibbonWrapper>
 </template>
 
 <script lang="ts">
-import type { Ref } from 'vue';
+import type { CSSProperties, Ref } from 'vue';
 import type { GlobalConfig } from '../type';
 import { GLOBAL_CONFIG } from '../SymbolKey';
-import { computed, defineComponent, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  h,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
+import { BadgeRibbon } from 'ant-design-vue';
 import {
   CheckOutlined,
   CodeSandboxOutlined,
@@ -268,9 +295,36 @@ function submitPostForm(action: string, fields: Record<string, string>) {
   document.body.removeChild(form);
 }
 
+const VersionRibbonWrapper = defineComponent({
+  name: 'VersionRibbonWrapper',
+  props: {
+    version: {
+      type: String,
+      default: '',
+    },
+  },
+  setup(props, { slots }) {
+    return () => {
+      const children = slots.default?.();
+      if (props.version) {
+        return h(
+          BadgeRibbon,
+          {
+            text: props.version,
+            color: props.version.includes('<') ? 'red' : undefined,
+          },
+          { default: () => children },
+        );
+      }
+      return children && children.length === 1 ? children[0] : children;
+    };
+  },
+});
+
 export default defineComponent({
   name: 'DemoBox',
   components: {
+    VersionRibbonWrapper,
     CheckOutlined,
     CodeSandboxOutlined,
     CopyOutlined,
@@ -294,12 +348,19 @@ export default defineComponent({
     });
 
     const isDebug = computed(() => Boolean(props.jsfiddle?.debug));
+    const isCompact = computed(() => Boolean(props.jsfiddle?.compact));
+    const isSimplify = computed(() => Boolean(props.jsfiddle?.simplify));
+    const demoVersion = computed(() =>
+      props.jsfiddle?.version != null && props.jsfiddle?.version !== ''
+        ? String(props.jsfiddle.version)
+        : '',
+    );
     const inIframe = inject('inIframe', false);
     const isAllExpanded = inject<Ref<boolean>>('isAllExpanded', ref(false));
-    const showDebugDemos = inject<Ref<boolean>>('showDebugDemos', ref(true));
-    const registerDebugDemo = inject<(id: string) => void>('registerDebugDemo', () => {});
+    const showDebugDemos = inject<Ref<boolean>>('showDebugDemos', ref(false));
     const themeMode = inject<{ theme: Ref<string> }>('themeMode', { theme: ref('light') });
     const theme = computed(() => themeMode.theme.value);
+    const isDark = computed(() => theme.value === 'dark');
     const iframeDemo = inject<Record<string, string>>('iframeDemo', {});
     const addDemosInfo = inject<(info: any) => void>('addDemosInfo', () => {});
     const globalConfig = inject<GlobalConfig>(GLOBAL_CONFIG);
@@ -313,9 +374,16 @@ export default defineComponent({
       },
     );
 
-    const iframeHeight = computed(() => props.jsfiddle?.iframe);
-    const zhTitle = computed(() => props.jsfiddle?.title?.['zh-CN'] || '');
-    const enTitle = computed(() => props.jsfiddle?.title?.['en-US'] || '');
+    const zhTitle = computed(() =>
+      typeof props.jsfiddle?.title === 'string'
+        ? props.jsfiddle.title
+        : props.jsfiddle?.title?.['zh-CN'] || '',
+    );
+    const enTitle = computed(() =>
+      typeof props.jsfiddle?.title === 'string'
+        ? props.jsfiddle.title
+        : props.jsfiddle?.title?.['en-US'] || '',
+    );
     const title = computed(() =>
       globalConfig.isZhCN.value ? zhTitle.value || enTitle.value : enTitle.value || zhTitle.value,
     );
@@ -330,6 +398,36 @@ export default defineComponent({
     const iframeDemoKey = computed(() => {
       const en = enTitle.value;
       return en ? String(en).split(' ').join('-').toLowerCase() : '';
+    });
+
+    const iframeSrc = computed(() => {
+      if (iframeDemo[iframeDemoKey.value]) {
+        return iframeDemo[iframeDemoKey.value];
+      }
+      const raw = props.jsfiddle?.iframe;
+      if (typeof raw === 'string' && /^(https?:)?\//.test(raw)) {
+        return raw;
+      }
+      return '';
+    });
+
+    const iframeHeight = computed(() => {
+      const raw = props.jsfiddle?.iframe;
+      if (typeof raw === 'number') return raw;
+      if (typeof raw === 'string' && /^\d+(px)?$/.test(raw.trim())) return raw;
+      return undefined;
+    });
+
+    const codeBoxDemoStyle = computed<CSSProperties>(() => {
+      const style: CSSProperties = {};
+      if (iframeSrc.value || isCompact.value) {
+        style.padding = 0;
+        style.overflow = 'hidden';
+      }
+      if (props.jsfiddle?.background === 'grey') {
+        style.backgroundColor = isDark.value ? '#303030' : '#f0f2f5';
+      }
+      return style;
     });
 
     const sourceCode = computed(() => decodeBase64(props.jsfiddle?.sourceCode));
@@ -412,14 +510,30 @@ export default defineComponent({
     }));
 
     onMounted(() => {
-      if (isDebug.value) {
-        registerDebugDemo(sectionId.value);
-      }
       addDemosInfo({
         href: `#${sectionId.value}`,
         title,
         enTitle,
+        debug: isDebug.value,
       });
+      if (
+        typeof window !== 'undefined' &&
+        sectionId.value &&
+        window.location.hash.toLocaleLowerCase() === `#${sectionId.value}`
+      ) {
+        nextTick(() => {
+          const el = document.getElementById(sectionId.value);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < 64 || rect.top > window.innerHeight - 100) {
+              window.scrollTo({
+                top: Math.max(0, window.scrollY + rect.top - 80),
+                behavior: 'auto',
+              });
+            }
+          }
+        });
+      }
     });
 
     onBeforeUnmount(() => {
@@ -430,12 +544,17 @@ export default defineComponent({
       docHtml,
       iframeDemo,
       iframeDemoKey,
+      iframeSrc,
       iframeHeight,
       inIframe,
       theme,
       type,
       isZhCN: globalConfig.isZhCN,
       isDebug,
+      isCompact,
+      isSimplify,
+      demoVersion,
+      codeBoxDemoStyle,
       showDebugDemos,
       sectionId,
       title,

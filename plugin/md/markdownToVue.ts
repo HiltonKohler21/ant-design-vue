@@ -15,7 +15,7 @@ import tsToJs from './utils/tsToJs';
 const debug = require('debug')('vitepress:md');
 const cache = new LRUCache<string, MarkdownCompileResult>({ max: 1024 });
 
-interface MarkdownCompileResult {
+export interface MarkdownCompileResult {
   vueSrc: string;
   pageData: PageData;
 }
@@ -185,6 +185,9 @@ const inferTitle = (frontmatter: any, content: string) => {
     return 'Home';
   }
   if (frontmatter.title) {
+    if (typeof frontmatter.title === 'object') {
+      return deeplyParseHeader(frontmatter.title['zh-CN'] || frontmatter.title['en-US'] || '');
+    }
     return deeplyParseHeader(frontmatter.title);
   }
   const match = content.match(/^\s*#+\s+(.*)/m);

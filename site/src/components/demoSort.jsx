@@ -1,4 +1,4 @@
-import { Comment, Fragment, Text, defineComponent, inject } from 'vue';
+import { Comment, Fragment, Text, defineComponent, inject, ref, unref } from 'vue';
 import { GLOBAL_CONFIG } from '../SymbolKey';
 
 function flattenSlotVNodes(nodes, result = []) {
@@ -15,6 +15,30 @@ function flattenSlotVNodes(nodes, result = []) {
   return result;
 }
 
+function extractDemoMetaList(children) {
+  return children
+    .map(vnode => {
+      const meta = vnode?.type?.__demoMeta;
+      if (!meta || !meta.sectionId) return null;
+      const rawTitle = meta.title;
+      const title =
+        rawTitle && typeof rawTitle === 'object'
+          ? rawTitle['zh-CN'] || rawTitle['en-US'] || ''
+          : String(rawTitle || '');
+      const enTitle =
+        rawTitle && typeof rawTitle === 'object'
+          ? rawTitle['en-US'] || rawTitle['zh-CN'] || ''
+          : String(rawTitle || '');
+      return {
+        href: `#${meta.sectionId}`,
+        title,
+        enTitle,
+        debug: Boolean(meta.debug),
+      };
+    })
+    .filter(Boolean);
+}
+
 export default defineComponent({
   props: {
     cols: {
@@ -25,16 +49,28 @@ export default defineComponent({
   setup() {
     return {
       globalConfig: inject(GLOBAL_CONFIG),
+      inIframe: inject('inIframe', false),
+      showDebugDemos: inject('showDebugDemos', ref(false)),
+      setPageDemos: inject('setPageDemos', () => {}),
     };
   },
   render() {
-    const { cols, globalConfig, $slots } = this;
+    const { cols, globalConfig, inIframe, showDebugDemos, setPageDemos, $slots } = this;
     const children = flattenSlotVNodes($slots.default?.() || []);
-    // 手机访问、cols 为 1 或仅有一个示例时强制开启单列 demo 模式
-    const isSingleCol = Number(cols) === 1 || children.length <= 1 || globalConfig.isMobile.value;
+    const orderedDemos = extractDemoMetaList(children);
+    if (orderedDemos.length > 0) {
+      setPageDemos(orderedDemos);
+    }
+    const showDebug = Boolean(inIframe) || Boolean(unref(showDebugDemos));
+    const visibleChildren = showDebug
+      ? children
+      : children.filter(vnode => !vnode?.type?.__demoMeta?.debug);
+    // 手机访问、cols 为 1 或仅有一个可见示例时强制开启单列 demo 模式
+    const isSingleCol =
+      Number(cols) === 1 || visibleChildren.length <= 1 || Boolean(unref(globalConfig?.isMobile));
     const leftChildren = [];
     const rightChildren = [];
-    children.forEach((demo, index) => {
+    visibleChildren.forEach((demo, index) => {
       if (index % 2 === 0 || isSingleCol) {
         leftChildren.push(demo);
       } else {

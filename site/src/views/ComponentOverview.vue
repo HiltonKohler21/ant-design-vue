@@ -84,84 +84,90 @@
                     : { to: getLocalizedPathname(component.path, isZhCN) }
                 "
               >
-                <a-card size="small" class="components-overview-card">
-                  <template #title>
-                    <div class="components-overview-title">
-                      <span class="components-overview-en">{{ component.title }}</span>
-                      <span v-if="isZhCN && component.subtitle" class="components-overview-cn">
-                        {{ component.subtitle }}
-                      </span>
+                <OverviewCardWrapper
+                  :border-beam="isBorderBeam(component)"
+                  :ribbon-color="getRibbonColor(component)"
+                  :ribbon-text="getRibbonText(component)"
+                >
+                  <a-card size="small" class="components-overview-card">
+                    <template #title>
+                      <div class="components-overview-title">
+                        <span class="components-overview-en">{{ component.title }}</span>
+                        <span v-if="isZhCN && component.subtitle" class="components-overview-cn">
+                          {{ component.subtitle }}
+                        </span>
+                      </div>
+                    </template>
+                    <template v-if="showExtraTag(component)" #extra>
+                      <a-tag
+                        :color="getTagColor(component.tag)"
+                        variant="filled"
+                        class="components-overview-new-tag"
+                      >
+                        {{ component.tag }}
+                      </a-tag>
+                    </template>
+                    <div class="components-overview-img">
+                      <img
+                        v-if="getCoverSrc(component) && !brokenCovers[getCoverKey(component)]"
+                        :src="getCoverSrc(component)"
+                        :alt="component.title"
+                        loading="lazy"
+                        @error="handleCoverError(component)"
+                      />
+                      <svg
+                        v-else
+                        class="components-overview-svg-placeholder"
+                        viewBox="0 0 180 110"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <rect
+                          x="24"
+                          y="18"
+                          width="132"
+                          height="74"
+                          rx="10"
+                          fill="var(--ant-color-bg-container, var(--component-background))"
+                          stroke="var(--ant-color-border-secondary, var(--site-border-color-split))"
+                          stroke-width="1.5"
+                        />
+                        <rect
+                          x="38"
+                          y="34"
+                          width="44"
+                          height="12"
+                          rx="4"
+                          fill="var(--ant-color-primary, #1677ff)"
+                        />
+                        <rect
+                          x="90"
+                          y="34"
+                          width="52"
+                          height="12"
+                          rx="4"
+                          fill="var(--ant-color-fill-secondary, rgba(128,128,128,0.14))"
+                        />
+                        <rect
+                          x="38"
+                          y="56"
+                          width="104"
+                          height="8"
+                          rx="4"
+                          fill="var(--ant-color-fill-tertiary, rgba(128,128,128,0.12))"
+                        />
+                        <rect
+                          x="38"
+                          y="70"
+                          width="72"
+                          height="8"
+                          rx="4"
+                          fill="var(--ant-color-fill-tertiary, rgba(128,128,128,0.12))"
+                        />
+                      </svg>
                     </div>
-                  </template>
-                  <template v-if="component.tag" #extra>
-                    <a-tag
-                      :color="getTagColor(component.tag)"
-                      :bordered="false"
-                      class="components-overview-new-tag"
-                    >
-                      {{ component.tag }}
-                    </a-tag>
-                  </template>
-                  <div class="components-overview-img">
-                    <img
-                      v-if="getCoverSrc(component) && !brokenCovers[getCoverKey(component)]"
-                      :src="getCoverSrc(component)"
-                      :alt="component.title"
-                      loading="lazy"
-                      @error="handleCoverError(component)"
-                    />
-                    <svg
-                      v-else
-                      class="components-overview-svg-placeholder"
-                      viewBox="0 0 180 110"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <rect
-                        x="24"
-                        y="18"
-                        width="132"
-                        height="74"
-                        rx="10"
-                        fill="var(--ant-color-bg-container, var(--component-background))"
-                        stroke="var(--ant-color-border-secondary, var(--site-border-color-split))"
-                        stroke-width="1.5"
-                      />
-                      <rect
-                        x="38"
-                        y="34"
-                        width="44"
-                        height="12"
-                        rx="4"
-                        fill="var(--ant-color-primary, #1677ff)"
-                      />
-                      <rect
-                        x="90"
-                        y="34"
-                        width="52"
-                        height="12"
-                        rx="4"
-                        fill="var(--ant-color-fill-secondary, rgba(128,128,128,0.14))"
-                      />
-                      <rect
-                        x="38"
-                        y="56"
-                        width="104"
-                        height="8"
-                        rx="4"
-                        fill="var(--ant-color-fill-tertiary, rgba(128,128,128,0.12))"
-                      />
-                      <rect
-                        x="38"
-                        y="70"
-                        width="72"
-                        height="8"
-                        rx="4"
-                        fill="var(--ant-color-fill-tertiary, rgba(128,128,128,0.12))"
-                      />
-                    </svg>
-                  </div>
-                </a-card>
+                  </a-card>
+                </OverviewCardWrapper>
               </component>
             </a-col>
           </template>
@@ -174,15 +180,57 @@
 <script lang="ts">
 import type { Ref } from 'vue';
 import type { GlobalConfig } from '../type';
-import { computed, defineComponent, inject, reactive, ref } from 'vue';
+import { computed, defineComponent, h, inject, reactive, ref } from 'vue';
+import { BadgeRibbon, BorderBeam } from 'ant-design-vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import { GLOBAL_CONFIG } from '../SymbolKey';
 import { getLocalizedPathname } from '../utils/util';
 import useMenus from '../hooks/useMenus';
 
+const OverviewCardWrapper = defineComponent({
+  name: 'OverviewCardWrapper',
+  props: {
+    borderBeam: {
+      type: Boolean,
+      default: false,
+    },
+    ribbonColor: {
+      type: String,
+      default: '',
+    },
+    ribbonText: {
+      type: String,
+      default: '',
+    },
+  },
+  setup(props, { slots }) {
+    return () => {
+      const children = slots.default?.();
+      let node: any = children && children.length === 1 ? children[0] : children;
+      if (props.borderBeam) {
+        const inner = node;
+        node = h(BorderBeam, { duration: 6, lineWidth: 2 }, { default: () => [inner] });
+      }
+      if (props.ribbonText) {
+        const inner = node;
+        node = h(
+          BadgeRibbon,
+          {
+            color: props.ribbonColor || undefined,
+            text: props.ribbonText,
+          },
+          { default: () => [inner] },
+        );
+      }
+      return node;
+    };
+  },
+});
+
 export default defineComponent({
   name: 'ComponentOverview',
   components: {
+    OverviewCardWrapper,
     SearchOutlined,
   },
   setup() {
@@ -207,7 +255,9 @@ export default defineComponent({
         if (map.has(key)) {
           const existing = map.get(key);
           existing.children = [...existing.children, ...(group.children || [])].sort((a, b) =>
-            String(a.title || '').localeCompare(String(b.title || '')),
+            String(a.title || '').localeCompare(String(b.title || ''), 'en', {
+              sensitivity: 'base',
+            }),
           );
         } else {
           map.set(key, {
@@ -267,13 +317,56 @@ export default defineComponent({
       filteredGroups.value.reduce((acc, g) => acc + (g.children?.length || 0), 0),
     );
 
-    const getTagColor = (tag?: string) => {
-      const normalized = String(tag || '')
+    const isBorderBeam = (component: any) => component?.title === 'BorderBeam';
+
+    const isDeprecated = (component: any) =>
+      String(component?.tag || '')
         .trim()
-        .toLowerCase();
-      if (normalized.includes('deprecated')) return 'warning';
-      if (normalized === 'new') return 'green';
-      return 'blue';
+        .toUpperCase() === 'DEPRECATED';
+
+    const isNewComponent = (component: any) => {
+      const tag = String(component?.tag || '').trim();
+      if (!tag || isDeprecated(component)) return false;
+      if (tag.toUpperCase() === 'NEW') return true;
+      const match = tag.match(/^(\d+)\.(\d+)\.(\d+)/);
+      if (!match) return false;
+      const major = Number(match[1]);
+      const minor = Number(match[2]);
+      return major > 4 || (major === 4 && minor >= 3);
+    };
+
+    const getRibbonColor = (component: any) => {
+      if (isDeprecated(component)) return 'orange';
+      if (isNewComponent(component)) return 'green';
+      return '';
+    };
+
+    const getRibbonText = (component: any) => {
+      if (isDeprecated(component)) {
+        return globalConfig.isZhCN.value ? '已废弃' : 'Deprecated';
+      }
+      if (isNewComponent(component)) {
+        return String(component.tag || '').trim();
+      }
+      return '';
+    };
+
+    const showExtraTag = (component: any) =>
+      Boolean(component?.tag) && !isDeprecated(component) && !isNewComponent(component);
+
+    const getTagColor = (tag?: string) => {
+      switch (
+        String(tag || '')
+          .trim()
+          .toUpperCase()
+      ) {
+        case 'UPDATED':
+          return 'processing';
+        case 'DEPRECATED':
+          return 'red';
+        default:
+          return 'success';
+      }
     };
 
     const getCoverSrc = (component: any) => {
@@ -306,6 +399,10 @@ export default defineComponent({
       totalCount,
       filteredCount,
       filteredGroups,
+      isBorderBeam,
+      getRibbonColor,
+      getRibbonText,
+      showExtraTag,
       getTagColor,
       getCoverSrc,
       getCoverKey,

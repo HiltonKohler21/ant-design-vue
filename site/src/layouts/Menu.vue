@@ -26,10 +26,10 @@
               <a-tag
                 v-if="n.tag"
                 :color="getTagColor(n.tag)"
-                :bordered="false"
+                variant="filled"
                 class="aside-item-tag"
               >
-                {{ n.tag }}
+                {{ getTagLabel(n.tag) }}
               </a-tag>
             </a-menu-item>
           </template>
@@ -43,8 +43,8 @@
           <router-link v-else :to="getLocalizedPathname(m.path, isZhCN)">
             <span>{{ isZhCN ? `${m.title} ${m.subtitle || ''}` : m.enTitle || m.title }}</span>
           </router-link>
-          <a-tag v-if="m.tag" :color="getTagColor(m.tag)" :bordered="false" class="aside-item-tag">
-            {{ m.tag }}
+          <a-tag v-if="m.tag" :color="getTagColor(m.tag)" variant="filled" class="aside-item-tag">
+            {{ getTagLabel(m.tag) }}
           </a-tag>
         </a-menu-item>
       </template>
@@ -86,14 +86,45 @@ export default defineComponent({
       { immediate: true, flush: 'post' },
     );
 
-    const getTagColor = (tag: string) => {
-      if (tag === 'Deprecated') return 'orange';
-      return 'blue';
+    const TAG_LOCALES: Record<'cn' | 'en', Record<string, string>> = {
+      cn: {
+        deprecated: '废弃',
+        updated: '更新',
+        new: '新增',
+      },
+      en: {
+        deprecated: 'DEPRECATED',
+        updated: 'UPDATED',
+        new: 'NEW',
+      },
+    };
+
+    const getTagColor = (tag?: string) => {
+      switch (
+        String(tag || '')
+          .trim()
+          .toUpperCase()
+      ) {
+        case 'UPDATED':
+          return 'processing';
+        case 'DEPRECATED':
+          return 'red';
+        default:
+          return 'success';
+      }
+    };
+
+    const getTagLabel = (tag?: string) => {
+      const raw = String(tag || '').trim();
+      if (!raw) return '';
+      const dict = props.isZhCN ? TAG_LOCALES.cn : TAG_LOCALES.en;
+      return dict[raw.toLowerCase()] ?? raw;
     };
 
     return {
       getLocalizedPathname,
       getTagColor,
+      getTagLabel,
       showOverview,
     };
   },

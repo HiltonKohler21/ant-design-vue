@@ -94,14 +94,12 @@
     border-radius: 10px;
     border: 1px solid var(--ant-color-border-secondary, var(--site-border-color-split));
     background: var(--ant-color-bg-container, var(--component-background));
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
-    overflow: hidden;
+    transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
 
     &:hover {
-      transform: translateY(-3px);
       border-color: var(--ant-color-primary-border-hover, var(--primary-color));
-      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.1), 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+      box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.08), 0 9px 28px 0 rgba(0, 0, 0, 0.05),
+        0 12px 48px 16px rgba(0, 0, 0, 0.03);
     }
 
     .ant-card-head {

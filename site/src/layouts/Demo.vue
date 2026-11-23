@@ -7,9 +7,10 @@
         <a-tag
           v-if="frontmatter.tag"
           :color="getTagColor(frontmatter.tag)"
+          variant="filled"
           class="component-doc-tag"
         >
-          {{ frontmatter.tag }}
+          {{ getTagLabel(frontmatter.tag) }}
         </a-tag>
         <a-tooltip v-if="docsGithubUrl" :title="$t('app.content.edit-page')">
           <a
@@ -86,23 +87,6 @@
       </h2>
       <div class="examples-actions">
         <a-tooltip
-          v-if="hasDebugDemos"
-          :title="
-            $t(showDebugDemos ? 'app.component.examples.hide' : 'app.component.examples.visible')
-          "
-        >
-          <a-button
-            size="small"
-            type="text"
-            class="examples-action-btn"
-            :class="{ 'examples-action-btn-active': showDebugDemos }"
-            :aria-pressed="showDebugDemos"
-            @click="toggleDebugDemos"
-          >
-            <BugOutlined />
-          </a-button>
-        </a-tooltip>
-        <a-tooltip
           :title="
             $t(isAllExpanded ? 'app.component.examples.collapse' : 'app.component.examples.expand')
           "
@@ -111,11 +95,34 @@
             size="small"
             type="text"
             class="expand-all-btn examples-action-btn"
-            :class="{ 'examples-action-btn-active': isAllExpanded }"
+            :class="{
+              'icon-enabled': isAllExpanded,
+              'examples-action-btn-active': isAllExpanded,
+            }"
             :aria-pressed="isAllExpanded"
             @click="toggleExpandAll"
           >
             <CodeOutlined />
+          </a-button>
+        </a-tooltip>
+        <a-tooltip
+          :title="
+            $t(showDebugDemos ? 'app.component.examples.hide' : 'app.component.examples.visible')
+          "
+        >
+          <a-button
+            size="small"
+            type="text"
+            class="examples-action-btn"
+            :class="{
+              'icon-enabled': showDebugDemos,
+              'examples-action-btn-active': showDebugDemos,
+            }"
+            :aria-pressed="showDebugDemos"
+            :data-has-debug="hasDebugDemos ? 'true' : 'false'"
+            @click="toggleDebugDemos"
+          >
+            <BugOutlined />
           </a-button>
         </a-tooltip>
       </div>
@@ -141,6 +148,7 @@
   </article>
 </template>
 <script lang="ts">
+import type { ComputedRef, Ref } from 'vue';
 import {
   computed,
   defineAsyncComponent,
@@ -194,13 +202,26 @@ type TokenEntry = {
 const tokenMap = tokenData as Record<string, TokenEntry>;
 const tokenMetaMap = tokenMeta as Record<string, any>;
 
+const TAG_LOCALES: Record<'cn' | 'en', Record<string, string>> = {
+  cn: {
+    deprecated: '废弃',
+    updated: '更新',
+    new: '新增',
+  },
+  en: {
+    deprecated: 'DEPRECATED',
+    updated: 'UPDATED',
+    new: 'NEW',
+  },
+};
+
 function getTagColor(tag?: string): string {
   const normalized = String(tag || '')
     .trim()
-    .toLowerCase();
-  if (normalized.includes('deprecated')) return 'warning';
-  if (normalized === 'new') return 'green';
-  return 'processing';
+    .toUpperCase();
+  if (normalized === 'DEPRECATED' || normalized.includes('DEPRECATED')) return 'red';
+  if (normalized === 'UPDATED') return 'processing';
+  return 'success';
 }
 
 function resolveTokenCompName(title: string): string {
@@ -258,34 +279,34 @@ export default defineComponent({
   setup(props, { slots }) {
     const route = useRoute();
     const isAllExpanded = ref(false);
-    const showDebugDemos = ref(true);
-    const debugDemoIds = ref<string[]>([]);
     const importCopied = ref(false);
     let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
-    provide('isAllExpanded', isAllExpanded);
-    provide('showDebugDemos', showDebugDemos);
-    provide('registerDebugDemo', (id: string) => {
-      if (id && !debugDemoIds.value.includes(id)) {
-        debugDemoIds.value = [...debugDemoIds.value, id];
-      }
+    const showDebugDemos = inject<Ref<boolean>>('showDebugDemos', ref(false));
+    const toggleDebugDemos = inject<() => void>('toggleDebugDemos', () => {
+      showDebugDemos.value = !showDebugDemos.value;
     });
+    const hasDebugDemos = inject<ComputedRef<boolean>>(
+      'hasDebugDemos',
+      computed(() => false),
+    );
 
-    const hasDebugDemos = computed(() => debugDemoIds.value.length > 0);
+    provide('isAllExpanded', isAllExpanded);
 
     const toggleExpandAll = () => {
       isAllExpanded.value = !isAllExpanded.value;
     };
 
-    const toggleDebugDemos = () => {
-      showDebugDemos.value = !showDebugDemos.value;
+    const getTagLabel = (tag?: string): string => {
+      const raw = String(tag || '').trim();
+      if (!raw) return '';
+      const dict = props.isZhCN ? TAG_LOCALES.cn : TAG_LOCALES.en;
+      return dict[raw.toLowerCase()] ?? raw;
     };
 
     const baseRoutePath = computed(() => route.path.replace(/-cn\/?$/, '').replace(/\/$/, ''));
     watch(baseRoutePath, () => {
       isAllExpanded.value = false;
-      showDebugDemos.value = true;
-      debugDemoIds.value = [];
       importCopied.value = false;
     });
 
@@ -421,6 +442,7 @@ export default defineComponent({
       tokenCompName,
       hasDesignTokens,
       getTagColor,
+      getTagLabel,
     };
   },
 });
@@ -552,31 +574,31 @@ export default defineComponent({
 .examples-actions {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .examples-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  color: var(--site-text-color-secondary);
-  border: 1px solid var(--site-border-color-split);
-  border-radius: 6px;
-  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+  color: var(--ant-color-text-secondary, var(--site-text-color-secondary));
+  border: 0;
+  transition: color 0.2s, background-color 0.2s, opacity 0.2s;
 
   &:hover {
-    color: var(--site-text-color);
-    background: var(--site-hover-bg);
-    border-color: var(--border-color-base);
+    color: var(--ant-color-text, var(--site-text-color));
+    background-color: var(--ant-color-fill-tertiary, var(--site-hover-bg));
   }
 
+  &.icon-enabled,
   &.examples-action-btn-active {
-    color: var(--primary-color);
-    background: var(--primary-color-bg);
-    border-color: var(--primary-color-border);
+    background-color: var(--ant-color-fill-secondary, var(--site-hover-bg));
+    opacity: 1;
+
+    :deep(.anticon) {
+      color: var(--ant-color-text-base, var(--site-text-color));
+      font-weight: bold;
+    }
   }
 }
 

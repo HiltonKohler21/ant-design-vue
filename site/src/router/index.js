@@ -81,6 +81,16 @@ const routes = [
     // },
     children: [
       {
+        path: 'vue/changelog-cn',
+        meta: { enTitle: 'Change Log', title: '更新日志', category: 'docs' },
+        component: () => import('../../../CHANGELOG.zh-CN.md'),
+      },
+      {
+        path: 'vue/changelog',
+        meta: { enTitle: 'Change Log', title: '更新日志', category: 'docs' },
+        component: () => import('../../../CHANGELOG.en-US.md'),
+      },
+      {
         path: 'vue/introduce-cn',
         meta: { enTitle: 'Ant Design of Vue', title: 'Ant Design of Vue', category: 'docs' },
         component: () => import('../vueDocs/introduce.zh-CN.md'),
@@ -109,26 +119,6 @@ const routes = [
         path: 'vue/use-with-vite',
         meta: { enTitle: 'Use in Vite', title: 'Use in Vite', category: 'docs' },
         component: () => import('../vueDocs/use-with-vite.en-US.md'),
-      },
-      {
-        path: 'vue/migration-v43-cn',
-        meta: {
-          enTitle: '4.2.6 to 4.3.0',
-          title: '从 4.2.6 到 4.3.0',
-          category: 'docs',
-          tag: '4.3.0',
-        },
-        component: () => import('../vueDocs/migration-v43.zh-CN.md'),
-      },
-      {
-        path: 'vue/migration-v43',
-        meta: {
-          enTitle: '4.2.6 to 4.3.0',
-          title: '4.2.6 to 4.3.0',
-          category: 'docs',
-          tag: '4.3.0',
-        },
-        component: () => import('../vueDocs/migration-v43.en-US.md'),
       },
       {
         path: 'vue/customize-theme-cn',
@@ -217,6 +207,26 @@ const routes = [
         path: 'vue/migration-v4',
         meta: { enTitle: 'V3 to V4', title: '从 V3 到 V4', category: 'docs' },
         component: () => import('../vueDocs/migration-v4.en-US.md'),
+      },
+      {
+        path: 'vue/migration-v43-cn',
+        meta: {
+          enTitle: '4.2.6 to 4.3.0',
+          title: '从 4.2.6 到 4.3.0',
+          category: 'docs',
+          tag: '4.3.0',
+        },
+        component: () => import('../vueDocs/migration-v43.zh-CN.md'),
+      },
+      {
+        path: 'vue/migration-v43',
+        meta: {
+          enTitle: '4.2.6 to 4.3.0',
+          title: '4.2.6 to 4.3.0',
+          category: 'docs',
+          tag: '4.3.0',
+        },
+        component: () => import('../vueDocs/migration-v43.en-US.md'),
       },
       {
         path: 'vue/i18n-cn',
@@ -313,16 +323,6 @@ const routes = [
           tag: 'Spec',
         },
         component: () => import('../vueDocs/design.en-US.md'),
-      },
-      {
-        path: 'vue/changelog-cn',
-        meta: { enTitle: 'Change Log', title: '更新日志', category: 'docs' },
-        component: () => import('../../../CHANGELOG.zh-CN.md'),
-      },
-      {
-        path: 'vue/changelog',
-        meta: { enTitle: 'Change Log', title: '更新日志', category: 'docs' },
-        component: () => import('../../../CHANGELOG.en-US.md'),
       },
       { path: '', redirect: '/docs/vue/introduce/' },
     ],

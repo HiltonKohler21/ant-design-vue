@@ -1,4 +1,4 @@
-import { groupBy, sortBy } from 'lodash-es';
+import { groupBy } from 'lodash-es';
 import type { ComputedRef } from 'vue';
 import { computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -22,6 +22,9 @@ const normalizeType = (type?: string) => {
   if (type === '其它') return '其他';
   return type;
 };
+
+const compareComponentTitle = (a: any, b: any) =>
+  String(a?.title || '').localeCompare(String(b?.title || ''), 'en', { sensitivity: 'base' });
 
 const useMenus = (): {
   menus: ComputedRef<any[]>;
@@ -86,7 +89,7 @@ const useMenus = (): {
           title: meta?.zh || key,
           order: meta ? meta.order : 99,
           enTitle: meta ? meta.en : key,
-          children: isDocsGroup ? group[key] : sortBy(group[key], 'title'),
+          children: isDocsGroup ? group[key] : [...group[key]].sort(compareComponentTitle),
         };
       })
       .sort((a, b) => a.order - b.order);

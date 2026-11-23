@@ -129,6 +129,12 @@ const isHelper = (src, comp, file) =>
       new RegExp(`from '\\./${file.replace(/\.vue$/, '')}`).test(o.src),
   );
 
+const stripYamlQuotes = val =>
+  val
+    .trim()
+    .replace(/^(['"])(.*)\1$/, '$2')
+    .trim();
+
 const targets = [];
 for (const c of comps) {
   const dir = path.join(COMPONENTS_DIR, c, 'demo');
@@ -141,7 +147,7 @@ for (const c of comps) {
     if (isHelper(src, c, f)) continue;
     const m = src.match(/title:\s*\n\s*zh-CN:\s*(.+)/);
     if (!m) continue;
-    expected.push({ file: f, title: m[1].trim() });
+    expected.push({ file: f, title: stripYamlQuotes(m[1]) });
   }
   if (expected.length) targets.push({ comp: c, expected });
 }

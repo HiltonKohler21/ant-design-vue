@@ -44,7 +44,7 @@
       >
         <div class="content-layout">
           <div class="content-body">
-            <section ref="mainContainerRef" :class="mainContainerClass">
+            <section ref="mainContainerRef" :class="mainContainerClass" :style="mainContainerStyle">
               <Demo v-if="isDemo" :page-data="pageData" :is-zh-c-n="isZhCN">
                 <component :is="matchCom" />
               </Demo>
@@ -63,7 +63,11 @@
               :offset-top="80"
               :target-offset="80"
               :items="headers"
-            />
+            >
+              <template #customTitle="item">
+                <span :class="{ 'toc-debug': item.debug }">{{ item.title }}</span>
+              </template>
+            </a-anchor>
           </aside>
         </div>
       </a-col>
@@ -102,7 +106,30 @@ type TocItem = {
   key: string;
   href: string;
   title: string;
+  debug?: boolean;
   children?: TocItem[];
+};
+
+type PageDemoItem = {
+  href: string;
+  title: any;
+  enTitle?: any;
+  debug?: boolean;
+};
+
+const isSameDemoList = (a: PageDemoItem[], b: PageDemoItem[]): boolean => {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i += 1) {
+    if (
+      a[i].href !== b[i].href ||
+      unref(a[i].title) !== unref(b[i].title) ||
+      unref(a[i].enTitle) !== unref(b[i].enTitle) ||
+      Boolean(a[i].debug) !== Boolean(b[i].debug)
+    ) {
+      return false;
+    }
+  }
+  return true;
 };
 
 const extractHeadingText = (el: Element | null): string => {
@@ -133,21 +160,96 @@ export default defineComponent({
     const { menus, activeMenuItem, currentMenuIndex, dataSource } = useMenus();
 
     const mainContainerRef = ref<HTMLElement | null>(null);
-    const demos = ref<any[]>([]);
+    const showDebugDemos = ref(false);
+    const orderedDemos = ref<PageDemoItem[]>([]);
+    const fallbackDemos = ref<PageDemoItem[]>([]);
     const hasDesignTokens = ref(false);
     const hasSemanticDom = ref(false);
     const domApiSections = ref<TocItem[]>([]);
     const domSemanticItem = ref<TocItem | null>(null);
 
-    provide('addDemosInfo', (info: any) => {
-      if (!info || !info.href) return;
-      const idx = demos.value.findIndex(d => d.href === info.href);
-      if (idx === -1) {
-        demos.value.push(info);
-      } else {
-        demos.value[idx] = info;
+    const setPageDemos = (list: PageDemoItem[]) => {
+      const normalized = Array.isArray(list) ? list.filter(item => item && item.href) : [];
+      if (!isSameDemoList(orderedDemos.value, normalized)) {
+        orderedDemos.value = normalized;
       }
+    };
+
+    const addDemosInfo = (info: PageDemoItem) => {
+      if (!info || !info.href) return;
+      const normalizedHref = String(info.href).toLocaleLowerCase();
+      const idx = fallbackDemos.value.findIndex(
+        d => String(d.href || '').toLocaleLowerCase() === normalizedHref,
+      );
+      if (idx === -1) {
+        fallbackDemos.value = [...fallbackDemos.value, info];
+      } else {
+        const next = fallbackDemos.value.slice();
+        next[idx] = info;
+        fallbackDemos.value = next;
+      }
+    };
+
+    const pageDemos = computed<PageDemoItem[]>(() => {
+      if (orderedDemos.value.length > 0) {
+        const byHref = new Map<string, PageDemoItem>();
+        fallbackDemos.value.forEach(item => {
+          const key = String(item?.href || '').toLocaleLowerCase();
+          if (key) byHref.set(key, item);
+        });
+        const seen = new Set<string>();
+        const merged = orderedDemos.value.map(item => {
+          const key = String(item.href || '').toLocaleLowerCase();
+          seen.add(key);
+          const fallback = byHref.get(key);
+          return {
+            ...fallback,
+            ...item,
+            debug: Boolean(item.debug ?? fallback?.debug),
+          };
+        });
+        fallbackDemos.value.forEach(item => {
+          const key = String(item?.href || '').toLocaleLowerCase();
+          if (key && !seen.has(key)) {
+            merged.push(item);
+          }
+        });
+        return merged;
+      }
+      return fallbackDemos.value;
     });
+
+    const debugDemoHrefs = computed(() =>
+      pageDemos.value
+        .filter(d => Boolean(d?.debug))
+        .map(d => String(d.href || '').toLocaleLowerCase())
+        .filter(Boolean),
+    );
+
+    const debugDemoHrefsKey = computed(() => debugDemoHrefs.value.join('|'));
+
+    const hasDebugDemos = computed(() => debugDemoHrefs.value.length > 0);
+
+    const toggleDebugDemos = () => {
+      const next = !showDebugDemos.value;
+      showDebugDemos.value = next;
+      if (!next && typeof window !== 'undefined') {
+        const currentHash = String(window.location.hash || route.hash || '').toLocaleLowerCase();
+        if (currentHash && debugDemoHrefs.value.includes(currentHash)) {
+          window.history.replaceState(
+            window.history.state,
+            '',
+            window.location.pathname + window.location.search,
+          );
+        }
+      }
+    };
+
+    provide('showDebugDemos', showDebugDemos);
+    provide('toggleDebugDemos', toggleDebugDemos);
+    provide('setPageDemos', setPageDemos);
+    provide('addDemosInfo', addDemosInfo);
+    provide('hasDebugDemos', hasDebugDemos);
 
     provide('setHasDesignTokens', (val: boolean) => {
       hasDesignTokens.value = !!val;
@@ -159,15 +261,29 @@ export default defineComponent({
 
     const baseRoutePath = computed(() => route.path.replace(/-cn\/?$/, '').replace(/\/$/, ''));
 
-    // Only reset demos/design-tokens when navigating to a different base route
-    // so switching zh-CN <-> en-US on the same page preserves the TOC.
+    // Only reset demos/design-tokens/debug state when navigating to a different base route
+    // so switching zh-CN <-> en-US on the same page preserves the TOC and debug toggle.
     watch(baseRoutePath, () => {
-      demos.value = [];
+      orderedDemos.value = [];
+      fallbackDemos.value = [];
+      showDebugDemos.value = false;
       hasDesignTokens.value = false;
       hasSemanticDom.value = false;
       domApiSections.value = [];
       domSemanticItem.value = null;
     });
+
+    // Auto-enable debug demos if URL hash targets a debug demo sectionId
+    watch(
+      [() => route.hash, debugDemoHrefsKey],
+      ([hash]) => {
+        const normalizedHash = String(hash || '').toLocaleLowerCase();
+        if (normalizedHash && debugDemoHrefs.value.includes(normalizedHash)) {
+          showDebugDemos.value = true;
+        }
+      },
+      { immediate: true },
+    );
 
     watch(
       () => route.path,
@@ -334,7 +450,8 @@ export default defineComponent({
 
     const headers = computed(() => {
       if (isDemo.value) {
-        const demoItems = demos.value
+        const demoItems = pageDemos.value
+          .filter(demo => showDebugDemos.value || !demo.debug)
           .map((demo, idx) => {
             const rawTitle = unref(demo.title);
             const rawEnTitle = unref(demo.enTitle);
@@ -347,6 +464,7 @@ export default defineComponent({
               key: href || `demo-${idx}`,
               href,
               title: titleText || href.replace(/^#/, ''),
+              debug: Boolean(demo.debug),
             };
           })
           .filter(Boolean) as TocItem[];
@@ -417,6 +535,14 @@ export default defineComponent({
       return {
         'main-container': true,
         'main-container-component': isDemo.value,
+        'show-debug-demos': isDemo.value && showDebugDemos.value,
+      };
+    });
+
+    const mainContainerStyle = computed(() => {
+      if (!isDemo.value) return undefined;
+      return {
+        '--antd-site-api-deprecated-display': showDebugDemos.value ? 'table-row' : 'none',
       };
     });
 
@@ -431,6 +557,7 @@ export default defineComponent({
       isZhCN,
       mainContainerRef,
       mainContainerClass,
+      mainContainerStyle,
       menus,
       currentMenuIndex,
       activeMenuItem,
@@ -479,6 +606,24 @@ export default defineComponent({
 
   .ant-anchor-link-title-active {
     color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .toc-debug {
+    color: var(--ant-purple-6, var(--purple-6, #722ed1));
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--ant-purple-5, var(--purple-5, #9254de));
+    }
+  }
+
+  .ant-anchor-link-title:hover .toc-debug {
+    color: var(--ant-purple-5, var(--purple-5, #9254de));
+  }
+
+  .ant-anchor-link-title-active .toc-debug {
+    color: var(--ant-purple-6, var(--purple-6, #722ed1));
     font-weight: 500;
   }
 }
