@@ -1,26 +1,45 @@
-import { defineComponent, toRefs, computed } from 'vue';
+import { defineComponent, toRefs, computed, ref } from 'vue';
 import type { PropType } from 'vue';
-import { ConfigProvider, Table, theme } from 'ant-design-vue';
+import { ConfigProvider, Empty, Input, Table, Tag, Tooltip, message, theme } from 'ant-design-vue';
+import { CheckOutlined, CopyOutlined, SearchOutlined } from '@ant-design/icons-vue';
 import { token2CSSVar } from 'ant-design-vue/es/_util/cssinjs';
 import getDesignToken from '../antdv-token-previewer/utils/getDesignToken';
 import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
 import tokenData from 'ant-design-vue/es/version/token.json';
 import { useLocale } from '../../i18n';
 import useSiteToken from '../../hooks/useSiteToken';
-import { CssVarBadge, isColorValue, useColumns } from '../TokenTable';
+import { CssVarBadge, copyText, isColorValue, useColumns } from '../TokenTable';
 import type { TokenData } from '../TokenTable';
 import ColorChunk from '../ColorChunk';
 
 const defaultToken = getDesignToken();
+const rawTokenMeta = tokenMeta as Record<string, any>;
+const globalTokenMeta: Record<string, any> = rawTokenMeta.global || rawTokenMeta;
+const componentTokenMeta: Record<string, Record<string, any>> = rawTokenMeta.components || {};
+
+const getGlobalMeta = (name: string) => {
+  if (name === 'global' || name === 'components') {
+    return undefined;
+  }
+  return globalTokenMeta[name];
+};
 
 const locales = {
   cn: {
     componentToken: '组件 Token',
     globalToken: '全局 Token',
+    searchPlaceholder: '搜索 Token',
+    copyTokenName: '复制 Token 名称',
+    copied: '已复制',
+    emptySearch: '未找到匹配的 Token',
   },
   en: {
     componentToken: 'Component Token',
     globalToken: 'Global Token',
+    searchPlaceholder: 'Search Token',
+    copyTokenName: 'Copy Token Name',
+    copied: 'Copied',
+    emptySearch: 'No matching tokens found',
   },
 };
 
@@ -30,13 +49,21 @@ export interface ComponentTokenItem {
   value: any;
 }
 
+interface ComponentTokenRowData extends TokenData {
+  since?: string;
+}
+
 const toComponentCssVar = (comp: string, tokenName: string, prefix = 'ant') => {
   const key = `${comp}${tokenName.charAt(0).toUpperCase()}${tokenName.slice(1)}`;
   return token2CSSVar(key, prefix);
 };
 
-const inferTokenType = (name: string, value: any): string => {
-  const meta = (tokenMeta as Record<string, any>)[name];
+const inferTokenType = (name: string, value: any, comp?: string): string => {
+  const compMeta = comp ? componentTokenMeta[comp]?.[name] : undefined;
+  if (compMeta?.type) {
+    return compMeta.type;
+  }
+  const meta = getGlobalMeta(name);
   if (meta?.type) {
     return meta.type;
   }
@@ -94,7 +121,7 @@ const collectComponentTokens = (component?: string) => {
         if (
           typeof tokenName === 'string' &&
           !tokenName.startsWith('_') &&
-          (tokenMeta as Record<string, any>)[tokenName]
+          getGlobalMeta(tokenName)
         ) {
           globalTokenSet.add(tokenName);
         }
@@ -126,11 +153,103 @@ export function hasComponentTokens(component?: string): boolean {
   return mergedComponentTokens.length > 0 || mergedGlobalTokens.length > 0;
 }
 
+const TokenNameButton = defineComponent({
+  name: 'TokenNameButton',
+  props: {
+    name: {
+      type: String,
+      required: true,
+    },
+    since: {
+      type: String,
+      default: '',
+    },
+  },
+  setup(props) {
+    const [locale] = useLocale(locales);
+    const siteToken = useSiteToken();
+    const token = computed(() => siteToken.value.token);
+    const copied = ref(false);
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const handleCopy = (e: MouseEvent) => {
+      e.stopPropagation();
+      copyText(props.name);
+      copied.value = true;
+      message.success(`${locale.value.copied}: ${props.name}`);
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        copied.value = false;
+      }, 1500);
+    };
+
+    return () => (
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '6px',
+        }}
+      >
+        <Tooltip title={copied.value ? locale.value.copied : locale.value.copyTokenName}>
+          <span
+            role="button"
+            tabindex={0}
+            onClick={handleCopy}
+            onKeydown={(e: KeyboardEvent) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleCopy(e as unknown as MouseEvent);
+              }
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontWeight: 500,
+              cursor: 'pointer',
+              color: copied.value ? token.value.colorSuccess : token.value.colorText,
+              transition: 'color 0.2s',
+            }}
+          >
+            <span>{props.name}</span>
+            {copied.value ? (
+              <CheckOutlined style={{ fontSize: '12px', color: token.value.colorSuccess }} />
+            ) : (
+              <CopyOutlined
+                style={{ fontSize: '12px', color: token.value.colorTextTertiary, opacity: 0.75 }}
+              />
+            )}
+          </span>
+        </Tooltip>
+        {props.since ? (
+          <Tag
+            color="blue"
+            bordered={false}
+            style={{
+              margin: 0,
+              padding: '0 6px',
+              fontSize: '11px',
+              lineHeight: '18px',
+            }}
+          >
+            {props.since}
+          </Tag>
+        ) : null}
+      </div>
+    );
+  },
+});
+
 interface SubTokenTableProps {
   defaultOpen?: boolean;
   title: string;
   tokens?: string[];
   componentTokens?: ComponentTokenItem[];
+  searchKeyword?: string;
 }
 
 const SubTokenTable = defineComponent({
@@ -152,9 +271,13 @@ const SubTokenTable = defineComponent({
       type: Array as PropType<SubTokenTableProps['componentTokens']>,
       default: undefined,
     },
+    searchKeyword: {
+      type: String as PropType<SubTokenTableProps['searchKeyword']>,
+      default: '',
+    },
   },
   setup(props) {
-    const { defaultOpen, title, tokens, componentTokens } = toRefs(props);
+    const { defaultOpen, title, tokens, componentTokens, searchKeyword } = toRefs(props);
     const [, lang] = useLocale(locales);
     const siteToken = useSiteToken();
     const token = computed(() => siteToken.value.token);
@@ -164,51 +287,81 @@ const SubTokenTable = defineComponent({
     );
 
     const isComponentMode = computed(() => Array.isArray(componentTokens.value));
-    const globalColumns = useColumns();
-    const componentColumns = useColumns({ hideDescription: true });
+    const columns = useColumns();
 
-    const data = computed<TokenData[]>(() => {
+    const allData = computed<ComponentTokenRowData[]>(() => {
       if (isComponentMode.value) {
         return (componentTokens.value || []).map(({ comp, name, value }) => {
           const overrideVal = liveToken.value[comp]?.[name];
           const resolvedValue = overrideVal !== undefined ? overrideVal : value;
+          const compMeta = componentTokenMeta[comp]?.[name];
+          const descText =
+            lang.value === 'cn'
+              ? compMeta?.desc || compMeta?.name
+              : compMeta?.descEn || compMeta?.nameEn;
           return {
             name,
-            type: inferTokenType(name, resolvedValue),
+            desc: descText || '-',
+            type: inferTokenType(name, resolvedValue, comp),
             value: resolvedValue,
             cssVar: toComponentCssVar(comp, name),
+            since: compMeta?.since || '',
           };
         });
       }
 
       return [...(tokens.value || [])]
         .sort(sortTokenNames)
-        .map<TokenData | null>(name => {
-          const meta = (tokenMeta as Record<string, any>)[name];
+        .map<ComponentTokenRowData | null>(name => {
+          const meta = getGlobalMeta(name);
           if (!meta) {
             return null;
           }
+          const descText =
+            lang.value === 'cn' ? meta.desc || meta.name : meta.descEn || meta.nameEn;
           return {
             name,
-            desc: lang.value === 'cn' ? meta.desc || meta.name : meta.descEn || meta.nameEn,
+            desc: descText || '-',
             type: meta.type,
             value: liveToken.value[name] ?? (defaultToken as any)[name],
             cssVar: token2CSSVar(name, 'ant'),
+            since: meta.since || '',
           };
         })
-        .filter((info): info is TokenData => Boolean(info));
+        .filter((info): info is ComponentTokenRowData => Boolean(info));
+    });
+
+    const filteredData = computed<ComponentTokenRowData[]>(() => {
+      const keyword = (searchKeyword.value || '').trim().toLowerCase();
+      if (!keyword) {
+        return allData.value;
+      }
+      return allData.value.filter(
+        item =>
+          item.name.toLowerCase().includes(keyword) ||
+          (item.cssVar && item.cssVar.toLowerCase().includes(keyword)) ||
+          (item.desc && item.desc.toLowerCase().includes(keyword)) ||
+          (item.type && item.type.toLowerCase().includes(keyword)),
+      );
     });
 
     return () => {
-      if (!data.value.length) {
+      const hasKeyword = Boolean((searchKeyword.value || '').trim());
+      if (!allData.value.length || (hasKeyword && !filteredData.value.length)) {
         return null;
       }
 
-      const activeColumns = isComponentMode.value ? componentColumns.value : globalColumns.value;
+      const countLabel = hasKeyword
+        ? `(${filteredData.value.length}/${allData.value.length})`
+        : `(${allData.value.length})`;
 
       return (
         // Reuse `.markdown` style
-        <details class="markdown" open={defaultOpen.value} style={{ marginBottom: '12px' }}>
+        <details
+          class="markdown"
+          open={hasKeyword ? true : defaultOpen.value}
+          style={{ marginBottom: '12px' }}
+        >
           <summary style={{ cursor: 'pointer', userSelect: 'none' }}>
             <h3 style={{ display: 'inline' }}>
               {title.value}
@@ -220,7 +373,7 @@ const SubTokenTable = defineComponent({
                   color: token.value.colorTextSecondary,
                 }}
               >
-                ({data.value.length})
+                {countLabel}
               </span>
             </h3>
           </summary>
@@ -233,9 +386,9 @@ const SubTokenTable = defineComponent({
           >
             <Table
               size="middle"
-              columns={activeColumns}
+              columns={columns.value}
               bordered
-              dataSource={data.value}
+              dataSource={filteredData.value}
               style={{ marginBottom: token.value.margin }}
               pagination={false}
               rowKey={record => record.cssVar || record.name}
@@ -250,10 +403,13 @@ const SubTokenTable = defineComponent({
                           alignItems: 'flex-start',
                         }}
                       >
-                        <span style={{ fontWeight: 500 }}>{record.name}</span>
+                        <TokenNameButton name={record.name} since={record.since} />
                         {record.cssVar ? <CssVarBadge cssVar={record.cssVar} /> : null}
                       </div>
                     );
+                  }
+                  if (column.key === 'desc') {
+                    return <span>{record.desc || '-'}</span>;
                   }
                   if (column.key === 'type') {
                     return (
@@ -309,9 +465,51 @@ const ComponentTokenTable = defineComponent({
   },
   setup(props) {
     const { component } = toRefs(props);
-    const [locale] = useLocale(locales);
+    const [locale, lang] = useLocale(locales);
+    const searchKeyword = ref('');
 
     const mergedTokens = computed(() => collectComponentTokens(component.value));
+
+    const hasAnyMatch = computed(() => {
+      const keyword = searchKeyword.value.trim().toLowerCase();
+      if (!keyword) {
+        return true;
+      }
+      const { mergedComponentTokens, mergedGlobalTokens } = mergedTokens.value;
+      const compHit = mergedComponentTokens.some(({ comp, name, value }) => {
+        const compMeta = componentTokenMeta[comp]?.[name];
+        const desc =
+          (lang.value === 'cn'
+            ? compMeta?.desc || compMeta?.name
+            : compMeta?.descEn || compMeta?.nameEn) || '';
+        const type = inferTokenType(name, value, comp);
+        const cssVar = toComponentCssVar(comp, name);
+        return (
+          name.toLowerCase().includes(keyword) ||
+          cssVar.toLowerCase().includes(keyword) ||
+          desc.toLowerCase().includes(keyword) ||
+          type.toLowerCase().includes(keyword)
+        );
+      });
+      if (compHit) {
+        return true;
+      }
+      return mergedGlobalTokens.some(name => {
+        const meta = getGlobalMeta(name);
+        if (!meta) {
+          return false;
+        }
+        const desc =
+          (lang.value === 'cn' ? meta.desc || meta.name : meta.descEn || meta.nameEn) || '';
+        const cssVar = token2CSSVar(name, 'ant');
+        return (
+          name.toLowerCase().includes(keyword) ||
+          cssVar.toLowerCase().includes(keyword) ||
+          desc.toLowerCase().includes(keyword) ||
+          (meta.type && String(meta.type).toLowerCase().includes(keyword))
+        );
+      });
+    });
 
     return () => {
       const { mergedComponentTokens, mergedGlobalTokens } = mergedTokens.value;
@@ -320,18 +518,43 @@ const ComponentTokenTable = defineComponent({
       }
 
       return (
-        <>
-          <SubTokenTable
-            title={locale.value.componentToken}
-            componentTokens={mergedComponentTokens}
-            defaultOpen={true}
-          />
-          <SubTokenTable
-            title={locale.value.globalToken}
-            tokens={mergedGlobalTokens}
-            defaultOpen={false}
-          />
-        </>
+        <div>
+          <div style={{ marginBottom: '12px', maxWidth: '320px' }}>
+            <Input
+              value={searchKeyword.value}
+              {...{
+                'onUpdate:value': (val: string) => {
+                  searchKeyword.value = val;
+                },
+              }}
+              placeholder={locale.value.searchPlaceholder}
+              allowClear
+              prefix={<SearchOutlined />}
+            />
+          </div>
+          {hasAnyMatch.value ? (
+            <>
+              <SubTokenTable
+                title={locale.value.componentToken}
+                componentTokens={mergedComponentTokens}
+                searchKeyword={searchKeyword.value}
+                defaultOpen={true}
+              />
+              <SubTokenTable
+                title={locale.value.globalToken}
+                tokens={mergedGlobalTokens}
+                searchKeyword={searchKeyword.value}
+                defaultOpen={false}
+              />
+            </>
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={locale.value.emptySearch}
+              style={{ marginBlock: '24px' }}
+            />
+          )}
+        </div>
       );
     };
   },
