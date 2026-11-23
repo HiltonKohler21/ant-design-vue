@@ -85,6 +85,10 @@ app.use(i18n);
 
 app.config.globalProperties.$i18n = i18n;
 
+// 先挂载、后等待路由就绪：让站点外壳（Header/侧边栏）尽快出现，
+// 避免 dev 下首屏因路由 chunk 较慢而整页空白。
+app.mount('#app');
+
 const ensureInitialRoute = () => {
   if (router.currentRoute.value.matched.length > 0) return;
   const target = window.location.pathname + window.location.search + window.location.hash;
@@ -93,12 +97,10 @@ const ensureInitialRoute = () => {
   }
 };
 
-// 深链接首屏：等首次导航完成后再挂载，避免出现「路由还没解析完就渲染」导致的白屏。
 router
   .isReady()
   .catch(() => {})
   .finally(() => {
-    app.mount('#app');
     ensureInitialRoute();
     window.setTimeout(ensureInitialRoute, 600);
   });

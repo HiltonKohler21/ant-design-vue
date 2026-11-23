@@ -1,5 +1,42 @@
+/**
+ * 解析 playwright：优先项目依赖，其次 npx 缓存（`npx playwright install` 后可用）
+ */
+const loadChromium = async () => {
+  try {
+    return (await import('playwright')).chromium;
+  } catch {
+    const { execSync } = await import('node:child_process');
+    const os = await import('node:os');
+    const path = await import('node:path');
+    const base = path.join(os.homedir(), '.npm', '_npx');
+    const candidates = [];
+    try {
+      const dirs = execSync(`ls -d ${base}/*/node_modules/playwright 2>/dev/null || true`, {
+        encoding: 'utf8',
+      })
+        .split('\n')
+        .filter(Boolean);
+      dirs.forEach(d => candidates.push(path.join(d, 'index.mjs')));
+    } catch {
+      /* ignore */
+    }
+    for (const c of candidates) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        return (await import(c)).chromium;
+      } catch {
+        /* try next */
+      }
+    }
+    console.error(
+      '未找到 playwright，请先执行：npm i -D playwright && npx playwright install chromium',
+    );
+    process.exit(2);
+  }
+};
+
+const chromium = await loadChromium();
 /** 站点全局交互巡检：主题切换 / 搜索 / 侧边栏导航 / demo 内按钮全量点击 */
-import { chromium } from 'playwright';
 
 const BASE = process.env.SITE_BASE || 'http://127.0.0.1:5173';
 const ENV_NOISE = /docsearch|Network Error|ERR_|Failed to load resource|403 \(\)/i;
@@ -38,25 +75,32 @@ await check('主题切换', async () => {
   }
   await trigger.click();
   await page.waitForTimeout(500);
-  const darkItem = page.locator('.theme-menu-item').filter({ hasText: /Dark Theme|暗黑主题/ }).first();
+  const darkItem = page
+    .locator('.theme-menu-item')
+    .filter({ hasText: /Dark Theme|暗黑主题/ })
+    .first();
   if ((await darkItem.count()) === 0) {
     issues.push('主题切换: 未找到「暗黑主题」选项');
     return;
   }
   await darkItem.click();
   await page.waitForTimeout(800);
-  const bg = await page.evaluate(
-    () => getComputedStyle(document.documentElement).getPropertyValue('--ant-color-bg-container').trim(),
+  const bg = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--ant-color-bg-container').trim(),
   );
   if (bg !== '#141414') issues.push(`主题切换: 暗色未生效（--ant-color-bg-container=${bg}）`);
 
   // 切回浅色
   await page.locator('.theme-switch-btn').first().click();
   await page.waitForTimeout(300);
-  await page.locator('.theme-menu-item').filter({ hasText: /Light Theme|浅色主题/ }).first().click();
+  await page
+    .locator('.theme-menu-item')
+    .filter({ hasText: /Light Theme|浅色主题/ })
+    .first()
+    .click();
   await page.waitForTimeout(600);
-  const bg2 = await page.evaluate(
-    () => getComputedStyle(document.documentElement).getPropertyValue('--ant-color-bg-container').trim(),
+  const bg2 = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--ant-color-bg-container').trim(),
   );
   if (bg2 !== '#ffffff') issues.push(`主题切换: 浅色恢复失败（=${bg2}）`);
 });
@@ -66,7 +110,9 @@ await check('搜索框', async () => {
   await page.keyboard.press('Control+k');
   await page.waitForTimeout(600);
   const visible = await page.evaluate(() => {
-    const input = document.querySelector('#search-box input, .search-box input, input[type="search"]');
+    const input = document.querySelector(
+      '#search-box input, .search-box input, input[type="search"]',
+    );
     return !!input && input.offsetParent !== null;
   });
   if (!visible) issues.push('搜索框: Ctrl+K 后未出现可见输入框');
@@ -78,16 +124,23 @@ await check('侧边栏导航', async () => {
   await page.goto(`${BASE}/components/masonry-cn`, { waitUntil: 'networkidle' });
   // 等待懒加载 chunk 渲染完成（首次进入某个组件页需要拉取对应 chunk）
   await page.waitForSelector('article .markdown h1, .code-box', { timeout: 20000 }).catch(() => {});
-  await page.waitForFunction(() => (document.querySelector('article .markdown h1')?.textContent || '').length > 3, {
-    timeout: 15000,
-  }).catch(() => {});
+  await page
+    .waitForFunction(
+      () => (document.querySelector('article .markdown h1')?.textContent || '').length > 3,
+      {
+        timeout: 15000,
+      },
+    )
+    .catch(() => {});
   const navState = await page.evaluate(() => ({
     url: location.pathname,
     h1: (document.querySelector('article .markdown h1')?.textContent || '').trim(),
     boxes: document.querySelectorAll('.code-box').length,
   }));
   if (!/Masonry/i.test(navState.h1)) {
-    issues.push(`侧边栏导航: masonry 页面异常（url=${navState.url} h1=${navState.h1} boxes=${navState.boxes}）`);
+    issues.push(
+      `侧边栏导航: masonry 页面异常（url=${navState.url} h1=${navState.h1} boxes=${navState.boxes}）`,
+    );
   }
 });
 
@@ -98,7 +151,9 @@ for (const name of ['button', 'modal', 'select', 'dropdown', 'tabs', 'table']) {
     await page.waitForTimeout(900);
     const boxes = await page.$$('.code-box');
     for (const box of boxes) {
-      const btns = await box.$$('button:not([disabled]), .ant-select, .ant-picker, .ant-switch, .ant-checkbox-wrapper, .ant-radio-wrapper, .ant-tabs-tab');
+      const btns = await box.$$(
+        'button:not([disabled]), .ant-select, .ant-picker, .ant-switch, .ant-checkbox-wrapper, .ant-radio-wrapper, .ant-tabs-tab',
+      );
       for (const b of btns.slice(0, 3)) {
         try {
           if (!(await b.isVisible())) continue;

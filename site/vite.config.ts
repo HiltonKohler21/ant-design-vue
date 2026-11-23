@@ -44,7 +44,6 @@ export default {
       'vue-i18n',
       'async-validator',
       '@ctrl/tinycolor',
-      'shallowequal',
       'resize-observer-polyfill',
     ],
   },

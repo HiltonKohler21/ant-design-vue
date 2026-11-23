@@ -90,3 +90,6 @@ components/version/token-meta.json
 
 # pi goal/agent 运行时状态
 .pi/
+
+# 开发态库预打包产物
+site/.dev-lib/

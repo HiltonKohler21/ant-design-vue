@@ -1,18 +1,60 @@
 /**
+ * 解析 playwright：优先项目依赖，其次 npx 缓存（`npx playwright install` 后可用）
+ */
+const loadChromium = async () => {
+  try {
+    return (await import('playwright')).chromium;
+  } catch {
+    const { execSync } = await import('node:child_process');
+    const os = await import('node:os');
+    const path = await import('node:path');
+    const base = path.join(os.homedir(), '.npm', '_npx');
+    const candidates = [];
+    try {
+      const dirs = execSync(`ls -d ${base}/*/node_modules/playwright 2>/dev/null || true`, {
+        encoding: 'utf8',
+      })
+        .split('\n')
+        .filter(Boolean);
+      dirs.forEach(d => candidates.push(path.join(d, 'index.mjs')));
+    } catch {
+      /* ignore */
+    }
+    for (const c of candidates) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        return (await import(c)).chromium;
+      } catch {
+        /* try next */
+      }
+    }
+    console.error(
+      '未找到 playwright，请先执行：npm i -D playwright && npx playwright install chromium',
+    );
+    process.exit(2);
+  }
+};
+
+const chromium = await loadChromium();
+/**
  * 站点巡检 v2：页面加载 + 交互点击 + 文档页覆盖
  *
  * 用法：node .cache/site-audit2.mjs [--only=x,y] [--limit=n] [--no-interact]
  */
-import { chromium } from 'playwright';
+
 import fs from 'node:fs';
 
 const BASE = process.env.SITE_BASE || 'http://127.0.0.1:5173';
 const demoRoutes = fs.readFileSync('site/src/router/demoRoutes.js', 'utf8');
-const comps = [...new Set([...demoRoutes.matchAll(/path:\s*'([a-z0-9-]+):lang\(-cn\)\?'/g)].map(m => m[1]))];
+const comps = [
+  ...new Set([...demoRoutes.matchAll(/path:\s*'([a-z0-9-]+):lang\(-cn\)\?'/g)].map(m => m[1])),
+];
 
 // 文档路由（docsRoutes 可能内联在 index.js 里，这里抓 path: 'xxx-cn'）
 const docsSrc = fs.readFileSync('site/src/router/index.js', 'utf8');
-const docPaths = [...new Set([...docsSrc.matchAll(/path:\s*'(vue\/[a-z0-9-]+-cn)'/g)].map(m => m[1]))];
+const docPaths = [
+  ...new Set([...docsSrc.matchAll(/path:\s*'(vue\/[a-z0-9-]+-cn)'/g)].map(m => m[1])),
+];
 const importDocs = (() => {
   try {
     return fs.readFileSync('site/src/router/docsRoutes.js', 'utf8');
@@ -22,7 +64,13 @@ const importDocs = (() => {
 })();
 const docs = docPaths.length
   ? docPaths
-  : [...new Set([...(docsSrc + importDocs).matchAll(/path:\s*'(docs\/[a-z0-9-]+):lang\(-cn\)\?'/g)].map(m => m[1]))];
+  : [
+      ...new Set(
+        [...(docsSrc + importDocs).matchAll(/path:\s*'(docs\/[a-z0-9-]+):lang\(-cn\)\?'/g)].map(
+          m => m[1],
+        ),
+      ),
+    ];
 
 const only = process.argv.find(a => a.startsWith('--only='))?.split('=')[1];
 const limit = Number(process.argv.find(a => a.startsWith('--limit='))?.split('=')[1] || 0);
@@ -59,14 +107,18 @@ for (const target of targets) {
   page.on('console', msg => {
     if (msg.type() === 'error') {
       const text = msg.text();
-      if (!/favicon|404 \(Not Found\)|ERR_CONNECTION/i.test(text)) consoleErrors.push(text.slice(0, 200));
+      if (!/favicon|404 \(Not Found\)|ERR_CONNECTION/i.test(text))
+        consoleErrors.push(text.slice(0, 200));
     }
   });
 
   let status = 200;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const resp = await page.goto(BASE + target.url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+      const resp = await page.goto(BASE + target.url, {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000,
+      });
       status = resp?.status() ?? 0;
       break;
     } catch (e) {
@@ -123,7 +175,9 @@ for (const target of targets) {
     try {
       const current = new URL(page.url()).pathname;
       if (!current.startsWith(new URL(BASE + target.url).pathname)) {
-        await page.goto(BASE + target.url, { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(() => {});
+        await page
+          .goto(BASE + target.url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+          .catch(() => {});
         await page.waitForTimeout(600);
       }
     } catch {
@@ -143,7 +197,12 @@ for (const target of targets) {
         nanStyles: [...document.querySelectorAll('[style]')].filter(el =>
           /(?:NaN|: undefined)/.test(el.getAttribute('style') || ''),
         ).length,
-        nanCss: ([...document.querySelectorAll('style')].map(s => s.innerHTML).join('').match(/NaN/g) || []).length,
+        nanCss: (
+          [...document.querySelectorAll('style')]
+            .map(s => s.innerHTML)
+            .join('')
+            .match(/NaN/g) || []
+        ).length,
         emptyRoot: (document.getElementById('app')?.innerHTML || '').length < 200,
       };
     });
@@ -163,7 +222,9 @@ for (const target of targets) {
     }));
   }
 
-  await page.screenshot({ path: `${outDir}/${target.name.replace(/\//g, '_')}.png` }).catch(() => {});
+  await page
+    .screenshot({ path: `${outDir}/${target.name.replace(/\//g, '_')}.png` })
+    .catch(() => {});
 
   const bad =
     status !== 200 ||
@@ -175,14 +236,26 @@ for (const target of targets) {
     info.nanCss > 0 ||
     (target.kind === 'component' && info.demos === 0);
 
-  results.push({ ...target, status, clicked, ...info, errors, consoleErrors, interactErrors, interactWarnings, bad });
+  results.push({
+    ...target,
+    status,
+    clicked,
+    ...info,
+    errors,
+    consoleErrors,
+    interactErrors,
+    interactWarnings,
+    bad,
+  });
   await page.close();
 }
 
 await browser.close();
 
 const bad = results.filter(r => r.bad);
-console.log(`\n巡检 ${results.length} 个页面（组件 ${comps.length} / 文档 ${docs.length} / 首页 1），问题 ${bad.length} 个`);
+console.log(
+  `\n巡检 ${results.length} 个页面（组件 ${comps.length} / 文档 ${docs.length} / 首页 1），问题 ${bad.length} 个`,
+);
 for (const r of bad) {
   console.log(
     `\n✗ ${r.name} [${r.kind}] status=${r.status} chars=${r.chars} demos=${r.demos} clicked=${r.clicked} nanStyle=${r.nanStyles} nanCss=${r.nanCss} empty=${r.emptyRoot}`,
