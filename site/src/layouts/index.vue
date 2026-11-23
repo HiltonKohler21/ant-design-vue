@@ -44,7 +44,7 @@
       >
         <div class="content-layout">
           <div class="content-body">
-            <section :class="mainContainerClass">
+            <section ref="mainContainerRef" :class="mainContainerClass">
               <Demo v-if="isDemo" :page-data="pageData" :is-zh-c-n="isZhCN">
                 <component :is="matchCom" />
               </Demo>
@@ -74,7 +74,17 @@
 </template>
 <script lang="ts">
 import { GLOBAL_CONFIG } from '../SymbolKey';
-import { computed, defineComponent, inject, provide, ref, unref, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  inject,
+  nextTick,
+  onMounted,
+  provide,
+  ref,
+  unref,
+  watch,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './header/index.vue';
 import Footer from './Footer.vue';
@@ -87,6 +97,22 @@ import type { GlobalConfig } from '../type';
 
 const rControl = /[\u0000-\u001f]/g;
 const rSpecial = /[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'<>,.?/]+/g;
+
+type TocItem = {
+  key: string;
+  href: string;
+  title: string;
+  children?: TocItem[];
+};
+
+const extractHeadingText = (el: Element | null): string => {
+  if (!el) return '';
+  const clone = el.cloneNode(true) as Element;
+  clone
+    .querySelectorAll('.anchor, .header-anchor, [aria-hidden="true"]')
+    .forEach(node => node.remove());
+  return (clone.textContent || '').replace(/\s+/g, ' ').trim();
+};
 
 export default defineComponent({
   name: 'Layout',
@@ -106,8 +132,11 @@ export default defineComponent({
     const visible = ref(false);
     const { menus, activeMenuItem, currentMenuIndex, dataSource } = useMenus();
 
+    const mainContainerRef = ref<HTMLElement | null>(null);
     const demos = ref<any[]>([]);
     const hasDesignTokens = ref(false);
+    const domApiSections = ref<TocItem[]>([]);
+    const domSemanticItem = ref<TocItem | null>(null);
 
     provide('addDemosInfo', (info: any) => {
       if (!info || !info.href) return;
@@ -130,6 +159,8 @@ export default defineComponent({
     watch(baseRoutePath, () => {
       demos.value = [];
       hasDesignTokens.value = false;
+      domApiSections.value = [];
+      domSemanticItem.value = null;
     });
 
     watch(
@@ -164,6 +195,137 @@ export default defineComponent({
         .replace(/^(\d)/, '_$1');
     };
 
+    const buildApiSectionsFromHeaders = (rawHeaders: any[]): TocItem[] => {
+      if (!Array.isArray(rawHeaders) || rawHeaders.length === 0) return [];
+      const apiStartIdx = rawHeaders.findIndex(h => {
+        if (!h || h.level !== 2) return false;
+        const slug = String(h.slug || '').toLowerCase();
+        const title = String(unref(h.title) || '')
+          .trim()
+          .toLowerCase();
+        return slug === 'api' || title === 'api';
+      });
+      if (apiStartIdx === -1) return [];
+
+      const sections: TocItem[] = [];
+      const seen = new Set<string>();
+      let currentH2: TocItem | null = null;
+
+      for (let i = apiStartIdx; i < rawHeaders.length; i += 1) {
+        const header = rawHeaders[i];
+        if (!header || (header.level !== 2 && header.level !== 3)) continue;
+        const title = String(unref(header.title) || '').trim();
+        if (!title) continue;
+        const slug = String(header.slug || slugifyTitle(title)).trim();
+        if (!slug) continue;
+        const href = `#${slug}`;
+        const lowerHref = href.toLowerCase();
+        if (seen.has(lowerHref)) continue;
+        seen.add(lowerHref);
+
+        const item: TocItem = {
+          key: href,
+          href,
+          title,
+        };
+
+        if (header.level === 2) {
+          sections.push(item);
+          currentH2 = item;
+        } else if (currentH2) {
+          if (!currentH2.children) {
+            currentH2.children = [];
+          }
+          currentH2.children.push(item);
+        } else {
+          sections.push(item);
+        }
+      }
+
+      return sections;
+    };
+
+    const collectComponentTocFromDom = async () => {
+      if (!isDemo.value) {
+        domApiSections.value = [];
+        domSemanticItem.value = null;
+        return;
+      }
+      await nextTick();
+      const container = mainContainerRef.value;
+      if (!container) {
+        domApiSections.value = [];
+        domSemanticItem.value = null;
+        return;
+      }
+
+      const apiContainer = container.querySelector('.api-container');
+      const sections: TocItem[] = [];
+      const seen = new Set<string>();
+      let currentH2: TocItem | null = null;
+
+      if (apiContainer) {
+        const headingNodes = apiContainer.querySelectorAll('h2[id], h3[id]');
+        headingNodes.forEach(node => {
+          const id = node.getAttribute('id')?.trim();
+          if (!id) return;
+          const title = extractHeadingText(node);
+          if (!title) return;
+          const href = `#${id}`;
+          const lowerHref = href.toLowerCase();
+          if (seen.has(lowerHref)) return;
+          seen.add(lowerHref);
+
+          const item: TocItem = {
+            key: href,
+            href,
+            title,
+          };
+
+          if (node.tagName === 'H2') {
+            sections.push(item);
+            currentH2 = item;
+          } else if (currentH2) {
+            if (!currentH2.children) {
+              currentH2.children = [];
+            }
+            currentH2.children.push(item);
+          } else {
+            sections.push(item);
+          }
+        });
+      }
+
+      domApiSections.value = sections;
+
+      const semanticEl = container.querySelector('#semantic-dom');
+      if (semanticEl && !seen.has('#semantic-dom')) {
+        const headingEl =
+          semanticEl.tagName === 'SECTION' ? semanticEl.querySelector('h2, h3') : semanticEl;
+        const semanticTitle =
+          extractHeadingText(headingEl) || (isZhCN.value ? '语义化 DOM' : 'Semantic DOM');
+        domSemanticItem.value = {
+          key: '#semantic-dom',
+          href: '#semantic-dom',
+          title: semanticTitle,
+        };
+      } else {
+        domSemanticItem.value = null;
+      }
+    };
+
+    watch(
+      [isDemo, () => route.path, isZhCN, pageData],
+      () => {
+        collectComponentTocFromDom();
+      },
+      { immediate: true, flush: 'post' },
+    );
+
+    onMounted(() => {
+      collectComponentTocFromDom();
+    });
+
     const headers = computed(() => {
       if (isDemo.value) {
         const demoItems = demos.value
@@ -181,21 +343,37 @@ export default defineComponent({
               title: titleText || href.replace(/^#/, ''),
             };
           })
-          .filter(Boolean) as Array<{ key: string; href: string; title: string }>;
+          .filter(Boolean) as TocItem[];
 
-        const items: Array<{ key: string; href: string; title: string; children?: any[] }> = [
+        const items: TocItem[] = [
           {
             key: '#examples',
             href: '#examples',
             title: isZhCN.value ? '代码演示' : 'Examples',
             ...(demoItems.length ? { children: demoItems } : {}),
           },
-          {
+        ];
+
+        const apiSections = domApiSections.value.length
+          ? domApiSections.value
+          : buildApiSectionsFromHeaders(pageData.value?.headers || []);
+
+        if (apiSections.length) {
+          items.push(...apiSections);
+        } else {
+          items.push({
             key: '#api',
             href: '#api',
             title: 'API',
-          },
-        ];
+          });
+        }
+
+        if (
+          domSemanticItem.value &&
+          !items.some(item => item.href.toLowerCase() === '#semantic-dom')
+        ) {
+          items.push(domSemanticItem.value);
+        }
 
         if (hasDesignTokens.value) {
           items.push({
@@ -208,10 +386,12 @@ export default defineComponent({
         return items;
       }
 
-      const docHeaders = (pageData.value?.headers || []).filter((h: any) => h.level === 2);
+      const docHeaders = (pageData.value?.headers || []).filter(
+        (h: any) => h && h.level === 2 && String(unref(h.title) || '').trim(),
+      );
       return docHeaders.map((header: any, idx: number) => {
-        const rawTitle = String(unref(header.title) || '');
-        const rawEnTitle = header.enTitle ? String(unref(header.enTitle)) : '';
+        const rawTitle = String(unref(header.title) || '').trim();
+        const rawEnTitle = header.enTitle ? String(unref(header.enTitle)).trim() : '';
         const title = isZhCN.value ? rawTitle : rawEnTitle || rawTitle;
         const slug = header.slug || slugifyTitle(rawTitle);
         const href = (header.href || `#${slug}`).toLocaleLowerCase();
@@ -239,6 +419,7 @@ export default defineComponent({
       isMobile: globalConfig.isMobile,
       direction: globalConfig.direction,
       isZhCN,
+      mainContainerRef,
       mainContainerClass,
       menus,
       currentMenuIndex,
@@ -270,6 +451,11 @@ export default defineComponent({
   .ant-anchor-link {
     padding-block: 4px;
     padding-inline: 14px 0;
+
+    .ant-anchor-link {
+      padding-block: 3px;
+      padding-inline: 12px 0;
+    }
   }
 
   .ant-anchor-link-title {

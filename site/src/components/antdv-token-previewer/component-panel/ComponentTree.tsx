@@ -22,14 +22,14 @@ const useStyle = makeStyle('ComponentTree', token => ({
     '.component-tree-search': {
       margin: '0 8px 12px',
       width: 'calc(100% - 16px)',
-      backgroundColor: 'rgba(0, 0, 0, 2%)',
+      backgroundColor: token.colorFillQuaternary,
       borderRadius: token.borderRadiusLG,
       height: 24,
       input: {
         fontSize: 12,
       },
       '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 4%)',
+        backgroundColor: token.colorFillTertiary,
       },
     },
 

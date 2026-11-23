@@ -36,12 +36,12 @@ const useStyle = makeStyle('TokenDetail', token => ({
       padding: '0 8px',
       fontSize: 12,
       lineHeight: '20px',
-      backgroundColor: 'rgba(0,0,0,0.015)',
+      backgroundColor: token.colorFillQuaternary,
     },
 
     '.token-panel-pro-token-collapse-map-collapse-token-inputs': {
       padding: '8px 10px',
-      backgroundColor: 'rgba(0,0,0,0.02)',
+      backgroundColor: token.colorFillAlter,
       marginTop: 12,
       '> *:not(:last-child)': {
         marginBottom: 8,

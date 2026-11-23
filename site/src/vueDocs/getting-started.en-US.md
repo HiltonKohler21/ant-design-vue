@@ -1,118 +1,106 @@
 # Getting Started
 
-Ant Design Vue is dedicated to providing a **good development experience** for programmers. Make sure that you had installed [Node.js](https://nodejs.org/)(> v8.9) correctly.
+Ant Design Vue is dedicated to providing a **pleasant** development experience for Vue 3 engineers.
 
-> Before delving into Ant Design Vue, a good knowledge base of [Vue](https://www.vuejs.org/) and [JavaScript ES2015](http://babeljs.io/docs/learn-es2015/) is needed.
+> Before getting started, make sure you are familiar with [Vue 3](https://vuejs.org/) and [modern JavaScript (ES2015+)](https://babeljs.io/docs/learn), and have [Node.js](https://nodejs.org/) v18+ installed.
+>
+> Upgrading from `4.2.6`? Read the [4.2.6 to 4.3.0 Migration Guide](/docs/vue/migration-v43).
 
-## Playground
+## 1. Create a New Project
 
-The following CodeSandbox demo is the simplest use case, and it's also a good habit to fork this demo to provide a re-producible demo while reporting a bug.
-
-- [![Vue Antd Template](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/agitated-franklin-1w72v)
-
-## Import ant-design-vue
-
-### 1. Create a New Project
-
-If you need to create a new project, you can use [Vite](https://github.com/vitejs/vite), [Rsbuild](https://github.com/web-infra-dev/rsbuild), or [Vue CLI](https://github.com/vuejs/vue-cli).
-
-Please initialize the project using the command line:
-
-- Vite:
+We recommend [Vite](https://vitejs.dev/) or [Rsbuild](https://rsbuild.dev/) to scaffold a Vue 3 + TypeScript app:
 
 ```bash
-$ npm create vite@latest
+# Vite (Recommended)
+npm create vite@latest my-antdv-app -- --template vue-ts
+
+# or Rsbuild
+npm create rsbuild@latest
 ```
 
-- Rsbuild:
+For full Vite configuration, automatic on-demand imports, and dev optimization tips, see [Use in Vite](/docs/vue/use-with-vite).
+
+## 2. Install Dependencies
 
 ```bash
-$ npm create rsbuild@latest
+npm install ant-design-vue@4.3.0 @ant-design/icons-vue
 ```
 
-- Vue CLI:
+> `4.x` uses CSS-in-JS with native CSS Variables (enabled by default in 4.3.0). Do **not** import `antd.css`, and `babel-plugin-import` is no longer needed.
 
-```bash
-$ npm install -g @vue/cli
-# OR
-$ yarn global add @vue/cli
+## 3. Register and Use Components
 
-$ vue create antd-demo
-```
+### Option A: Global Registration
 
-> Vue CLI is no longer maintained, so it is not recommended to use.
-
-### 2. Use antd's Components
-
-#### Install
-
-```bash
-$ npm i --save ant-design-vue@4.x
-```
-
-#### Component Registration
-
-If you use Vue's default template syntax, you need to register components before you can use them. There are three ways to register components:
-
-**Global Registration All Components**
-
-```jsx
+```ts
+// src/main.ts
 import { createApp } from 'vue';
 import Antd from 'ant-design-vue';
-import App from './App';
 import 'ant-design-vue/dist/reset.css';
+import App from './App.vue';
 
-const app = createApp(App);
-
-app.use(Antd).mount('#app');
+createApp(App).use(Antd).mount('#app');
 ```
 
-The above imports Antd entirely. Note that CSS file needs to be imported separately.
+Wrap your root with `<a-config-provider>` and `<a-app>`:
 
-**Global Registration Some Components**
-
-```jsx
-import { createApp } from 'vue';
-import { Button, message } from 'ant-design-vue';
-import App from './App';
-
-const app = createApp(App);
-
-/* Automatically register components under Button, such as Button.Group */
-app.use(Button).mount('#app');
-
-app.config.globalProperties.$message = message;
-```
-
-**Local Registration**
-
-In this way, component sub-components, such as Button and ButtonGroup, need to be registered separately, and they are only valid in the current component after registration. Therefore, we recommend using the above two methods.
-
-```html
+```vue
 <template>
-  <a-button>Add</a-button>
+  <a-config-provider :theme="{ token: { colorPrimary: '#1677ff' } }">
+    <a-app>
+      <a-space>
+        <a-button type="primary" @click="notify">Get Started</a-button>
+        <a-date-picker v-model:value="date" />
+      </a-space>
+    </a-app>
+  </a-config-provider>
 </template>
-<script>
-  import { Button } from 'ant-design-vue';
-  const ButtonGroup = Button.Group;
 
-  export default {
-    components: {
-      AButton: Button,
-      AButtonGroup: ButtonGroup,
-    },
-  };
+<script setup lang="ts">
+import { ref } from 'vue';
+import type { Dayjs } from 'dayjs';
+import { App } from 'ant-design-vue';
+
+const date = ref<Dayjs>();
+const { message } = App.useApp();
+const notify = () => message.success('Welcome to Ant Design Vue 4.3.0!');
 </script>
 ```
 
-### 3. Component list
+### Option B: On-Demand Import (ES Modules / `unplugin-vue-components`)
 
-[Component list](https://github.com/vueComponent/ant-design-vue/blob/main/components/components.ts)
+`ant-design-vue` supports ES module tree shaking natively:
 
-## Import on Demand
+```vue
+<template>
+  <Button type="primary">Primary</Button>
+</template>
 
-`ant-design-vue` supports tree shaking of ES modules, so using `import { Button } from 'ant-design-vue';` would drop js code you didn't use.
+<script setup lang="ts">
+import { Button } from 'ant-design-vue';
+</script>
+```
 
-## Customization
+Or configure `unplugin-vue-components` to resolve `<a-*>` tags automatically — see [Use in Vite](/docs/vue/use-with-vite).
 
-- [Customize Theme](/docs/vue/customize-theme)
+### Option C: Partial Global Registration
+
+```ts
+import { createApp } from 'vue';
+import { Button, DatePicker } from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css';
+import App from './App.vue';
+
+const app = createApp(App);
+// app.use(Button) also registers Button sub-components
+app.use(Button).use(DatePicker).mount('#app');
+```
+
+## 4. Next Steps
+
+- [Use in Vite](/docs/vue/use-with-vite): Auto on-demand imports, Volar types, and dev optimization
+- [4.2.6 to 4.3.0 Migration Guide](/docs/vue/migration-v43): Default CSS Variables, `token` vs `realToken`, new components, and API upgrades
+- [Customize Theme](/docs/vue/customize-theme): Brand tokens, Dark Mode, Compact Mode, and `zeroRuntime`
+- [Common Props](/docs/vue/common-props): `rootClassName`, `classNames`/`styles`, `variant`, and `ConfigProvider` defaults
+- [SSR & Static Style Extraction](/docs/vue/ssr-extract-ssr): Nuxt 3 and Vite SSR integration
+- [FAQ](/docs/vue/faq): TailwindCSS v4, Shadow DOM, CSP, i18n, and troubleshooting

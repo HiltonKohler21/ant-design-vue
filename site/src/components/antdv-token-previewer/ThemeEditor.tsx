@@ -1,5 +1,6 @@
-import type { PropType } from 'vue';
-import { defineComponent, toRefs, ref, computed } from 'vue';
+import type { PropType, Ref } from 'vue';
+import { defineComponent, inject, toRefs, ref, computed } from 'vue';
+import { ConfigProvider, theme as antdTheme } from 'ant-design-vue';
 import type { DerivativeFunc } from 'ant-design-vue/es/_util/cssinjs';
 import classNames from 'ant-design-vue/es/_util/classNames';
 import type { SelectedToken, Theme } from './interface';
@@ -15,10 +16,56 @@ import TokenPanelPro from './token-panel-pro';
 import ComponentDemoPro from './token-panel-pro/ComponentDemoPro';
 import { antdComponents } from './component-panel';
 
+const { defaultAlgorithm, darkAlgorithm: antdDarkAlgorithm } = antdTheme;
+
 const useStyle = makeStyle('ThemeEditor', token => ({
   '.antd-theme-editor': {
     backgroundColor: token.colorBgLayout,
+    color: token.colorText,
     display: 'flex',
+    width: '100%',
+    minWidth: 0,
+
+    '.antd-theme-editor-panel': {
+      flex: '0 0 min(540px, 100%)',
+      maxWidth: '100%',
+      minWidth: 0,
+      height: '100%',
+      backgroundColor: token.colorBgContainer,
+      display: 'flex',
+      transition: 'all 0.3s',
+
+      '&.antd-theme-editor-panel-alias-open': {
+        flex: '0 0 min(860px, 100%)',
+      },
+    },
+
+    '.antd-theme-editor-preview': {
+      flex: 1,
+      minWidth: 0,
+      overflow: 'auto',
+    },
+
+    '@media (max-width: 991px)': {
+      flexDirection: 'column',
+      height: 'auto !important',
+      minHeight: 'calc(100vh - 120px)',
+
+      '.antd-theme-editor-panel, .antd-theme-editor-panel.antd-theme-editor-panel-alias-open': {
+        flex: 'none',
+        width: '100%',
+        maxWidth: '100%',
+        height: 'auto',
+        maxHeight: '65vh',
+        borderBottom: `1px solid ${token.colorBorderSecondary}`,
+      },
+
+      '.antd-theme-editor-preview': {
+        flex: 'none',
+        width: '100%',
+        overflow: 'visible',
+      },
+    },
   },
 }));
 
@@ -40,8 +87,8 @@ export type ThemeEditorProps = {
   locale?: Locale;
 };
 
-const ThemeEditor = defineComponent({
-  name: 'ThemeEditor',
+const ThemeEditorInner = defineComponent({
+  name: 'ThemeEditorInner',
   inheritAttrs: false,
   props: {
     simple: { type: Boolean },
@@ -131,20 +178,15 @@ const ThemeEditor = defineComponent({
       return wrapSSR(
         <div {...attrs} class={classNames(hashId.value, 'antd-theme-editor', attrs.class)}>
           <div
-            style={{
-              flex: aliasOpen.value ? '0 0 860px' : `0 0 ${860 - 320}px`,
-              height: '100%',
-              backgroundColor: '#F7F8FA',
-              backgroundImage: 'linear-gradient(180deg, #FFFFFF 0%, rgba(246,247,249,0.00) 100%)',
-              display: 'flex',
-              transition: 'all 0.3s',
-            }}
+            class={classNames('antd-theme-editor-panel', {
+              'antd-theme-editor-panel-alias-open': aliasOpen.value,
+            })}
           >
             <TokenPanelPro
               aliasOpen={aliasOpen.value}
               onAliasOpenChange={open => (aliasOpen.value = open)}
               theme={theme.value}
-              style={{ flex: 1 }}
+              style={{ flex: 1, minWidth: 0 }}
               selectedTokens={selectedTokens.value}
               onTokenSelect={handleTokenSelect}
               infoFollowPrimary={infoFollowPrimary.value}
@@ -156,11 +198,50 @@ const ThemeEditor = defineComponent({
             components={antdComponents}
             activeComponents={relatedComponents.value}
             selectedTokens={computedSelectedTokens.value}
-            style={{ flex: 1, overflow: 'auto' }}
+            class="antd-theme-editor-preview"
             componentDrawer
           />
         </div>,
       );
+    };
+  },
+});
+
+const ThemeEditor = defineComponent({
+  name: 'ThemeEditor',
+  inheritAttrs: false,
+  props: {
+    simple: { type: Boolean },
+    theme: { type: Object as PropType<Theme> },
+    onThemeChange: { type: Function as PropType<(theme: Theme) => void> },
+    darkAlgorithm: { type: Function as PropType<DerivativeFunc<any, any>> },
+    locale: { type: Object as PropType<Locale>, default: zhCN },
+  },
+  setup(props, { attrs, expose }) {
+    const innerRef = ref<{ updateRef?: () => void } | null>(null);
+    const siteThemeMode = inject<{ theme?: Ref<string> } | null>('themeMode', null);
+
+    const shellTheme = computed(() => {
+      if (!siteThemeMode) {
+        return null;
+      }
+      return {
+        inherit: false,
+        cssVar: false,
+        algorithm: siteThemeMode.theme?.value === 'dark' ? antdDarkAlgorithm : defaultAlgorithm,
+      };
+    });
+
+    expose({
+      updateRef: () => innerRef.value?.updateRef?.(),
+    });
+
+    return () => {
+      const inner = <ThemeEditorInner ref={innerRef} {...props} {...attrs} />;
+      if (shellTheme.value) {
+        return <ConfigProvider theme={shellTheme.value}>{inner}</ConfigProvider>;
+      }
+      return inner;
     };
   },
 });

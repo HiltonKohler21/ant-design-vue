@@ -23,7 +23,9 @@ const useStyle = makeStyle('TokenPanelProAlias', token => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: 45,
-    borderTop: `1px solid ${token.colorSplit}`,
+    borderTop: `1px solid ${token.colorBorderSecondary}`,
+    backgroundColor: token.colorBgContainer,
+    color: token.colorText,
 
     '.token-panel-pro-color-alias-title': {
       display: 'flex',
@@ -93,8 +95,9 @@ const useStyle = makeStyle('TokenPanelProAlias', token => ({
         height: 100,
         width: 16,
         borderRadius: 999,
-        border: `1px solid ${token.colorSplit}`,
-        backgroundColor: '#fff',
+        border: `1px solid ${token.colorBorderSecondary}`,
+        backgroundColor: token.colorBgElevated,
+        color: token.colorTextSecondary,
         margin: 'auto',
         cursor: 'pointer',
         display: 'flex',

@@ -101,14 +101,34 @@ const routes = [
         component: () => import('../vueDocs/getting-started.en-US.md'),
       },
       {
-        path: 'vue/compatible-style-cn',
-        meta: { enTitle: 'Compatible Style', title: '样式兼容', category: 'docs' },
-        component: () => import('../vueDocs/compatible-style.zh-CN.md'),
+        path: 'vue/use-with-vite-cn',
+        meta: { enTitle: 'Use in Vite', title: '在 Vite 中使用', category: 'docs' },
+        component: () => import('../vueDocs/use-with-vite.zh-CN.md'),
       },
       {
-        path: 'vue/compatible-style',
-        meta: { enTitle: 'Compatible Style', title: '样式兼容', category: 'docs' },
-        component: () => import('../vueDocs/compatible-style.en-US.md'),
+        path: 'vue/use-with-vite',
+        meta: { enTitle: 'Use in Vite', title: 'Use in Vite', category: 'docs' },
+        component: () => import('../vueDocs/use-with-vite.en-US.md'),
+      },
+      {
+        path: 'vue/migration-v43-cn',
+        meta: {
+          enTitle: '4.2.6 to 4.3.0',
+          title: '从 4.2.6 到 4.3.0',
+          category: 'docs',
+          tag: '4.3.0',
+        },
+        component: () => import('../vueDocs/migration-v43.zh-CN.md'),
+      },
+      {
+        path: 'vue/migration-v43',
+        meta: {
+          enTitle: '4.2.6 to 4.3.0',
+          title: '4.2.6 to 4.3.0',
+          category: 'docs',
+          tag: '4.3.0',
+        },
+        component: () => import('../vueDocs/migration-v43.en-US.md'),
       },
       {
         path: 'vue/customize-theme-cn',
@@ -121,13 +141,41 @@ const routes = [
         component: () => import('../vueDocs/customize-theme.en-US.md'),
       },
       {
+        path: 'vue/compatible-style-cn',
+        meta: { enTitle: 'Compatible Style', title: '样式兼容', category: 'docs' },
+        component: () => import('../vueDocs/compatible-style.zh-CN.md'),
+      },
+      {
+        path: 'vue/compatible-style',
+        meta: { enTitle: 'Compatible Style', title: '样式兼容', category: 'docs' },
+        component: () => import('../vueDocs/compatible-style.en-US.md'),
+      },
+      {
+        path: 'vue/common-props-cn',
+        meta: { enTitle: 'Common Props', title: '通用属性', category: 'docs' },
+        component: () => import('../vueDocs/common-props.zh-CN.md'),
+      },
+      {
+        path: 'vue/common-props',
+        meta: { enTitle: 'Common Props', title: 'Common Props', category: 'docs' },
+        component: () => import('../vueDocs/common-props.en-US.md'),
+      },
+      {
         path: 'vue/ssr-extract-ssr',
-        meta: { enTitle: 'SSR Static style export', title: 'SSR 静态样式导出', category: 'docs' },
+        meta: {
+          enTitle: 'SSR & Static Style Extraction',
+          title: 'SSR 与静态样式导出',
+          category: 'docs',
+        },
         component: () => import('../vueDocs/extract-ssr.en-US.md'),
       },
       {
         path: 'vue/ssr-extract-ssr-cn',
-        meta: { enTitle: 'SSR Static style export', title: 'SSR 静态样式导出', category: 'docs' },
+        meta: {
+          enTitle: 'SSR & Static Style Extraction',
+          title: 'SSR 与静态样式导出',
+          category: 'docs',
+        },
         component: () => import('../vueDocs/extract-ssr.zh-CN.md'),
       },
       {
@@ -287,6 +335,10 @@ const routes = [
     path: '/theme-editor-cn',
     component: () => import('../views/theme-editor/index.vue'),
   },
+  { path: '/migration-v43', redirect: '/docs/vue/migration-v43' },
+  { path: '/migration-v43-cn', redirect: '/docs/vue/migration-v43-cn' },
+  { path: '/docs/vue/extract-ssr', redirect: '/docs/vue/ssr-extract-ssr' },
+  { path: '/docs/vue/extract-ssr-cn', redirect: '/docs/vue/ssr-extract-ssr-cn' },
   { path: '/for-agents', redirect: '/docs/vue/for-agents' },
   { path: '/for-agents-cn', redirect: '/docs/vue/for-agents-cn' },
   { path: '/mcp', redirect: '/docs/vue/mcp' },

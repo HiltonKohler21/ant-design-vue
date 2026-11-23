@@ -29,7 +29,7 @@ const useStyle = makeStyle('ThemeSelect', token => ({
   '.previewer-theme-select': {
     padding: `${token.paddingXXS}px ${token.paddingXS}px`,
     borderRadius: 4,
-    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    backgroundColor: token.colorFillQuaternary,
     height: token.controlHeight,
     display: 'flex',
     alignItems: 'center',
@@ -67,8 +67,8 @@ const useStyle = makeStyle('ThemeSelect', token => ({
       },
 
       '&.previewer-theme-select-tag-active': {
-        border: `${token.lineWidth}px ${token.lineType} ${token['blue-1']}`,
-        backgroundColor: 'rgba(22,119,255,0.10)',
+        border: `${token.lineWidth}px ${token.lineType} ${token.colorPrimaryBorder}`,
+        backgroundColor: token.colorPrimaryBg,
         color: token.colorPrimary,
 
         '&::after': {

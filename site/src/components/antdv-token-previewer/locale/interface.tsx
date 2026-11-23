@@ -13,4 +13,6 @@ export type Locale = {
     components: string;
     relatedTokens: string;
   };
+  copyVueConfig?: string;
+  copiedVueConfig?: string;
 };

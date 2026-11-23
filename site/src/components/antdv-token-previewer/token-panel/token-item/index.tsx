@@ -55,14 +55,9 @@ const AdditionInfo = defineComponent({
         return (
           <div
             {...attrs}
+            class="previewer-token-addition-tag"
             style={{
-              height: '20px',
-              overflow: 'hidden',
-              backgroundColor: 'rgba(0,0,0,0.04)',
-              borderRadius: '8px',
               display: visible.value ? 'block' : 'none',
-              padding: '0 6px',
-              lineHeight: '20px',
               ...(attrs.style as CSSProperties),
             }}
           >
@@ -106,7 +101,23 @@ const useStyle = makeStyle('TokenItem', token => ({
       borderRadius: { _skip_check_: true, value: `4px !important` },
 
       [`&:not(${token.rootCls}-collapse-item-active):hover`]: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: token.colorFillTertiary,
+      },
+
+      '.previewer-token-item-inputs': {
+        backgroundColor: token.colorFillAlter,
+        borderRadius: 4,
+        padding: 8,
+        width: '100%',
+      },
+
+      '.previewer-token-addition-tag': {
+        height: 20,
+        overflow: 'hidden',
+        backgroundColor: token.colorFillTertiary,
+        borderRadius: 8,
+        padding: '0 6px',
+        lineHeight: '20px',
       },
 
       [`> ${token.rootCls}-collapse-header`]: {
@@ -320,15 +331,7 @@ export default defineComponent({
                 ) : undefined
               }
             >
-              <Space
-                direction="vertical"
-                style={{
-                  background: '#fafafa',
-                  borderRadius: '4px',
-                  padding: '8px',
-                  width: '100%',
-                }}
-              >
+              <Space direction="vertical" class="previewer-token-item-inputs">
                 {themes.value.map(theme => {
                   return (
                     <div key={theme.key}>

@@ -1,3 +1,5 @@
+> 已经在使用 `4.x` 并准备升级到 `4.3.0`？请直接查看 [从 4.2.6 升级到 4.3.0 指南](/docs/vue/migration-v43-cn)。
+
 本文档将帮助你从 ant-design-vue `3.x` 版本升级到 ant-design-vue `4.x` 版本，如果你是 `2.x` 或者更老的版本，请先参考之前的[升级文档](/docs/vue/migration-v3-cn)升级到 3.x。
 
 ## 升级准备

@@ -15,15 +15,47 @@ const { TabPane } = Tabs;
 const useStyle = makeStyle('TokenPanelPro', token => ({
   '.token-panel-pro': {
     height: '100%',
+    width: '100%',
+    minWidth: 0,
     display: 'flex',
+    backgroundColor: token.colorBgContainer,
+    color: token.colorText,
     borderInlineEnd: `1px solid ${token.colorBorderSecondary}`,
     [`.token-panel-pro-tabs${token.rootCls}-tabs`]: {
       height: '100%',
+      flex: '0 0 min(540px, 100%)',
+      minWidth: 0,
       overflow: 'auto',
       [`${token.rootCls}-tabs-content`]: {
         height: '100%',
         [`${token.rootCls}-tabs-tabpane`]: {
           height: '100%',
+        },
+      },
+    },
+    '.token-panel-pro-alias-pane': {
+      flex: 'none',
+      width: 0,
+      minWidth: 0,
+      '&.token-panel-pro-alias-pane-open': {
+        flex: '0 0 min(320px, 100%)',
+        width: 'min(320px, 100%)',
+      },
+    },
+    '@media (max-width: 991px)': {
+      flexDirection: 'column',
+      borderInlineEnd: 'none',
+      [`.token-panel-pro-tabs${token.rootCls}-tabs`]: {
+        flex: '1 1 auto',
+        width: '100%',
+      },
+      '.token-panel-pro-alias-pane': {
+        display: 'none',
+        '&.token-panel-pro-alias-pane-open': {
+          display: 'flex',
+          flex: 'none',
+          width: '100%',
+          maxHeight: '45vh',
         },
       },
     },
@@ -81,7 +113,6 @@ const TokenPanelPro = defineComponent({
             defaultActiveKey="color"
             tabBarGutter={32}
             tabBarStyle={{ padding: '0 16px', margin: 0 }}
-            style={{ height: '100%', flex: '0 0 540px' }}
             class="token-panel-pro-tabs"
             onChange={key => {
               activeGroup.value =
@@ -111,7 +142,9 @@ const TokenPanelPro = defineComponent({
             onOpenChange={props.onAliasOpenChange}
             activeSeeds={activeCategory.value?.seedToken}
             theme={theme.value}
-            style={{ flex: aliasOpen.value ? '0 0 320px' : 'none', width: 0 }}
+            class={classNames('token-panel-pro-alias-pane', {
+              'token-panel-pro-alias-pane-open': aliasOpen.value,
+            })}
             selectedTokens={selectedTokens.value}
             onTokenSelect={props.onTokenSelect}
           />

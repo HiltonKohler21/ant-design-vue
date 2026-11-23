@@ -88,7 +88,7 @@ const useStyle = makeStyle('TokenCard', token => ({
     width: '100%',
     height: 'auto',
     borderRadius: token.borderRadiusLG,
-    border: `1px solid rgba(0,0,0,0.09)`,
+    border: `1px solid ${token.colorBorderSecondary}`,
     marginBottom: token.marginSM,
 
     [`${token.rootCls}-collapse.token-card-collapse`]: {
@@ -103,7 +103,7 @@ const useStyle = makeStyle('TokenCard', token => ({
   },
   [`.token-card ${token.rootCls}-input-group >${token.rootCls}-input:not(:first-child):not(:last-child)`]:
     {
-      background: 'white',
+      background: token.colorBgContainer,
       borderRadius: token.borderRadiusLG,
     },
 }));
@@ -167,7 +167,7 @@ export default defineComponent({
               expandIcon: ({ isActive }) => (
                 <CaretRightOutlined
                   rotate={isActive ? 450 : 360}
-                  style={{ fontSize: '12px', color: 'rgba(0,0,0,0.45)' }}
+                  style={{ fontSize: '12px', opacity: 0.65 }}
                 />
               ),
             }}

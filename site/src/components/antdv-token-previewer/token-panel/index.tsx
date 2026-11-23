@@ -21,7 +21,8 @@ const useStyle = makeStyle('AliasTokenPreview', token => ({
     '.preview-panel': {
       height: '100%',
       minWidth: 300,
-      backgroundColor: 'white',
+      backgroundColor: token.colorBgContainer,
+      color: token.colorText,
       display: 'flex',
       flexDirection: 'column',
       '.preview-panel-token-wrapper': {
@@ -75,7 +76,7 @@ const useStyle = makeStyle('AliasTokenPreview', token => ({
         },
       },
       '.preview-panel-search': {
-        backgroundColor: 'rgba(0, 0, 0, 2%)',
+        backgroundColor: token.colorFillQuaternary,
         borderRadius: token.borderRadiusLG,
 
         [`${token.rootCls}-input-group-addon`]: {
@@ -85,7 +86,7 @@ const useStyle = makeStyle('AliasTokenPreview', token => ({
           transition: `background-color ${token.motionDurationSlow}`,
 
           '&:hover': {
-            backgroundColor: 'rgba(0, 0, 0, 4%)',
+            backgroundColor: token.colorFillTertiary,
           },
         },
 

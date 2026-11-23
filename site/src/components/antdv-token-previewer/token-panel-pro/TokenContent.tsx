@@ -6,6 +6,7 @@ import {
   ConfigProvider,
   Popover,
   Switch,
+  theme as antdTheme,
   Tooltip,
   Typography,
 } from 'ant-design-vue';
@@ -64,9 +65,8 @@ const useStyle = makeStyle('ColorTokenContent', token => ({
       flex: 1,
       overflow: 'auto',
       [`> ${token.rootCls}-collapse-item-active`]: {
-        backgroundColor: '#fff',
-        boxShadow:
-          '0 6px 16px -8px rgba(0,0,0,0.08), 0 9px 28px 0 rgba(0,0,0,0.05), 0 12px 48px -8px rgba(0,0,0,0.03), inset 0 0 0 2px #1677FF',
+        backgroundColor: token.colorBgElevated,
+        boxShadow: `${token.boxShadowSecondary}, inset 0 0 0 2px ${token.colorPrimary}`,
         transition: 'box-shadow 0.2s ease-in-out',
         borderRadius: 8,
       },
@@ -87,6 +87,8 @@ const useStyle = makeStyle('ColorTokenContent', token => ({
 
       '.token-panel-pro-token-collapse-seed-block': {
         display: 'flex',
+        flexWrap: 'wrap',
+        gap: 8,
         alignItems: 'center',
         justifyContent: 'flex-end',
 
@@ -135,7 +137,7 @@ const useStyle = makeStyle('ColorTokenContent', token => ({
 
       [`.token-panel-pro-token-collapse-map-collapse${token.rootCls}-collapse`]: {
         borderRadius: 4,
-        backgroundColor: '#fff',
+        backgroundColor: token.colorBgContainer,
 
         [`> ${token.rootCls}-collapse-item`]: {
           '&:not(:first-child)': {
@@ -172,7 +174,7 @@ const useStyle = makeStyle('ColorTokenContent', token => ({
                   height: 56,
                   width: 56,
                   position: 'relative',
-                  borderInline: '1px solid #e8e8e8',
+                  borderInline: `1px solid ${token.colorBorderSecondary}`,
                 },
                 '> *': {
                   marginInlineEnd: 8,
@@ -643,6 +645,7 @@ const TokenContent = defineComponent({
     });
 
     const [wrapSSR, hashId] = useStyle();
+    const { realToken } = antdTheme.useToken();
 
     const grouped = ref<boolean>(true);
     const locale = useInjectLocaleContext();
@@ -708,8 +711,9 @@ const TokenContent = defineComponent({
             </div>
             <ConfigProvider
               theme={{
+                cssVar: false,
                 token: {
-                  colorBorder: '#f0f0f0',
+                  colorBorder: realToken.value.colorBorderSecondary,
                 },
               }}
             >

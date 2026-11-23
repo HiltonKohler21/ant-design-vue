@@ -14,7 +14,7 @@ const useStyle = makeStyle('TokenInput', token => ({
   '.previewer-token-input': {
     [`${token.rootCls}-input-group-addon, ${token.rootCls}-input-number-group-addon`]: {
       border: '0 !important',
-      color: `rgba(0, 0, 0, 0.25) !important`,
+      color: `${token.colorTextTertiary} !important`,
       fontSize: `${token.fontSizeSM}px !important`,
       padding: '0 !important',
       backgroundColor: 'transparent !important',
@@ -43,7 +43,7 @@ const useStyle = makeStyle('TokenInput', token => ({
 
     [`${token.rootCls}-input-group-wrapper ${token.rootCls}-input, ${token.rootCls}-input-number-group-wrapper ${token.rootCls}-input-number`]:
       {
-        background: 'white',
+        background: token.colorBgContainer,
         borderRadius: `${token.borderRadiusLG}px !important`,
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',

@@ -15,7 +15,7 @@ export default {
     save: 'Save',
     edit: 'Edit',
     export: 'Export',
-    editModelTitle: 'edit Theme Config',
+    editModelTitle: 'Edit Theme Config',
     editJsonContentTypeError: 'The theme of the JSON format is incorrect',
     editSuccessfully: 'Edited successfully',
     saveSuccessfully: 'Saved successfully',

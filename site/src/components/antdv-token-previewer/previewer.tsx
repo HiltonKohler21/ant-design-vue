@@ -22,17 +22,23 @@ const SIDER_WIDTH = 340;
 
 const useStyle = makeStyle('layout', token => ({
   [`.previewer-layout${token.rootCls}-layout`]: {
+    backgroundColor: token.colorBgLayout,
+
     [`${token.rootCls}-layout-header`]: {
-      backgroundColor: 'white !important',
+      backgroundColor: `${token.colorBgContainer} !important`,
+      color: token.colorText,
       display: 'flex',
       alignItems: 'center',
-      borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      flexWrap: 'wrap',
+      gap: token.marginXS,
+      borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
       paddingInline: `${token.paddingLG}px !important`,
     },
 
     [`${token.rootCls}-layout-sider`]: {
       padding: 0,
-      borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+      backgroundColor: `${token.colorBgContainer} !important`,
+      borderInlineEnd: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
       transition: `all ${token.motionDurationSlow}`,
       overflow: 'visible !important',
 
@@ -40,16 +46,14 @@ const useStyle = makeStyle('layout', token => ({
         position: 'absolute',
         transform: 'translateX(50%)',
         border: 'none',
-        boxShadow:
-          '0 2px 8px -2px rgba(0,0,0,0.05), 0 1px 4px -1px rgba(25,15,15,0.07), 0 0 1px 0 rgba(0,0,0,0.08)',
+        boxShadow: token.boxShadowSecondary,
         marginTop: token.margin,
         insetInlineEnd: 0,
-        color: 'rgba(0,0,0,0.25)',
+        color: token.colorTextQuaternary,
 
         '&:hover': {
-          color: 'rgba(0,0,0,0.45)',
-          boxShadow:
-            '0 2px 8px -2px rgba(0,0,0,0.18), 0 1px 4px -1px rgba(25,15,15,0.18), 0 0 1px 0 rgba(0,0,0,0.18)',
+          color: token.colorTextSecondary,
+          boxShadow: token.boxShadow,
         },
 
         '.previewer-sider-collapse-btn-icon': {
@@ -270,7 +274,6 @@ const Previewer = defineComponent({
           >
             <Sider
               style={{
-                backgroundColor: 'white',
                 height: '100%',
                 overflow: 'auto',
                 flex: `0 0 ${siderWidth.value}px`,

@@ -4,7 +4,11 @@
       <h1 class="component-doc-title">
         <span>{{ docTitle }}</span>
         <span v-if="isZhCN && docSubtitle" class="subtitle">{{ docSubtitle }}</span>
-        <a-tag v-if="frontmatter.tag" color="processing" class="component-doc-tag">
+        <a-tag
+          v-if="frontmatter.tag"
+          :color="getTagColor(frontmatter.tag)"
+          class="component-doc-tag"
+        >
           {{ frontmatter.tag }}
         </a-tag>
         <a-tooltip v-if="docsGithubUrl" :title="$t('app.content.edit-page')">
@@ -118,6 +122,13 @@
     </section>
     <slot />
     <section v-if="api" class="markdown api-container" v-html="api"></section>
+    <section v-if="$slots['semantic-dom']" id="semantic-dom" class="markdown semantic-dom-section">
+      <h2>
+        <span>{{ isZhCN ? '语义化 DOM' : 'Semantic DOM' }}</span>
+        <a href="#semantic-dom" class="anchor">#</a>
+      </h2>
+      <slot name="semantic-dom" />
+    </section>
     <section v-if="hasDesignTokens" id="design-tokens" class="markdown design-tokens-section">
       <h2>
         <span>{{ isZhCN ? '主题变量（Design Token）' : 'Design Token' }}</span>
@@ -150,6 +161,7 @@ import {
   GithubOutlined,
 } from '@ant-design/icons-vue';
 import tokenData from 'ant-design-vue/es/version/token.json';
+import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
 import Contributor from '../components/Contributors/index.vue';
 
 const ComponentTokenTable = defineAsyncComponent(() => import('../components/ComponentTokenTable'));
@@ -175,6 +187,16 @@ type TokenEntry = {
 };
 
 const tokenMap = tokenData as Record<string, TokenEntry>;
+const tokenMetaMap = tokenMeta as Record<string, any>;
+
+function getTagColor(tag?: string): string {
+  const normalized = String(tag || '')
+    .trim()
+    .toLowerCase();
+  if (normalized.includes('deprecated')) return 'warning';
+  if (normalized === 'new') return 'green';
+  return 'processing';
+}
 
 function resolveTokenCompName(title: string): string {
   const trimmed = String(title || '').trim();
@@ -325,8 +347,17 @@ export default defineComponent({
       if (!name) return false;
       const entry = tokenMap[name];
       if (!entry) return false;
-      const compCount = entry.component ? Object.keys(entry.component).length : 0;
-      const globalCount = Array.isArray(entry.global) ? entry.global.length : 0;
+      const compCount = entry.component
+        ? Object.keys(entry.component).filter(tokenName => !tokenName.startsWith('_')).length
+        : 0;
+      const globalCount = Array.isArray(entry.global)
+        ? entry.global.filter(
+            tokenName =>
+              typeof tokenName === 'string' &&
+              !tokenName.startsWith('_') &&
+              Boolean(tokenMetaMap[tokenName]),
+          ).length
+        : 0;
       return compCount > 0 || globalCount > 0;
     });
 
@@ -365,6 +396,7 @@ export default defineComponent({
       handleCopyImport,
       tokenCompName,
       hasDesignTokens,
+      getTagColor,
     };
   },
 });
@@ -524,6 +556,7 @@ export default defineComponent({
   }
 }
 
+.semantic-dom-section,
 .design-tokens-section {
   margin-top: 32px;
 }

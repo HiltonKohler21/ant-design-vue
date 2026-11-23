@@ -15,6 +15,8 @@ const locale: Locale = {
     components: '组件',
     relatedTokens: '关联 Token',
   },
+  copyVueConfig: '复制 Vue 配置',
+  copiedVueConfig: '已复制 Vue 主题配置',
 };
 
 export default locale;

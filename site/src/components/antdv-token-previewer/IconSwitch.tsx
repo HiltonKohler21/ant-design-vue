@@ -3,66 +3,63 @@ import makeStyle from './utils/makeStyle';
 import type { PropType } from 'vue';
 import { defineComponent, toRefs } from 'vue';
 
-const useStyle = makeStyle('IconSwitch', () => {
-  const activeBackground = '#314659';
-  return {
-    '.theme-editor-icon-switch': {
-      display: 'inline-block',
+const useStyle = makeStyle('IconSwitch', token => ({
+  '.theme-editor-icon-switch': {
+    display: 'inline-block',
 
-      '.holder': {
-        position: 'relative',
-        display: 'inline-flex',
-        background: '#ebedf0',
-        borderRadius: '100vw',
-        cursor: 'pointer',
-        transition: 'all 0.3s',
+    '.holder': {
+      position: 'relative',
+      display: 'inline-flex',
+      background: token.colorFillSecondary,
+      borderRadius: '100vw',
+      cursor: 'pointer',
+      transition: 'all 0.3s',
 
-        '&::before': {
-          position: 'absolute',
-          top: 0,
-          left: 'calc(100% - 32px)',
-          width: 32,
-          height: 32,
-          background: activeBackground,
-          borderRadius: '100vw',
-          transition: 'all 0.3s',
-          content: '""',
-        },
-
-        '&.leftChecked::before': {
-          left: 0,
-        },
-
-        '&:hover': {
-          boxShadow: '0 0 3px fade(@active-background, 40%)',
-        },
-      },
-
-      '.icon': {
-        position: 'relative',
+      '&::before': {
+        position: 'absolute',
+        top: 0,
+        left: 'calc(100% - 32px)',
         width: 32,
         height: 32,
-        color: '#a3b1bf',
-        lineHeight: '32px',
-        textAlign: 'center',
+        background: token.colorPrimary,
+        borderRadius: '100vw',
         transition: 'all 0.3s',
-        fontSize: 16,
+        content: '""',
+      },
 
-        '.anticon': {
-          fontSize: 14,
-        },
+      '&.leftChecked::before': {
+        left: 0,
+      },
 
-        '&:first-child': {
-          marginInlineEnd: -4,
-        },
-
-        '&.active': {
-          color: '#fff',
-        },
+      '&:hover': {
+        boxShadow: `0 0 3px ${token.colorPrimaryBorder}`,
       },
     },
-  };
-});
+
+    '.icon': {
+      position: 'relative',
+      width: 32,
+      height: 32,
+      color: token.colorTextSecondary,
+      lineHeight: '32px',
+      textAlign: 'center',
+      transition: 'all 0.3s',
+      fontSize: 16,
+
+      '.anticon': {
+        fontSize: 14,
+      },
+
+      '&:first-child': {
+        marginInlineEnd: -4,
+      },
+
+      '&.active': {
+        color: token.colorTextLightSolid,
+      },
+    },
+  },
+}));
 
 export interface IconSwitchProps {
   leftChecked?: boolean;

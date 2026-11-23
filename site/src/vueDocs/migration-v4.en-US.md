@@ -1,3 +1,5 @@
+> Already on `4.x` and upgrading to `4.3.0`? See the [4.2.6 to 4.3.0 Migration Guide](/docs/vue/migration-v43).
+
 This document will help you upgrade from ant-design-vue `3.x` version to ant-design-vue `4.x` version. If you are using `2.x` or older version, please refer to the previous [upgrade document](/docs/vue/migration-v3) to 3.x.
 
 ## Upgrade preparation
@@ -21,7 +23,7 @@ This document will help you upgrade from ant-design-vue `3.x` version to ant-des
   - If you need to reset the style of the component, but you don't want to introduce `ant-design-vue/dist/reset.css` to pollute the global style, You can try using the [App](/components/app) in the outermost layer to solve the problem that native elements do not have antd specification style.
 - Remove css variables and dynamic theme built on top of them.
 - LocaleProvider has been deprecated in 3.x (use `<ConfigProvider locale />` instead), we removed the related folder `ant-design-vue/es/locale-provider` and `ant-design-vue/lib/locale-provider` in 4.x.
-- Replace built-in Moment.js with Dayjs. For more: [Use custom date library](/docs/vue/use-custom-date-library/).
+- Replace built-in Moment.js with Dayjs. For more: [Use custom date library](/docs/vue/replace-date).
 - `babel-plugin-import` is no longer supported. CSS-in-JS itself has the ability to import on demand, and plugin support is no longer required.
 
 ### Compatibility

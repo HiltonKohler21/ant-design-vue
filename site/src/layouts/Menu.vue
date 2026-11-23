@@ -23,7 +23,12 @@
                 <span>{{ isZhCN ? n.title : n.enTitle || n.title }}</span>
                 <span v-if="isZhCN && n.subtitle" class="chinese">{{ n.subtitle }}</span>
               </router-link>
-              <a-tag v-if="n.tag" color="blue" :bordered="false" class="aside-item-tag">
+              <a-tag
+                v-if="n.tag"
+                :color="getTagColor(n.tag)"
+                :bordered="false"
+                class="aside-item-tag"
+              >
                 {{ n.tag }}
               </a-tag>
             </a-menu-item>
@@ -38,6 +43,9 @@
           <router-link v-else :to="getLocalizedPathname(m.path, isZhCN)">
             <span>{{ isZhCN ? `${m.title} ${m.subtitle || ''}` : m.enTitle || m.title }}</span>
           </router-link>
+          <a-tag v-if="m.tag" :color="getTagColor(m.tag)" :bordered="false" class="aside-item-tag">
+            {{ m.tag }}
+          </a-tag>
         </a-menu-item>
       </template>
     </template>
@@ -78,8 +86,14 @@ export default defineComponent({
       { immediate: true, flush: 'post' },
     );
 
+    const getTagColor = (tag: string) => {
+      if (tag === 'Deprecated') return 'orange';
+      return 'blue';
+    };
+
     return {
       getLocalizedPathname,
+      getTagColor,
       showOverview,
     };
   },

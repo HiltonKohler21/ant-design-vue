@@ -1,3 +1,4 @@
+import { theme as antdTheme } from 'ant-design-vue';
 import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
 import type { PropType } from 'vue';
 import { toRefs, defineComponent } from 'vue';
@@ -11,6 +12,14 @@ export type TokenPreviewProps = {
   type?: string;
 };
 
+const isDarkThemeConfig = (config?: ThemeConfig): boolean => {
+  const algo = config?.algorithm;
+  if (!algo) return false;
+  return Array.isArray(algo)
+    ? algo.includes(antdTheme.darkAlgorithm)
+    : algo === antdTheme.darkAlgorithm;
+};
+
 const TokenPreview = defineComponent({
   name: 'TokenPreview',
   props: {
@@ -22,11 +31,14 @@ const TokenPreview = defineComponent({
     const { theme, tokenName, type } = toRefs(props);
 
     return () => {
+      const dark = isDarkThemeConfig(theme.value);
+      const dt = getDesignToken(theme.value) as any;
+
       if (type.value === 'Color') {
         return (
           <div
             style={{
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
               width: '100%',
               height: '100%',
               position: 'relative',
@@ -36,7 +48,7 @@ const TokenPreview = defineComponent({
               style={{
                 height: '100%',
                 width: '100%',
-                backgroundColor: (getDesignToken(theme.value) as any)[tokenName.value],
+                backgroundColor: dt[tokenName.value],
                 transition: 'background-color 0.2s',
               }}
             />
@@ -54,9 +66,10 @@ const TokenPreview = defineComponent({
               alignItems: 'center',
               justifyContent: 'center',
               overflow: 'hidden',
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
-              fontSize: `${(getDesignToken(theme.value) as any)[tokenName.value]}px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
+              fontSize: `${dt[tokenName.value]}px`,
               fontWeight: 700,
+              color: dt.colorText,
             }}
           >
             <span>Aa</span>
@@ -75,18 +88,15 @@ const TokenPreview = defineComponent({
               justifyContent: 'center',
               fontWeight: 700,
               overflow: 'hidden',
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
             }}
           >
             <span
               style={{
-                fontSize: `${
-                  (getDesignToken(theme.value) as any)[
-                    tokenName.value.replace('lineHeight', 'fontSize')
-                  ]
-                }px`,
-                lineHeight: (getDesignToken(theme.value) as any)[tokenName.value],
-                background: '#fff2f0',
+                fontSize: `${dt[tokenName.value.replace('lineHeight', 'fontSize')]}px`,
+                lineHeight: dt[tokenName.value],
+                background: dt.colorErrorBg,
+                color: dt.colorText,
                 paddingInline: '8px',
               }}
             >
@@ -96,7 +106,7 @@ const TokenPreview = defineComponent({
         );
       }
       if (type.value === 'Margin') {
-        const margin = (getDesignToken(theme.value) as any)[tokenName.value];
+        const margin = dt[tokenName.value];
         return (
           <div
             style={{
@@ -104,7 +114,7 @@ const TokenPreview = defineComponent({
               height: '100%',
               position: 'relative',
               overflow: 'hidden',
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
             }}
           >
             <div
@@ -112,7 +122,7 @@ const TokenPreview = defineComponent({
                 width: '100%',
                 height: '100%',
                 overflow: 'hidden',
-                background: '#fff1b8',
+                background: dt.colorWarningBg,
                 transform: 'translate(10%, 10%) scale(0.8)',
               }}
             >
@@ -122,7 +132,7 @@ const TokenPreview = defineComponent({
                   marginTop: `${margin}px`,
                   width: `calc(100% - ${margin}px)`,
                   height: `calc(100% - ${margin}px)`,
-                  background: '#bae0ff',
+                  background: dt.colorInfoBg,
                 }}
               />
             </div>
@@ -130,7 +140,7 @@ const TokenPreview = defineComponent({
         );
       }
       if (type.value === 'Padding') {
-        const padding = `${(getDesignToken(theme.value) as any)[tokenName.value]}px`;
+        const padding = `${dt[tokenName.value]}px`;
         return (
           <div
             style={{
@@ -138,7 +148,7 @@ const TokenPreview = defineComponent({
               height: '100%',
               position: 'relative',
               overflow: 'hidden',
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
             }}
           >
             <div
@@ -146,7 +156,7 @@ const TokenPreview = defineComponent({
                 width: '100%',
                 height: '100%',
                 overflow: 'hidden',
-                background: '#d9f7be',
+                background: dt.colorSuccessBg,
                 transform: 'translate(10%, 10%) scale(0.8)',
                 paddingLeft: padding,
                 paddingTop: padding,
@@ -156,7 +166,7 @@ const TokenPreview = defineComponent({
                 style={{
                   width: `100%`,
                   height: `100%`,
-                  background: '#bae0ff',
+                  background: dt.colorInfoBg,
                 }}
               />
             </div>
@@ -171,7 +181,7 @@ const TokenPreview = defineComponent({
               height: '100%',
               position: 'relative',
               overflow: 'hidden',
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
             }}
           >
             <div
@@ -180,9 +190,9 @@ const TokenPreview = defineComponent({
                 height: '100%',
                 overflow: 'hidden',
                 transform: 'translate(30%, 30%)',
-                border: '2px solid rgba(0,0,0,0.45)',
-                background: '#fff',
-                borderRadius: `${(getDesignToken(theme.value) as any)[tokenName.value]}px`,
+                border: `2px solid ${dt.colorBorder}`,
+                background: dt.colorBgContainer,
+                borderRadius: `${dt[tokenName.value]}px`,
               }}
             />
           </div>
@@ -199,7 +209,7 @@ const TokenPreview = defineComponent({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: `${getColorBgImg(false)} 0% 0% / 28px`,
+              background: `${getColorBgImg(dark)} 0% 0% / 28px`,
             }}
           >
             <div
@@ -207,9 +217,9 @@ const TokenPreview = defineComponent({
                 width: '60%',
                 height: '50%',
                 borderRadius: '6px',
-                background: '#fff',
-                border: '1px solid #d9d9d9',
-                boxShadow: (getDesignToken(theme.value) as any)[tokenName.value],
+                background: dt.colorBgContainer,
+                border: `1px solid ${dt.colorBorder}`,
+                boxShadow: dt[tokenName.value],
               }}
             />
           </div>

@@ -15,6 +15,8 @@ const locale: Locale = {
     components: 'Components',
     relatedTokens: 'Related Tokens',
   },
+  copyVueConfig: 'Copy Vue Config',
+  copiedVueConfig: 'Vue config copied',
 };
 
 export default locale;

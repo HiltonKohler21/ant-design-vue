@@ -1,7 +1,7 @@
 import type { PropType } from 'vue';
 import { defineComponent, toRefs, computed } from 'vue';
 import { BuildOutlined, CarOutlined } from '@ant-design/icons-vue';
-import { ConfigProvider, Drawer, Empty, Tag, theme as antdTheme, Tooltip } from 'ant-design-vue';
+import { ConfigProvider, Drawer, Empty, Tag, Tooltip } from 'ant-design-vue';
 import classNames from 'ant-design-vue/es/_util/classNames';
 import ComponentDemos from '../component-demos';
 import type { AliasToken, ComponentDemo, MutableTheme, TokenName, TokenValue } from '../interface';
@@ -12,12 +12,37 @@ import makeStyle from '../utils/makeStyle';
 import { getComponentToken } from '../utils/statistic';
 import ComponentCard from './ComponentCard';
 
-const { defaultAlgorithm } = antdTheme;
-
 const useStyle = makeStyle('ComponentTokenDrawer', token => ({
   '.previewer-component-token-drawer': {
     [`&${token.rootCls}-drawer ${token.rootCls}-drawer-body`]: {
       padding: '0 !important',
+    },
+
+    '.previewer-component-token-drawer-content': {
+      display: 'flex',
+      height: '100%',
+      backgroundColor: token.colorBgContainer,
+
+      '@media (max-width: 991px)': {
+        flexDirection: 'column',
+        height: 'auto',
+      },
+    },
+
+    '.previewer-component-token-drawer-panel': {
+      flex: '0 0 min(400px, 100%)',
+      overflow: 'auto',
+      overflowX: 'hidden',
+      padding: '24px',
+      backgroundColor: token.colorBgContainer,
+      borderInlineStart: `1px solid ${token.colorBorderSecondary}`,
+
+      '@media (max-width: 991px)': {
+        flex: 'none',
+        width: '100%',
+        borderInlineStart: 'none',
+        borderTop: `1px solid ${token.colorBorderSecondary}`,
+      },
     },
 
     '.previewer-component-drawer-subtitle': {
@@ -157,18 +182,14 @@ const ComponentTokenDrawer = defineComponent({
             ),
           }}
           onClose={props.onClose as any}
-          width={1200}
+          width="min(1200px, 95vw)"
           class={classNames('previewer-component-token-drawer', hashId.value)}
         >
-          <div style={{ display: 'flex', height: '100%' }}>
-            <ConfigProvider theme={theme.value.config}>
-              <ConfigProvider theme={theme.value.config}>
-                <ComponentFullDemos demos={ComponentDemos[component.value]} />
-              </ConfigProvider>
+          <div class="previewer-component-token-drawer-content">
+            <ConfigProvider theme={{ inherit: false, cssVar: false, ...theme.value.config }}>
+              <ComponentFullDemos demos={ComponentDemos[component.value]} />
             </ConfigProvider>
-            <div
-              style={{ flex: '0 0 400px', overflow: 'auto', overflowX: 'hidden', padding: '24px' }}
-            >
+            <div class="previewer-component-token-drawer-panel">
               <div class="previewer-component-drawer-subtitle">Related Tokens / 相关 token</div>
               <TokenCard
                 icon={<BuildOutlined />}
@@ -234,15 +255,6 @@ export default defineComponent({
     theme: { type: Object as PropType<MutableTheme> },
   },
   setup(props, { attrs }) {
-    return () => (
-      <ConfigProvider
-        theme={{
-          algorithm: defaultAlgorithm,
-          ...props.theme?.config,
-        }}
-      >
-        <ComponentTokenDrawer {...props} {...attrs} />
-      </ConfigProvider>
-    );
+    return () => <ComponentTokenDrawer {...props} {...attrs} />;
   },
 });

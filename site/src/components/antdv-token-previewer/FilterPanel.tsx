@@ -6,14 +6,12 @@ import { Segmented, Tag } from 'ant-design-vue';
 
 const useStyle = makeStyle('FilterPanel', token => ({
   '.previewer-filter-panel': {
-    // boxShadow:
-    //   '0 2px 4px 0 rgba(0,0,0,0.05), 0 1px 2px 0 rgba(25,15,15,0.07), 0 0 1px 0 rgba(0,0,0,0.08)',
-    // backgroundColor: '#fff',
-    // borderRadius: 6,
-    // padding: '8px 12px',
+    backgroundColor: 'transparent',
     overflow: 'hidden',
     display: 'flex',
-    alignItems: 'start',
+    flexWrap: 'wrap',
+    gap: token.marginXS,
+    alignItems: 'center',
 
     '.component-tree-head': {
       display: 'flex',
@@ -39,7 +37,7 @@ const useStyle = makeStyle('FilterPanel', token => ({
 
     [`${token.rootCls}-tag.previewer-token-filter-tag`]: {
       color: token.colorPrimary,
-      backgroundColor: 'rgba(22,119,255,0.10)',
+      backgroundColor: token.colorPrimaryBg,
       border: 'none',
       borderRadius: 4,
 

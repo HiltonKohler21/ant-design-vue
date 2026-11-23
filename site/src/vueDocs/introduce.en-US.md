@@ -1,11 +1,11 @@
 # Ant Design of Vue
 
-Following the Ant Design specification, we developed a Vue UI library `antd` that contains a set of high quality components and demos for building rich, interactive user interfaces.
+Following the Ant Design specification, `ant-design-vue` is a Vue 3 UI component library designed for enterprise-level web applications.
 
 <div class="pic-plus">
-  <img width="150" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" />
+  <img width="150" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="Ant Design" />
   <span>+</span>
-  <img width="160" src="https://www.antdv.com/vue.png" />
+  <img width="160" src="/vue.png" alt="Vue" />
 </div>
 
 <style>
@@ -22,54 +22,54 @@ Following the Ant Design specification, we developed a Vue UI library `antd` tha
 
 ## Features
 
-- An enterprise-class UI design language for web applications.
-- 75 high-quality Vue 3 components out of the box with complete TypeScript definitions.
-- Native CSS Variables enabled by default and optional zero-runtime static CSS extraction (4.3.0+).
-- Shared [Ant Design of React](https://ant.design/docs/spec/introduce) design resources.
+- An enterprise-class UI design language for desktop web applications.
+- 75 high-quality Vue 3 components out of the box with complete TypeScript definitions and 72 `ConfigProvider` component defaults.
+- Native CSS Variables enabled by default in `4.3.0`, plus optional zero-runtime static CSS extraction (`zeroRuntime`).
+- Shared [Ant Design](https://ant.design/docs/spec/introduce) design system and visual Theme Editor.
+
+> Upgrading from `4.2.6`? Read the [4.2.6 to 4.3.0 Migration Guide](/docs/vue/migration-v43).
 
 ## Environment Support
 
-- Modern browsers. You can use [1.x](https://1x.antdv.com/) for IE9+.
-- Server-side Rendering
-- [Electron](https://electronjs.org/)
+- Modern browsers (last 2 versions). For IE9+, please use [1.x](https://1x.antdv.com/).
+- Server-Side Rendering (Nuxt 3 / Vite SSR) — see [SSR & Static Style Extraction](/docs/vue/ssr-extract-ssr).
+- [Electron](https://www.electronjs.org/)
 
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/> Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Opera | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/electron/electron_48x48.png" alt="Electron" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Electron |
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)<br/>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)<br/>Opera | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/electron/electron_48x48.png" alt="Electron" width="24px" height="24px" />](https://godban.github.io/browsers-support-badges/)<br/>Electron |
 | --- | --- | --- | --- | --- | --- |
-| Edge | last 2 versions | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+| last 2 versions | last 2 versions | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
 
 ## Version
 
-- Stable: [![npm package](https://img.shields.io/npm/v/ant-design-vue.svg?style=flat-square)](https://www.npmjs.org/package/ant-design-vue)
+- Stable: [![npm package](https://img.shields.io/npm/v/ant-design-vue.svg?style=flat-square)](https://www.npmjs.com/package/ant-design-vue)
 
-You can subscribe to this feed for new version notifications: <https://github.com/vueComponent/ant-design-vue/releases.atom>
+Subscribe to new releases via Atom feed: <https://github.com/vueComponent/ant-design-vue/releases.atom>
 
 ## Installation
 
-### Using npm or yarn
+### Using npm, yarn, or pnpm
 
-**We recommend using npm or yarn to install**, it not only makes development easier, but also allow you to take advantage of the rich ecosystem of Javascript packages and tooling.
-
-```bash
-$ npm install ant-design-vue@4.x --save
-```
+**We recommend installing via a package manager** to take advantage of modern bundlers like Vite, ES module tree shaking, and full TypeScript tooling.
 
 ```bash
-$ yarn add ant-design-vue@4.x
+npm install ant-design-vue@4.3.0
+# or
+yarn add ant-design-vue@4.3.0
+# or
+pnpm add ant-design-vue@4.3.0
 ```
 
-If you are in a bad network environment, you can try other registries and tools like [cnpm](https://github.com/cnpm/cnpm).
+For Vite setup and automatic on-demand imports, see [Use in Vite](/docs/vue/use-with-vite).
 
 ### Import in Browser
 
-Add `script` and `link` tags in your browser and use the global variable `antd`.
+Add `script` and `link` tags to use the global `antd` variable.
 
-We provide `antd.js` `antd.min.js` and `reset.css` under `ant-design-vue/dist` in antd's npm package. You can also download these files directly from [![jsdelivr](https://data.jsdelivr.com/v1/package/npm/ant-design-vue/badge)](https://www.jsdelivr.com/package/npm/ant-design-vue) or [unpkg](https://unpkg.com/ant-design-vue/dist/).
+Prebuilt `antd.js`, `antd.min.js`, and `reset.css` are shipped under `ant-design-vue/dist`, also available on [![jsdelivr](https://data.jsdelivr.com/v1/package/npm/ant-design-vue/badge)](https://www.jsdelivr.com/package/npm/ant-design-vue) and [unpkg](https://unpkg.com/ant-design-vue/dist/).
 
-> **We strongly discourage loading the entire files** this will add bloat to your application and make it more difficult to receive bugfixes and updates. Antd is intended to be used in conjunction with a build tool, such as [webpack](https://webpack.github.io/), which will make it easy to import only the parts of antd that you are using.
-
-> Note: you should import `vue`, [dayjs](https://day.js.org/) and dayjs plugins before using `antd.js`.
-
-Like:
+> **We strongly discourage using the full UMD bundle in production**, as it disables tree shaking and modern build optimizations.
+>
+> Note: Load `vue`, [`dayjs`](https://day.js.org/), and required `dayjs` plugins before `antd.js`:
 
 ```html
 <script src="https://unpkg.com/dayjs/dayjs.min.js"></script>
@@ -84,81 +84,43 @@ Like:
 
 ## Usage
 
-```jsx
+```ts
+import { createApp } from 'vue';
 import { DatePicker } from 'ant-design-vue';
-app.use(DatePicker);
-```
-
-And import stylesheets manually:
-
-```jsx
 import 'ant-design-vue/dist/reset.css';
+import App from './App.vue';
+
+const app = createApp(App);
+app.use(DatePicker).mount('#app');
 ```
 
-### Use modularized ant-design-vue
+### Tree Shaking & Automatic On-Demand Imports
 
-`ant-design-vue` supports ES modules tree shaking by default.
-
-### Automatically import components on demand
-
-#### [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
-
-If you're using 'Vite', we recommend using 'unplugin-vue-components'
-
-```bash
-$ npm install unplugin-vue-components -D
-```
-
-```js
-// vite.config.js
-import { defineConfig } from 'vite';
-import Components from 'unplugin-vue-components/vite';
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
-export default defineConfig({
-  plugins: [
-    // ...
-    Components({
-      resolvers: [
-        AntDesignVueResolver({
-          importStyle: false, // css in js
-        }),
-      ],
-    }),
-  ],
-});
-```
-
-You can then import 'ant-design-vue' components directly in your code, and the plugin will automatically convert your code to 'import {Button} from 'ant-design-vue''.
-
-```jsx
-import { Button } from 'ant-design-vue';
-```
+`ant-design-vue` supports ES module tree shaking out of the box. In Vite projects, pair it with [`unplugin-vue-components`](https://github.com/unplugin/unplugin-vue-components) and `AntDesignVueResolver({ importStyle: false })` — see [Use in Vite](/docs/vue/use-with-vite).
 
 ## Links
 
-- [Home Page](https://www.antdv.com/)
-- [Ant Design Of React](https://ant.design/)
-- [Components](https://www.antdv.com/components/overview)
-- [Change Log](/docs/vue/changelog)
-- [CodeSandbox template](https://codesandbox.io/s/agitated-franklin-1w72v) for bug reports
+- [Getting Started](/docs/vue/getting-started)
+- [Use in Vite](/docs/vue/use-with-vite)
+- [4.2.6 to 4.3.0 Migration Guide](/docs/vue/migration-v43)
+- [Components Overview](/components/overview)
 - [Customize Theme](/docs/vue/customize-theme)
+- [Common Props](/docs/vue/common-props)
 - [FAQ](/docs/vue/faq)
-- [Awesome Ant Design](https://github.com/vueComponent/ant-design-vue-awesome)
+- [Change Log](/docs/vue/changelog)
+- [Ant Design of React](https://ant.design/)
+- [Awesome Ant Design Vue](https://github.com/vueComponent/ant-design-vue-awesome)
 
 ## Contributing
 
-If you'd like to help us improve ant-design-vue, just create a [Pull Request](https://github.com/vueComponent/ant-design-vue/pulls). Feel free to report bugs and issues [here](https://vuecomponent.github.io/issue-helper/).
+We welcome [Pull Requests](https://github.com/vueComponent/ant-design-vue/pulls) and bug reports via [GitHub Issues](https://github.com/vueComponent/ant-design-vue/issues).
 
-> If you're new to posting issues, we ask that you read [_How To Ask Questions The Smart Way_](http://www.catb.org/~esr/faqs/smart-questions.html) and [How to Ask a Question in Open Source Community](https://github.com/seajs/seajs/issues/545) and [How to Report Bugs Effectively](http://www.chiark.greenend.org.uk/~sgtatham/bugs.html) prior to posting. Well written bug reports help us help you!
+> Please review [How To Ask Questions The Smart Way](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way) and include a minimal reproduction when reporting issues.
 
 ## About ant-design-vue
 
-As we all know, Ant Design, as a design language, has gone through many years of iteration and accumulation. Its UI design ideas have become a set of de facto standards and are sought after and loved by many front-end developers and enterprises, and it is also a magic weapon in the hands of React developers. I hope that ant-design-vue will allow Vue developers to enjoy the excellent design of Ant Design.
+Ant Design has become an industry-standard design language for enterprise applications. `ant-design-vue` brings Ant Design's visual language, DOM structure, and design token system natively to Vue 3 with Composition API and full TypeScript support, aiming to give Vue developers a **pleasant** experience.
 
-The ant-design-vue is the Vue implementation of Ant Design. The style of the component is kept in sync with Ant Design. The html structure and css style of the component are also consistent. The style 0 modification is really achieved, and the component API is kept as consistent as possible.
-
-Ant Design Vue is committed to providing programmers with a **pleasant** development experience.
-
-## THANK YOU
+## Special Thanks
 
 [Ant Design Team](https://github.com/ant-design/ant-design/blob/master/AUTHORS.txt)

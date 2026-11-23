@@ -62,7 +62,7 @@ export function createMarkdownToVueRenderFn(
     const newContent =
       data.vueCode && isComponentDemo
         ? await genComponentCode(md, data, pageData)
-        : await genDocCode(content, pageData);
+        : await genDocCode(pageData, data);
 
     debug(`[render] ${file} in ${Date.now() - start}ms.`);
     const result = {
@@ -154,7 +154,7 @@ const DOC_COMPONENTS = [
   },
 ];
 
-async function genDocCode(content: string, pageData: PageData) {
+async function genDocCode(pageData: PageData, data: MarkdownParsedData) {
   const usedComponents = DOC_COMPONENTS.filter(({ re }) => re.test(pageData.html));
   const imports = usedComponents
     .map(({ name, path: compPath }) => `import ${name} from '${compPath}';`)
@@ -164,6 +164,9 @@ async function genDocCode(content: string, pageData: PageData) {
         .map(({ name }) => name)
         .join(',\n        ')}\n    },\n`
     : '';
+  const hoistedStyles = (data?.hoistedTags || [])
+    .filter(tag => /^<style(?=[\s>])/i.test(tag.trim()))
+    .join('\n');
   return `
 <template><article class="markdown">${pageData.html}</article></template>
 
@@ -173,7 +176,7 @@ export default {
 ${componentsBlock}    pageData: ${JSON.stringify(pageData)}
 }
 </script>
-${fetchCode(content, 'style')}
+${hoistedStyles}
 `;
 }
 

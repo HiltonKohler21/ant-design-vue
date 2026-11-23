@@ -15,9 +15,8 @@ const BREADCRUMB_HEIGHT = 40;
 
 const useStyle = makeStyle('ComponentPanel', token => ({
   '.component-panel': {
-    boxShadow:
-      '0 2px 4px 0 rgba(0,0,0,0.05), 0 1px 2px 0 rgba(25,15,15,0.07), 0 0 1px 0 rgba(0,0,0,0.08)',
-    backgroundColor: '#fff',
+    boxShadow: token.boxShadowTertiary,
+    backgroundColor: token.colorBgContainer,
     display: 'flex',
     borderRadius: 6,
     height: '100%',
@@ -34,12 +33,10 @@ const useStyle = makeStyle('ComponentPanel', token => ({
         flex: 'none',
         backgroundColor: token.colorBgContainer,
         display: 'flex',
+        flexWrap: 'wrap',
+        gap: `${token.marginXS}px ${token.margin}px`,
         alignItems: 'center',
-        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBgContainer}`,
-
-        '> *:not(:first-child)': {
-          marginInlineStart: token.margin,
-        },
+        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
 
         [`${token.rootCls}-segmented-item`]: {
           minWidth: 52,
@@ -87,12 +84,11 @@ const useStyle = makeStyle('ComponentPanel', token => ({
         width: '100%',
         height: BREADCRUMB_HEIGHT,
         zIndex: 20,
-        backgroundColor: token.colorBgContainer,
+        backgroundColor: token.colorBgElevated,
         padding: '8px 16px',
         transition: 'opacity 0.3s',
-        background: 'rgba(255, 255, 255, .6)',
         backdropFilter: 'blur(10px)',
-        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBgContainer}`,
+        borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
       },
     },
 
@@ -108,7 +104,7 @@ export const antdComponents = {
   General: ['Button', 'Icon', 'Typography'],
   Layout: ['Divider', 'Grid', 'Space'],
   Navigation: ['Breadcrumb', 'Dropdown', 'Menu', 'Pagination', 'Steps'],
-  'Date Entry': [
+  'Data Entry': [
     'AutoComplete',
     'Cascader',
     'Checkbox',

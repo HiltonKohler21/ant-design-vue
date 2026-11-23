@@ -2,6 +2,20 @@
   <Navigation @langChange="onLangChange" @directionChange="onDirectionChange" />
   <template v-if="isMobile">
     <div class="mobile-header-tools">
+      <a-select
+        key="mobile-version"
+        class="version mobile-version-select"
+        size="small"
+        :value="antdVersion"
+        :dropdown-match-select-width="false"
+        :aria-label="isZhCN ? '切换版本' : 'Switch version'"
+        @change="handleVersionChange"
+      >
+        <a-select-option :value="antdVersion">{{ antdVersion }}</a-select-option>
+        <a-select-option value="3x">3.x</a-select-option>
+        <a-select-option value="2x">2.x (Not Recommended)</a-select-option>
+        <a-select-option value="1x">1.x (For Vue 2)</a-select-option>
+      </a-select>
       <ThemeSwitch />
     </div>
     <Ecosystem />
@@ -164,8 +178,14 @@ export default defineComponent({
 .mobile-header-tools {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 8px 20px;
   border-top: 1px solid var(--site-border-color-split);
   border-bottom: 1px solid var(--site-border-color-split);
+
+  .mobile-version-select {
+    min-width: 96px;
+  }
 }
 </style>

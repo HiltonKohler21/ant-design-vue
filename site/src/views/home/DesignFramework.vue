@@ -15,7 +15,7 @@
       </div>
 
       <a-row :gutter="[24, 24]">
-        <!-- 1. Design Values -->
+        <!-- 1. Design Values & Spec (DESIGN.md) -->
         <a-col :xs="24" :md="12">
           <router-link
             :to="getLocalizedPathname('/docs/vue/design', isZhCN)"
@@ -25,12 +25,15 @@
               <CompassOutlined />
             </div>
             <div class="home-framework-card-content">
-              <h3>{{ isZhCN ? '设计价值观' : 'Design Values' }}</h3>
+              <div class="home-framework-title-row">
+                <h3>{{ isZhCN ? '设计价值观与规范' : 'Design Values & Spec' }}</h3>
+                <a-tag color="blue" :bordered="false">DESIGN.md</a-tag>
+              </div>
               <p>
                 {{
                   isZhCN
-                    ? '基于「自然、确定、意义、生长」四大企业级设计价值观，构建直觉高效的产品体验。'
-                    : 'Built on four enterprise design values — Natural, Certain, Meaningful, and Growing.'
+                    ? '基于「自然、确定、意义、生长」四大设计价值观与标准色彩、字体及空间体系，人类与 AI 皆可直接读取。'
+                    : 'Four enterprise design values paired with standardized color, typography, and 8px spacing specs.'
                 }}
               </p>
               <div class="home-framework-pillars">
@@ -39,17 +42,17 @@
                 </span>
               </div>
               <span class="home-framework-link">
-                {{ isZhCN ? '了解设计价值观' : 'Explore values' }}
+                {{ isZhCN ? '阅读 DESIGN.md 规范' : 'Read DESIGN.md' }}
                 <ArrowRightOutlined />
               </span>
             </div>
           </router-link>
         </a-col>
 
-        <!-- 2. Design Spec (DESIGN.md) -->
+        <!-- 2. 4.3.0 Upgrade & Migration Guide -->
         <a-col :xs="24" :md="12">
           <router-link
-            :to="getLocalizedPathname('/docs/vue/design', isZhCN)"
+            :to="getLocalizedPathname('/docs/vue/migration-v43', isZhCN)"
             class="home-framework-card card-spec"
           >
             <div class="home-framework-card-icon">
@@ -57,18 +60,18 @@
             </div>
             <div class="home-framework-card-content">
               <div class="home-framework-title-row">
-                <h3>{{ isZhCN ? '设计规范' : 'Design Specification' }}</h3>
-                <a-tag color="blue" :bordered="false">DESIGN.md</a-tag>
+                <h3>{{ isZhCN ? '4.3.0 升级指南' : '4.3.0 Migration Guide' }}</h3>
+                <a-tag color="blue" :bordered="false">v4.3.0</a-tag>
               </div>
               <p>
                 {{
                   isZhCN
-                    ? '标准化的色彩体系、字体阶梯、8px 空间网格与组件交互规范，人类与 AI 皆可直接读取。'
-                    : 'Standardized color scales, typography hierarchy, 8px spacing grid, and interaction patterns.'
+                    ? '涵盖默认 CSS Variables、token 与 realToken 差异、新增组件迁移、72 项全局配置与废弃属性对照表。'
+                    : 'Covers default CSS Variables, token vs realToken, new components, 72 global configs, and API migration.'
                 }}
               </p>
               <span class="home-framework-link">
-                {{ isZhCN ? '阅读 DESIGN.md 规范' : 'Read DESIGN.md' }}
+                {{ isZhCN ? '查看 4.3.0 迁移指南' : 'View Migration Guide' }}
                 <ArrowRightOutlined />
               </span>
             </div>
