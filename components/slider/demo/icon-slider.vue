@@ -31,12 +31,12 @@ const max = ref<number>(20);
 
 const preColor = computed(() => {
   const mid = +((max.value - min.value) / 2).toFixed(5);
-  return sliderValue.value >= mid ? '' : 'rgba(0, 0, 0, .45)';
+  return sliderValue.value >= mid ? '' : 'var(--ant-color-text-secondary, rgba(0, 0, 0, 0.45))';
 });
 
 const nextColor = computed(() => {
   const mid = +((max.value - min.value) / 2).toFixed(5);
-  return sliderValue.value >= mid ? 'rgba(0, 0, 0, .45)' : '';
+  return sliderValue.value >= mid ? 'var(--ant-color-text-secondary, rgba(0, 0, 0, 0.45))' : '';
 });
 </script>
 <style scoped>
@@ -45,21 +45,21 @@ const nextColor = computed(() => {
   padding: 0px 30px;
 }
 
-.icon-wrapper .anticon {
+.icon-wrapper :deep(.anticon) {
   position: absolute;
   top: -2px;
   width: 16px;
   height: 16px;
   line-height: 1;
   font-size: 16px;
-  color: rgba(0, 0, 0, 0.25);
+  color: var(--ant-color-text-quaternary, rgba(0, 0, 0, 0.25));
 }
 
-.icon-wrapper .anticon:first-child {
+.icon-wrapper :deep(.anticon:first-child) {
   left: 0;
 }
 
-.icon-wrapper .anticon:last-child {
+.icon-wrapper :deep(.anticon:last-child) {
   right: 0;
 }
 </style>

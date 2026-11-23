@@ -46,7 +46,7 @@ const handleOk = (e: MouseEvent) => {
 };
 </script>
 <style lang="less">
-.full-modal {
+.ant-modal-wrap.full-modal {
   .ant-modal {
     max-width: 100%;
     top: 0;

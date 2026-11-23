@@ -18,7 +18,13 @@ No border.
 
 <template>
   <div>
-    <a-input-number id="inputNumber" v-model:value="value" :bordered="false" :min="1" :max="10" />
+    <a-input-number
+      id="inputNumber"
+      v-model:value="value"
+      variant="borderless"
+      :min="1"
+      :max="10"
+    />
   </div>
 </template>
 <script lang="ts" setup>

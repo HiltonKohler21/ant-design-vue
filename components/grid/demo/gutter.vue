@@ -93,4 +93,3 @@ You can use an array to set vertical spacing, `[horizontal, vertical]` `[16, { x
   padding: 8px 0;
 }
 </style>
-```

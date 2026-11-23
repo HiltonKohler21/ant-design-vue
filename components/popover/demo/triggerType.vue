@@ -16,7 +16,7 @@ Mouse to click, focus and move in.
 
 </docs>
 <template>
-  <div>
+  <div class="components-popover-demo-triggertype">
     <a-popover title="Title" trigger="hover">
       <template #content>
         <p>Content</p>
@@ -41,7 +41,7 @@ Mouse to click, focus and move in.
   </div>
 </template>
 <style scoped>
-#components-popover-demo-triggerType .ant-btn {
+.components-popover-demo-triggertype :deep(.ant-btn) {
   margin-right: 8px;
 }
 </style>

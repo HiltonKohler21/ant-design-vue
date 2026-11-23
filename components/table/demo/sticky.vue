@@ -17,7 +17,13 @@ For long table，need to scroll to view the header and scroll bar，then you can
 </docs>
 
 <template>
-  <a-table sticky :columns="columns" :data-source="data" :scroll="{ x: 1500 }">
+  <a-table
+    class="components-table-demo-sticky"
+    sticky
+    :columns="columns"
+    :data-source="data"
+    :scroll="{ x: 1500 }"
+  >
     <template #bodyCell="{ column }">
       <template v-if="column.key === 'operation'"><a>action</a></template>
     </template>
@@ -121,12 +127,8 @@ const fixedTop = ref(false);
 </script>
 
 <style scoped>
-#components-table-demo-summary tfoot th,
-#components-table-demo-summary tfoot td {
-  background: #fafafa;
-}
-[data-theme='dark'] #components-table-demo-summary tfoot th,
-[data-theme='dark'] #components-table-demo-summary tfoot td {
-  background: #1d1d1d;
+.components-table-demo-sticky :deep(tfoot th),
+.components-table-demo-sticky :deep(tfoot td) {
+  background: var(--ant-color-fill-alter, #fafafa);
 }
 </style>

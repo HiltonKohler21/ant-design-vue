@@ -16,7 +16,7 @@ There are 12 `placement` options available.
 
 </docs>
 <template>
-  <div id="components-popover-demo-placement">
+  <div class="components-popover-demo-placement">
     <div :style="{ marginLeft: `${buttonWidth}px`, whiteSpace: 'nowrap' }">
       <a-popover placement="topLeft">
         <template #content>
@@ -153,7 +153,7 @@ import { ref } from 'vue';
 const buttonWidth = ref<number>(70);
 </script>
 <style scoped>
-#components-popover-demo-placement .ant-btn {
+.components-popover-demo-placement :deep(.ant-btn) {
   width: 70px;
   text-align: center;
   padding: 0;

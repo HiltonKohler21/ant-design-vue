@@ -56,6 +56,7 @@ const DEFAULT_OMIT_PROPS = [
   'tabindex',
   'OptionList',
   'notFoundContent',
+  'prefix',
 ] as const;
 
 export type RenderNode = VueNode | ((props: any) => VueNode);
@@ -649,6 +650,7 @@ export default defineComponent({
     return () => {
       const {
         prefixCls,
+        prefix,
         id,
 
         open,

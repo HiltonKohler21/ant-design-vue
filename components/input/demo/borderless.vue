@@ -16,7 +16,7 @@ No border.
 
 </docs>
 <template>
-  <a-input v-model:value="value" :bordered="false" placeholder="Borderless" />
+  <a-input v-model:value="value" variant="borderless" placeholder="Borderless" />
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';

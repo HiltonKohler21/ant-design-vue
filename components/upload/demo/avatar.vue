@@ -85,17 +85,17 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
 };
 </script>
 <style scoped>
-.avatar-uploader > .ant-upload {
+.avatar-uploader :deep(> .ant-upload) {
   width: 128px;
   height: 128px;
 }
-.ant-upload-select-picture-card i {
+:deep(.ant-upload-select-picture-card i) {
   font-size: 32px;
-  color: #999;
+  color: var(--ant-color-text-tertiary, #999);
 }
 
-.ant-upload-select-picture-card .ant-upload-text {
+:deep(.ant-upload-select-picture-card .ant-upload-text) {
   margin-top: 8px;
-  color: #666;
+  color: var(--ant-color-text-secondary, #666);
 }
 </style>

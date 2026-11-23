@@ -6,6 +6,7 @@
     <collapsible />
     <nested />
     <control />
+    <lazy />
   </demo-sort>
 </template>
 
@@ -19,6 +20,7 @@ import Multiple from './multiple.vue';
 import Collapsible from './collapsible.vue';
 import Nested from './nested.vue';
 import Control from './control.vue';
+import Lazy from './lazy.vue';
 
 export default defineComponent({
   CN,
@@ -30,6 +32,7 @@ export default defineComponent({
     Collapsible,
     Nested,
     Control,
+    Lazy,
   },
   setup() {
     return {};

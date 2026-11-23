@@ -1,4 +1,4 @@
-import { defineComponent, ref, type PropType } from 'vue';
+import { computed, defineComponent, ref, type PropType } from 'vue';
 import classNames from '../../_util/classNames';
 import raf from '../../_util/raf';
 import useConfigInject from '../../config-provider/hooks/useConfigInject';
@@ -36,10 +36,12 @@ export default defineComponent({
     expose({
       focus: () => inputRef.value?.focus(),
       blur: () => inputRef.value?.blur(),
-      input: inputRef.value,
+      get input() {
+        return inputRef.value?.input ?? inputRef.value;
+      },
     });
 
-    const maskValue = typeof props.mask === 'string' ? props.mask : props.value;
+    const maskValue = computed(() => (typeof props.mask === 'string' ? props.mask : props.value));
 
     const onInternalChange = (e: Event) => {
       props.onChange?.(props.index, (e.target as HTMLInputElement).value);
@@ -72,13 +74,13 @@ export default defineComponent({
       <span class={`${prefixCls.value}-input-wrapper`} role="presentation">
         {props.mask && props.value !== '' && props.value !== undefined && (
           <span class={`${prefixCls.value}-mask-icon`} aria-hidden="true">
-            {maskValue}
+            {maskValue.value}
           </span>
         )}
         <Input
           {...omit(props, ['index', 'onChange', 'onActiveChange', 'mask', 'value', 'className'])}
           aria-label={`OTP Input ${props.index + 1}`}
-          type={props.mask === true ? 'password' : 'text'}
+          type={(props.type ?? (props.mask === true ? 'password' : 'text')) as any}
           ref={inputRef}
           value={props.value}
           onInput={onInternalChange}

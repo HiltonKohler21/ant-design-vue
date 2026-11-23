@@ -139,7 +139,10 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
 export default function genSingleStyle(token: SelectToken): CSSInterpolation {
   const { componentCls } = token;
 
-  const inputPaddingHorizontalSM = token.calc(token.controlPaddingHorizontalSM).sub(token.lineWidth).equal();
+  const inputPaddingHorizontalSM = token
+    .calc(token.controlPaddingHorizontalSM)
+    .sub(token.lineWidth)
+    .equal();
 
   return [
     genSizeStyle(token),
@@ -169,7 +172,10 @@ export default function genSingleStyle(token: SelectToken): CSSInterpolation {
 
           // With arrow should provides `padding-right` to show the arrow
           [`&${componentCls}-show-arrow ${componentCls}-selection-search`]: {
-            insetInlineEnd: inputPaddingHorizontalSM + token.calc(token.fontSize).mul(1.5).equal(),
+            insetInlineEnd: token
+              .calc(inputPaddingHorizontalSM)
+              .add(token.calc(token.fontSize).mul(1.5).equal())
+              .equal(),
           },
 
           [`

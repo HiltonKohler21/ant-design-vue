@@ -330,6 +330,7 @@ const InternalTabs = defineComponent({
         editable,
         locale,
         tabBarGutter,
+        indicatorSize,
         onTabClick: onInternalTabClick,
         onTabScroll,
         style: tabBarStyle,

@@ -18,8 +18,11 @@ Under different screen sizes, there should be different performance
 </docs>
 
 <template>
-  <div class="components-page-header-demo-responsive" style="border: 1px solid rgb(235, 237, 240)">
-    <a-page-header title="Title" sub-title="This is a subtitle" @back="() => $router.go(-1)">
+  <div
+    class="components-page-header-demo-responsive"
+    style="border: 1px solid var(--ant-color-border-secondary, rgb(235, 237, 240))"
+  >
+    <a-page-header title="Title" sub-title="This is a subtitle" @back="onBack">
       <template #extra>
         <a-button key="3">Operation</a-button>
         <a-button key="2">Operation</a-button>
@@ -67,31 +70,38 @@ Under different screen sizes, there should be different performance
     </a-page-header>
   </div>
 </template>
+<script lang="ts" setup>
+import { message } from 'ant-design-vue';
+
+const onBack = () => {
+  message.info('Back clicked');
+};
+</script>
 <style scoped>
 .components-page-header-demo-responsive {
   padding-bottom: 20px;
 }
-.components-page-header-demo-responsive tr:last-child td {
+.components-page-header-demo-responsive :deep(tr:last-child td) {
   padding-bottom: 0;
 }
-#components-page-header-demo-responsive .content {
+.components-page-header-demo-responsive .content {
   display: flex;
 }
-#components-page-header-demo-responsive .ant-statistic-content {
+.components-page-header-demo-responsive :deep(.ant-statistic-content) {
   font-size: 20px;
   line-height: 28px;
 }
 @media (max-width: 576px) {
-  #components-page-header-demo-responsive .content {
+  .components-page-header-demo-responsive .content {
     display: block;
   }
 
-  #components-page-header-demo-responsive .main {
+  .components-page-header-demo-responsive .main {
     width: 100%;
     margin-bottom: 12px;
   }
 
-  #components-page-header-demo-responsive .extra {
+  .components-page-header-demo-responsive .extra {
     width: 100%;
     margin-left: 0;
     text-align: left;

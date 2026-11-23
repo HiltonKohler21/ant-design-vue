@@ -49,7 +49,7 @@ const genPageHeaderStyle: GenerateStyle<PageHeaderToken, CSSObject> = token => {
 
       [`${antCls}-divider-vertical`]: {
         height: '14px',
-        margin: `0 ${token.marginSM}`,
+        margin: `0 ${unit(token.marginSM)}`,
         verticalAlign: 'middle',
       },
 

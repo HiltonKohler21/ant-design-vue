@@ -20,10 +20,10 @@ Use the operating area and customize the sub-nodes, suitable for use in the need
   <div>
     <a-page-header
       class="demo-page-header"
-      style="border: 1px solid rgb(235, 237, 240)"
+      style="border: 1px solid var(--ant-color-border-secondary, rgb(235, 237, 240))"
       title="Title"
       sub-title="This is a subtitle"
-      @back="() => $router.go(-1)"
+      @back="onBack"
     >
       <template #extra>
         <a-button key="3">Operation</a-button>
@@ -43,7 +43,7 @@ Use the operating area and customize the sub-nodes, suitable for use in the need
       </a-descriptions>
     </a-page-header>
     <br />
-    <a-page-header title="Title" sub-title="This is a subtitle" @back="() => $router.go(-1)">
+    <a-page-header title="Title" sub-title="This is a subtitle" @back="onBack">
       <template #tags>
         <a-tag color="blue">Running</a-tag>
       </template>
@@ -67,6 +67,13 @@ Use the operating area and customize the sub-nodes, suitable for use in the need
     </a-page-header>
   </div>
 </template>
+<script lang="ts" setup>
+import { message } from 'ant-design-vue';
+
+const onBack = () => {
+  message.info('Back clicked');
+};
+</script>
 <style scoped>
 .demo-page-header :deep(tr:last-child td) {
   padding-bottom: 0;

@@ -37,8 +37,9 @@ const AFlex = defineComponent({
         mergedStyle.flex = flex;
       }
 
-      if (gap && !isPresetSize(gap)) {
-        mergedStyle.gap = `${gap}px`;
+      if (gap !== undefined && gap !== null && gap !== '' && !isPresetSize(gap)) {
+        const isNumeric = typeof gap === 'number' || /^\d+(\.\d+)?$/.test(String(gap).trim());
+        mergedStyle.gap = isNumeric ? `${gap}px` : gap;
       }
 
       return wrapSSR(

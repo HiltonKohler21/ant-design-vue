@@ -50,18 +50,6 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
         [`${componentCls}-ink-bar`]: {
           visibility: 'hidden',
         },
-
-        '&-indicator-size-small': {
-          [`${componentCls}-ink-bar`]: {
-            height: 14,
-          },
-        },
-
-        '&-indicator-size-large': {
-          [`${componentCls}-ink-bar`]: {
-            height: 28,
-          },
-        },
       },
 
       // ========================== Top & Bottom ==========================
@@ -527,7 +515,9 @@ const genSizeStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
       [`&${componentCls}-large`]: {
         [`> ${componentCls}-nav`]: {
           [`${componentCls}-tab`]: {
-            padding: `${unit(token.paddingXS)} ${unit(padding)} ${unit(token.calc(token.paddingXXS).mul(1.5).equal())}`,
+            padding: `${unit(token.paddingXS)} ${unit(padding)} ${unit(
+              token.calc(token.paddingXXS).mul(1.5).equal(),
+            )}`,
           },
         },
       },
@@ -840,6 +830,24 @@ const genTabsStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
         pointerEvents: 'none',
       },
 
+      [`&${componentCls}-top, &${componentCls}-bottom`]: {
+        [`&${componentCls}-indicator-size-small ${componentCls}-ink-bar`]: {
+          maxWidth: 14,
+        },
+        [`&${componentCls}-indicator-size-large ${componentCls}-ink-bar`]: {
+          maxWidth: 28,
+        },
+      },
+
+      [`&${componentCls}-left, &${componentCls}-right`]: {
+        [`&${componentCls}-indicator-size-small ${componentCls}-ink-bar`]: {
+          maxHeight: 14,
+        },
+        [`&${componentCls}-indicator-size-large ${componentCls}-ink-bar`]: {
+          maxHeight: 28,
+        },
+      },
+
       // ============================= Tabs =============================
       ...genTabStyle(token),
 
@@ -892,7 +900,8 @@ export default genComponentStyleHook(
       tabsActiveColor: token.colorPrimaryActive,
 
       tabsCardHorizontalPadding: `${unit(
-        (rawToken.controlHeightLG - Math.round(rawToken.fontSize * rawToken.lineHeight)) / 2 - rawToken.lineWidth,
+        (rawToken.controlHeightLG - Math.round(rawToken.fontSize * rawToken.lineHeight)) / 2 -
+          rawToken.lineWidth,
       )} ${unit(token.padding)}`,
       tabsCardHeight,
       tabsCardGutter: rawToken.marginXXS / 2,

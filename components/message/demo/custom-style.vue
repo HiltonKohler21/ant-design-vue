@@ -32,7 +32,7 @@ const success = () => {
 };
 </script>
 <style>
-.custom-class {
+.ant-message-notice.custom-class {
   color: red;
 }
 </style>

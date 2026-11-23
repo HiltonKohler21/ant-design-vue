@@ -127,6 +127,9 @@ export default defineComponent({
       const linkSections: Array<Section> = [];
       const container = getContainer.value();
       state.links.forEach(link => {
+        if (!link) {
+          return;
+        }
         const sharpLinkMatch = sharpMatcherRegx.exec(link.toString());
         if (!sharpLinkMatch) {
           return;
@@ -161,6 +164,9 @@ export default defineComponent({
       const { offsetTop, targetOffset } = props;
 
       setCurrentActiveLink(link);
+      if (!link) {
+        return;
+      }
       const sharpLinkMatch = sharpMatcherRegx.exec(link);
       if (!sharpLinkMatch) {
         return;

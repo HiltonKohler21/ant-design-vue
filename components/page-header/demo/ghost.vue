@@ -17,13 +17,11 @@ The default PageHeader is a transparent background. In some cases, PageHeader ne
 </docs>
 
 <template>
-  <div class="demo-page-header" style="background-color: #f5f5f5; padding: 24px">
-    <a-page-header
-      :ghost="ghost"
-      title="Title"
-      sub-title="This is a subtitle"
-      @back="() => $router.go(-1)"
-    >
+  <div
+    class="demo-page-header"
+    style="background-color: var(--ant-color-fill-alter, #f5f5f5); padding: 24px"
+  >
+    <a-page-header :ghost="ghost" title="Title" sub-title="This is a subtitle" @back="onBack">
       <template #extra>
         <a-button key="3">Operation</a-button>
         <a-button key="2">Operation</a-button>
@@ -46,7 +44,11 @@ The default PageHeader is a transparent background. In some cases, PageHeader ne
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { message } from 'ant-design-vue';
 const ghost = ref(false);
+const onBack = () => {
+  message.info('Back clicked');
+};
 </script>
 <style scoped>
 .demo-page-header :deep(tr:last-child td) {

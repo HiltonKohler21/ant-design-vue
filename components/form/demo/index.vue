@@ -91,11 +91,13 @@ export default defineComponent({
 });
 </script>
 <style>
-.code-box-demo .ant-form:not(.ant-form-inline):not(.ant-form-vertical) {
+[id^='components-form-demo-']
+  .code-box-demo
+  .ant-form:not(.ant-form-inline):not(.ant-form-vertical) {
   max-width: 600px;
 }
 
-.markdown.api-container table td:nth-of-type(4) {
+article:has([id^='components-form-demo-']) .markdown.api-container table td:nth-of-type(4) {
   white-space: nowrap;
   word-wrap: break-word;
 }

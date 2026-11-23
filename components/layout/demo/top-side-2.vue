@@ -31,7 +31,7 @@ Both the top navigation and the sidebar, commonly used in application site.
       </a-menu>
     </a-layout-header>
     <a-layout has-sider>
-      <a-layout-sider width="200" style="background: #fff">
+      <a-layout-sider width="200" style="background: var(--ant-color-bg-container, #fff)">
         <a-menu
           v-model:selectedKeys="selectedKeys2"
           v-model:openKeys="openKeys"
@@ -83,7 +83,13 @@ Both the top navigation and the sidebar, commonly used in application site.
           <a-breadcrumb-item>App</a-breadcrumb-item>
         </a-breadcrumb>
         <a-layout-content
-          :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px', borderRadius: '8px' }"
+          :style="{
+            background: 'var(--ant-color-bg-container, #fff)',
+            padding: '24px',
+            margin: 0,
+            minHeight: '280px',
+            borderRadius: '8px',
+          }"
         >
           Content
         </a-layout-content>
@@ -100,15 +106,10 @@ const openKeys = ref<string[]>(['sub1']);
 </script>
 <style scoped>
 .demo-logo {
-  float: left;
   width: 120px;
   height: 31px;
-  margin: 16px 24px 16px 0;
+  margin-inline-end: 24px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
-}
-.ant-row-rtl .demo-logo {
-  float: right;
-  margin: 16px 0 16px 24px;
 }
 </style>

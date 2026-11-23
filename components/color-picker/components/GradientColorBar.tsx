@@ -15,6 +15,7 @@ const gradientColorBarProps = () => ({
   /** 当前激活的渐变点 index */
   activeIndex: { type: Number, default: 0 },
   onChange: Function as PropType<(color: AggregationColor) => void>,
+  onChangeComplete: Function as PropType<(color: AggregationColor) => void>,
   onActive: Function as PropType<(index: number) => void>,
 });
 
@@ -28,6 +29,7 @@ export default defineComponent({
   setup(props) {
     const barRef = ref<HTMLElement>();
     const draggingIndex = ref<number | null>(null);
+    let lastDraggedColor: AggregationColor | null = null;
 
     const colors = computed(() => props.value.getColors());
     const colorList = computed(() =>
@@ -46,12 +48,14 @@ export default defineComponent({
       const el = barRef.value;
       if (!el) return 0;
       const rect = el.getBoundingClientRect();
+      if (!rect.width) return e.clientX > rect.left ? 100 : 0;
       return Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
     };
 
     const handleMouseDown = (e: MouseEvent, index: number) => {
       e.stopPropagation();
       draggingIndex.value = index;
+      lastDraggedColor = null;
       props.onActive?.(index);
       window.addEventListener('mousemove', onWindowMove);
       window.addEventListener('mouseup', onWindowUp);
@@ -59,19 +63,32 @@ export default defineComponent({
 
     const onWindowMove = (e: MouseEvent) => {
       if (draggingIndex.value === null) return;
-      const percent = getPercentFromEvent(e);
-      const nextColors = sortColors(
-        colors.value.map((c, i) =>
-          i === draggingIndex.value ? { ...c, percent: Math.round(percent) } : c,
-        ),
-      );
-      props.onChange?.(new AggregationColor(nextColors));
+      const curIndex = draggingIndex.value;
+      const currentStop = colors.value[curIndex];
+      if (!currentStop) return;
+      const percent = Math.round(getPercentFromEvent(e));
+      const draggedStop: GradientColorPoint = { ...currentStop, percent };
+      const mapped = colors.value.map((c, i) => (i === curIndex ? draggedStop : c));
+      const nextColors = sortColors(mapped);
+      const nextIndex = nextColors.indexOf(draggedStop);
+      if (nextIndex !== -1 && nextIndex !== curIndex) {
+        draggingIndex.value = nextIndex;
+        props.onActive?.(nextIndex);
+      }
+      const nextAgg = new AggregationColor(nextColors);
+      lastDraggedColor = nextAgg;
+      props.onChange?.(nextAgg);
     };
 
     const onWindowUp = () => {
+      const wasDragging = draggingIndex.value !== null;
       draggingIndex.value = null;
       window.removeEventListener('mousemove', onWindowMove);
       window.removeEventListener('mouseup', onWindowUp);
+      if (wasDragging) {
+        props.onChangeComplete?.(lastDraggedColor ?? props.value);
+        lastDraggedColor = null;
+      }
     };
 
     onBeforeUnmount(() => {
@@ -87,13 +104,15 @@ export default defineComponent({
       )
         return;
       const percent = Math.round(getPercentFromEvent(e));
-      const newPoint = {
+      const newPoint: GradientColorPoint = {
         color: new AggregationColor(getGradientPercentColor(colors.value, percent)),
         percent,
       };
       const nextColors = sortColors([...colors.value, newPoint]);
-      const nextIndex = nextColors.findIndex(c => c.percent === percent);
-      props.onChange?.(new AggregationColor(nextColors));
+      const nextIndex = nextColors.indexOf(newPoint);
+      const nextAgg = new AggregationColor(nextColors);
+      props.onChange?.(nextAgg);
+      props.onChangeComplete?.(nextAgg);
       props.onActive?.(nextIndex >= 0 ? nextIndex : nextColors.length - 1);
     };
 
@@ -102,7 +121,9 @@ export default defineComponent({
       if ((e.key === 'Delete' || e.key === 'Backspace') && colors.value.length > 2) {
         const index = props.activeIndex;
         const nextColors = colors.value.filter((_, i) => i !== index);
-        props.onChange?.(new AggregationColor(nextColors));
+        const nextAgg = new AggregationColor(nextColors);
+        props.onChange?.(nextAgg);
+        props.onChangeComplete?.(nextAgg);
         props.onActive?.(Math.min(index, nextColors.length - 1));
       }
     };

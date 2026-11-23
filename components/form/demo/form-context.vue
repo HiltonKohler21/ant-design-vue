@@ -114,16 +114,11 @@ const tailLayout = {
 };
 </script>
 <style scoped>
-#components-form-demo-form-context .user {
+.user {
   margin-bottom: 8px;
 }
 
-#components-form-demo-form-context .user .ant-avatar {
-  margin-right: 8px;
-}
-
-.ant-row-rtl #components-form-demo-form-context .user .ant-avatar {
-  margin-right: 0;
-  margin-left: 8px;
+.user :deep(.ant-avatar) {
+  margin-inline-end: 8px;
 }
 </style>

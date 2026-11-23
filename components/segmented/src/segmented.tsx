@@ -164,6 +164,7 @@ export default defineComponent({
               value={props.value}
               motionName={`${pre}-${props.motionName}`}
               direction={direction.value}
+              vertical={props.vertical}
               getValueIndex={val => segmentedOptions.value.findIndex(n => n.value === val)}
               onMotionStart={() => {
                 thumbShow.value = true;

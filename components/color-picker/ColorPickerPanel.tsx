@@ -1,6 +1,7 @@
 import { computed, defineComponent, onBeforeUnmount, ref } from 'vue';
 import type { PropType } from 'vue';
 import classNames from '../_util/classNames';
+import useConfigInject from '../config-provider/hooks/useConfigInject';
 import Segmented from '../segmented';
 import { AggregationColor, generateColor, type HsbType } from './color';
 import GradientColorBar from './components/GradientColorBar';
@@ -28,18 +29,61 @@ export default defineComponent({
   inheritAttrs: false,
   props: colorPickerPanelProps(),
   setup(props, { attrs }) {
+    const { configProvider } = useConfigInject('color-picker', props);
     const panelPrefixCls = computed(() => `${props.prefixCls}-panel`);
+    const isZhLocale = computed(() =>
+      configProvider.locale?.value?.locale?.toLowerCase().startsWith('zh'),
+    );
 
     // 拖拽状态：null 表示未拖拽，否则记录拖拽的维度
     const dragging = ref<'sv' | 'hue' | 'alpha' | null>(null);
+    let lastDraggedColor: AggregationColor | null = null;
 
     // 渐变点激活索引
     const activeIndex = ref(0);
 
-    const hsv = computed(() => props.value.toHsb());
+    const isGradientMode = computed(() => props.mode === 'gradient');
+    const gradientColors = computed(() => props.value.getColors());
+    const safeActiveIndex = computed(() =>
+      Math.min(activeIndex.value, Math.max(0, gradientColors.value.length - 1)),
+    );
+    // 渐变模式下 SV / 色相 / Alpha / 输入框绑定到当前选中的渐变色点
+    const activeColor = computed(() =>
+      isGradientMode.value
+        ? gradientColors.value[safeActiveIndex.value]?.color ?? props.value
+        : props.value,
+    );
+
+    const hsv = computed(() => activeColor.value.toHsb());
+
+    const emitSingleColor = (nextSingle: AggregationColor, complete = false) => {
+      let nextColor: AggregationColor;
+      if (isGradientMode.value) {
+        const stops = gradientColors.value;
+        const baseStops =
+          stops.length >= 2
+            ? stops
+            : [
+                { color: activeColor.value, percent: 0 },
+                { color: new AggregationColor('#ffffff'), percent: 100 },
+              ];
+        const idx = Math.min(safeActiveIndex.value, baseStops.length - 1);
+        const nextStops = baseStops.map((item, i) =>
+          i === idx ? { ...item, color: nextSingle } : item,
+        );
+        nextColor = new AggregationColor(nextStops);
+      } else {
+        nextColor = nextSingle;
+      }
+      lastDraggedColor = nextColor;
+      props.onChange?.(nextColor);
+      if (complete) {
+        props.onChangeComplete?.(nextColor);
+      }
+    };
 
     const onChangeColor = (next: HsbType) => {
-      props.onChange?.(new AggregationColor(next));
+      emitSingleColor(new AggregationColor(next));
     };
 
     /* ====================== SV 色板拖选 ====================== */
@@ -48,9 +92,9 @@ export default defineComponent({
       const el = svRef.value;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
-      const y = Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height));
-      onChangeColor({ h: hsv.value.h, s: x, b: 1 - y });
+      const x = rect.width ? Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)) : 0;
+      const y = rect.height ? Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height)) : 0;
+      onChangeColor({ h: hsv.value.h, s: x, b: 1 - y, a: hsv.value.a ?? 1 });
     };
     const svDown = (e: MouseEvent) => {
       dragging.value = 'sv';
@@ -64,8 +108,8 @@ export default defineComponent({
       const el = hueRef.value;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
-      onChangeColor({ h: x * 360, s: hsv.value.s, b: hsv.value.b });
+      const x = rect.width ? Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)) : 0;
+      onChangeColor({ h: x * 360, s: hsv.value.s, b: hsv.value.b, a: hsv.value.a ?? 1 });
     };
     const hueDown = (e: MouseEvent) => {
       dragging.value = 'hue';
@@ -79,9 +123,9 @@ export default defineComponent({
       const el = alphaRef.value;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      const x = rect.width ? Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)) : 0;
       const { h, s, b } = hsv.value;
-      onChangeColor({ h, s, b, a: x });
+      onChangeColor({ h, s, b, a: Math.round(x * 100) / 100 });
     };
     const alphaDown = (e: MouseEvent) => {
       dragging.value = 'alpha';
@@ -95,8 +139,13 @@ export default defineComponent({
       else if (dragging.value === 'alpha') alphaUpdate(e);
     };
     const onWindowUp = () => {
+      const wasDragging = dragging.value !== null;
       dragging.value = null;
       unbindWindow();
+      if (wasDragging) {
+        props.onChangeComplete?.(lastDraggedColor ?? props.value);
+        lastDraggedColor = null;
+      }
     };
     const bindWindow = () => {
       window.addEventListener('mousemove', onWindowMove);
@@ -110,26 +159,42 @@ export default defineComponent({
 
     /* ====================== 格式输入 ====================== */
     const formatValue = computed(() => {
-      if (props.format === 'rgb') return props.value.toRgbString();
-      if (props.format === 'hsb') return props.value.toHsbString();
-      return props.value.toHex();
+      if (props.format === 'rgb') return activeColor.value.toRgbString();
+      if (props.format === 'hsb') return activeColor.value.toHsbString();
+      return activeColor.value.toHex();
     });
     const onFormatInput = (e: Event) => {
-      const val = (e.target as HTMLInputElement).value;
+      const val = (e.target as HTMLInputElement).value.trim();
       if (props.format === 'hex') {
         if (/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(val)) {
-          props.onChange?.(new AggregationColor(val));
+          emitSingleColor(new AggregationColor(val), true);
         }
       } else if (props.format === 'rgb') {
-        const m = val.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+        const m = val.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/i);
         if (m) {
-          props.onChange?.(
+          emitSingleColor(
             new AggregationColor({
-              r: +m[1],
-              g: +m[2],
-              b: +m[3],
-              a: m[4] !== undefined ? +m[4] : 1,
+              r: Math.min(255, +m[1]),
+              g: Math.min(255, +m[2]),
+              b: Math.min(255, +m[3]),
+              a: m[4] !== undefined ? Math.min(1, Math.max(0, +m[4])) : 1,
             }),
+            true,
+          );
+        }
+      } else if (props.format === 'hsb') {
+        const m = val.match(
+          /hsba?\(\s*([\d.]+)\s*,\s*([\d.]+)%?\s*,\s*([\d.]+)%?(?:\s*,\s*([\d.]+))?\s*\)/i,
+        );
+        if (m) {
+          emitSingleColor(
+            new AggregationColor({
+              h: Math.min(360, Math.max(0, +m[1])),
+              s: Math.min(100, Math.max(0, +m[2])) / 100,
+              b: Math.min(100, Math.max(0, +m[3])) / 100,
+              a: m[4] !== undefined ? Math.min(1, Math.max(0, +m[4])) : hsv.value.a ?? 1,
+            }),
+            true,
           );
         }
       }
@@ -143,99 +208,94 @@ export default defineComponent({
     const hueBg = `linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)`;
 
     return () => {
-      const { disabledAlpha, presets, mode, onModeChange } = props;
+      const { disabledAlpha, presets, mode, allowMode, onModeChange } = props;
       const color = props.value;
+      const curColor = activeColor.value;
       const { h, s, b, a } = hsv.value;
-      const isGradient = mode === 'gradient';
+      const isGradient = isGradientMode.value;
+      const opaqueColor = new AggregationColor({ h, s, b, a: 1 }).toHexString();
 
       const panelContent = (
         <div class={classNames(panelPrefixCls.value, props.class, attrs.class)}>
-          {/* mode 切换 */}
-          <Segmented
-            size="small"
-            class={`${panelPrefixCls.value}-mode`}
-            options={[
-              { label: '单色', value: 'single' },
-              { label: '渐变', value: 'gradient' },
-            ]}
-            value={mode}
-            onChange={val => onModeChange?.(val as 'single' | 'gradient')}
-          />
-          {isGradient ? (
+          {/* mode 切换（仅在同时允许 single 与 gradient 时展示） */}
+          {allowMode && (
+            <Segmented
+              size="small"
+              class={`${panelPrefixCls.value}-mode`}
+              options={[
+                { label: isZhLocale.value ? '单色' : 'Single', value: 'single' },
+                { label: isZhLocale.value ? '渐变' : 'Gradient', value: 'gradient' },
+              ]}
+              value={mode}
+              onChange={val => onModeChange?.(val as 'single' | 'gradient')}
+            />
+          )}
+          {isGradient && (
             <GradientColorBar
               prefixCls={panelPrefixCls.value}
               value={color}
-              activeIndex={activeIndex.value}
+              activeIndex={safeActiveIndex.value}
               onChange={c => props.onChange?.(c)}
+              onChangeComplete={c => props.onChangeComplete?.(c)}
               onActive={i => {
                 activeIndex.value = i;
               }}
             />
-          ) : (
-            <>
-              {/* SV 色板 */}
-              <div class={`${panelPrefixCls.value}-sat`} ref={svRef} onMousedown={svDown}>
-                <div
-                  class={`${panelPrefixCls.value}-sat-fill`}
-                  style={{ background: svBg.value }}
-                />
-                <div
-                  class={`${panelPrefixCls.value}-sat-thumb`}
-                  style={{ left: `${s * 100}%`, top: `${(1 - b) * 100}%` }}
-                />
-              </div>
-              <div class={`${panelPrefixCls.value}-sliders`}>
-                {/* 色相 */}
-                <div class={`${panelPrefixCls.value}-hue`} ref={hueRef} onMousedown={hueDown}>
-                  <div class={`${panelPrefixCls.value}-hue-fill`} style={{ background: hueBg }} />
-                  <div
-                    class={`${panelPrefixCls.value}-hue-thumb`}
-                    style={{ left: `${(h / 360) * 100}%` }}
-                  />
-                </div>
-                {/* Alpha */}
-                {!disabledAlpha && (
-                  <div
-                    class={`${panelPrefixCls.value}-alpha`}
-                    ref={alphaRef}
-                    onMousedown={alphaDown}
-                  >
-                    <div
-                      class={`${panelPrefixCls.value}-alpha-fill`}
-                      style={{
-                        background: `linear-gradient(to right, transparent, ${color.toHexString()})`,
-                      }}
-                    />
-                    <div
-                      class={`${panelPrefixCls.value}-alpha-thumb`}
-                      style={{ left: `${(a ?? 1) * 100}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-              {/* 格式输入 */}
-              <div class={`${panelPrefixCls.value}-input`}>
-                {!props.disabledFormat && (
-                  <Segmented
-                    size="small"
-                    options={[
-                      { label: 'HEX', value: 'hex' },
-                      { label: 'RGB', value: 'rgb' },
-                      { label: 'HSB', value: 'hsb' },
-                    ]}
-                    value={props.format}
-                    onChange={val => props.onFormatChange?.(val as 'hex' | 'rgb' | 'hsb')}
-                  />
-                )}
-                <input
-                  value={formatValue.value}
-                  onInput={onFormatInput}
-                  onChange={() => {}}
-                  spellcheck={false}
-                />
-              </div>
-            </>
           )}
+          {/* SV 色板 */}
+          <div class={`${panelPrefixCls.value}-sat`} ref={svRef} onMousedown={svDown}>
+            <div class={`${panelPrefixCls.value}-sat-fill`} style={{ background: svBg.value }} />
+            <div
+              class={`${panelPrefixCls.value}-sat-thumb`}
+              style={{ left: `${s * 100}%`, top: `${(1 - b) * 100}%` }}
+            />
+          </div>
+          <div class={`${panelPrefixCls.value}-sliders`}>
+            {/* 色相 */}
+            <div class={`${panelPrefixCls.value}-hue`} ref={hueRef} onMousedown={hueDown}>
+              <div class={`${panelPrefixCls.value}-hue-fill`} style={{ background: hueBg }} />
+              <div
+                class={`${panelPrefixCls.value}-hue-thumb`}
+                style={{ left: `${(h / 360) * 100}%` }}
+              />
+            </div>
+            {/* Alpha */}
+            {!disabledAlpha && (
+              <div class={`${panelPrefixCls.value}-alpha`} ref={alphaRef} onMousedown={alphaDown}>
+                <div
+                  class={`${panelPrefixCls.value}-alpha-fill`}
+                  style={{
+                    background: `linear-gradient(to right, transparent, ${opaqueColor})`,
+                  }}
+                />
+                <div
+                  class={`${panelPrefixCls.value}-alpha-thumb`}
+                  style={{ left: `${(a ?? 1) * 100}%` }}
+                />
+              </div>
+            )}
+          </div>
+          {/* 格式输入 */}
+          <div class={`${panelPrefixCls.value}-input`}>
+            {!props.disabledFormat && (
+              <Segmented
+                size="small"
+                options={[
+                  { label: 'HEX', value: 'hex' },
+                  { label: 'RGB', value: 'rgb' },
+                  { label: 'HSB', value: 'hsb' },
+                ]}
+                value={props.format}
+                onChange={val => props.onFormatChange?.(val as 'hex' | 'rgb' | 'hsb')}
+              />
+            )}
+            <input
+              value={formatValue.value}
+              onInput={onFormatInput}
+              onChange={() => {}}
+              spellcheck={false}
+            />
+          </div>
           {/* 预设色 */}
           {presets?.map(preset => (
             <div key={preset.label} class={`${panelPrefixCls.value}-presets`}>
@@ -245,10 +305,10 @@ export default defineComponent({
                   <div
                     key={c}
                     class={classNames(`${panelPrefixCls.value}-presets-color`, {
-                      active: color.toHexString().toLowerCase() === c.toLowerCase(),
+                      active: curColor.toHexString().toLowerCase() === c.toLowerCase(),
                     })}
                     style={{ background: c }}
-                    onClick={() => props.onChange?.(new AggregationColor(c))}
+                    onClick={() => emitSingleColor(new AggregationColor(c), true)}
                   />
                 ))}
               </div>

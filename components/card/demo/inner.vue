@@ -18,7 +18,14 @@ It can be placed inside the ordinary card to display the information of the mult
 
 <template>
   <a-card title="Card title">
-    <p style="font-size: 14px; color: rgba(0, 0, 0, 0.85); margin-bottom: 16px; font-weight: 500">
+    <p
+      style="
+        font-size: 14px;
+        color: var(--ant-color-text, rgba(0, 0, 0, 0.85));
+        margin-bottom: 16px;
+        font-weight: 500;
+      "
+    >
       Group title
     </p>
     <a-card title="Inner card title">

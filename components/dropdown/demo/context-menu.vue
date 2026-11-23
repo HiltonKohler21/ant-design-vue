@@ -21,10 +21,10 @@ The default trigger mode is `hover`, you can change it to `contextMenu`.
     <div
       :style="{
         textAlign: 'center',
-        background: '#f7f7f7',
+        background: 'var(--ant-color-fill-alter, #f7f7f7)',
         height: '200px',
         lineHeight: '200px',
-        color: '#777',
+        color: 'var(--ant-color-text-secondary, #777)',
       }"
     >
       Right Click on here

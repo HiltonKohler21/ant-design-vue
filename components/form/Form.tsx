@@ -145,7 +145,7 @@ const Form = defineComponent({
     });
     useProviderSize(size);
     useProviderDisabled(disabled);
-    useProvideFormFeedbackIcons(props.feedbackIcons);
+    useProvideFormFeedbackIcons(computed(() => props.feedbackIcons));
     const mergedColon = computed(() => props.colon ?? contextForm.value?.colon);
     const { validateMessages: globalValidateMessages } = useInjectGlobalForm();
     const validateMessages = computed(() => {

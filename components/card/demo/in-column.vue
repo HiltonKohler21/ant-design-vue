@@ -17,7 +17,7 @@ Cards usually cooperate with grid column layout in overview page.
 </docs>
 
 <template>
-  <div style="background-color: #ececec; padding: 20px">
+  <div style="background-color: var(--ant-color-bg-layout, #ececec); padding: 20px">
     <a-row :gutter="16">
       <a-col :span="8">
         <a-card title="Card title" :bordered="false">

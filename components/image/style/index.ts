@@ -58,7 +58,9 @@ export const genPreviewOperationsStyle = (token: ImageToken): CSSObject => {
   const { previewCls, modalMaskBg, paddingSM, previewOperationColorDisabled, motionDurationSlow } =
     token;
 
-  const operationBg = new TinyColor((token as any)._realToken?.modalMaskBg ?? modalMaskBg).setAlpha(0.1);
+  const operationBg = new TinyColor((token as any)._realToken?.modalMaskBg ?? modalMaskBg).setAlpha(
+    0.1,
+  );
   const operationBgHover = operationBg.clone().setAlpha(0.2);
 
   return {
@@ -125,7 +127,7 @@ export const genPreviewSwitchStyle = (token: ImageToken): CSSObject => {
     [`${previewCls}-switch-left, ${previewCls}-switch-right`]: {
       position: 'fixed',
       insetBlockStart: '50%',
-      zIndex: (token as any)._realToken?.zIndexPopup ?? zIndexPopup + 1,
+      zIndex: token.calc(zIndexPopup).add(1).equal(),
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -219,7 +221,7 @@ export const genImagePreviewStyle: GenerateStyle<ImageToken> = (token: ImageToke
         },
 
         [`${previewCls}-moving`]: {
-          [`${previewCls}-preview-img`]: {
+          [`${previewCls}-img`]: {
             cursor: 'grabbing',
 
             '&-wrapper': {

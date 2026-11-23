@@ -48,19 +48,16 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-[id^='components-button-demo-'] .ant-btn {
+:deep([id^='components-button-demo-'] .ant-btn) {
   margin-right: 8px;
   margin-bottom: 12px;
 }
-[id^='components-button-demo-'] .ant-btn-rtl {
+:deep([id^='components-button-demo-'] .ant-btn-rtl) {
   margin-right: 0;
   margin-left: 8px;
 }
-[id^='components-button-demo-'] .ant-btn-group > .ant-btn,
-[id^='components-button-demo-'] .ant-btn-group > span > .ant-btn {
+:deep([id^='components-button-demo-'] .ant-btn-group > .ant-btn),
+:deep([id^='components-button-demo-'] .ant-btn-group > span > .ant-btn) {
   margin-right: 0;
-}
-[data-theme='dark'] .site-button-ghost-wrapper {
-  background: rgba(255, 255, 255, 0.2);
 }
 </style>

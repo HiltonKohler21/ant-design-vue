@@ -5,7 +5,10 @@ describe('Listy', () => {
   it('renders rows with itemRender', () => {
     const wrapper = mount(Listy, {
       props: {
-        data: [{ key: 'a', label: 'A' }, { key: 'b', label: 'B' }],
+        data: [
+          { key: 'a', label: 'A' },
+          { key: 'b', label: 'B' },
+        ],
         itemRender: item => <span>{item.label}</span>,
       },
     });
@@ -27,6 +30,28 @@ describe('Listy', () => {
     const rows = wrapper.findAll('.ant-listy-item');
     expect(rows.length).toBeGreaterThan(0);
     expect(rows.length).toBeLessThan(100);
+  });
+
+  it('safely derives keys in virtual mode when items lack a .key field', () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const wrapper = mount(Listy, {
+      props: {
+        data: Array.from({ length: 50 }, (_, i) => ({ label: `NoKey-${i}` })),
+        height: 200,
+        itemHeight: 40,
+        itemRender: item => <span>{item.label}</span>,
+      },
+    });
+    const rows = wrapper.findAll('.ant-listy-item');
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows[0].text()).toBe('NoKey-0');
+    expect(rows[1].text()).toBe('NoKey-1');
+    // Should not produce duplicate undefined key warnings
+    const dupKeyWarns = warnSpy.mock.calls.filter(args =>
+      String(args[0]).includes('Duplicate keys'),
+    );
+    expect(dupKeyWarns.length).toBe(0);
+    warnSpy.mockRestore();
   });
 
   it('supports semantic classNames/styles and rowHoverable=false', () => {

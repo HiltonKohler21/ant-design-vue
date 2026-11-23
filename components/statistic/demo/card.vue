@@ -17,7 +17,7 @@ Display statistic data in Card.
 </docs>
 
 <template>
-  <div style="background: #ececec; padding: 30px">
+  <div style="background: var(--ant-color-bg-layout, #ececec); padding: 30px">
     <a-row :gutter="16">
       <a-col :span="12">
         <a-card>

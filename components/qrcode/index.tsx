@@ -59,8 +59,7 @@ const QRCode = defineComponent({
       };
       return {
         value,
-        size:
-          size - (Number(realToken.value.paddingSM) + Number(realToken.value.lineWidth)) * 2,
+        size: size - (Number(realToken.value.paddingSM) + Number(realToken.value.lineWidth)) * 2,
         level: errorLevel,
         bgColor,
         fgColor: color,
@@ -69,6 +68,7 @@ const QRCode = defineComponent({
     });
     return () => {
       const pre = prefixCls.value;
+      const customStatusNode = props.status !== 'active' ? slots.statusRender?.(props) : undefined;
       return wrapSSR(
         <div
           {...attrs}
@@ -91,8 +91,8 @@ const QRCode = defineComponent({
         >
           {props.status !== 'active' && (
             <div class={`${pre}-mask`}>
-              {slots.statusRender?.(props) ? (
-                slots.statusRender(props)
+              {customStatusNode ? (
+                customStatusNode
               ) : (
                 <>
                   {props.status === 'loading' && <Spin />}
@@ -103,7 +103,6 @@ const QRCode = defineComponent({
                         type="link"
                         onClick={e => {
                           emit('refresh', e);
-                          props.onRefresh?.(e);
                         }}
                         v-slots={{ icon: () => <ReloadOutlined /> }}
                       >

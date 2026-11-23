@@ -17,7 +17,7 @@ You can use `centered`,`style.top` or other styles to set position of modal dial
 </docs>
 
 <template>
-  <div id="components-modal-demo-position">
+  <div class="components-modal-demo-position">
     <a-button type="primary" @click="setModal1Visible(true)">
       Display a modal dialog at 20px to Top
     </a-button>

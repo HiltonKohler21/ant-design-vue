@@ -16,7 +16,7 @@ There are two compacted table sizes: `middle` and `small`. The `small` size is u
 </docs>
 
 <template>
-  <div id="components-table-demo-size">
+  <div class="components-table-demo-size">
     <h4>Middle size table</h4>
     <a-table :columns="columns" :data-source="data" size="middle" />
     <h4>Small size table</h4>
@@ -50,8 +50,8 @@ const data = [
   },
 ];
 </script>
-<style>
-#components-table-demo-size h4 {
+<style scoped>
+.components-table-demo-size h4 {
   margin-bottom: 16px;
 }
 </style>

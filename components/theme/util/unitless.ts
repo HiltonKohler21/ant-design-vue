@@ -19,7 +19,9 @@ export const unitless: Record<string, boolean> = {
   fontWeightStrong: true,
   zIndexPopupBase: true,
   zIndexBase: true,
+  zIndexPopup: true,
   opacityImage: true,
+  beamDuration: true,
 };
 
 export const ignore: Record<string, boolean> = {
@@ -46,4 +48,6 @@ export const preserve: Record<string, boolean> = {
   screenXXL: true,
   screenXXLMin: true,
   screenXXLMax: true,
+  screenXXXL: true,
+  screenXXXLMin: true,
 };

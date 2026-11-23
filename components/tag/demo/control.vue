@@ -37,7 +37,11 @@ Generating a set of Tags by array, you can add and remove dynamically.
     @blur="handleInputConfirm"
     @keyup.enter="handleInputConfirm"
   />
-  <a-tag v-else style="background: #fff; border-style: dashed" @click="showInput">
+  <a-tag
+    v-else
+    style="background: var(--ant-color-bg-container, #fff); border-style: dashed"
+    @click="showInput"
+  >
     <plus-outlined />
     New Tag
   </a-tag>

@@ -126,10 +126,10 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
           },
         },
 
-        [`@media (max-width: ${token.screenSMMax})`]: {
+        [`@media (max-width: ${unit(token.screenSMMax)})`]: {
           [componentCls]: {
             maxWidth: 'calc(100vw - 16px)',
-            margin: `${token.marginXS} auto`,
+            margin: `${unit(token.marginXS)} auto`,
           },
           [`${componentCls}-centered`]: {
             [componentCls]: {
@@ -174,11 +174,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
 
         [`${componentCls}-close`]: {
           position: 'absolute',
-          top: token
-            .calc(token.modalHeaderCloseSize)
-            .sub(token.modalCloseBtnSize)
-            .div(2)
-            .equal(),
+          top: token.calc(token.modalHeaderCloseSize).sub(token.modalCloseBtnSize).div(2).equal(),
           insetInlineEnd: token
             .calc(token.modalHeaderCloseSize)
             .sub(token.modalCloseBtnSize)
@@ -310,7 +306,9 @@ const genModalConfirmStyle: GenerateStyle<ModalToken> = token => {
           [`+ ${confirmComponentCls}-content`]: {
             marginBlockStart: token.marginXS,
             flexBasis: '100%',
-            maxWidth: `calc(100% - ${unit(token.calc(token.modalConfirmIconSize).add(token.marginSM).equal())})`,
+            maxWidth: `calc(100% - ${unit(
+              token.calc(token.modalConfirmIconSize).add(token.marginSM).equal(),
+            )})`,
           },
         },
 
@@ -396,7 +394,9 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
 
       [`${componentCls}-header`]: {
         padding: token.modalHeaderPadding,
-        borderBottom: `${unit(token.modalHeaderBorderWidth)} ${token.modalHeaderBorderStyle} ${token.modalHeaderBorderColorSplit}`,
+        borderBottom: `${unit(token.modalHeaderBorderWidth)} ${token.modalHeaderBorderStyle} ${
+          token.modalHeaderBorderColorSplit
+        }`,
         marginBottom: 0,
       },
 
@@ -405,8 +405,12 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
       },
 
       [`${componentCls}-footer`]: {
-        padding: `${unit(token.modalFooterPaddingVertical)} ${unit(token.modalFooterPaddingHorizontal)}`,
-        borderTop: `${unit(token.modalFooterBorderWidth)} ${token.modalFooterBorderStyle} ${token.modalFooterBorderColorSplit}`,
+        padding: `${unit(token.modalFooterPaddingVertical)} ${unit(
+          token.modalFooterPaddingHorizontal,
+        )}`,
+        borderTop: `${unit(token.modalFooterBorderWidth)} ${token.modalFooterBorderStyle} ${
+          token.modalFooterBorderColorSplit
+        }`,
         borderRadius: `0 0 ${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)}`,
         marginTop: 0,
       },
@@ -414,7 +418,9 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
 
     [confirmComponentCls]: {
       [`${antCls}-modal-body`]: {
-        padding: `${unit(token.calc(token.padding).mul(2).equal())} ${unit(token.calc(token.padding).mul(2).equal())} ${unit(token.paddingLG)}`,
+        padding: `${unit(token.calc(token.padding).mul(2).equal())} ${unit(
+          token.calc(token.padding).mul(2).equal(),
+        )} ${unit(token.paddingLG)}`,
       },
       [`${confirmComponentCls}-body`]: {
         [`> ${token.iconCls}`]: {

@@ -62,9 +62,9 @@ const items = steps.map(item => ({ key: item.title, title: item.title }));
 <style scoped>
 .steps-content {
   margin-top: 16px;
-  border: 1px dashed #e9e9e9;
+  border: 1px dashed var(--ant-color-border, #e9e9e9);
   border-radius: 6px;
-  background-color: #fafafa;
+  background-color: var(--ant-color-fill-alter, #fafafa);
   min-height: 200px;
   text-align: center;
   padding-top: 80px;
@@ -72,10 +72,5 @@ const items = steps.map(item => ({ key: item.title, title: item.title }));
 
 .steps-action {
   margin-top: 24px;
-}
-
-[data-theme='dark'] .steps-content {
-  background-color: #2f2f2f;
-  border: 1px dashed #404040;
 }
 </style>

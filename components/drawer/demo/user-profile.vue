@@ -134,7 +134,7 @@ import descriptionItem from './descriptionItem/index.vue';
 const open = ref<boolean>(false);
 const pStyle = {
   fontSize: '16px',
-  color: 'rgba(0,0,0,0.85)',
+  color: 'var(--ant-color-text, rgba(0, 0, 0, 0.85))',
   lineHeight: '24px',
   display: 'block',
   marginBottom: '16px',

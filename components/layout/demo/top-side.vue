@@ -36,8 +36,8 @@ Both the top navigation and the sidebar, commonly used in documentation site.
         <a-breadcrumb-item>List</a-breadcrumb-item>
         <a-breadcrumb-item>App</a-breadcrumb-item>
       </a-breadcrumb>
-      <a-layout style="padding: 24px 0; background: #fff">
-        <a-layout-sider width="200" style="background: #fff">
+      <a-layout style="padding: 24px 0; background: var(--ant-color-bg-container, #fff)">
+        <a-layout-sider width="200" style="background: var(--ant-color-bg-container, #fff)">
           <a-menu
             v-model:selectedKeys="selectedKeys2"
             v-model:openKeys="openKeys"
@@ -103,20 +103,10 @@ const openKeys = ref<string[]>(['sub1']);
 
 <style scoped>
 .demo-logo {
-  float: left;
   width: 120px;
   height: 31px;
-  margin: 16px 24px 16px 0;
+  margin-inline-end: 24px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
-}
-
-.ant-row-rtl .demo-logo {
-  float: right;
-  margin: 16px 0 16px 24px;
-}
-
-.site-layout-background {
-  background: #fff;
 }
 </style>

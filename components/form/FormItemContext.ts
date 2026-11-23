@@ -120,14 +120,20 @@ export type FeedbackIcons = (itemStatus: {
   warnings?: any[];
 }) => Partial<Record<ValidateStatus, any>>;
 
-const FormFeedbackIconsKey: InjectionKey<FeedbackIcons> = Symbol('FormFeedbackIcons');
+const FormFeedbackIconsKey: InjectionKey<ComputedRef<FeedbackIcons | undefined>> =
+  Symbol('FormFeedbackIcons');
 
-export const useProvideFormFeedbackIcons = (feedbackIcons?: FeedbackIcons) => {
+export const useProvideFormFeedbackIcons = (
+  feedbackIcons: ComputedRef<FeedbackIcons | undefined>,
+) => {
   provide(FormFeedbackIconsKey, feedbackIcons);
 };
 
 export const useInjectFormFeedbackIcons = () => {
-  return inject(FormFeedbackIconsKey, undefined);
+  return inject(
+    FormFeedbackIconsKey,
+    computed(() => undefined),
+  );
 };
 
 export const FormItemInputContext = createContext<FormItemStatusContextProps>({});

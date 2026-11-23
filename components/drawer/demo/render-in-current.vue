@@ -22,11 +22,11 @@ Render in current dom. custom container, check `getContainer`.
       height: '200px',
       overflow: 'hidden',
       position: 'relative',
-      border: '1px solid #ebedf0',
+      border: '1px solid var(--ant-color-border-secondary, #ebedf0)',
       borderRadius: '2px',
       padding: '48px',
       textAlign: 'center',
-      background: '#fafafa',
+      background: 'var(--ant-color-fill-alter, #fafafa)',
     }"
   >
     Render in this

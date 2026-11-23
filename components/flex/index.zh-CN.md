@@ -3,6 +3,7 @@ category: Components
 subtitle: 弹性布局
 type: 布局
 title: Flex
+cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*SMzgSJZE_AwAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*8yArQ43EGccAAAAAAAAAAAAADrJ8AQ/original
 tag: New

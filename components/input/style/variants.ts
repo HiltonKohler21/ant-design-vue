@@ -209,7 +209,7 @@ const genBaseUnderlinedStyle = (
   options: { borderColor: string; hoverBorderColor: string; activeBorderColor: string },
 ): CSSObject => ({
   backgroundColor: token.colorBgContainer,
-  borderWidth: `${token.lineWidth} 0`,
+  borderWidth: `${unit(token.lineWidth)} 0`,
   borderStyle: `${token.lineType} none`,
   borderColor: `transparent transparent ${options.borderColor} transparent`,
   borderRadius: 0,
@@ -297,7 +297,7 @@ export const genGroupVariantStyle = (token: InputToken): CSSObject => {
     [`${componentCls}-underlined`]: {
       [`${componentCls}-group-addon`]: {
         backgroundColor: 'transparent',
-        borderWidth: `${token.lineWidth} 0`,
+        borderWidth: `${unit(token.lineWidth)} 0`,
         borderStyle: `${token.lineType} none`,
         borderColor: `transparent transparent ${token.colorBorder} transparent`,
       },

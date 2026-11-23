@@ -17,7 +17,7 @@ Specify the trigger area of collapsible by `collapsible`.
 </docs>
 
 <template>
-  <a-space direction="vertical">
+  <a-space direction="vertical" style="width: 100%">
     <a-collapse v-model:activeKey="activeKey" collapsible="header">
       <a-collapse-panel key="1" header="This panel can only be collapsed by clicking text">
         <p>{{ text }}</p>
@@ -40,8 +40,3 @@ import { ref } from 'vue';
 const activeKey = ref(['1']);
 const text = `A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found as a welcome guest in many households across the world.`;
 </script>
-<style scoped>
-.ant-space {
-  width: 100%;
-}
-</style>

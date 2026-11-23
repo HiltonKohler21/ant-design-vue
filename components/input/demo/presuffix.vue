@@ -23,7 +23,9 @@ Add prefix or suffix icons inside input.
       </template>
       <template #suffix>
         <a-tooltip title="Extra information">
-          <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+          <info-circle-outlined
+            style="color: var(--ant-color-text-secondary, rgba(0, 0, 0, 0.45))"
+          />
         </a-tooltip>
       </template>
     </a-input>

@@ -167,7 +167,7 @@ export const genUnderlinedVariantStyle = (token: SelectToken): CSSObject => {
     ...genSelectorBase(token, {
       background: token.colorBgContainer,
       borderColor: `transparent transparent ${token.colorBorder} transparent`,
-      borderWidth: `${token.lineWidth} 0`,
+      borderWidth: `${unit(token.lineWidth)} 0`,
       borderStyle: `${token.lineType} none`,
       borderRadius: 0,
     }),

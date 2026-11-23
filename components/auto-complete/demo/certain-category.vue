@@ -20,8 +20,8 @@ Lookup-Patterns - Certain Category.
     <a-auto-complete
       v-model:value="value"
       class="certain-category-search"
-      popup-class-name="certain-category-search-dropdown"
-      :dropdown-match-select-width="500"
+      :class-names="{ popup: { root: 'certain-category-search-dropdown' } }"
+      :popup-match-select-width="500"
       style="width: 250px"
       :options="dataSource"
     >
@@ -109,26 +109,13 @@ const dataSource = [
 const value = ref('');
 </script>
 
-<style scoped>
-.certain-category-search-dropdown .ant-select-dropdown-menu-item-group-title {
-  color: #666;
+<style>
+.certain-category-search-dropdown .ant-select-item-group {
+  color: var(--ant-color-text-secondary, #666);
   font-weight: bold;
 }
 
-.certain-category-search-dropdown .ant-select-dropdown-menu-item-group {
-  border-bottom: 1px solid #f6f6f6;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu-item {
+.certain-category-search-dropdown .ant-select-item-option {
   padding-left: 16px;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu-item.show-all {
-  text-align: center;
-  cursor: default;
-}
-
-.certain-category-search-dropdown .ant-select-dropdown-menu {
-  max-height: 300px;
 }
 </style>

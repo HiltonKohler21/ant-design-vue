@@ -5,6 +5,7 @@ describe('BackTop', () => {
   it('renders hidden by default', () => {
     const wrapper = mount(BackTop);
     expect(wrapper.find('.ant-back-top').exists()).toBe(true);
+    expect(wrapper.find('.ant-back-top').attributes('style')).toContain('display: none');
   });
 
   it('shows immediately when visibilityHeight is 0', () => {
@@ -25,10 +26,10 @@ describe('BackTop', () => {
     expect(wrapper.element.getAttribute('class')).toContain('my-back-top');
   });
 
-  it('triggers click event', () => {
+  it('triggers click event once (no double fire)', () => {
     const onClick = jest.fn();
     const wrapper = mount(BackTop, { props: { visibilityHeight: 0, onClick } });
     wrapper.find('.ant-back-top').trigger('click');
-    expect(onClick).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

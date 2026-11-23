@@ -16,7 +16,7 @@ Using `marks` property to mark a graduated slider, use `value` to specify the po
 </docs>
 
 <template>
-  <div id="components-slider-demo-mark">
+  <div class="components-slider-demo-mark">
     <h4>included=true</h4>
     <a-slider v-model:value="value1" :marks="marks">
       <template #mark="{ label, point }">
@@ -86,10 +86,10 @@ const marks = ref<Record<number, any>>({
 });
 </script>
 <style scoped>
-#components-slider-demo-mark h4 {
+.components-slider-demo-mark h4 {
   margin: 0 0 16px;
 }
-#components-slider-demo-mark .ant-slider-with-marks {
+.components-slider-demo-mark :deep(.ant-slider-with-marks) {
   margin-bottom: 44px;
 }
 </style>

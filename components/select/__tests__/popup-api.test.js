@@ -51,7 +51,7 @@ describe('upstream popup API: Select（antd 5.25 改名）', () => {
     await wrapper.find('.ant-select-selector').trigger('mousedown');
     await nextTick();
     await nextTick();
-    expect(onOpenChange).toHaveBeenCalled();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
     wrapper.unmount();
   });
 });

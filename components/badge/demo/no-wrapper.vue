@@ -22,9 +22,9 @@ Used in standalone when children is empty.
   <a-badge
     count="4"
     :number-style="{
-      backgroundColor: '#fff',
-      color: '#999',
-      boxShadow: '0 0 0 1px #d9d9d9 inset',
+      backgroundColor: 'var(--ant-color-bg-container, #fff)',
+      color: 'var(--ant-color-text-tertiary, #999)',
+      boxShadow: '0 0 0 1px var(--ant-color-border, #d9d9d9) inset',
     }"
   />
   <a-badge count="109" :number-style="{ backgroundColor: '#52c41a' }" />

@@ -52,7 +52,6 @@ const BackTop = defineComponent({
     const scrollToTop = (e: MouseEvent) => {
       const { target = getDefaultTarget, duration } = props;
       scrollTo(0, { getContainer: target, duration });
-      props.onClick?.(e);
       emit('click', e);
     };
 
@@ -62,28 +61,39 @@ const BackTop = defineComponent({
       visible.value = scrollTop >= visibilityHeight;
     });
 
-    const bindScrollEvent = () => {
-      const { target } = props;
-      const getTarget = target || getDefaultTarget;
-      const container = getTarget();
-      handleScroll({ target: container });
-      container?.addEventListener('scroll', handleScroll);
-    };
+    let scrollContainer: HTMLElement | Window | Document | null = null;
 
     const scrollRemove = () => {
+      handleScroll.cancel();
+      scrollContainer?.removeEventListener('scroll', handleScroll);
+      scrollContainer = null;
+    };
+
+    const bindScrollEvent = () => {
+      scrollRemove();
       const { target } = props;
       const getTarget = target || getDefaultTarget;
       const container = getTarget();
-      handleScroll.cancel();
-      container?.removeEventListener('scroll', handleScroll);
+      if (container) {
+        scrollContainer = container;
+        handleScroll({ target: container });
+        container.addEventListener('scroll', handleScroll);
+      }
     };
 
     watch(
       () => props.target,
-      () => {
+      (_val, _oldVal, onCleanup) => {
         scrollRemove();
+        let cancelled = false;
         nextTick(() => {
-          bindScrollEvent();
+          if (!cancelled) {
+            bindScrollEvent();
+          }
+        });
+        onCleanup(() => {
+          cancelled = true;
+          scrollRemove();
         });
       },
     );
@@ -125,25 +135,24 @@ const BackTop = defineComponent({
       const transitionProps = getTransitionProps('fade');
 
       return wrapSSR(
-        <div
-          {...restAttrs}
-          ref={domRef}
-          class={classString}
-          style={style as any}
-          onClick={scrollToTop}
-        >
-          <Transition {...transitionProps}>
-            <div v-show={visible.value}>
-              {slots.default?.() || (
-                <div class={`${prefixCls.value}-content`}>
-                  <div class={`${prefixCls.value}-icon`}>
-                    <VerticalAlignTopOutlined />
-                  </div>
+        <Transition {...transitionProps}>
+          <div
+            {...restAttrs}
+            v-show={visible.value}
+            ref={domRef}
+            class={classString}
+            style={style as any}
+            onClick={scrollToTop}
+          >
+            {slots.default?.() || (
+              <div class={`${prefixCls.value}-content`}>
+                <div class={`${prefixCls.value}-icon`}>
+                  <VerticalAlignTopOutlined />
                 </div>
-              )}
-            </div>
-          </Transition>
-        </div>,
+              </div>
+            )}
+          </div>
+        </Transition>,
       );
     };
   },

@@ -135,9 +135,16 @@ const genWireframeStyle: GenerateStyle<PopoverToken> = token => {
     padding,
   } = token;
 
-  const titlePaddingBlockDist = controlHeight - Math.round(fontSize * lineHeight);
-  const popoverTitlePaddingBlockTop = titlePaddingBlockDist / 2;
-  const popoverTitlePaddingBlockBottom = titlePaddingBlockDist / 2 - lineWidth;
+  const titlePaddingBlockDist = token
+    .calc(controlHeight)
+    .sub(token.calc(fontSize).mul(lineHeight).equal())
+    .equal();
+  const popoverTitlePaddingBlockTop = token.calc(titlePaddingBlockDist).div(2).equal();
+  const popoverTitlePaddingBlockBottom = token
+    .calc(titlePaddingBlockDist)
+    .div(2)
+    .sub(lineWidth)
+    .equal();
   const popoverPaddingHorizontal = padding;
 
   return {
@@ -148,7 +155,9 @@ const genWireframeStyle: GenerateStyle<PopoverToken> = token => {
 
       [`${componentCls}-title`]: {
         margin: 0,
-        padding: `${unit(popoverTitlePaddingBlockTop)} ${unit(popoverPaddingHorizontal)} ${unit(popoverTitlePaddingBlockBottom)}`,
+        padding: `${unit(popoverTitlePaddingBlockTop)} ${unit(popoverPaddingHorizontal)} ${unit(
+          popoverTitlePaddingBlockBottom,
+        )}`,
         borderBottom: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
       },
 
@@ -162,7 +171,8 @@ const genWireframeStyle: GenerateStyle<PopoverToken> = token => {
 export default genComponentStyleHook(
   'Popover',
   token => {
-    const { colorBgElevated, colorText, wireframe } = token;
+    const { colorBgElevated, colorText } = token;
+    const wireframe = (token as any)._realToken?.wireframe ?? token.wireframe;
 
     const popoverToken = mergeToken<PopoverToken>(token, {
       popoverBg: colorBgElevated,

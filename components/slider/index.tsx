@@ -166,9 +166,8 @@ const Slider = defineComponent({
       emit('blur', e);
     };
     const handleAfterChange = (val: Value) => {
-      props.onAfterChange?.(val);
-      props.onChangeComplete?.(val);
       emit('afterChange', val);
+      emit('changeComplete', val);
     };
     expose({
       focus,

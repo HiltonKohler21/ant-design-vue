@@ -24,7 +24,14 @@ import type {
 import type { VueNode } from '../../_util/type';
 import useConfigInject from '../../config-provider/hooks/useConfigInject';
 import { getTransitionProps } from '../../_util/transition';
-import { booleanType, stringType, functionType, arrayType, objectType, anyType } from '../../_util/type';
+import {
+  booleanType,
+  stringType,
+  functionType,
+  arrayType,
+  objectType,
+  anyType,
+} from '../../_util/type';
 
 export const listItemProps = () => {
   return {
@@ -100,7 +107,7 @@ export default defineComponent({
         iconRender = slots.iconRender,
         actionIconRender = slots.actionIconRender,
         itemRender = slots.itemRender,
-        extra = slots.extra,
+        extra,
         isImgUrl,
         showPreviewIcon,
         showRemoveIcon,
@@ -246,11 +253,18 @@ export default defineComponent({
           </span>
         );
 
+      const extraNode =
+        extra !== undefined
+          ? typeof extra === 'function'
+            ? (extra as (file: UploadFile) => VueNode)(file)
+            : extra
+          : slots.extra?.(file);
+
       const dom = (
         <div class={infoUploadingClass}>
           {icon}
           {fileName}
-          {extra && <span class={`${prefixCls}-list-item-extra`}>{extra}</span>}
+          {extraNode && <span class={`${prefixCls}-list-item-extra`}>{extraNode}</span>}
           {pictureCardActions}
           {showProgress.value && (
             <Transition {...transitionProps.value}>

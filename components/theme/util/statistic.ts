@@ -39,9 +39,8 @@ export function merge<T extends object>(...objs: Partial<T>[]): T {
     });
   });
 
-  recording = true;
   // 传播真实数值 token（cssVar 模式下 token 值是 var() 字符串，
-  // 尺寸派生 / 取整等数值运算需要原始数值）
+  // 尺寸派生 / 取整等数值运算需要原始数值）；在恢复 recording 前读取避免污染统计
   const realToken = (objs as any[]).find(o => o && (o as any)._realToken)?._realToken;
   if (realToken) {
     Object.defineProperty(ret, '_realToken', {
@@ -50,6 +49,8 @@ export function merge<T extends object>(...objs: Partial<T>[]): T {
       configurable: true,
     });
   }
+
+  recording = true;
   return ret;
 }
 
@@ -78,7 +79,12 @@ export default function statisticToken<T extends object>(token: T) {
 
     proxy = new Proxy(token, {
       get(obj: any, prop: any) {
-        if (recording) {
+        if (
+          recording &&
+          typeof prop === 'string' &&
+          prop !== '_realToken' &&
+          !prop.startsWith('_')
+        ) {
           tokenKeys!.add(prop);
         }
         return obj[prop];

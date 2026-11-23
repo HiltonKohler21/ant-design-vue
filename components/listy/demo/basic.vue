@@ -27,18 +27,13 @@ A plain list and a virtual scrolling list.
     />
   </a-space>
 </template>
-<script lang="ts">
-import { defineComponent, h } from 'vue';
+<script lang="ts" setup>
+import { h } from 'vue';
 
-export default defineComponent({
-  setup() {
-    const data = Array.from({ length: 5 }, (_, i) => ({ key: i, label: `Item ${i + 1}` }));
-    const largeData = Array.from({ length: 500 }, (_, i) => ({
-      key: i,
-      label: `Row ${i + 1}`,
-    }));
-    const renderItem = (item: any) => h('span', item.label);
-    return { data, largeData, renderItem };
-  },
-});
+const data = Array.from({ length: 5 }, (_, i) => ({ key: i, label: `Item ${i + 1}` }));
+const largeData = Array.from({ length: 500 }, (_, i) => ({
+  key: i,
+  label: `Row ${i + 1}`,
+}));
+const renderItem = (item: any) => h('span', item.label);
 </script>

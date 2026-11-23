@@ -32,8 +32,16 @@ const Tour = defineComponent({
       current,
       defaultCurrent,
     });
+
+    const builtinPlacements = computed(() =>
+      getPlacements({
+        arrowPointAtCenter: true,
+        autoAdjustOverflow: true,
+      }),
+    );
+
     return () => {
-      const { steps, current, type, rootClassName, ...restProps } = props;
+      const { steps, current, type, rootClassName, actionsRender, ...restProps } = props;
 
       const customClassName = classNames(
         {
@@ -48,7 +56,8 @@ const Tour = defineComponent({
         return (
           <TourPanel
             {...stepProps}
-            type={type}
+            type={stepProps.type ?? type}
+            actionsRender={stepProps.actionsRender ?? actionsRender}
             current={stepCurrent}
             v-slots={{
               indicatorsRender: slots.indicatorsRender,
@@ -62,13 +71,6 @@ const Tour = defineComponent({
         emit('update:current', stepCurrent);
         emit('change', stepCurrent);
       };
-
-      const builtinPlacements = computed(() =>
-        getPlacements({
-          arrowPointAtCenter: true,
-          autoAdjustOverflow: true,
-        }),
-      );
 
       return wrapSSR(
         <VCTour

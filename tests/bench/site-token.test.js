@@ -11,6 +11,8 @@
  */
 import { mount } from '@vue/test-utils';
 import { nextTick, defineComponent } from 'vue';
+import fs from 'fs';
+import path from 'path';
 import ConfigProvider from '../../components/config-provider';
 // eslint-disable-next-line import/no-relative-packages
 import useSiteToken from '../../site/src/hooks/useSiteToken';
@@ -104,5 +106,21 @@ describe('站点 token 派生（cssVar 模式）', () => {
     // `${token.x}px` 若用变量化 token 会产出 var(--ant-x)px
     expect(css).not.toMatch(/var\(--ant-[^)]*\)px/);
     expect(css).toMatch(/\.site-token-probe\s*\{/);
+  });
+
+  it('components/version/token.json 不含 var(--ant- 与 _realToken 污染', () => {
+    const raw = fs.readFileSync(
+      path.resolve(__dirname, '../../components/version/token.json'),
+      'utf8',
+    );
+    expect(raw).not.toContain('var(--ant-');
+    expect(raw).not.toContain('_realToken');
+
+    const parsed = JSON.parse(raw);
+    expect(Object.keys(parsed).length).toBeGreaterThanOrEqual(60);
+    expect(parsed.Avatar.component.containerSize).toBe(32);
+    expect(parsed.Avatar.component.groupBorderColor).toBe('#ffffff');
+    expect(parsed.BorderBeam.component.beamDefaultColor).toBe('#1677ff');
+    expect(parsed.Menu.component.dropdownWidth).toBe(160);
   });
 });

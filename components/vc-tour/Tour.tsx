@@ -75,7 +75,7 @@ const Tour = defineComponent({
     const [mergedOpen, setMergedOpen] = useMergedState(undefined, {
       value: computed(() => props.open),
       postState: origin =>
-        mergedCurrent.value < 0 || mergedCurrent.value >= props.steps.length
+        mergedCurrent.value < 0 || mergedCurrent.value >= (props.steps?.length ?? 0)
           ? false
           : origin ?? true,
     });
@@ -88,7 +88,7 @@ const Tour = defineComponent({
       openRef.value = mergedOpen.value;
     });
 
-    const curStep = computed(() => (props.steps[mergedCurrent.value] || {}) as TourStepInfo);
+    const curStep = computed(() => (props.steps?.[mergedCurrent.value] || {}) as TourStepInfo);
 
     const mergedPlacement = computed(() => curStep.value.placement ?? placement.value);
     const mergedMask = computed(() => mergedOpen.value && (curStep.value.mask ?? mask.value));
@@ -101,6 +101,20 @@ const Tour = defineComponent({
       gap,
       mergedScrollIntoViewOptions,
     );
+
+    const posInfoStyle = computed(() => {
+      const info = posInfo.value || CENTER_PLACEHOLDER;
+      // 如果info[key] 是number，添加 px
+      const style: CSSProperties = {};
+      Object.keys(info).forEach(key => {
+        if (typeof info[key] === 'number') {
+          style[key] = `${info[key]}px`;
+        } else {
+          style[key] = info[key];
+        }
+      });
+      return style;
+    });
 
     // ========================= arrow =========================
     const mergedArrow = computed(() =>
@@ -165,7 +179,7 @@ const Tour = defineComponent({
           arrow={mergedArrow.value}
           key="content"
           prefixCls={prefixCls}
-          total={steps.length}
+          total={steps?.length ?? 0}
           renderPanel={renderPanel}
           onPrev={() => {
             onInternalChange(mergedCurrent.value - 1);
@@ -182,19 +196,6 @@ const Tour = defineComponent({
           {...curStep.value}
         />
       );
-      const posInfoStyle = computed(() => {
-        const info = posInfo.value || CENTER_PLACEHOLDER;
-        // 如果info[key] 是number，添加 px
-        const style: CSSProperties = {};
-        Object.keys(info).forEach(key => {
-          if (typeof info[key] === 'number') {
-            style[key] = `${info[key]}px`;
-          } else {
-            style[key] = info[key];
-          }
-        });
-        return style;
-      });
       return mergedOpen.value ? (
         <>
           <Mask

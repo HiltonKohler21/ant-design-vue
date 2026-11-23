@@ -1,3 +1,4 @@
+import hash from '@emotion/hash';
 import type { CSSInterpolation, Theme } from '../_util/cssinjs';
 import { createTheme, transformToken, useCacheToken, useStyleRegister } from '../_util/cssinjs';
 import useCSSVarRegister from '../_util/cssinjs/hooks/useCSSVarRegister';
@@ -39,6 +40,11 @@ import {
 } from 'vue';
 
 const defaultTheme = createTheme(defaultDerivative);
+
+const isProduction = process.env.NODE_ENV === 'production';
+// nuxt generate when NODE_ENV is prerender
+const isPrerender = process.env.NODE_ENV === 'prerender';
+const hashPrefix = !isProduction && !isPrerender ? 'css-dev-only-do-not-override' : 'css';
 
 export {
   // colors
@@ -146,6 +152,8 @@ export function useToken(options?: {
   ComputedRef<GlobalToken>,
   /** CSS 变量配置；null 表示处于 hash 模式 */
   ComputedRef<CssVarResolvedConfig | null>,
+  /** 主题代号：token 重算时自增，供组件级变量块在主题来回切换时重新排序 */
+  ComputedRef<number>,
 ] {
   // 是否处在上层 DesignToken Provider 之内（决定变量块的插入优先级）：
   // ConfigProvider 自身的 useToken（provide 之前）拿不到 Provider，属兜底块。
@@ -237,19 +245,26 @@ export function useToken(options?: {
       preserve: CSS_VAR_PRESERVE,
       tokenKey: (realToken.value as any)?._tokenKey,
       zeroRuntime: options?.zeroRuntime?.value ?? (designTokenContext.value as any)?.zeroRuntime,
-      priority: parentDesignTokenContext ? 'high' : 'low',
+      priority: parentDesignTokenContext || globalDesignTokenApi.value ? 'high' : 'low',
       themeSeq: themeSeqRef.value,
     })),
     () => realToken.value,
   );
 
-  return [
-    mergedTheme,
-    token,
-    computed(() => (designTokenContext.value.hashed ? cacheToken.value[1] : '')),
-    realToken,
-    cssVarConfig,
-  ];
+  // cssVar 模式下样式按与主题无关的 _tokenKey 缓存一份，hashId 也必须与主题无关，
+  // 否则运行时切换主题（Light↔Dark/Compact/主色）后 DOM 换成新 hashId，
+  // 而缓存的 <style> 仍绑定旧 :where(.oldHash)，导致全部组件样式失效。
+  const hashId = computed(() => {
+    if (!designTokenContext.value.hashed) {
+      return '';
+    }
+    if (cssVarConfig.value) {
+      return `${hashPrefix}-${hash(cssVarConfig.value.key)}`;
+    }
+    return cacheToken.value[1];
+  });
+
+  return [mergedTheme, token, hashId, realToken, cssVarConfig, themeSeqRef];
 }
 
 export type UseComponentStyleResult = [(node: VueNode) => VueNode, Ref<string>];

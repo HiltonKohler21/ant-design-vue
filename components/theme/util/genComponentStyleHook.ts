@@ -46,16 +46,21 @@ export type FullToken<ComponentName extends OverrideComponent> = TokenWithCommon
   GlobalTokenWithComponent<ComponentName>
 >;
 
+export interface GenComponentStyleHookOptions {
+  unitless?: Record<string, boolean>;
+}
+
 export default function genComponentStyleHook<ComponentName extends OverrideComponent>(
   component: ComponentName,
   styleFn: (token: FullToken<ComponentName>, info: StyleInfo<ComponentName>) => CSSInterpolation,
   getDefaultToken?:
     | OverrideTokenWithoutDerivative[ComponentName]
     | ((token: GlobalToken) => OverrideTokenWithoutDerivative[ComponentName]),
+  options?: GenComponentStyleHookOptions,
 ) {
   return (_prefixCls?: Ref<string>): UseComponentStyleResult => {
     const prefixCls = computed(() => _prefixCls?.value);
-    const [theme, token, hashId, realToken, cssVarConfig] = useToken();
+    const [theme, token, hashId, realToken, cssVarConfig, themeSeqRef] = useToken();
     const designTokenContext = useDesignTokenInject();
     const { getPrefixCls, iconPrefixCls } = useConfigContextInject();
     const rootPrefixCls = computed(() => getPrefixCls());
@@ -89,8 +94,7 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
     };
 
     /** 引用侧：key 保持原名，值替换为 var(--ant-tag-default-bg)，供 styleFn 使用 */
-    const getStyleComponentToken = () => {
-      const raw = getRawComponentToken();
+    const getStyleComponentToken = (raw = getRawComponentToken()) => {
       if (!cssVarConfig.value) {
         return raw;
       }
@@ -107,25 +111,52 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
     };
 
     // ==================== CSS 变量注册（antd v6 纯变量模式）====================
-    const unitlessCssVar = new Set(
-      Object.keys(CSS_VAR_UNITLESS).map(key => token2CSSVar(key, cssVarConfig.value?.prefix)),
-    );
+    // 组件级 token 在声明侧经 toCompTokenKey 加了组件前缀（如 zIndexPopup → DrawerZIndexPopup），
+    // 因此 unitless / ignore / preserve 也必须同步映射到带前缀 key，否则会被误拼 px。
+    const mapCompFlags = (flags: Record<string, boolean>) => {
+      const mapped: Record<string, boolean> = { ...flags };
+      Object.keys(flags).forEach(key => {
+        if (flags[key]) {
+          mapped[toCompTokenKey(key)] = true;
+        }
+      });
+      return mapped;
+    };
+    const compUnitless = mapCompFlags({
+      ...CSS_VAR_UNITLESS,
+      ...options?.unitless,
+    });
+    const compIgnore = mapCompFlags(CSS_VAR_IGNORE);
+    const compPreserve = mapCompFlags(CSS_VAR_PRESERVE);
+
+    const unitlessCssVar = computed(() => {
+      const prefix = cssVarConfig.value?.prefix || 'ant';
+      return new Set(
+        Object.keys(compUnitless)
+          .filter(key => compUnitless[key])
+          .map(key => token2CSSVar(key, prefix)),
+      );
+    });
     // 注册组件级 CSS 变量声明（--ant-<component>-<token>）
+    // 挂在 :root 上以确保挂载到 body 的弹层（Select/DatePicker/Image Preview 等）也能继承组件变量
     useCSSVarRegister(
       computed(() => ({
         path: [component],
         prefix: cssVarConfig.value?.prefix || 'ant',
-        scope: cssVarConfig.value ? `.${prefixCls.value}` : '',
-        unitless: CSS_VAR_UNITLESS,
-        ignore: CSS_VAR_IGNORE,
-        preserve: CSS_VAR_PRESERVE,
+        scope: cssVarConfig.value ? ':root' : '',
+        unitless: compUnitless,
+        ignore: compIgnore,
+        preserve: compPreserve,
         tokenKey: (realToken.value as any)?._tokenKey,
         zeroRuntime: (designTokenContext.value as any)?.zeroRuntime,
+        themeSeq: themeSeqRef.value,
       })),
       getComponentToken,
     );
     // cssVar 模式输出 calc()，hash 模式保持纯数值运算
-    const calc = computed(() => genCalc(cssVarConfig.value ? 'css' : 'number', unitlessCssVar));
+    const calc = computed(() =>
+      genCalc(cssVarConfig.value ? 'css' : 'number', unitlessCssVar.value),
+    );
 
     const sharedInfo = computed(() => {
       return {
@@ -156,9 +187,10 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
       useStyleRegister(componentInfo, () => {
         const { token: proxyToken, flush } = statisticToken(token.value);
 
+        const rawComponentToken = getRawComponentToken();
         const mergedComponentToken = cssVarConfig.value
-          ? getStyleComponentToken()
-          : getRawComponentToken();
+          ? getStyleComponentToken(rawComponentToken)
+          : rawComponentToken;
 
         const componentCls = `.${prefixCls.value}`;
         const mergedToken = mergeToken<
@@ -178,7 +210,7 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
         // cssVar 模式下 token 值是 var() 字符串，无法参与 JS 数值运算。
         Object.defineProperty(mergedToken, '_realToken', {
           // 全局 token + 组件级 token 的「真实数值」（组件级 token 在 cssVar 模式下同样被 var 化）
-          value: { ...realToken.value, ...getRawComponentToken() },
+          value: { ...realToken.value, ...rawComponentToken },
           enumerable: false,
           configurable: true,
         });
@@ -189,7 +221,7 @@ export default function genComponentStyleHook<ComponentName extends OverrideComp
           iconPrefixCls: iconPrefixCls.value,
           overrideComponentToken: realToken.value[component],
         });
-        flush(component, mergedComponentToken);
+        flush(component, rawComponentToken);
         return [genCommonStyle(token.value, prefixCls.value), styleInterpolation];
       }),
       hashId,

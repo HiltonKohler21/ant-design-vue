@@ -25,7 +25,9 @@ export interface MasonryItemType<T = any> {
   data?: T;
 }
 
-export type MasonryColumns = number | Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', number>>;
+export type MasonryColumns =
+  | number
+  | Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', number>>;
 export type MasonryGutter =
   | number
   | [number | string, number | string]
@@ -101,20 +103,32 @@ const Masonry = defineComponent({
       return 1;
     });
 
-    const gutter = computed(() => normalizeGutter(props.gutter as MasonryGutter, screens.value || {}));
+    const gutter = computed(() =>
+      normalizeGutter(props.gutter as MasonryGutter, screens.value || {}),
+    );
 
     const measured = reactive<Record<string, number>>({});
-    const itemEls = new Map<string | number, HTMLElement>();
+    const itemEls = new Map<string, HTMLElement>();
     let observer: ResizeObserver | null = null;
-    let layoutVersion = ref(0);
+    const layoutVersion = ref(0);
 
-    const measure = (el: any, key: string | number) => {
+    const measure = (el: any, slotKey: string) => {
+      const prevEl = itemEls.get(slotKey);
       if (!el) {
-        itemEls.delete(key);
+        if (prevEl) {
+          observer?.unobserve(prevEl);
+          itemEls.delete(slotKey);
+        }
         return;
       }
-      itemEls.set(key, el as HTMLElement);
-      observer?.observe(el as HTMLElement);
+      const nextEl = el as HTMLElement;
+      if (prevEl && prevEl !== nextEl) {
+        observer?.unobserve(prevEl);
+      }
+      itemEls.set(slotKey, nextEl);
+      if (prevEl !== nextEl) {
+        observer?.observe(nextEl);
+      }
     };
 
     const setupObserver = () => {
@@ -139,13 +153,25 @@ const Masonry = defineComponent({
     onMounted(() => {
       setupObserver();
       nextTick(() => {
-        itemEls.forEach(el => observer!.observe(el));
+        itemEls.forEach(el => observer?.observe(el));
       });
     });
     onBeforeUnmount(() => {
       observer?.disconnect();
       observer = null;
+      itemEls.clear();
     });
+    watch(
+      () => props.items,
+      nextItems => {
+        const activeKeys = new Set((nextItems || []).map(item => String(item.key)));
+        Object.keys(measured).forEach(k => {
+          if (!activeKeys.has(k)) {
+            delete measured[k];
+          }
+        });
+      },
+    );
     watch(
       () => props.fresh,
       () => {
@@ -230,7 +256,7 @@ const Masonry = defineComponent({
                     marginBottom: `${gapY}px`,
                     ...((props.styles as any)?.item as CSSProperties),
                   }}
-                  ref={(el: any) => measure(el, item.key)}
+                  ref={(el: any) => measure(el, `${column}:${String(item.key)}`)}
                 >
                   {renderItem(item, index)}
                 </div>

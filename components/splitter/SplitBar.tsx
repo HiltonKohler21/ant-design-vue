@@ -6,7 +6,9 @@ import UpOutlined from '@ant-design/icons-vue/UpOutlined';
 import classNames from '../_util/classNames';
 import type { ShowCollapsibleIconMode } from './interface';
 
-function getValidNumber(num: number): number {
+const DOUBLE_CLICK_TIME_GAP = 300;
+
+function getValidNumber(num?: number): number {
   return typeof num === 'number' && !Number.isNaN(num) && Number.isFinite(num)
     ? Math.round(num)
     : 0;
@@ -46,17 +48,26 @@ export default defineComponent({
   name: 'SplitBar',
   props: splitBarProps(),
   setup(props) {
-    const splitBarPrefixCls = `${props.prefixCls}-bar`;
+    const splitBarPrefixCls = computed(() => `${props.prefixCls}-bar`);
     const startPos = ref<[number, number] | null>(null);
     const constrainedOffset = ref(0);
+    const lastClickTime = ref(0);
 
     const constrainedOffsetX = computed(() => (props.vertical ? 0 : constrainedOffset.value));
     const constrainedOffsetY = computed(() => (props.vertical ? constrainedOffset.value : 0));
 
     const onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      e.stopPropagation();
+      const currentTime = Date.now();
+      const timeGap = currentTime - lastClickTime.value;
+      if (timeGap > 0 && timeGap < DOUBLE_CLICK_TIME_GAP) {
+        return;
+      }
+      lastClickTime.value = currentTime;
       if (props.resizable && e.currentTarget) {
         startPos.value = [e.pageX, e.pageY];
-        props.onOffsetStart?.(props.index);
+        props.onOffsetStart?.(props.index!);
       }
     };
 
@@ -64,15 +75,18 @@ export default defineComponent({
       if (props.resizable && e.touches.length === 1) {
         const touch = e.touches[0];
         startPos.value = [touch.pageX, touch.pageY];
-        props.onOffsetStart?.(props.index);
+        props.onOffsetStart?.(props.index!);
       }
     };
 
     const getConstrainedOffset = (rawOffset: number) => {
-      const currentPos = (props.containerSize * props.ariaNow) / 100;
+      const currentPos = (props.containerSize * (props.ariaNow ?? 0)) / 100;
       const newPos = currentPos + rawOffset;
-      const minAllowed = Math.max(0, (props.containerSize * props.ariaMin) / 100);
-      const maxAllowed = Math.min(props.containerSize, (props.containerSize * props.ariaMax) / 100);
+      const minAllowed = Math.max(0, (props.containerSize * (props.ariaMin ?? 0)) / 100);
+      const maxAllowed = Math.min(
+        props.containerSize,
+        (props.containerSize * (props.ariaMax ?? 100)) / 100,
+      );
       const clampedPos = Math.max(minAllowed, Math.min(maxAllowed, newPos));
       return clampedPos - currentPos;
     };
@@ -83,26 +97,60 @@ export default defineComponent({
     };
 
     const handleLazyEnd = () => {
-      props.onOffsetUpdate?.(props.index, constrainedOffsetX.value, constrainedOffsetY.value, true);
+      props.onOffsetUpdate?.(
+        props.index!,
+        constrainedOffsetX.value,
+        constrainedOffsetY.value,
+        true,
+      );
       constrainedOffset.value = 0;
       props.onOffsetEnd?.(true);
     };
 
     const getVisibilityClass = (mode: ShowCollapsibleIconMode) => {
+      const cls = splitBarPrefixCls.value;
       switch (mode) {
         case true:
-          return `${splitBarPrefixCls}-collapse-bar-always-visible`;
+          return `${cls}-collapse-bar-always-visible`;
         case false:
-          return `${splitBarPrefixCls}-collapse-bar-always-hidden`;
+          return `${cls}-collapse-bar-always-hidden`;
         case 'auto':
-          return `${splitBarPrefixCls}-collapse-bar-hover-only`;
+          return `${cls}-collapse-bar-hover-only`;
       }
     };
 
+    const onCollapseClick = (e: MouseEvent, type: 'start' | 'end') => {
+      e.stopPropagation();
+      props.onCollapse?.(props.index!, type);
+    };
+
+    const onCollapseKeyDown = (e: KeyboardEvent, type: 'start' | 'end') => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        props.onCollapse?.(props.index!, type);
+      }
+    };
+
+    // Use flush: 'sync' so mouseup/touchend listeners are attached immediately during mousedown/touchstart,
+    // guaranteeing even same-frame fast clicks release movingIndex and never leak .ant-splitter-mask.
     watch(
       startPos,
-      newStartPos => {
+      (newStartPos, _, onCleanup) => {
         if (!newStartPos) return;
+
+        let ended = false;
+
+        const finishDrag = () => {
+          if (ended) return;
+          ended = true;
+          if (props.lazy) {
+            handleLazyEnd();
+          } else {
+            props.onOffsetEnd?.();
+          }
+          startPos.value = null;
+        };
 
         const onMouseMove = (e: MouseEvent) => {
           const offsetX = e.pageX - newStartPos[0];
@@ -110,17 +158,8 @@ export default defineComponent({
           if (props.lazy) {
             handleLazyMove(offsetX, offsetY);
           } else {
-            props.onOffsetUpdate?.(props.index, offsetX, offsetY);
+            props.onOffsetUpdate?.(props.index!, offsetX, offsetY);
           }
-        };
-
-        const onMouseUp = () => {
-          if (props.lazy) {
-            handleLazyEnd();
-          } else {
-            props.onOffsetEnd?.();
-          }
-          startPos.value = null;
         };
 
         const handleTouchMove = (e: TouchEvent) => {
@@ -131,101 +170,115 @@ export default defineComponent({
             if (props.lazy) {
               handleLazyMove(offsetX, offsetY);
             } else {
-              props.onOffsetUpdate?.(props.index, offsetX, offsetY);
+              props.onOffsetUpdate?.(props.index!, offsetX, offsetY);
             }
           }
         };
 
-        const handleTouchEnd = () => {
-          if (props.lazy) {
-            handleLazyEnd();
-          } else {
-            props.onOffsetEnd?.();
-          }
-          startPos.value = null;
+        const eventHandlerMap: Record<string, EventListener> = {
+          mousemove: onMouseMove as EventListener,
+          mouseup: finishDrag,
+          touchmove: handleTouchMove as EventListener,
+          touchend: finishDrag,
+          touchcancel: finishDrag,
+          blur: finishDrag,
         };
 
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-        window.addEventListener('touchmove', handleTouchMove);
-        window.addEventListener('touchend', handleTouchEnd);
+        Object.entries(eventHandlerMap).forEach(([event, handler]) => {
+          window.addEventListener(event, handler);
+        });
 
-        onBeforeUnmount(() => {
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-          window.removeEventListener('touchmove', handleTouchMove);
-          window.removeEventListener('touchend', handleTouchEnd);
+        onCleanup(() => {
+          Object.entries(eventHandlerMap).forEach(([event, handler]) => {
+            window.removeEventListener(event, handler);
+          });
         });
       },
-      { flush: 'post' },
+      { flush: 'sync' },
     );
 
-    const transformStyle = {
-      [`--${splitBarPrefixCls}-preview-offset`]: `${constrainedOffset.value}px`,
-    };
+    onBeforeUnmount(() => {
+      if (startPos.value !== null) {
+        startPos.value = null;
+        constrainedOffset.value = 0;
+        props.onOffsetEnd?.();
+      }
+    });
 
-    const StartIcon = props.vertical ? UpOutlined : LeftOutlined;
-    const EndIcon = props.vertical ? DownOutlined : RightOutlined;
+    const transformStyle = computed(() => ({
+      [`--${splitBarPrefixCls.value}-preview-offset`]: `${constrainedOffset.value}px`,
+    }));
 
-    return () => (
-      <div
-        class={splitBarPrefixCls}
-        role="separator"
-        aria-valuenow={getValidNumber(props.ariaNow)}
-        aria-valuemin={getValidNumber(props.ariaMin)}
-        aria-valuemax={getValidNumber(props.ariaMax)}
-      >
-        {props.lazy && (
+    const StartIcon = computed(() => (props.vertical ? UpOutlined : LeftOutlined));
+    const EndIcon = computed(() => (props.vertical ? DownOutlined : RightOutlined));
+
+    return () => {
+      const barCls = splitBarPrefixCls.value;
+      const StartIconComp = StartIcon.value;
+      const EndIconComp = EndIcon.value;
+
+      return (
+        <div class={barCls}>
+          {props.lazy && (
+            <div
+              class={classNames(`${barCls}-preview`, {
+                [`${barCls}-preview-active`]: !!constrainedOffset.value,
+              })}
+              style={transformStyle.value}
+            />
+          )}
           <div
-            class={classNames(`${splitBarPrefixCls}-preview`, {
-              [`${splitBarPrefixCls}-preview-active`]: !!constrainedOffset.value,
+            class={classNames(`${barCls}-dragger`, {
+              [`${barCls}-dragger-disabled`]: !props.resizable,
+              [`${barCls}-dragger-active`]: props.active,
             })}
-            style={transformStyle}
+            role="separator"
+            aria-disabled={!props.resizable}
+            aria-orientation={props.vertical ? 'horizontal' : 'vertical'}
+            aria-valuenow={getValidNumber(props.ariaNow)}
+            aria-valuemin={getValidNumber(props.ariaMin)}
+            aria-valuemax={getValidNumber(props.ariaMax)}
+            onMousedown={onMouseDown}
+            onTouchstart={onTouchStart}
           />
-        )}
-        <div
-          class={classNames(`${splitBarPrefixCls}-dragger`, {
-            [`${splitBarPrefixCls}-dragger-disabled`]: !props.resizable,
-            [`${splitBarPrefixCls}-dragger-active`]: props.active,
-          })}
-          onMousedown={onMouseDown}
-          onTouchstart={onTouchStart}
-        />
-        {props.startCollapsible && (
-          <div
-            class={classNames(
-              `${splitBarPrefixCls}-collapse-bar`,
-              `${splitBarPrefixCls}-collapse-bar-start`,
-              getVisibilityClass(props.showStartCollapsibleIcon),
-            )}
-            onClick={() => props.onCollapse?.(props.index, 'start')}
-          >
-            <StartIcon
+          {props.startCollapsible && (
+            <div
               class={classNames(
-                `${splitBarPrefixCls}-collapse-icon`,
-                `${splitBarPrefixCls}-collapse-start`,
+                `${barCls}-collapse-bar`,
+                `${barCls}-collapse-bar-start`,
+                getVisibilityClass(props.showStartCollapsibleIcon),
               )}
-            />
-          </div>
-        )}
-        {props.endCollapsible && (
-          <div
-            class={classNames(
-              `${splitBarPrefixCls}-collapse-bar`,
-              `${splitBarPrefixCls}-collapse-bar-end`,
-              getVisibilityClass(props.showEndCollapsibleIcon),
-            )}
-            onClick={() => props.onCollapse?.(props.index, 'end')}
-          >
-            <EndIcon
+              role="button"
+              tabindex={0}
+              onMousedown={(e: MouseEvent) => e.stopPropagation()}
+              onClick={(e: MouseEvent) => onCollapseClick(e, 'start')}
+              onKeydown={(e: KeyboardEvent) => onCollapseKeyDown(e, 'start')}
+            >
+              <span class={classNames(`${barCls}-collapse-icon`, `${barCls}-collapse-start`)}>
+                <StartIconComp />
+              </span>
+            </div>
+          )}
+          {props.endCollapsible && (
+            <div
               class={classNames(
-                `${splitBarPrefixCls}-collapse-icon`,
-                `${splitBarPrefixCls}-collapse-end`,
+                `${barCls}-collapse-bar`,
+                `${barCls}-collapse-bar-end`,
+                getVisibilityClass(props.showEndCollapsibleIcon),
               )}
-            />
-          </div>
-        )}
-      </div>
-    );
+              role="button"
+              tabindex={0}
+              onMousedown={(e: MouseEvent) => e.stopPropagation()}
+              onClick={(e: MouseEvent) => onCollapseClick(e, 'end')}
+              onKeydown={(e: KeyboardEvent) => onCollapseKeyDown(e, 'end')}
+            >
+              <span class={classNames(`${barCls}-collapse-icon`, `${barCls}-collapse-end`)}>
+                <EndIconComp />
+              </span>
+            </div>
+          )}
+        </div>
+      );
+    };
   },
 });

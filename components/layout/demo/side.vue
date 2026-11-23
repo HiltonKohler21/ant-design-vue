@@ -19,7 +19,9 @@ The level of the aside navigation is scalable. The first, second, and third leve
 
 </docs>
 <template>
-  <a-layout style="min-height: 360px">
+  <a-layout
+    style="min-height: 360px; position: relative; overflow: hidden; transform: translate(0)"
+  >
     <a-layout-sider v-model:collapsed="collapsed" collapsible>
       <div class="demo-logo-vertical" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
@@ -59,13 +61,19 @@ The level of the aside navigation is scalable. The first, second, and third leve
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header style="background: #fff; padding: 0" />
+      <a-layout-header style="background: var(--ant-color-bg-container, #fff); padding: 0" />
       <a-layout-content style="margin: 0 16px">
         <a-breadcrumb style="margin: 16px 0">
           <a-breadcrumb-item>User</a-breadcrumb-item>
           <a-breadcrumb-item>Bill</a-breadcrumb-item>
         </a-breadcrumb>
-        <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
+        <div
+          :style="{
+            padding: '24px',
+            background: 'var(--ant-color-bg-container, #fff)',
+            minHeight: '360px',
+          }"
+        >
           Bill is a cat.
         </div>
       </a-layout-content>
@@ -94,12 +102,5 @@ const selectedKeys = ref<string[]>(['1']);
   margin: 16px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
-}
-
-.site-layout .site-layout-background {
-  background: #fff;
-}
-[data-theme='dark'] .site-layout .site-layout-background {
-  background: #141414;
 }
 </style>

@@ -1,6 +1,8 @@
-import { computed, ref, type Ref } from 'vue';
+import { camelize } from '../../_util/props-util';
 import type { PanelProps } from '../interface';
 import { autoPtgSizes } from './sizeUtil';
+
+const isNonNullable = <T>(val: T): val is NonNullable<T> => val !== undefined && val !== null;
 
 export function getPtg(str: string): number {
   return Number(str.slice(0, -1)) / 100;
@@ -10,21 +12,38 @@ function isPtg(itemSize: any): itemSize is string {
   return typeof itemSize === 'string' && itemSize.endsWith('%');
 }
 
+export function parsePxSize(val: number | string | undefined): number | undefined {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (!trimmed) return undefined;
+    if (trimmed.endsWith('px')) {
+      const parsed = Number.parseFloat(trimmed);
+      return Number.isNaN(parsed) ? undefined : parsed;
+    }
+    const parsed = Number(trimmed);
+    return Number.isNaN(parsed) ? undefined : parsed;
+  }
+  return undefined;
+}
+
 export interface CollapsibleType {
   start?: boolean;
   end?: boolean;
   showCollapsibleIcon: 'auto' | boolean;
 }
 
-function getCollapsible(collapsible: PanelProps['collapsible']): CollapsibleType {
+function getCollapsible(collapsible: PanelProps['collapsible'] | ''): CollapsibleType {
   if (collapsible && typeof collapsible === 'object') {
+    const showIcon =
+      collapsible.showCollapsibleIcon ?? (collapsible as any)['show-collapsible-icon'];
     return {
       ...collapsible,
-      showCollapsibleIcon:
-        collapsible.showCollapsibleIcon === undefined ? 'auto' : collapsible.showCollapsibleIcon,
+      showCollapsibleIcon: showIcon === undefined ? 'auto' : showIcon,
     };
   }
-  const mergedCollapsible = !!collapsible;
+  // Vue templates compile bare boolean attributes like `<a-splitter-panel collapsible>` to `""`
+  const mergedCollapsible = collapsible === '' || !!collapsible;
   return {
     start: mergedCollapsible,
     end: mergedCollapsible,
@@ -33,98 +52,123 @@ function getCollapsible(collapsible: PanelProps['collapsible']): CollapsibleType
 }
 
 export type InternalPanelItem = PanelProps & {
+  class?: any;
   children?: any;
   collapsible: CollapsibleType;
 };
 
 /**
- * Convert `children` into `items`.
+ * Convert flattened slot VNodes into normalized `InternalPanelItem[]`.
  */
-export function useItems(children: Ref<any[]>): Ref<InternalPanelItem[]> {
-  return computed(() =>
-    children.value
-      .filter(item => item && typeof item !== 'string' && typeof item !== 'number' && item.type)
-      .map(node => {
-        const { collapsible, ...restProps } = node.props || {};
-        return {
-          ...restProps,
-          children: node.children,
-          collapsible: getCollapsible(collapsible),
-        };
-      }),
-  );
+export function parseItems(children: any[]): InternalPanelItem[] {
+  return children
+    .filter(item => item && typeof item !== 'string' && typeof item !== 'number' && item.type)
+    .map(node => {
+      const rawProps = node.props || {};
+      const normalizedProps: Record<string, any> = {};
+      Object.keys(rawProps).forEach(key => {
+        const camelKey = key === 'class' || key === 'style' ? key : camelize(key);
+        normalizedProps[camelKey] = rawProps[key];
+      });
+
+      const { collapsible, resizable, destroyOnHidden, ...restProps } = normalizedProps;
+
+      let mergedResizable: boolean | undefined;
+      if (resizable === '' || resizable === true || resizable === 'true') {
+        mergedResizable = true;
+      } else if (resizable === false || resizable === 'false') {
+        mergedResizable = false;
+      } else {
+        mergedResizable = resizable;
+      }
+
+      const mergedDestroyOnHidden =
+        destroyOnHidden === '' || destroyOnHidden === true || destroyOnHidden === 'true';
+
+      return {
+        ...restProps,
+        resizable: mergedResizable,
+        destroyOnHidden: mergedDestroyOnHidden,
+        children: node.children,
+        collapsible: getCollapsible(collapsible),
+      };
+    });
+}
+
+export interface ComputedSizes {
+  panelSizes: (number | string | undefined)[];
+  itemPxSizes: number[];
+  itemPtgSizes: number[];
+  itemPtgMinSizes: number[];
+  itemPtgMaxSizes: number[];
 }
 
 /**
- * Save the size state.
- * Align the size into flex percentage base.
+ * Compute panel sizes, pixel sizes, and percentage sizes/limits for the current render.
  */
-export function useSizes(items: Ref<InternalPanelItem[]>, containerSize: Ref<number | undefined>) {
-  const propSizes = computed(() => items.value.map(item => item.size));
-  const itemsCount = computed(() => items.value.length);
-  const mergedContainerSize = computed(() => containerSize.value || 0);
+export function computeSizes(
+  items: InternalPanelItem[],
+  containerSize: number | undefined,
+  innerSizes: any[],
+): ComputedSizes {
+  const propSizes = items.map(item => item.size);
+  const itemsCount = items.length;
+  const mergedContainerSize = containerSize || 0;
 
-  const innerSizes = ref<any[]>(items.value.map(item => item.defaultSize));
+  // Match antd: if any panel has `size`, use `propSizes`; otherwise use `innerSizes`.
+  const sizes = propSizes.some(isNonNullable) ? propSizes : innerSizes;
 
-  const sizes = computed(() => {
-    const mergedSizes: any[] = [];
-    for (let i = 0; i < itemsCount.value; i += 1) {
-      mergedSizes[i] = propSizes.value[i] !== undefined ? propSizes.value[i] : innerSizes.value[i];
+  const itemPtgMinSizes = items.map(item => {
+    if (isPtg(item.min)) {
+      return getPtg(item.min);
     }
-    return mergedSizes;
+    if (mergedContainerSize <= 0) {
+      return 0;
+    }
+    return (parsePxSize(item.min) || 0) / mergedContainerSize;
   });
 
-  const postPercentMinSizes = computed(() =>
-    items.value.map(item => {
-      if (isPtg(item.min)) {
-        return getPtg(item.min);
-      }
-      return (item.min || 0) / mergedContainerSize.value;
-    }),
-  );
+  const itemPtgMaxSizes = items.map(item => {
+    if (isPtg(item.max)) {
+      return getPtg(item.max);
+    }
+    if (mergedContainerSize <= 0) {
+      return 1;
+    }
+    const parsedMax = parsePxSize(item.max);
+    return (parsedMax !== undefined ? parsedMax : mergedContainerSize) / mergedContainerSize;
+  });
 
-  const postPercentMaxSizes = computed(() =>
-    items.value.map(item => {
-      if (isPtg(item.max)) {
-        return getPtg(item.max);
-      }
-      return (item.max || mergedContainerSize.value) / mergedContainerSize.value;
-    }),
-  );
-
-  const postPercentSizes = computed(() => {
-    const ptgList: (number | undefined)[] = [];
-    for (let i = 0; i < itemsCount.value; i += 1) {
-      const itemSize = sizes.value[i];
-      if (isPtg(itemSize)) {
-        ptgList[i] = getPtg(itemSize);
-      } else if (itemSize || itemSize === 0) {
-        const num = Number(itemSize);
-        if (!Number.isNaN(num)) {
-          ptgList[i] = num / mergedContainerSize.value;
+  const ptgList: (number | undefined)[] = [];
+  for (let i = 0; i < itemsCount; i += 1) {
+    const itemSize = sizes[i];
+    if (isPtg(itemSize)) {
+      ptgList[i] = getPtg(itemSize);
+    } else if (itemSize || itemSize === 0) {
+      const num = parsePxSize(itemSize);
+      if (num !== undefined && !Number.isNaN(num)) {
+        if (mergedContainerSize > 0) {
+          ptgList[i] = num / mergedContainerSize;
+        } else {
+          ptgList[i] = num === 0 ? 0 : undefined;
         }
       } else {
         ptgList[i] = undefined;
       }
+    } else {
+      ptgList[i] = undefined;
     }
-    return autoPtgSizes(ptgList, postPercentMinSizes.value, postPercentMaxSizes.value);
-  });
+  }
 
-  const postPxSizes = computed(() =>
-    postPercentSizes.value.map(ptg => ptg * mergedContainerSize.value),
-  );
+  const itemPtgSizes = autoPtgSizes(ptgList, itemPtgMinSizes, itemPtgMaxSizes);
+  const itemPxSizes = itemPtgSizes.map(ptg => ptg * mergedContainerSize);
+  const panelSizes = containerSize ? itemPxSizes : sizes;
 
-  // If ssr, we will use the size from developer config first.
-  const panelSizes = computed(() => (containerSize.value ? postPxSizes.value : sizes.value));
-
-  return [
+  return {
     panelSizes,
-    postPxSizes,
-    postPercentSizes,
-    postPercentMinSizes,
-    postPercentMaxSizes,
-    (sizes: number[]) => {
-      innerSizes.value = sizes;
-    },
-  ] as const;
+    itemPxSizes,
+    itemPtgSizes,
+    itemPtgMinSizes,
+    itemPtgMaxSizes,
+  };
 }

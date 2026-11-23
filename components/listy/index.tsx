@@ -1,5 +1,5 @@
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, toRaw } from 'vue';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import { withInstall } from '../_util/type';
@@ -61,15 +61,50 @@ const Listy = defineComponent({
 
     const mergedVirtual = computed(
       () =>
-        props.virtual ??
-        (!!props.height && !!props.itemHeight && (props.data?.length ?? 0) > 0),
+        props.virtual ?? (!!props.height && !!props.itemHeight && (props.data?.length ?? 0) > 0),
     );
+
+    const itemIndexMap = computed(() => {
+      const map = new Map<any, number>();
+      const list = props.data || [];
+      for (let i = 0; i < list.length; i += 1) {
+        const entry = list[i];
+        const rawEntry = toRaw(entry);
+        if (!map.has(entry)) {
+          map.set(entry, i);
+        }
+        if (rawEntry !== entry && !map.has(rawEntry)) {
+          map.set(rawEntry, i);
+        }
+      }
+      return map;
+    });
 
     const keyFn = computed(() => {
       const k = props.itemKey;
       if (typeof k === 'function') return k;
-      if (typeof k === 'string') return (item: any) => item?.[k];
-      return (item: any, index: number) => item?.key ?? index;
+      if (typeof k === 'string') {
+        return (item: any, index?: number) => {
+          const val = item?.[k];
+          if (val !== undefined && val !== null) return val;
+          if (index !== undefined) return index;
+          const idx = itemIndexMap.value.get(item) ?? itemIndexMap.value.get(toRaw(item));
+          return idx !== undefined ? idx : String(item);
+        };
+      }
+      return (item: any, index?: number) => {
+        if (
+          item != null &&
+          typeof item === 'object' &&
+          item.key !== undefined &&
+          item.key !== null
+        ) {
+          return item.key;
+        }
+        if (index !== undefined) return index;
+        const idx = itemIndexMap.value.get(item) ?? itemIndexMap.value.get(toRaw(item));
+        return idx !== undefined ? idx : String(item);
+      };
     });
 
     const renderItem = (item: any, index: number) => {
@@ -107,7 +142,10 @@ const Listy = defineComponent({
         attrs.class as any,
         hashId.value,
       );
-      const rootStyle = { ...((props.styles as any)?.root as CSSProperties), ...(attrs.style as CSSProperties) };
+      const rootStyle = {
+        ...((props.styles as any)?.root as CSSProperties),
+        ...(attrs.style as CSSProperties),
+      };
 
       if (mergedVirtual.value && props.height && props.itemHeight) {
         return wrapSSR(

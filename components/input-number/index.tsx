@@ -32,7 +32,7 @@ const baseProps = baseInputNumberProps();
 export const inputNumberProps = () => ({
   ...baseProps,
   size: stringType<SizeType>(),
-  bordered: booleanType(true),
+  bordered: booleanType(),
   rootClassName: String,
   variant: stringType<Variant>(),
   placeholder: String,

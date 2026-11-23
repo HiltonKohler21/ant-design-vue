@@ -138,7 +138,10 @@ const genSkeletonElementImage = (token: SkeletonToken): CSSObject => {
       verticalAlign: 'top',
       background: color,
       borderRadius: borderRadiusSM,
-      ...genSkeletonElementImageSize(token, token.calc(imageSizeBase).mul(2).equal() as unknown as number),
+      ...genSkeletonElementImageSize(
+        token,
+        token.calc(imageSizeBase).mul(2).equal() as unknown as number,
+      ),
       [`${skeletonImageCls}-path`]: {
         fill: '#bfbfbf',
       },
@@ -195,8 +198,6 @@ const genSkeletonElementButton = (token: SkeletonToken): CSSObject => {
       verticalAlign: 'top',
       background: color,
       borderRadius: borderRadiusSM,
-      width: controlHeight * 2,
-      minWidth: controlHeight * 2,
       ...genSkeletonElementButtonSize(token, controlHeight),
     },
     ...genSkeletonElementButtonShape(token, controlHeight, skeletonButtonCls),

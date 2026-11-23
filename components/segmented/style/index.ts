@@ -124,8 +124,14 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         },
 
         '&-label': {
-          minHeight: token.calc(token.controlHeight).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
-          lineHeight: token.calc(token.controlHeight).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          minHeight: token
+            .calc(token.controlHeight)
+            .sub(token.calc(token.segmentedContainerPadding).mul(2).equal())
+            .equal(),
+          lineHeight: token
+            .calc(token.controlHeight)
+            .sub(token.calc(token.segmentedContainerPadding).mul(2).equal())
+            .equal(),
           padding: `0 ${unit(token.segmentedPaddingHorizontal)}`,
           ...segmentedTextEllipsisCss,
         },
@@ -168,8 +174,14 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
       [`&${componentCls}-lg`]: {
         borderRadius: token.borderRadiusLG,
         [`${componentCls}-item-label`]: {
-          minHeight: token.calc(token.controlHeightLG).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
-          lineHeight: token.calc(token.controlHeightLG).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          minHeight: token
+            .calc(token.controlHeightLG)
+            .sub(token.calc(token.segmentedContainerPadding).mul(2).equal())
+            .equal(),
+          lineHeight: token
+            .calc(token.controlHeightLG)
+            .sub(token.calc(token.segmentedContainerPadding).mul(2).equal())
+            .equal(),
           padding: `0 ${unit(token.segmentedPaddingHorizontal)}`,
           fontSize: token.fontSizeLG,
         },
@@ -188,8 +200,14 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
       [`&${componentCls}-sm`]: {
         borderRadius: token.borderRadiusSM,
         [`${componentCls}-item-label`]: {
-          minHeight: token.calc(token.controlHeightSM).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
-          lineHeight: token.calc(token.controlHeightSM).sub(token.calc(token.segmentedContainerPadding).mul(2).equal()).equal(),
+          minHeight: token
+            .calc(token.controlHeightSM)
+            .sub(token.calc(token.segmentedContainerPadding).mul(2).equal())
+            .equal(),
+          lineHeight: token
+            .calc(token.controlHeightSM)
+            .sub(token.calc(token.segmentedContainerPadding).mul(2).equal())
+            .equal(),
           padding: `0 ${unit(token.segmentedPaddingHorizontalSM)}`,
         },
         [`${componentCls}-item, ${componentCls}-thumb`]: {
@@ -203,8 +221,8 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
 
       // transition effect when `appear-active`
       [`${componentCls}-thumb-motion-appear-active`]: {
-        transition: `transform ${token.motionDurationSlow} ${token.motionEaseInOut}, width ${token.motionDurationSlow} ${token.motionEaseInOut}`,
-        willChange: 'transform, width',
+        transition: `transform ${token.motionDurationSlow} ${token.motionEaseInOut}, width ${token.motionDurationSlow} ${token.motionEaseInOut}, height ${token.motionDurationSlow} ${token.motionEaseInOut}`,
+        willChange: 'transform, width, height',
       },
     },
   };

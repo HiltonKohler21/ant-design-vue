@@ -114,7 +114,6 @@ const TreeSelect = defineComponent({
     listHeight: 256,
     treeIcon: false,
     listItemHeight: 26,
-    bordered: true,
   }),
   slots: Object as CustomSlotsType<{
     title?: any;
@@ -174,7 +173,6 @@ const TreeSelect = defineComponent({
       () => props.popupMatchSelectWidth ?? dropdownMatchSelectWidth.value,
     );
     const handleOpenChange = (open: boolean) => {
-      props.onOpenChange?.(open);
       props.onDropdownVisibleChange?.(open);
       emit('openChange', open);
       emit('update:open', open);
@@ -373,7 +371,11 @@ const TreeSelect = defineComponent({
             treeMotion={null}
             dropdownClassName={mergedDropdownClassName.value}
             dropdownRender={props.popupRender ?? props.dropdownRender}
-            dropdownStyle={props.dropdownStyle}
+            dropdownStyle={
+              props.styles?.popup?.root || props.dropdownStyle
+                ? { ...props.dropdownStyle, ...props.styles?.popup?.root }
+                : undefined
+            }
             choiceTransitionName={choiceTransitionName.value}
             onChange={handleChange}
             onBlur={handleBlur}

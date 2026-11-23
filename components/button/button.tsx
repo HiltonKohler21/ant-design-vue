@@ -103,9 +103,12 @@ export default defineComponent({
       },
     );
 
+    const mergedType = computed(() =>
+      props.variant !== undefined ? variantToType(props.variant) : props.type,
+    );
+
     const classes = computed(() => {
       const {
-        type,
         shape = 'default',
         ghost,
         block,
@@ -114,7 +117,7 @@ export default defineComponent({
         variant,
         color,
       } = props;
-      const mergedType = variant !== undefined ? variantToType(variant) : type;
+      const currentType = mergedType.value;
       const mergedDanger = danger || color === 'danger';
       const pre = prefixCls.value;
 
@@ -128,11 +131,12 @@ export default defineComponent({
           [hashId.value]: true,
           [`${pre}`]: true,
           [`${pre}-${shape}`]: shape !== 'default' && shape,
-          [`${pre}-${mergedType}`]: mergedType,
+          [`${pre}-${currentType}`]: currentType,
           [`${pre}-filled`]: variant === 'filled',
+          [`${pre}-color-primary`]: color === 'primary',
           [`${pre}-${sizeCls}`]: sizeCls,
           [`${pre}-loading`]: innerLoading.value,
-          [`${pre}-background-ghost`]: ghost && !isUnBorderedButtonType(type),
+          [`${pre}-background-ghost`]: ghost && !isUnBorderedButtonType(currentType),
           [`${pre}-two-chinese-chars`]: hasTwoCNChar.value && autoInsertSpace.value,
           [`${pre}-block`]: block,
           [`${pre}-dangerous`]: !!mergedDanger,
@@ -184,7 +188,7 @@ export default defineComponent({
 
     watchEffect(() => {
       devWarning(
-        !(props.ghost && isUnBorderedButtonType(props.type)),
+        !(props.ghost && isUnBorderedButtonType(mergedType.value)),
         'Button',
         "`link` or `text` button can't be a `ghost` button.",
       );
@@ -212,9 +216,9 @@ export default defineComponent({
       const { icon = slots.icon?.() } = props;
       const children = flattenChildren(slots.default?.());
 
-      isNeedInserted = children.length === 1 && !icon && !isUnBorderedButtonType(props.type);
+      isNeedInserted = children.length === 1 && !icon && !isUnBorderedButtonType(mergedType.value);
 
-      const { type, htmlType, href, title, target } = props;
+      const { htmlType, href, title, target } = props;
 
       const iconType = innerLoading.value ? 'loading' : icon;
       const buttonProps = {
@@ -268,7 +272,7 @@ export default defineComponent({
         </button>
       );
 
-      if (!isUnBorderedButtonType(type)) {
+      if (!isUnBorderedButtonType(mergedType.value)) {
         buttonNode = (
           <Wave ref="wave" disabled={!!innerLoading.value}>
             {buttonNode}

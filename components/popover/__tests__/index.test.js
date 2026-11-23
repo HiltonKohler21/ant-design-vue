@@ -46,4 +46,24 @@ describe('Popover', () => {
       expect(popup.innerHTML).toMatchSnapshot();
     });
   });
+
+  it('should render overlay when only content (without title) is provided', async () => {
+    const popover = mount(
+      {
+        render() {
+          return (
+            <Popover ref="popover" content="only content text" open>
+              <span>trigger</span>
+            </Popover>
+          );
+        },
+      },
+      { attachTo: 'body' },
+    );
+    await new Promise(r => setTimeout(r, 80));
+    const popup = popover.vm.$refs.popover.getPopupDomNode();
+    expect(popup).not.toBe(null);
+    expect(popup.innerHTML).toContain('only content text');
+    popover.unmount();
+  });
 });

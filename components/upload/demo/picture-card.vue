@@ -105,13 +105,13 @@ const handlePreview = async (file: UploadProps['fileList'][number]) => {
 </script>
 <style scoped>
 /* you can make up upload button and sample style by using stylesheets */
-.ant-upload-select-picture-card i {
+:deep(.ant-upload-select-picture-card i) {
   font-size: 32px;
-  color: #999;
+  color: var(--ant-color-text-tertiary, #999);
 }
 
-.ant-upload-select-picture-card .ant-upload-text {
+:deep(.ant-upload-select-picture-card .ant-upload-text) {
   margin-top: 8px;
-  color: #666;
+  color: var(--ant-color-text-secondary, #666);
 }
 </style>

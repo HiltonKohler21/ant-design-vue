@@ -164,9 +164,11 @@ const Preview = defineComponent({
       }
     };
 
-    const wrapClassName = classnames({
-      [`${props.prefixCls}-moving`]: isMoving.value,
-    });
+    const wrapClassName = computed(() =>
+      classnames({
+        [`${props.prefixCls}-moving`]: isMoving.value,
+      }),
+    );
     const toolClassName = `${props.prefixCls}-operations-operation`;
     const iconClassName = `${props.prefixCls}-operations-icon`;
     const tools = [
@@ -357,7 +359,7 @@ const Preview = defineComponent({
           onClose={onClose}
           afterClose={onAfterClose}
           visible={visible}
-          wrapClassName={wrapClassName}
+          wrapClassName={wrapClassName.value}
           rootClassName={rootClassName}
           getContainer={props.getContainer}
         >

@@ -2,6 +2,7 @@
 category: Components
 type: 数据展示
 title: Collapse
+cols: 1
 subtitle: 折叠面板
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*B7HKR5OBe8gAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sir-TK0HkWcAAAAAAAAAAAAADrJ8AQ/original

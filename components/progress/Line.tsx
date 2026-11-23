@@ -135,17 +135,17 @@ export default defineComponent({
       };
     });
 
-    const outerStyle: CSSProperties = {
-      width: sizeRef.value.width < 0 ? '100%' : sizeRef.value.width,
+    const outerStyle = computed<CSSProperties>(() => ({
+      width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
       height: `${sizeRef.value.height}px`,
-    };
+    }));
 
     return () => (
       <>
         <div
           {...attrs}
           class={[`${props.prefixCls}-outer`, attrs.class]}
-          style={[attrs.style as CSSProperties, outerStyle]}
+          style={[attrs.style as CSSProperties, outerStyle.value]}
         >
           <div class={`${props.prefixCls}-inner`} style={trailStyle.value}>
             <div class={`${props.prefixCls}-bg`} style={percentStyle.value} />

@@ -17,7 +17,7 @@ Support 6 placements.
 </docs>
 
 <template>
-  <div id="components-dropdown-demo-placement">
+  <div class="components-dropdown-demo-placement">
     <template v-for="(placement, index) in placements" :key="placement">
       <a-dropdown :placement="placement">
         <a-button>{{ placement }}</a-button>
@@ -57,7 +57,7 @@ const placements = [
 ] as DropdownProps['placement'][];
 </script>
 <style scoped>
-#components-dropdown-demo-placement .ant-btn {
+.components-dropdown-demo-placement :deep(.ant-btn) {
   margin-right: 8px;
   margin-bottom: 8px;
 }

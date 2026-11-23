@@ -1,3 +1,4 @@
+import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -9,13 +10,10 @@ export interface ComponentToken {
   rowGap: number;
 }
 
-type MasonryToken = FullToken<'Masonry'> & {
-  masonryColumnGap: number;
-  masonryRowGap: number;
-};
+type MasonryToken = FullToken<'Masonry'>;
 
 const genMasonryStyle: GenerateStyle<MasonryToken> = token => {
-  const { componentCls, masonryColumnGap, masonryRowGap } = token;
+  const { componentCls, columnGap, rowGap } = token;
   return {
     [componentCls]: {
       ...resetComponent(token),
@@ -23,8 +21,8 @@ const genMasonryStyle: GenerateStyle<MasonryToken> = token => {
       alignItems: 'flex-start',
       width: '100%',
       boxSizing: 'border-box',
-      columnGap: masonryColumnGap,
-      rowGap: masonryRowGap,
+      columnGap: unit(columnGap),
+      rowGap: unit(rowGap),
 
       [`${componentCls}-column`]: {
         flex: '1 1 0',

@@ -81,6 +81,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
           fontSize: token.fontSizeSM,
           color: token.colorText,
           lineHeight: 1,
+          whiteSpace: 'nowrap',
         },
 
         // Clear button
@@ -129,7 +130,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
 
     // Popover overlay styling
     [`${componentCls}-popover`]: {
-      [`&.ant-popover .ant-popover-inner`]: {
+      [`&${token.antCls}-popover ${token.antCls}-popover-inner`]: {
         padding: 0,
         overflow: 'hidden',
         borderRadius: token.borderRadiusLG,
@@ -220,7 +221,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
       // Gradient slider
       [`${panelCls}-gradient-slider`]: {
         position: 'relative',
-        marginTop: token.marginSM,
+        marginBottom: token.marginSM,
         outline: 'none',
 
         [`${panelCls}-gradient-slider-bg`]: {

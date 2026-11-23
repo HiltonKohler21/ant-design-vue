@@ -20,7 +20,7 @@ Because the width of label is not fixed, you may need to adjust it by customizin
 
 </docs>
 <template>
-  <div>
+  <div class="advanced-search-wrapper">
     <a-form
       ref="formRef"
       name="advanced_search"
@@ -74,26 +74,22 @@ const onFinish = (values: any) => {
 </script>
 
 <style scoped>
-#components-form-demo-advanced-search .ant-form {
+.advanced-search-wrapper :deep(.ant-form) {
   max-width: none;
 }
-#components-form-demo-advanced-search .search-result-list {
+.advanced-search-wrapper :deep(.ant-advanced-search-form) {
+  background: var(--ant-color-fill-alter, #fafafa);
+  border: 1px solid var(--ant-color-border-secondary, #f0f0f0);
+  padding: 24px;
+  border-radius: var(--ant-border-radius-lg, 8px);
+}
+.advanced-search-wrapper .search-result-list {
   margin-top: 16px;
-  border: 1px dashed #e9e9e9;
-  border-radius: 2px;
-  background-color: #fafafa;
+  border: 1px dashed var(--ant-color-border, #d9d9d9);
+  border-radius: var(--ant-border-radius, 6px);
+  background-color: var(--ant-color-fill-alter, #fafafa);
   min-height: 200px;
   text-align: center;
   padding-top: 80px;
-}
-[data-theme='dark'] .ant-advanced-search-form {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid #434343;
-  padding: 24px;
-  border-radius: 2px;
-}
-[data-theme='dark'] #components-form-demo-advanced-search .search-result-list {
-  border: 1px dashed #434343;
-  background: rgba(255, 255, 255, 0.04);
 }
 </style>

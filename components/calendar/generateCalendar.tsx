@@ -141,6 +141,8 @@ function generateCalendar<
       dateCellRender?: { current: DateType };
       monthFullCellRender?: { current: DateType };
       monthCellRender?: { current: DateType };
+      cellRender?: { current: DateType; info: any };
+      fullCellRender?: { current: DateType; info: any };
       headerRender?: {
         value: DateType;
         type: CalendarMode;
@@ -257,17 +259,29 @@ function generateCalendar<
           dateCellRender = slots?.dateCellRender,
           monthFullCellRender = slots?.monthFullCellRender,
           monthCellRender = slots?.monthCellRender,
-          cellRender = slots?.cellRender,
-          fullCellRender = slots?.fullCellRender,
           showWeek,
           headerRender = slots?.headerRender,
           fullscreen = true,
           validRange,
         } = props;
         // ====================== Render ======================
-        const dateRender = ({ current: date }, info?: any) => {
-          if (fullCellRender) {
-            return fullCellRender(date, info);
+        const dateRender = ({ current: date }) => {
+          const originNode = (
+            <div class={`${prefixCls.value}-cell-inner`}>
+              {String(generateConfig.getDate(date)).padStart(2, '0')}
+            </div>
+          );
+          const info = {
+            originNode,
+            today,
+            range: undefined as 'start' | 'end' | undefined,
+            type: 'date' as const,
+          };
+          if (props.fullCellRender) {
+            return props.fullCellRender(date, info);
+          }
+          if (slots?.fullCellRender) {
+            return slots.fullCellRender({ current: date, info });
           }
           if (dateFullCellRender) {
             return dateFullCellRender({ current: date });
@@ -286,23 +300,39 @@ function generateCalendar<
                 {String(generateConfig.getDate(date)).padStart(2, '0')}
               </div>
               <div class={`${calendarPrefixCls.value}-date-content`}>
-                {cellRender
-                  ? cellRender(date, info)
+                {props.cellRender
+                  ? props.cellRender(date, info)
+                  : slots?.cellRender
+                  ? slots.cellRender({ current: date, info })
                   : dateCellRender && dateCellRender({ current: date })}
               </div>
             </div>
           );
         };
 
-        const monthRender = ({ current: date }, locale: Locale, info?: any) => {
-          if (fullCellRender) {
-            return fullCellRender(date, info);
+        const monthRender = ({ current: date }, locale: Locale) => {
+          const months = locale.shortMonths || generateConfig.locale.getShortMonths!(locale.locale);
+          const originNode = (
+            <div class={`${prefixCls.value}-cell-inner`}>
+              {months[generateConfig.getMonth(date)]}
+            </div>
+          );
+          const info = {
+            originNode,
+            today,
+            range: undefined as 'start' | 'end' | undefined,
+            type: 'month' as const,
+            locale,
+          };
+          if (props.fullCellRender) {
+            return props.fullCellRender(date, info);
+          }
+          if (slots?.fullCellRender) {
+            return slots.fullCellRender({ current: date, info });
           }
           if (monthFullCellRender) {
             return monthFullCellRender({ current: date });
           }
-
-          const months = locale.shortMonths || generateConfig.locale.getShortMonths!(locale.locale);
 
           return (
             <div
@@ -318,8 +348,10 @@ function generateCalendar<
                 {months[generateConfig.getMonth(date)]}
               </div>
               <div class={`${calendarPrefixCls.value}-date-content`}>
-                {cellRender
-                  ? cellRender(date, info)
+                {props.cellRender
+                  ? props.cellRender(date, info)
+                  : slots?.cellRender
+                  ? slots.cellRender({ current: date, info })
                   : monthCellRender && monthCellRender({ current: date })}
               </div>
             </div>

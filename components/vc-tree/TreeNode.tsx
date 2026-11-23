@@ -47,8 +47,8 @@ export default defineComponent({
       checkedKeysSet,
       halfCheckedKeysSet,
     } = useInjectKeysState();
-    const { dragOverNodeKey, dropPosition, keyEntities } = context.value;
     const mergedTreeNodeProps = computed(() => {
+      const { dragOverNodeKey, dropPosition, keyEntities } = context.value;
       return getTreeNodeProps(props.eventKey, {
         expandedKeysSet: expandedKeysSet.value,
         selectedKeysSet: selectedKeysSet.value,

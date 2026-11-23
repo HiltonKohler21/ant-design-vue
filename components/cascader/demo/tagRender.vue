@@ -3,8 +3,16 @@
 order: 10
 title:
   zh-CN: 自定义 tag 内容
-  en-US: The custom tag
+  en-US: Custom Tag Render
 ---
+
+## zh-CN
+
+通过 `tagRender` 插槽自定义多选标签内容。
+
+## en-US
+
+Customize the multiple selection tag content using the `tagRender` slot.
 
 </docs>
 

@@ -152,6 +152,14 @@ const genBaseStyle: GenerateStyle<SelectToken> = token => {
         ...textEllipsis,
       },
 
+      // ========================= Prefix ==========================
+      [`${componentCls}-prefix, ${componentCls}-selection-prefix`]: {
+        flex: 'none',
+        display: 'inline-flex',
+        alignItems: 'center',
+        marginInlineEnd: token.paddingXXS,
+      },
+
       // ======================= Placeholder =======================
       [`${componentCls}-selection-placeholder`]: {
         ...textEllipsis,
@@ -241,7 +249,10 @@ const genBaseStyle: GenerateStyle<SelectToken> = token => {
     // ========================= Feedback ==========================
     [`${componentCls}-has-feedback`]: {
       [`${componentCls}-clear`]: {
-        insetInlineEnd: token.calc(inputPaddingHorizontalBase).add(token.calc(token.fontSize).add(token.paddingXXS).equal()).equal(),
+        insetInlineEnd: token
+          .calc(inputPaddingHorizontalBase)
+          .add(token.calc(token.fontSize).add(token.paddingXXS).equal())
+          .equal(),
       },
     },
   };

@@ -43,6 +43,7 @@ export const tabNavListProps = () => {
     moreTransitionName: { type: String },
     mobile: { type: Boolean },
     tabBarGutter: { type: Number },
+    indicatorSize: [Number, String],
     renderTabBar: { type: Function as PropType<RenderTabBar> },
     locale: objectType<TabsLocale>(),
     popupClassName: String,
@@ -378,29 +379,50 @@ export default defineComponent({
       raf.cancel(inkBarRafRef.value);
     };
 
-    watch([activeTabOffset, tabPositionTopOrBottom, () => props.rtl], () => {
-      const newInkStyle: CSSProperties = {};
-
-      if (activeTabOffset.value) {
-        if (tabPositionTopOrBottom.value) {
-          if (props.rtl) {
-            newInkStyle.right = toPx(activeTabOffset.value.right);
-          } else {
-            newInkStyle.left = toPx(activeTabOffset.value.left);
-          }
-
-          newInkStyle.width = toPx(activeTabOffset.value.width);
-        } else {
-          newInkStyle.top = toPx(activeTabOffset.value.top);
-          newInkStyle.height = toPx(activeTabOffset.value.height);
-        }
+    const getIndicatorSize = (origin: number): number => {
+      const { indicatorSize } = props;
+      if (typeof indicatorSize === 'number') {
+        return indicatorSize;
       }
+      if (indicatorSize === 'small') {
+        return Math.min(origin, 14);
+      }
+      if (indicatorSize === 'large') {
+        return Math.min(origin, 28);
+      }
+      return origin;
+    };
 
-      cleanInkBarRaf();
-      inkBarRafRef.value = raf(() => {
-        setInkStyle(newInkStyle);
-      });
-    });
+    watch(
+      [activeTabOffset, tabPositionTopOrBottom, () => props.rtl, () => props.indicatorSize],
+      () => {
+        const newInkStyle: CSSProperties = {};
+
+        if (activeTabOffset.value) {
+          if (tabPositionTopOrBottom.value) {
+            const inkWidth = getIndicatorSize(activeTabOffset.value.width);
+            const offset = (activeTabOffset.value.width - inkWidth) / 2;
+            if (props.rtl) {
+              newInkStyle.right = toPx(activeTabOffset.value.right + offset);
+            } else {
+              newInkStyle.left = toPx(activeTabOffset.value.left + offset);
+            }
+
+            newInkStyle.width = toPx(inkWidth);
+          } else {
+            const inkHeight = getIndicatorSize(activeTabOffset.value.height);
+            const offset = (activeTabOffset.value.height - inkHeight) / 2;
+            newInkStyle.top = toPx(activeTabOffset.value.top + offset);
+            newInkStyle.height = toPx(inkHeight);
+          }
+        }
+
+        cleanInkBarRaf();
+        inkBarRafRef.value = raf(() => {
+          setInkStyle(newInkStyle);
+        });
+      },
+    );
 
     watch(
       [() => props.activeKey, activeTabOffset, tabOffsets, tabPositionTopOrBottom],

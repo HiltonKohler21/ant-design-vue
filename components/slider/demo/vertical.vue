@@ -16,7 +16,7 @@ The vertical Slider.
 </docs>
 
 <template>
-  <div style="height: 300px">
+  <div class="slider-demo-wrapper" style="height: 300px">
     <div style="display: inline-block; height: 300px; margin-left: 70px">
       <a-slider v-model:value="value1" vertical />
     </div>
@@ -46,7 +46,7 @@ const marks = ref<Record<number, any>>({
 });
 </script>
 <style scoped>
-.code-box-demo .ant-slider {
+.slider-demo-wrapper :deep(.ant-slider) {
   margin-bottom: 16px;
 }
 </style>

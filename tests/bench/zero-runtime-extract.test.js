@@ -8,6 +8,7 @@
  * 因此提取流程放在 jest 环境下执行；`scripts/static-style-extract.mjs` 是对外入口。
  */
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
@@ -96,11 +97,22 @@ describe('zeroRuntime 静态样式提取', () => {
     expect(css).toContain('--ant-color-primary');
     expect(css).toContain(':root');
 
-    // 3) 落盘
-    const outDir = path.resolve(__dirname, '../../dist/static-style');
-    fs.mkdirSync(outDir, { recursive: true });
-    const outFile = path.join(outDir, 'antdv.css');
-    fs.writeFileSync(outFile, css, 'utf8');
+    // 3) 落盘（只读沙箱环境下回退到系统临时目录）
+    let outDir = path.resolve(__dirname, '../../dist/static-style');
+    let outFile = path.join(outDir, 'antdv.css');
+    try {
+      fs.mkdirSync(outDir, { recursive: true });
+      fs.writeFileSync(outFile, css, 'utf8');
+    } catch (err) {
+      if (err && (err.code === 'EPERM' || err.code === 'EACCES' || err.code === 'EROFS')) {
+        outDir = path.join(os.tmpdir(), 'antdv-static-style');
+        fs.mkdirSync(outDir, { recursive: true });
+        outFile = path.join(outDir, 'antdv.css');
+        fs.writeFileSync(outFile, css, 'utf8');
+      } else {
+        throw err;
+      }
+    }
 
     // eslint-disable-next-line no-console
     console.log(`[zero-runtime] 提取 CSS ${(css.length / 1024).toFixed(1)} KB → ${outFile}`);

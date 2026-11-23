@@ -80,6 +80,9 @@ import TreeSelect from '../../components/tree-select';
 import Popover from '../../components/popover';
 import Splitter from '../../components/splitter';
 import ColorPicker from '../../components/color-picker';
+import useMessageStyle from '../../components/message/style';
+import useNotificationStyle from '../../components/notification/style';
+import { ref } from 'vue';
 
 const collectCss = () =>
   Array.from(document.querySelectorAll('style'))
@@ -97,6 +100,10 @@ const findNegatedVar = css => (css.match(/(?<![\w)])\-var\(--ant-/g) || []).leng
  * 合法：var(--x)、var(--x) var(--y)、var(--x);、var(--x))、var(--x)!
  */
 const findVarConcat = css => (css.match(/var\(--ant-[a-z0-9-]+\)(?=[A-Za-z0-9.-]+)/g) || []).length;
+
+/** 找出被误拼 `px` 的无单位变量声明（例如 `--ant-drawer-z-index-popup:1000px`） */
+const findUnitlessWithPx = css =>
+  css.match(/--ant-[a-z0-9-]*(?:z-index[a-z0-9-]*|beam-duration)\s*:\s*-?\d+(?:\.\d+)?px\b/g) || [];
 
 const ILLEGAL = [
   // 注意：不能用 \bNaN\b —— NaNpx 中 N→p 之间没有词边界，会漏检
@@ -412,6 +419,9 @@ const check = async slot => {
   if (bareVar.length) hits.push(`var() 裸算术 × ${bareVar.length}`);
   const negVar = findNegatedVar(css);
   if (negVar) hits.push(`-var() × ${negVar}`);
+  const unitlessPx = findUnitlessWithPx(css);
+  if (unitlessPx.length)
+    hits.push(`unitless px × ${unitlessPx.length} (${unitlessPx.slice(0, 3).join(', ')})`);
   const varConcat = findVarConcat(css);
   if (varConcat) {
     hits.push(`var() 拼数字 × ${varConcat}`);
@@ -457,5 +467,86 @@ describe('cssVar 非法 CSS 检测（逐组件）', () => {
     expect(cssBytes).toBeGreaterThan(100);
     // eslint-disable-next-line no-console
     console.log(`  ✓ ${name}（${cssBytes} B）`);
+  });
+
+  it('组件级 zIndexPopup 变量必须是无单位纯整数（无 px 后缀）', async () => {
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+
+    const MessageStyleProbe = {
+      setup() {
+        const [wrapMsg] = useMessageStyle(ref('ant-message'));
+        const [wrapNoti] = useNotificationStyle(ref('ant-notification'));
+        return () => wrapMsg(wrapNoti(<div class="probe-overlay" />));
+      },
+    };
+
+    const wrapper = mount(ConfigProvider, {
+      props: { theme: { cssVar: true } },
+      slots: {
+        default: () => (
+          <div>
+            <Drawer open title="d">
+              drawer
+            </Drawer>
+            <Popover open title="t" content="c">
+              <span>pop</span>
+            </Popover>
+            <Tooltip open title="tip">
+              <span>tip</span>
+            </Tooltip>
+            <Dropdown open menu={{ items: [{ key: '1', label: 'd' }] }}>
+              <span>dd</span>
+            </Dropdown>
+            <Select open options={[{ value: 'a', label: 'A' }]} />
+            <Image src="https://antdv.com/x.png" />
+            <MessageStyleProbe />
+          </div>
+        ),
+      },
+      attachTo: 'body',
+    });
+    await nextTick();
+    await new Promise(r => setTimeout(r, 80));
+
+    const css = collectCss();
+    const expectedVars = [
+      '--ant-drawer-z-index-popup',
+      '--ant-popover-z-index-popup',
+      '--ant-message-z-index-popup',
+      '--ant-notification-z-index-popup',
+      '--ant-tooltip-z-index-popup',
+      '--ant-dropdown-z-index-popup',
+      '--ant-select-z-index-popup',
+      '--ant-image-z-index-popup',
+    ];
+    expectedVars.forEach(varName => {
+      const m = css.match(new RegExp(`${varName}\\s*:\\s*([^;}]+)`));
+      expect(m).toBeTruthy();
+      expect(m[1].trim()).toMatch(/^\d+$/);
+    });
+    expect(findUnitlessWithPx(css)).toEqual([]);
+    wrapper.unmount();
+  });
+
+  it('Popover wireframe 模式下不产生 NaNpx', async () => {
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: { theme: { cssVar: true, token: { wireframe: true } } },
+      slots: {
+        default: () => (
+          <Popover open title="t" content="c">
+            <span>w</span>
+          </Popover>
+        ),
+      },
+      attachTo: 'body',
+    });
+    await nextTick();
+    await new Promise(r => setTimeout(r, 80));
+    const css = collectCss();
+    expect(css).not.toContain('NaN');
+    wrapper.unmount();
   });
 });

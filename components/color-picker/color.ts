@@ -105,8 +105,11 @@ export class AggregationColor {
   }
 
   toHsbString(): string {
-    const { h, s, v } = this.metaColor.toHsv();
-    return `hsb(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(v * 100)}%)`;
+    const { h, s, v, a } = this.metaColor.toHsv();
+    const alpha = Math.round((a ?? 1) * 100) / 100;
+    return alpha < 1
+      ? `hsba(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(v * 100)}%, ${alpha})`
+      : `hsb(${Math.round(h)}, ${Math.round(s * 100)}%, ${Math.round(v * 100)}%)`;
   }
 
   toHex(): string {
@@ -114,7 +117,9 @@ export class AggregationColor {
   }
 
   toHexString(): string {
-    return this.metaColor.toHexString();
+    return this.metaColor.getAlpha() < 1
+      ? this.metaColor.toHex8String()
+      : this.metaColor.toHexString();
   }
 
   toRgb() {
@@ -124,7 +129,8 @@ export class AggregationColor {
 
   toRgbString(): string {
     const { r, g, b, a } = this.metaColor.toRgb();
-    return a < 1 ? `rgba(${r}, ${g}, ${b}, ${a})` : `rgb(${r}, ${g}, ${b})`;
+    const alpha = Math.round(a * 100) / 100;
+    return alpha < 1 ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgb(${r}, ${g}, ${b})`;
   }
 
   isGradient(): boolean {
@@ -136,17 +142,23 @@ export class AggregationColor {
   }
 
   toCssString(): string {
+    if (this.cleared) {
+      return 'transparent';
+    }
     const { colors } = this;
     if (colors) {
       const colorsStr = colors.map(c => `${c.color.toRgbString()} ${c.percent}%`).join(', ');
       return `linear-gradient(90deg, ${colorsStr})`;
     }
-    return this.metaColor.toRgbString();
+    return this.toRgbString();
   }
 
   equals(color: AggregationColor): boolean {
-    if (!color || this.isGradient() !== color.isGradient()) {
+    if (!color || this.cleared !== color.cleared || this.isGradient() !== color.isGradient()) {
       return false;
+    }
+    if (this.cleared && color.cleared) {
+      return true;
     }
     if (!this.isGradient()) {
       return this.toHexString() === color.toHexString();
@@ -179,10 +191,10 @@ export function genAlphaColor(color: AggregationColor, alpha?: number): Aggregat
   const rgba = color.toRgb();
   if (!rgba.r && !rgba.g && !rgba.b) {
     const hsba = color.toHsb();
-    hsba.a = alpha || 1;
+    hsba.a = alpha ?? 1;
     return generateColor(hsba);
   }
-  rgba.a = alpha || 1;
+  rgba.a = alpha ?? 1;
   return generateColor(rgba);
 }
 

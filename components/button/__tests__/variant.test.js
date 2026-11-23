@@ -27,6 +27,17 @@ describe('Button variant（antd 5.21）', () => {
     const wrapper = mount(Button, { props: { variant: 'solid', color: 'danger' } });
     expect(wrapper.element.getAttribute('class')).toContain('ant-btn-dangerous');
   });
+
+  it('color=primary 输出 color-primary 且 variant=link ghost 不输出 background-ghost', () => {
+    const wrapper = mount(Button, { props: { variant: 'filled', color: 'primary' } });
+    expect(wrapper.element.getAttribute('class')).toContain('ant-btn-color-primary');
+    expect(wrapper.element.getAttribute('class')).toContain('ant-btn-filled');
+
+    const warnSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const linkGhost = mount(Button, { props: { variant: 'link', ghost: true } });
+    expect(linkGhost.element.getAttribute('class')).not.toContain('ant-btn-background-ghost');
+    warnSpy.mockRestore();
+  });
 });
 
 describe('Popconfirm onPopupClick', () => {

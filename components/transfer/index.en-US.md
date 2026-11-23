@@ -2,16 +2,17 @@
 category: Components
 type: Data Entry
 title: Transfer
+cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EAApQ5ephigAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*yv12S4sSRAEAAAAAAAAAAAAADrJ8AQ/original
 ---
 
-Alert component for feedback.
+Double column transfer choice box.
 
 ## When To Use
 
-- When you need to show alert messages to users.
-- When you need a persistent static container which is closable by user actions.
+- It is a fair way to select or transfer multiple items from one column to another.
+- Compared with Select and TreeSelect, Transfer occupies more space and can display more information about options.
 
 Transfer the elements between two columns in an intuitive and efficient way.
 

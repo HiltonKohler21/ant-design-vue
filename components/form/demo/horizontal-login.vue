@@ -24,12 +24,16 @@ Inline login form is often used in navigation bar.
   >
     <a-form-item>
       <a-input v-model:value="formState.user" placeholder="Username">
-        <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+        <template #prefix>
+          <UserOutlined style="color: var(--ant-color-text-quaternary, rgba(0, 0, 0, 0.25))" />
+        </template>
       </a-input>
     </a-form-item>
     <a-form-item>
       <a-input v-model:value="formState.password" type="password" placeholder="Password">
-        <template #prefix><LockOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+        <template #prefix>
+          <LockOutlined style="color: var(--ant-color-text-quaternary, rgba(0, 0, 0, 0.25))" />
+        </template>
       </a-input>
     </a-form-item>
     <a-form-item>

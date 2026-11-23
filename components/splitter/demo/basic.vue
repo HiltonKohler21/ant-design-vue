@@ -16,8 +16,8 @@ The most basic usage.
 
 </docs>
 <template>
-  <a-splitter style="height: 200px">
-    <a-splitter-panel size="30%" min="20%">
+  <a-splitter style="height: 200px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); border-radius: 8px">
+    <a-splitter-panel default-size="30%" min="20%">
       <div style="padding: 16px">First panel</div>
     </a-splitter-panel>
     <a-splitter-panel>

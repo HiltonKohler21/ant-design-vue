@@ -140,10 +140,6 @@ const totals = computed(() => {
 <style>
 #components-table-demo-summary tfoot th,
 #components-table-demo-summary tfoot td {
-  background: #fafafa;
-}
-[data-theme='dark'] #components-table-demo-summary tfoot th,
-[data-theme='dark'] #components-table-demo-summary tfoot td {
-  background: #1d1d1d;
+  background: var(--ant-color-fill-alter, #fafafa);
 }
 </style>

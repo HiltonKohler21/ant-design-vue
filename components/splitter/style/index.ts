@@ -118,8 +118,12 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
           '&:active': {
             background: controlItemBgActiveHover,
           },
+          [`${splitBarCls}-collapse-icon`]: {
+            display: 'flex',
+            alignItems: 'center',
+          },
         },
-        '&:hover, &:active': {
+        '&:hover, &:active, &:focus-within': {
           [`${splitBarCls}-collapse-bar-hover-only`]: {
             opacity: 1,
           },

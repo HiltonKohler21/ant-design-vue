@@ -17,7 +17,7 @@ By specifying `arrowPointAtCenter` prop, the arrow will point to the center of t
 </docs>
 
 <template>
-  <a-space>
+  <a-space wrap>
     <a-tooltip placement="topLeft" title="Prompt Text">
       <a-button>Align edge / 边缘对齐</a-button>
     </a-tooltip>

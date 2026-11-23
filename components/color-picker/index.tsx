@@ -13,8 +13,8 @@ import { AggregationColor, generateColor } from './color';
 export const colorPickerProps = () => ({
   prefixCls: String,
   rootClassName: String,
-  value: { type: String, default: undefined },
-  defaultValue: { type: String, default: '#1677ff' },
+  value: { type: [String, Object, Array] as PropType<any>, default: undefined },
+  defaultValue: { type: [String, Object, Array] as PropType<any>, default: '#1677ff' },
   open: { type: Boolean, default: undefined },
   disabled: { type: Boolean, default: undefined },
   disabledAlpha: { type: Boolean, default: false },
@@ -74,7 +74,7 @@ const ColorPicker = defineComponent({
     const mergedSize = computed(() => props.size ?? size.value);
 
     // 内部颜色状态（受控/非受控）
-    const innerValue = ref<string>(props.value ?? props.defaultValue);
+    const innerValue = ref<any>(props.value ?? props.defaultValue);
     watch(
       () => props.value,
       v => {
@@ -83,18 +83,35 @@ const ColorPicker = defineComponent({
     );
     const color = computed(() => generateColor(innerValue.value));
 
-    // mode 状态
-    const initialMode = computed<'single' | 'gradient'>(() => {
-      if (Array.isArray(props.mode)) {
-        return props.mode[0] ?? 'single';
-      }
-      return props.mode ?? 'single';
+    // mode 状态：支持根据初始渐变值自动进入 gradient 模式
+    const modeOptions = computed<('single' | 'gradient')[]>(() => {
+      const list = Array.isArray(props.mode) ? props.mode : [props.mode ?? 'single'];
+      return Array.from(new Set(list)).filter(
+        (m): m is 'single' | 'gradient' => m === 'single' || m === 'gradient',
+      );
     });
-    const mergedMode = ref<'single' | 'gradient'>(initialMode.value);
+    const allowModeSwitch = computed(() => modeOptions.value.length > 1);
+    const resolveMode = (): 'single' | 'gradient' => {
+      if (color.value.isGradient() && modeOptions.value.includes('gradient')) {
+        return 'gradient';
+      }
+      return modeOptions.value[0] ?? 'single';
+    };
+    const mergedMode = ref<'single' | 'gradient'>(resolveMode());
     watch(
       () => props.mode,
       () => {
-        mergedMode.value = initialMode.value;
+        if (!modeOptions.value.includes(mergedMode.value)) {
+          mergedMode.value = resolveMode();
+        }
+      },
+    );
+    watch(
+      () => color.value.isGradient(),
+      isGrad => {
+        if (isGrad && modeOptions.value.includes('gradient')) {
+          mergedMode.value = 'gradient';
+        }
       },
     );
 
@@ -110,17 +127,42 @@ const ColorPicker = defineComponent({
       props.onFormatChange?.(f);
     };
 
+    const formatOutputColor = (nextColor: AggregationColor): string => {
+      if (nextColor.cleared) return '';
+      return nextColor.isGradient() ? nextColor.toCssString() : nextColor.toHexString();
+    };
+
+    const setColor = (nextColor: AggregationColor) => {
+      const raw = formatOutputColor(nextColor);
+      const val = props.formatter && raw ? props.formatter(raw) : raw;
+      innerValue.value = val;
+      emit('update:value', val);
+      props.onChange?.(val);
+    };
+
+    const setColorComplete = (nextColor: AggregationColor) => {
+      const raw = formatOutputColor(nextColor);
+      const val = props.formatter && raw ? props.formatter(raw) : raw;
+      props.onChangeComplete?.(val);
+    };
+
     const setMode = (m: 'single' | 'gradient') => {
       mergedMode.value = m;
       props.onModeChange?.(m);
       if (m === 'gradient' && !color.value.isGradient()) {
         // 切换到渐变时，初始化为双色渐变
-        setColor(
-          new AggregationColor([
-            { color: color.value, percent: 0 },
-            { color: new AggregationColor('#ffffff'), percent: 100 },
-          ]),
-        );
+        const startColor = color.value.cleared ? new AggregationColor('#1677ff') : color.value;
+        const grad = new AggregationColor([
+          { color: startColor, percent: 0 },
+          { color: new AggregationColor('#ffffff'), percent: 100 },
+        ]);
+        setColor(grad);
+        setColorComplete(grad);
+      } else if (m === 'single' && color.value.isGradient()) {
+        const first = color.value.getColors()[0]?.color ?? new AggregationColor('#1677ff');
+        const single = new AggregationColor(first);
+        setColor(single);
+        setColorComplete(single);
       }
     };
 
@@ -139,23 +181,19 @@ const ColorPicker = defineComponent({
       props.onOpenChange?.(next);
     };
 
-    const setColor = (nextColor: AggregationColor) => {
-      const raw = nextColor.isGradient() ? nextColor.toCssString() : nextColor.toHexString();
-      const val = props.formatter ? props.formatter(raw) : raw;
-      innerValue.value = val;
-      emit('update:value', val);
-      props.onChange?.(val);
-    };
-
-    const setColorComplete = (nextColor: AggregationColor) => {
-      const raw = nextColor.isGradient() ? nextColor.toCssString() : nextColor.toHexString();
-      props.onChangeComplete?.(raw);
-    };
-
     return () => {
       const { disabledAlpha, presets, showText, allowClear, rootClassName } = props;
       const isCleared = color.value.cleared;
       const display = isCleared ? 'transparent' : color.value.toCssString();
+      const triggerText = isCleared
+        ? ''
+        : color.value.isGradient()
+        ? color.value.toCssString()
+        : mergedFormat.value === 'rgb'
+        ? color.value.toRgbString()
+        : mergedFormat.value === 'hsb'
+        ? color.value.toHsbString()
+        : color.value.toHexString();
 
       const triggerNode = slots.default ? (
         slots.default()
@@ -183,7 +221,7 @@ const ColorPicker = defineComponent({
           </div>
           {showText && (
             <span class={`${prefixCls.value}-trigger-text`}>
-              {typeof showText === 'function' ? showText(color.value) : isCleared ? '' : display}
+              {typeof showText === 'function' ? showText(color.value) : triggerText}
             </span>
           )}
           {allowClear && !isCleared && (
@@ -191,7 +229,9 @@ const ColorPicker = defineComponent({
               class={`${prefixCls.value}-trigger-clear`}
               onClick={e => {
                 e.stopPropagation();
-                setColor(new AggregationColor(''));
+                const cleared = new AggregationColor('');
+                setColor(cleared);
+                setColorComplete(cleared);
                 props.onClear?.();
               }}
             >
@@ -222,11 +262,7 @@ const ColorPicker = defineComponent({
             trigger={props.trigger}
             placement={props.placement}
             arrow={props.arrow}
-            overlayClassName={classNames(
-              `${prefixCls.value}-popover`,
-              rootClassName,
-              hashId.value,
-            )}
+            overlayClassName={classNames(`${prefixCls.value}-popover`, rootClassName, hashId.value)}
             onOpenChange={setOpen}
             v-slots={{
               default: () => triggerNode,
@@ -240,11 +276,7 @@ const ColorPicker = defineComponent({
                   disabledAlpha={disabledAlpha}
                   presets={presets}
                   mode={mergedMode.value}
-                  allowMode={
-                    Array.isArray(props.mode)
-                      ? props.mode.includes('gradient')
-                      : props.mode === 'gradient'
-                  }
+                  allowMode={allowModeSwitch.value}
                   onModeChange={setMode}
                   panelRender={props.panelRender}
                   format={mergedFormat.value}

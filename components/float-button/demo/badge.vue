@@ -33,7 +33,7 @@ FloatButton with Badge.
       </template>
     </a-float-button>
     <a-float-button :badge="{ count: 123, overflowCount: 999 }"></a-float-button>
-    <a-back-top :visibility-height="0" />
+    <a-float-button-back-top :visibility-height="0" />
   </a-float-button-group>
 </template>
 <script setup>

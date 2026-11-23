@@ -16,7 +16,7 @@ Synchronize with [InputNumber](/components/input-number/) component.
 </docs>
 
 <template>
-  <div>
+  <div class="slider-demo-wrapper">
     <a-row>
       <a-col :span="12">
         <a-slider v-model:value="inputValue1" :min="1" :max="20" />
@@ -47,7 +47,7 @@ const inputValue = ref<number>(0);
 const inputValue1 = ref<number>(1);
 </script>
 <style scoped>
-.code-box-demo .ant-slider {
+.slider-demo-wrapper :deep(.ant-slider) {
   margin-bottom: 16px;
 }
 </style>

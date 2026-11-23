@@ -38,7 +38,14 @@ Generally, the mainnav is placed at the top of the page, and includes the logo, 
         <a-breadcrumb-item>List</a-breadcrumb-item>
         <a-breadcrumb-item>App</a-breadcrumb-item>
       </a-breadcrumb>
-      <div :style="{ background: '#fff', padding: '24px', minHeight: '280px', borderRadius: '8px' }">
+      <div
+        :style="{
+          background: 'var(--ant-color-bg-container, #fff)',
+          padding: '24px',
+          minHeight: '280px',
+          borderRadius: '8px',
+        }"
+      >
         Content
       </div>
     </a-layout-content>
@@ -53,15 +60,10 @@ const selectedKeys = ref<string[]>(['2']);
 </script>
 <style scoped>
 .demo-logo {
-  float: left;
   width: 120px;
   height: 31px;
-  margin: 16px 24px 16px 0;
+  margin-inline-end: 24px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 6px;
-}
-.ant-row-rtl .demo-logo {
-  float: right;
-  margin: 16px 0 16px 24px;
 }
 </style>

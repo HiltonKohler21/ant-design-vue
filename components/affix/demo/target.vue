@@ -17,7 +17,7 @@ Set a `target` for 'Affix', which is listen to scroll event of target element (d
 </docs>
 
 <template>
-  <div id="components-affix-demo-target" ref="containerRef" class="scrollable-container">
+  <div ref="containerRef" class="components-affix-demo-target scrollable-container">
     <div class="background">
       <a-affix :target="() => containerRef">
         <a-button type="primary">Fixed at the top of container</a-button>
@@ -30,12 +30,12 @@ import { ref } from 'vue';
 const containerRef = ref();
 </script>
 <style scoped>
-#components-affix-demo-target.scrollable-container {
+.components-affix-demo-target.scrollable-container {
   height: 100px;
   overflow-y: scroll;
 }
 
-#components-affix-demo-target .background {
+.components-affix-demo-target .background {
   padding-top: 60px;
   height: 300px;
   background-image: url('https://zos.alipayobjects.com/rmsportal/RmjwQiJorKyobvI.jpg');

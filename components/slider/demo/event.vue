@@ -16,9 +16,15 @@ The `onChange` callback function will fire when the user changes the slider's va
 </docs>
 
 <template>
-  <div class="code-box-demo">
+  <div class="slider-demo-wrapper">
     <a-slider v-model:value="value1" @change="onChange" @afterChange="onAfterChange" />
-    <a-slider v-model:value="value2" range :step="10" @change="onChange" @afterChange="onAfterChange" />
+    <a-slider
+      v-model:value="value2"
+      range
+      :step="10"
+      @change="onChange"
+      @afterChange="onAfterChange"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -35,7 +41,7 @@ const onAfterChange = (value: number) => {
 };
 </script>
 <style scoped>
-.code-box-demo .ant-slider {
+.slider-demo-wrapper :deep(.ant-slider) {
   margin-bottom: 16px;
 }
 </style>

@@ -8,6 +8,8 @@ export const tourProps = () => ({
   prefixCls: { type: String },
   current: { type: Number },
   type: { type: String as PropType<'default' | 'primary'> }, //	default	类型，影响底色与文字颜色
+  /** 自定义底部操作按钮渲染 */
+  actionsRender: { type: Function as PropType<(originNode: any, info: any) => any> },
   'onUpdate:current': Function as PropType<(val: number) => void>,
 });
 

@@ -28,21 +28,12 @@ Custom paging display
     </div>
   </a-carousel>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue';
-
+<script lang="ts" setup>
 const baseUrl =
   'https://raw.githubusercontent.com/vueComponent/ant-design-vue/main/components/carousel/demo/';
-export default defineComponent({
-  setup() {
-    const getImgUrl = (i: number) => {
-      return `${baseUrl}abstract0${i + 1}.jpg`;
-    };
-    return {
-      getImgUrl,
-    };
-  },
-});
+const getImgUrl = (i: number) => {
+  return `${baseUrl}abstract0${i + 1}.jpg`;
+};
 </script>
 <style scoped>
 /* For demo */
@@ -51,7 +42,7 @@ export default defineComponent({
   height: auto;
 }
 :deep(.slick-slide img) {
-  border: 5px solid #fff;
+  border: 5px solid var(--ant-color-bg-container, #fff);
   display: block;
   margin: auto;
   max-width: 80%;
@@ -72,7 +63,7 @@ export default defineComponent({
   filter: grayscale(100%);
   display: block;
 }
-:deep .slick-thumb li.slick-active img {
+:deep(.slick-thumb li.slick-active img) {
   filter: grayscale(0%);
 }
 </style>

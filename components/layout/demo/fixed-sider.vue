@@ -16,9 +16,19 @@ When dealing with long content, a fixed sider can provide a better user experien
 
 </docs>
 <template>
-  <a-layout has-sider style="height: 400px; overflow: hidden; position: relative; border-radius: 8px">
+  <a-layout
+    has-sider
+    style="height: 400px; overflow: hidden; position: relative; border-radius: 8px"
+  >
     <a-layout-sider
-      :style="{ overflow: 'auto', height: '100%', position: 'absolute', left: 0, top: 0, bottom: 0 }"
+      :style="{
+        overflow: 'auto',
+        height: '100%',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+      }"
     >
       <div class="demo-logo-vertical" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
@@ -57,9 +67,15 @@ When dealing with long content, a fixed sider can provide a better user experien
       </a-menu>
     </a-layout-sider>
     <a-layout :style="{ marginLeft: '200px', height: '100%', overflow: 'auto' }">
-      <a-layout-header :style="{ background: '#fff', padding: 0 }" />
+      <a-layout-header :style="{ background: 'var(--ant-color-bg-container, #fff)', padding: 0 }" />
       <a-layout-content :style="{ margin: '24px 16px 0', overflow: 'initial' }">
-        <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
+        <div
+          :style="{
+            padding: '24px',
+            background: 'var(--ant-color-bg-container, #fff)',
+            textAlign: 'center',
+          }"
+        >
           ...
           <br />
           Really
@@ -184,12 +200,5 @@ const selectedKeys = ref<string[]>(['4']);
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
   border-radius: 6px;
-}
-.site-layout .site-layout-background {
-  background: #fff;
-}
-
-[data-theme='dark'] .site-layout .site-layout-background {
-  background: #141414;
 }
 </style>

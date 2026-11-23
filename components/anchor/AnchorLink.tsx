@@ -55,7 +55,7 @@ export default defineComponent({
       contextHandleClick(e, { title: mergedTitle, href });
       scrollTo(href);
       // Support clicking on an anchor does not record history.
-      if (e.defaultPrevented) {
+      if (e.defaultPrevented || !href) {
         return;
       }
       const isExternalLink = href.startsWith('http://') || href.startsWith('https://');
@@ -66,9 +66,10 @@ export default defineComponent({
         }
         return;
       }
-      e.preventDefault();
-      const historyMethod = replace ? 'replaceState' : 'pushState';
-      (window.history as any)[historyMethod](null, '', href);
+      if (replace) {
+        e.preventDefault();
+        window.history.replaceState(null, '', href);
+      }
     };
 
     watch(

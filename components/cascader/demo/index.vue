@@ -54,7 +54,7 @@ export default defineComponent({
 });
 </script>
 <style>
-#components-cascader-demo .ant-cascader-picker {
+[id^='components-cascader-demo-'] .ant-cascader {
   width: 300px;
 }
 </style>

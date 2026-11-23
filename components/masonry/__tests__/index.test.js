@@ -1,3 +1,4 @@
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import Masonry from '..';
 
@@ -58,5 +59,43 @@ describe('Masonry', () => {
     expect(wrapper.classes()).toContain('root-cls');
     expect(wrapper.find('.ant-masonry-item').classes()).toContain('item-cls');
     expect(wrapper.find('.ant-masonry-item').attributes('style')).toContain('color: red');
+  });
+
+  it('unobserves removed items in ResizeObserver', async () => {
+    const observe = jest.fn();
+    const unobserve = jest.fn();
+    const disconnect = jest.fn();
+    const origRO = global.ResizeObserver;
+    global.ResizeObserver = jest.fn().mockImplementation(() => ({
+      observe,
+      unobserve,
+      disconnect,
+    }));
+
+    try {
+      const wrapper = mount(Masonry, {
+        props: {
+          columns: 2,
+          items: [
+            { key: 'a', data: 'A' },
+            { key: 'b', data: 'B' },
+          ],
+          itemRender: ({ data }) => <span>{data}</span>,
+        },
+      });
+      await nextTick();
+      expect(observe).toHaveBeenCalled();
+
+      await wrapper.setProps({
+        items: [{ key: 'a', data: 'A' }],
+      });
+      await nextTick();
+      expect(unobserve).toHaveBeenCalledTimes(1);
+
+      wrapper.unmount();
+      expect(disconnect).toHaveBeenCalled();
+    } finally {
+      global.ResizeObserver = origRO;
+    }
   });
 });

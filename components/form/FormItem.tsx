@@ -171,6 +171,7 @@ export default defineComponent({
     const formContext = useInjectForm();
     const fieldName = computed(() => props.name || props.prop);
     const errors = shallowRef([]);
+    const warnings = shallowRef([]);
     const validateDisabled = shallowRef(false);
     const inputRef = shallowRef();
     const namePath = computed(() => {
@@ -288,15 +289,23 @@ export default defineComponent({
       );
       validateState.value = 'validating';
       errors.value = [];
+      warnings.value = [];
 
       promise
         .catch(e => e)
         .then((results: RuleError[] = []) => {
           if (validateState.value === 'validating') {
             const res = results.filter(result => result && result.errors.length);
-            validateState.value = res.length ? 'error' : 'success';
+            const errorRes = res.filter(r => !r.rule?.warningOnly);
+            const warningRes = res.filter(r => r.rule?.warningOnly);
+            validateState.value = errorRes.length
+              ? 'error'
+              : warningRes.length
+              ? 'warning'
+              : 'success';
 
-            errors.value = res.map(r => r.errors);
+            errors.value = errorRes.map(r => r.errors);
+            warnings.value = warningRes.map(r => r.errors);
 
             formContext.onValidate(
               fieldName.value,
@@ -323,12 +332,14 @@ export default defineComponent({
       validateState.value = props.validateStatus;
       validateDisabled.value = false;
       errors.value = [];
+      warnings.value = [];
     };
 
     const resetField = () => {
       validateState.value = props.validateStatus;
       validateDisabled.value = true;
       errors.value = [];
+      warnings.value = [];
       const model = formContext.model.value || {};
       const value = fieldValue.value;
       const prop = getPropByPath(model, namePath.value, true);
@@ -410,11 +421,14 @@ export default defineComponent({
       formContext.removeField(eventKey);
     });
     const debounceErrors = useDebounce(errors);
+    const debounceWarnings = useDebounce(warnings);
     const mergedValidateStatus = computed(() => {
       if (props.validateStatus !== undefined) {
         return props.validateStatus;
       } else if (debounceErrors.value.length) {
         return 'error';
+      } else if (debounceWarnings.value.length) {
+        return 'warning';
       }
       return validateState.value;
     });
@@ -435,11 +449,12 @@ export default defineComponent({
     watchEffect(() => {
       let feedbackIcon: any;
       if (props.hasFeedback) {
-        const customIcons = feedbackIcons
-          ? feedbackIcons({
+        const feedbackIconsFn = feedbackIcons.value;
+        const customIcons = feedbackIconsFn
+          ? feedbackIconsFn({
               status: mergedValidateStatus.value,
               errors: debounceErrors.value,
-              warnings: debounceErrors.value,
+              warnings: debounceWarnings.value,
             })
           : undefined;
         const mergedIconMap = { ...iconMap, ...(customIcons || {}) };

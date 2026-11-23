@@ -25,7 +25,7 @@ import { useInjectFloatButtonGroupContext } from './context';
 
 const BackTop = defineComponent({
   compatConfig: { MODE: 3 },
-  name: 'ABackTop',
+  name: 'AFloatButtonBackTop',
   inheritAttrs: false,
   props: initDefaultProps(backTopProps(), {
     visibilityHeight: 400,
@@ -64,28 +64,39 @@ const BackTop = defineComponent({
       state.visible = scrollTop >= visibilityHeight;
     });
 
-    const bindScrollEvent = () => {
-      const { target } = props;
-      const getTarget = target || getDefaultTarget;
-      const container = getTarget();
-      handleScroll({ target: container });
-      container?.addEventListener('scroll', handleScroll);
-    };
+    let scrollContainer: HTMLElement | Window | Document | null = null;
 
     const scrollRemove = () => {
+      handleScroll.cancel();
+      scrollContainer?.removeEventListener('scroll', handleScroll);
+      scrollContainer = null;
+    };
+
+    const bindScrollEvent = () => {
+      scrollRemove();
       const { target } = props;
       const getTarget = target || getDefaultTarget;
       const container = getTarget();
-      handleScroll.cancel();
-      container?.removeEventListener('scroll', handleScroll);
+      if (container) {
+        scrollContainer = container;
+        handleScroll({ target: container });
+        container.addEventListener('scroll', handleScroll);
+      }
     };
 
     watch(
       () => props.target,
-      () => {
+      (_val, _oldVal, onCleanup) => {
         scrollRemove();
+        let cancelled = false;
         nextTick(() => {
-          bindScrollEvent();
+          if (!cancelled) {
+            bindScrollEvent();
+          }
+        });
+        onCleanup(() => {
+          cancelled = true;
+          scrollRemove();
         });
       },
     );

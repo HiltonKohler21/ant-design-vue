@@ -45,4 +45,3 @@ const onChange = (current: number) => {
   color: #fff;
 }
 </style>
-```

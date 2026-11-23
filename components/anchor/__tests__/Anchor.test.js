@@ -59,6 +59,25 @@ describe('Anchor Render', () => {
     wrapper.find('a[href="http://www.example.com/#api"]').trigger('click');
     expect(currentActiveLink.value).toBe('http://www.example.com/#api');
   });
+
+  it('AnchorLink guards undefined href and avoids pushState on hash links when replace is false', async () => {
+    const pushStateSpy = jest.spyOn(window.history, 'pushState').mockImplementation(() => {});
+    const wrapper = mount({
+      render() {
+        return (
+          <Anchor>
+            <Link href={undefined} title="NoHref" />
+            <Link href="#section-1" title="Section 1" />
+          </Anchor>
+        );
+      },
+    });
+    await sleep();
+    expect(() => wrapper.findAll('a')[0].trigger('click')).not.toThrow();
+    await wrapper.find('a[href="#section-1"]').trigger('click');
+    expect(pushStateSpy).not.toHaveBeenCalled();
+    pushStateSpy.mockRestore();
+  });
   /*
     it('Anchor render perfectly for complete href - scroll', done => {
       const wrapper = mount(

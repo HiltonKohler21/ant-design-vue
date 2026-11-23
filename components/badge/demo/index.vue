@@ -53,7 +53,7 @@ export default defineComponent({
   width: 42px;
   height: 42px;
   border-radius: 4px;
-  background: #eee;
+  background: var(--ant-color-fill-secondary, #eee);
   display: inline-block;
   vertical-align: middle;
 }

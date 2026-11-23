@@ -15,7 +15,7 @@ The status can be controlled by the value `status`, four values ​​of `active
 </docs>
 
 <template>
-  <a-space>
+  <a-space wrap>
     <a-qrcode value="http://www.antdv.com" status="loading" />
     <a-qrcode
       value="http://www.antdv.com"

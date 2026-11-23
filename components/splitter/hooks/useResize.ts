@@ -1,26 +1,47 @@
-import { computed, ref, shallowRef, type Ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import type { InternalPanelItem } from './useItems';
-import { getPtg } from './useItems';
+import { getPtg, parsePxSize } from './useItems';
+import type { ResizableInfo } from './useResizable';
+
+export interface ResizeSnapshot {
+  items: InternalPanelItem[];
+  resizableInfos: ResizableInfo[];
+  percentSizes: number[];
+  containerSize: number | undefined;
+  reverse: boolean;
+}
 
 /**
- * Handle user drag resize logic.
+ * Handle user drag resize & collapse logic against the latest rendered snapshot.
  */
 export default function useResize(
-  items: Ref<InternalPanelItem[]>,
-  resizableInfos: Ref<any[]>,
-  percentSizes: Ref<number[]>,
-  containerSize: Ref<number | undefined>,
+  getSnapshot: () => ResizeSnapshot,
   updateSizes: (sizes: number[]) => void,
-  isRTL: Ref<boolean>,
 ) {
-  const limitSizes = computed(() => items.value.map(item => [item.min, item.max]));
-  const mergedContainerSize = computed(() => containerSize.value || 0);
-
   const cacheSizes = ref<number[]>([]);
   const cacheCollapsedSize = shallowRef<number[]>([]);
   const movingIndex = ref<{ index: number; confirmed: boolean } | null>(null);
 
-  const getPxSizes = () => percentSizes.value.map(ptg => ptg * mergedContainerSize.value);
+  const getPxSizes = () => {
+    const { percentSizes, containerSize } = getSnapshot();
+    const mergedContainerSize = containerSize || 0;
+    return percentSizes.map(ptg => ptg * mergedContainerSize);
+  };
+
+  function getLimitSize(
+    str: number | string | undefined,
+    defaultLimit: number,
+    mergedContainerSize: number,
+  ): number {
+    if (typeof str === 'string') {
+      if (str.endsWith('%')) {
+        return getPtg(str) * mergedContainerSize;
+      }
+      const parsed = parsePxSize(str);
+      return parsed !== undefined ? parsed : defaultLimit;
+    }
+    return str !== undefined ? str : defaultLimit;
+  }
 
   const onOffsetStart = (index: number) => {
     cacheSizes.value = getPxSizes();
@@ -28,6 +49,10 @@ export default function useResize(
   };
 
   const onOffsetUpdate = (index: number, offset: number) => {
+    const { items, resizableInfos, containerSize } = getSnapshot();
+    const mergedContainerSize = containerSize || 0;
+    const limitSizes = items.map(item => [item.min, item.max]);
+
     let confirmedIndex: number | null = null;
     if ((!movingIndex.value || !movingIndex.value.confirmed) && offset !== 0) {
       if (offset > 0) {
@@ -35,7 +60,7 @@ export default function useResize(
         movingIndex.value = { index, confirmed: true };
       } else {
         for (let i = index; i >= 0; i -= 1) {
-          if (cacheSizes.value[i] > 0 && resizableInfos.value[i].resizable) {
+          if (cacheSizes.value[i] > 0 && resizableInfos[i]?.resizable) {
             confirmedIndex = i;
             movingIndex.value = { index: i, confirmed: true };
             break;
@@ -48,10 +73,12 @@ export default function useResize(
     const numSizes = [...cacheSizes.value];
     const nextIndex = mergedIndex + 1;
 
-    const startMinSize = getLimitSize(limitSizes.value[mergedIndex][0], 0);
-    const endMinSize = getLimitSize(limitSizes.value[nextIndex][0], 0);
-    const startMaxSize = getLimitSize(limitSizes.value[mergedIndex][1], mergedContainerSize.value);
-    const endMaxSize = getLimitSize(limitSizes.value[nextIndex][1], mergedContainerSize.value);
+    const mergedLimits = limitSizes[mergedIndex] || [undefined, undefined];
+    const nextLimits = limitSizes[nextIndex] || [undefined, undefined];
+    const startMinSize = getLimitSize(mergedLimits[0], 0, mergedContainerSize);
+    const endMinSize = getLimitSize(nextLimits[0], 0, mergedContainerSize);
+    const startMaxSize = getLimitSize(mergedLimits[1], mergedContainerSize, mergedContainerSize);
+    const endMaxSize = getLimitSize(nextLimits[1], mergedContainerSize, mergedContainerSize);
 
     let mergedOffset = offset;
     if (numSizes[mergedIndex] + mergedOffset < startMinSize) {
@@ -78,8 +105,12 @@ export default function useResize(
   };
 
   const onCollapse = (index: number, type: 'start' | 'end') => {
+    const { items, containerSize, reverse } = getSnapshot();
+    const mergedContainerSize = containerSize || 0;
+    const limitSizes = items.map(item => [item.min, item.max]);
+
     const currentSizes = getPxSizes();
-    const adjustedType = isRTL.value ? (type === 'start' ? 'end' : 'start') : type;
+    const adjustedType = reverse ? (type === 'start' ? 'end' : 'start') : type;
     const currentIndex = adjustedType === 'start' ? index : index + 1;
     const targetIndex = adjustedType === 'start' ? index + 1 : index;
     const currentSize = currentSizes[currentIndex];
@@ -91,16 +122,16 @@ export default function useResize(
       cacheCollapsedSize.value[index] = currentSize;
     } else {
       const totalSize = currentSize + targetSize;
-      const currentSizeMin = getLimitSize(limitSizes.value[currentIndex][0], 0);
+      const currentLimits = limitSizes[currentIndex] || [undefined, undefined];
+      const targetLimits = limitSizes[targetIndex] || [undefined, undefined];
+      const currentSizeMin = getLimitSize(currentLimits[0], 0, mergedContainerSize);
       const currentSizeMax = getLimitSize(
-        limitSizes.value[currentIndex][1],
-        mergedContainerSize.value,
+        currentLimits[1],
+        mergedContainerSize,
+        mergedContainerSize,
       );
-      const targetSizeMin = getLimitSize(limitSizes.value[targetIndex][0], 0);
-      const targetSizeMax = getLimitSize(
-        limitSizes.value[targetIndex][1],
-        mergedContainerSize.value,
-      );
+      const targetSizeMin = getLimitSize(targetLimits[0], 0, mergedContainerSize);
+      const targetSizeMax = getLimitSize(targetLimits[1], mergedContainerSize, mergedContainerSize);
       const limitStart = Math.max(currentSizeMin, totalSize - targetSizeMax);
       const limitEnd = Math.min(currentSizeMax, totalSize - targetSizeMin);
       const halfOffset = targetSizeMin || (limitEnd - limitStart) / 2;
@@ -123,13 +154,6 @@ export default function useResize(
     updateSizes(currentSizes);
     return currentSizes;
   };
-
-  function getLimitSize(str: number | string | undefined, defaultLimit: number): number {
-    if (typeof str === 'string') {
-      return getPtg(str) * mergedContainerSize.value;
-    }
-    return str !== undefined ? str : defaultLimit;
-  }
 
   return [
     onOffsetStart,

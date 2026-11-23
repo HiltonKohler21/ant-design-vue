@@ -60,7 +60,7 @@ export const selectProps = () => ({
   itemIcon: PropTypes.any,
   size: stringType<SizeType>(),
   mode: stringType<'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE'>(),
-  bordered: booleanType(true),
+  bordered: booleanType(),
   variant: stringType<Variant>(),
   rootClassName: String,
   /** 语义化 classNames（antd 5.25+） */
@@ -100,6 +100,7 @@ const Select = defineComponent({
   slots: Object as CustomSlotsType<{
     notFoundContent: any;
     suffixIcon: any;
+    prefix?: any;
     itemIcon: any;
     removeIcon: any;
     clearIcon: any;
@@ -150,7 +151,7 @@ const Select = defineComponent({
         '`popupClassName` is deprecated. Please use `classNames.popup.root` instead.',
       );
       devWarning(
-        !props.styles?.popup?.root,
+        !props.dropdownStyle,
         'Select',
         '`dropdownStyle` is deprecated. Please use `styles.popup.root` instead.',
       );
@@ -250,7 +251,6 @@ const Select = defineComponent({
       () => props.popupRender ?? props.dropdownRender ?? slots.dropdownRender,
     );
     const handleOpenChange = (open: boolean) => {
-      props.onOpenChange?.(open);
       props.onDropdownVisibleChange?.(open);
       emit('openChange', open);
       emit('update:open', open);
@@ -340,7 +340,7 @@ const Select = defineComponent({
           prefixCls={prefixCls.value}
           direction={direction.value}
           inputIcon={suffixIcon}
-          prefix={props.prefix}
+          prefix={props.prefix ?? slots.prefix?.()}
           menuItemSelectedIcon={itemIcon}
           removeIcon={removeIcon}
           clearIcon={clearIcon}

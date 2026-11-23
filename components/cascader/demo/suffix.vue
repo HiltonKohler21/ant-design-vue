@@ -16,7 +16,7 @@ Custom suffix icon
 
 </docs>
 <template>
-  <a-space>
+  <a-space wrap>
     <a-cascader
       v-model:value="value1"
       style="margin-top: 1rem"

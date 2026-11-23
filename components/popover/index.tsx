@@ -50,7 +50,7 @@ const Popover = defineComponent({
       const { title = filterEmpty(slots.title?.()), content = filterEmpty(slots.content?.()) } =
         props;
       const hasTitle = !!(Array.isArray(title) ? title.length : title);
-      const hasContent = !!(Array.isArray(content) ? content.length : title);
+      const hasContent = !!(Array.isArray(content) ? content.length : content);
       if (!hasTitle && !hasContent) return null;
       return (
         <>

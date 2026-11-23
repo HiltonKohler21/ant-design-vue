@@ -67,10 +67,7 @@ const data = [
 </script>
 
 <style scoped>
-[data-doc-theme='light'] .ant-table-striped :deep(.table-striped) td {
-  background-color: #fafafa;
-}
-[data-doc-theme='dark'] .ant-table-striped :deep(.table-striped) td {
-  background-color: rgb(29, 29, 29);
+.ant-table-striped :deep(.table-striped) td {
+  background-color: var(--ant-color-fill-alter, #fafafa);
 }
 </style>

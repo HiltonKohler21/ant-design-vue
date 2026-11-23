@@ -35,7 +35,7 @@ If you want to use a customized trigger, you can hide the default one by setting
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header style="background: #fff; padding: 0">
+      <a-layout-header style="background: var(--ant-color-bg-container, #fff); padding: 0">
         <menu-unfold-outlined
           v-if="collapsed"
           class="trigger"
@@ -44,7 +44,12 @@ If you want to use a customized trigger, you can hide the default one by setting
         <menu-fold-outlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
       </a-layout-header>
       <a-layout-content
-        :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
+        :style="{
+          margin: '24px 16px',
+          padding: '24px',
+          background: 'var(--ant-color-bg-container, #fff)',
+          minHeight: '280px',
+        }"
       >
         Content
       </a-layout-content>
@@ -81,9 +86,5 @@ const collapsed = ref<boolean>(false);
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
   border-radius: 6px;
-}
-
-.site-layout .site-layout-background {
-  background: #fff;
 }
 </style>

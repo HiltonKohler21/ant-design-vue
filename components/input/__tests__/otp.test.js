@@ -34,4 +34,30 @@ describe('Input.OTP', () => {
     expect(inputs[0].element.value).toBe('a');
     expect(inputs[2].element.value).toBe('c');
   });
+
+  it('v-model:value 无 onChange 时依然触发 update:value，省略 separator 不渲染空节点，支持 rootClassName 与 type', async () => {
+    const onUpdateValue = jest.fn();
+    const wrapper = mount(OTP, {
+      props: {
+        length: 2,
+        rootClassName: 'my-otp',
+        type: 'tel',
+        'onUpdate:value': onUpdateValue,
+      },
+    });
+    expect(wrapper.classes()).toContain('my-otp');
+    expect(wrapper.findAll('.ant-otp-separator').length).toBe(0);
+    expect(wrapper.find('input').attributes('type')).toBe('tel');
+    expect(wrapper.vm.nativeElement).toBe(wrapper.element);
+    const inputs = wrapper.findAll('input');
+    await inputs[0].setValue('9');
+    expect(onUpdateValue).toHaveBeenCalledWith('9');
+  });
+
+  it('mask 响应式更新', async () => {
+    const wrapper = mount(OTP, { props: { length: 2, value: '12', mask: '*' } });
+    expect(wrapper.find('.ant-otp-mask-icon').text()).toBe('*');
+    await wrapper.setProps({ mask: '#' });
+    expect(wrapper.find('.ant-otp-mask-icon').text()).toBe('#');
+  });
 });

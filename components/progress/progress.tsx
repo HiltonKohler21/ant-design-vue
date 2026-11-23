@@ -69,13 +69,16 @@ export default defineComponent({
     const classString = computed(() => {
       const { type, showInfo, size, percentPosition } = props;
       const pre = prefixCls.value;
+      const isPercentInner =
+        percentPosition === 'inner' ||
+        (typeof percentPosition === 'object' && percentPosition?.type === 'inner');
       return {
         [pre]: true,
         [`${pre}-inline-circle`]: type === 'circle' && getSize(size, 'circle').width <= 20,
         [`${pre}-${(type === 'dashboard' && 'circle') || type}`]: true,
         [`${pre}-status-${progressStatus.value}`]: true,
         [`${pre}-show-info`]: showInfo,
-        [`${pre}-show-info-inner`]: percentPosition === 'inner',
+        [`${pre}-show-info-inner`]: isPercentInner,
         [`${pre}-${size}`]: size,
         [`${pre}-rtl`]: direction.value === 'rtl',
         [props.rootClassName as string]: !!props.rootClassName,

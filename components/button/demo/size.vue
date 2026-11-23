@@ -20,20 +20,20 @@ If a large or small button is desired, set the `size` property to either `large`
 </docs>
 
 <template>
-  <a-space direction="vertical">
+  <a-space direction="vertical" style="width: 100%">
     <a-radio-group v-model:value="size">
       <a-radio-button value="large">Large</a-radio-button>
       <a-radio-button value="default">Default</a-radio-button>
       <a-radio-button value="small">Small</a-radio-button>
     </a-radio-group>
-    <a-space>
+    <a-space wrap>
       <a-button type="primary" :size="size">Primary</a-button>
       <a-button :size="size">Normal</a-button>
       <a-button type="dashed" :size="size">Dashed</a-button>
       <a-button danger :size="size">Danger</a-button>
       <a-button type="link" :size="size">Link</a-button>
     </a-space>
-    <a-space>
+    <a-space wrap>
       <a-button type="primary" :size="size">
         <template #icon>
           <DownloadOutlined />

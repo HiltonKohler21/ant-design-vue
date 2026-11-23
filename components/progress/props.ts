@@ -19,6 +19,11 @@ export type StringGradients = { [percentage: string]: string };
 type FromToGradients = { from: string; to: string };
 export type ProgressGradient = { direction?: string } & (StringGradients | FromToGradients);
 
+export interface PercentPositionType {
+  align?: 'start' | 'center' | 'end';
+  type?: 'inner' | 'outer';
+}
+
 export interface SuccessProps {
   percent?: number;
   /** @deprecated Use `percent` instead */
@@ -38,8 +43,8 @@ export const progressProps = () => ({
   strokeLinecap: stringType<'butt' | 'square' | 'round'>(),
   /** 5.20+ 替代 strokeLinecap，true 等价 'round' */
   rounding: { type: Boolean, default: undefined },
-  /** 5.20+ 百分比文字位置：inner（进度条内）/ outer（进度条外） */
-  percentPosition: stringType<'inner' | 'outer'>(),
+  /** 5.20+ 百分比文字位置：inner/outer 或 { align, type } */
+  percentPosition: someType<'inner' | 'outer' | PercentPositionType>([String, Object]),
   strokeColor: anyType<string | string[] | ProgressGradient>(),
   trailColor: String,
   /** @deprecated Use `size` instead */

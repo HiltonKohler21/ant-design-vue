@@ -23,13 +23,15 @@ Used together with `vue-router`
         <span v-if="routes.indexOf(route) === routes.length - 1">
           {{ route.breadcrumbName }}
         </span>
-        <router-link v-else :to="`${basePath}/${paths.join('/')}`">
-          {{ route.breadcrumbName }}
+        <router-link v-else v-slot="{ href }" custom :to="`${basePath}/${paths.join('/')}`">
+          <a :href="href" @click.prevent="currentPath = `${basePath}/${paths.join('/')}`">
+            {{ route.breadcrumbName }}
+          </a>
         </router-link>
       </template>
     </a-breadcrumb>
     <br />
-    {{ $route.path }}
+    {{ currentPath }}
   </div>
 </template>
 <script lang="ts" setup>
@@ -43,6 +45,7 @@ interface Route {
   }>;
 }
 const basePath = '/components/breadcrumb';
+const currentPath = ref<string>(basePath);
 const routes = ref<Route[]>([
   {
     path: 'index',

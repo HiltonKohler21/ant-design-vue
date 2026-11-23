@@ -96,12 +96,12 @@ Compact Mode for form component.
         <a-select-option value="1">Between</a-select-option>
         <a-select-option value="2">Except</a-select-option>
       </a-select>
-      <a-input :style="{ width: 100, textAlig: 'center' }" placeholder="Minimum" />
+      <a-input :style="{ width: '100px', textAlign: 'center' }" placeholder="Minimum" />
       <a-input
         class="site-input-split"
         :style="{
-          width: 30,
-          borderLef: 0,
+          width: '30px',
+          borderLeft: 0,
           borderRight: 0,
           pointerEvents: 'none',
         }"
@@ -111,8 +111,8 @@ Compact Mode for form component.
       <a-input
         class="site-input-right"
         :style="{
-          width: 100,
-          textAlig: 'center',
+          width: '100px',
+          textAlign: 'center',
         }"
         placeholder="Maximum"
       />
@@ -175,7 +175,7 @@ Compact Mode for form component.
         show-search
         :style="{ width: '60%' }"
         value="leaf1"
-        :dropdown-style="{ maxHeight: 400, overflow: 'auto' }"
+        :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
         placeholder="Please select"
         allow-clear
         tree-default-expand-all

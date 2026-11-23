@@ -17,7 +17,7 @@ A simple playground for column count and gutter.
 </docs>
 
 <template>
-  <div id="components-grid-demo-playground">
+  <div class="components-grid-demo-playground">
     <div style="margin-bottom: 16px">
       <span style="margin-right: 6px">Horizontal Gutter (px):</span>
       <div style="width: 50%">
@@ -120,27 +120,28 @@ const rowColHtml = computed(() => {
 });
 </script>
 <style scoped>
-:deep(#components-grid-demo-playground) [class~='ant-col'] {
+.components-grid-demo-playground :deep([class~='ant-col']) {
   background: transparent;
   border: 0;
 }
-:deep(#components-grid-demo-playground) [class~='ant-col'] > div {
+.components-grid-demo-playground :deep([class~='ant-col'] > div) {
   height: 120px;
   font-size: 14px;
   line-height: 120px;
   background: #0092ff;
   border-radius: 4px;
 }
-:deep(#components-grid-demo-playground) pre {
+.components-grid-demo-playground pre {
   padding: 8px 16px;
   font-size: 13px;
-  background: #f9f9f9;
+  color: var(--ant-color-text);
+  background: var(--ant-color-fill-alter, #f9f9f9);
   border-radius: 6px;
 }
-:deep(#components-grid-demo-playground) pre.demo-code {
+.components-grid-demo-playground pre.demo-code {
   direction: ltr;
 }
-:deep(#components-grid-demo-playground) .ant-col {
+.components-grid-demo-playground :deep(.ant-col) {
   padding: 0;
 }
 </style>

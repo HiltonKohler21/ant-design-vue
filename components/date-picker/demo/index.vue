@@ -72,7 +72,7 @@ export default defineComponent({
 });
 </script>
 <style>
-#components-date-picker-demo .ant-calendar-picker {
+[id^='components-date-picker-demo-'] .ant-picker {
   margin: 0 8px 12px 0;
 }
 </style>

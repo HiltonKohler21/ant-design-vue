@@ -26,6 +26,7 @@ export interface PanelProps {
     | { start?: boolean; end?: boolean; showCollapsibleIcon?: ShowCollapsibleIconMode };
   resizable?: boolean;
   defaultSize?: number | string;
+  destroyOnHidden?: boolean;
 }
 
 export const splitterProps = () => ({
@@ -51,4 +52,5 @@ export const splitterPanelProps = () => ({
     type: [Boolean, Object] as PropType<PanelProps['collapsible']>,
     default: undefined,
   },
+  destroyOnHidden: { type: Boolean, default: false },
 });

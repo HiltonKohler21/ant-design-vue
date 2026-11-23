@@ -17,7 +17,7 @@ title:
 </docs>
 
 <template>
-  <div :style="{ background: 'rgb(190, 200, 200)', padding: '16px 16px' }">
+  <div class="site-button-ghost-wrapper">
     <a-space>
       <a-button type="primary" ghost>Primary</a-button>
       <a-button ghost>Default</a-button>
@@ -26,3 +26,13 @@ title:
     </a-space>
   </div>
 </template>
+<style scoped>
+.site-button-ghost-wrapper {
+  padding: 16px;
+  background: rgb(190, 200, 200);
+  border-radius: var(--ant-border-radius, 6px);
+}
+[data-theme='dark'] .site-button-ghost-wrapper {
+  background: rgba(255, 255, 255, 0.16);
+}
+</style>

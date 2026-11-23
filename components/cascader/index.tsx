@@ -152,7 +152,6 @@ const Cascader = defineComponent({
   name: 'ACascader',
   inheritAttrs: false,
   props: initDefaultProps(cascaderProps(), {
-    bordered: true,
     choiceTransitionName: '',
     allowClear: true,
   }),
@@ -188,7 +187,6 @@ const Cascader = defineComponent({
     );
     deprecated(props.bordered === undefined, 'bordered', 'variant', 'Cascader');
     const handleOpenChange = (open: boolean) => {
-      props.onOpenChange?.(open);
       props.onDropdownVisibleChange?.(open);
       emit('openChange', open);
       emit('update:open', open);
@@ -327,9 +325,7 @@ const Cascader = defineComponent({
               'popupMenuColumnStyle',
             ])}
             dropdownStyle={{ ...props.styles?.popup?.root, ...props.dropdownStyle }}
-            dropdownMenuColumnStyle={
-              props.popupMenuColumnStyle ?? props.dropdownMenuColumnStyle
-            }
+            dropdownMenuColumnStyle={props.popupMenuColumnStyle ?? props.dropdownMenuColumnStyle}
             style={[props.styles?.root, attrs.style as any]}
             onDropdownVisibleChange={handleOpenChange}
             {...attrs}

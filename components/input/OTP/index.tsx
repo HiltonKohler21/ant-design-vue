@@ -39,14 +39,12 @@ const OTP = defineComponent({
   name: 'AInputOTP',
   inheritAttrs: false,
   props: otpProps(),
-  setup(props, { attrs, expose }) {
+  setup(props, { attrs, emit, expose }) {
     const { prefixCls, direction } = useConfigInject('otp', props);
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const formContext = FormItemInputContext.useInject();
-    const mergedStatus = computed(() =>
-      getMergedStatus(formContext.status, props.status),
-    );
+    const mergedStatus = computed(() => getMergedStatus(formContext.status, props.status));
 
     // ========================= Refs =========================
     const containerRef = ref<HTMLElement>();
@@ -59,7 +57,9 @@ const OTP = defineComponent({
           refs.value[i]?.blur();
         }
       },
-      nativeElement: containerRef.value,
+      get nativeElement() {
+        return containerRef.value;
+      },
     });
 
     // ======================= Formatter ======================
@@ -83,16 +83,15 @@ const OTP = defineComponent({
     const triggerValueCellsChange = (nextValueCells: string[]) => {
       const prevValueCells = valueCells.value;
       valueCells.value = nextValueCells;
-      props.onInput?.(nextValueCells);
+      emit('input', nextValueCells);
+      const val = nextValueCells.join('');
+      emit('update:value', val);
       if (
-        props.onChange &&
         nextValueCells.length === props.length &&
         nextValueCells.every(c => c) &&
         nextValueCells.some((c, index) => prevValueCells[index] !== c)
       ) {
-        const val = nextValueCells.join('');
-        props.onChange(val);
-        props['onUpdate:value']?.(val);
+        emit('change', val);
       }
     };
 
@@ -155,17 +154,25 @@ const OTP = defineComponent({
           ref={containerRef}
           class={classNames(
             prefixCls.value,
+            props.rootClassName,
             {
               [`${prefixCls.value}-sm`]: props.size === 'small',
               [`${prefixCls.value}-lg`]: props.size === 'large',
               [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
             },
             hashId.value,
+            attrs.class,
           )}
           role="group"
         >
           {Array.from({ length: props.length }).map((_, index) => {
             const singleValue = valueCells.value[index] || '';
+            const separatorNode =
+              props.separator !== undefined && props.separator !== null
+                ? typeof props.separator === 'function'
+                  ? props.separator(index)
+                  : props.separator
+                : null;
             return (
               <Fragment key={`otp-${index}`}>
                 <OTPInput
@@ -182,13 +189,12 @@ const OTP = defineComponent({
                   autoFocus={index === 0 && props.autoFocus}
                   {...inputSharedProps}
                 />
-                {index < props.length - 1 && (
-                  <span class={`${prefixCls.value}-separator`}>
-                    {typeof props.separator === 'function'
-                      ? props.separator(index)
-                      : props.separator}
-                  </span>
-                )}
+                {index < props.length - 1 &&
+                  separatorNode !== null &&
+                  separatorNode !== undefined &&
+                  separatorNode !== false && (
+                    <span class={`${prefixCls.value}-separator`}>{separatorNode}</span>
+                  )}
               </Fragment>
             );
           })}

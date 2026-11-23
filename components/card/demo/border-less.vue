@@ -16,7 +16,7 @@ A borderless card on a gray background.
 </docs>
 
 <template>
-  <div style="background: #ececec; padding: 30px">
+  <div style="background: var(--ant-color-bg-layout, #ececec); padding: 30px">
     <a-card title="Card title" :bordered="false" style="width: 300px">
       <p>Card content</p>
       <p>Card content</p>

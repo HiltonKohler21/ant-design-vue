@@ -19,7 +19,7 @@ Child elements depending on the value of the `start`,`center`, `end`,`space-betw
 </docs>
 
 <template>
-  <div id="components-grid-demo-flex">
+  <div class="components-grid-demo-flex">
     <a-divider orientation="left">sub-element align left</a-divider>
     <a-row justify="start">
       <a-col :span="4">col-4</a-col>
@@ -71,7 +71,7 @@ Child elements depending on the value of the `start`,`center`, `end`,`space-betw
 </template>
 
 <style lang="less" scoped>
-:deep(#components-grid-demo-flex) [class~='ant-row'] {
+.components-grid-demo-flex :deep([class~='ant-row']) {
   background: rgba(128, 128, 128, 0.08);
 }
 </style>

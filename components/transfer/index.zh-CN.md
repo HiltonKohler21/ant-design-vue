@@ -2,6 +2,7 @@
 category: Components
 type: 数据录入
 title: Transfer
+cols: 1
 subtitle: 穿梭框
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EAApQ5ephigAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*yv12S4sSRAEAAAAAAAAAAAAADrJ8AQ/original

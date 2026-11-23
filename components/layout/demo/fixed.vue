@@ -45,7 +45,14 @@ Fixed Header is generally used to fix the top navigation to facilitate page swit
         <a-breadcrumb-item>List</a-breadcrumb-item>
         <a-breadcrumb-item>App</a-breadcrumb-item>
       </a-breadcrumb>
-      <div :style="{ background: '#fff', padding: '24px', minHeight: '380px', borderRadius: '8px' }">
+      <div
+        :style="{
+          background: 'var(--ant-color-bg-container, #fff)',
+          padding: '24px',
+          minHeight: '380px',
+          borderRadius: '8px',
+        }"
+      >
         Content
       </div>
     </a-layout-content>
@@ -63,15 +70,7 @@ const selectedKeys = ref<string[]>(['2']);
   width: 120px;
   height: 31px;
   background: rgba(255, 255, 255, 0.2);
-  margin: 16px 24px 16px 0;
-  float: left;
+  margin-inline-end: 24px;
   border-radius: 6px;
-}
-.site-layout .site-layout-background {
-  background: #fff;
-}
-
-[data-theme='dark'] .site-layout .site-layout-background {
-  background: #141414;
 }
 </style>

@@ -28,20 +28,22 @@ describe('upstream P3: 零散属性第二批', () => {
     expect(wrapper.element.getAttribute('class')).toContain('ant-spin-fullscreen-show');
   });
 
-  it('QRCode onRefresh 触发回调', () => {
+  it('QRCode onRefresh 仅触发一次回调', () => {
     const onRefresh = jest.fn();
     const wrapper = mount(QRCode, {
       props: { value: 'https://x', status: 'expired', onRefresh },
     });
     wrapper.find('.ant-qrcode-expired + button, button').trigger('click');
-    expect(onRefresh).toHaveBeenCalled();
+    expect(onRefresh).toHaveBeenCalledTimes(1);
   });
 
-  it('QRCode statusRender 插槽优先', () => {
+  it('QRCode statusRender 插槽优先且仅调用一次', () => {
+    const statusRender = jest.fn(() => <div class="custom-status">custom</div>);
     const wrapper = mount(QRCode, {
       props: { value: 'https://x', status: 'loading' },
-      slots: { statusRender: () => <div class="custom-status">custom</div> },
+      slots: { statusRender },
     });
     expect(wrapper.find('.custom-status').exists()).toBe(true);
+    expect(statusRender).toHaveBeenCalledTimes(1);
   });
 });

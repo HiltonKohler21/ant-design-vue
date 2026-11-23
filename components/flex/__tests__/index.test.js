@@ -20,6 +20,20 @@ describe('Flex', () => {
     expect(wrapper.find('.ant-flex-justify-center')).toBeTruthy();
     expect(wrapper2.classes('ant-flex')).toBeTruthy();
     expect(wrapper2.element.style.gap).toBe('100px');
+
+    const wrapper3 = mount({
+      render() {
+        return <Flex gap="1rem">test</Flex>;
+      },
+    });
+    expect(wrapper3.element.style.gap).toBe('1rem');
+
+    const wrapper4 = mount({
+      render() {
+        return <Flex gap="20">test</Flex>;
+      },
+    });
+    expect(wrapper4.element.style.gap).toBe('20px');
   });
 
   it('Component work', () => {

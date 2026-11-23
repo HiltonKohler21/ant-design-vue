@@ -10,13 +10,10 @@ export interface ComponentToken {
   itemPaddingInline: number;
 }
 
-interface ListyToken extends FullToken<'Listy'> {
-  listyItemPaddingBlock: number;
-  listyItemPaddingInline: number;
-}
+type ListyToken = FullToken<'Listy'>;
 
 const genListyStyle: GenerateStyle<ListyToken> = token => {
-  const { componentCls, listyItemPaddingBlock, listyItemPaddingInline } = token;
+  const { componentCls, itemPaddingBlock, itemPaddingInline } = token;
   return {
     [componentCls]: {
       ...resetComponent(token),
@@ -26,7 +23,7 @@ const genListyStyle: GenerateStyle<ListyToken> = token => {
       lineHeight: token.lineHeight,
 
       [`${componentCls}-item`]: {
-        padding: `${unit(listyItemPaddingBlock)} ${unit(listyItemPaddingInline)}`,
+        padding: `${unit(itemPaddingBlock)} ${unit(itemPaddingInline)}`,
         borderBottom: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
       },
 

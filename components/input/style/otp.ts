@@ -43,7 +43,7 @@ const genOTPStyle: GenerateStyle<OtpToken, CSSObject> = token => {
         paddingInline: paddingXXS,
       },
       [`&${componentCls}-sm ${componentCls}-input`]: {
-        paddingInline: paddingXXS / 2,
+        paddingInline: token.calc(paddingXXS).div(2).equal(),
       },
       [`&${componentCls}-lg ${componentCls}-input`]: {
         paddingInline: paddingXS,
