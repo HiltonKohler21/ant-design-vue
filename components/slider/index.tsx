@@ -224,16 +224,45 @@ const Slider = defineComponent({
         handleRender,
         ...restProps
       } = props;
+      const contextSlider = configProvider.slider?.value as any;
+      const mergedSemanticClassNames: SemanticNames<SliderSemanticName> = {
+        root: classNames(contextSlider?.classNames?.root, semanticClassNames?.root) || undefined,
+        tracks:
+          classNames(contextSlider?.classNames?.tracks, semanticClassNames?.tracks) || undefined,
+        track: classNames(contextSlider?.classNames?.track, semanticClassNames?.track) || undefined,
+        rail: classNames(contextSlider?.classNames?.rail, semanticClassNames?.rail) || undefined,
+        handle:
+          classNames(contextSlider?.classNames?.handle, semanticClassNames?.handle) || undefined,
+      };
+      const mergeStyle = (a?: CSSProperties, b?: CSSProperties) =>
+        a || b ? { ...a, ...b } : undefined;
+      const mergedSemanticStyles: SemanticStylesMap<SliderSemanticName> = {
+        root: mergeStyle(contextSlider?.styles?.root, semanticStyles?.root),
+        tracks: mergeStyle(contextSlider?.styles?.tracks, semanticStyles?.tracks),
+        track: mergeStyle(contextSlider?.styles?.track, semanticStyles?.track),
+        rail: mergeStyle(contextSlider?.styles?.rail, semanticStyles?.rail),
+        handle: mergeStyle(contextSlider?.styles?.handle, semanticStyles?.handle),
+      };
+      const mergedTrackClassName =
+        classNames(mergedSemanticClassNames.tracks, mergedSemanticClassNames.track) || undefined;
+
       const tooltipPrefixCls = configProvider.getPrefixCls('tooltip', customizeTooltipPrefixCls);
       const cls = classNames(
+        contextSlider?.className,
         attrs.class,
         props.rootClassName,
-        semanticClassNames?.root,
+        mergedSemanticClassNames.root,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
         hashId.value,
       );
+      const mergedRootStyle = [
+        contextSlider?.style,
+        contextSlider?.styles?.root,
+        attrs.style as any,
+        semanticStyles?.root,
+      ];
 
       // make reverse default on rtl direction
       if (direction.value === 'rtl' && !restProps.vertical) {
@@ -247,6 +276,34 @@ const Slider = defineComponent({
       }
 
       if (range) {
+        const valueLength = Array.isArray(restProps.value)
+          ? restProps.value.length
+          : Array.isArray(restProps.defaultValue)
+          ? restProps.defaultValue.length
+          : 2;
+        const rangeTrackCount = Math.max(
+          1,
+          valueLength - 1,
+          Array.isArray(restProps.trackStyle) ? restProps.trackStyle.length : 0,
+        );
+        const rangeHandleCount = Math.max(
+          2,
+          valueLength,
+          Array.isArray(restProps.handleStyle) ? restProps.handleStyle.length : 0,
+        );
+        const rangeTrackStyle = Array.from({ length: rangeTrackCount }, (_, idx) => ({
+          ...mergedSemanticStyles.tracks,
+          ...(Array.isArray(restProps.trackStyle)
+            ? restProps.trackStyle[idx]
+            : restProps.trackStyle),
+          ...mergedSemanticStyles.track,
+        }));
+        const rangeHandleStyle = Array.from({ length: rangeHandleCount }, (_, idx) => ({
+          ...(Array.isArray(restProps.handleStyle)
+            ? restProps.handleStyle[idx]
+            : restProps.handleStyle),
+          ...mergedSemanticStyles.handle,
+        }));
         return wrapSSR(
           <VcRange
             {...attrs}
@@ -254,21 +311,13 @@ const Slider = defineComponent({
             step={restProps.step!}
             draggableTrack={draggableTrack}
             class={cls}
-            style={[attrs.style as any, semanticStyles?.root]}
-            railClassName={semanticClassNames?.rail}
-            trackClassName={semanticClassNames?.track}
-            handleClassName={semanticClassNames?.handle}
-            railStyle={semanticStyles?.rail}
-            trackStyle={
-              Array.isArray(restProps.trackStyle)
-                ? restProps.trackStyle.map(s => ({ ...s, ...semanticStyles?.track }))
-                : { ...restProps.trackStyle, ...semanticStyles?.track }
-            }
-            handleStyle={
-              Array.isArray(restProps.handleStyle)
-                ? restProps.handleStyle.map(s => ({ ...s, ...semanticStyles?.handle }))
-                : { ...restProps.handleStyle, ...semanticStyles?.handle }
-            }
+            style={mergedRootStyle}
+            railClassName={mergedSemanticClassNames.rail}
+            trackClassName={mergedTrackClassName}
+            handleClassName={mergedSemanticClassNames.handle}
+            railStyle={mergedSemanticStyles.rail}
+            trackStyle={rangeTrackStyle}
+            handleStyle={rangeHandleStyle}
             ref={sliderRef}
             handle={(info: HandleGeneratorInfo) =>
               handleWithTooltip({
@@ -292,16 +341,22 @@ const Slider = defineComponent({
           id={id}
           step={restProps.step!}
           class={cls}
-          style={[attrs.style as any, semanticStyles?.root]}
-          railClassName={semanticClassNames?.rail}
-          trackClassName={semanticClassNames?.track}
-          handleClassName={semanticClassNames?.handle}
-          railStyle={semanticStyles?.rail}
-          trackStyle={{ ...restProps.trackStyle, ...semanticStyles?.track }}
+          style={mergedRootStyle}
+          railClassName={mergedSemanticClassNames.rail}
+          trackClassName={mergedTrackClassName}
+          handleClassName={mergedSemanticClassNames.handle}
+          railStyle={mergedSemanticStyles.rail}
+          trackStyle={{
+            ...mergedSemanticStyles.tracks,
+            ...(Array.isArray(restProps.trackStyle)
+              ? restProps.trackStyle[0]
+              : restProps.trackStyle),
+            ...mergedSemanticStyles.track,
+          }}
           handleStyle={
             Array.isArray(restProps.handleStyle)
-              ? restProps.handleStyle.map(s => ({ ...s, ...semanticStyles?.handle }))
-              : { ...restProps.handleStyle, ...semanticStyles?.handle }
+              ? restProps.handleStyle.map(s => ({ ...s, ...mergedSemanticStyles.handle }))
+              : { ...restProps.handleStyle, ...mergedSemanticStyles.handle }
           }
           ref={sliderRef}
           handle={(info: HandleGeneratorInfo) =>

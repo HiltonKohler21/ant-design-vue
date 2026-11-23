@@ -1,4 +1,4 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { cloneVNode, defineComponent } from 'vue';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
@@ -8,7 +8,7 @@ import TimelineItem from './TimelineItem';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 
 import { tuple, booleanType } from '../_util/type';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 // CSSINJS
 import useStyle from './style';
@@ -41,6 +41,12 @@ export default defineComponent({
   }>,
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('timeline', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('timeline');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -104,13 +110,18 @@ export default defineComponent({
           [`${prefixCls.value}-label`]: hasLabelItem,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
-        props.rootClassName,
+        contextClassName.value,
+        contextClassNames.value.root,
         props.rootClassName,
         attrs.class,
         hashId.value,
       );
       return wrapSSR(
-        <ul {...attrs} class={classString}>
+        <ul
+          {...attrs}
+          class={classString}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+        >
           {items}
         </ul>,
       );

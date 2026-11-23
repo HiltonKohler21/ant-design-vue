@@ -11,9 +11,9 @@ import { useLocaleReceiver } from '../locale-provider/LocaleReceiver';
 import enUS from './locale/en_US';
 import CalendarHeader from './Header';
 import type { CustomSlotsType, VueNode } from '../_util/type';
-import type { App, PropType } from 'vue';
+import type { App, CSSProperties, PropType } from 'vue';
 import { computed, defineComponent, toRef } from 'vue';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 
 // CSSINJS
@@ -154,6 +154,12 @@ function generateCalendar<
     setup(p, { emit, slots, attrs }) {
       const props = p as unknown as Props;
       const { prefixCls, direction } = useConfigInject('picker', props);
+      const {
+        className: contextClassName,
+        style: contextStyle,
+        classNames: contextClassNames,
+        styles: contextStyles,
+      } = useComponentConfig('calendar');
 
       // style
       const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -363,6 +369,8 @@ function generateCalendar<
             class={classNames(
               calendarPrefixCls.value,
               (props as any).rootClassName,
+              contextClassName.value,
+              contextClassNames.value.root,
               {
                 [`${calendarPrefixCls.value}-full`]: fullscreen,
                 [`${calendarPrefixCls.value}-mini`]: !fullscreen,
@@ -371,6 +379,7 @@ function generateCalendar<
               attrs.class,
               hashId.value,
             )}
+            style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           >
             {headerRender ? (
               headerRender({

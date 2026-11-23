@@ -80,6 +80,13 @@ const CompactItem = defineComponent({
   },
 });
 
+const alignStyleMap: Record<string, string> = {
+  start: 'flex-start',
+  end: 'flex-end',
+  center: 'center',
+  baseline: 'baseline',
+};
+
 const Compact = defineComponent({
   name: 'ASpaceCompact',
   inheritAttrs: false,
@@ -95,6 +102,7 @@ const Compact = defineComponent({
         [`${prefixCls.value}-rtl`]: directionConfig.value === 'rtl',
         [`${prefixCls.value}-block`]: props.block,
         [`${prefixCls.value}-vertical`]: props.direction === 'vertical',
+        [`${prefixCls.value}-align-${props.align}`]: !!props.align,
       });
     });
 
@@ -105,8 +113,11 @@ const Compact = defineComponent({
         return null;
       }
 
+      const alignItems = props.align ? alignStyleMap[props.align] : undefined;
+      const mergedStyle = alignItems ? [{ alignItems }, attrs.style as any] : (attrs.style as any);
+
       return wrapSSR(
-        <div {...attrs} class={[clx.value, attrs.class]}>
+        <div {...attrs} class={[clx.value, attrs.class]} style={mergedStyle}>
           {childNodes.map((child, i) => {
             const key = (child && child.key) || `${prefixCls.value}-item-${i}`;
             const noCompactItemContext = !compactItemContext || isEmpty(compactItemContext);

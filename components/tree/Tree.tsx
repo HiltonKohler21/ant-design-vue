@@ -1,4 +1,4 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { watchEffect, ref, defineComponent, computed } from 'vue';
 import classNames from '../_util/classNames';
 import VcTree from '../vc-tree';
@@ -8,7 +8,7 @@ import initDefaultProps from '../_util/props-util/initDefaultProps';
 import type { DataNode, EventDataNode, FieldNames, Key, ScrollTo } from '../vc-tree/interface';
 import type { TreeNodeProps } from '../vc-tree/props';
 import { treeProps as vcTreeProps } from '../vc-tree/props';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { SwitcherIconProps } from './utils/iconUtil';
 import renderSwitcherIcon from './utils/iconUtil';
 import dropIndicatorRender from './utils/dropIndicator';
@@ -168,6 +168,12 @@ export default defineComponent({
       '`children` of Tree is deprecated. Please use `treeData` instead.',
     );
     const { prefixCls, direction, virtual } = useConfigInject('tree', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('tree');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -255,9 +261,12 @@ export default defineComponent({
               [`${prefixCls.value}-unselectable`]: !selectable,
               [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
             },
+            contextClassName.value,
+            contextClassNames.value.root,
             attrs.class,
             hashId.value,
           )}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           direction={direction.value}
           checkable={checkable}
           selectable={selectable}

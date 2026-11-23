@@ -50,10 +50,11 @@ export interface InternalUploadFile<T = any> extends UploadFile<T> {
   originFileObj: FileType;
 }
 
-export interface ShowUploadListInterface {
+export interface ShowUploadListInterface<T = any> {
   showRemoveIcon?: boolean;
   showPreviewIcon?: boolean;
   showDownloadIcon?: boolean;
+  extra?: VueNode | ((file: UploadFile<T>) => VueNode);
 }
 
 export interface UploadChangeParam<T = UploadFile> {
@@ -98,7 +99,7 @@ type BeforeUploadValueType = void | boolean | string | Blob | FileType;
 function uploadProps<T = any>() {
   return {
     rootClassName: String,
-    extra: anyType<VueNode>(),
+    extra: anyType<VueNode | ((file: UploadFile<T>) => VueNode)>(),
     capture: someType<boolean | 'user' | 'environment'>([Boolean, String]),
     type: stringType<UploadType>(),
     name: String,
@@ -190,7 +191,7 @@ function uploadListProps<T = any>() {
     appendAction: functionType<() => VueNode>(),
     appendActionVisible: booleanType(),
     itemRender: functionType<ItemRender<T>>(),
-    extra: anyType<VueNode>(),
+    extra: anyType<VueNode | ((file: UploadFile<T>) => VueNode)>(),
   };
 }
 

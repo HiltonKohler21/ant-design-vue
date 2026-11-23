@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Leita hér',
     itemUnit: 'færsla',
     itemsUnit: 'færslur',
+    deselectAll: 'Afvelja öll gögn',
   },
   Upload: {
     uploading: 'Hleð upp...',

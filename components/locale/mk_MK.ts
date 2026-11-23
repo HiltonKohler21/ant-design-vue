@@ -33,6 +33,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Пребарај тука',
     itemUnit: 'предмет',
     itemsUnit: 'предмети',
+    deselectAll: 'Деселектирај ги сите податоци',
   },
   Upload: {
     uploading: 'Се прикачува...',

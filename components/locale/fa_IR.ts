@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'انتخاب صفحه فعلی',
     removeCurrent: 'پاک کردن انتخاب‌های صفحه فعلی',
     selectAll: 'انتخاب همه',
+    deselectAll: 'لغو انتخاب همه',
     removeAll: 'پاک کردن همه انتخاب‌ها',
     selectInvert: 'معکوس کردن انتخاب‌ها در صفحه ی کنونی',
   },

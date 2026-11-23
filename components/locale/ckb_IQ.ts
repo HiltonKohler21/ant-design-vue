@@ -43,6 +43,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'لێرە بگەڕێ',
     itemUnit: 'بڕگە',
     itemsUnit: 'بڕگە',
+    deselectAll: 'Deselect all',
   },
   Upload: {
     uploading: 'بار دەکرێت...',

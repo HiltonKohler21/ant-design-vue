@@ -22,7 +22,8 @@ const FloatButton = defineComponent({
   inheritAttrs: false,
   props: initDefaultProps(floatButtonProps(), { type: 'default', shape: 'circle' }),
   setup(props, { attrs, slots }) {
-    const { prefixCls, direction } = useConfigInject(floatButtonPrefixCls, props);
+    const { configProvider, prefixCls, direction } = useConfigInject(floatButtonPrefixCls, props);
+    const floatButtonConfig = computed(() => (configProvider as any).floatButton?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const { shape: groupShape } = useInjectFloatButtonGroupContext();
 
@@ -59,10 +60,14 @@ const FloatButton = defineComponent({
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
+        floatButtonConfig.value?.className,
         attrs.class,
         props.rootClassName,
         hashId.value,
       );
+      const mergedStyle = floatButtonConfig.value?.style
+        ? [floatButtonConfig.value.style, attrs.style]
+        : attrs.style;
 
       const buttonNode = (
         <Tooltip
@@ -103,6 +108,7 @@ const FloatButton = defineComponent({
             ref={floatButtonRef}
             {...attrs}
             {...(restProps as any)}
+            style={mergedStyle as any}
             class={classString}
             onClick={handleClick}
           >
@@ -113,6 +119,7 @@ const FloatButton = defineComponent({
             ref={floatButtonRef}
             {...attrs}
             {...restProps}
+            style={mergedStyle as any}
             class={classString}
             type={props.htmlType || 'button'}
             disabled={props.disabled}

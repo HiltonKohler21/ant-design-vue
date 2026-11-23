@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Tìm ở đây',
     itemUnit: 'mục',
     itemsUnit: 'mục',
+    deselectAll: 'Bỏ chọn tất cả',
   },
   Upload: {
     uploading: 'Đang tải lên...',

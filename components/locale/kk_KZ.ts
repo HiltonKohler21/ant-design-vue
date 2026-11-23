@@ -49,6 +49,7 @@ const localeValues: Locale = {
     itemsUnit: 'элемент.',
     remove: 'Жою',
     selectAll: 'Барлық деректерді таңдау',
+    deselectAll: 'Барлық деректердің таңдауын алып тастаңыз',
     selectCurrent: 'Ағымдағы бетті таңдау',
     selectInvert: 'Кері тәртіпте көрсету',
     removeAll: 'Барлық деректерді жою',

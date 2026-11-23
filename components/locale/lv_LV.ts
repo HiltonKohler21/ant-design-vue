@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Meklēt šeit',
     itemUnit: 'vienumu',
     itemsUnit: 'vienumus',
+    deselectAll: 'Noņemiet visu datu atlasi',
   },
   Upload: {
     uploading: 'Augšupielāde...',

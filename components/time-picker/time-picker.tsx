@@ -1,5 +1,6 @@
 import type { ExtractPropTypes } from 'vue';
-import { defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
+import useVariant from '../form/hooks/useVariant';
 import type { RangePickerTimeProps } from '../date-picker/generatePicker';
 import generatePicker from '../date-picker/generatePicker';
 import {
@@ -97,6 +98,11 @@ function createTimePicker<
     setup(p, { slots, expose, emit, attrs }) {
       const props = p as unknown as DTimePickerProps;
       const formItemContext = useInjectFormItemContext();
+      const [mergedVariant] = useVariant(
+        'timePicker',
+        computed(() => props.variant),
+        computed(() => props.bordered),
+      );
       devWarning(
         !(slots.addon || props.addon),
         'TimePicker',
@@ -137,6 +143,7 @@ function createTimePicker<
           <InternalTimePicker
             {...attrs}
             {...omit(props, ['onUpdate:value', 'onUpdate:open', 'rootClassName'])}
+            variant={mergedVariant.value}
             rootClassName={props.rootClassName}
             id={id}
             dropdownClassName={props.popupClassName}

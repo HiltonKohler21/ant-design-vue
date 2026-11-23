@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Lêgerîn',
     itemUnit: 'tişt',
     itemsUnit: 'tişt',
+    deselectAll: 'Hemî daneyan jêbirin',
   },
   Upload: {
     uploading: 'Bardike...',

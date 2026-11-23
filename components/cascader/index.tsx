@@ -176,6 +176,7 @@ const Cascader = defineComponent({
       renderEmpty,
       size: contextSize,
       disabled,
+      configProvider,
     } = useConfigInject('cascader', props);
     const prefixCls = computed(() => getPrefixCls('select', props.prefixCls));
 
@@ -323,14 +324,16 @@ const Cascader = defineComponent({
               'styles',
               'dropdownMenuColumnStyle',
               'popupMenuColumnStyle',
+              'popupRender',
+              'dropdownRender',
             ])}
             dropdownStyle={{ ...props.styles?.popup?.root, ...props.dropdownStyle }}
             dropdownMenuColumnStyle={props.popupMenuColumnStyle ?? props.dropdownMenuColumnStyle}
-            style={[props.styles?.root, attrs.style as any]}
             onDropdownVisibleChange={handleOpenChange}
             {...attrs}
             id={id}
             prefixCls={prefixCls.value}
+            style={[configProvider.cascader?.value?.style, props.styles?.root, attrs.style as any]}
             class={[
               cascaderPrefixCls.value,
               {
@@ -342,6 +345,7 @@ const Cascader = defineComponent({
                   enableVariantCls.value && mergedVariant.value !== 'outlined',
                 [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
               },
+              configProvider.cascader?.value?.className,
               props.rootClassName,
               props.classNames?.root,
               getStatusClassNames(
@@ -366,7 +370,8 @@ const Cascader = defineComponent({
             loadingIcon={loadingIcon}
             checkable={!!multiple}
             dropdownClassName={mergedDropdownClassName.value}
-            dropdownRender={props.popupRender ?? props.dropdownRender}
+            popupRender={props.popupRender ?? slots.popupRender}
+            dropdownRender={props.dropdownRender ?? slots.dropdownRender}
             dropdownPrefixCls={cascaderPrefixCls.value}
             choiceTransitionName={getTransitionName(rootPrefixCls.value, '', choiceTransitionName)}
             transitionName={getTransitionName(

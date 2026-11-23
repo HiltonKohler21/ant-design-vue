@@ -8,8 +8,10 @@ import enUS from '../locale/en_US';
 import { useLocaleReceiver } from '../../locale-provider/LocaleReceiver';
 import { getRangePlaceholder, transPlacement2DropdownAlign } from '../util';
 import { getTimeProps, Components } from '.';
+import type { CSSProperties } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
-import useConfigInject from '../../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
+import useVariant from '../../form/hooks/useVariant';
 import classNames from '../../_util/classNames';
 import type { CommonProps, RangePickerProps } from './props';
 import { commonProps, rangePickerProps } from './props';
@@ -71,6 +73,33 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
 
       const { prefixCls, direction, getPopupContainer, size, rootPrefixCls, disabled } =
         useConfigInject('picker', props);
+      const {
+        componentConfig: rangePickerConfig,
+        className: rangePickerClassName,
+        style: rangePickerStyle,
+        classNames: rangePickerClassNames,
+        styles: rangePickerStyles,
+      } = useComponentConfig('rangePicker');
+      const {
+        componentConfig: datePickerConfig,
+        className: datePickerClassName,
+        style: datePickerStyle,
+        classNames: datePickerClassNames,
+        styles: datePickerStyles,
+      } = useComponentConfig('datePicker');
+      const {
+        componentConfig: timePickerConfig,
+        className: timePickerClassName,
+        style: timePickerStyle,
+        classNames: timePickerClassNames,
+        styles: timePickerStyles,
+      } = useComponentConfig('timePicker');
+      const [mergedVariant, enableVariantCls] = useVariant(
+        'rangePicker',
+        computed(() => props.variant),
+        computed(() => props.bordered),
+        props.picker === 'time' ? 'timePicker' : 'datePicker',
+      );
       const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
       const mergedSize = computed(() => compactSize.value || size.value);
       // style
@@ -149,18 +178,31 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
       return () => {
         const locale = { ...contextLocale.value, ...props.locale };
         const p = { ...props, ...attrs };
+        const isTimePicker = props.picker === 'time';
+        const basePickerConfig = isTimePicker ? timePickerConfig.value : datePickerConfig.value;
+        const basePickerClassName = isTimePicker
+          ? timePickerClassName.value
+          : datePickerClassName.value;
+        const basePickerStyle = isTimePicker ? timePickerStyle.value : datePickerStyle.value;
+        const basePickerClassNames = isTimePicker
+          ? timePickerClassNames.value
+          : datePickerClassNames.value;
+        const basePickerStyles = isTimePicker ? timePickerStyles.value : datePickerStyles.value;
         const {
           prefixCls: customizePrefixCls,
-          bordered = true,
+          bordered: _bordered,
+          variant: _variant,
           placeholder,
-          suffixIcon = slots.suffixIcon?.(),
+          suffixIcon = slots.suffixIcon?.() ??
+            basePickerConfig.suffix ??
+            basePickerConfig.suffixIcon,
           picker = 'date',
           transitionName,
-          allowClear = true,
+          allowClear = basePickerConfig.allowClear ?? true,
           dateRender = slots.dateRender,
           renderExtraFooter = slots.renderExtraFooter,
-          separator = slots.separator?.(),
-          clearIcon = slots.clearIcon?.(),
+          separator = slots.separator?.() ?? rangePickerConfig.value.separator,
+          clearIcon = slots.clearIcon?.() ?? basePickerConfig.clearIcon,
           id = formItemContext.id.value,
           rootClassName,
           ...restProps
@@ -212,9 +254,14 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
             picker={picker}
             class={classNames(
               rootClassName,
+              basePickerClassName,
+              rangePickerClassName.value,
+              basePickerClassNames.root,
+              rangePickerClassNames.value.root,
               {
                 [`${pre}-${mergedSize.value}`]: mergedSize.value,
-                [`${pre}-borderless`]: !bordered,
+                [`${pre}-borderless`]: mergedVariant.value === 'borderless',
+                [`${pre}-${mergedVariant.value}`]: enableVariantCls.value,
               },
               getStatusClassNames(
                 pre,
@@ -225,6 +272,13 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
               hashId.value,
               compactItemClassnames.value,
             )}
+            style={[
+              basePickerStyle,
+              rangePickerStyle.value,
+              basePickerStyles.root,
+              rangePickerStyles.value.root,
+              attrs.style as CSSProperties,
+            ]}
             locale={locale!.lang}
             prefixCls={pre}
             getPopupContainer={attrs.getCalendarContainer || getPopupContainer.value}
@@ -237,6 +291,8 @@ export default function generateRangePicker<DateType, ExtraProps = {}>(
             direction={direction.value}
             dropdownClassName={classNames(
               hashId.value,
+              basePickerClassNames.popup?.root,
+              rangePickerClassNames.value.popup?.root,
               props.popupClassName,
               props.dropdownClassName,
             )}

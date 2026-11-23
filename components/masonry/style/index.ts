@@ -36,6 +36,10 @@ const genMasonryStyle: GenerateStyle<MasonryToken> = token => {
         width: '100%',
         minWidth: 0,
       },
+
+      '&-rtl': {
+        direction: 'rtl',
+      },
     },
   };
 };

@@ -1,7 +1,12 @@
 import PropTypes from '../_util/vue-types';
 import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import classNames from '../_util/classNames';
-import { isStringElement, isEmptyElement, flattenChildren } from '../_util/props-util';
+import {
+  isStringElement,
+  isEmptyElement,
+  flattenChildren,
+  isValidElement,
+} from '../_util/props-util';
 import { Col } from '../grid';
 import { cloneElement } from '../_util/vnode';
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
@@ -44,7 +49,19 @@ export default defineComponent({
       grid: ref(),
       itemLayout: ref(),
     });
-    const { prefixCls } = useConfigInject('list', props);
+    const { prefixCls, configProvider } = useConfigInject('list', props);
+
+    const moduleClass = (moduleName: 'actions' | 'extra') => {
+      const ctxList = configProvider.list?.value as any;
+      return classNames(ctxList?.item?.classNames?.[moduleName], props.classNames?.[moduleName]);
+    };
+
+    const moduleStyle = (moduleName: 'actions' | 'extra'): CSSProperties | undefined => {
+      const ctxList = configProvider.list?.value as any;
+      const ctxStyle = ctxList?.item?.styles?.[moduleName];
+      const ownStyle = props.styles?.[moduleName];
+      return ctxStyle || ownStyle ? { ...ctxStyle, ...ownStyle } : undefined;
+    };
 
     const isItemContainsTextNodeAndNotSingular = () => {
       const children = slots.default?.() || [];
@@ -72,12 +89,13 @@ export default defineComponent({
       const children = slots.default?.();
       let actions = props.actions ?? flattenChildren(slots.actions?.());
       actions = actions && !Array.isArray(actions) ? [actions] : actions;
+      const actionsCls = moduleClass('actions') || undefined;
+      const actionsStyle = moduleStyle('actions');
+      const extraCls = moduleClass('extra') || undefined;
+      const extraStyle = moduleStyle('extra');
+
       const actionsContent = actions && actions.length > 0 && (
-        <ul
-          class={[`${pre}-item-action`, props.classNames?.actions]}
-          style={props.styles?.actions}
-          key="actions"
-        >
+        <ul class={[`${pre}-item-action`, actionsCls]} style={actionsStyle} key="actions">
           {actions.map((action, i) => (
             <li key={`${pre}-item-action-${i}`}>
               {action}
@@ -86,6 +104,26 @@ export default defineComponent({
           ))}
         </ul>
       );
+      const horizontalExtra =
+        extra && (extraCls || extraStyle) ? (
+          isValidElement(extra) || (Array.isArray(extra) && extra.length > 0) ? (
+            cloneElement(
+              extra,
+              {
+                key: 'extra',
+                ...(extraCls ? { class: extraCls } : {}),
+                ...(extraStyle ? { style: extraStyle } : {}),
+              },
+              false,
+            )
+          ) : (
+            <div class={[`${pre}-item-extra`, extraCls]} style={extraStyle} key="extra">
+              {extra}
+            </div>
+          )
+        ) : (
+          cloneElement(extra, { key: 'extra' })
+        );
       const Element = grid.value ? 'div' : 'li';
       const itemChildren = (
         <Element
@@ -104,11 +142,11 @@ export default defineComponent({
                   {children}
                   {actionsContent}
                 </div>,
-                <div class={`${pre}-item-extra`} key="extra">
+                <div class={[`${pre}-item-extra`, extraCls]} style={extraStyle} key="extra">
                   {extra}
                 </div>,
               ]
-            : [children, actionsContent, cloneElement(extra, { key: 'extra' })]}
+            : [children, actionsContent, horizontalExtra]}
         </Element>
       );
       return grid.value ? (

@@ -50,6 +50,7 @@ const localeValues: Locale = {
     removeCurrent: 'Verwijder huidige pagina',
     searchPlaceholder: 'Zoek hier',
     selectAll: 'Selecteer alles',
+    deselectAll: 'Deselecteer alle gegevens',
     selectCurrent: 'Selecteer huidige pagina',
     selectInvert: 'Huidige pagina omkeren',
     titles: ['', ''],

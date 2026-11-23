@@ -6,7 +6,13 @@ import { resetComponent } from '../../style';
 
 /** Component only token. Which will handle additional calculation of alias token */
 export interface ComponentToken {
-  sizePaddingEdgeHorizontal: number;
+  sizePaddingEdgeHorizontal?: number;
+  /** 文本横向内间距 */
+  textPaddingInline: number | string;
+  /** 文本与边缘距离，取值 0 ～ 1 */
+  orientationMargin: number;
+  /** 纵向分割线的横向外间距 */
+  verticalMarginInline: number | string;
 }
 
 interface DividerToken extends FullToken<'Divider'> {
@@ -15,14 +21,46 @@ interface DividerToken extends FullToken<'Divider'> {
   dividerHorizontalGutterMargin: number;
 }
 
+// ============================== Size ==============================
+const genSizeDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject => {
+  const { componentCls } = token;
+
+  return {
+    [componentCls]: {
+      '&-horizontal': {
+        [`&${componentCls}`]: {
+          '&-sm': {
+            marginBlock: token.marginXS,
+          },
+          '&-md': {
+            marginBlock: token.margin,
+          },
+        },
+      },
+    },
+  };
+};
+
 // ============================== Shared ==============================
 const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject => {
-  const { componentCls, sizePaddingEdgeHorizontal, colorSplit, lineWidth } = token;
+  const {
+    componentCls,
+    sizePaddingEdgeHorizontal,
+    colorSplit,
+    lineWidth,
+    textPaddingInline,
+    orientationMargin,
+    verticalMarginInline,
+  } = token;
 
   return {
     [componentCls]: {
       ...resetComponent(token),
       borderBlockStart: `${unit(lineWidth)} solid ${colorSplit}`,
+
+      '&-rtl': {
+        direction: 'rtl',
+      },
 
       // vertical
       '&-vertical': {
@@ -30,7 +68,8 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         top: '-0.06em',
         display: 'inline-block',
         height: '0.9em',
-        margin: `0 ${unit(token.dividerVerticalGutterMargin)}`,
+        marginInline: verticalMarginInline,
+        marginBlock: 0,
         verticalAlign: 'middle',
         borderTop: 0,
         borderInlineStart: `${unit(lineWidth)} solid ${colorSplit}`,
@@ -69,27 +108,28 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
 
       [`&-horizontal${componentCls}-with-text-left`]: {
         '&::before': {
-          width: '5%',
+          width: `calc(${orientationMargin} * 100%)`,
         },
 
         '&::after': {
-          width: '95%',
+          width: `calc(100% - ${orientationMargin} * 100%)`,
         },
       },
 
       [`&-horizontal${componentCls}-with-text-right`]: {
         '&::before': {
-          width: '95%',
+          width: `calc(100% - ${orientationMargin} * 100%)`,
         },
 
         '&::after': {
-          width: '5%',
+          width: `calc(${orientationMargin} * 100%)`,
         },
       },
 
       [`${componentCls}-inner-text`]: {
         display: 'inline-block',
-        padding: '0 1em',
+        paddingBlock: 0,
+        paddingInline: textPaddingInline,
       },
 
       '&-dashed': {
@@ -114,6 +154,20 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
 
       [`&-vertical${componentCls}-dashed`]: {
         borderInlineStartWidth: lineWidth,
+        borderInlineEnd: 0,
+        borderBlockStart: 0,
+        borderBlockEnd: 0,
+      },
+
+      [`&-horizontal${componentCls}-with-text${componentCls}-dotted`]: {
+        '&::before, &::after': {
+          borderStyle: 'dotted none none',
+        },
+      },
+
+      [`&-vertical${componentCls}-dotted`]: {
+        borderInlineStartWidth: lineWidth,
+        borderInlineStartStyle: 'dotted',
         borderInlineEnd: 0,
         borderBlockStart: 0,
         borderBlockEnd: 0,
@@ -167,9 +221,17 @@ export default genComponentStyleHook(
       dividerHorizontalWithTextGutterMargin: token.margin,
       dividerHorizontalGutterMargin: token.marginLG,
     });
-    return [genSharedDividerStyle(dividerToken)];
+    return [genSharedDividerStyle(dividerToken), genSizeDividerStyle(dividerToken)];
   },
-  {
+  token => ({
     sizePaddingEdgeHorizontal: 0,
+    textPaddingInline: '1em',
+    orientationMargin: 0.05,
+    verticalMarginInline: token.marginXS,
+  }),
+  {
+    unitless: {
+      orientationMargin: true,
+    },
   },
 );

@@ -217,6 +217,7 @@ export const baseSelectPropsWithoutPrivate = () => {
       default: undefined,
     },
     dropdownRender: { type: Function as PropType<DropdownRender> },
+    popupRender: { type: Function as PropType<(menu: VueNode) => VueNode> },
     dropdownAlign: Object as PropType<AlignType>,
     placement: {
       type: String as PropType<Placement>,
@@ -683,6 +684,7 @@ export default defineComponent({
         dropdownClassName,
         dropdownMatchSelectWidth,
         dropdownRender,
+        popupRender,
         dropdownAlign,
         showAction,
         direction,
@@ -826,6 +828,7 @@ export default defineComponent({
           direction={direction}
           dropdownMatchSelectWidth={dropdownMatchSelectWidth}
           dropdownRender={dropdownRender}
+          popupRender={popupRender}
           dropdownAlign={dropdownAlign}
           placement={placement}
           getPopupContainer={getPopupContainer}

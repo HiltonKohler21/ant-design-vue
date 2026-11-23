@@ -41,6 +41,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Vyhledávání',
     itemUnit: 'položka',
     itemsUnit: 'položek',
+    deselectAll: 'Zrušit výběr všech',
   },
   Upload: {
     uploading: 'Nahrávání...',

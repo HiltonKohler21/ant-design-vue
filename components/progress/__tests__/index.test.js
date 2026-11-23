@@ -3,6 +3,7 @@ import { asyncExpect } from '../../../tests/utils';
 import { handleGradient, sortGradient } from '../Line';
 import Progress from '..';
 import ProgressSteps from '../Steps';
+import ConfigProvider from '../../config-provider';
 
 describe('Progress', () => {
   it('successPercent should decide the progress status when it exists', async () => {
@@ -316,5 +317,69 @@ describe('Progress', () => {
     expect(errorSpy).toHaveBeenCalledWith(
       'Warning: [ant-design-vue: Progress] `success.progress` is deprecated. Please use `success.percent` instead.',
     );
+  });
+
+  it('percentPosition supports both string and { align, type } object', () => {
+    const strInner = mount(Progress, {
+      props: { percent: 50, percentPosition: 'inner' },
+    });
+    expect(strInner.classes()).toContain('ant-progress-line-position-inner');
+    expect(strInner.classes()).toContain('ant-progress-line-align-end');
+    expect(strInner.classes()).toContain('ant-progress-show-info-inner');
+    expect(strInner.find('.ant-progress-bg-inner .ant-progress-text-inner').exists()).toBe(true);
+
+    const objInnerStart = mount(Progress, {
+      props: { percent: 100, percentPosition: { align: 'start', type: 'inner' } },
+    });
+    expect(objInnerStart.classes()).toContain('ant-progress-line-position-inner');
+    expect(objInnerStart.classes()).toContain('ant-progress-line-align-start');
+    const innerText = objInnerStart.find('.ant-progress-bg-inner .ant-progress-text');
+    expect(innerText.exists()).toBe(true);
+    expect(innerText.classes()).toContain('ant-progress-text-start');
+    expect(innerText.classes()).toContain('ant-progress-text-inner');
+    expect(innerText.text()).toBe('100%');
+
+    const outerStart = mount(Progress, {
+      props: { percent: 50, percentPosition: { align: 'start', type: 'outer' } },
+    });
+    expect(outerStart.classes()).toContain('ant-progress-line-position-outer');
+    expect(outerStart.classes()).toContain('ant-progress-line-align-start');
+    const outerChildren = outerStart.find('.ant-progress-outer').element.children;
+    expect(outerChildren[0].className).toContain('ant-progress-text');
+    expect(outerChildren[0].className).toContain('ant-progress-text-start');
+    expect(outerChildren[0].className).toContain('ant-progress-text-outer');
+    expect(outerChildren[1].className).toContain('ant-progress-inner');
+
+    const outerCenter = mount(Progress, {
+      props: { percent: 50, percentPosition: { align: 'center', type: 'outer' } },
+    });
+    expect(outerCenter.classes()).toContain('ant-progress-line-position-outer');
+    expect(outerCenter.classes()).toContain('ant-progress-line-align-center');
+    expect(outerCenter.find('.ant-progress-layout-bottom').exists()).toBe(true);
+    expect(outerCenter.find('.ant-progress-layout-bottom .ant-progress-text-center').exists()).toBe(
+      true,
+    );
+
+    const outerEnd = mount(Progress, {
+      props: { percent: 50, percentPosition: { align: 'end', type: 'outer' } },
+    });
+    const endChildren = outerEnd.find('.ant-progress-outer').element.children;
+    expect(endChildren[0].className).toContain('ant-progress-inner');
+    expect(endChildren[1].className).toContain('ant-progress-text-end');
+  });
+
+  it('ConfigProvider.progress wires className and style', () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider progress={{ className: 'cp-progress', style: { marginTop: '6px' } }}>
+            <Progress percent={30} />
+          </ConfigProvider>
+        );
+      },
+    });
+    const root = wrapper.find('.ant-progress');
+    expect(root.classes()).toContain('cp-progress');
+    expect(root.element.style.marginTop).toBe('6px');
   });
 });

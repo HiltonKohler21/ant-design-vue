@@ -5,7 +5,7 @@ import { isPresetColor } from '../_util/colors';
 import type { CSSProperties, PropType, ExtractPropTypes } from 'vue';
 import { defineComponent, computed } from 'vue';
 import PropTypes from '../_util/vue-types';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 export const ribbonProps = () => ({
   prefix: String,
@@ -27,6 +27,12 @@ export default defineComponent({
   }>,
   setup(props, { attrs, slots }) {
     const { prefixCls, direction } = useConfigInject('ribbon', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('ribbon');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const colorInPreset = computed(() => isPresetColor(props.color, false));
     const ribbonCls = computed(() => [
@@ -46,13 +52,22 @@ export default defineComponent({
         cornerColorStyle.color = props.color;
       }
       return wrapSSR(
-        <div class={`${prefixCls.value}-wrapper ${hashId.value}`} {...restAttrs}>
+        <div
+          class={[`${prefixCls.value}-wrapper`, hashId.value, contextClassNames.value.root]}
+          style={contextStyles.value.root}
+          {...restAttrs}
+        >
           {slots.default?.()}
           <div
-            class={[ribbonCls.value, className, hashId.value]}
-            style={{ ...colorStyle, ...(style as CSSProperties) }}
+            class={[ribbonCls.value, contextClassName.value, className, hashId.value]}
+            style={{ ...contextStyle.value, ...colorStyle, ...(style as CSSProperties) }}
           >
-            <span class={`${prefixCls.value}-text`}>{props.text || slots.text?.()}</span>
+            <span
+              class={[`${prefixCls.value}-text`, contextClassNames.value.content]}
+              style={contextStyles.value.content}
+            >
+              {props.text || slots.text?.()}
+            </span>
             <div class={`${prefixCls.value}-corner`} style={cornerColorStyle} />
           </div>
         </div>,

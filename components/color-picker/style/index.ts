@@ -75,6 +75,14 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
           },
         },
 
+        // Prefix
+        [`${componentCls}-trigger-prefix`]: {
+          marginInlineEnd: token.marginXXS,
+          display: 'inline-flex',
+          alignItems: 'center',
+          color: token.colorTextSecondary,
+        },
+
         // Text
         [`${componentCls}-trigger-text`]: {
           margin: `0 ${unit(token.marginXS)} 0 ${unit(token.marginXS)}`,
@@ -86,7 +94,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
 
         // Clear button
         [`${componentCls}-trigger-clear`]: {
-          marginRight: token.marginXXS,
+          marginInlineEnd: token.marginXXS,
           fontSize: token.fontSizeSM,
           color: token.colorTextSecondary,
           cursor: 'pointer',
@@ -95,6 +103,14 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
           '&:hover': {
             color: token.colorText,
           },
+        },
+      },
+
+      // RTL
+      '&-rtl': {
+        direction: 'rtl',
+        [`${componentCls}-clear`]: {
+          direction: 'ltr',
         },
       },
 
@@ -146,6 +162,9 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
       boxSizing: 'border-box',
       background: token.colorBgElevated,
       borderRadius: token.borderRadiusLG,
+      '&-rtl': {
+        direction: 'rtl',
+      },
 
       // Saturation SV Board
       [`${panelCls}-sat`]: {

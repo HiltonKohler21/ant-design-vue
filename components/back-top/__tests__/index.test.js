@@ -1,5 +1,7 @@
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import BackTop from '..';
+import ConfigProvider from '../../config-provider';
 
 describe('BackTop', () => {
   it('renders hidden by default', () => {
@@ -31,5 +33,29 @@ describe('BackTop', () => {
     const wrapper = mount(BackTop, { props: { visibilityHeight: 0, onClick } });
     wrapper.find('.ant-back-top').trigger('click');
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('respects ComponentToken zIndexPopup default and user override without clobbering', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        theme: {
+          cssVar: true,
+          components: {
+            BackTop: {
+              zIndexPopup: 2500,
+            },
+          },
+        },
+      },
+      slots: { default: () => <BackTop visibilityHeight={0} /> },
+    });
+    await nextTick();
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('--ant-back-top-z-index-popup:2500');
+    expect(css).not.toContain('--ant-back-top-z-index-popup:2500px');
+    wrapper.unmount();
   });
 });

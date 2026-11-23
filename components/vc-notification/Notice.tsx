@@ -1,5 +1,5 @@
 import type { Key } from '../_util/type';
-import { Teleport, computed, defineComponent, onMounted, watch, onUnmounted } from 'vue';
+import { Teleport, computed, defineComponent, onMounted, watch, onUnmounted, ref } from 'vue';
 import type { HTMLAttributes, CSSProperties } from 'vue';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import classNames from '../_util/classNames';
@@ -17,6 +17,8 @@ export interface NoticeProps {
   noticeKey: Key;
   closeIcon?: any;
   closable?: boolean;
+  showProgress?: boolean;
+  pauseOnHover?: boolean;
   props?: DivProps;
   onClick?: MouseEventHandler;
   onClose?: (key: Key) => void;
@@ -28,6 +30,8 @@ export interface NoticeProps {
   visible?: boolean;
 }
 
+const PROGRESS_UPDATE_INTERVAL = 100;
+
 export default defineComponent<NoticeProps>({
   name: 'Notice',
   inheritAttrs: false,
@@ -38,6 +42,8 @@ export default defineComponent<NoticeProps>({
     'noticeKey',
     'closeIcon',
     'closable',
+    'showProgress',
+    'pauseOnHover',
     'props',
     'onClick',
     'onClose',
@@ -45,14 +51,24 @@ export default defineComponent<NoticeProps>({
     'visible',
   ] as any,
   setup(props, { attrs, slots }) {
-    let closeTimer: any;
+    let closeTimer: any = null;
+    let progressTimer: any = null;
+    let startTime = 0;
     let isUnMounted = false;
+    const hovering = ref(false);
+    const spentTime = ref(0);
+    const percent = ref(0);
+
     const duration = computed(() => (props.duration === undefined ? 4.5 : props.duration));
-    const startCloseTimer = () => {
-      if (duration.value && !isUnMounted) {
-        closeTimer = setTimeout(() => {
-          close();
-        }, duration.value * 1000);
+    const pauseOnHover = computed(() => props.pauseOnHover !== false);
+    const showProgress = computed(() =>
+      Boolean(props.showProgress && duration.value && duration.value > 0),
+    );
+
+    const clearProgressTimer = () => {
+      if (progressTimer) {
+        clearTimeout(progressTimer);
+        progressTimer = null;
       }
     };
 
@@ -61,7 +77,40 @@ export default defineComponent<NoticeProps>({
         clearTimeout(closeTimer);
         closeTimer = null;
       }
+      clearProgressTimer();
     };
+
+    const scheduleProgressTick = () => {
+      clearProgressTimer();
+      if (!showProgress.value || hovering.value || isUnMounted || !duration.value) {
+        return;
+      }
+      const totalMs = duration.value * 1000;
+      const elapsed = spentTime.value + (startTime ? Date.now() - startTime : 0);
+      const nextPercent = Math.min(100, (elapsed / totalMs) * 100);
+      percent.value = nextPercent;
+      if (nextPercent < 100) {
+        progressTimer = setTimeout(() => {
+          scheduleProgressTick();
+        }, PROGRESS_UPDATE_INTERVAL);
+      }
+    };
+
+    const startCloseTimer = () => {
+      if (duration.value && duration.value > 0 && !isUnMounted) {
+        const totalMs = duration.value * 1000;
+        const remaining = Math.max(0, totalMs - spentTime.value);
+        startTime = Date.now();
+        closeTimer = setTimeout(() => {
+          percent.value = 100;
+          close();
+        }, remaining);
+        if (showProgress.value) {
+          scheduleProgressTick();
+        }
+      }
+    };
+
     const close = (e?: MouseEvent) => {
       if (e) {
         e.stopPropagation();
@@ -72,10 +121,41 @@ export default defineComponent<NoticeProps>({
         onClose(noticeKey);
       }
     };
+
     const restartCloseTimer = () => {
       clearCloseTimer();
+      spentTime.value = 0;
+      percent.value = 0;
+      hovering.value = false;
+      startTime = 0;
       startCloseTimer();
     };
+
+    const handleMouseEnter = () => {
+      if (!pauseOnHover.value) {
+        return;
+      }
+      hovering.value = true;
+      if (startTime) {
+        spentTime.value += Date.now() - startTime;
+        startTime = 0;
+        if (duration.value && duration.value > 0) {
+          percent.value = Math.min(100, (spentTime.value / (duration.value * 1000)) * 100);
+        }
+      }
+      clearCloseTimer();
+    };
+
+    const handleMouseLeave = () => {
+      if (!pauseOnHover.value) {
+        return;
+      }
+      if (hovering.value) {
+        hovering.value = false;
+        startCloseTimer();
+      }
+    };
+
     onMounted(() => {
       startCloseTimer();
     });
@@ -97,6 +177,7 @@ export default defineComponent<NoticeProps>({
       },
       { flush: 'post' },
     );
+
     return () => {
       const { prefixCls, closable, closeIcon = slots.closeIcon?.(), onClick, holder } = props;
       const { class: className, style } = attrs;
@@ -110,14 +191,15 @@ export default defineComponent<NoticeProps>({
         },
         {},
       );
+      const validPercent = Math.round(100 - Math.min(Math.max(percent.value, 0), 100));
       const node = (
         <div
           class={classNames(componentClass, className, {
             [`${componentClass}-closable`]: closable,
           })}
           style={style as CSSProperties}
-          onMouseenter={clearCloseTimer}
-          onMouseleave={startCloseTimer}
+          onMouseenter={handleMouseEnter}
+          onMouseleave={handleMouseLeave}
           onClick={onClick}
           {...dataOrAriaAttributeProps}
         >
@@ -126,6 +208,11 @@ export default defineComponent<NoticeProps>({
             <a tabindex={0} onClick={close} class={`${componentClass}-close`}>
               {closeIcon || <span class={`${componentClass}-close-x`} />}
             </a>
+          ) : null}
+          {showProgress.value ? (
+            <progress class={`${componentClass}-progress`} max="100" value={validPercent}>
+              {`${validPercent}%`}
+            </progress>
           ) : null}
         </div>
       );

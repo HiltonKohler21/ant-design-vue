@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'বর্তমান পৃষ্ঠা নির্বাচন করুন',
     removeCurrent: 'বর্তমান পৃষ্ঠাটি সরান',
     selectAll: 'সমস্ত ডেটা নির্বাচন করুন',
+    deselectAll: 'সমস্ত ডেটা অনির্বাচন করুন',
     removeAll: 'সমস্ত ডেটা সরান',
     selectInvert: 'বর্তমান পৃষ্ঠাটি উল্টে দিন',
   },

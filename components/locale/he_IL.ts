@@ -43,6 +43,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'חפש כאן',
     itemUnit: 'פריט',
     itemsUnit: 'פריטים',
+    deselectAll: 'בטל את הבחירה בכל הנתונים',
   },
   Upload: {
     uploading: 'מעלה...',

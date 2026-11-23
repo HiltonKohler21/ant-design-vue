@@ -1,7 +1,7 @@
 import type { ExtractPropTypes } from 'vue';
 import { defineComponent } from 'vue';
 import { getPropsSlot } from '../_util/props-util';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import { vNodeType } from '../_util/type';
 import type { CustomSlotsType } from '../_util/type';
 
@@ -24,6 +24,12 @@ export default defineComponent({
   }>,
   setup(props, { slots }) {
     const { prefixCls } = useConfigInject('card', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('cardMeta');
     return () => {
       const classString = {
         [`${prefixCls.value}-meta`]: true,
@@ -33,21 +39,44 @@ export default defineComponent({
       const description = getPropsSlot(slots, props, 'description');
 
       const avatarDom = avatar ? (
-        <div class={`${prefixCls.value}-meta-avatar`}>{avatar}</div>
+        <div
+          class={[`${prefixCls.value}-meta-avatar`, contextClassNames.value.avatar]}
+          style={contextStyles.value.avatar}
+        >
+          {avatar}
+        </div>
       ) : null;
-      const titleDom = title ? <div class={`${prefixCls.value}-meta-title`}>{title}</div> : null;
+      const titleDom = title ? (
+        <div
+          class={[`${prefixCls.value}-meta-title`, contextClassNames.value.title]}
+          style={contextStyles.value.title}
+        >
+          {title}
+        </div>
+      ) : null;
       const descriptionDom = description ? (
-        <div class={`${prefixCls.value}-meta-description`}>{description}</div>
+        <div
+          class={[`${prefixCls.value}-meta-description`, contextClassNames.value.description]}
+          style={contextStyles.value.description}
+        >
+          {description}
+        </div>
       ) : null;
       const MetaDetail =
         titleDom || descriptionDom ? (
-          <div class={`${prefixCls.value}-meta-detail`}>
+          <div
+            class={[`${prefixCls.value}-meta-detail`, contextClassNames.value.section]}
+            style={contextStyles.value.section}
+          >
             {titleDom}
             {descriptionDom}
           </div>
         ) : null;
       return (
-        <div class={classString}>
+        <div
+          class={[classString, contextClassName.value, contextClassNames.value.root]}
+          style={[contextStyle.value, contextStyles.value.root]}
+        >
           {avatarDom}
           {MetaDetail}
         </div>

@@ -29,16 +29,39 @@ type HolderProps = NotificationConfig & {
 
 interface HolderRef extends NotificationAPI {
   prefixCls: string;
-  hashId: string;
+  hashId: any;
+  notification?: any;
 }
 
 const Holder = defineComponent({
   name: 'Holder',
   inheritAttrs: false,
-  props: ['prefixCls', 'class', 'type', 'icon', 'content', 'onAllRemoved'],
+  props: [
+    'prefixCls',
+    'class',
+    'type',
+    'icon',
+    'content',
+    'onAllRemoved',
+    'top',
+    'bottom',
+    'duration',
+    'getContainer',
+    'getPopupContainer',
+    'placement',
+    'closeIcon',
+    'showProgress',
+    'pauseOnHover',
+    'maxCount',
+    'rtl',
+  ],
   setup(props: HolderProps, { expose }) {
-    const { getPrefixCls, getPopupContainer } = useConfigInject('notification', props);
+    const { getPrefixCls, getPopupContainer, direction, configProvider } = useConfigInject(
+      'notification',
+      props,
+    );
     const prefixCls = computed(() => props.prefixCls || getPrefixCls('notification'));
+    const contextNotification = computed(() => configProvider.notification?.value);
     // =============================== Style ===============================
     const getStyles = (placement: NotificationPlacement) =>
       getPlacementStyle(placement, props.top ?? DEFAULT_OFFSET, props.bottom ?? DEFAULT_OFFSET);
@@ -46,7 +69,10 @@ const Holder = defineComponent({
     // Style
     const [, hashId] = useStyle(prefixCls);
 
-    const getClassName = () => classNames(hashId.value, { [`${prefixCls.value}-rtl`]: props.rtl });
+    const getClassName = () =>
+      classNames(hashId.value, {
+        [`${prefixCls.value}-rtl`]: props.rtl ?? direction.value === 'rtl',
+      });
 
     // ============================== Motion ===============================
     const getNotificationMotion = () => getMotion(prefixCls.value);
@@ -58,10 +84,20 @@ const Holder = defineComponent({
       getClassName,
       motion: getNotificationMotion,
       closable: true,
-      closeIcon: getCloseIcon(prefixCls.value),
-      duration: DEFAULT_DURATION,
+      closeIcon: getCloseIcon(
+        prefixCls.value,
+        typeof props.closeIcon === 'function'
+          ? props.closeIcon()
+          : props.closeIcon ?? contextNotification.value?.closeIcon,
+      ),
+      duration: props.duration ?? DEFAULT_DURATION,
+      showProgress: props.showProgress,
+      pauseOnHover: props.pauseOnHover,
       getContainer: () =>
-        props.getPopupContainer?.() || getPopupContainer.value?.() || document.body,
+        props.getContainer?.() ||
+        props.getPopupContainer?.() ||
+        getPopupContainer.value?.() ||
+        document.body,
       maxCount: props.maxCount,
       hashId: hashId.value,
       onAllRemoved: props.onAllRemoved,
@@ -72,6 +108,7 @@ const Holder = defineComponent({
       ...api,
       prefixCls: prefixCls.value,
       hashId,
+      notification: contextNotification,
     });
     return holder;
   },
@@ -93,14 +130,49 @@ export function useInternalNotification(
     if (!holderRef.value) {
       return;
     }
-    const { open: originOpen, prefixCls, hashId } = holderRef.value;
+    const {
+      open: originOpen,
+      prefixCls,
+      hashId,
+      notification: contextNotificationRef,
+    } = holderRef.value;
+    const contextNotification = contextNotificationRef?.value ?? contextNotificationRef;
     const noticePrefixCls = `${prefixCls}-notice`;
 
-    const { message, description, icon, type, btn, actions, class: className, ...restConfig } = config;
+    const {
+      message,
+      description,
+      icon,
+      type,
+      btn,
+      actions,
+      class: className,
+      style,
+      closeIcon,
+      showProgress,
+      pauseOnHover,
+      ...restConfig
+    } = config;
     const mergedActions = actions ?? btn;
+    const resolvedCloseIcon =
+      closeIcon !== undefined
+        ? closeIcon
+        : notificationConfig?.closeIcon !== undefined
+        ? notificationConfig.closeIcon
+        : contextNotification?.closeIcon;
     return originOpen({
-      placement: 'topRight',
+      placement: notificationConfig?.placement ?? 'topRight',
       ...restConfig,
+      ...(resolvedCloseIcon !== undefined
+        ? {
+            closeIcon: getCloseIcon(
+              prefixCls,
+              typeof resolvedCloseIcon === 'function' ? resolvedCloseIcon() : resolvedCloseIcon,
+            ),
+          }
+        : {}),
+      showProgress: showProgress ?? notificationConfig?.showProgress,
+      pauseOnHover: pauseOnHover ?? notificationConfig?.pauseOnHover,
       content: () => (
         <PureContent
           prefixCls={noticePrefixCls}
@@ -111,8 +183,14 @@ export function useInternalNotification(
           btn={typeof mergedActions === 'function' ? mergedActions() : mergedActions}
         />
       ),
+      style: { ...(contextNotification?.style || {}), ...(style || {}) },
       // @ts-ignore
-      class: classNames(type && `${noticePrefixCls}-${type}`, hashId, className),
+      class: classNames(
+        type && `${noticePrefixCls}-${type}`,
+        hashId?.value ?? hashId,
+        contextNotification?.className,
+        className,
+      ),
     });
   };
 

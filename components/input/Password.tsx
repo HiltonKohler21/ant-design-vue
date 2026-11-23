@@ -78,21 +78,47 @@ export default defineComponent({
       };
       return cloneElement(isValidElement(icon) ? icon : <span>{icon}</span>, iconProps);
     };
-    const { prefixCls, getPrefixCls } = useConfigInject('input-password', props);
+    const { configProvider, prefixCls, getPrefixCls } = useConfigInject('input-password', props);
+    const passwordConfig = computed(() => (configProvider as any).inputPassword?.value);
     const inputPrefixCls = computed(() => getPrefixCls('input', props.inputPrefixCls));
     const renderPassword = () => {
-      const { size, visibilityToggle, ...restProps } = props;
+      const {
+        size,
+        visibilityToggle,
+        classNames: propClassNames,
+        styles: propStyles,
+        ...restProps
+      } = props;
 
       const suffixIcon = visibilityToggle && getIcon(prefixCls.value);
-      const inputClassName = classNames(prefixCls.value, attrs.class, {
-        [`${prefixCls.value}-${size}`]: !!size,
-      });
+      const inputClassName = classNames(
+        prefixCls.value,
+        passwordConfig.value?.className,
+        attrs.class,
+        {
+          [`${prefixCls.value}-${size}`]: !!size,
+        },
+      );
+      const mergedStyle = passwordConfig.value?.style
+        ? [passwordConfig.value.style, attrs.style]
+        : attrs.style;
+      const mergedClassNames =
+        passwordConfig.value?.classNames || propClassNames
+          ? { ...passwordConfig.value?.classNames, ...propClassNames }
+          : undefined;
+      const mergedStyles =
+        passwordConfig.value?.styles || propStyles
+          ? { ...passwordConfig.value?.styles, ...propStyles }
+          : undefined;
 
       const omittedProps = {
         ...omit(restProps, ['suffix', 'iconRender', 'action']),
         ...attrs,
         type: visible.value ? 'text' : 'password',
         class: inputClassName,
+        style: mergedStyle,
+        classNames: mergedClassNames,
+        styles: mergedStyles,
         prefixCls: inputPrefixCls.value,
         suffix: suffixIcon,
       } as InputProps;

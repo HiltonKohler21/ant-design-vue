@@ -109,8 +109,8 @@ const Space = defineComponent({
       return (
         <div
           {...attrs}
-          class={[cn.value, props.rootClassName, attrs.class]}
-          style={[style.value, attrs.style as CSSProperties]}
+          class={[cn.value, (space?.value as any)?.className, props.rootClassName, attrs.class]}
+          style={[style.value, (space?.value as any)?.style, attrs.style as CSSProperties]}
         >
           {items.map((child, index) => {
             let originIndex = children.indexOf(child);

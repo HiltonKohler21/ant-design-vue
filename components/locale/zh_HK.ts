@@ -54,6 +54,7 @@ const localeValues: Locale = {
     selectCurrent: '全選當頁',
     removeCurrent: '刪除當頁',
     selectAll: '全選所有',
+    deselectAll: '取消全選',
     removeAll: '刪除全部',
     selectInvert: '反選當頁',
   },

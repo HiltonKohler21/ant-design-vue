@@ -291,7 +291,7 @@ const ImageInternal = defineComponent({
               alt={alt}
               getContainer={getPreviewContainer.value}
               icons={icons}
-              rootClassName={rootClassName}
+              rootClassName={cn(dialogProps.rootClassName, rootClassName)}
             />
           )}
         </>

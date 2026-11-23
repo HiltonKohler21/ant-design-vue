@@ -10,6 +10,8 @@ import type {
   AnimatedConfig,
   OnTabScroll,
   Tab,
+  GetIndicatorSize,
+  IndicatorConfig,
 } from './interface';
 import { defineComponent, computed, onMounted, watchEffect } from 'vue';
 import type { CSSProperties, ExtractPropTypes } from 'vue';
@@ -71,7 +73,9 @@ export const tabsProps = () => {
     /** 5.23+ 配置式标签页 */
     items: arrayType<any[]>(),
     /** 5.21+ 指示条尺寸（deprecated，映射到 indicator.size） */
-    indicatorSize: [Number, String],
+    indicatorSize: someType<GetIndicatorSize | 'small' | 'large'>([Number, String, Function]),
+    /** 5.13+ 自定义指示条尺寸与对齐方式 */
+    indicator: objectType<IndicatorConfig>(),
 
     hideAdd: Boolean,
     type: stringType<TabsType>(),
@@ -196,11 +200,10 @@ const InternalTabs = defineComponent({
       'Tabs',
       '`tabBarExtraContent` slot is deprecated. Please use `rightExtra` slot instead.',
     );
-    const { prefixCls, direction, size, rootPrefixCls, getPopupContainer } = useConfigInject(
-      'tabs',
-      props,
-    );
+    const { prefixCls, direction, size, rootPrefixCls, getPopupContainer, configProvider } =
+      useConfigInject('tabs', props);
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const contextTabs = computed(() => configProvider.tabs?.value as any);
     const rtl = computed(() => direction.value === 'rtl');
     const mergedAnimated = computed<AnimatedConfig>(() => {
       const { animated, tabPosition } = props;
@@ -299,7 +302,20 @@ const InternalTabs = defineComponent({
         hideAdd,
         centered,
         indicatorSize,
+        indicator,
       } = props;
+      const ctxTabs = contextTabs.value;
+      const mergedIndicator: IndicatorConfig = {
+        align: indicator?.align ?? ctxTabs?.indicator?.align,
+        size:
+          indicator?.size ?? indicatorSize ?? ctxTabs?.indicator?.size ?? ctxTabs?.indicatorSize,
+      };
+      const legacyIndicatorSize =
+        mergedIndicator.size === 'small' || mergedIndicator.size === 'large'
+          ? mergedIndicator.size
+          : indicatorSize === 'small' || indicatorSize === 'large'
+          ? indicatorSize
+          : undefined;
       // ======================== Render ========================
       const sharedProps = {
         id: mergedId.value,
@@ -331,6 +347,7 @@ const InternalTabs = defineComponent({
         locale,
         tabBarGutter,
         indicatorSize,
+        indicator: mergedIndicator,
         onTabClick: onInternalTabClick,
         onTabScroll,
         style: tabBarStyle,
@@ -354,6 +371,7 @@ const InternalTabs = defineComponent({
         <div
           {...attrs}
           id={id}
+          style={[ctxTabs?.style, attrs.style as any]}
           class={classNames(
             pre,
             `${pre}-${mergedTabPosition.value}`,
@@ -366,9 +384,9 @@ const InternalTabs = defineComponent({
               [`${pre}-mobile`]: mobile.value,
               [`${pre}-editable`]: type === 'editable-card',
               [`${pre}-rtl`]: rtl.value,
-              [`${pre}-indicator-size-${indicatorSize}`]:
-                indicatorSize === 'small' || indicatorSize === 'large',
+              [`${pre}-indicator-size-${legacyIndicatorSize}`]: !!legacyIndicatorSize,
             },
+            ctxTabs?.className,
             attrs.class,
             props.rootClassName,
           )}

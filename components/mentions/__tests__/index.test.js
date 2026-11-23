@@ -1,5 +1,7 @@
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import Mentions from '..';
+import ConfigProvider from '../../config-provider';
 import focusTest from '../../../tests/shared/focusTest';
 import { sleep } from '../../../tests/utils';
 import KeyCode from '../../_util/KeyCode';
@@ -99,5 +101,39 @@ describe('Mentions', () => {
     jest.runAllTimers();
 
     expect(wrapper.find('textarea').element.value).toBe('@notExist');
+    jest.useRealTimers();
+  });
+
+  it('supports variant CSS rules and ConfigProvider.mentions className/style/variant', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        mentions: {
+          className: 'cp-mentions',
+          style: { width: '240px' },
+          variant: 'filled',
+        },
+      },
+      slots: { default: () => <Mentions /> },
+    });
+    await nextTick();
+    const root = wrapper.find('.ant-mentions');
+    expect(root.classes()).toContain('ant-mentions-filled');
+    expect(root.classes()).toContain('cp-mentions');
+    expect(root.attributes('style')).toContain('width: 240px');
+
+    const borderless = mount(Mentions, { props: { variant: 'borderless' } });
+    expect(borderless.find('.ant-mentions').classes()).toContain('ant-mentions-borderless');
+
+    const underlined = mount(Mentions, { props: { variant: 'underlined' } });
+    expect(underlined.find('.ant-mentions').classes()).toContain('ant-mentions-underlined');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('.ant-mentions-outlined');
+    expect(css).toContain('.ant-mentions-filled');
+    expect(css).toContain('.ant-mentions-borderless');
+    expect(css).toContain('.ant-mentions-underlined');
   });
 });

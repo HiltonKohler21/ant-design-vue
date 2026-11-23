@@ -11,14 +11,14 @@ import {
 } from 'vue';
 import Wave from '../_util/wave';
 import buttonProps from './buttonTypes';
-import { flattenChildren, initDefaultProps } from '../_util/props-util';
+import { flattenChildren } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 import devWarning from '../vc-util/devWarning';
 import LoadingIcon from './LoadingIcon';
 import useStyle from './style';
-import type { ButtonType } from './buttonTypes';
+import type { ButtonColorType, ButtonType, ButtonVariantType } from './buttonTypes';
 import type { VNode } from 'vue';
 import { GroupSizeContext } from './button-group';
 import { useCompactItemContext } from '../space/Compact';
@@ -29,10 +29,13 @@ type Loading = boolean | number;
 const rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/;
 const isTwoCNChar = rxTwoCNChar.test.bind(rxTwoCNChar);
 
-const variantToType = (variant?: string): ButtonType | undefined => {
+const variantToType = (
+  variant?: ButtonVariantType,
+  color?: ButtonColorType,
+): ButtonType | undefined => {
   switch (variant) {
     case 'solid':
-      return 'primary';
+      return color === 'primary' || color === undefined ? 'primary' : 'default';
     case 'dashed':
       return 'dashed';
     case 'text':
@@ -57,14 +60,18 @@ export default defineComponent({
   name: 'AButton',
   inheritAttrs: false,
   __ANT_BUTTON: true,
-  props: initDefaultProps(buttonProps(), { type: 'default' }),
+  props: buttonProps(),
   slots: Object as CustomSlotsType<{
     icon: any;
     default: any;
   }>,
   // emits: ['click', 'mousedown'],
   setup(props, { slots, attrs, emit, expose }) {
-    const { prefixCls, autoInsertSpaceInButton, direction, size } = useConfigInject('btn', props);
+    const { prefixCls, autoInsertSpaceInButton, direction, size, configProvider } = useConfigInject(
+      'btn',
+      props,
+    );
+    const contextButton = computed(() => configProvider.button?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const groupSizeContext = GroupSizeContext.useInject();
     const disabledContext = useInjectDisabled();
@@ -76,7 +83,12 @@ export default defineComponent({
     const innerLoading = shallowRef<Loading>(false);
     const hasTwoCNChar = shallowRef(false);
 
-    const autoInsertSpace = computed(() => autoInsertSpaceInButton.value !== false);
+    const autoInsertSpace = computed(
+      () =>
+        (props.autoInsertSpace ??
+          contextButton.value?.autoInsertSpace ??
+          autoInsertSpaceInButton.value) !== false,
+    );
     const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
 
     // =============== Update Loading ===============
@@ -103,22 +115,70 @@ export default defineComponent({
       },
     );
 
-    const mergedType = computed(() =>
-      props.variant !== undefined ? variantToType(props.variant) : props.type,
+    const colorVariantPair = computed<[ButtonColorType | undefined, ButtonVariantType | undefined]>(
+      () => {
+        const { color, variant, type, danger } = props;
+        const ctxColor = contextButton.value?.color as ButtonColorType | undefined;
+        const ctxVariant = contextButton.value?.variant as ButtonVariantType | undefined;
+
+        if (color && variant) {
+          return [color, variant];
+        }
+        if (color) {
+          const fallbackVariant: ButtonVariantType =
+            type === 'primary'
+              ? 'solid'
+              : type === 'dashed'
+              ? 'dashed'
+              : type === 'text'
+              ? 'text'
+              : type === 'link'
+              ? 'link'
+              : ctxVariant || 'outlined';
+          return [color, fallbackVariant];
+        }
+        if (variant) {
+          if (danger) {
+            return ['danger', variant];
+          }
+          if (variant === 'solid') {
+            return ['primary', 'solid'];
+          }
+          return [ctxColor, variant];
+        }
+        if (type !== undefined || danger) {
+          return [undefined, undefined];
+        }
+        if (ctxColor && ctxVariant) {
+          return [ctxColor, ctxVariant];
+        }
+        if (ctxVariant) {
+          if (ctxVariant === 'solid') {
+            return ['primary', 'solid'];
+          }
+          return [undefined, ctxVariant];
+        }
+        if (ctxColor) {
+          return [ctxColor, 'outlined'];
+        }
+        return [undefined, undefined];
+      },
     );
 
+    const mergedType = computed<ButtonType>(() => {
+      const [resolvedColor, resolvedVariant] = colorVariantPair.value;
+      if (resolvedVariant !== undefined) {
+        return variantToType(resolvedVariant, resolvedColor) || 'default';
+      }
+      return props.type || 'default';
+    });
+
     const classes = computed(() => {
-      const {
-        shape = 'default',
-        ghost,
-        block,
-        danger,
-        iconPosition = 'start',
-        variant,
-        color,
-      } = props;
+      const { shape = 'default', ghost, block, danger, iconPosition = 'start' } = props;
+      const [resolvedColor, resolvedVariant] = colorVariantPair.value;
       const currentType = mergedType.value;
-      const mergedDanger = danger || color === 'danger';
+      const mergedDanger = danger || resolvedColor === 'danger';
+      const colorCls = resolvedColor === 'danger' ? 'dangerous' : resolvedColor;
       const pre = prefixCls.value;
 
       const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
@@ -132,8 +192,9 @@ export default defineComponent({
           [`${pre}`]: true,
           [`${pre}-${shape}`]: shape !== 'default' && shape,
           [`${pre}-${currentType}`]: currentType,
-          [`${pre}-filled`]: variant === 'filled',
-          [`${pre}-color-primary`]: color === 'primary',
+          [`${pre}-filled`]: resolvedVariant === 'filled',
+          [`${pre}-color-${colorCls}`]: !!colorCls,
+          [`${pre}-variant-${resolvedVariant}`]: !!resolvedVariant,
           [`${pre}-${sizeCls}`]: sizeCls,
           [`${pre}-loading`]: innerLoading.value,
           [`${pre}-background-ghost`]: ghost && !isUnBorderedButtonType(currentType),
@@ -149,7 +210,7 @@ export default defineComponent({
     const fixTwoCNChar = () => {
       // Fix for HOC usage like <FormatMessage />
       const node = buttonNodeRef.value!;
-      if (!node || autoInsertSpaceInButton.value === false) {
+      if (!node || !autoInsertSpace.value) {
         return;
       }
       const buttonText = node.textContent;
@@ -221,12 +282,15 @@ export default defineComponent({
       const { htmlType, href, title, target } = props;
 
       const iconType = innerLoading.value ? 'loading' : icon;
+      const contextStyle = contextButton.value?.style;
       const buttonProps = {
         ...attrs,
         title,
         disabled: mergedDisabled.value,
+        ...(contextStyle ? { style: [contextStyle, attrs.style as any] } : {}),
         class: [
           classes.value,
+          contextButton.value?.className,
           props.rootClassName,
           attrs.class,
           { [`${prefixCls.value}-icon-only`]: children.length === 0 && !!iconType },

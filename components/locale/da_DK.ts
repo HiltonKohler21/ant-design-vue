@@ -40,6 +40,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Søg her',
     itemUnit: 'element',
     itemsUnit: 'elementer',
+    deselectAll: 'Fravælg alle data',
   },
   Upload: {
     uploading: 'Uploader...',

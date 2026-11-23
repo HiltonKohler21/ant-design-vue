@@ -24,7 +24,8 @@ const FloatButtonGroup = defineComponent({
     shape: 'circle',
   } as FloatButtonGroupProps),
   setup(props, { attrs, slots, emit }) {
-    const { prefixCls, direction } = useConfigInject(floatButtonPrefixCls, props);
+    const { configProvider, prefixCls, direction } = useConfigInject(floatButtonPrefixCls, props);
+    const floatButtonGroupConfig = computed(() => (configProvider as any).floatButtonGroup?.value);
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -98,18 +99,33 @@ const FloatButtonGroup = defineComponent({
 
       const groupPrefixCls = `${prefixCls.value}-group`;
 
-      const groupCls = classNames(groupPrefixCls, hashId.value, attrs.class, {
-        [`${groupPrefixCls}-rtl`]: direction.value === 'rtl',
-        [`${groupPrefixCls}-${shape}`]: shape,
-        [`${groupPrefixCls}-${shape}-shadow`]: !trigger,
-      });
+      const groupCls = classNames(
+        groupPrefixCls,
+        hashId.value,
+        floatButtonGroupConfig.value?.className,
+        attrs.class,
+        {
+          [`${groupPrefixCls}-rtl`]: direction.value === 'rtl',
+          [`${groupPrefixCls}-${shape}`]: shape,
+          [`${groupPrefixCls}-${shape}-shadow`]: !trigger,
+        },
+      );
+      const mergedStyle = floatButtonGroupConfig.value?.style
+        ? [floatButtonGroupConfig.value.style, attrs.style]
+        : attrs.style;
 
       const wrapperCls = classNames(hashId.value, `${groupPrefixCls}-wrap`);
 
       const transitionProps = getTransitionProps(`${groupPrefixCls}-wrap`);
 
       return wrapSSR(
-        <div ref={floatButtonGroupRef} {...attrs} class={groupCls} {...hoverAction.value}>
+        <div
+          ref={floatButtonGroupRef}
+          {...attrs}
+          style={mergedStyle as any}
+          class={groupCls}
+          {...hoverAction.value}
+        >
           {trigger && ['click', 'hover'].includes(trigger) ? (
             <>
               <Transition {...transitionProps}>

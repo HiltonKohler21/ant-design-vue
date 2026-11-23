@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Търсене',
     itemUnit: 'избор',
     itemsUnit: 'избори',
+    deselectAll: 'Демаркирайте всички данни',
   },
   Upload: {
     uploading: 'Качване...',

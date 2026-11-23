@@ -38,7 +38,8 @@ export default defineComponent({
   }),
   setup(props, { slots, attrs, expose }) {
     const formItemContext = useInjectFormItemContext();
-    const { prefixCls, direction, disabled } = useConfigInject('upload', props);
+    const { configProvider, prefixCls, direction, disabled } = useConfigInject('upload', props);
+    const uploadConfig = computed(() => (configProvider as any).upload?.value);
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -314,8 +315,13 @@ export default defineComponent({
         showUploadList,
         extra,
       } = props;
-      const { showDownloadIcon, showPreviewIcon, showRemoveIcon } =
-        typeof showUploadList === 'boolean' ? ({} as ShowUploadListInterface) : showUploadList;
+      const {
+        showDownloadIcon,
+        showPreviewIcon,
+        showRemoveIcon,
+        extra: showUploadListExtra,
+      } = typeof showUploadList === 'boolean' ? ({} as ShowUploadListInterface) : showUploadList;
+      const mergedExtra = showUploadListExtra ?? extra;
       return showUploadList ? (
         <UploadList
           prefixCls={prefixCls.value}
@@ -336,7 +342,7 @@ export default defineComponent({
           isImageUrl={isImageUrl}
           progress={progress}
           itemRender={itemRender}
-          extra={extra}
+          extra={mergedExtra}
           appendActionVisible={buttonVisible}
           appendAction={button}
           v-slots={{ ...slots }}
@@ -348,6 +354,9 @@ export default defineComponent({
     return () => {
       const { listType, type } = props;
       const { class: className, style: styleName, ...transAttrs } = attrs;
+      const mergedRootStyle = uploadConfig.value?.style
+        ? [uploadConfig.value.style, styleName]
+        : styleName;
       const rcUploadProps = {
         onBatchStart,
         onError,
@@ -394,8 +403,10 @@ export default defineComponent({
         return wrapSSR(
           <span
             {...attrs}
+            style={mergedRootStyle as any}
             class={classNames(
               `${prefixCls.value}-wrapper`,
+              uploadConfig.value?.className,
               props.rootClassName,
               rtlCls,
               className,
@@ -440,8 +451,10 @@ export default defineComponent({
         return wrapSSR(
           <span
             {...attrs}
+            style={mergedRootStyle as any}
             class={classNames(
               `${prefixCls.value}-wrapper`,
+              uploadConfig.value?.className,
               props.rootClassName,
               `${prefixCls.value}-picture-card-wrapper`,
               rtlCls,
@@ -456,8 +469,10 @@ export default defineComponent({
       return wrapSSR(
         <span
           {...attrs}
+          style={mergedRootStyle as any}
           class={classNames(
             `${prefixCls.value}-wrapper`,
+            uploadConfig.value?.className,
             props.rootClassName,
             rtlCls,
             attrs.class,

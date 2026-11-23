@@ -16,7 +16,11 @@ import type { CustomSlotsType } from '../_util/type';
 import useMergedState from '../_util/hooks/useMergedState';
 
 import KeyCode from '../_util/KeyCode';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import { getTransitionName } from '../_util/transition';
 import { cloneVNodes } from '../_util/vnode';
@@ -57,11 +61,8 @@ const Popconfirm = defineComponent({
   name: 'APopconfirm',
   inheritAttrs: false,
   props: initDefaultProps(popconfirmProps(), {
-    ...tooltipDefaultProps(),
-    trigger: 'click',
+    ...omit(tooltipDefaultProps(), ['trigger', 'mouseEnterDelay', 'mouseLeaveDelay']),
     placement: 'top',
-    mouseEnterDelay: 0.1,
-    mouseLeaveDelay: 0.1,
     arrowPointAtCenter: false,
     autoAdjustOverflow: true,
     okType: 'primary',
@@ -132,6 +133,13 @@ const Popconfirm = defineComponent({
       settingOpen(value);
     };
     const { prefixCls: prefixClsConfirm, getPrefixCls } = useConfigInject('popconfirm', props);
+    const {
+      componentConfig: popconfirmConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('popconfirm');
     const rootPrefixCls = computed(() => getPrefixCls());
     const btnPrefixCls = computed(() => getPrefixCls('btn'));
     const [wrapSSR] = usePopconfirmStyle(prefixClsConfirm);
@@ -202,7 +210,19 @@ const Popconfirm = defineComponent({
     };
 
     return () => {
-      const { placement, overlayClassName, trigger = 'click', ...restProps } = props;
+      const { placement, overlayClassName, ...restProps } = props;
+      const mergedTrigger = props.trigger ?? popconfirmConfig.value.trigger ?? 'click';
+      const mergedMouseEnterDelay =
+        props.mouseEnterDelay ?? popconfirmConfig.value.mouseEnterDelay ?? 0.1;
+      const mergedMouseLeaveDelay =
+        props.mouseLeaveDelay ?? popconfirmConfig.value.mouseLeaveDelay ?? 0.1;
+      const mergedArrow = props.arrow ?? popconfirmConfig.value.arrow ?? true;
+      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
+      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
+      const mergedOverlayStyle =
+        contextStyle.value || props.overlayStyle
+          ? { ...contextStyle.value, ...props.overlayStyle }
+          : undefined;
       const otherProps = omit(restProps, [
         'title',
         'content',
@@ -213,20 +233,31 @@ const Popconfirm = defineComponent({
         'onCancel',
         'prefixCls',
       ]);
-      const overlayClassNames = classNames(prefixClsConfirm.value, overlayClassName);
+      const overlayClassNames = classNames(
+        prefixClsConfirm.value,
+        contextClassName.value,
+        overlayClassName,
+      );
       return wrapSSR(
         <Popover
           {...otherProps}
           {...attrs}
-          trigger={trigger}
+          trigger={mergedTrigger}
+          mouseEnterDelay={mergedMouseEnterDelay}
+          mouseLeaveDelay={mergedMouseLeaveDelay}
+          arrow={mergedArrow}
           placement={placement}
           onOpenChange={onOpenChange}
           open={open.value}
           overlayClassName={overlayClassNames}
+          overlayStyle={mergedOverlayStyle}
+          classNames={mergedClassNames}
+          styles={mergedStyles}
           transitionName={getTransitionName(rootPrefixCls.value, 'zoom-big', props.transitionName)}
           v-slots={{ content: renderOverlay }}
           ref={rootRef}
           data-popover-inject
+          data-popconfirm-inject
         >
           {cloneVNodes(
             slots.default?.() || [],

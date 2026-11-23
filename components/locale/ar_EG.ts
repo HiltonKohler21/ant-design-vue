@@ -43,6 +43,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'ابحث هنا',
     itemUnit: 'عنصر',
     itemsUnit: 'عناصر',
+    deselectAll: 'إلغاء تحديد كافة البيانات',
   },
   Upload: {
     uploading: 'جاري الرفع...',

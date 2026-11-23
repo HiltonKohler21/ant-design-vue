@@ -26,6 +26,7 @@ import PropTypes from '../_util/vue-types';
 import { cloneElement } from '../_util/vnode';
 import { flattenChildren } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import classNames from '../_util/classNames';
 import type { CustomSlotsType } from '../_util/type';
 import type { DescriptionsSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import useStyle from './style';
@@ -41,6 +42,14 @@ const descriptionsItemProp = () => ({
   label: PropTypes.any,
   labelStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   contentStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
+  classNames: {
+    type: Object as PropType<SemanticNames<'label' | 'content'>>,
+    default: undefined,
+  },
+  styles: {
+    type: Object as PropType<SemanticStylesMap<'label' | 'content'>>,
+    default: undefined,
+  },
   span: { type: Number, default: 1 },
 });
 
@@ -165,6 +174,8 @@ export type DescriptionsProps = HTMLAttributes &
 export interface DescriptionsContextProp {
   labelStyle?: Ref<CSSProperties>;
   contentStyle?: Ref<CSSProperties>;
+  classNames?: Ref<SemanticNames<DescriptionsSemanticName> | undefined>;
+  styles?: Ref<SemanticStylesMap<DescriptionsSemanticName> | undefined>;
 }
 
 export const descriptionsContext: InjectionKey<DescriptionsContextProp> =
@@ -182,12 +193,41 @@ const Descriptions = defineComponent({
   }>,
   Item: DescriptionsItem,
   setup(props, { slots, attrs }) {
-    const { prefixCls, direction } = useConfigInject('descriptions', props);
+    const { prefixCls, direction, configProvider } = useConfigInject('descriptions', props);
     let token: number;
     const screens = ref<ScreenMap>({});
 
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const responsiveObserve = useResponsiveObserve();
+
+    const contextDescriptions = computed(() => configProvider.descriptions?.value as any);
+
+    const mergedClassNames = computed<SemanticNames<DescriptionsSemanticName>>(() => {
+      const ctx = contextDescriptions.value?.classNames;
+      const own = props.classNames;
+      return {
+        root: classNames(ctx?.root, own?.root) || undefined,
+        header: classNames(ctx?.header, own?.header) || undefined,
+        title: classNames(ctx?.title, own?.title) || undefined,
+        extra: classNames(ctx?.extra, own?.extra) || undefined,
+        label: classNames(ctx?.label, own?.label) || undefined,
+        content: classNames(ctx?.content, own?.content) || undefined,
+      };
+    });
+
+    const mergedStyles = computed<SemanticStylesMap<DescriptionsSemanticName>>(() => {
+      const ctx = contextDescriptions.value?.styles;
+      const own = props.styles;
+      const merge = (a?: CSSProperties, b?: CSSProperties) => (a || b ? { ...a, ...b } : undefined);
+      return {
+        root: merge(ctx?.root, own?.root),
+        header: merge(ctx?.header, own?.header),
+        title: merge(ctx?.title, own?.title),
+        extra: merge(ctx?.extra, own?.extra),
+        label: merge(ctx?.label, own?.label),
+        content: merge(ctx?.content, own?.content),
+      };
+    });
 
     onBeforeMount(() => {
       token = responsiveObserve.value.subscribe(screen => {
@@ -205,6 +245,8 @@ const Descriptions = defineComponent({
     provide(descriptionsContext, {
       labelStyle: toRef(props, 'labelStyle'),
       contentStyle: toRef(props, 'contentStyle'),
+      classNames: mergedClassNames,
+      styles: mergedStyles,
     });
 
     const mergeColumn = computed(() => getColumn(props.column, screens.value));
@@ -232,30 +274,36 @@ const Descriptions = defineComponent({
               [`${prefixCls.value}-bordered`]: !!bordered,
               [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
             },
+            contextDescriptions.value?.className,
             props.rootClassName,
-            props.classNames?.root,
+            mergedClassNames.value.root,
             attrs.class,
             hashId.value,
           ]}
-          style={[attrs.style as any, props.styles?.root]}
+          style={[
+            contextDescriptions.value?.style,
+            contextDescriptions.value?.styles?.root,
+            attrs.style as any,
+            props.styles?.root,
+          ]}
         >
           {(title || extra) && (
             <div
-              class={[`${prefixCls.value}-header`, props.classNames?.header]}
-              style={props.styles?.header}
+              class={[`${prefixCls.value}-header`, mergedClassNames.value.header]}
+              style={mergedStyles.value.header}
             >
               {title && (
                 <div
-                  class={[`${prefixCls.value}-title`, props.classNames?.title]}
-                  style={props.styles?.title}
+                  class={[`${prefixCls.value}-title`, mergedClassNames.value.title]}
+                  style={mergedStyles.value.title}
                 >
                   {title}
                 </div>
               )}
               {extra && (
                 <div
-                  class={[`${prefixCls.value}-extra`, props.classNames?.extra]}
-                  style={props.styles?.extra}
+                  class={[`${prefixCls.value}-extra`, mergedClassNames.value.extra]}
+                  style={mergedStyles.value.extra}
                 >
                   {extra}
                 </div>

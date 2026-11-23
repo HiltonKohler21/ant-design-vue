@@ -32,6 +32,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Cari',
     itemUnit: 'item',
     itemsUnit: 'item',
+    deselectAll: 'Batal pilih semua data',
   },
   Upload: {
     uploading: 'Mengunggah...',

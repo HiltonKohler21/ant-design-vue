@@ -4,7 +4,11 @@ import Tooltip from '../tooltip';
 import abstractTooltipProps from '../tooltip/abstractTooltipProps';
 import { filterEmpty, initDefaultProps } from '../_util/props-util';
 import { anyType, withInstall } from '../_util/type';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 import omit from '../_util/omit';
 import { getTransitionName } from '../_util/transition';
 import { tooltipDefaultProps } from '../tooltip/Tooltip';
@@ -25,11 +29,8 @@ const Popover = defineComponent({
   name: 'APopover',
   inheritAttrs: false,
   props: initDefaultProps(popoverProps(), {
-    ...tooltipDefaultProps(),
-    trigger: 'hover',
+    ...omit(tooltipDefaultProps(), ['trigger', 'mouseEnterDelay', 'mouseLeaveDelay']),
     placement: 'top',
-    mouseEnterDelay: 0.1,
-    mouseLeaveDelay: 0.1,
   }),
   setup(props, { expose, slots, attrs }) {
     const tooltipRef = ref();
@@ -44,6 +45,14 @@ const Popover = defineComponent({
       },
     });
     const { prefixCls, configProvider } = useConfigInject('popover', props);
+    const {
+      componentConfig: popoverConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('popover');
+    const injectFromPopconfirm = computed(() => !!(attrs as any)['data-popconfirm-inject']);
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const rootPrefixCls = computed(() => configProvider.getPrefixCls());
     const getOverlay = () => {
@@ -60,14 +69,36 @@ const Popover = defineComponent({
       );
     };
     return () => {
-      const overlayCls = classNames(props.overlayClassName, hashId.value);
+      const ctxConfig = injectFromPopconfirm.value ? {} : popoverConfig.value;
+      const ctxCls = injectFromPopconfirm.value ? undefined : contextClassName.value;
+      const ctxStyle = injectFromPopconfirm.value ? undefined : contextStyle.value;
+      const ctxClassNames = injectFromPopconfirm.value ? undefined : contextClassNames.value;
+      const ctxStyles = injectFromPopconfirm.value ? undefined : contextStyles.value;
+      const mergedTrigger = props.trigger ?? (ctxConfig as any).trigger ?? 'hover';
+      const mergedMouseEnterDelay =
+        props.mouseEnterDelay ?? (ctxConfig as any).mouseEnterDelay ?? 0.1;
+      const mergedMouseLeaveDelay =
+        props.mouseLeaveDelay ?? (ctxConfig as any).mouseLeaveDelay ?? 0.1;
+      const mergedArrow = props.arrow ?? (ctxConfig as any).arrow ?? true;
+      const mergedClassNames = mergeSemanticClassNames(ctxClassNames, props.classNames);
+      const mergedStyles = mergeSemanticStyles(ctxStyles, props.styles);
+      const mergedOverlayStyle =
+        ctxStyle || props.overlayStyle ? { ...ctxStyle, ...props.overlayStyle } : undefined;
+      const overlayCls = classNames(props.overlayClassName, ctxCls, hashId.value);
       return wrapSSR(
         <Tooltip
           {...omit(props, ['title', 'content'])}
           {...attrs}
+          trigger={mergedTrigger}
+          mouseEnterDelay={mergedMouseEnterDelay}
+          mouseLeaveDelay={mergedMouseLeaveDelay}
+          arrow={mergedArrow}
           prefixCls={prefixCls.value}
           ref={tooltipRef}
           overlayClassName={overlayCls}
+          overlayStyle={mergedOverlayStyle}
+          classNames={mergedClassNames}
+          styles={mergedStyles}
           v-slots={{ title: getOverlay, default: slots.default }}
           transitionName={getTransitionName(rootPrefixCls.value, 'zoom-big', props.transitionName)}
           data-popover-inject

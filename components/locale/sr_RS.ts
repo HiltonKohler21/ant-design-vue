@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'Izaberi trenutnu stranicu',
     removeCurrent: 'Ukloni trenutnu stranicu',
     selectAll: 'Izaberi sve podatke',
+    deselectAll: 'Опозовите избор свих података',
     removeAll: 'Ukloni sve podatke',
     selectInvert: 'Obrni izbor trenutne stranice',
   },

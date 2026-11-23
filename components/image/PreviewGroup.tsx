@@ -15,6 +15,7 @@ import SwapOutlined from '@ant-design/icons-vue/SwapOutlined';
 import { getTransitionName } from '../_util/transition';
 import useStyle from './style';
 import { anyType } from '../_util/type';
+import classNames from '../_util/classNames';
 
 export const icons = {
   rotateLeft: <RotateLeftOutlined />,
@@ -39,24 +40,48 @@ const InternalPreviewGroup = defineComponent({
   inheritAttrs: false,
   props: previewGroupProps(),
   setup(props, { attrs, slots }) {
-    const { prefixCls, rootPrefixCls } = useConfigInject('image', props);
+    const { prefixCls, rootPrefixCls, configProvider } = useConfigInject('image', props);
     const previewPrefixCls = computed(() => `${prefixCls.value}-preview`);
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const contextPreview = computed(() => {
+      const p = configProvider.image?.value?.preview as any;
+      return typeof p === 'object' && p !== null ? p : {};
+    });
+    const mergedIcons = computed(() => {
+      const _preview =
+        typeof props.preview === 'object' && props.preview !== null ? props.preview : {};
+      const closeIcon = (_preview as any).closeIcon ?? contextPreview.value.closeIcon;
+      return {
+        ...icons,
+        ...contextPreview.value.icons,
+        ...(_preview as any).icons,
+        ...(closeIcon !== undefined ? { close: closeIcon } : {}),
+      };
+    });
     const mergedPreview = computed(() => {
       const { preview } = props;
       if (preview === false) {
         return preview;
       }
-      const _preview = typeof preview === 'object' ? preview : {};
+      const _preview = typeof preview === 'object' && preview !== null ? preview : {};
 
       return {
+        ...contextPreview.value,
         ..._preview,
-        rootClassName: hashId.value,
-        transitionName: getTransitionName(rootPrefixCls.value, 'zoom', _preview.transitionName),
+        rootClassName: classNames(
+          contextPreview.value.rootClassName,
+          _preview.rootClassName,
+          hashId.value,
+        ),
+        transitionName: getTransitionName(
+          rootPrefixCls.value,
+          'zoom',
+          _preview.transitionName ?? contextPreview.value.transitionName,
+        ),
         maskTransitionName: getTransitionName(
           rootPrefixCls.value,
           'fade',
-          _preview.maskTransitionName,
+          _preview.maskTransitionName ?? contextPreview.value.maskTransitionName,
         ),
       };
     });
@@ -65,7 +90,7 @@ const InternalPreviewGroup = defineComponent({
         <PreviewGroup
           {...{ ...attrs, ...props }}
           preview={mergedPreview.value}
-          icons={icons}
+          icons={mergedIcons.value}
           previewPrefixCls={previewPrefixCls.value}
           v-slots={slots}
         ></PreviewGroup>,

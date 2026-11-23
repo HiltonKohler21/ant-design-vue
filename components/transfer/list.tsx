@@ -342,18 +342,20 @@ export default defineComponent({
           </Menu>
         );
       } else {
+        const isAllChecked =
+          checkedKeys.length > 0 && checkedKeys.length === enabledItemKeys.value.length;
         menu = (
           <Menu>
             <Menu.Item
               key="selectAll"
               onClick={() => {
                 const keys = enabledItemKeys.value;
-                onItemSelectAll(getNewSelectKeys(keys, []));
+                onItemSelectAll(
+                  isAllChecked ? getNewSelectKeys([], keys) : getNewSelectKeys(keys, []),
+                );
               }}
             >
-              {checkedKeys.length > 0 && checkedKeys.length === enabledItemKeys.value.length
-                ? deselectAll
-                : selectAll}
+              {isAllChecked ? deselectAll || selectAll : selectAll}
             </Menu.Item>
             {pagination && (
               <Menu.Item

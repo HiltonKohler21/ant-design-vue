@@ -48,6 +48,7 @@ const localeValues: Locale = {
     selectCurrent: 'Select current page',
     removeCurrent: 'Remove current page',
     selectAll: 'Select all data',
+    deselectAll: 'Díroghnaigh na sonraí go léir',
     removeAll: 'Remove all data',
     selectInvert: 'Invert current page',
   },

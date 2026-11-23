@@ -10,8 +10,10 @@ import { ReloadOutlined } from '@ant-design/icons-vue';
 import { useToken } from '../theme/internal';
 import { QRCodeCanvas, QRCodeSVG } from './QRCode';
 import warning from '../_util/warning';
+import type { QRStatus, StatusRenderInfo } from './interface';
 import { qrcodeProps } from './interface';
 
+export type { QRStatus, StatusRenderInfo };
 export type QRCodeProps = Partial<ExtractPropTypes<ReturnType<typeof qrcodeProps>>>;
 const QRCode = defineComponent({
   name: 'AQrcode',
@@ -28,7 +30,7 @@ const QRCode = defineComponent({
       );
     }
     const [locale] = useLocaleReceiver('QRCode');
-    const { prefixCls } = useConfigInject('qrcode', props);
+    const { prefixCls, configProvider } = useConfigInject('qrcode', props);
     const [wrapSSR, hashId] = useStyle(prefixCls);
     // realToken：未变量化的原始 token。QR 码尺寸/画布颜色参与 JS 计算与 Canvas 绘制，
     // cssVar 模式下 token 值是 var() 字符串，必须使用真实值。
@@ -66,13 +68,27 @@ const QRCode = defineComponent({
         imageSettings: icon ? imageSettings : undefined,
       };
     });
+    const handleRefresh = (e?: MouseEvent) => {
+      emit('refresh', e);
+    };
     return () => {
       const pre = prefixCls.value;
-      const customStatusNode = props.status !== 'active' ? slots.statusRender?.(props) : undefined;
+      const contextQRCode = (configProvider as any).qrcode?.value;
+      const renderStatus = props.statusRender ?? slots.statusRender;
+      const statusInfo: StatusRenderInfo | undefined =
+        props.status !== 'active'
+          ? {
+              status: props.status as Exclude<QRStatus, 'active'>,
+              locale: locale.value,
+              onRefresh: handleRefresh,
+            }
+          : undefined;
+      const customStatusNode = statusInfo && renderStatus ? renderStatus(statusInfo) : undefined;
       return wrapSSR(
         <div
           {...attrs}
           style={[
+            contextQRCode?.style,
             attrs.style as CSSProperties,
             {
               width: `${props.size}px`,
@@ -83,6 +99,7 @@ const QRCode = defineComponent({
           class={[
             hashId.value,
             pre,
+            contextQRCode?.className,
             props.rootClassName,
             {
               [`${pre}-borderless`]: !props.bordered,
@@ -91,7 +108,7 @@ const QRCode = defineComponent({
         >
           {props.status !== 'active' && (
             <div class={`${pre}-mask`}>
-              {customStatusNode ? (
+              {customStatusNode !== undefined && customStatusNode !== null ? (
                 customStatusNode
               ) : (
                 <>
@@ -101,9 +118,7 @@ const QRCode = defineComponent({
                       <p class={`${pre}-expired`}>{locale.value.expired}</p>
                       <Button
                         type="link"
-                        onClick={e => {
-                          emit('refresh', e);
-                        }}
+                        onClick={handleRefresh}
                         v-slots={{ icon: () => <ReloadOutlined /> }}
                       >
                         {locale.value.refresh}

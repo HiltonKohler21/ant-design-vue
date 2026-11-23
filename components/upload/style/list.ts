@@ -39,6 +39,14 @@ const genListStyle: GenerateStyle<UploadToken> = token => {
             transition: `all ${token.motionDurationSlow}`,
           },
 
+          [`${itemCls}-extra`]: {
+            flex: 'none',
+            marginInlineStart: token.marginXS,
+            color: token.colorTextDescription,
+            fontSize,
+            whiteSpace: 'nowrap',
+          },
+
           [actionsCls]: {
             [actionCls]: {
               opacity: 0,

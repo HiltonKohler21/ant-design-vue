@@ -43,6 +43,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'ស្វែងរកនៅទីនេះ',
     itemUnit: '',
     itemsUnit: 'items',
+    deselectAll: 'ដកការជ្រើសរើសទិន្នន័យទាំងអស់។',
   },
   Upload: {
     uploading: 'កំពុងបញ្ចូលឡើង...',

@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Хайх',
     itemUnit: 'Зүйл',
     itemsUnit: 'Зүйлүүд',
+    deselectAll: 'Бүх өгөгдлийн сонголтыг цуцлах',
   },
   Upload: {
     uploading: 'Хуулж байна...',

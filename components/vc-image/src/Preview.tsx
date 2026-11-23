@@ -7,6 +7,7 @@ import {
   shallowRef,
   watch,
   cloneVNode,
+  isVNode,
 } from 'vue';
 import type { VNode, PropType } from 'vue';
 
@@ -33,7 +34,7 @@ export interface PreviewProps extends Omit<IDialogChildProps, 'onClose' | 'mask'
     rotateRight?: VNode;
     zoomIn?: VNode;
     zoomOut?: VNode;
-    close?: VNode;
+    close?: VNode | boolean | null;
     left?: VNode;
     right?: VNode;
     flipX?: VNode;
@@ -62,10 +63,6 @@ const Preview = defineComponent({
   props: previewProps,
   emits: ['close', 'afterClose'],
   setup(props, { emit, attrs }) {
-    const { rotateLeft, rotateRight, zoomIn, zoomOut, close, left, right, flipX, flipY } = reactive(
-      props.icons,
-    );
-
     const scale = shallowRef(1);
     const rotate = shallowRef(0);
     const flip = reactive({ x: 1, y: 1 });
@@ -171,44 +168,49 @@ const Preview = defineComponent({
     );
     const toolClassName = `${props.prefixCls}-operations-operation`;
     const iconClassName = `${props.prefixCls}-operations-icon`;
-    const tools = [
-      {
-        icon: close,
-        onClick: onClose,
-        type: 'close',
-      },
-      {
-        icon: zoomIn,
-        onClick: () => onZoomIn(),
-        type: 'zoomIn',
-      },
-      {
-        icon: zoomOut,
-        onClick: () => onZoomOut(),
-        type: 'zoomOut',
-        disabled: computed(() => scale.value === 1),
-      },
-      {
-        icon: rotateRight,
-        onClick: onRotateRight,
-        type: 'rotateRight',
-      },
-      {
-        icon: rotateLeft,
-        onClick: onRotateLeft,
-        type: 'rotateLeft',
-      },
-      {
-        icon: flipX,
-        onClick: onFlipX,
-        type: 'flipX',
-      },
-      {
-        icon: flipY,
-        onClick: onFlipY,
-        type: 'flipY',
-      },
-    ];
+    const tools = computed(() => {
+      const { rotateLeft, rotateRight, zoomIn, zoomOut, close, flipX, flipY } = props.icons || {};
+      return [
+        {
+          icon: close,
+          onClick: onClose,
+          type: 'close',
+        },
+        {
+          icon: zoomIn,
+          onClick: () => onZoomIn(),
+          type: 'zoomIn',
+        },
+        {
+          icon: zoomOut,
+          onClick: () => onZoomOut(),
+          type: 'zoomOut',
+          disabled: computed(() => scale.value === 1),
+        },
+        {
+          icon: rotateRight,
+          onClick: onRotateRight,
+          type: 'rotateRight',
+        },
+        {
+          icon: rotateLeft,
+          onClick: onRotateLeft,
+          type: 'rotateLeft',
+        },
+        {
+          icon: flipX,
+          onClick: onFlipX,
+          type: 'flipX',
+        },
+        {
+          icon: flipY,
+          onClick: onFlipY,
+          type: 'flipY',
+        },
+      ].filter(
+        tool => (tool.icon as any) !== false && tool.icon !== null && tool.icon !== undefined,
+      );
+    });
 
     const onMouseUp: MouseEventHandler = () => {
       if (props.visible && isMoving.value) {
@@ -365,7 +367,7 @@ const Preview = defineComponent({
         >
           <div class={[`${props.prefixCls}-operations-wrapper`, rootClassName]}>
             <ul class={`${props.prefixCls}-operations`}>
-              {tools.map(({ icon: IconType, onClick, type, disabled }) => (
+              {tools.value.map(({ icon: IconType, onClick, type, disabled }) => (
                 <li
                   class={classnames(toolClassName, {
                     [`${props.prefixCls}-operations-operation-disabled`]:
@@ -374,7 +376,7 @@ const Preview = defineComponent({
                   onClick={onClick}
                   key={type}
                 >
-                  {cloneVNode(IconType, { class: iconClassName })}
+                  {isVNode(IconType) ? cloneVNode(IconType, { class: iconClassName }) : IconType}
                 </li>
               ))}
             </ul>
@@ -406,7 +408,7 @@ const Preview = defineComponent({
               })}
               onClick={onSwitchLeft}
             >
-              {left}
+              {props.icons?.left}
             </div>
           )}
           {showLeftOrRightSwitches.value && (
@@ -417,7 +419,7 @@ const Preview = defineComponent({
               })}
               onClick={onSwitchRight}
             >
-              {right}
+              {props.icons?.right}
             </div>
           )}
         </Dialog>

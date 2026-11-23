@@ -5,6 +5,16 @@ import { arrayType, objectType, someType, withInstall } from '../_util/type';
 import { useMutationObserver } from '../_util/hooks/_vueuse/useMutationObserver';
 import { initDefaultProps } from '../_util/props-util';
 import { useToken } from '../theme/internal';
+import useConfigInject from '../config-provider/hooks/useConfigInject';
+import { useProvideWatermark } from './context';
+
+export {
+  WatermarkContextKey,
+  useProvideWatermark,
+  useInjectWatermark,
+  usePanelRef,
+} from './context';
+export type { WatermarkContextProps } from './context';
 
 /**
  * Base size of the canvas, 1 for parallel layout and 2 for alternate layout
@@ -45,11 +55,14 @@ const Watermark = defineComponent({
     gap: [100, 100],
   }),
   setup(props, { slots, attrs }) {
+    const { configProvider } = useConfigInject('watermark', props);
+    const watermarkConfig = computed(() => (configProvider as any).watermark?.value || {});
     // realToken：未变量化的原始 token（Canvas 绘制需要真实字号与颜色，
     // cssVar 模式下 token 值是 var() 字符串，会导致 NaN / 黑色）
     const [, , , realToken] = useToken();
     const containerRef = shallowRef<HTMLDivElement>();
-    const watermarkRef = shallowRef<HTMLDivElement>();
+    const watermarkMap = new Map<HTMLElement, HTMLDivElement>();
+    const subElements = shallowRef<Set<HTMLElement>>(new Set());
     const stopObservation = shallowRef(false);
     const gapX = computed(() => props.gap?.[0] ?? 100);
     const gapY = computed(() => props.gap?.[1] ?? 100);
@@ -57,9 +70,7 @@ const Watermark = defineComponent({
     const gapYCenter = computed(() => gapY.value / 2);
     const offsetLeft = computed(() => props.offset?.[0] ?? gapXCenter.value);
     const offsetTop = computed(() => props.offset?.[1] ?? gapYCenter.value);
-    const fontSize = computed(
-      () => props.font?.fontSize ?? Number(realToken.value.fontSizeLG),
-    );
+    const fontSize = computed(() => props.font?.fontSize ?? Number(realToken.value.fontSizeLG));
     const fontWeight = computed(() => props.font?.fontWeight ?? 'normal');
     const fontStyle = computed(() => props.font?.fontStyle ?? 'normal');
     const fontFamily = computed(() => props.font?.fontFamily ?? 'sans-serif');
@@ -93,31 +104,72 @@ const Watermark = defineComponent({
 
       return markStyle;
     });
-    const destroyWatermark = () => {
-      if (watermarkRef.value) {
-        watermarkRef.value.remove();
-        watermarkRef.value = undefined;
+
+    const removeWatermarkFrom = (container: HTMLElement) => {
+      const markEle = watermarkMap.get(container);
+      if (markEle) {
+        markEle.remove();
+        watermarkMap.delete(container);
       }
     };
 
-    const appendWatermark = (base64Url: string, markWidth: number) => {
-      if (containerRef.value && watermarkRef.value) {
-        stopObservation.value = true;
-        watermarkRef.value.setAttribute(
-          'style',
-          getStyleStr({
-            ...markStyle.value,
-            backgroundImage: `url('${base64Url}')`,
-            backgroundSize: `${(gapX.value + markWidth) * BaseSize}px`,
-          }),
-        );
-        containerRef.value?.append(watermarkRef.value);
-        // Delayed execution
-        setTimeout(() => {
-          stopObservation.value = false;
+    const destroyWatermark = () => {
+      watermarkMap.forEach(markEle => {
+        markEle.remove();
+      });
+      watermarkMap.clear();
+    };
+
+    const targetElements = computed<HTMLElement[]>(() => {
+      const list: HTMLElement[] = containerRef.value ? [containerRef.value] : [];
+      if (props.inherit !== false) {
+        subElements.value.forEach(el => {
+          if (el && el !== containerRef.value) {
+            list.push(el);
+          }
         });
       }
+      return list;
+    });
+
+    const appendWatermarkTo = (container: HTMLElement, base64Url: string, markWidth: number) => {
+      if (!container) return;
+      stopObservation.value = true;
+      let watermarkEle = watermarkMap.get(container);
+      if (!watermarkEle) {
+        watermarkEle = document.createElement('div');
+        watermarkMap.set(container, watermarkEle);
+      }
+      watermarkEle.setAttribute(
+        'style',
+        getStyleStr({
+          ...markStyle.value,
+          backgroundImage: `url('${base64Url}')`,
+          backgroundSize: `${(gapX.value + markWidth) * BaseSize}px`,
+        }),
+      );
+      if (watermarkEle.parentElement !== container) {
+        container.append(watermarkEle);
+      }
+      // Delayed execution
+      setTimeout(() => {
+        stopObservation.value = false;
+      });
     };
+
+    const appendWatermark = (base64Url: string, markWidth: number) => {
+      const activeSet = new Set(targetElements.value);
+      // Remove watermark from elements no longer targeted (e.g. inherit flipped to false)
+      watermarkMap.forEach((_ele, holder) => {
+        if (!activeSet.has(holder)) {
+          removeWatermarkFrom(holder);
+        }
+      });
+      targetElements.value.forEach(holder => {
+        appendWatermarkTo(holder, base64Url, markWidth);
+      });
+    };
+
     /**
      * Get the width and height of the watermark. The default values are as follows
      * Image: [120, 64]; Content: It's calculated by content;
@@ -165,10 +217,6 @@ const Watermark = defineComponent({
       const rotate = props.rotate ?? -22;
 
       if (ctx) {
-        if (!watermarkRef.value) {
-          watermarkRef.value = document.createElement('div');
-        }
-
         const ratio = getPixelRatio();
         const [markWidth, markHeight] = getMarkSize(ctx);
         const canvasWidth = (gapX.value + markWidth) * ratio;
@@ -214,11 +262,31 @@ const Watermark = defineComponent({
         }
       }
     };
+
+    // Provide WatermarkContext so nested portals (Modal, Drawer, custom usePanelRef)
+    // inherit the watermark when `inherit` is true, and skip when `inherit` is false.
+    useProvideWatermark({
+      add: (ele: HTMLElement) => {
+        if (!ele || subElements.value.has(ele)) return;
+        const next = new Set(subElements.value);
+        next.add(ele);
+        subElements.value = next;
+      },
+      remove: (ele: HTMLElement) => {
+        if (!ele) return;
+        removeWatermarkFrom(ele);
+        if (!subElements.value.has(ele)) return;
+        const next = new Set(subElements.value);
+        next.delete(ele);
+        subElements.value = next;
+      },
+    });
+
     onMounted(() => {
       renderWatermark();
     });
     watch(
-      () => [props, realToken.value.colorFill, realToken.value.fontSizeLG],
+      () => [props, realToken.value.colorFill, realToken.value.fontSizeLG, targetElements.value],
       () => {
         renderWatermark();
       },
@@ -235,7 +303,10 @@ const Watermark = defineComponent({
         return;
       }
       mutations.forEach(mutation => {
-        if (reRendering(mutation, watermarkRef.value)) {
+        const isTargetWatermark = Array.from(watermarkMap.values()).some(wm =>
+          reRendering(mutation, wm),
+        );
+        if (isTargetWatermark) {
           destroyWatermark();
           renderWatermark();
         }
@@ -252,8 +323,12 @@ const Watermark = defineComponent({
         <div
           {...attrs}
           ref={containerRef}
-          class={[attrs.class, props.rootClassName]}
-          style={[{ position: 'relative' }, attrs.style as CSSProperties]}
+          class={[attrs.class, watermarkConfig.value.className, props.rootClassName]}
+          style={[
+            { position: 'relative' },
+            watermarkConfig.value.style as CSSProperties,
+            attrs.style as CSSProperties,
+          ]}
         >
           {slots.default?.()}
         </div>

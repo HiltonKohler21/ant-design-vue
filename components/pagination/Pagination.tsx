@@ -1,4 +1,4 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { computed, toRef, defineComponent } from 'vue';
 import LeftOutlined from '@ant-design/icons-vue/LeftOutlined';
 import RightOutlined from '@ant-design/icons-vue/RightOutlined';
@@ -9,7 +9,7 @@ import { useLocaleReceiver } from '../locale-provider/LocaleReceiver';
 import VcPagination from '../vc-pagination';
 import enUS from '../vc-pagination/locale/en_US';
 import classNames from '../_util/classNames';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import useBreakpoint from '../_util/hooks/useBreakpoint';
 import { booleanType, arrayType, stringType, functionType, someType } from '../_util/type';
 
@@ -84,6 +84,13 @@ export default defineComponent({
   // emits: ['change', 'showSizeChange', 'update:current', 'update:pageSize'],
   setup(props, { slots, attrs }) {
     const { prefixCls, configProvider, direction, size } = useConfigInject('pagination', props);
+    const {
+      componentConfig: paginationConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('pagination');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -145,6 +152,9 @@ export default defineComponent({
         size.value === 'small' || !!(breakpoint.value?.xs && !size.value && responsive);
       const paginationProps = {
         ...restProps,
+        showSizeChanger: props.showSizeChanger ?? paginationConfig.value.showSizeChanger,
+        totalBoundaryShowSizeChanger:
+          props.totalBoundaryShowSizeChanger ?? paginationConfig.value.totalBoundaryShowSizeChanger,
         ...getIconsProps(prefixCls.value),
         prefixCls: prefixCls.value,
         selectPrefixCls: selectPrefixCls.value,
@@ -157,10 +167,13 @@ export default defineComponent({
             [`${prefixCls.value}-mini`]: isSmall,
             [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           },
+          contextClassName.value,
+          contextClassNames.value.root,
           props.rootClassName,
           attrs.class,
           hashId.value,
         ),
+        style: [contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties],
         itemRender,
       };
 

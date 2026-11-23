@@ -64,6 +64,7 @@ export interface SelectTriggerProps {
   direction: string;
   dropdownMatchSelectWidth?: boolean | number;
   dropdownRender?: DropdownRender;
+  popupRender?: (menu: VueNode) => VueNode;
   getPopupContainer?: RenderDOMFunc;
   dropdownAlign: AlignType;
   empty: boolean;
@@ -92,6 +93,7 @@ const SelectTrigger = defineComponent<SelectTriggerProps, { popupRef: any }>({
     transitionName: String,
     getPopupContainer: Function,
     dropdownRender: Function,
+    popupRender: Function,
     containerWidth: Number,
     dropdownMatchSelectWidth: PropTypes.oneOfType([Number, Boolean]).def(true),
     popupElement: PropTypes.any,
@@ -127,6 +129,7 @@ const SelectTrigger = defineComponent<SelectTriggerProps, { popupRef: any }>({
         dropdownMatchSelectWidth,
         containerWidth,
         dropdownRender,
+        popupRender,
         animation,
         transitionName,
         getPopupContainer,
@@ -139,7 +142,9 @@ const SelectTrigger = defineComponent<SelectTriggerProps, { popupRef: any }>({
       const dropdownPrefixCls = `${prefixCls}-dropdown`;
 
       let popupNode = popupElement;
-      if (dropdownRender) {
+      if (popupRender) {
+        popupNode = popupRender(popupElement);
+      } else if (dropdownRender) {
         popupNode = dropdownRender({ menuNode: popupElement, props });
       }
 

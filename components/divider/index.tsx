@@ -18,9 +18,9 @@ export const dividerProps = () => ({
   },
   /** 5.13+ 替代 dashed，可选 solid / dashed / dotted */
   variant: String as PropType<'solid' | 'dashed' | 'dotted'>,
-  size: String as PropType<'small' | 'middle' | 'large'>,
+  size: String as PropType<'small' | 'middle' | 'medium' | 'large'>,
   orientation: {
-    type: String as PropType<'left' | 'right' | 'center'>,
+    type: String as PropType<'left' | 'right' | 'center' | 'start' | 'end'>,
     default: 'center',
   },
   plain: {
@@ -37,26 +37,52 @@ const Divider = defineComponent({
   compatConfig: { MODE: 3 },
   props: dividerProps(),
   setup(props, { slots, attrs }) {
-    const { prefixCls: prefixClsRef, direction } = useConfigInject('divider', props);
+    const {
+      configProvider,
+      prefixCls: prefixClsRef,
+      direction,
+      size: contextSize,
+    } = useConfigInject('divider', props);
+    const dividerConfig = computed(() => (configProvider as any).divider?.value);
     const [wrapSSR, hashId] = useStyle(prefixClsRef);
+    const mergedOrientation = computed(() => {
+      const { orientation } = props;
+      if (orientation === 'left') {
+        return direction.value === 'rtl' ? 'right' : 'left';
+      }
+      if (orientation === 'right') {
+        return direction.value === 'rtl' ? 'left' : 'right';
+      }
+      if (orientation === 'start') {
+        return 'left';
+      }
+      if (orientation === 'end') {
+        return 'right';
+      }
+      return orientation;
+    });
     const hasCustomMarginLeft = computed(
-      () => props.orientation === 'left' && props.orientationMargin != null,
+      () => mergedOrientation.value === 'left' && props.orientationMargin != null,
     );
     const hasCustomMarginRight = computed(
-      () => props.orientation === 'right' && props.orientationMargin != null,
+      () => mergedOrientation.value === 'right' && props.orientationMargin != null,
     );
     const classString = computed(() => {
-      const { type, dashed, plain, variant, size } = props;
-      const mergedVariant = variant ?? (dashed ? 'dashed' : 'solid');
+      const { type, dashed, plain, variant } = props;
+      const mergedVariant =
+        variant ?? (dashed ? 'dashed' : undefined) ?? dividerConfig.value?.variant ?? 'solid';
+      const mergedSize = props.size ?? contextSize.value;
       const prefixCls = prefixClsRef.value;
       return {
         [prefixCls]: true,
+        [dividerConfig.value?.className as string]: !!dividerConfig.value?.className,
         [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: !!hashId.value,
         [`${prefixCls}-${type}`]: true,
         [`${prefixCls}-dashed`]: mergedVariant === 'dashed',
         [`${prefixCls}-dotted`]: mergedVariant === 'dotted',
-        [`${prefixCls}-${size}`]: !!size && size !== 'middle',
+        [`${prefixCls}-sm`]: mergedSize === 'small',
+        [`${prefixCls}-md`]: mergedSize === 'middle' || mergedSize === 'medium',
         [`${prefixCls}-plain`]: !!plain,
         [`${prefixCls}-rtl`]: direction.value === 'rtl',
         [`${prefixCls}-no-default-orientation-margin-left`]: hasCustomMarginLeft.value,
@@ -68,20 +94,30 @@ const Divider = defineComponent({
         typeof props.orientationMargin === 'number'
           ? `${props.orientationMargin}px`
           : props.orientationMargin;
+      if (direction.value === 'rtl') {
+        return {
+          ...(hasCustomMarginLeft.value && { marginInlineStart: marginValue }),
+          ...(hasCustomMarginRight.value && { marginInlineEnd: marginValue }),
+        };
+      }
       return {
         ...(hasCustomMarginLeft.value && { marginLeft: marginValue }),
         ...(hasCustomMarginRight.value && { marginRight: marginValue }),
       };
     });
     const orientationPrefix = computed(() =>
-      props.orientation.length > 0 ? '-' + props.orientation : props.orientation,
+      mergedOrientation.value.length > 0 ? '-' + mergedOrientation.value : mergedOrientation.value,
     );
 
     return () => {
       const children = flattenChildren(slots.default?.());
+      const mergedStyle = dividerConfig.value?.style
+        ? [dividerConfig.value.style, attrs.style]
+        : attrs.style;
       return wrapSSR(
         <div
           {...attrs}
+          style={mergedStyle as any}
           class={[
             classString.value,
             children.length

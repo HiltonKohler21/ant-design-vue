@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { asyncExpect } from '../../../tests/utils';
 import Avatar from '..';
+import ConfigProvider from '../../config-provider';
+import Popover from '../../popover';
 import useBreakpoint from '../../_util/hooks/useBreakpoint';
 
 jest.mock('../../_util/hooks/useBreakpoint');
@@ -205,5 +207,77 @@ describe('Avatar Render', () => {
     expect(wrapper.html()).toMatchSnapshot();
     wrapper.unmount();
     global.document.body.removeChild(div);
+  });
+
+  it('Avatar.Group supports max as both number and object { count, style, popover }', () => {
+    const numWrapper = mount({
+      render() {
+        return (
+          <Avatar.Group max={2}>
+            <Avatar>A</Avatar>
+            <Avatar>B</Avatar>
+            <Avatar>C</Avatar>
+            <Avatar>D</Avatar>
+          </Avatar.Group>
+        );
+      },
+    });
+    const numAvatars = numWrapper.findAll('.ant-avatar');
+    expect(numAvatars).toHaveLength(3);
+    expect(numAvatars[2].text()).toBe('+2');
+
+    const objWrapper = mount({
+      render() {
+        return (
+          <Avatar.Group
+            maxStyle={{ fontWeight: 'bold' }}
+            max={{
+              count: 2,
+              style: { color: 'rgb(245, 106, 0)', backgroundColor: 'rgb(253, 227, 207)' },
+              popover: {
+                trigger: 'click',
+                placement: 'bottom',
+                overlayClassName: 'custom-avatar-pop',
+              },
+            }}
+          >
+            <Avatar>A</Avatar>
+            <Avatar>B</Avatar>
+            <Avatar>C</Avatar>
+            <Avatar>D</Avatar>
+            <Avatar>E</Avatar>
+          </Avatar.Group>
+        );
+      },
+    });
+    const objAvatars = objWrapper.findAll('.ant-avatar');
+    expect(objAvatars).toHaveLength(3);
+    expect(objAvatars[2].text()).toBe('+3');
+    expect(objAvatars[2].element.style.color).toBe('rgb(245, 106, 0)');
+    expect(objAvatars[2].element.style.backgroundColor).toBe('rgb(253, 227, 207)');
+    expect(objAvatars[2].element.style.fontWeight).toBe('bold');
+
+    const popover = objWrapper.findComponent(Popover);
+    expect(popover.props('trigger')).toBe('click');
+    expect(popover.props('placement')).toBe('bottom');
+    expect(popover.props('overlayClassName')).toContain('ant-avatar-group-popover');
+    expect(popover.props('overlayClassName')).toContain('custom-avatar-pop');
+  });
+
+  it('ConfigProvider.avatar wires className and style', () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider
+            avatar={{ className: 'cp-avatar', style: { backgroundColor: 'rgb(1, 2, 3)' } }}
+          >
+            <Avatar>U</Avatar>
+          </ConfigProvider>
+        );
+      },
+    });
+    const avatar = wrapper.find('.ant-avatar');
+    expect(avatar.classes()).toContain('cp-avatar');
+    expect(avatar.element.style.backgroundColor).toBe('rgb(1, 2, 3)');
   });
 });

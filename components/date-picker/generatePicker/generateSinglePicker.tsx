@@ -8,8 +8,10 @@ import enUS from '../locale/en_US';
 import { getPlaceholder, transPlacement2DropdownAlign } from '../util';
 import { useLocaleReceiver } from '../../locale-provider/LocaleReceiver';
 import { getTimeProps, Components } from '.';
+import type { CSSProperties } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
-import useConfigInject from '../../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
+import useVariant from '../../form/hooks/useVariant';
 import classNames from '../../_util/classNames';
 import type { CommonProps, DatePickerProps } from './props';
 import { commonProps, datePickerProps } from './props';
@@ -85,6 +87,19 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
 
         const { prefixCls, direction, getPopupContainer, size, rootPrefixCls, disabled } =
           useConfigInject('picker', props);
+        const pickerConfigKey = picker === 'time' ? 'timePicker' : 'datePicker';
+        const {
+          componentConfig: pickerConfig,
+          className: contextClassName,
+          style: contextStyle,
+          classNames: contextClassNames,
+          styles: contextStyles,
+        } = useComponentConfig(pickerConfigKey);
+        const [mergedVariant, enableVariantCls] = useVariant(
+          pickerConfigKey,
+          computed(() => props.variant),
+          computed(() => props.bordered),
+        );
         const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
         const mergedSize = computed(() => compactSize.value || size.value);
         // style
@@ -164,18 +179,21 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
           const locale = { ...contextLocale.value, ...props.locale };
           const p = { ...props, ...attrs };
           const {
-            bordered = true,
+            bordered: _bordered,
+            variant: _variant,
             placeholder,
-            suffixIcon = slots.suffixIcon?.(),
+            suffixIcon = slots.suffixIcon?.() ??
+              pickerConfig.value.suffix ??
+              pickerConfig.value.suffixIcon,
             showToday = true,
             transitionName,
-            allowClear = true,
+            allowClear = pickerConfig.value.allowClear ?? true,
             dateRender = slots.dateRender,
             renderExtraFooter = slots.renderExtraFooter,
             monthCellRender = slots.monthCellRender ||
               (props as any).monthCellContentRender ||
               slots.monthCellContentRender,
-            clearIcon = slots.clearIcon?.(),
+            clearIcon = slots.clearIcon?.() ?? pickerConfig.value.clearIcon,
             id = formItemContext.id.value,
             rootClassName,
             ...restProps
@@ -232,9 +250,12 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
               locale={locale!.lang}
               class={classNames(
                 rootClassName,
+                contextClassName.value,
+                contextClassNames.value.root,
                 {
                   [`${pre}-${mergedSize.value}`]: mergedSize.value,
-                  [`${pre}-borderless`]: !bordered,
+                  [`${pre}-borderless`]: mergedVariant.value === 'borderless',
+                  [`${pre}-${mergedVariant.value}`]: enableVariantCls.value,
                 },
                 getStatusClassNames(
                   pre,
@@ -245,6 +266,7 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
                 hashId.value,
                 compactItemClassnames.value,
               )}
+              style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
               disabled={disabled.value}
               prefixCls={pre}
               getPopupContainer={attrs.getCalendarContainer || getPopupContainer.value}
@@ -257,6 +279,7 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
               direction={direction.value}
               dropdownClassName={classNames(
                 hashId.value,
+                contextClassNames.value.popup?.root,
                 props.popupClassName,
                 props.dropdownClassName,
               )}

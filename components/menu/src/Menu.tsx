@@ -1,5 +1,5 @@
 import type { CustomSlotsType, Key } from '../../_util/type';
-import type { ExtractPropTypes, PropType, VNode } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType, VNode } from 'vue';
 import {
   shallowRef,
   Teleport,
@@ -15,7 +15,7 @@ import {
 import shallowEqual from '../../_util/shallowequal';
 import type { StoreMenuInfo } from './hooks/useMenuContext';
 import useProvideMenu, { MenuContextProvider, useProvideFirstLevel } from './hooks/useMenuContext';
-import useConfigInject from '../../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
 import type {
   MenuTheme,
   MenuMode,
@@ -102,6 +102,13 @@ export default defineComponent({
   }>,
   setup(props, { slots, emit, attrs }) {
     const { direction, getPrefixCls } = useConfigInject('menu', props);
+    const {
+      componentConfig: menuConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('menu');
     const override = useInjectOverride();
     const prefixCls = computed(() => {
       return getPrefixCls('menu', props.prefixCls || override?.prefixCls?.value);
@@ -395,9 +402,16 @@ export default defineComponent({
 
     const lastVisibleIndex = ref(0);
     const expandIcon = computed<MenuProps['expandIcon']>(() =>
-      props.expandIcon || slots.expandIcon || override?.expandIcon?.value
+      props.expandIcon ||
+      slots.expandIcon ||
+      override?.expandIcon?.value ||
+      menuConfig.value.expandIcon
         ? opt => {
-            let icon = props.expandIcon || slots.expandIcon;
+            let icon =
+              props.expandIcon ||
+              slots.expandIcon ||
+              override?.expandIcon?.value ||
+              menuConfig.value.expandIcon;
             icon = typeof icon === 'function' ? icon(opt) : icon;
             return cloneElement(
               icon as unknown as VNode,
@@ -470,7 +484,14 @@ export default defineComponent({
           prefixCls={`${prefixCls.value}-overflow`}
           component="ul"
           itemComponent={MenuItem}
-          class={[className.value, attrs.class, hashId.value]}
+          class={[
+            className.value,
+            contextClassName.value,
+            contextClassNames.value.root,
+            attrs.class,
+            hashId.value,
+          ]}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           role="menu"
           id={props.id}
           data={getWrapperList(childList)}

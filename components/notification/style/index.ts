@@ -9,6 +9,7 @@ import { resetComponent } from '../../style';
 export interface ComponentToken {
   zIndexPopup: number;
   width: number;
+  progressBg: string;
 }
 
 export interface NotificationToken extends FullToken<'Notification'> {
@@ -21,6 +22,7 @@ export interface NotificationToken extends FullToken<'Notification'> {
   animationMaxHeight: number;
   notificationIconSize: number;
   notificationCloseButtonSize: number;
+  notificationProgressHeight: number;
 }
 
 const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
@@ -246,6 +248,39 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
           float: 'right',
           marginTop: token.marginSM,
         },
+
+        // =========================== Progress ===========================
+        [`${noticeCls}-progress`]: {
+          position: 'absolute',
+          bottom: 0,
+          display: 'block',
+          appearance: 'none',
+          inlineSize: `calc(100% - ${unit(borderRadiusLG)} * 2)`,
+          blockSize: token.notificationProgressHeight,
+          border: 0,
+          left: {
+            _skip_check_: true,
+            value: borderRadiusLG,
+          },
+          right: {
+            _skip_check_: true,
+            value: borderRadiusLG,
+          },
+
+          '&, &::-webkit-progress-bar': {
+            borderRadius: borderRadiusLG,
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+          },
+
+          '&::-moz-progress-bar': {
+            background: token.progressBg,
+          },
+
+          '&::-webkit-progress-value': {
+            borderRadius: borderRadiusLG,
+            background: token.progressBg,
+          },
+        },
       },
     },
 
@@ -279,6 +314,7 @@ export default genComponentStyleHook(
       animationMaxHeight: 150,
       notificationIconSize: rawToken.fontSizeLG * rawToken.lineHeightLG,
       notificationCloseButtonSize: rawToken.controlHeightLG * 0.55,
+      notificationProgressHeight: 2,
     });
 
     return [genNotificationStyle(notificationToken)];
@@ -286,5 +322,6 @@ export default genComponentStyleHook(
   token => ({
     zIndexPopup: token.zIndexPopupBase + 50,
     width: 384,
+    progressBg: `linear-gradient(90deg, ${token.colorPrimaryBorderHover}, ${token.colorPrimary})`,
   }),
 );

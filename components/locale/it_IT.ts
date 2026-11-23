@@ -37,6 +37,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Cerca qui',
     itemUnit: 'elemento',
     itemsUnit: 'elementi',
+    deselectAll: 'Deseleziona tutti i dati',
   },
   Upload: {
     uploading: 'Caricamento...',

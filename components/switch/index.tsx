@@ -1,4 +1,4 @@
-import type { ExtractPropTypes, PropType } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import { defineComponent, onBeforeMount, ref, computed, onMounted, nextTick, watch } from 'vue';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 import PropTypes from '../_util/vue-types';
@@ -8,7 +8,7 @@ import warning from '../_util/warning';
 import type { CustomSlotsType } from '../_util/type';
 import { tuple, withInstall } from '../_util/type';
 import { getPropsSlot } from '../_util/props-util';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import { useInjectFormItemContext } from '../form/FormItemContext';
 import omit from '../_util/omit';
 import type { FocusEventHandler } from '../_util/EventInterface';
@@ -106,6 +106,12 @@ const Switch = defineComponent({
     );
 
     const { prefixCls, direction, size } = useConfigInject('switch', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('switch');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const refSwitchNode = ref();
     const focus = () => {
@@ -198,7 +204,13 @@ const Switch = defineComponent({
             role="switch"
             aria-checked={checked.value as any}
             disabled={mergedDisabled.value || props.loading}
-            class={[attrs.class, classNames.value]}
+            class={[
+              contextClassName.value,
+              contextClassNames.value.root,
+              attrs.class,
+              classNames.value,
+            ]}
+            style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
             ref={refSwitchNode}
           >
             <div class={`${prefixCls.value}-handle`}>

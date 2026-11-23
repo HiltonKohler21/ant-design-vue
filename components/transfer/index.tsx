@@ -73,6 +73,7 @@ export interface TransferLocale {
   itemsUnit: string;
   remove?: string;
   selectAll?: string;
+  deselectAll?: string;
   selectCurrent?: string;
   selectInvert?: string;
   removeAll?: string;
@@ -142,6 +143,7 @@ const Transfer = defineComponent({
   // emits: ['update:targetKeys', 'update:selectedKeys', 'change', 'search', 'scroll', 'selectChange'],
   setup(props, { emit, attrs, slots, expose }) {
     const { configProvider, prefixCls, direction } = useConfigInject('transfer', props);
+    const transferConfig = computed(() => (configProvider as any).transfer?.value);
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -365,6 +367,7 @@ const Transfer = defineComponent({
 
       const cls = classNames(
         prefixCls.value,
+        transferConfig.value?.className,
         props.rootClassName,
         className,
         {
@@ -375,13 +378,15 @@ const Transfer = defineComponent({
         getStatusClassNames(prefixCls.value, mergedStatus.value, formItemInputContext.hasFeedback),
         hashId.value,
       );
+      const mergedStyle = transferConfig.value?.style ? [transferConfig.value.style, style] : style;
+      const mergedSelectionsIcon = selectionsIcon ?? (transferConfig.value as any)?.selectionsIcon;
       const titles = props.titles;
       const leftTitle =
         (titles && titles[0]) ?? slots.leftTitle?.() ?? (locale.titles || ['', ''])[0];
       const rightTitle =
         (titles && titles[1]) ?? slots.rightTitle?.() ?? (locale.titles || ['', ''])[1];
       return (
-        <div {...attrs} class={cls} style={style as CSSProperties} id={id}>
+        <div {...attrs} class={cls} style={mergedStyle as CSSProperties} id={id}>
           <List
             key="leftList"
             prefixCls={`${prefixCls.value}-list`}
@@ -401,7 +406,7 @@ const Transfer = defineComponent({
             direction={direction.value === 'rtl' ? 'right' : 'left'}
             showSelectAll={showSelectAll}
             selectAllLabel={selectAllLabels[0] || slots.leftSelectAllLabel}
-            selectionsIcon={selectionsIcon}
+            selectionsIcon={mergedSelectionsIcon}
             pagination={mergedPagination}
             {...locale}
             v-slots={{ titleText: () => leftTitle, footer }}
@@ -440,7 +445,7 @@ const Transfer = defineComponent({
             direction={direction.value === 'rtl' ? 'left' : 'right'}
             showSelectAll={showSelectAll}
             selectAllLabel={selectAllLabels[1] || slots.rightSelectAllLabel}
-            selectionsIcon={selectionsIcon}
+            selectionsIcon={mergedSelectionsIcon}
             showRemove={oneWay}
             pagination={mergedPagination}
             {...locale}

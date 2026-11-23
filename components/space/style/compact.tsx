@@ -21,6 +21,20 @@ const genSpaceCompactStyle: GenerateStyle<SpaceToken> = token => {
       '&-vertical': {
         flexDirection: 'column',
       },
+      '&-align': {
+        '&-center': {
+          alignItems: 'center',
+        },
+        '&-start': {
+          alignItems: 'flex-start',
+        },
+        '&-end': {
+          alignItems: 'flex-end',
+        },
+        '&-baseline': {
+          alignItems: 'baseline',
+        },
+      },
     },
   };
 };

@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'Markera nuvarande sida',
     removeCurrent: 'Ta bort nuvarande sida',
     selectAll: 'Markera all data',
+    deselectAll: 'Avmarkera all data',
     removeAll: 'Ta bort all data',
     selectInvert: 'Invertera nuvarande sida',
   },

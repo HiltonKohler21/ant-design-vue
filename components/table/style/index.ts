@@ -18,6 +18,7 @@ import genResizeStyle from './resize';
 import genSorterStyle from './sorter';
 import genStickyStyle from './sticky';
 import genSummaryStyle from './summary';
+import genVirtualStyle from './virtual';
 import { clearFix, resetComponent } from '../../style';
 
 export interface ComponentToken {}
@@ -217,9 +218,10 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
             `]: {
               [componentCls]: {
                 marginBlock: `${unit(token.calc(tablePaddingVertical).mul(-1).equal())}`,
-                marginInline: `${
-                  token.calc(token.tableExpandColumnWidth).sub(tablePaddingHorizontal).equal()
-                }px ${unit(token.calc(tablePaddingHorizontal).mul(-1).equal())}`,
+                marginInline: `${token
+                  .calc(token.tableExpandColumnWidth)
+                  .sub(tablePaddingHorizontal)
+                  .equal()}px ${unit(token.calc(tablePaddingHorizontal).mul(-1).equal())}`,
                 [`${componentCls}-tbody > tr:last-child > td`]: {
                   borderBottom: 0,
                   '&:first-child, &:last-child': {
@@ -373,5 +375,6 @@ export default genComponentStyleHook('Table', token => {
     genSizeStyle(tableToken),
     genResizeStyle(tableToken),
     genRtlStyle(tableToken),
+    genVirtualStyle(tableToken),
   ];
 });

@@ -88,4 +88,107 @@ describe('Input semantic API（antd 5.25）', () => {
     expect(html).toContain('color: rgb(1, 2, 3)');
     expect(html).toContain('color: rgb(4, 5, 6)');
   });
+
+  it('TextArea wires classNames/styles, ConfigProvider.textArea variant/className/style, and input variant fallback', () => {
+    const taWrapper = mount(TextArea, {
+      props: {
+        showCount: true,
+        value: 'hello',
+        classNames: { input: 'ta-input', count: 'ta-count' },
+        styles: { input: { fontSize: '15px' }, count: { color: 'rgb(7, 8, 9)' } },
+      },
+    });
+    expect(taWrapper.find('textarea').classes()).toContain('ta-input');
+    expect(taWrapper.find('textarea').attributes('style')).toContain('font-size: 15px');
+    expect(taWrapper.find('textarea').attributes('classnames')).toBeUndefined();
+    expect(taWrapper.find('.ta-count').exists()).toBe(true);
+    expect(taWrapper.find('.ta-count').attributes('style')).toContain('color: rgb(7, 8, 9)');
+
+    const cpTextArea = mount(ConfigProvider, {
+      props: {
+        textArea: {
+          variant: 'filled',
+          className: 'cp-textarea',
+          style: { minHeight: '80px' },
+        },
+        input: { variant: 'underlined' },
+      },
+      slots: { default: () => <TextArea /> },
+    });
+    expect(cpTextArea.find('textarea').classes()).toContain('ant-input-filled');
+    expect(cpTextArea.find('textarea').classes()).toContain('cp-textarea');
+    expect(cpTextArea.find('textarea').attributes('style')).toContain('min-height: 80px');
+
+    const cpFallback = mount(ConfigProvider, {
+      props: { input: { variant: 'underlined' } },
+      slots: { default: () => <TextArea /> },
+    });
+    expect(cpFallback.find('textarea').classes()).toContain('ant-input-underlined');
+  });
+
+  it('Password and Search wire classNames/styles and ConfigProvider configs', () => {
+    const { Password, Search } = Input;
+    const pwWrapper = mount(ConfigProvider, {
+      props: {
+        inputPassword: {
+          className: 'cp-password',
+          style: { width: '180px' },
+        },
+      },
+      slots: {
+        default: () => (
+          <Password
+            classNames={{ input: 'pw-input', suffix: 'pw-suffix' }}
+            styles={{ suffix: { color: 'rgb(11, 22, 33)' } }}
+          />
+        ),
+      },
+    });
+    expect(pwWrapper.find('.ant-input-password').classes()).toContain('cp-password');
+    expect(pwWrapper.find('.ant-input-password').attributes('style')).toContain('width: 180px');
+    expect(pwWrapper.find('input').classes()).toContain('pw-input');
+    expect(pwWrapper.find('.ant-input-suffix').classes()).toContain('pw-suffix');
+    expect(pwWrapper.find('.ant-input-suffix').attributes('style')).toContain(
+      'color: rgb(11, 22, 33)',
+    );
+
+    const searchWrapper = mount(ConfigProvider, {
+      props: {
+        inputSearch: {
+          className: 'cp-search',
+          style: { width: '220px' },
+        },
+      },
+      slots: {
+        default: () => (
+          <Search
+            prefix="P"
+            classNames={{ input: 's-input', prefix: 's-prefix' }}
+            styles={{ prefix: { color: 'rgb(44, 55, 66)' } }}
+          />
+        ),
+      },
+    });
+    expect(searchWrapper.find('.ant-input-search').classes()).toContain('cp-search');
+    expect(searchWrapper.find('.ant-input-search').attributes('style')).toContain('width: 220px');
+    expect(searchWrapper.find('input').classes()).toContain('s-input');
+    expect(searchWrapper.find('.ant-input-prefix').classes()).toContain('s-prefix');
+    expect(searchWrapper.find('.ant-input-prefix').attributes('style')).toContain(
+      'color: rgb(44, 55, 66)',
+    );
+  });
+
+  it('Input wires ConfigProvider.input className and style', () => {
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        input: {
+          className: 'cp-input',
+          style: { width: '160px' },
+        },
+      },
+      slots: { default: () => <Input /> },
+    });
+    expect(wrapper.find('input').classes()).toContain('cp-input');
+    expect(wrapper.find('input').attributes('style')).toContain('width: 160px');
+  });
 });

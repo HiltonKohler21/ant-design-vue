@@ -1,5 +1,5 @@
 import type { ExtractPropTypes, CSSProperties, PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { cloneVNode, computed, defineComponent, isVNode, nextTick, watch } from 'vue';
 import classNames from '../_util/classNames';
 import Dialog from '../vc-dialog';
 import PropTypes from '../_util/vue-types';
@@ -18,6 +18,7 @@ import { canUseDocElement } from '../_util/styleChecker';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { getTransitionName } from '../_util/transition';
 import warning from '../_util/warning';
+import { usePanelRef } from '../watermark/context';
 import useStyle from './style';
 
 type MousePosition = { x: number; y: number } | null;
@@ -77,6 +78,7 @@ export const modalProps = () => ({
   destroyOnClose: { type: Boolean, default: undefined },
   /** @deprecated Please use `destroyOnHidden` instead */
   destroyOnHidden: { type: Boolean, default: undefined },
+  rootClassName: String,
   wrapClassName: String,
   maskTransitionName: String,
   transitionName: String,
@@ -172,10 +174,10 @@ export default defineComponent({
   }),
   setup(props, { emit, slots, attrs }) {
     const [locale] = useLocaleReceiver('Modal');
-    const { prefixCls, rootPrefixCls, direction, getPopupContainer } = useConfigInject(
-      'modal',
-      props,
-    );
+    const { prefixCls, rootPrefixCls, direction, getPopupContainer, configProvider } =
+      useConfigInject('modal', props);
+    const modalConfig = computed(() => (configProvider.modal?.value as any) || {});
+    const panelRef = usePanelRef();
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     warning(
@@ -183,6 +185,22 @@ export default defineComponent({
       'Modal',
       `\`visible\` will be removed in next major version, please use \`open\` instead.`,
     );
+
+    const mergedOpen = computed(() => props.open ?? props.visible);
+    watch(
+      mergedOpen,
+      (val, oldVal) => {
+        if (val && !oldVal) {
+          nextTick(() => {
+            if (mergedOpen.value) {
+              props.afterOpenChange?.(true);
+            }
+          });
+        }
+      },
+      { flush: 'post', immediate: true },
+    );
+
     const handleCancel = (e: MouseEvent) => {
       emit('update:visible', false);
       emit('update:open', false);
@@ -223,41 +241,80 @@ export default defineComponent({
         prefixCls: customizePrefixCls,
         visible,
         open,
+        rootClassName,
         wrapClassName,
         centered,
         getContainer,
-        closeIcon = slots.closeIcon?.(),
+        closeIcon = slots.closeIcon?.() ?? modalConfig.value.closeIcon,
         focusTriggerAfterClose = true,
         destroyOnHidden,
         classNames: semanticClassNames,
         styles: semanticStyles,
+        modalRender,
         ...restProps
       } = props;
+
+      const ctxClassNames = modalConfig.value.classNames || {};
+      const ctxStyles = modalConfig.value.styles || {};
+      const mergedSemanticClassNames: DialogSemanticClassNames = {
+        mask: classNames(ctxClassNames.mask, semanticClassNames?.mask),
+        wrapper: classNames(ctxClassNames.wrapper, semanticClassNames?.wrapper),
+        content: classNames(ctxClassNames.content, semanticClassNames?.content),
+        header: classNames(ctxClassNames.header, semanticClassNames?.header),
+        body: classNames(ctxClassNames.body, semanticClassNames?.body),
+        footer: classNames(ctxClassNames.footer, semanticClassNames?.footer),
+      };
+      const mergedSemanticStyles: DialogSemanticStyles = {
+        mask: { ...ctxStyles.mask, ...semanticStyles?.mask },
+        wrapper: { ...ctxStyles.wrapper, ...semanticStyles?.wrapper },
+        content: { ...ctxStyles.content, ...semanticStyles?.content },
+        header: { ...ctxStyles.header, ...semanticStyles?.header },
+        body: { ...ctxStyles.body, ...semanticStyles?.body },
+        footer: { ...ctxStyles.footer, ...semanticStyles?.footer },
+      };
 
       const wrapClassNameExtended = classNames(wrapClassName, {
         [`${prefixCls.value}-centered`]: !!centered,
         [`${prefixCls.value}-wrap-rtl`]: direction.value === 'rtl',
       });
+      const mergedStyle = modalConfig.value.style
+        ? [modalConfig.value.style as CSSProperties, attrs.style as CSSProperties]
+        : attrs.style;
+
+      const mergedModalRender = ({ originVNode }: { originVNode: VueNode }) => {
+        const node = modalRender
+          ? modalRender({ originVNode })
+          : slots.modalRender
+          ? slots.modalRender({ originVNode })
+          : originVNode;
+        if (isVNode(node)) {
+          return cloneVNode(node, { ref: panelRef });
+        }
+        return node;
+      };
+
       return wrapSSR(
         <Dialog
           {...restProps}
           {...attrs}
-          rootClassName={hashId.value}
-          class={classNames(hashId.value, attrs.class)}
+          style={mergedStyle}
+          rootClassName={classNames(rootClassName, hashId.value)}
+          class={classNames(hashId.value, modalConfig.value.className, attrs.class)}
           getContainer={getContainer || getPopupContainer?.value}
           prefixCls={prefixCls.value}
-          wrapClassName={classNames(wrapClassNameExtended, semanticClassNames?.wrapper)}
-          wrapStyle={semanticStyles?.wrapper}
-          maskClassName={semanticClassNames?.mask}
-          maskStyle={{ ...semanticStyles?.mask, ...props.maskStyle }}
-          headerClassName={semanticClassNames?.header}
-          headerStyle={semanticStyles?.header}
-          bodyClassName={semanticClassNames?.body}
-          bodyStyle={{ ...semanticStyles?.body, ...props.bodyStyle }}
-          footerClassName={semanticClassNames?.footer}
-          footerStyle={semanticStyles?.footer}
-          dialogClass={semanticClassNames?.content}
-          dialogStyle={semanticStyles?.content}
+          wrapClassName={classNames(wrapClassNameExtended, mergedSemanticClassNames.wrapper)}
+          wrapStyle={mergedSemanticStyles.wrapper}
+          maskClassName={mergedSemanticClassNames.mask}
+          maskStyle={{ ...mergedSemanticStyles.mask, ...props.maskStyle }}
+          headerClassName={mergedSemanticClassNames.header}
+          headerStyle={mergedSemanticStyles.header}
+          bodyClassName={mergedSemanticClassNames.body}
+          bodyStyle={{ ...mergedSemanticStyles.body, ...props.bodyStyle }}
+          footerClassName={mergedSemanticClassNames.footer}
+          footerStyle={mergedSemanticStyles.footer}
+          dialogClass={mergedSemanticClassNames.content}
+          dialogStyle={mergedSemanticStyles.content}
+          modalRender={mergedModalRender}
           visible={open ?? visible}
           onClose={handleCancel}
           afterClose={() => {

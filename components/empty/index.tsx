@@ -8,7 +8,11 @@ import { filterEmpty } from '../_util/props-util';
 import type { VueNode } from '../_util/type';
 import { anyType, objectType, withInstall } from '../_util/type';
 import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 
 import useStyle from './style';
 
@@ -37,22 +41,38 @@ const Empty = defineComponent({
   props: emptyProps(),
   setup(props, { slots = {}, attrs }) {
     const { direction, prefixCls: prefixClsRef } = useConfigInject('empty', props);
+    const {
+      componentConfig: emptyConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('empty');
 
     const [wrapSSR, hashId] = useStyle(prefixClsRef);
 
     return () => {
       const prefixCls = prefixClsRef.value;
       const {
-        image: mergedImage = slots.image?.() || h(DefaultEmptyImg),
+        image: mergedImage = slots.image?.() ?? emptyConfig.value.image ?? h(DefaultEmptyImg),
         description = slots.description?.() || undefined,
         imageStyle,
         class: className = '',
+        classNames: propClassNames,
+        styles: propStyles,
+        rootClassName: _rootClassName,
+        prefixCls: _prefixCls,
         ...restProps
       } = { ...props, ...attrs };
+      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, propClassNames);
+      const mergedStyles = mergeSemanticStyles(contextStyles.value, propStyles);
       const image =
         typeof mergedImage === 'function' ? (mergedImage as () => VueNode)() : mergedImage;
       const isNormal =
-        typeof image === 'object' && 'type' in image && (image.type as any).PRESENTED_IMAGE_SIMPLE;
+        image &&
+        typeof image === 'object' &&
+        'type' in image &&
+        (image.type as any).PRESENTED_IMAGE_SIMPLE;
       return wrapSSR(
         <LocaleReceiver
           componentName="Empty"
@@ -72,8 +92,9 @@ const Empty = defineComponent({
                 class={classNames(
                   prefixCls,
                   props.rootClassName,
+                  contextClassName.value,
                   className,
-                  props.classNames?.root,
+                  mergedClassNames.root,
                   hashId.value,
                   {
                     [`${prefixCls}-normal`]: isNormal,
@@ -81,26 +102,26 @@ const Empty = defineComponent({
                   },
                 )}
                 {...restProps}
-                style={[(restProps as any).style, props.styles?.root]}
+                style={[contextStyle.value, mergedStyles.root, (restProps as any).style]}
               >
                 <div
-                  class={[`${prefixCls}-image`, props.classNames?.image]}
-                  style={[imageStyle, props.styles?.image]}
+                  class={[`${prefixCls}-image`, mergedClassNames.image]}
+                  style={[imageStyle, mergedStyles.image]}
                 >
                   {imageNode}
                 </div>
                 {des && (
                   <p
-                    class={[`${prefixCls}-description`, props.classNames?.description]}
-                    style={props.styles?.description}
+                    class={[`${prefixCls}-description`, mergedClassNames.description]}
+                    style={mergedStyles.description}
                   >
                     {des}
                   </p>
                 )}
                 {slots.default && (
                   <div
-                    class={[`${prefixCls}-footer`, props.classNames?.footer]}
-                    style={props.styles?.footer}
+                    class={[`${prefixCls}-footer`, mergedClassNames.footer]}
+                    style={mergedStyles.footer}
                   >
                     {filterEmpty(slots.default())}
                   </div>

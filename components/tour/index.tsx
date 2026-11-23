@@ -1,10 +1,11 @@
+import type { CSSProperties } from 'vue';
 import { computed, defineComponent, toRefs } from 'vue';
 import VCTour from '../vc-tour';
 import classNames from '../_util/classNames';
 import TourPanel from './panelRender';
 import type { TourProps, TourStepProps } from './interface';
 import { tourProps } from './interface';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { VueNode } from '../_util/type';
 import { withInstall } from '../_util/type';
 import useMergedType from './useMergedType';
@@ -22,6 +23,12 @@ const Tour = defineComponent({
   setup(props, { attrs, emit, slots }) {
     const { current, type, steps, defaultCurrent } = toRefs(props);
     const { prefixCls, direction } = useConfigInject('tour', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('tour');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -48,6 +55,8 @@ const Tour = defineComponent({
           [`${prefixCls.value}-primary`]: currentMergedType.value === 'primary',
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
+        contextClassName.value,
+        contextClassNames.value.root,
         hashId.value,
         rootClassName,
       );
@@ -77,6 +86,7 @@ const Tour = defineComponent({
           {...attrs}
           {...restProps}
           rootClassName={customClassName}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           prefixCls={prefixCls.value}
           current={current}
           defaultCurrent={props.defaultCurrent}

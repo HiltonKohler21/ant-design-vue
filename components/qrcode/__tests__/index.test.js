@@ -1,6 +1,7 @@
-import { ref } from 'vue';
+import { ref, computed, defineComponent } from 'vue';
 import { mount } from '@vue/test-utils';
 import QRCode from '..';
+import { defaultConfigProvider, useConfigContextProvider } from '../../config-provider/context';
 
 describe('QRCode test', () => {
   it('should correct render', () => {
@@ -87,5 +88,85 @@ describe('QRCode test', () => {
       'Warning: [ant-design-vue: QRCode] ErrorLevel `L` is not recommended to be used with `icon`, for scanning result would be affected by low level.',
     );
     errSpy.mockRestore();
+  });
+
+  it('statusRender prop does not leak to DOM and receives { status, locale, onRefresh }', async () => {
+    const onRefresh = jest.fn();
+    const statusRender = jest.fn(({ status, locale, onRefresh: refresh }) => (
+      <div class="custom-status">
+        <span>{`${status}-${locale.expired}`}</span>
+        <button type="button" class="custom-refresh-btn" onClick={refresh}>
+          {locale.refresh}
+        </button>
+      </div>
+    ));
+    const wrapper = mount(QRCode, {
+      props: {
+        value: 'test',
+        status: 'expired',
+        onRefresh,
+        statusRender,
+      },
+    });
+    expect(wrapper.element.hasAttribute('statusrender')).toBe(false);
+    expect(wrapper.element.hasAttribute('status-render')).toBe(false);
+    expect(statusRender).toHaveBeenCalledTimes(1);
+    const arg = statusRender.mock.calls[0][0];
+    expect(arg.status).toBe('expired');
+    expect(arg.locale).toBeTruthy();
+    expect(typeof arg.onRefresh).toBe('function');
+    expect(wrapper.find('.custom-status').exists()).toBe(true);
+    await wrapper.find('.custom-refresh-btn').trigger('click');
+    expect(onRefresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('statusRender slot receives { status, locale, onRefresh }', async () => {
+    const onRefresh = jest.fn();
+    const wrapper = mount(QRCode, {
+      props: {
+        value: 'test',
+        status: 'loading',
+        onRefresh,
+      },
+      slots: {
+        statusRender: ({ status, locale, onRefresh: refresh }) => (
+          <div class="slot-status" onClick={refresh}>
+            {`${status}:${Boolean(locale)}`}
+          </div>
+        ),
+      },
+    });
+    const el = wrapper.find('.slot-status');
+    expect(el.exists()).toBe(true);
+    expect(el.text()).toBe('loading:true');
+    await el.trigger('click');
+    expect(onRefresh).toHaveBeenCalledTimes(1);
+  });
+
+  it('ConfigProvider.qrcode wires className and style', () => {
+    const CustomProvider = defineComponent({
+      setup(_, { slots }) {
+        useConfigContextProvider({
+          ...defaultConfigProvider,
+          qrcode: computed(() => ({
+            className: 'cp-qrcode',
+            style: { marginTop: '12px' },
+          })),
+        });
+        return () => slots.default?.();
+      },
+    });
+    const wrapper = mount({
+      render() {
+        return (
+          <CustomProvider>
+            <QRCode value="test" />
+          </CustomProvider>
+        );
+      },
+    });
+    const root = wrapper.find('.ant-qrcode');
+    expect(root.classes()).toContain('cp-qrcode');
+    expect(root.element.style.marginTop).toBe('12px');
   });
 });

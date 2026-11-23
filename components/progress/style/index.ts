@@ -65,6 +65,31 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         },
       },
 
+      [`&${progressCls}-line-position-outer, &${progressCls}-line-position-inner`]: {
+        [`${progressCls}-outer`]: {
+          display: 'inline-flex',
+          alignItems: 'center',
+          width: '100%',
+          marginInlineEnd: 0,
+          paddingInlineEnd: 0,
+        },
+        [`${progressCls}-inner`]: {
+          flex: 1,
+        },
+      },
+
+      [`${progressCls}-layout-bottom`]: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        [`${progressCls}-text`]: {
+          width: 'max-content',
+          marginInlineStart: 0,
+          marginTop: token.marginXXS,
+        },
+      },
+
       [`${progressCls}-inner`]: {
         position: 'relative',
         display: 'inline-block',
@@ -88,21 +113,21 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         transition: `all ${token.motionDurationSlow} ${token.motionEaseInOutCirc}`,
       },
 
+      [`${progressCls}-bg-inner`]: {
+        minWidth: 'max-content',
+        [`${progressCls}-text-inner`]: {
+          color: token.colorWhite,
+          [`&${progressCls}-text-bright`]: {
+            color: 'rgba(0, 0, 0, 0.45)',
+          },
+        },
+      },
+
       [`${progressCls}-success-bg`]: {
         position: 'absolute',
         insetBlockStart: 0,
         insetInlineStart: 0,
         backgroundColor: token.colorSuccess,
-      },
-
-      [`&${progressCls}-show-info-inner`]: {
-        [`${progressCls}-text`]: {
-          position: 'absolute',
-          insetInlineEnd: 0,
-          insetBlockStart: 0,
-          marginInlineEnd: token.marginXS,
-          lineHeight: 1,
-        },
       },
 
       [`${progressCls}-text`]: {
@@ -117,6 +142,37 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         wordBreak: 'normal',
         [iconPrefixCls]: {
           fontSize: token.fontSize,
+        },
+        [`&${progressCls}-text-outer`]: {
+          width: 'max-content',
+        },
+        [`&${progressCls}-text-outer${progressCls}-text-start`]: {
+          width: 'max-content',
+          marginInlineStart: 0,
+          marginInlineEnd: token.marginXS,
+        },
+        [`&${progressCls}-text-outer${progressCls}-text-center`]: {
+          width: 'max-content',
+          marginInlineStart: 0,
+        },
+      },
+
+      [`${progressCls}-text-inner`]: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+        marginInlineStart: 0,
+        padding: `0 ${unit(token.paddingXXS)}`,
+        [`&${progressCls}-text-start`]: {
+          justifyContent: 'start',
+        },
+        [`&${progressCls}-text-center`]: {
+          justifyContent: 'center',
+        },
+        [`&${progressCls}-text-end`]: {
+          justifyContent: 'end',
         },
       },
 

@@ -5,7 +5,7 @@ import warning from '../_util/warning';
 import classNames from '../_util/classNames';
 import SlickCarousel from '../vc-slick';
 import { withInstall, booleanType, functionType, stringType } from '../_util/type';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 // CSSINJS
 import useStyle from './style';
@@ -110,6 +110,7 @@ const Carousel = defineComponent({
       );
     });
     const { prefixCls, direction } = useConfigInject('carousel', props);
+    const { className: contextClassName, style: contextStyle } = useComponentConfig('carousel');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -135,6 +136,7 @@ const Carousel = defineComponent({
       const className = classNames(
         prefixCls.value,
         props.rootClassName,
+        contextClassName.value,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-vertical`]: vertical.value,
@@ -143,7 +145,7 @@ const Carousel = defineComponent({
         hashId.value,
       );
       return wrapSSR(
-        <div class={className} style={style as CSSProperties}>
+        <div class={className} style={[contextStyle.value, style as CSSProperties]}>
           <SlickCarousel
             ref={slickRef}
             {...props}

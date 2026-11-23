@@ -1,4 +1,4 @@
-import type { App, ExtractPropTypes, ImgHTMLAttributes, Plugin } from 'vue';
+import type { App, CSSProperties, ExtractPropTypes, ImgHTMLAttributes, Plugin } from 'vue';
 import { defineComponent, computed } from 'vue';
 import ImageInternal from '../vc-image';
 import { imageProps } from '../vc-image/src/Image';
@@ -22,25 +22,49 @@ const Image = defineComponent({
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
+    const contextImage = computed(() => configProvider.image?.value);
+
     const mergedPreview = computed(() => {
       const { preview } = props;
+      const contextPreview = contextImage.value?.preview as any;
 
       if (preview === false) {
         return preview;
       }
-      const _preview = typeof preview === 'object' ? preview : {};
+      const _contextPreview =
+        typeof contextPreview === 'object' && contextPreview !== null ? contextPreview : {};
+      const _preview = typeof preview === 'object' && preview !== null ? preview : {};
+      const closeIcon = (_preview as any).closeIcon ?? _contextPreview.closeIcon;
+      const mergedIcons = {
+        ...icons,
+        ..._contextPreview.icons,
+        ..._preview.icons,
+        ...(closeIcon !== undefined ? { close: closeIcon } : {}),
+      };
+      const previewRootClassName = classNames(
+        _contextPreview.rootClassName,
+        _preview.rootClassName,
+      );
 
       return {
-        icons,
+        ..._contextPreview,
         ..._preview,
-        transitionName: getTransitionName(rootPrefixCls.value, 'zoom', _preview.transitionName),
+        icons: mergedIcons,
+        ...(previewRootClassName ? { rootClassName: previewRootClassName } : {}),
+        transitionName: getTransitionName(
+          rootPrefixCls.value,
+          'zoom',
+          _preview.transitionName ?? _contextPreview.transitionName,
+        ),
         maskTransitionName: getTransitionName(
           rootPrefixCls.value,
           'fade',
-          _preview.maskTransitionName,
+          _preview.maskTransitionName ?? _contextPreview.maskTransitionName,
         ),
       };
     });
+
+    const mergedFallback = computed(() => props.fallback ?? contextImage.value?.fallback);
 
     return () => {
       const imageLocale = configProvider.locale?.value?.Image || defaultLocale.Image;
@@ -51,9 +75,25 @@ const Image = defineComponent({
         </div>
       );
       const { previewMask = slots.previewMask || defaultPreviewMask } = props;
+      const mergedClass = classNames(contextImage.value?.className, attrs.class);
+      const ctxStyle = contextImage.value?.style;
+      const mergedStyle: CSSProperties | undefined =
+        ctxStyle || attrs.style
+          ? {
+              ...ctxStyle,
+              ...(typeof attrs.style === 'object' ? (attrs.style as CSSProperties) : {}),
+            }
+          : undefined;
       return wrapSSR(
         <ImageInternal
-          {...{ ...attrs, ...props, prefixCls: prefixCls.value }}
+          {...{
+            ...attrs,
+            ...props,
+            prefixCls: prefixCls.value,
+            fallback: mergedFallback.value,
+            ...(mergedClass ? { class: mergedClass } : {}),
+            ...(mergedStyle ? { style: mergedStyle } : {}),
+          }}
           preview={mergedPreview.value}
           rootClassName={classNames(props.rootClassName, hashId.value)}
           v-slots={{

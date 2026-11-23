@@ -16,8 +16,10 @@ import { PureContent } from './PurePanel';
 import { getMotion } from '../vc-trigger/utils/motionUtil';
 import type { Key } from '../_util/type';
 import { wrapPromiseFn } from '../_util/util';
-import type { VNode } from 'vue';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import type { ComputedRef, VNode } from 'vue';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import { globalConfig } from '../config-provider';
+import type { MessageConfig } from '../config-provider/context';
 import classNames from '../_util/classNames';
 
 const DEFAULT_OFFSET = 8;
@@ -33,6 +35,7 @@ type HolderProps = ConfigOptions & {
 interface HolderRef extends NotificationAPI {
   prefixCls: string;
   hashId: string;
+  message?: ComputedRef<MessageConfig>;
 }
 
 const Holder = defineComponent({
@@ -51,7 +54,12 @@ const Holder = defineComponent({
     'staticGetContainer',
   ],
   setup(props, { expose }) {
-    const { getPrefixCls, getPopupContainer } = useConfigInject('message', props);
+    const { getPrefixCls, getPopupContainer, direction, holderRender } = useConfigInject(
+      'message',
+      props,
+    );
+    const { componentConfig: contextMessage, classNames: contextClassNames } =
+      useComponentConfig('message');
 
     const prefixCls = computed(() => getPrefixCls('message', props.prefixCls));
 
@@ -66,7 +74,12 @@ const Holder = defineComponent({
         top: typeof top === 'number' ? `${top}px` : top,
       };
     };
-    const getClassName = () => classNames(hashId.value, props.rtl ? `${prefixCls.value}-rtl` : '');
+    const getClassName = () =>
+      classNames(
+        hashId.value,
+        props.rtl ?? direction.value === 'rtl' ? `${prefixCls.value}-rtl` : '',
+        contextClassNames.value.root,
+      );
 
     // ============================== Motion ===============================
     const getNotificationMotion = () =>
@@ -102,8 +115,13 @@ const Holder = defineComponent({
       ...api,
       prefixCls,
       hashId,
+      message: contextMessage,
     });
-    return holder;
+    return () => {
+      const dom = holder();
+      const mergedHolderRender = holderRender.value ?? globalConfig().holderRender;
+      return mergedHolderRender ? mergedHolderRender(dom) : dom;
+    };
   },
 });
 
@@ -133,9 +151,10 @@ export function useInternalMessage(
       return fakeResult;
     }
 
-    const { open: originOpen, prefixCls, hashId } = holderRef.value;
+    const { open: originOpen, prefixCls, hashId, message: contextMessage } = holderRef.value;
     const noticePrefixCls = `${prefixCls}-notice`;
-    const { content, icon, type, key, class: className, onClose, ...restConfig } = config;
+    const { content, icon, type, key, class: className, style, onClose, ...restConfig } = config;
+    const ctxMsg = contextMessage?.value || (contextMessage as any);
 
     let mergedKey: Key = key!;
     if (mergedKey === undefined || mergedKey === null) {
@@ -158,7 +177,18 @@ export function useInternalMessage(
         ),
         placement: 'top',
         // @ts-ignore
-        class: classNames(type && `${noticePrefixCls}-${type}`, hashId, className),
+        class: classNames(
+          type && `${noticePrefixCls}-${type}`,
+          hashId,
+          ctxMsg?.className,
+          ctxMsg?.classNames?.root,
+          className,
+        ),
+        // @ts-ignore
+        style:
+          ctxMsg?.style || ctxMsg?.styles?.root || style
+            ? { ...ctxMsg?.style, ...ctxMsg?.styles?.root, ...style }
+            : undefined,
         onClose: () => {
           onClose?.();
           resolve();

@@ -62,11 +62,13 @@ const ColorPicker = defineComponent({
   props: colorPickerProps(),
   setup(props, { attrs, emit, slots }) {
     const {
+      configProvider,
       prefixCls,
       direction,
       size,
       disabled: mergedDisabled,
     } = useConfigInject('color-picker', props);
+    const colorPickerConfig = computed(() => (configProvider as any).colorPicker?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const formItemInputContext = FormItemInputContext.useInject();
@@ -241,10 +243,15 @@ const ColorPicker = defineComponent({
         </div>
       );
 
+      const mergedStyle = colorPickerConfig.value?.style
+        ? [colorPickerConfig.value.style, attrs.style]
+        : attrs.style;
+
       return wrapSSR(
         <div
           class={classNames(
             prefixCls.value,
+            colorPickerConfig.value?.className,
             rootClassName,
             hashId.value,
             {
@@ -255,20 +262,27 @@ const ColorPicker = defineComponent({
             },
             attrs.class,
           )}
-          style={attrs.style as any}
+          style={mergedStyle as any}
         >
           <Popover
             open={open.value}
             trigger={props.trigger}
             placement={props.placement}
             arrow={props.arrow}
-            overlayClassName={classNames(`${prefixCls.value}-popover`, rootClassName, hashId.value)}
+            overlayClassName={classNames(
+              `${prefixCls.value}-popover`,
+              { [`${prefixCls.value}-rtl`]: direction.value === 'rtl' },
+              rootClassName,
+              hashId.value,
+            )}
             onOpenChange={setOpen}
             v-slots={{
               default: () => triggerNode,
               content: () => (
                 <ColorPickerPanel
-                  class={hashId.value}
+                  class={classNames(hashId.value, {
+                    [`${prefixCls.value}-panel-rtl`]: direction.value === 'rtl',
+                  })}
                   prefixCls={prefixCls.value}
                   value={color.value}
                   onChange={setColor}

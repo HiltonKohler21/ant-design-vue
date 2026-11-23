@@ -31,7 +31,11 @@ export default defineComponent({
     const formItemContext = useInjectFormItemContext();
     const formItemInputContext = FormItemInputContext.useInject();
     const mergedStatus = computed(() => getMergedStatus(formItemInputContext.status, props.status));
-    const { direction, prefixCls, size, autocomplete } = useConfigInject('input', props);
+    const { configProvider, direction, prefixCls, size, autocomplete } = useConfigInject(
+      'input',
+      props,
+    );
+    const inputConfig = computed(() => (configProvider as any).input?.value);
 
     // ====================== Variant =======================
     const [mergedVariant, enableVariantCls] = useVariant(
@@ -146,10 +150,31 @@ export default defineComponent({
           : undefined;
       const isBorderless = mergedVariant.value === 'borderless';
       const clearIcon = slots.clearIcon || (() => <CloseCircleFilled />);
+      const mergedClassNames = {
+        ...inputConfig.value?.classNames,
+        ...props.classNames,
+      };
+      const mergedStyles = {
+        ...inputConfig.value?.styles,
+        ...props.styles,
+      };
+      const hasWrapper = inputHasPrefixSuffix || !!addonAfter || !!addonBefore;
+      const mergedStyle =
+        inputConfig.value?.style || (!hasWrapper && mergedStyles?.input)
+          ? [inputConfig.value?.style, attrs.style, !hasWrapper ? mergedStyles?.input : undefined]
+          : attrs.style;
       return wrapSSR(
         <VcInput
           {...attrs}
-          {...omit(rest, ['onUpdate:value', 'onChange', 'onInput'])}
+          {...omit(rest, [
+            'onUpdate:value',
+            'onChange',
+            'onInput',
+            'classNames',
+            'styles',
+            'rootClassName',
+          ])}
+          style={mergedStyle as any}
           onChange={triggerChange}
           id={id}
           disabled={props.disabled ?? disabled.value}
@@ -160,12 +185,12 @@ export default defineComponent({
           onFocus={handleFocus}
           prefix={prefix}
           suffix={suffixNode}
-          prefixClassName={props.classNames?.prefix}
-          suffixClassName={props.classNames?.suffix}
-          countClassName={props.classNames?.count}
-          prefixStyle={props.styles?.prefix}
-          suffixStyle={props.styles?.suffix}
-          countStyle={props.styles?.count}
+          prefixClassName={mergedClassNames?.prefix}
+          suffixClassName={mergedClassNames?.suffix}
+          countClassName={mergedClassNames?.count}
+          prefixStyle={mergedStyles?.prefix}
+          suffixStyle={mergedStyles?.suffix}
+          countStyle={mergedStyles?.count}
           allowClear={allowClear}
           addonAfter={
             addonAfter && (
@@ -181,7 +206,12 @@ export default defineComponent({
               </NoCompactStyle>
             )
           }
-          class={[attrs.class, compactItemClassnames.value, props.rootClassName]}
+          class={[
+            inputConfig.value?.className,
+            attrs.class,
+            compactItemClassnames.value,
+            props.rootClassName,
+          ]}
           inputClassName={classNames(
             {
               [`${prefixClsValue}-sm`]: mergedSize.value === 'small',
@@ -189,7 +219,7 @@ export default defineComponent({
               [`${prefixClsValue}-rtl`]: direction.value === 'rtl',
               [`${prefixClsValue}-borderless`]: isBorderless,
               [variantCls]: !inputHasPrefixSuffix && !!variantCls,
-              [props.classNames?.input as string]: !!props.classNames?.input,
+              [mergedClassNames?.input as string]: !!mergedClassNames?.input,
             },
             !inputHasPrefixSuffix && getStatusClassNames(prefixClsValue, mergedStatus.value),
             hashId.value,

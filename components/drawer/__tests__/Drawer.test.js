@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { asyncExpect } from '../../../tests/utils';
 import Drawer from '..';
+import ConfigProvider from '../../config-provider';
 
 const DrawerCom = {
   props: {
@@ -130,6 +131,55 @@ describe('Drawer', () => {
     const wrapper = mount(DrawerCom, props);
     await asyncExpect(() => {
       expect(wrapper.html()).toMatchSnapshot();
+    });
+  });
+
+  it('wires ariaId onto drawer body and title', async () => {
+    const wrapper = mount(Drawer, {
+      props: {
+        open: true,
+        title: 'Accessible Title',
+        ariaId: 'drawer-custom-title-id',
+        getContainer: false,
+      },
+      slots: {
+        default: () => 'Body',
+      },
+    });
+    await asyncExpect(() => {
+      expect(wrapper.find('.ant-drawer-wrapper-body').attributes('aria-labelledby')).toBe(
+        'drawer-custom-title-id',
+      );
+      expect(wrapper.find('.ant-drawer-title').attributes('id')).toBe('drawer-custom-title-id');
+    });
+  });
+
+  it('applies ConfigProvider.drawer className, style, classNames, styles', async () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider
+            drawer={{
+              className: 'cp-drawer-cls',
+              style: { backgroundColor: 'rgb(10, 20, 30)' },
+              classNames: { body: 'cp-drawer-body' },
+              styles: { header: { padding: '8px' } },
+            }}
+          >
+            <Drawer open title="CP Drawer" getContainer={false}>
+              Content
+            </Drawer>
+          </ConfigProvider>
+        );
+      },
+    });
+    await asyncExpect(() => {
+      expect(wrapper.find('.ant-drawer-content').classes()).toContain('cp-drawer-cls');
+      expect(wrapper.find('.ant-drawer-content').element.style.backgroundColor).toBe(
+        'rgb(10, 20, 30)',
+      );
+      expect(wrapper.find('.ant-drawer-body').classes()).toContain('cp-drawer-body');
+      expect(wrapper.find('.ant-drawer-header').element.style.padding).toBe('8px');
     });
   });
 });

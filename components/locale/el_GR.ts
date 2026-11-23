@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Αναζήτηση',
     itemUnit: 'αντικείμενο',
     itemsUnit: 'αντικείμενα',
+    deselectAll: 'Καταργήστε την επιλογή όλων των δεδομένων',
   },
   Upload: {
     uploading: 'Μεταφόρτωση...',

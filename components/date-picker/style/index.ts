@@ -595,12 +595,16 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
       '&-footer': {
         width: 'min-content',
         minWidth: '100%',
-        lineHeight: `${unit(token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal())}`,
+        lineHeight: `${unit(
+          token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal(),
+        )}`,
         textAlign: 'center',
 
         '&-extra': {
           padding: `0 ${paddingSM}`,
-          lineHeight: `${unit(token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal())}`,
+          lineHeight: `${unit(
+            token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal(),
+          )}`,
           textAlign: 'start',
 
           '&:not(:last-child)': {
@@ -732,7 +736,9 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
             background: colorPrimary,
 
             [`&${componentCls}-cell-week`]: {
-              color: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid)
+              color: new TinyColor(
+                (token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid,
+              )
                 .setAlpha(0.5)
                 .toHexString(),
             },
@@ -823,7 +829,9 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
           },
 
           '&-active': {
-            background: new TinyColor((token as any)._realToken?.controlItemBgActive ?? controlItemBgActive)
+            background: new TinyColor(
+              (token as any)._realToken?.controlItemBgActive ?? controlItemBgActive,
+            )
               .setAlpha(0.2)
               .toHexString(),
           },
@@ -1033,6 +1041,39 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
           backgroundColor: 'transparent !important',
           borderColor: 'transparent !important',
           boxShadow: 'none !important',
+        },
+
+        [`&${componentCls}-filled`]: {
+          background: token.colorFillTertiary,
+          borderColor: 'transparent',
+
+          '&:hover': {
+            background: token.colorFillSecondary,
+            borderColor: 'transparent',
+          },
+
+          [`&${componentCls}-focused`]: {
+            background: colorBgContainer,
+            borderColor: colorPrimary,
+            boxShadow: 'none',
+          },
+        },
+
+        [`&${componentCls}-underlined`]: {
+          background: colorBgContainer,
+          borderWidth: `${unit(lineWidth)} 0`,
+          borderStyle: `${lineType} none`,
+          borderColor: `transparent transparent ${colorBorder} transparent`,
+          borderRadius: 0,
+
+          '&:hover': {
+            borderColor: `transparent transparent ${token.colorPrimaryHover} transparent`,
+          },
+
+          [`&${componentCls}-focused`]: {
+            borderColor: `transparent transparent ${colorPrimary} transparent`,
+            boxShadow: 'none',
+          },
         },
 
         // ======================== Input =========================
@@ -1281,7 +1322,14 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
             marginBottom: 0,
             padding: `${unit(paddingXXS)} ${unit(paddingSM)}`,
             overflow: 'hidden',
-            lineHeight: `${unit(token.calc(token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal()).sub(token.calc(paddingXS).div(2).equal()).equal())}`,
+            lineHeight: `${unit(
+              token
+                .calc(
+                  token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal(),
+                )
+                .sub(token.calc(paddingXS).div(2).equal())
+                .equal(),
+            )}`,
             textAlign: 'start',
             listStyle: 'none',
             display: 'flex',
@@ -1416,7 +1464,9 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
         },
 
         '&-dropdown-range': {
-          padding: `${unit(token.calc(token.calc(sizePopupArrow).mul(2).equal()).div(3).equal())} 0`,
+          padding: `${unit(
+            token.calc(token.calc(sizePopupArrow).mul(2).equal()).div(3).equal(),
+          )} 0`,
 
           '&-hidden': {
             display: 'none',
@@ -1460,9 +1510,7 @@ export const initPickerPanelToken = (token: TokenWithCommonCls<GlobalToken>): Pi
     pickerPanelCellWidth: raw.controlHeightSM * 1.5,
     pickerPanelCellHeight: raw.controlHeightSM,
     pickerDateHoverRangeBorderColor: new TinyColor(raw.colorPrimary).lighten(20).toHexString(),
-    pickerBasicCellHoverWithRangeColor: new TinyColor(raw.colorPrimary)
-      .lighten(35)
-      .toHexString(),
+    pickerBasicCellHoverWithRangeColor: new TinyColor(raw.colorPrimary).lighten(35).toHexString(),
     pickerPanelWithoutTimeCellHeight: raw.controlHeightLG * 1.65,
     pickerYearMonthCellWidth: raw.controlHeightLG * 1.5,
     pickerTimePanelColumnHeight: pickerTimePanelCellHeight * 8,

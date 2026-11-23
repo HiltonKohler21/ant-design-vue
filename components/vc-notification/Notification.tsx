@@ -42,6 +42,8 @@ export interface OpenConfig extends NoticeProps {
   placement?: Placement;
   content?: string | (() => VueNode) | VueNode;
   duration?: number | null;
+  style?: CSSProperties;
+  class?: string;
 }
 
 export type NoticeFunc = (noticeProps: NoticeContent) => void;

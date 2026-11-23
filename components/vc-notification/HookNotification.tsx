@@ -24,6 +24,8 @@ export interface OpenConfig extends NoticeProps {
   placement?: Placement;
   content?: VueNode;
   duration?: number | null;
+  style?: CSSProperties;
+  class?: string;
 }
 
 export type Placements = Partial<Record<Placement, OpenConfig[]>>;

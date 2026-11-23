@@ -3,10 +3,12 @@ import { getSlot, getClass, getStyle } from '../_util/props-util';
 import type { CSSProperties, FunctionalComponent, VNode } from 'vue';
 import { inject, ref } from 'vue';
 import { descriptionsContext } from './index';
+import type { DescriptionsSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
+import classNames from '../_util/classNames';
 
 interface CellConfig {
   component: string | [string, string];
-  type: string;
+  type: 'label' | 'content' | 'item';
   showLabel?: boolean;
   showContent?: boolean;
 }
@@ -20,6 +22,11 @@ export interface RowProps {
   index: number;
 }
 
+const mergeStyleObjects = (...styles: (CSSProperties | undefined)[]): CSSProperties | undefined => {
+  const merged = Object.assign({}, ...styles.filter(Boolean));
+  return Object.keys(merged).length > 0 ? merged : undefined;
+};
+
 const Row: FunctionalComponent<RowProps> = props => {
   const renderCells = (
     items: VNode[],
@@ -31,7 +38,14 @@ const Row: FunctionalComponent<RowProps> = props => {
       showContent,
       labelStyle: rootLabelStyle,
       contentStyle: rootContentStyle,
-    }: CellConfig & { labelStyle?: CSSProperties; contentStyle?: CSSProperties },
+      classNames: rootClassNames,
+      styles: rootStyles,
+    }: CellConfig & {
+      labelStyle?: CSSProperties;
+      contentStyle?: CSSProperties;
+      classNames?: SemanticNames<DescriptionsSemanticName>;
+      styles?: SemanticStylesMap<DescriptionsSemanticName>;
+    },
   ) => {
     return items.map((item, index) => {
       const itemProps = item.props || {};
@@ -41,19 +55,59 @@ const Row: FunctionalComponent<RowProps> = props => {
         labelStyle = itemProps['label-style'],
         contentStyle = itemProps['content-style'],
         label = (item.children as any)?.label?.(),
+        classNames: itemClassNames = itemProps['class-names'],
+        styles: itemStyles,
       } = itemProps;
       const children = getSlot(item);
       const className = getClass(item);
       const style = getStyle(item);
       const { key } = item;
+
+      const mergedLabelStyle = mergeStyleObjects(
+        rootLabelStyle,
+        rootStyles?.label,
+        labelStyle,
+        itemStyles?.label,
+      );
+      const mergedContentStyle = mergeStyleObjects(
+        rootContentStyle,
+        rootStyles?.content,
+        contentStyle,
+        itemStyles?.content,
+      );
+      const mergedCellClassNames = {
+        label: classNames(rootClassNames?.label, itemClassNames?.label) || undefined,
+        content: classNames(rootClassNames?.content, itemClassNames?.content) || undefined,
+      };
+
       if (typeof component === 'string') {
+        const borderedCellStyle = bordered
+          ? type === 'label'
+            ? mergeStyleObjects(
+                rootLabelStyle,
+                rootStyles?.label,
+                style,
+                labelStyle,
+                itemStyles?.label,
+              )
+            : type === 'content'
+            ? mergeStyleObjects(
+                rootContentStyle,
+                rootStyles?.content,
+                style,
+                contentStyle,
+                itemStyles?.content,
+              )
+            : style
+          : style;
         return (
           <Cell
             key={`${type}-${String(key) || index}`}
             class={className}
-            style={style}
-            labelStyle={{ ...rootLabelStyle, ...labelStyle }}
-            contentStyle={{ ...rootContentStyle, ...contentStyle }}
+            style={borderedCellStyle}
+            labelStyle={bordered ? undefined : mergedLabelStyle}
+            contentStyle={bordered ? undefined : mergedContentStyle}
+            classNames={mergedCellClassNames}
             span={span}
             colon={colon}
             component={component}
@@ -69,7 +123,14 @@ const Row: FunctionalComponent<RowProps> = props => {
         <Cell
           key={`label-${String(key) || index}`}
           class={className}
-          style={{ ...rootLabelStyle, ...style, ...labelStyle }}
+          style={mergeStyleObjects(
+            rootLabelStyle,
+            rootStyles?.label,
+            style,
+            labelStyle,
+            itemStyles?.label,
+          )}
+          classNames={mergedCellClassNames}
           span={1}
           colon={colon}
           component={component[0]}
@@ -80,7 +141,14 @@ const Row: FunctionalComponent<RowProps> = props => {
         <Cell
           key={`content-${String(key) || index}`}
           class={className}
-          style={{ ...rootContentStyle, ...style, ...contentStyle }}
+          style={mergeStyleObjects(
+            rootContentStyle,
+            rootStyles?.content,
+            style,
+            contentStyle,
+            itemStyles?.content,
+          )}
+          classNames={mergedCellClassNames}
           span={span * 2 - 1}
           component={component[1]}
           itemPrefixCls={itemPrefixCls}
@@ -92,9 +160,16 @@ const Row: FunctionalComponent<RowProps> = props => {
   };
 
   const { prefixCls, vertical, row, index, bordered } = props;
-  const { labelStyle, contentStyle } = inject(descriptionsContext, {
+  const {
+    labelStyle,
+    contentStyle,
+    classNames: contextClassNames,
+    styles: contextStyles,
+  } = inject(descriptionsContext, {
     labelStyle: ref({}),
     contentStyle: ref({}),
+    classNames: ref(undefined),
+    styles: ref(undefined),
   });
   if (vertical) {
     return (
@@ -104,8 +179,10 @@ const Row: FunctionalComponent<RowProps> = props => {
             component: 'th',
             type: 'label',
             showLabel: true,
-            labelStyle: labelStyle.value,
-            contentStyle: contentStyle.value,
+            labelStyle: labelStyle?.value,
+            contentStyle: contentStyle?.value,
+            classNames: contextClassNames?.value,
+            styles: contextStyles?.value,
           })}
         </tr>
         <tr key={`content-${index}`} class={`${prefixCls}-row`}>
@@ -113,8 +190,10 @@ const Row: FunctionalComponent<RowProps> = props => {
             component: 'td',
             type: 'content',
             showContent: true,
-            labelStyle: labelStyle.value,
-            contentStyle: contentStyle.value,
+            labelStyle: labelStyle?.value,
+            contentStyle: contentStyle?.value,
+            classNames: contextClassNames?.value,
+            styles: contextStyles?.value,
           })}
         </tr>
       </>
@@ -128,8 +207,10 @@ const Row: FunctionalComponent<RowProps> = props => {
         type: 'item',
         showLabel: true,
         showContent: true,
-        labelStyle: labelStyle.value,
-        contentStyle: contentStyle.value,
+        labelStyle: labelStyle?.value,
+        contentStyle: contentStyle?.value,
+        classNames: contextClassNames?.value,
+        styles: contextStyles?.value,
       })}
     </tr>
   );

@@ -9,7 +9,11 @@ import {
   ref,
   watch,
 } from 'vue';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 import useBreakpoint from '../_util/hooks/useBreakpoint';
 import classNames from '../_util/classNames';
 import { withInstall } from '../_util/type';
@@ -86,6 +90,12 @@ const Masonry = defineComponent({
   props: masonryProps(),
   setup(props, { attrs, slots }) {
     const { direction, getPrefixCls } = useConfigInject('masonry', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('masonry');
     const prefixCls = computed(() => getPrefixCls('masonry', props.prefixCls));
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const screens = useBreakpoint();
@@ -228,8 +238,11 @@ const Masonry = defineComponent({
 
     return () => {
       const [gapX, gapY] = gutter.value;
+      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
+      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
       const rootStyle: CSSProperties = {
-        ...((props.styles as any)?.root as CSSProperties),
+        ...contextStyle.value,
+        ...((mergedStyles as any)?.root as CSSProperties),
         columnGap: `${gapX}px`,
         flexDirection: rtl.value ? 'row-reverse' : 'row',
       };
@@ -238,8 +251,10 @@ const Masonry = defineComponent({
           {...attrs}
           class={classNames(
             prefixCls.value,
+            { [`${prefixCls.value}-rtl`]: rtl.value },
             props.rootClassName,
-            (props.classNames as any)?.root,
+            contextClassName.value,
+            (mergedClassNames as any)?.root,
             attrs.class as any,
             hashId.value,
           )}
@@ -251,10 +266,10 @@ const Masonry = defineComponent({
                 <div
                   key={String(item.key)}
                   data-masonry-key={String(item.key)}
-                  class={classNames(`${prefixCls.value}-item`, (props.classNames as any)?.item)}
+                  class={classNames(`${prefixCls.value}-item`, (mergedClassNames as any)?.item)}
                   style={{
                     marginBottom: `${gapY}px`,
-                    ...((props.styles as any)?.item as CSSProperties),
+                    ...((mergedStyles as any)?.item as CSSProperties),
                   }}
                   ref={(el: any) => measure(el, `${column}:${String(item.key)}`)}
                 >

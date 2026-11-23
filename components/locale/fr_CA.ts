@@ -37,6 +37,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Rechercher',
     itemUnit: 'élément',
     itemsUnit: 'éléments',
+    deselectAll: 'Désélectionner toutes les données',
   },
   Empty: {
     description: 'Aucune donnée',

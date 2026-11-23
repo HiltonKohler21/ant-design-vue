@@ -49,6 +49,7 @@ const localeValues: Locale = {
     selectCurrent: 'Velg gjeldende side',
     removeCurrent: 'Fjern gjeldende side',
     selectAll: 'Velg all data',
+    deselectAll: 'Opphev valg av all data',
     removeAll: 'Fjern all data',
     selectInvert: 'Inverter gjeldende side',
   },

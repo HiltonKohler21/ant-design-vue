@@ -79,7 +79,11 @@ export default defineComponent({
       composedRef.value = false;
       emit('compositionend', e);
     };
-    const { prefixCls, getPrefixCls, direction, size } = useConfigInject('input-search', props);
+    const { configProvider, prefixCls, getPrefixCls, direction, size } = useConfigInject(
+      'input-search',
+      props,
+    );
+    const searchConfig = computed(() => (configProvider as any).inputSearch?.value);
     const inputPrefixCls = computed(() => getPrefixCls('input', props.inputPrefixCls));
     return () => {
       const {
@@ -87,6 +91,8 @@ export default defineComponent({
         loading,
         addonAfter = slots.addonAfter?.(),
         suffix = slots.suffix?.(),
+        classNames: propClassNames,
+        styles: propStyles,
         ...restProps
       } = props;
       let { enterButton = slots.enterButton?.() ?? false } = props;
@@ -139,6 +145,7 @@ export default defineComponent({
       }
       const cls = classNames(
         prefixCls.value,
+        searchConfig.value?.className,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-${size.value}`]: !!size.value,
@@ -146,11 +153,25 @@ export default defineComponent({
         },
         attrs.class,
       );
+      const mergedStyle = searchConfig.value?.style
+        ? [searchConfig.value.style, attrs.style]
+        : attrs.style;
+      const mergedClassNames =
+        searchConfig.value?.classNames || propClassNames
+          ? { ...searchConfig.value?.classNames, ...propClassNames }
+          : undefined;
+      const mergedStyles =
+        searchConfig.value?.styles || propStyles
+          ? { ...searchConfig.value?.styles, ...propStyles }
+          : undefined;
       return (
         <Input
           ref={inputRef}
           {...omit(restProps, ['onUpdate:value', 'onSearch', 'enterButton'])}
           {...attrs}
+          style={mergedStyle as any}
+          classNames={mergedClassNames}
+          styles={mergedStyles}
           onPressEnter={onPressEnter}
           onCompositionstart={handleOnCompositionStart}
           onCompositionend={handleOnCompositionEnd}

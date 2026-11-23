@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'Selectează pagina curentă',
     removeCurrent: 'Șterge pagina curentă',
     selectAll: 'Selectează toate datele',
+    deselectAll: 'Deselectează toate datele',
     removeAll: 'Șterge toate datele',
     selectInvert: 'Inversează pagina curentă',
   },

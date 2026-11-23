@@ -148,12 +148,20 @@ const ResizableTextArea = defineComponent({
         'type',
         'maxlength',
         'valueModifiers',
+        'classNames',
+        'styles',
+        'rootClassName',
       ]);
-      const cls = classNames(prefixCls, attrs.class, {
+      const semanticClass = classNames(
+        props.classNames?.input,
+        (props.classNames as any)?.textarea,
+      );
+      const semanticStyle = props.styles?.input || (props.styles as any)?.textarea;
+      const cls = classNames(prefixCls, attrs.class, semanticClass, {
         [`${prefixCls}-disabled`]: disabled,
       });
       const mergedAutoSizeStyle = needAutoSize.value ? autoSizeStyle.value : null;
-      const style = [attrs.style, textareaStyles.value, mergedAutoSizeStyle];
+      const style = [attrs.style, semanticStyle, textareaStyles.value, mergedAutoSizeStyle];
       const textareaProps: any = {
         ...otherProps,
         ...attrs,

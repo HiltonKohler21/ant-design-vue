@@ -1,6 +1,8 @@
 import { defineComponent, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import BorderBeam, { getBorderBeamGradient } from '..';
+import ConfigProvider from '../../config-provider';
+import { unitless } from '../../theme/util/unitless';
 
 describe('BorderBeam', () => {
   it('teleports a single beam directly inside the child element without adding a wrapper div', async () => {
@@ -112,5 +114,53 @@ describe('BorderBeam', () => {
     ).toBe('linear-gradient(to left, #1677ff 0%, #52c41a 35%, #52c41a 70%, transparent)');
     expect(getBorderBeamGradient(undefined)).toBeUndefined();
     expect(getBorderBeamGradient([])).toBeUndefined();
+  });
+
+  it('warns in dev when both items and count are passed, respects motion=false, wires ConfigProvider.borderBeam, and removes orphaned beamDuration', async () => {
+    expect(unitless.beamDuration).toBeUndefined();
+
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    document.head.innerHTML = '';
+
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        borderBeam: {
+          className: 'cp-border-beam',
+          style: { zIndex: 5 },
+        },
+        theme: {
+          token: {
+            motion: false,
+          },
+        },
+      },
+      slots: {
+        default: () => (
+          <BorderBeam count={2} items={[{ color: '#1677ff' }]}>
+            <div class="motion-host" style="position: relative">
+              content
+            </div>
+          </BorderBeam>
+        ),
+      },
+    });
+    await nextTick();
+    await nextTick();
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('`count` is ignored when `items` is provided.'),
+    );
+    const beam = wrapper.find('.motion-host .ant-border-beam');
+    expect(beam.exists()).toBe(true);
+    expect(beam.classes()).toContain('cp-border-beam');
+    expect(beam.classes()).toContain('ant-border-beam-no-motion');
+    expect(beam.attributes('style')).toContain('z-index: 5');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('ant-border-beam-no-motion');
+
+    errorSpy.mockRestore();
   });
 });

@@ -190,7 +190,7 @@ const Group = defineComponent({
           {slots.default && slots.default()}
           <Preview
             {...dialogProps}
-            ria-hidden={!isShowPreview.value}
+            aria-hidden={!isShowPreview.value}
             visible={isShowPreview.value}
             prefixCls={props.previewPrefixCls}
             onClose={onPreviewClose}

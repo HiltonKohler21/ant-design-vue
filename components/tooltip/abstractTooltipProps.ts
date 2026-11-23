@@ -40,7 +40,7 @@ export default () => ({
   arrowPointAtCenter: { type: Boolean, default: undefined },
   arrow: {
     type: [Boolean, Object] as PropType<boolean | { pointAtCenter?: boolean }>,
-    default: true as boolean | { pointAtCenter?: boolean },
+    default: undefined as boolean | { pointAtCenter?: boolean },
   },
   autoAdjustOverflow: {
     type: [Boolean, Object] as PropType<boolean | AdjustOverflow>,

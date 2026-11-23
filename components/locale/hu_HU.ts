@@ -31,6 +31,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Keresés',
     itemUnit: 'elem',
     itemsUnit: 'elemek',
+    deselectAll: 'Törölje az összes adat kijelölését',
   },
   Upload: {
     uploading: 'Feltöltés...',

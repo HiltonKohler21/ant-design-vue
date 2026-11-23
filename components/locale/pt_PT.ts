@@ -31,6 +31,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Procurar...',
     itemUnit: 'item',
     itemsUnit: 'itens',
+    deselectAll: 'Desmarcar tudo',
   },
   Upload: {
     uploading: 'A carregar...',

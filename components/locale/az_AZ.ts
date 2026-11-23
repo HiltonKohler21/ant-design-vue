@@ -33,6 +33,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Burada axtar',
     itemUnit: 'item',
     itemsUnit: 'items',
+    deselectAll: 'Bütün seçmə nişanlarını sil',
   },
   Select: {
     notFoundContent: 'Tapılmadı',

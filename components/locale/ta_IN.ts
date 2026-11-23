@@ -38,6 +38,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'இங்கு தேடவும்',
     itemUnit: 'தகவல்',
     itemsUnit: 'தகவல்கள்',
+    deselectAll: 'எல்லா தரவையும் தேர்வுநீக்கவும்',
   },
   Upload: {
     uploading: 'பதிவேற்றுகிறது...',

@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'მიმდინარე გვერდის არჩევა',
     removeCurrent: 'მიმდინარე გვერდის ამოშლა',
     selectAll: 'ყველას მონიშვნა',
+    deselectAll: 'გააუქმეთ ყველა მონაცემი',
     removeAll: 'ყველას წაშლა',
     selectInvert: 'მიმდინარე გვერდის შებრუნება',
   },

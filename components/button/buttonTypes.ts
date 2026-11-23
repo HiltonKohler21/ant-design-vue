@@ -3,11 +3,14 @@ import PropTypes from '../_util/vue-types';
 import type { ExtractPropTypes, PropType } from 'vue';
 import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import type { SizeType } from '../config-provider';
+import type { PresetColorKey } from '../theme/interface';
 import { eventType } from '../_util/type';
 import type { MouseEventHandler } from '../_util/EventInterface';
 
 export type ButtonType = 'link' | 'default' | 'primary' | 'ghost' | 'dashed' | 'text';
 export type ButtonShape = 'default' | 'circle' | 'round';
+export type ButtonVariantType = 'outlined' | 'dashed' | 'solid' | 'filled' | 'text' | 'link';
+export type ButtonColorType = 'default' | 'primary' | 'danger' | PresetColorKey;
 
 export type ButtonHTMLType = 'submit' | 'button' | 'reset';
 
@@ -26,9 +29,11 @@ export const buttonProps = () => ({
   /** 图标位置（antd 5.17+） */
   iconPosition: { type: String as PropType<'start' | 'end'>, default: 'start' },
   /** 5.21+ 替代 type，可选 outlined/dashed/solid/filled/text/link */
-  variant: String as PropType<'outlined' | 'dashed' | 'solid' | 'filled' | 'text' | 'link'>,
-  /** 5.21+ 按钮颜色（primary/danger/default） */
-  color: String as PropType<'primary' | 'danger' | 'default'>,
+  variant: String as PropType<ButtonVariantType>,
+  /** 5.21+ 按钮颜色（default/primary/danger 及 antd 5.23+ PresetColors） */
+  color: String as PropType<ButtonColorType>,
+  /** 5.17+ 两个中文字符之间自动插入空格 */
+  autoInsertSpace: { type: Boolean, default: undefined },
   /** 语义化 styles（antd 5.25+）：icon */
   styles: { type: Object as PropType<SemanticStylesMap<'icon'>>, default: undefined },
   prefixCls: String,

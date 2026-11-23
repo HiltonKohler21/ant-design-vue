@@ -1,6 +1,6 @@
-import type { HTMLAttributes, PropType } from 'vue';
+import type { CSSProperties, HTMLAttributes, PropType } from 'vue';
 import { defineComponent } from 'vue';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { Direction } from '../config-provider';
 
@@ -28,6 +28,12 @@ const Typography = defineComponent({
   props: typographyProps(),
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('typography', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('typography');
 
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -46,10 +52,13 @@ const Typography = defineComponent({
           class={classNames(
             prefixCls.value,
             { [`${prefixCls.value}-rtl`]: direction.value === 'rtl' },
+            contextClassName.value,
+            contextClassNames.value.root,
             rootClassName,
             attrs.class,
             hashId.value,
           )}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
         >
           {slots.default?.()}
         </Component>,

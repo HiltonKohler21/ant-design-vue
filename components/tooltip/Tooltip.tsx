@@ -14,7 +14,11 @@ import {
 import { cloneElement } from '../_util/vnode';
 export type { TriggerType, TooltipPlacement } from './abstractTooltipProps';
 import abstractTooltipProps from './abstractTooltipProps';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 import getPlacements from '../_util/placements';
 import firstNotUndefined from '../_util/firstNotUndefined';
 import raf from '../_util/raf';
@@ -73,11 +77,8 @@ export default defineComponent({
   name: 'ATooltip',
   inheritAttrs: false,
   props: initDefaultProps(tooltipProps(), {
-    trigger: 'hover',
     align: {},
     placement: 'top',
-    mouseEnterDelay: 0.1,
-    mouseLeaveDelay: 0.1,
     arrowPointAtCenter: false,
     autoAdjustOverflow: true,
   }),
@@ -100,18 +101,23 @@ export default defineComponent({
       });
     }
 
-    const { prefixCls, getPopupContainer, direction, rootPrefixCls } = useConfigInject(
-      'tooltip',
-      props,
-    );
+    const { prefixCls, getPopupContainer, direction, rootPrefixCls, popupOverflow } =
+      useConfigInject('tooltip', props);
+    const {
+      componentConfig: tooltipConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('tooltip');
+    const injectFromPopover = computed(() => !!(attrs as any)['data-popover-inject']);
+    const mergedArrow = computed(() => {
+      const ctxArrow = injectFromPopover.value ? undefined : tooltipConfig.value.arrow;
+      return props.arrow ?? ctxArrow ?? true;
+    });
     const mergedOpen = computed(() => props.open ?? props.visible);
     const innerOpen = ref(
-      firstNotUndefined([
-        props.open,
-        props.visible,
-        props.defaultOpen,
-        props.defaultVisible,
-      ]),
+      firstNotUndefined([props.open, props.visible, props.defaultOpen, props.defaultVisible]),
     );
 
     const tooltip = ref();
@@ -156,19 +162,35 @@ export default defineComponent({
     });
 
     const tooltipPlacements = computed(() => {
-      const { builtinPlacements, autoAdjustOverflow, arrow, arrowPointAtCenter } = props;
+      const { builtinPlacements, autoAdjustOverflow, arrowPointAtCenter } = props;
+      const arrow = mergedArrow.value;
       let mergedArrowPointAtCenter = arrowPointAtCenter;
 
       if (typeof arrow === 'object') {
         mergedArrowPointAtCenter = arrow.pointAtCenter ?? arrowPointAtCenter;
       }
-      return (
-        builtinPlacements ||
-        getPlacements({
-          arrowPointAtCenter: mergedArrowPointAtCenter,
-          autoAdjustOverflow,
-        })
-      );
+      if (builtinPlacements) {
+        return builtinPlacements;
+      }
+      const placements = getPlacements({
+        arrowPointAtCenter: mergedArrowPointAtCenter,
+        autoAdjustOverflow,
+      });
+      if (popupOverflow.value) {
+        const alwaysByViewport = popupOverflow.value === 'viewport';
+        Object.keys(placements).forEach(key => {
+          if (placements[key]?.overflow) {
+            placements[key] = {
+              ...placements[key],
+              overflow: {
+                ...placements[key].overflow,
+                alwaysByViewport,
+              },
+            };
+          }
+        });
+      }
+      return placements;
     });
     const isTrueProps = (val: boolean | '') => {
       return val || val === '';
@@ -256,15 +278,24 @@ export default defineComponent({
       }
     };
     const colorInfo = computed(() => parseColor(prefixCls.value, props.color));
-    const injectFromPopover = computed(() => (attrs as any)['data-popover-inject']);
     const [wrapSSR, hashId] = useStyle(
       prefixCls,
       computed(() => !injectFromPopover.value),
     );
     return () => {
       const { openClassName, overlayClassName, overlayStyle, overlayInnerStyle } = props;
-      const semanticClassNames = props.classNames;
-      const semanticStyles = props.styles;
+      const ctxConfig = injectFromPopover.value ? {} : tooltipConfig.value;
+      const ctxCls = injectFromPopover.value ? undefined : contextClassName.value;
+      const ctxStyle = injectFromPopover.value ? undefined : contextStyle.value;
+      const ctxClassNames = injectFromPopover.value ? undefined : contextClassNames.value;
+      const ctxStyles = injectFromPopover.value ? undefined : contextStyles.value;
+      const semanticClassNames = mergeSemanticClassNames(ctxClassNames, props.classNames);
+      const semanticStyles = mergeSemanticStyles(ctxStyles, props.styles);
+      const mergedTrigger = props.trigger ?? (ctxConfig as any).trigger ?? 'hover';
+      const mergedMouseEnterDelay =
+        props.mouseEnterDelay ?? (ctxConfig as any).mouseEnterDelay ?? 0.1;
+      const mergedMouseLeaveDelay =
+        props.mouseLeaveDelay ?? (ctxConfig as any).mouseLeaveDelay ?? 0.1;
       let children = filterEmpty(slots.default?.()) ?? null;
       children = children.length === 1 ? children[0] : children;
 
@@ -285,6 +316,7 @@ export default defineComponent({
       });
       const customOverlayClassName = classNames(
         overlayClassName,
+        ctxCls,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
@@ -300,8 +332,11 @@ export default defineComponent({
       const vcTooltipProps = {
         ...attrs,
         ...(props as TooltipProps),
+        trigger: mergedTrigger,
+        mouseEnterDelay: mergedMouseEnterDelay,
+        mouseLeaveDelay: mergedMouseLeaveDelay,
         prefixCls: prefixCls.value,
-        arrow: !!props.arrow,
+        arrow: !!mergedArrow.value,
         getPopupContainer: getPopupContainer?.value,
         builtinPlacements: tooltipPlacements.value,
         visible: tempVisible,
@@ -312,7 +347,12 @@ export default defineComponent({
           semanticClassNames?.root,
         ),
         overlayInnerClassName: semanticClassNames?.body,
-        overlayStyle: { ...arrowContentStyle, ...overlayStyle, ...semanticStyles?.root },
+        overlayStyle: {
+          ...arrowContentStyle,
+          ...ctxStyle,
+          ...overlayStyle,
+          ...semanticStyles?.root,
+        },
         overlayInnerStyle: { ...formattedOverlayInnerStyle, ...semanticStyles?.body },
         onVisibleChange: handleVisibleChange,
         onPopupAlign,

@@ -55,8 +55,9 @@ const Avatar = defineComponent({
     const avatarChildrenRef = shallowRef<HTMLElement>(null);
     const avatarNodeRef = shallowRef<HTMLElement>(null);
 
-    const { prefixCls } = useConfigInject('avatar', props);
+    const { prefixCls, configProvider } = useConfigInject('avatar', props);
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const contextAvatar = computed(() => configProvider.avatar?.value);
     const avatarCtx = useAvatarInjectContext();
     const size = computed(() => {
       return props.size === 'default' ? avatarCtx.size : props.size;
@@ -141,6 +142,7 @@ const Avatar = defineComponent({
       const pre = prefixCls.value;
       const classString = {
         [`${attrs.class}`]: !!attrs.class,
+        [contextAvatar.value?.className as string]: !!contextAvatar.value?.className,
         [props.rootClassName as string]: !!props.rootClassName,
         [pre]: true,
         [`${pre}-lg`]: size.value === 'large',
@@ -212,7 +214,12 @@ const Avatar = defineComponent({
           {...attrs}
           ref={avatarNodeRef}
           class={classString}
-          style={[sizeStyle, responsiveSizeStyle(!!icon), attrs.style as CSSProperties]}
+          style={[
+            sizeStyle,
+            responsiveSizeStyle(!!icon),
+            contextAvatar.value?.style,
+            attrs.style as CSSProperties,
+          ]}
         >
           {childrenToRender}
         </span>,

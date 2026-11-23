@@ -35,6 +35,7 @@ const localeValues: Locale = {
     searchPlaceholder: '여기에 검색하세요',
     itemUnit: '개',
     itemsUnit: '개',
+    deselectAll: '모든 데이터 선택 해제',
   },
   Upload: {
     uploading: '업로드 중...',

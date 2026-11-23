@@ -21,7 +21,7 @@ import {
   getFixedTop,
   getFixedBottom,
 } from './utils';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import omit from '../_util/omit';
 import useStyle from './style';
 function getDefaultTarget() {
@@ -254,6 +254,7 @@ const Affix = defineComponent({
     });
 
     const { prefixCls } = useConfigInject('affix', props);
+    const { className: contextClassName, style: contextStyle } = useComponentConfig('affix');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     return () => {
       const { affixStyle, placeholderStyle, status } = state;
@@ -276,7 +277,8 @@ const Affix = defineComponent({
             {...attrs}
             ref={placeholderNode}
             data-measure-status={status}
-            class={[attrs.class, props.rootClassName]}
+            class={[contextClassName.value, attrs.class, props.rootClassName]}
+            style={[contextStyle.value, attrs.style as CSSProperties]}
           >
             {affixStyle && <div style={placeholderStyle} aria-hidden="true" />}
             <div class={className} ref={fixedNode} style={affixStyle}>

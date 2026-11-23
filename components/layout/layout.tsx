@@ -1,6 +1,6 @@
-import type { ExtractPropTypes, HTMLAttributes } from 'vue';
+import type { CSSProperties, ExtractPropTypes, HTMLAttributes } from 'vue';
 import { computed, createVNode, defineComponent, provide, ref } from 'vue';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import { SiderHookProviderKey } from './injectionKey';
 import useStyle from './style';
 
@@ -56,6 +56,7 @@ const BasicLayout = defineComponent({
   props: basicProps(),
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('', props);
+    const { className: contextClassName, style: contextStyle } = useComponentConfig('layout');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const siders = ref<string[]>([]);
     const siderHookProvider = {
@@ -83,7 +84,11 @@ const BasicLayout = defineComponent({
       return wrapSSR(
         createVNode(
           tagName,
-          { ...attrs, class: [divCls.value, props.rootClassName, attrs.class] },
+          {
+            ...attrs,
+            class: [divCls.value, contextClassName.value, props.rootClassName, attrs.class],
+            style: [contextStyle.value, attrs.style as CSSProperties],
+          },
           slots,
         ),
       );

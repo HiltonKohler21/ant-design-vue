@@ -7,7 +7,12 @@ import Option from './Option';
 import OptGroup from './OptGroup';
 import omit from '../_util/omit';
 
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
+import classNames from '../_util/classNames';
 import type { InputStatus } from '../_util/statusUtils';
 
 import type { CustomSlotsType } from '../_util/type';
@@ -25,7 +30,7 @@ export const autoCompleteProps = () => ({
     default: undefined as CSSProperties,
   },
   // optionLabelProp: String,
-  dropdownMatchSelectWidth: { type: [Number, Boolean], default: true },
+  dropdownMatchSelectWidth: { type: [Number, Boolean], default: undefined },
   /** @deprecated Please use `popupRender` instead */
   dropdownRender: { type: Function as PropType<(menu: any) => any>, default: undefined },
   /** @deprecated Please use `styles.popup.root` instead */
@@ -107,18 +112,24 @@ const AutoComplete = defineComponent({
       focus,
       blur,
     });
-    const { prefixCls } = useConfigInject('select', props);
+    const { prefixCls, dropdownMatchSelectWidth } = useConfigInject('select', props);
+    const {
+      componentConfig: autoCompleteConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('autoComplete');
     return () => {
       const { size, dataSource, notFoundContent = slots.notFoundContent?.() } = props;
       let optionChildren: VNode[];
-      const { class: className } = attrs;
-      const cls = {
-        [className as string]: !!className,
+      const { class: className, style } = attrs;
+      const cls = classNames(contextClassName.value, className as any, {
         [`${prefixCls.value}-lg`]: size === 'large',
         [`${prefixCls.value}-sm`]: size === 'small',
         [`${prefixCls.value}-show-search`]: true,
         [`${prefixCls.value}-auto-complete`]: true,
-      };
+      });
       if (props.options === undefined) {
         const childArray = slots.dataSource?.() || slots.options?.() || [];
         if (childArray.length && isSelectOptionOrSelectOptGroup(childArray[0])) {
@@ -152,16 +163,28 @@ const AutoComplete = defineComponent({
         }
       }
 
+      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
+      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
+      const mergedAllowClear = props.allowClear ?? autoCompleteConfig.value.allowClear;
+      const mergedVariant =
+        props.variant ??
+        (props.bordered === false ? 'borderless' : autoCompleteConfig.value.variant);
       const selectProps = omit(
         {
           ...props,
           ...(attrs as any),
+          allowClear: mergedAllowClear,
+          variant: mergedVariant,
+          dropdownMatchSelectWidth: dropdownMatchSelectWidth.value,
+          classNames: Object.keys(mergedClassNames).length ? mergedClassNames : props.classNames,
+          styles: Object.keys(mergedStyles).length ? mergedStyles : props.styles,
           mode: Select.SECRET_COMBOBOX_MODE_DO_NOT_USE,
           // optionLabelProp,
           getInputElement,
           notFoundContent,
           // placeholder: '',
           class: cls,
+          style: contextStyle.value ? [contextStyle.value, style as CSSProperties] : style,
           popupClassName: props.popupClassName || props.dropdownClassName,
           ref: selectRef,
         },

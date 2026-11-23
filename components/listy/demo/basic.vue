@@ -17,10 +17,10 @@ A plain list and a virtual scrolling list.
 </docs>
 <template>
   <a-space direction="vertical" style="width: 100%" :size="24">
-    <a-listy :data="data" :item-key="'key'" :item-render="renderItem" />
+    <a-listy :items="data" row-key="key" :item-render="renderItem" />
     <a-listy
-      :data="largeData"
-      :item-key="'key'"
+      :items="largeData"
+      row-key="key"
       :item-render="renderItem"
       :height="220"
       :item-height="42"

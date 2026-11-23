@@ -17,6 +17,8 @@ import useConfigInject from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import { filterEmpty } from '../_util/props-util';
 import { withInstall } from '../_util/type';
+import warning from '../_util/warning';
+import { useToken } from '../theme/internal';
 import useStyle from './style';
 import {
   DEFAULT_BORDER_BEAM_DURATION,
@@ -116,10 +118,13 @@ const BorderBeam = defineComponent({
   inheritAttrs: false,
   props: borderBeamProps(),
   setup(props, { attrs, slots }) {
-    const { getPrefixCls } = useConfigInject('border-beam', props);
+    const { configProvider, getPrefixCls } = useConfigInject('border-beam', props);
+    const borderBeamConfig = computed(() => (configProvider as any).borderBeam?.value);
     const rootPrefixCls = computed(() => getPrefixCls());
     const prefixCls = computed(() => getPrefixCls('border-beam', props.prefixCls));
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const [, , , realToken] = useToken();
+    const isMotionDisabled = computed(() => (realToken.value as any)?.motion === false);
 
     const hostDom = shallowRef<HTMLElement | null>(null);
     const borderWidth = shallowRef<BorderWidth>(DEFAULT_BORDER_WIDTH);
@@ -244,6 +249,7 @@ const BorderBeam = defineComponent({
           : insetOffset.value;
 
         const style: CSSProperties = {
+          ...(borderBeamConfig.value?.style as CSSProperties),
           ...(attrs.style as CSSProperties),
           ...(itemBeamGradient ? { [varName('beam-gradient')]: itemBeamGradient } : undefined),
           ...(hasValidDuration.value ? { [varName('duration')]: `${props.duration}s` } : undefined),
@@ -265,6 +271,14 @@ const BorderBeam = defineComponent({
     });
 
     return () => {
+      if (process.env.NODE_ENV !== 'production') {
+        warning(
+          !isNonNullable(props.items) || !isNonNullable(props.count),
+          'BorderBeam',
+          '`count` is ignored when `items` is provided.',
+        );
+      }
+
       const rawChildren = slots.default?.() || [];
       const validChildren = filterEmpty(rawChildren);
       const singleChild =
@@ -280,8 +294,12 @@ const BorderBeam = defineComponent({
 
       const beamClassName = classNames(
         prefixCls.value,
+        borderBeamConfig.value?.className,
         props.rootClassName,
         attrs.class as any,
+        {
+          [`${prefixCls.value}-no-motion`]: isMotionDisabled.value,
+        },
         hashId.value,
       );
 

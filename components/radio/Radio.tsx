@@ -1,9 +1,9 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import PropTypes from '../_util/vue-types';
 import VcCheckbox from '../vc-checkbox/Checkbox';
 import classNames from '../_util/classNames';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { RadioChangeEvent } from './interface';
 import { FormItemInputContext, useInjectFormItemContext } from '../form/FormItemContext';
 import omit from '../_util/omit';
@@ -50,6 +50,12 @@ export default defineComponent({
     const vcCheckbox = ref<HTMLElement>();
 
     const { prefixCls: radioPrefixCls, direction, disabled } = useConfigInject('radio', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('radio');
     const prefixCls = computed(() =>
       radioGroupContext?.optionType.value === 'button' || radioOptionTypeContext === 'button'
         ? `${radioPrefixCls.value}-button`
@@ -112,14 +118,24 @@ export default defineComponent({
           [`${prefixCls.value}-wrapper-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-wrapper-in-form-item`]: formItemInputContext.isFormItemInput,
         },
+        contextClassName.value,
+        contextClassNames.value.root,
         attrs.class,
         hashId.value,
       );
 
       return wrapSSR(
-        <label {...attrs} class={wrapperClassString}>
+        <label
+          {...attrs}
+          class={wrapperClassString}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+        >
           <VcCheckbox {...rProps} type="radio" ref={vcCheckbox} />
-          {slots.default && <span>{slots.default()}</span>}
+          {slots.default && (
+            <span class={contextClassNames.value.label} style={contextStyles.value.label}>
+              {slots.default()}
+            </span>
+          )}
         </label>,
       );
     };

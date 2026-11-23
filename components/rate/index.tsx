@@ -8,7 +8,7 @@ import PropTypes from '../_util/vue-types';
 import KeyCode from '../_util/KeyCode';
 import StarFilled from '@ant-design/icons-vue/StarFilled';
 import Tooltip from '../tooltip';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 import Star from './Star';
 import useRefs from '../_util/hooks/useRefs';
@@ -57,6 +57,7 @@ const Rate = defineComponent({
   // emits: ['hoverChange', 'update:value', 'change', 'focus', 'blur', 'keydown'],
   setup(props, { slots, attrs, emit, expose }) {
     const { prefixCls, direction } = useConfigInject('rate', props);
+    const { className: contextClassName, style: contextStyle } = useComponentConfig('rate');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const formItemContext = useInjectFormItemContext();
     const rateRef = ref();
@@ -230,6 +231,7 @@ const Rate = defineComponent({
       const rateClassName = classNames(
         prefixCls.value,
         disabledClass,
+        contextClassName.value,
         className,
         props.rootClassName,
         {
@@ -242,7 +244,7 @@ const Rate = defineComponent({
           {...attrs}
           id={id}
           class={rateClassName}
-          style={style as CSSProperties}
+          style={[contextStyle.value, style as CSSProperties]}
           onMouseleave={disabled ? null : onMouseLeave}
           tabindex={disabled ? -1 : tabindex}
           onFocus={disabled ? null : onFocus}

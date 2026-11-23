@@ -38,6 +38,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'ಇಲ್ಲಿ ಹುಡುಕಿ',
     itemUnit: 'ವಿಷಯ',
     itemsUnit: 'ವಿಷಯಗಳು',
+    deselectAll: 'ಎಲ್ಲಾ ಡೇಟಾವನ್ನು ಆಯ್ಕೆ ರದ್ದುಮಾಡಿ',
   },
   Select: {
     notFoundContent: 'ದೊರೆತಿಲ್ಲ',

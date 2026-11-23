@@ -33,4 +33,48 @@ describe('Form feedbackIcons', () => {
     await new Promise(r => setTimeout(r, 50));
     expect(wrapper.html()).toContain('updated-error-icon');
   });
+
+  it('warningOnly 校验规则下 warnings 与 errors 严格区分并渲染自定义 warning 图标', async () => {
+    let lastArgs = null;
+    const model = { field: '' };
+    const feedbackIcons = args => {
+      lastArgs = args;
+      return {
+        warning: <span class="custom-warning-icon">warn</span>,
+        error: <span class="custom-error-icon">err</span>,
+      };
+    };
+    const wrapper = mount(Form, {
+      props: {
+        model,
+        feedbackIcons,
+        rules: {
+          field: [{ required: true, message: 'just a warning', warningOnly: true }],
+        },
+      },
+      slots: {
+        default: () => (
+          <Form.Item name="field" hasFeedback>
+            <Input value={model.field} />
+          </Form.Item>
+        ),
+      },
+    });
+    await wrapper.vm.validateFields();
+    await new Promise(r => setTimeout(r, 120));
+    expect(lastArgs.status).toBe('warning');
+    expect(lastArgs.errors).toEqual([]);
+    expect(lastArgs.warnings.length).toBeGreaterThan(0);
+    expect(wrapper.html()).toContain('custom-warning-icon');
+    expect(wrapper.html()).not.toContain('custom-error-icon');
+  });
+
+  it('FormItem 脱离 Form 单独使用时安全回退默认 feedbackIcon', async () => {
+    const wrapper = mount(Form.Item, {
+      props: { hasFeedback: true, validateStatus: 'success' },
+      slots: { default: () => <Input /> },
+    });
+    await new Promise(r => setTimeout(r, 50));
+    expect(wrapper.find('.ant-form-item-feedback-icon-success').exists()).toBe(true);
+  });
 });

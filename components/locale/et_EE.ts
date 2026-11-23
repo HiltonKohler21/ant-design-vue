@@ -53,6 +53,7 @@ const localeValues: Locale = {
     selectCurrent: 'Vali praegune leht',
     removeCurrent: 'Eemalda praegune leht',
     selectAll: 'Vali kõik',
+    deselectAll: 'Tühista kõik andmed',
     removeAll: 'Eemalda kõik andmed',
     selectInvert: 'Inverteeri valik',
   },

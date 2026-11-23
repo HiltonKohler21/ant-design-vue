@@ -13,7 +13,7 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import RightOutlined from '@ant-design/icons-vue/RightOutlined';
 import firstNotUndefined from '../_util/firstNotUndefined';
 import classNames from '../_util/classNames';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { CollapsePanelProps } from './CollapsePanel';
 import collapseMotion from '../_util/collapseMotion';
 import type { CustomSlotsType } from '../_util/type';
@@ -61,6 +61,13 @@ export default defineComponent({
       { deep: true },
     );
     const { prefixCls, direction, rootPrefixCls } = useConfigInject('collapse', props);
+    const {
+      componentConfig: collapseConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('collapse');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -74,7 +81,7 @@ export default defineComponent({
     });
 
     const renderExpandIcon = (panelProps: CollapsePanelProps) => {
-      const { expandIcon = slots.expandIcon } = props;
+      const { expandIcon = slots.expandIcon ?? collapseConfig.value.expandIcon } = props;
       const icon = expandIcon ? (
         expandIcon(panelProps)
       ) : (
@@ -129,7 +136,8 @@ export default defineComponent({
     const getNewChild = (child, index) => {
       if (isEmptyElement(child)) return;
       const activeKey = stateActiveKey.value;
-      const { accordion, destroyInactivePanel, destroyOnHidden, collapsible, openAnimation } = props;
+      const { accordion, destroyInactivePanel, destroyOnHidden, collapsible, openAnimation } =
+        props;
       const mergedDestroyInactivePanel = destroyOnHidden ?? destroyInactivePanel;
       const animation = openAnimation || collapseMotion(`${rootPrefixCls.value}-motion-collapse`);
 
@@ -180,6 +188,8 @@ export default defineComponent({
       const { accordion, bordered, ghost, size } = props;
       const collapseClassName = classNames(
         prefixCls.value,
+        contextClassName.value,
+        contextClassNames.value.root,
         {
           [`${prefixCls.value}-borderless`]: !bordered,
           [`${prefixCls.value}-icon-position-${iconPosition.value}`]: true,
@@ -195,7 +205,7 @@ export default defineComponent({
         <div
           class={collapseClassName}
           {...getDataAndAriaProps(attrs)}
-          style={attrs.style as CSSProperties}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           role={accordion ? 'tablist' : null}
         >
           {getItems()}

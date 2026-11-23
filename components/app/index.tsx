@@ -3,7 +3,7 @@ import type { App as TypeApp, Plugin } from 'vue';
 import { initDefaultProps } from '../_util/props-util';
 import classNames from '../_util/classNames';
 import { objectType } from '../_util/type';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import useMessage from '../message/useMessage';
 import useModal from '../modal/useModal';
 import useNotification from '../notification/useNotification';
@@ -33,9 +33,10 @@ const App = defineComponent({
   props: initDefaultProps(AppProps(), {}),
   setup(props, { slots }) {
     const { prefixCls } = useConfigInject('app', props);
+    const { className: contextClassName, style: contextStyle } = useComponentConfig('app');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const customClassName = computed(() => {
-      return classNames(hashId.value, prefixCls.value, props.rootClassName);
+      return classNames(hashId.value, prefixCls.value, props.rootClassName, contextClassName.value);
     });
 
     const appConfig = useInjectAppConfigContext();
@@ -60,7 +61,7 @@ const App = defineComponent({
 
     return () => {
       return wrapSSR(
-        <div class={customClassName.value}>
+        <div class={customClassName.value} style={contextStyle.value}>
           {ModalContextHolder()}
           {messageContextHolder()}
           {notificationContextHolder()}

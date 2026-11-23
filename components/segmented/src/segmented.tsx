@@ -1,7 +1,7 @@
 import { defineComponent, shallowRef, computed } from 'vue';
-import type { ExtractPropTypes, FunctionalComponent } from 'vue';
+import type { CSSProperties, ExtractPropTypes, FunctionalComponent } from 'vue';
 import classNames from '../../_util/classNames';
-import useConfigInject from '../../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
 import { initDefaultProps } from '../../_util/props-util';
 import useStyle from '../style';
 import type { CustomSlotsType, VueNode } from '../../_util/type';
@@ -123,6 +123,12 @@ export default defineComponent({
   }>,
   setup(props, { emit, slots, attrs }) {
     const { prefixCls, direction, size } = useConfigInject('segmented', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('segmented');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const rootRef = shallowRef<HTMLDivElement>();
     const thumbShow = shallowRef(false);
@@ -143,6 +149,8 @@ export default defineComponent({
           class={classNames(
             pre,
             props.rootClassName,
+            contextClassName.value,
+            contextClassNames.value.root,
             {
               [hashId.value]: true,
               [`${pre}-block`]: props.block,
@@ -155,6 +163,7 @@ export default defineComponent({
             },
             attrs.class,
           )}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           ref={rootRef}
         >
           <div class={`${pre}-group`}>

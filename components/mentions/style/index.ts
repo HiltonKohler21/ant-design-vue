@@ -1,4 +1,5 @@
 import { unit } from '../../_util/cssinjs';
+import type { CSSObject } from '../../_util/cssinjs';
 import type { InputToken } from '../../input/style';
 import {
   genActiveStyle,
@@ -8,6 +9,12 @@ import {
   genStatusStyle,
   initInputToken,
 } from '../../input/style';
+import {
+  genBorderlessStyle,
+  genFilledStyle,
+  genOutlinedStyle,
+  genUnderlinedStyle,
+} from '../../input/style/variants';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook } from '../../theme/internal';
 import { resetComponent, textEllipsis } from '../../style';
@@ -220,12 +227,37 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
   };
 };
 
+const genMentionsVariantStyle = (token: MentionsToken): CSSObject[] => {
+  const { componentCls } = token;
+  return [
+    {
+      [`${componentCls}-outlined`]: genOutlinedStyle(token),
+      [`${componentCls}-filled`]: genFilledStyle(token),
+      [`${componentCls}-borderless`]: genBorderlessStyle(token),
+      [`${componentCls}-underlined`]: genUnderlinedStyle(token),
+    },
+    {
+      [`${componentCls}-filled, ${componentCls}-underlined`]: {
+        [`&:focus, &:focus-within, &${componentCls}-focused`]: {
+          boxShadow: 'none',
+        },
+      },
+      [`${componentCls}-borderless${componentCls}-disabled`]: {
+        '> textarea': {
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+        },
+      },
+    },
+  ];
+};
+
 // ============================== Export ==============================
 export default genComponentStyleHook(
   'Mentions',
   token => {
     const mentionsToken = initInputToken<FullToken<'Mentions'>>(token);
-    return [genMentionsStyle(mentionsToken)];
+    return [genMentionsStyle(mentionsToken), ...genMentionsVariantStyle(mentionsToken)];
   },
   token => ({
     dropdownHeight: 250,

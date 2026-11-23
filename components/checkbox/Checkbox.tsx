@@ -14,7 +14,7 @@ import { flattenChildren } from '../_util/props-util';
 import warning from '../_util/warning';
 import type { EventHandler } from '../_util/EventInterface';
 import { FormItemInputContext, useInjectFormItemContext } from '../form/FormItemContext';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 
 import type { CheckboxChangeEvent, CheckboxProps } from './interface';
@@ -34,6 +34,12 @@ export default defineComponent({
     const formItemContext = useInjectFormItemContext();
     const formItemInputContext = FormItemInputContext.useInject();
     const { prefixCls, direction, disabled } = useConfigInject('checkbox', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('checkbox');
 
     const contextDisabled = useInjectDisabled();
     // style
@@ -104,6 +110,8 @@ export default defineComponent({
       }
       const classString = classNames(
         props.rootClassName,
+        contextClassName.value,
+        contextClassNames.value.root,
         {
           [`${prefixCls.value}-wrapper`]: true,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
@@ -118,13 +126,14 @@ export default defineComponent({
         {
           [`${prefixCls.value}-indeterminate`]: indeterminate,
         },
+        contextClassNames.value.icon,
         hashId.value,
       );
       const ariaChecked = indeterminate ? 'mixed' : undefined;
       return wrapSSR(
         <label
           class={classString}
-          style={style as CSSProperties}
+          style={[contextStyle.value, contextStyles.value.root, style as CSSProperties]}
           onMouseenter={onMouseenter as EventHandler}
           onMouseleave={onMouseleave as EventHandler}
         >
@@ -132,9 +141,14 @@ export default defineComponent({
             aria-checked={ariaChecked}
             {...checkboxProps}
             class={checkboxClass}
+            style={contextStyles.value.icon}
             ref={checkboxRef}
           />
-          {children.length ? <span>{children}</span> : null}
+          {children.length ? (
+            <span class={contextClassNames.value.label} style={contextStyles.value.label}>
+              {children}
+            </span>
+          ) : null}
         </label>,
       );
     };

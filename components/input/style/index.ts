@@ -76,7 +76,9 @@ const genInputLargeStyle = (token: InputToken): CSSObject => {
 };
 
 export const genInputSmallStyle = (token: InputToken): CSSObject => ({
-  padding: `${unit(token.inputPaddingVerticalSM)} ${unit(token.calc(token.controlPaddingHorizontalSM).sub(1).equal())}`,
+  padding: `${unit(token.inputPaddingVerticalSM)} ${unit(
+    token.calc(token.controlPaddingHorizontalSM).sub(1).equal(),
+  )}`,
   borderRadius: token.borderRadiusSM,
 });
 
@@ -271,7 +273,9 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
 
         // Reset Select's style in addon
         [`${antCls}-select`]: {
-          margin: `${unit(token.calc(token.calc(token.inputPaddingVertical).add(1).equal()).mul(-1).equal())} ${unit(token.calc(token.inputPaddingHorizontal).mul(-1).equal())}`,
+          margin: `${unit(
+            token.calc(token.calc(token.inputPaddingVertical).add(1).equal()).mul(-1).equal(),
+          )} ${unit(token.calc(token.inputPaddingHorizontal).mul(-1).equal())}`,
 
           [`&${antCls}-select-single:not(${antCls}-select-customize-input)`]: {
             [`${antCls}-select-selector`]: {
@@ -888,15 +892,20 @@ export function initInputToken<T extends GlobalToken = GlobalToken>(token: T): I
   return mergeToken<InputToken<T>>(token, {
     inputAffixPadding: token.paddingXXS,
     inputPaddingVertical: Math.max(
-      Math.round(((rawToken.controlHeight - rawToken.fontSize * rawToken.lineHeight) / 2) * 10) / 10 -
+      Math.round(((rawToken.controlHeight - rawToken.fontSize * rawToken.lineHeight) / 2) * 10) /
+        10 -
         rawToken.lineWidth,
       3,
     ),
     inputPaddingVerticalLG:
-      Math.ceil(((rawToken.controlHeightLG - rawToken.fontSizeLG * rawToken.lineHeightLG) / 2) * 10) / 10 -
+      Math.ceil(
+        ((rawToken.controlHeightLG - rawToken.fontSizeLG * rawToken.lineHeightLG) / 2) * 10,
+      ) /
+        10 -
       rawToken.lineWidth,
     inputPaddingVerticalSM: Math.max(
-      Math.round(((rawToken.controlHeightSM - rawToken.fontSize * rawToken.lineHeight) / 2) * 10) / 10 -
+      Math.round(((rawToken.controlHeightSM - rawToken.fontSize * rawToken.lineHeight) / 2) * 10) /
+        10 -
         rawToken.lineWidth,
       0,
     ),
@@ -951,10 +960,20 @@ const genTextAreaStyle: GenerateStyle<InputToken> = token => {
           pointerEvents: 'none',
           float: 'right',
         },
+
+        [`${componentCls}-data-count`]: {
+          color: token.colorTextDescription,
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none',
+          float: 'right',
+        },
       },
 
       '&-rtl': {
         '&::after': {
+          float: 'left',
+        },
+        [`${componentCls}-data-count`]: {
           float: 'left',
         },
       },
@@ -979,7 +998,6 @@ export default genComponentStyleHook('Input', token => {
       inputPaddingHorizontalSM: numericPaddings.inputPaddingHorizontalSM,
     },
   );
-
 
   return [
     genInputStyle(inputToken),

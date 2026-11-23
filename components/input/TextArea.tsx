@@ -63,12 +63,20 @@ export default defineComponent({
     const stateValue = shallowRef(props.value ?? props.defaultValue);
     const resizableTextArea = shallowRef();
     const mergedValue = shallowRef('');
-    const { prefixCls, size, direction } = useConfigInject('input', props);
+    const { configProvider, prefixCls, size, direction } = useConfigInject('input', props);
+    const textAreaConfig = computed(() => (configProvider as any).textArea?.value);
 
     // ====================== Variant =======================
     const [mergedVariant, enableVariantCls] = useVariant(
-      'input',
-      computed(() => props.variant),
+      'textArea' as any,
+      computed(() => {
+        if (props.variant !== undefined) return props.variant;
+        if (props.bordered === false) return undefined;
+        return (
+          (configProvider as any).textArea?.value?.variant ??
+          (configProvider as any).input?.value?.variant
+        );
+      }),
       computed(() => props.bordered),
     );
     deprecated(props.bordered === undefined, 'bordered', 'variant', 'TextArea');
@@ -201,15 +209,32 @@ export default defineComponent({
       setValue(triggerValue);
     };
     const renderTextArea = () => {
-      const { class: customClass } = attrs;
+      const { class: customClass, style: customStyle } = attrs;
       const isBorderless = mergedVariant.value === 'borderless';
       const variantCls =
         enableVariantCls.value && mergedVariant.value !== 'outlined'
           ? `${prefixCls.value}-${mergedVariant.value}`
           : undefined;
+      const mergedSemanticClassNames = {
+        ...textAreaConfig.value?.classNames,
+        ...props.classNames,
+      };
+      const mergedSemanticStyles = {
+        ...textAreaConfig.value?.styles,
+        ...props.styles,
+      };
+      const hasOuterWrapper =
+        showCount.value || formItemInputContext.hasFeedback || props.allowClear;
+      const mergedTextareaStyle =
+        !hasOuterWrapper && textAreaConfig.value?.style
+          ? [textAreaConfig.value.style, customStyle]
+          : customStyle;
       const resizeProps = {
-        ...omit(props, ['allowClear']),
+        ...omit(props, ['allowClear', 'rootClassName']),
         ...attrs,
+        classNames: mergedSemanticClassNames,
+        styles: mergedSemanticStyles,
+        style: mergedTextareaStyle,
         class: [
           {
             [`${prefixCls.value}-borderless`]: isBorderless,
@@ -218,6 +243,8 @@ export default defineComponent({
             [`${prefixCls.value}-sm`]: size.value === 'small',
             [`${prefixCls.value}-lg`]: size.value === 'large',
           },
+          !hasOuterWrapper && textAreaConfig.value?.className,
+          !hasOuterWrapper && props.rootClassName,
           getStatusClassNames(prefixCls.value, mergedStatus.value),
           hashId.value,
         ],
@@ -266,16 +293,32 @@ export default defineComponent({
     return () => {
       const { maxlength, hidden } = props;
       const { style, class: customClass } = attrs;
+      const mergedSemanticClassNames = {
+        ...textAreaConfig.value?.classNames,
+        ...props.classNames,
+      };
+      const mergedSemanticStyles = {
+        ...textAreaConfig.value?.styles,
+        ...props.styles,
+      };
+      const mergedOuterStyle = textAreaConfig.value?.style
+        ? [textAreaConfig.value.style, style]
+        : style;
+      const hasShowCountWrapper = showCount.value || formItemInputContext.hasFeedback;
+      const clearableClass = !hasShowCountWrapper
+        ? classNames(textAreaConfig.value?.className, props.rootClassName, customClass)
+        : customClass;
       const inputProps: any = {
-        ...props,
+        ...omit(props, ['classNames', 'styles', 'rootClassName']),
         ...attrs,
+        class: clearableClass,
         prefixCls: prefixCls.value,
         inputType: 'text',
         handleReset,
         direction: direction.value,
         bordered: mergedVariant.value !== 'borderless',
         variant: mergedVariant.value,
-        style: showCount.value ? undefined : style,
+        style: hasShowCountWrapper ? undefined : mergedOuterStyle,
         hashId: hashId.value,
         disabled: props.disabled ?? disabled.value,
       };
@@ -289,7 +332,7 @@ export default defineComponent({
         />
       );
 
-      if (showCount.value || formItemInputContext.hasFeedback) {
+      if (hasShowCountWrapper) {
         const valueLength = [...mergedValue.value].length;
         let dataCount: VueNode = '';
         if (typeof showCount.value === 'object') {
@@ -301,6 +344,8 @@ export default defineComponent({
         } else {
           dataCount = `${valueLength}${hasMaxLength.value ? ` / ${maxlength}` : ''}`;
         }
+        const useSemanticCountNode =
+          showCount.value && !!(mergedSemanticClassNames.count || mergedSemanticStyles.count);
         textareaNode = (
           <div
             hidden={hidden}
@@ -312,15 +357,33 @@ export default defineComponent({
                 [`${prefixCls.value}-textarea-in-form-item`]: formItemInputContext.isFormItemInput,
               },
               `${prefixCls.value}-textarea-show-count`,
+              textAreaConfig.value?.className,
+              props.rootClassName,
               customClass,
               hashId.value,
             )}
-            style={style as CSSProperties}
-            data-count={typeof dataCount !== 'object' ? dataCount : undefined}
+            style={mergedOuterStyle as CSSProperties}
+            data-count={
+              !useSemanticCountNode && typeof dataCount !== 'object' ? dataCount : undefined
+            }
           >
             {textareaNode}
+            {useSemanticCountNode && (
+              <span
+                class={classNames(`${prefixCls.value}-data-count`, mergedSemanticClassNames.count)}
+                style={mergedSemanticStyles.count}
+              >
+                {dataCount}
+              </span>
+            )}
             {formItemInputContext.hasFeedback && (
-              <span class={`${prefixCls.value}-textarea-suffix`}>
+              <span
+                class={classNames(
+                  `${prefixCls.value}-textarea-suffix`,
+                  mergedSemanticClassNames.suffix,
+                )}
+                style={mergedSemanticStyles.suffix}
+              >
                 {formItemInputContext.feedbackIcon}
               </span>
             )}

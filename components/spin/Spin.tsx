@@ -1,11 +1,11 @@
-import type { VNode, ExtractPropTypes, PropType } from 'vue';
+import type { CSSProperties, VNode, ExtractPropTypes, PropType } from 'vue';
 import { onBeforeUnmount, cloneVNode, isVNode, defineComponent, shallowRef, watch } from 'vue';
 import { debounce } from 'throttle-debounce';
 import PropTypes from '../_util/vue-types';
 import { filterEmpty, getPropsSlot } from '../_util/props-util';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 import useStyle from './style';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import Progress from '../progress';
 import omit from '../_util/omit';
 
@@ -50,6 +50,13 @@ export default defineComponent({
   }),
   setup(props, { attrs, slots }) {
     const { prefixCls, size, direction } = useConfigInject('spin', props);
+    const {
+      componentConfig: spinConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('spin');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const sSpinning = shallowRef(props.spinning && !shouldDelay(props.spinning, props.delay));
     let updateSpinning: any;
@@ -71,13 +78,15 @@ export default defineComponent({
       updateSpinning?.cancel();
     });
     return () => {
-      const { class: cls, ...divProps } = omit(attrs, ['rootClassName']);
+      const { class: cls, style: attrStyle, ...divProps } = omit(attrs, ['rootClassName']);
       const { tip = slots.tip?.() } = props;
       const children = slots.default?.();
       const spinClassName = {
         [hashId.value]: true,
         [prefixCls.value]: true,
         [props.rootClassName as string]: !!props.rootClassName,
+        [contextClassName.value as string]: !!contextClassName.value,
+        [contextClassNames.value.root as string]: !!contextClassNames.value.root,
         [`${prefixCls.value}-sm`]: size.value === 'small',
         [`${prefixCls.value}-lg`]: size.value === 'large',
         [`${prefixCls.value}-spinning`]: sSpinning.value,
@@ -98,7 +107,7 @@ export default defineComponent({
             />
           );
         }
-        let indicator = getPropsSlot(slots, props, 'indicator');
+        let indicator = getPropsSlot(slots, props, 'indicator') ?? spinConfig.value.indicator;
         // should not be render default indicator when indicator value is null
         if (indicator === null) {
           return null;
@@ -124,7 +133,13 @@ export default defineComponent({
         );
       }
       const spinElement = (
-        <div {...divProps} class={spinClassName} aria-live="polite" aria-busy={sSpinning.value}>
+        <div
+          {...divProps}
+          class={spinClassName}
+          style={[contextStyle.value, contextStyles.value.root, attrStyle as CSSProperties]}
+          aria-live="polite"
+          aria-busy={sSpinning.value}
+        >
           {renderIndicator(prefixCls.value)}
           {tip ? <div class={`${prefixCls.value}-text`}>{tip}</div> : null}
         </div>

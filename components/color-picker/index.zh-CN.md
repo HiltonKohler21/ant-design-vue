@@ -3,8 +3,8 @@ category: Components
 type: 数据录入
 title: ColorPicker
 subtitle: 颜色选择器
-cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*2k5wR4L6y5gAAAAAAAAAAAAADrJ8AQ/original
-coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*eM07S6sQ0uUAAAAAAAAAAAAADrJ8AQ/original
+cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*PpY4RYNM8UcAAAAAAAAAAAAADrJ8AQ/original
+coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EHL-QYJofZsAAAAAAAAAAAAADrJ8AQ/original
 ---
 
 提供颜色选择功能的输入组件，支持纯色、渐变色、预设色板、透明度调节及多种颜色格式输入。
@@ -53,6 +53,6 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*eM07S6sQ0uUAAA
 
 ### 插槽
 
-| 插槽名称 | 说明 | 参数 |
-| --- | --- | --- |
-| default | 自定义颜色选择器的触发器 | - |
+| 插槽名称 | 说明                     | 参数 |
+| -------- | ------------------------ | ---- |
+| default  | 自定义颜色选择器的触发器 | -    |

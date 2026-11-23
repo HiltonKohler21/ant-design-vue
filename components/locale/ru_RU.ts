@@ -55,6 +55,7 @@ const localeValues: Locale = {
     itemsUnit: 'элем.',
     remove: 'Удалить',
     selectAll: 'Выбрать все данные',
+    deselectAll: 'Очистить все данные',
     selectCurrent: 'Выбрать текущую страницу',
     selectInvert: 'Показать в обратном порядке',
     removeAll: 'Удалить все данные',

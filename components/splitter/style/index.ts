@@ -59,6 +59,9 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
       width: '100%',
       height: '100%',
       alignItems: 'stretch',
+      '&-rtl': {
+        direction: 'rtl',
+      },
       [`> ${splitBarCls}`]: {
         flex: 'none',
         position: 'relative',
@@ -252,16 +255,21 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
   };
 };
 
-export default genComponentStyleHook<'Splitter'>('Splitter', token => {
-  const splitBarSize = (token as any).splitBarSize || 2;
-  const splitTriggerSize = (token as any).splitTriggerSize || 6;
-  const resizeSpinnerSize = (token as any).resizeSpinnerSize || 20;
-  const splitBarDraggableSize = (token as any).splitBarDraggableSize || resizeSpinnerSize;
-  const splitterToken = mergeToken<SplitterToken>(token, {
-    splitBarSize,
-    splitTriggerSize,
-    splitBarDraggableSize,
-    resizeSpinnerSize,
-  });
-  return genSplitterStyle(splitterToken);
-});
+export default genComponentStyleHook<'Splitter'>(
+  'Splitter',
+  token => {
+    const rawToken: any = (token as any)._realToken ?? token;
+    const splitBarDraggableSize =
+      rawToken.splitBarDraggableSize > 0 ? token.splitBarDraggableSize : token.resizeSpinnerSize;
+    const splitterToken = mergeToken<SplitterToken>(token, {
+      splitBarDraggableSize,
+    });
+    return genSplitterStyle(splitterToken);
+  },
+  () => ({
+    splitBarSize: 2,
+    splitTriggerSize: 6,
+    splitBarDraggableSize: 0,
+    resizeSpinnerSize: 20,
+  }),
+);

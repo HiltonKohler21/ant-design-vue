@@ -34,6 +34,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Etsi täältä',
     itemUnit: 'kohde',
     itemsUnit: 'kohdetta',
+    deselectAll: 'Poista kaikkien tietojen valinnat',
   },
   Upload: {
     uploading: 'Lähetetään...',

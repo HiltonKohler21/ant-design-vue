@@ -4,6 +4,12 @@ import { defaultConfigProvider, configProviderKey } from '../context';
 import { useInjectDisabled } from '../DisabledContext';
 import { DefaultRenderEmpty } from '../renderEmpty';
 import { useInjectSize } from '../SizeContext';
+export {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from './useComponentConfig';
+
 export default (name: string, props: Record<any, any>) => {
   const sizeContext = useInjectSize();
   const disabledContext = useInjectDisabled();
@@ -27,9 +33,17 @@ export default (name: string, props: Record<any, any>) => {
     () => props.getContainer ?? props.getPopupContainer ?? configProvider.getPopupContainer?.value,
   );
 
-  const dropdownMatchSelectWidth = computed<boolean | number>(
-    () => props.dropdownMatchSelectWidth ?? configProvider.dropdownMatchSelectWidth?.value,
+  const popupMatchSelectWidth = computed<boolean | number>(
+    () =>
+      props.popupMatchSelectWidth ??
+      props.dropdownMatchSelectWidth ??
+      configProvider.popupMatchSelectWidth?.value ??
+      configProvider.dropdownMatchSelectWidth?.value,
   );
+  const dropdownMatchSelectWidth = popupMatchSelectWidth;
+  const popupOverflow = computed(() => props.popupOverflow ?? configProvider.popupOverflow?.value);
+  const holderRender = computed(() => props.holderRender ?? configProvider.holderRender?.value);
+  const warning = computed(() => configProvider.warning?.value);
   const virtual = computed(
     () =>
       (props.virtual === undefined
@@ -38,7 +52,10 @@ export default (name: string, props: Record<any, any>) => {
   );
   const size = computed(() => (props.size as SizeType) || sizeContext.value);
   const autocomplete = computed(
-    () => props.autocomplete ?? configProvider.input?.value?.autocomplete,
+    () =>
+      props.autocomplete ??
+      configProvider.input?.value?.autocomplete ??
+      configProvider.input?.value?.autoComplete,
   );
   const disabled = computed<boolean>(() => props.disabled ?? disabledContext.value);
   const csp = computed(() => props.csp ?? configProvider.csp);
@@ -60,6 +77,10 @@ export default (name: string, props: Record<any, any>) => {
     renderEmpty,
     virtual,
     dropdownMatchSelectWidth,
+    popupMatchSelectWidth,
+    popupOverflow,
+    holderRender,
+    warning,
     rootPrefixCls,
     getPrefixCls: configProvider.getPrefixCls,
     autocomplete,

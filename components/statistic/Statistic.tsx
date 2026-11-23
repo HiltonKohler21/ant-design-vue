@@ -4,7 +4,7 @@ import initDefaultProps from '../_util/props-util/initDefaultProps';
 import StatisticNumber from './Number';
 import type { valueType, Formatter } from './utils';
 import Skeleton from '../skeleton/Skeleton';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 // CSSINJS
 import useStyle from './style';
@@ -48,6 +48,12 @@ export default defineComponent({
   }>,
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('statistic', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('statistic');
 
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -76,14 +82,27 @@ export default defineComponent({
           class={[
             pre,
             { [`${pre}-rtl`]: direction.value === 'rtl' },
+            contextClassName.value,
+            contextClassNames.value.root,
             props.rootClassName,
             attrs.class,
             hashId.value,
           ]}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
         >
-          {title && <div class={`${pre}-title`}>{title}</div>}
+          {title && (
+            <div
+              class={[`${pre}-title`, contextClassNames.value.title]}
+              style={contextStyles.value.title}
+            >
+              {title}
+            </div>
+          )}
           <Skeleton paragraph={false} loading={props.loading}>
-            <div style={valueStyle} class={`${pre}-content`}>
+            <div
+              style={[contextStyles.value.content, valueStyle]}
+              class={[`${pre}-content`, contextClassNames.value.content]}
+            >
               {prefix && <span class={`${pre}-content-prefix`}>{prefix}</span>}
               {valueNode}
               {suffix && <span class={`${pre}-content-suffix`}>{suffix}</span>}

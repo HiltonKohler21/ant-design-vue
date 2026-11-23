@@ -48,6 +48,7 @@ const localeValues: Locale = {
     itemsUnit: 'элем.',
     remove: 'Выдаліць',
     selectAll: 'Выбраць усе дадзеныя',
+    deselectAll: 'Адмяніце выбар усіх даных',
     selectCurrent: 'Вылучыць дадзеную старонку',
     selectInvert: 'Паказаць у зваротным парадку',
     removeAll: 'Выдаліць усе дадзеныя',

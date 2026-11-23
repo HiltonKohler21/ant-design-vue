@@ -50,6 +50,7 @@ const localeValues: Locale = {
     selectCurrent: 'เลือกทั้งหมดในหน้านี้',
     removeCurrent: 'นำออกทั้งหมดในหน้านี้',
     selectAll: 'เลือกข้อมูลทั้งหมด',
+    deselectAll: 'ยกเลิกการเลือกทั้งหมด',
     removeAll: 'นำข้อมูลออกทั้งหมด',
     selectInvert: 'กลับสถานะการเลือกในหน้านี้',
   },

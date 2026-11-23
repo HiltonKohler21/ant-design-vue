@@ -64,80 +64,355 @@ export const Variants = ['outlined', 'borderless', 'filled', 'underlined'] as co
 
 export type Variant = (typeof Variants)[number];
 
-/** 组件级配置：className + style（antd 5.x ConfigProvider 的组件默认配置） */
+/** 组件级配置：className + style（antd 5.x/6.x ConfigProvider 的组件默认配置） */
 export interface ComponentStyleConfig {
   className?: string;
   style?: CSSProperties;
 }
 
-/** 各组件 Config 类型（含 variant 的组件扩展） */
-export type AlertConfig = ComponentStyleConfig;
-export type AnchorConfig = ComponentStyleConfig;
-export type AvatarConfig = ComponentStyleConfig;
-export type BadgeConfig = ComponentStyleConfig;
-export type BreadcrumbConfig = ComponentStyleConfig;
-export type ButtonConfig = ComponentStyleConfig & {
+export interface SemanticComponentStyleConfig extends ComponentStyleConfig {
+  classNames?: Record<string, any>;
+  styles?: Record<string, any>;
+}
+
+/** 各组件 Config 类型（对齐 antd@6.7.2 全量 72 个组件配置） */
+export type AffixConfig = ComponentStyleConfig;
+export type AlertConfig = SemanticComponentStyleConfig & {
+  variant?: 'outlined' | 'filled';
+  closable?: boolean | Record<string, any>;
+  closeIcon?: any;
+  successIcon?: any;
+  infoIcon?: any;
+  warningIcon?: any;
+  errorIcon?: any;
+};
+export type AnchorConfig = SemanticComponentStyleConfig;
+export type AppConfig = ComponentStyleConfig;
+export type AutoCompleteConfig = SemanticComponentStyleConfig & {
+  allowClear?: boolean | { clearIcon?: any };
   variant?: Variant;
+};
+export type AvatarConfig = ComponentStyleConfig;
+export type BadgeConfig = SemanticComponentStyleConfig;
+export type BorderBeamConfig = ComponentStyleConfig;
+export type BreadcrumbConfig = SemanticComponentStyleConfig & {
+  separator?: any;
+  dropdownIcon?: any;
+};
+export type ButtonConfig = SemanticComponentStyleConfig & {
+  variant?: Variant | 'solid' | 'dashed' | 'text' | 'link';
   color?: string;
   autoInsertSpace?: boolean;
+  shape?: string;
+  loadingIcon?: any;
 };
-export type CalendarConfig = ComponentStyleConfig;
-export type CardConfig = ComponentStyleConfig & { variant?: 'borderless' | 'outlined' };
+export type CalendarConfig = SemanticComponentStyleConfig;
+export type CardConfig = SemanticComponentStyleConfig & { variant?: 'borderless' | 'outlined' };
+export type CardMetaConfig = SemanticComponentStyleConfig;
 export type CarouselConfig = ComponentStyleConfig;
-export type CascaderConfig = ComponentStyleConfig & { variant?: Variant };
-export type CheckboxConfig = ComponentStyleConfig;
-export type CollapseConfig = ComponentStyleConfig;
-export type ColorPickerConfig = ComponentStyleConfig;
-export type DatePickerConfig = ComponentStyleConfig & { variant?: Variant };
-export type DescriptionsConfig = ComponentStyleConfig;
-export type DividerConfig = ComponentStyleConfig;
-export type DrawerConfig = ComponentStyleConfig;
-export type DropdownConfig = ComponentStyleConfig;
-export type FloatButtonConfig = ComponentStyleConfig;
-export type FloatButtonGroupConfig = ComponentStyleConfig;
-export type InputNumberConfig = ComponentStyleConfig & { variant?: Variant };
+export type CascaderConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  allowClear?: boolean | { clearIcon?: any };
+  expandIcon?: any;
+  loadingIcon?: any;
+  removeIcon?: any;
+  suffix?: any;
+  suffixIcon?: any;
+  clearIcon?: any;
+  searchIcon?: any;
+};
+export type CheckboxConfig = SemanticComponentStyleConfig;
+export type CollapseConfig = SemanticComponentStyleConfig & {
+  expandIcon?: (panelProps: any) => any;
+};
+export type ColorPickerConfig = SemanticComponentStyleConfig & {
+  arrow?: boolean | { pointAtCenter?: boolean };
+};
+export type DatePickerConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  suffix?: any;
+  suffixIcon?: any;
+  allowClear?: boolean;
+  clearIcon?: any;
+};
+export type DescriptionsConfig = SemanticComponentStyleConfig;
+export type DividerConfig = SemanticComponentStyleConfig & {
+  variant?: 'solid' | 'dashed' | 'dotted';
+};
+export type DrawerConfig = SemanticComponentStyleConfig & {
+  closeIcon?: any;
+  closable?: boolean | Record<string, any>;
+  mask?: any;
+  focusable?: any;
+};
+export type DropdownConfig = SemanticComponentStyleConfig;
+export type FloatButtonConfig = SemanticComponentStyleConfig & { backTopIcon?: any };
+export type FloatButtonGroupConfig = SemanticComponentStyleConfig & { closeIcon?: any };
+export type FormConfig = SemanticComponentStyleConfig & {
+  validateMessages?: ValidateMessages;
+  requiredMark?: RequiredMark;
+  colon?: boolean;
+  scrollToFirstError?: any;
+  variant?: Variant;
+  tooltip?: any;
+  labelAlign?: string;
+  labelWrap?: boolean;
+};
+export type InputConfig = SemanticComponentStyleConfig & {
+  autocomplete?: string;
+  autoComplete?: string;
+  allowClear?: boolean | { clearIcon?: any };
+  variant?: Variant;
+};
+export type InputPasswordConfig = SemanticComponentStyleConfig & {
+  iconRender?: (visible: boolean) => any;
+  variant?: Variant;
+};
+export type InputSearchConfig = SemanticComponentStyleConfig & {
+  searchIcon?: any;
+  variant?: Variant;
+};
+export type InputNumberConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  allowClear?: boolean | { clearIcon?: any };
+};
 export type LayoutConfig = ComponentStyleConfig;
-export type ListConfig = ComponentStyleConfig;
-export type MentionsConfig = ComponentStyleConfig & { variant?: Variant };
-export type MenuConfig = ComponentStyleConfig;
-export type ModalConfig = ComponentStyleConfig;
-export type PopconfirmConfig = ComponentStyleConfig;
-export type PopoverConfig = ComponentStyleConfig;
-export type ProgressConfig = ComponentStyleConfig;
-export type RadioConfig = ComponentStyleConfig;
-export type RangePickerConfig = ComponentStyleConfig & { variant?: Variant };
+export type ListConfig = ComponentStyleConfig & {
+  item?: { classNames?: Record<string, any>; styles?: Record<string, any> };
+};
+export type ListyConfig = SemanticComponentStyleConfig;
+export type MasonryConfig = SemanticComponentStyleConfig;
+export type MentionsConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  allowClear?: boolean | { clearIcon?: any };
+};
+export type MenuConfig = SemanticComponentStyleConfig & {
+  expandIcon?: any;
+};
+export type ModalConfig = SemanticComponentStyleConfig & {
+  closeIcon?: any;
+  closable?: boolean | Record<string, any>;
+  centered?: boolean;
+  okButtonProps?: Record<string, any>;
+  cancelButtonProps?: Record<string, any>;
+  mask?: any;
+  focusable?: any;
+  infoIcon?: any;
+  successIcon?: any;
+  errorIcon?: any;
+  warningIcon?: any;
+};
+export type OTPConfig = SemanticComponentStyleConfig & { variant?: Variant };
+export type PaginationConfig = SemanticComponentStyleConfig & {
+  showSizeChanger?: boolean;
+  totalBoundaryShowSizeChanger?: number;
+};
+export type PopconfirmConfig = SemanticComponentStyleConfig & {
+  arrow?: boolean | { pointAtCenter?: boolean };
+  trigger?: any;
+  mouseEnterDelay?: number;
+  mouseLeaveDelay?: number;
+};
+export type PopoverConfig = SemanticComponentStyleConfig & {
+  arrow?: boolean | { pointAtCenter?: boolean };
+  trigger?: any;
+  mouseEnterDelay?: number;
+  mouseLeaveDelay?: number;
+};
+export type ProgressConfig = SemanticComponentStyleConfig;
+export type QRcodeConfig = SemanticComponentStyleConfig;
+export type RadioConfig = SemanticComponentStyleConfig;
+export type RangePickerConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  separator?: any;
+};
 export type RateConfig = ComponentStyleConfig;
-export type ResultConfig = ComponentStyleConfig;
-export type SegmentedConfig = ComponentStyleConfig;
-export type SkeletonConfig = ComponentStyleConfig;
-export type SliderConfig = ComponentStyleConfig;
-export type SpinConfig = ComponentStyleConfig;
-export type SplitterConfig = ComponentStyleConfig;
-export type StatisticConfig = ComponentStyleConfig;
-export type StepsConfig = ComponentStyleConfig;
-export type TabsConfig = ComponentStyleConfig;
-export type TagConfig = ComponentStyleConfig;
-export type TextAreaConfig = ComponentStyleConfig & { variant?: Variant };
-export type TimePickerConfig = ComponentStyleConfig & { variant?: Variant };
-export type TimelineConfig = ComponentStyleConfig;
-export type TooltipConfig = ComponentStyleConfig;
-export type TourConfig = ComponentStyleConfig;
-export type TransferConfig = ComponentStyleConfig;
-export type TreeConfig = ComponentStyleConfig;
-export type TreeSelectConfig = ComponentStyleConfig & { variant?: Variant };
-export type TypographyConfig = ComponentStyleConfig;
-export type UploadConfig = ComponentStyleConfig;
-export type ImageConfig = ComponentStyleConfig & {
-  preview?: { closeIcon?: any };
+export type ResultConfig = SemanticComponentStyleConfig;
+export type RibbonConfig = SemanticComponentStyleConfig;
+export type SegmentedConfig = SemanticComponentStyleConfig;
+export type SelectConfig = SemanticComponentStyleConfig & {
+  showSearch?: boolean;
+  variant?: Variant;
+  autoComplete?: string;
+  allowClear?: boolean | { clearIcon?: any };
+  clearIcon?: any;
+  loadingIcon?: any;
+  menuItemSelectedIcon?: any;
+  removeIcon?: any;
+  suffix?: any;
+  suffixIcon?: any;
+};
+export type SkeletonConfig = SemanticComponentStyleConfig;
+export type SliderConfig = SemanticComponentStyleConfig;
+export type SpaceConfig = SemanticComponentStyleConfig & { size?: SizeType | number };
+export type SpinConfig = SemanticComponentStyleConfig & { indicator?: any };
+export type SplitterConfig = SemanticComponentStyleConfig;
+export type StatisticConfig = SemanticComponentStyleConfig;
+export type StepsConfig = SemanticComponentStyleConfig & { variant?: 'filled' | 'outlined' };
+export type TabsConfig = SemanticComponentStyleConfig & {
+  indicator?: any;
+  indicatorSize?: any;
+  more?: any;
+  moreIcon?: any;
+  addIcon?: any;
+  removeIcon?: any;
+};
+export type TagConfig = SemanticComponentStyleConfig & {
+  variant?: 'filled' | 'solid' | 'outlined';
+  closeIcon?: any;
+  closable?: boolean | Record<string, any>;
+};
+export type TextAreaConfig = SemanticComponentStyleConfig & {
+  autocomplete?: string;
+  autoComplete?: string;
+  allowClear?: boolean | { clearIcon?: any };
+  variant?: Variant;
+};
+export type TimePickerConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  suffix?: any;
+  suffixIcon?: any;
+  allowClear?: boolean;
+  clearIcon?: any;
+};
+export type TimelineConfig = SemanticComponentStyleConfig & { variant?: 'filled' | 'outlined' };
+export type TooltipConfig = SemanticComponentStyleConfig & {
+  arrow?: boolean | { pointAtCenter?: boolean };
+  trigger?: any;
+  mouseEnterDelay?: number;
+  mouseLeaveDelay?: number;
+  unique?: boolean;
+};
+export type TourConfig = SemanticComponentStyleConfig & { closeIcon?: any };
+export type TransferConfig = SemanticComponentStyleConfig & { selectionsIcon?: any };
+export type TreeConfig = SemanticComponentStyleConfig;
+export type TreeSelectConfig = SemanticComponentStyleConfig & {
+  variant?: Variant;
+  allowClear?: boolean | { clearIcon?: any };
+  switcherIcon?: any;
+};
+export type TypographyConfig = SemanticComponentStyleConfig;
+export type UploadConfig = SemanticComponentStyleConfig & {
+  customRequest?: any;
+  progress?: any;
+  accept?: string;
+};
+export type WatermarkConfig = ComponentStyleConfig;
+export type ImageConfig = SemanticComponentStyleConfig & {
+  preview?: {
+    closeIcon?: any;
+    classNames?: Record<string, any>;
+    styles?: Record<string, any>;
+    mask?: any;
+  };
   fallback?: string;
 };
-export type EmptyConfig = ComponentStyleConfig & { image?: any };
-export type SwitchConfig = ComponentStyleConfig;
-export type MessageConfig = ComponentStyleConfig;
-export type TableConfig = ComponentStyleConfig & { expandable?: { expandIcon?: any } };
-export type NotificationConfig = ComponentStyleConfig & { closeIcon?: any };
+export type EmptyConfig = SemanticComponentStyleConfig & { image?: any };
+export type SwitchConfig = SemanticComponentStyleConfig;
+export type MessageConfig = SemanticComponentStyleConfig;
+export type TableConfig = SemanticComponentStyleConfig & {
+  expandable?: { expandIcon?: any };
+  rowKey?: any;
+  scroll?: any;
+};
+export type NotificationConfig = SemanticComponentStyleConfig & { closeIcon?: any };
 export type FlexConfig = ComponentStyleConfig & { vertical?: boolean };
 export type WarningConfig = { strict?: boolean };
+
+export interface ConfigComponentProps {
+  affix?: AffixConfig;
+  alert?: AlertConfig;
+  anchor?: AnchorConfig;
+  app?: AppConfig;
+  autoComplete?: AutoCompleteConfig;
+  avatar?: AvatarConfig;
+  badge?: BadgeConfig;
+  borderBeam?: BorderBeamConfig;
+  breadcrumb?: BreadcrumbConfig;
+  button?: ButtonConfig;
+  calendar?: CalendarConfig;
+  card?: CardConfig;
+  cardMeta?: CardMetaConfig;
+  carousel?: CarouselConfig;
+  cascader?: CascaderConfig;
+  checkbox?: CheckboxConfig;
+  collapse?: CollapseConfig;
+  colorPicker?: ColorPickerConfig;
+  datePicker?: DatePickerConfig;
+  descriptions?: DescriptionsConfig;
+  divider?: DividerConfig;
+  drawer?: DrawerConfig;
+  dropdown?: DropdownConfig;
+  empty?: EmptyConfig;
+  flex?: FlexConfig;
+  floatButton?: FloatButtonConfig;
+  floatButtonGroup?: FloatButtonGroupConfig;
+  form?: FormConfig;
+  image?: ImageConfig;
+  input?: InputConfig;
+  inputNumber?: InputNumberConfig;
+  inputPassword?: InputPasswordConfig;
+  inputSearch?: InputSearchConfig;
+  layout?: LayoutConfig;
+  list?: ListConfig;
+  listy?: ListyConfig;
+  masonry?: MasonryConfig;
+  mentions?: MentionsConfig;
+  menu?: MenuConfig;
+  message?: MessageConfig;
+  modal?: ModalConfig;
+  notification?: NotificationConfig;
+  otp?: OTPConfig;
+  pagination?: PaginationConfig;
+  popconfirm?: PopconfirmConfig;
+  popover?: PopoverConfig;
+  progress?: ProgressConfig;
+  qrcode?: QRcodeConfig;
+  radio?: RadioConfig;
+  rangePicker?: RangePickerConfig;
+  rate?: RateConfig;
+  result?: ResultConfig;
+  ribbon?: RibbonConfig;
+  segmented?: SegmentedConfig;
+  select?: SelectConfig;
+  skeleton?: SkeletonConfig;
+  slider?: SliderConfig;
+  space?: SpaceConfig;
+  spin?: SpinConfig;
+  splitter?: SplitterConfig;
+  statistic?: StatisticConfig;
+  steps?: StepsConfig;
+  switch?: SwitchConfig;
+  table?: TableConfig;
+  tabs?: TabsConfig;
+  tag?: TagConfig;
+  textArea?: TextAreaConfig;
+  timePicker?: TimePickerConfig;
+  timeline?: TimelineConfig;
+  tooltip?: TooltipConfig;
+  tour?: TourConfig;
+  transfer?: TransferConfig;
+  tree?: TreeConfig;
+  treeSelect?: TreeSelectConfig;
+  typography?: TypographyConfig;
+  upload?: UploadConfig;
+  watermark?: WatermarkConfig;
+  wave?: { disabled?: boolean };
+}
+
+export const WarningContextKey: InjectionKey<ComputedRef<WarningConfig | undefined>> =
+  Symbol('WarningContextKey');
+
+export const useProvideWarningContext = (warning: ComputedRef<WarningConfig | undefined>) => {
+  provide(WarningContextKey, warning);
+};
+
+export const useInjectWarningContext = () => {
+  return inject(
+    WarningContextKey,
+    computed<WarningConfig | undefined>(() => undefined),
+  );
+};
 
 export type MappingAlgorithm = DerivativeFunc<SeedToken, MapToken>;
 
@@ -178,7 +453,7 @@ export const configProviderProps = () => ({
   },
   csp: objectType<CSPConfig>(),
   variant: { type: String as PropType<Variant> },
-  input: objectType<{ autocomplete?: string; variant?: Variant }>(),
+  input: objectType<InputConfig>(),
   autoInsertSpaceInButton: { type: Boolean, default: undefined },
   locale: objectType<Locale>(),
   pageHeader: objectType<{ ghost?: boolean }>(),
@@ -190,40 +465,36 @@ export const configProviderProps = () => ({
     type: String as PropType<'ltr' | 'rtl'>,
     default: 'ltr',
   },
-  space: objectType<{ size?: SizeType | number }>(),
+  space: objectType<SpaceConfig>(),
   virtual: { type: Boolean, default: undefined },
-  dropdownMatchSelectWidth: { type: [Number, Boolean], default: true },
+  dropdownMatchSelectWidth: { type: [Number, Boolean], default: undefined },
   /** 5.25+ 替代 dropdownMatchSelectWidth */
   popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
   /** 5.25+ 弹层溢出配置 */
   popupOverflow: { type: String as PropType<'viewport' | 'scroll'>, default: undefined },
   /** 5.25+ 静态方法占位容器渲染 */
   holderRender: { type: Function as PropType<(children: any) => any>, default: undefined },
-  form: objectType<{
-    validateMessages?: ValidateMessages;
-    requiredMark?: RequiredMark;
-    colon?: boolean;
-  }>(),
-  pagination: objectType<{
-    showSizeChanger?: boolean;
-  }>(),
+  form: objectType<FormConfig>(),
+  pagination: objectType<PaginationConfig>(),
   theme: objectType<ThemeConfig>(),
-  select: objectType<{
-    showSearch?: boolean;
-    variant?: Variant;
-  }>(),
+  select: objectType<SelectConfig>(),
   wave: objectType<{
     disabled?: boolean;
   }>(),
-  // ====================== 组件级默认配置（antd 5.x camelCase）======================
+  // ====================== 组件级默认配置（对齐 antd@6.7.2 全量 72 个组件配置）======================
+  affix: objectType<AffixConfig>(),
   alert: objectType<AlertConfig>(),
   anchor: objectType<AnchorConfig>(),
+  app: objectType<AppConfig>(),
+  autoComplete: objectType<AutoCompleteConfig>(),
   avatar: objectType<AvatarConfig>(),
   badge: objectType<BadgeConfig>(),
+  borderBeam: objectType<BorderBeamConfig>(),
   breadcrumb: objectType<BreadcrumbConfig>(),
   button: objectType<ButtonConfig>(),
   calendar: objectType<CalendarConfig>(),
   card: objectType<CardConfig>(),
+  cardMeta: objectType<CardMetaConfig>(),
   carousel: objectType<CarouselConfig>(),
   cascader: objectType<CascaderConfig>(),
   checkbox: objectType<CheckboxConfig>(),
@@ -237,18 +508,25 @@ export const configProviderProps = () => ({
   floatButton: objectType<FloatButtonConfig>(),
   floatButtonGroup: objectType<FloatButtonGroupConfig>(),
   inputNumber: objectType<InputNumberConfig>(),
+  inputPassword: objectType<InputPasswordConfig>(),
+  inputSearch: objectType<InputSearchConfig>(),
   layout: objectType<LayoutConfig>(),
   list: objectType<ListConfig>(),
+  listy: objectType<ListyConfig>(),
+  masonry: objectType<MasonryConfig>(),
   mentions: objectType<MentionsConfig>(),
   menu: objectType<MenuConfig>(),
   modal: objectType<ModalConfig>(),
+  otp: objectType<OTPConfig>(),
   popconfirm: objectType<PopconfirmConfig>(),
   popover: objectType<PopoverConfig>(),
   progress: objectType<ProgressConfig>(),
+  qrcode: objectType<QRcodeConfig>(),
   radio: objectType<RadioConfig>(),
   rangePicker: objectType<RangePickerConfig>(),
   rate: objectType<RateConfig>(),
   result: objectType<ResultConfig>(),
+  ribbon: objectType<RibbonConfig>(),
   segmented: objectType<SegmentedConfig>(),
   skeleton: objectType<SkeletonConfig>(),
   slider: objectType<SliderConfig>(),
@@ -268,6 +546,7 @@ export const configProviderProps = () => ({
   treeSelect: objectType<TreeSelectConfig>(),
   typography: objectType<TypographyConfig>(),
   upload: objectType<UploadConfig>(),
+  watermark: objectType<WatermarkConfig>(),
   image: objectType<ImageConfig>(),
   empty: objectType<EmptyConfig>(),
   switch: objectType<SwitchConfig>(),
@@ -286,9 +565,7 @@ export interface ConfigProviderInnerProps {
   autoInsertSpaceInButton?: ComputedRef<boolean>;
   locale?: ComputedRef<Locale>;
   direction?: ComputedRef<'ltr' | 'rtl'>;
-  space?: ComputedRef<{
-    size?: number | SizeType;
-  }>;
+  space?: ComputedRef<SpaceConfig>;
   virtual?: ComputedRef<boolean>;
   dropdownMatchSelectWidth?: ComputedRef<number | boolean>;
   popupMatchSelectWidth?: ComputedRef<number | boolean>;
@@ -303,22 +580,10 @@ export interface ConfigProviderInnerProps {
   pageHeader?: ComputedRef<{
     ghost?: boolean;
   }>;
-  input?: ComputedRef<{
-    autocomplete?: string;
-    variant?: Variant;
-  }>;
-  pagination?: ComputedRef<{
-    showSizeChanger?: boolean;
-  }>;
-  form?: ComputedRef<{
-    validateMessages?: ValidateMessages;
-    requiredMark?: RequiredMark;
-    colon?: boolean;
-  }>;
-  select?: ComputedRef<{
-    showSearch?: boolean;
-    variant?: Variant;
-  }>;
+  input?: ComputedRef<InputConfig>;
+  pagination?: ComputedRef<PaginationConfig>;
+  form?: ComputedRef<FormConfig>;
+  select?: ComputedRef<SelectConfig>;
   componentSize?: ComputedRef<SizeType>;
   componentDisabled?: ComputedRef<boolean>;
   transformCellText?: ComputedRef<(tableProps: TransformCellTextProps) => any>;
@@ -334,14 +599,19 @@ export interface ConfigProviderInnerProps {
   notification?: ComputedRef<NotificationConfig>;
   warning?: ComputedRef<WarningConfig>;
   // ====================== 组件级默认配置 ======================
+  affix?: ComputedRef<AffixConfig>;
   alert?: ComputedRef<AlertConfig>;
   anchor?: ComputedRef<AnchorConfig>;
+  app?: ComputedRef<AppConfig>;
+  autoComplete?: ComputedRef<AutoCompleteConfig>;
   avatar?: ComputedRef<AvatarConfig>;
   badge?: ComputedRef<BadgeConfig>;
+  borderBeam?: ComputedRef<BorderBeamConfig>;
   breadcrumb?: ComputedRef<BreadcrumbConfig>;
   button?: ComputedRef<ButtonConfig>;
   calendar?: ComputedRef<CalendarConfig>;
   card?: ComputedRef<CardConfig>;
+  cardMeta?: ComputedRef<CardMetaConfig>;
   carousel?: ComputedRef<CarouselConfig>;
   cascader?: ComputedRef<CascaderConfig>;
   checkbox?: ComputedRef<CheckboxConfig>;
@@ -355,18 +625,25 @@ export interface ConfigProviderInnerProps {
   floatButton?: ComputedRef<FloatButtonConfig>;
   floatButtonGroup?: ComputedRef<FloatButtonGroupConfig>;
   inputNumber?: ComputedRef<InputNumberConfig>;
+  inputPassword?: ComputedRef<InputPasswordConfig>;
+  inputSearch?: ComputedRef<InputSearchConfig>;
   layout?: ComputedRef<LayoutConfig>;
   list?: ComputedRef<ListConfig>;
+  listy?: ComputedRef<ListyConfig>;
+  masonry?: ComputedRef<MasonryConfig>;
   mentions?: ComputedRef<MentionsConfig>;
   menu?: ComputedRef<MenuConfig>;
   modal?: ComputedRef<ModalConfig>;
+  otp?: ComputedRef<OTPConfig>;
   popconfirm?: ComputedRef<PopconfirmConfig>;
   popover?: ComputedRef<PopoverConfig>;
   progress?: ComputedRef<ProgressConfig>;
+  qrcode?: ComputedRef<QRcodeConfig>;
   radio?: ComputedRef<RadioConfig>;
   rangePicker?: ComputedRef<RangePickerConfig>;
   rate?: ComputedRef<RateConfig>;
   result?: ComputedRef<ResultConfig>;
+  ribbon?: ComputedRef<RibbonConfig>;
   segmented?: ComputedRef<SegmentedConfig>;
   skeleton?: ComputedRef<SkeletonConfig>;
   slider?: ComputedRef<SliderConfig>;
@@ -386,6 +663,7 @@ export interface ConfigProviderInnerProps {
   treeSelect?: ComputedRef<TreeSelectConfig>;
   typography?: ComputedRef<TypographyConfig>;
   upload?: ComputedRef<UploadConfig>;
+  watermark?: ComputedRef<WatermarkConfig>;
 }
 
 export const configProviderKey: InjectionKey<ConfigProviderInnerProps> = Symbol('configProvider');
@@ -407,3 +685,96 @@ export const useConfigContextInject = () => {
 export const useConfigContextProvider = (props: ConfigProviderInnerProps) => {
   return provide(configProviderKey, props);
 };
+
+const EMPTY_CONFIG_OBJECT: Record<string, any> = {};
+
+export function mergeSemanticClassNames<T extends Record<string, any>>(
+  ctxClassNames?: T,
+  propClassNames?: T,
+): T {
+  if (!ctxClassNames && !propClassNames) return EMPTY_CONFIG_OBJECT as T;
+  const merged: Record<string, any> = { ...ctxClassNames };
+  if (propClassNames) {
+    Object.keys(propClassNames).forEach(key => {
+      const ctxVal = merged[key];
+      const propVal = propClassNames[key];
+      if (ctxVal && propVal && typeof ctxVal === 'object' && typeof propVal === 'object') {
+        merged[key] = mergeSemanticClassNames(ctxVal, propVal);
+      } else if (ctxVal && propVal) {
+        merged[key] = `${ctxVal} ${propVal}`;
+      } else if (propVal !== undefined) {
+        merged[key] = propVal;
+      }
+    });
+  }
+  return merged as T;
+}
+
+export function mergeSemanticStyles<T extends Record<string, any>>(
+  ctxStyles?: T,
+  propStyles?: T,
+): T {
+  if (!ctxStyles && !propStyles) return EMPTY_CONFIG_OBJECT as T;
+  const merged: Record<string, any> = { ...ctxStyles };
+  if (propStyles) {
+    Object.keys(propStyles).forEach(key => {
+      const ctxVal = merged[key];
+      const propVal = propStyles[key];
+      if (ctxVal && propVal && typeof ctxVal === 'object' && typeof propVal === 'object') {
+        merged[key] = { ...ctxVal, ...propVal };
+      } else if (propVal !== undefined) {
+        merged[key] = propVal;
+      }
+    });
+  }
+  return merged as T;
+}
+
+export type ComponentConfigResult<T extends keyof ConfigComponentProps> = {
+  getPrefixCls: ConfigProviderInnerProps['getPrefixCls'];
+  direction: ConfigProviderInnerProps['direction'];
+  getPopupContainer: ConfigProviderInnerProps['getPopupContainer'];
+  renderEmpty: ConfigProviderInnerProps['renderEmpty'];
+  popupOverflow: ConfigProviderInnerProps['popupOverflow'];
+  holderRender: ConfigProviderInnerProps['holderRender'];
+  componentConfig: ComputedRef<NonNullable<ConfigComponentProps[T]>>;
+  className: ComputedRef<string | undefined>;
+  style: ComputedRef<CSSProperties | undefined>;
+  classNames: ComputedRef<Record<string, any>>;
+  styles: ComputedRef<Record<string, any>>;
+};
+
+export function useComponentConfig<T extends keyof ConfigComponentProps>(
+  propName: T,
+): ComponentConfigResult<T> {
+  const configProvider = useConfigContextInject();
+  const componentConfig = computed<NonNullable<ConfigComponentProps[T]>>(
+    () =>
+      ((configProvider as any)[propName]?.value || EMPTY_CONFIG_OBJECT) as NonNullable<
+        ConfigComponentProps[T]
+      >,
+  );
+  const className = computed(() => (componentConfig.value as any)?.className as string | undefined);
+  const style = computed(() => (componentConfig.value as any)?.style as CSSProperties | undefined);
+  const classNames = computed(
+    () =>
+      ((componentConfig.value as any)?.classNames || EMPTY_CONFIG_OBJECT) as Record<string, any>,
+  );
+  const styles = computed(
+    () => ((componentConfig.value as any)?.styles || EMPTY_CONFIG_OBJECT) as Record<string, any>,
+  );
+
+  return {
+    getPrefixCls: configProvider.getPrefixCls,
+    direction: configProvider.direction,
+    getPopupContainer: configProvider.getPopupContainer,
+    renderEmpty: configProvider.renderEmpty,
+    popupOverflow: configProvider.popupOverflow,
+    holderRender: configProvider.holderRender,
+    componentConfig,
+    className,
+    style,
+    classNames,
+    styles,
+  };
+}

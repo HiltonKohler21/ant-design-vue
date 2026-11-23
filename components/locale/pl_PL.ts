@@ -53,6 +53,7 @@ const localeValues: Locale = {
     selectCurrent: 'Wybierz aktualną stronę',
     removeCurrent: 'Usuń aktualną stronę',
     selectAll: 'Wybierz wszystkie',
+    deselectAll: 'Odznacz wszystkie dane',
     removeAll: 'Usuń wszystkie',
     selectInvert: 'Odwróć wybór',
   },

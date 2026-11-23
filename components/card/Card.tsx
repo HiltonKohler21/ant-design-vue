@@ -5,7 +5,11 @@ import PropTypes from '../_util/vue-types';
 import { flattenChildren, isEmptyElement, filterEmptyWithUndefined } from '../_util/props-util';
 import type { SizeType } from '../config-provider';
 import isPlainObject from 'lodash-es/isPlainObject';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 import useVariant from '../form/hooks/useVariant';
 import devWarning from '../vc-util/devWarning';
 import useStyle from './style';
@@ -81,6 +85,12 @@ const Card = defineComponent({
   }>,
   setup(props, { slots, attrs }) {
     const { prefixCls, direction, size } = useConfigInject('card', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('card');
 
     // ====================== Variant =======================
     const [mergedVariant] = useVariant(
@@ -182,23 +192,25 @@ const Card = defineComponent({
             })}
           </Tabs>
         ) : null;
+      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
+      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
       if (title || extra || tabs) {
         head = (
           <div
-            class={[`${pre}-head`, props.classNames?.header]}
-            style={[headStyle, props.styles?.header]}
+            class={[`${pre}-head`, mergedClassNames.header]}
+            style={[headStyle, mergedStyles.header]}
           >
             <div class={`${pre}-head-wrapper`}>
               {title && (
                 <div
-                  class={[`${pre}-head-title`, props.classNames?.title]}
-                  style={props.styles?.title}
+                  class={[`${pre}-head-title`, mergedClassNames.title]}
+                  style={mergedStyles.title}
                 >
                   {title}
                 </div>
               )}
               {extra && (
-                <div class={[`${pre}-extra`, props.classNames?.extra]} style={props.styles?.extra}>
+                <div class={[`${pre}-extra`, mergedClassNames.extra]} style={mergedStyles.extra}>
                   {extra}
                 </div>
               )}
@@ -209,27 +221,29 @@ const Card = defineComponent({
       }
 
       const coverDom = cover ? (
-        <div class={[`${pre}-cover`, props.classNames?.cover]} style={props.styles?.cover}>
+        <div class={[`${pre}-cover`, mergedClassNames.cover]} style={mergedStyles.cover}>
           {cover}
         </div>
       ) : null;
       const body = (
-        <div
-          class={[`${pre}-body`, props.classNames?.body]}
-          style={[bodyStyle, props.styles?.body]}
-        >
+        <div class={[`${pre}-body`, mergedClassNames.body]} style={[bodyStyle, mergedStyles.body]}>
           {loading ? loadingBlock : children}
         </div>
       );
       const actionDom =
         actions && actions.length ? (
-          <ul class={[`${pre}-actions`, props.classNames?.actions]} style={props.styles?.actions}>
+          <ul class={[`${pre}-actions`, mergedClassNames.actions]} style={mergedStyles.actions}>
             {getAction(actions)}
           </ul>
         ) : null;
 
       return wrapSSR(
-        <div ref="cardContainerRef" {...attrs} class={[classString, attrs.class]}>
+        <div
+          ref="cardContainerRef"
+          {...attrs}
+          class={[classString, contextClassName.value, mergedClassNames.root, attrs.class]}
+          style={[contextStyle.value, mergedStyles.root, attrs.style as CSSProperties]}
+        >
           {head}
           {coverDom}
           {children && children.length ? body : null}

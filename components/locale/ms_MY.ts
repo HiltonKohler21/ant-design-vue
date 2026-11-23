@@ -47,6 +47,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Carian di sini',
     itemUnit: 'item',
     itemsUnit: 'item',
+    deselectAll: 'Nyahpilih semua data',
   },
   Icon: {
     icon: 'ikon',

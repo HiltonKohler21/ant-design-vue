@@ -1,4 +1,4 @@
-import type { App, ExtractPropTypes } from 'vue';
+import type { App, CSSProperties, ExtractPropTypes } from 'vue';
 import { computed, defineComponent } from 'vue';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import CheckOutlined from '@ant-design/icons-vue/CheckOutlined';
@@ -6,7 +6,7 @@ import type { VueNode, CustomSlotsType } from '../_util/type';
 import { anyType, booleanType, stringType, functionType, someType, arrayType } from '../_util/type';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 import VcSteps, { Step as VcStep } from '../vc-steps';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import useBreakpoint from '../_util/hooks/useBreakpoint';
 import classNames from '../_util/classNames';
 import Progress from '../progress';
@@ -70,6 +70,12 @@ const Steps = defineComponent({
   // emits: ['update:current', 'change'],
   setup(props, { attrs, slots, emit }) {
     const { prefixCls, direction: rtlDirection, configProvider } = useConfigInject('steps', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('steps');
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
     // realToken：未变量化的原始 token（cssVar 下 token 值是 var() 字符串，尺寸计算需真实值）
@@ -130,6 +136,8 @@ const Steps = defineComponent({
           [`${prefixCls.value}-rtl`]: rtlDirection.value === 'rtl',
           [`${prefixCls.value}-with-progress`]: mergedPercent.value !== undefined,
         },
+        contextClassName.value,
+        contextClassNames.value.root,
         props.rootClassName,
         attrs.class,
         hashId.value,
@@ -147,6 +155,7 @@ const Steps = defineComponent({
           prefixCls={prefixCls.value}
           iconPrefix={iconPrefix.value}
           class={stepsClassName}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
           onChange={handleChange}
           isInline={isInline.value}
           itemRender={isInline.value ? itemRender : undefined}

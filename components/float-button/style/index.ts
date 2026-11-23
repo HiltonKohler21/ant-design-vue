@@ -100,7 +100,7 @@ const floatButtonGroupStyle: GenerateStyle<FloatButtonToken, CSSObject> = token 
   return {
     [groupPrefixCls]: {
       ...resetComponent(token),
-      zIndex: 99,
+      zIndex: token.zIndexPopup,
       display: 'block',
       border: 'none',
       position: 'fixed',
@@ -152,11 +152,7 @@ const floatButtonGroupStyle: GenerateStyle<FloatButtonToken, CSSObject> = token 
         },
         [`${antCls}-badge`]: {
           [`${antCls}-badge-count`]: {
-            top: token
-              .calc(token.floatButtonBodyPadding)
-              .add(token.badgeOffset)
-              .mul(-1)
-              .equal(),
+            top: token.calc(token.floatButtonBodyPadding).add(token.badgeOffset).mul(-1).equal(),
             insetInlineEnd: token
               .calc(token.floatButtonBodyPadding)
               .add(token.badgeOffset)
@@ -230,7 +226,7 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
       border: 'none',
       position: 'fixed',
       cursor: 'pointer',
-      zIndex: 99,
+      zIndex: token.zIndexPopup,
       display: 'block',
       justifyContent: 'center',
       alignItems: 'center',
@@ -274,7 +270,9 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: `${unit(token.calc(floatButtonBodyPadding).div(2).equal())} ${unit(floatButtonBodyPadding)}`,
+          padding: `${unit(token.calc(floatButtonBodyPadding).div(2).equal())} ${unit(
+            floatButtonBodyPadding,
+          )}`,
           [`${componentCls}-icon`]: {
             textAlign: 'center',
             margin: 'auto',
@@ -365,39 +363,45 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook<'FloatButton'>('FloatButton', token => {
-  const {
-    colorTextLightSolid,
-    colorBgElevated,
-    controlHeightLG,
-    marginXXL,
-    marginLG,
-    fontSize,
-    controlItemBgHover,
-  } = token;
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const floatButtonToken = mergeToken<FloatButtonToken>(token, {
-    floatButtonBackgroundColor: colorBgElevated,
-    floatButtonColor: colorTextLightSolid,
-    floatButtonHoverBackgroundColor: controlItemBgHover,
-    floatButtonFontSize: fontSize,
-    floatButtonIconSize: rawToken.fontSizeIcon * 1.5,
-    floatButtonSize: controlHeightLG,
+export default genComponentStyleHook<'FloatButton'>(
+  'FloatButton',
+  token => {
+    const {
+      colorTextLightSolid,
+      colorBgElevated,
+      controlHeightLG,
+      marginXXL,
+      marginLG,
+      fontSize,
+      controlItemBgHover,
+    } = token;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const floatButtonToken = mergeToken<FloatButtonToken>(token, {
+      floatButtonBackgroundColor: colorBgElevated,
+      floatButtonColor: colorTextLightSolid,
+      floatButtonHoverBackgroundColor: controlItemBgHover,
+      floatButtonFontSize: fontSize,
+      floatButtonIconSize: rawToken.fontSizeIcon * 1.5,
+      floatButtonSize: controlHeightLG,
 
-    floatButtonInsetBlockEnd: marginXXL,
-    floatButtonInsetInlineEnd: marginLG,
-    floatButtonBodySize: rawToken.controlHeightLG - rawToken.paddingXXS * 2,
-    // 这里的 paddingXXS 是简写，完整逻辑是 (controlHeightLG - (controlHeightLG - paddingXXS * 2)) / 2,
-    floatButtonBodyPadding: rawToken.paddingXXS,
-    badgeOffset: rawToken.paddingXXS * 1.5,
-    dotOffsetInCircle: getOffset(rawToken.controlHeightLG / 2),
-    dotOffsetInSquare: getOffset(rawToken.borderRadiusLG),
-  });
-  return [
-    floatButtonGroupStyle(floatButtonToken),
-    sharedFloatButtonStyle(floatButtonToken),
-    initFadeMotion(token),
-    initFloatButtonGroupMotion(floatButtonToken),
-  ];
-});
+      floatButtonInsetBlockEnd: marginXXL,
+      floatButtonInsetInlineEnd: marginLG,
+      floatButtonBodySize: rawToken.controlHeightLG - rawToken.paddingXXS * 2,
+      // 这里的 paddingXXS 是简写，完整逻辑是 (controlHeightLG - (controlHeightLG - paddingXXS * 2)) / 2,
+      floatButtonBodyPadding: rawToken.paddingXXS,
+      badgeOffset: rawToken.paddingXXS * 1.5,
+      dotOffsetInCircle: getOffset(rawToken.controlHeightLG / 2),
+      dotOffsetInSquare: getOffset(rawToken.borderRadiusLG),
+    });
+    return [
+      floatButtonGroupStyle(floatButtonToken),
+      sharedFloatButtonStyle(floatButtonToken),
+      initFadeMotion(token),
+      initFloatButtonGroupMotion(floatButtonToken),
+    ];
+  },
+  token => ({
+    zIndexPopup: token.zIndexPopupBase + 10,
+  }),
+);

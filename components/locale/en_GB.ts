@@ -43,6 +43,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Search here',
     itemUnit: 'item',
     itemsUnit: 'items',
+    deselectAll: 'Deselect all data',
   },
   Upload: {
     uploading: 'Uploading...',

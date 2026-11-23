@@ -127,6 +127,8 @@ const TreeSelect = defineComponent({
     leafIcon?: any;
     tagRender?: any;
     suffixIcon?: any;
+    popupRender?: any;
+    dropdownRender?: any;
   }>,
   setup(props, { attrs, slots, expose, emit }) {
     warning(
@@ -162,6 +164,7 @@ const TreeSelect = defineComponent({
       getPopupContainer,
       getPrefixCls,
       disabled,
+      configProvider,
     } = useConfigInject('select', props);
     const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
     const mergedSize = computed(() => compactSize.value || contextSize.value);
@@ -303,6 +306,8 @@ const TreeSelect = defineComponent({
         'variant',
         'status',
         'popupMatchSelectWidth',
+        'popupRender',
+        'dropdownRender',
         'onOpenChange',
         'rootClassName',
         'classNames',
@@ -323,6 +328,7 @@ const TreeSelect = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: isFormItemInput,
         },
+        configProvider.treeSelect?.value?.className,
         props.rootClassName,
         props.classNames?.root,
         getStatusClassNames(prefixCls.value, mergedStatus.value, hasFeedback),
@@ -348,7 +354,11 @@ const TreeSelect = defineComponent({
             ref={treeSelectRef}
             prefixCls={prefixCls.value}
             class={mergedClassName}
-            style={[props.styles?.root, attrs.style as any]}
+            style={[
+              configProvider.treeSelect?.value?.style,
+              props.styles?.root,
+              attrs.style as any,
+            ]}
             listHeight={listHeight}
             listItemHeight={listItemHeight}
             treeLine={!!treeLine}
@@ -370,7 +380,8 @@ const TreeSelect = defineComponent({
             getPopupContainer={getPopupContainer?.value}
             treeMotion={null}
             dropdownClassName={mergedDropdownClassName.value}
-            dropdownRender={props.popupRender ?? props.dropdownRender}
+            popupRender={props.popupRender ?? slots.popupRender}
+            dropdownRender={props.dropdownRender ?? slots.dropdownRender}
             dropdownStyle={
               props.styles?.popup?.root || props.dropdownStyle
                 ? { ...props.dropdownStyle, ...props.styles?.popup?.root }

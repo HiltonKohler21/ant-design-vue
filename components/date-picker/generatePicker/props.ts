@@ -1,7 +1,7 @@
 import type { FocusEventHandler, MouseEventHandler } from '../../_util/EventInterface';
 import type { CSSProperties } from 'vue';
 import type { PickerLocale } from '.';
-import type { SizeType } from '../../config-provider';
+import type { SizeType, Variant } from '../../config-provider';
 import type {
   PresetDate,
   CustomFormat,
@@ -96,6 +96,8 @@ function commonProps<DateType = any>() {
     locale: objectType<PickerLocale>(),
     size: stringType<SizeType>(),
     bordered: booleanType(),
+    /** 视觉变体（antd 5.13+）：outlined / borderless / filled / underlined */
+    variant: stringType<Variant>(),
     dateRender: functionType<DateRender<DateType>>(),
     disabledDate: functionType<(date: DateType) => boolean>(),
     mode: stringType<PanelMode>(),
@@ -166,6 +168,7 @@ export interface CommonProps<DateType> {
   locale?: PickerLocale;
   size?: SizeType;
   bordered?: boolean;
+  variant?: Variant;
   dateRender?: DateRender<DateType>;
   disabledDate?: (date: DateType) => boolean;
   mode?: PanelMode;

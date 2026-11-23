@@ -90,10 +90,11 @@ export default defineComponent<PurePanelProps>({
   name: 'PurePanel',
   inheritAttrs: false,
   props: ['prefixCls', 'icon', 'type', 'message', 'description', 'btn', 'closeIcon'] as any,
-  setup(props) {
-    const { getPrefixCls } = useConfigInject('notification', props);
+  setup(props, { attrs }) {
+    const { getPrefixCls, configProvider } = useConfigInject('notification', props);
     const prefixCls = computed(() => props.prefixCls || getPrefixCls('notification'));
     const noticePrefixCls = computed(() => `${prefixCls.value}-notice`);
+    const contextNotification = computed(() => configProvider.notification?.value);
 
     const [, hashId] = useStyle(prefixCls);
     return () => {
@@ -101,11 +102,20 @@ export default defineComponent<PurePanelProps>({
         <Notice
           {...props}
           prefixCls={prefixCls.value}
-          class={classNames(hashId.value, `${noticePrefixCls.value}-pure-panel`)}
+          class={classNames(
+            hashId.value,
+            `${noticePrefixCls.value}-pure-panel`,
+            contextNotification.value?.className,
+            attrs.class,
+          )}
+          style={[contextNotification.value?.style, attrs.style]}
           noticeKey="pure"
           duration={null}
           closable={props.closable}
-          closeIcon={getCloseIcon(prefixCls.value, props.closeIcon)}
+          closeIcon={getCloseIcon(
+            prefixCls.value,
+            props.closeIcon ?? contextNotification.value?.closeIcon,
+          )}
         >
           <PureContent
             prefixCls={noticePrefixCls.value}

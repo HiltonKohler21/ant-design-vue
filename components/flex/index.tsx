@@ -1,7 +1,7 @@
 import { computed, defineComponent } from 'vue';
 import type { CSSProperties } from 'vue';
 import { useConfigContextInject } from '../config-provider/context';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import useStyle from './style';
 import { isPresetSize } from '../_util/gapSize';
 import omit from '../_util/omit';
@@ -17,6 +17,7 @@ const AFlex = defineComponent({
   setup(props, { slots, attrs }) {
     const { flex: ctxFlex, direction: ctxDirection } = useConfigContextInject();
     const { prefixCls } = useConfigInject('flex', props);
+    const { className: contextClassName, style: contextStyle } = useComponentConfig('flex');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const mergedCls = computed(() => [
       prefixCls.value,
@@ -44,8 +45,8 @@ const AFlex = defineComponent({
 
       return wrapSSR(
         <Component
-          class={[attrs.class, props.rootClassName, mergedCls.value]}
-          style={[attrs.style as CSSProperties, mergedStyle]}
+          class={[contextClassName.value, attrs.class, props.rootClassName, mergedCls.value]}
+          style={[contextStyle.value, attrs.style as CSSProperties, mergedStyle]}
           {...omit(othersProps, ['justify', 'wrap', 'align', 'vertical'])}
         >
           {slots.default?.()}

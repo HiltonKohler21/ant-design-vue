@@ -24,6 +24,8 @@ const antBorderBeamMove = new Keyframes('antBorderBeamMove', {
 
 const genBorderBeamStyle: GenerateStyle<BorderBeamToken> = token => {
   const { componentCls, rootPrefixCls, colorPrimary, colorPrimaryHover, lineWidth } = token;
+  const rawToken: any = (token as any)._realToken ?? token;
+  const motionDisabled = rawToken.motion === false || (token as any).motion === false;
   const varRef = (name: string, fallback?: string) =>
     fallback
       ? `var(${getBorderBeamVarName(rootPrefixCls, name)}, ${fallback})`
@@ -63,19 +65,41 @@ const genBorderBeamStyle: GenerateStyle<BorderBeamToken> = token => {
             offsetDistance: '0%',
             offsetPath: `rect(0 auto auto 0 round ${varRef('size', '100px')})`,
             offsetRotate: 'auto',
-            animationName: antBorderBeamMove,
-            animationDuration: varRef('duration', `${DEFAULT_BORDER_BEAM_DURATION}s`),
-            animationDelay: varRef('delay', '0s'),
-            animationTimingFunction: 'linear',
-            animationIterationCount: 'infinite',
-            willChange: 'offset-distance',
+            ...(motionDisabled
+              ? {
+                  display: 'none',
+                  animation: 'none',
+                  transition: 'none',
+                }
+              : {
+                  animationName: antBorderBeamMove,
+                  animationDuration: varRef('duration', `${DEFAULT_BORDER_BEAM_DURATION}s`),
+                  animationDelay: varRef('delay', '0s'),
+                  animationTimingFunction: 'linear',
+                  animationIterationCount: 'infinite',
+                  willChange: 'offset-distance',
+                }),
+            '@media (prefers-reduced-motion: reduce)': {
+              transition: 'none',
+              animation: 'none',
+            },
           },
+        },
+      },
+
+      '&-no-motion': {
+        '&::before': {
+          display: 'none',
+          animation: 'none',
+          transition: 'none',
         },
       },
 
       '@media (prefers-reduced-motion: reduce)': {
         '&::before': {
           display: 'none',
+          animation: 'none',
+          transition: 'none',
         },
       },
     },

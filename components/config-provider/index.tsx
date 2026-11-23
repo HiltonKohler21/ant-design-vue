@@ -21,8 +21,10 @@ import {
   useConfigContextInject,
   configProviderProps,
   useProvideGlobalForm,
+  useProvideWarningContext,
   defaultIconPrefixCls,
 } from './context';
+import { useComponentConfig } from './hooks/useComponentConfig';
 import { useProviderSize } from './SizeContext';
 import { useProviderDisabled } from './DisabledContext';
 import { createTheme } from '../_util/cssinjs';
@@ -30,14 +32,17 @@ import { DesignTokenProvider, useDesignTokenOptionalInject } from '../theme/inte
 
 export type {
   ConfigProviderProps,
+  ConfigComponentProps,
   Theme,
   SizeType,
   Direction,
   CSPConfig,
   DirectionType,
   Variant,
+  WarningConfig,
 } from './context';
-export { Variants } from './context';
+export { Variants, useInjectWarningContext } from './context';
+export { useComponentConfig };
 export const defaultPrefixCls = 'ant';
 export { defaultIconPrefixCls };
 function getGlobalPrefixCls() {
@@ -89,6 +94,7 @@ type GlobalConfigProviderProps = {
   prefixCls?: MaybeRef<ConfigProviderProps['prefixCls']>;
   iconPrefixCls?: MaybeRef<ConfigProviderProps['iconPrefixCls']>;
   getPopupContainer?: ConfigProviderProps['getPopupContainer'];
+  holderRender?: ConfigProviderProps['holderRender'];
 };
 
 let stopWatchEffect: WatchStopHandle;
@@ -120,6 +126,7 @@ export const globalConfig = () => ({
     // Fallback to default prefixCls
     return getGlobalPrefixCls();
   },
+  holderRender: globalConfigForApi.holderRender,
 });
 
 const ConfigProvider = defineComponent({
@@ -174,7 +181,11 @@ const ConfigProvider = defineComponent({
       () => props.dropdownMatchSelectWidth ?? parentContext.dropdownMatchSelectWidth?.value,
     );
     const popupMatchSelectWidth = computed(
-      () => props.popupMatchSelectWidth ?? dropdownMatchSelectWidth.value,
+      () =>
+        props.popupMatchSelectWidth ??
+        props.dropdownMatchSelectWidth ??
+        parentContext.popupMatchSelectWidth?.value ??
+        parentContext.dropdownMatchSelectWidth?.value,
     );
     const popupOverflow = computed(() => props.popupOverflow ?? parentContext.popupOverflow?.value);
     const holderRender = computed(() => props.holderRender ?? parentContext.holderRender?.value);
@@ -207,14 +218,19 @@ const ConfigProvider = defineComponent({
     const componentDisabled = computed(() => props.componentDisabled);
     const wave = computed(() => props.wave ?? parentContext.wave?.value);
     const variant = computed(() => props.variant ?? parentContext.variant?.value);
+    const affix = computed(() => props.affix ?? parentContext.affix?.value);
     const alert = computed(() => props.alert ?? parentContext.alert?.value);
     const anchor = computed(() => props.anchor ?? parentContext.anchor?.value);
+    const app = computed(() => props.app ?? parentContext.app?.value);
+    const autoComplete = computed(() => props.autoComplete ?? parentContext.autoComplete?.value);
     const avatar = computed(() => props.avatar ?? parentContext.avatar?.value);
     const badge = computed(() => props.badge ?? parentContext.badge?.value);
+    const borderBeam = computed(() => props.borderBeam ?? parentContext.borderBeam?.value);
     const breadcrumb = computed(() => props.breadcrumb ?? parentContext.breadcrumb?.value);
     const button = computed(() => props.button ?? parentContext.button?.value);
     const calendar = computed(() => props.calendar ?? parentContext.calendar?.value);
     const card = computed(() => props.card ?? parentContext.card?.value);
+    const cardMeta = computed(() => props.cardMeta ?? parentContext.cardMeta?.value);
     const carousel = computed(() => props.carousel ?? parentContext.carousel?.value);
     const cascader = computed(() => props.cascader ?? parentContext.cascader?.value);
     const checkbox = computed(() => props.checkbox ?? parentContext.checkbox?.value);
@@ -230,18 +246,25 @@ const ConfigProvider = defineComponent({
       () => props.floatButtonGroup ?? parentContext.floatButtonGroup?.value,
     );
     const inputNumber = computed(() => props.inputNumber ?? parentContext.inputNumber?.value);
+    const inputPassword = computed(() => props.inputPassword ?? parentContext.inputPassword?.value);
+    const inputSearch = computed(() => props.inputSearch ?? parentContext.inputSearch?.value);
     const layout = computed(() => props.layout ?? parentContext.layout?.value);
     const list = computed(() => props.list ?? parentContext.list?.value);
+    const listy = computed(() => props.listy ?? parentContext.listy?.value);
+    const masonry = computed(() => props.masonry ?? parentContext.masonry?.value);
     const mentions = computed(() => props.mentions ?? parentContext.mentions?.value);
     const menu = computed(() => props.menu ?? parentContext.menu?.value);
     const modal = computed(() => props.modal ?? parentContext.modal?.value);
+    const otp = computed(() => props.otp ?? parentContext.otp?.value);
     const popconfirm = computed(() => props.popconfirm ?? parentContext.popconfirm?.value);
     const popover = computed(() => props.popover ?? parentContext.popover?.value);
     const progress = computed(() => props.progress ?? parentContext.progress?.value);
+    const qrcode = computed(() => props.qrcode ?? parentContext.qrcode?.value);
     const radio = computed(() => props.radio ?? parentContext.radio?.value);
     const rangePicker = computed(() => props.rangePicker ?? parentContext.rangePicker?.value);
     const rate = computed(() => props.rate ?? parentContext.rate?.value);
     const result = computed(() => props.result ?? parentContext.result?.value);
+    const ribbon = computed(() => props.ribbon ?? parentContext.ribbon?.value);
     const segmented = computed(() => props.segmented ?? parentContext.segmented?.value);
     const skeleton = computed(() => props.skeleton ?? parentContext.skeleton?.value);
     const slider = computed(() => props.slider ?? parentContext.slider?.value);
@@ -261,6 +284,7 @@ const ConfigProvider = defineComponent({
     const treeSelect = computed(() => props.treeSelect ?? parentContext.treeSelect?.value);
     const typography = computed(() => props.typography ?? parentContext.typography?.value);
     const upload = computed(() => props.upload ?? parentContext.upload?.value);
+    const watermark = computed(() => props.watermark ?? parentContext.watermark?.value);
     const image = computed(() => props.image ?? parentContext.image?.value);
     const empty = computed(() => props.empty ?? parentContext.empty?.value);
     const switchConfig = computed(() => props.switch ?? parentContext.switch?.value);
@@ -298,14 +322,19 @@ const ConfigProvider = defineComponent({
       select,
       componentSize,
       componentDisabled,
+      affix,
       alert,
       anchor,
+      app,
+      autoComplete,
       avatar,
       badge,
+      borderBeam,
       breadcrumb,
       button,
       calendar,
       card,
+      cardMeta,
       carousel,
       cascader,
       checkbox,
@@ -319,18 +348,25 @@ const ConfigProvider = defineComponent({
       floatButton,
       floatButtonGroup,
       inputNumber,
+      inputPassword,
+      inputSearch,
       layout,
       list,
+      listy,
+      masonry,
       mentions,
       menu,
       modal,
+      otp,
       popconfirm,
       popover,
       progress,
+      qrcode,
       radio,
       rangePicker,
       rate,
       result,
+      ribbon,
       segmented,
       skeleton,
       slider,
@@ -350,6 +386,7 @@ const ConfigProvider = defineComponent({
       treeSelect,
       typography,
       upload,
+      watermark,
       image,
       empty,
       switch: switchConfig,
@@ -388,9 +425,7 @@ const ConfigProvider = defineComponent({
       const t: any = props.theme || {};
       const hasToken = t.token && Object.keys(t.token).length > 0;
       const hasComponents = t.components && Object.keys(t.components).length > 0;
-      const hasAlgorithm = Array.isArray(t.algorithm)
-        ? t.algorithm.length > 0
-        : !!t.algorithm;
+      const hasAlgorithm = Array.isArray(t.algorithm) ? t.algorithm.length > 0 : !!t.algorithm;
       return !!(hasToken || hasComponents || hasAlgorithm);
     });
     const resolvedDesignToken = computed(() => {
@@ -418,13 +453,39 @@ const ConfigProvider = defineComponent({
     });
     useConfigContextProvider(configProvider);
     useProvideGlobalForm({ validateMessages: validateMessagesRef });
+    useProvideWarningContext(warning);
     useProviderSize(componentSize);
     useProviderDisabled(componentDisabled);
+
+    if (process.env.NODE_ENV !== 'production') {
+      watchEffect(() => {
+        const strict = warning.value?.strict;
+        if (strict === false) {
+          const deprecatedList: string[] = [];
+          if (props.autoInsertSpaceInButton !== undefined) {
+            deprecatedList.push(
+              '`autoInsertSpaceInButton` is deprecated. Please use `button.autoInsertSpace` instead.',
+            );
+          }
+          if (props.dropdownMatchSelectWidth !== undefined) {
+            deprecatedList.push(
+              '`dropdownMatchSelectWidth` is deprecated. Please use `popupMatchSelectWidth` instead.',
+            );
+          }
+          if (deprecatedList.length > 0) {
+            // eslint-disable-next-line no-console
+            console.warn('[ant-design-vue: ConfigProvider] Deprecated usage:', deprecatedList);
+          }
+        }
+      });
+    }
 
     const renderProvider = (legacyLocale: Locale) => {
       let childNode = shouldWrapSSR.value ? wrapSSR(slots.default?.()) : slots.default?.();
       if (props.theme)
-        childNode = <DesignTokenProvider value={resolvedDesignToken.value}>{childNode}</DesignTokenProvider>;
+        childNode = (
+          <DesignTokenProvider value={resolvedDesignToken.value}>{childNode}</DesignTokenProvider>
+        );
       return (
         <LocaleProvider locale={locale.value || legacyLocale} ANT_MARK__={ANT_MARK}>
           {childNode}

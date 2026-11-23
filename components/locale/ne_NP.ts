@@ -31,6 +31,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'यहाँ खोज्नुहोस्',
     itemUnit: 'वस्तु',
     itemsUnit: 'वस्तुहरू',
+    deselectAll: 'सबै अचयन गर्नुहोस्',
   },
   Upload: {
     uploading: 'अपलोड गर्दै...',

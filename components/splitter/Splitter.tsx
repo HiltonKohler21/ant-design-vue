@@ -31,7 +31,8 @@ const Splitter = defineComponent({
   props: splitterProps(),
   emits: ['resizeStart', 'resize', 'resizeEnd', 'collapse'],
   setup(props, { slots, attrs, emit }) {
-    const { prefixCls, direction } = useConfigInject('splitter', props);
+    const { configProvider, prefixCls, direction } = useConfigInject('splitter', props);
+    const splitterConfig = computed(() => (configProvider as any).splitter?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const isVertical = computed(() => props.layout === 'vertical');
@@ -124,6 +125,7 @@ const Splitter = defineComponent({
         {
           [`${prefixCls.value}-rtl`]: isRTL.value,
         },
+        splitterConfig.value?.className,
         props.rootClassName,
         attrs.class,
         hashId.value,
@@ -159,9 +161,13 @@ const Splitter = defineComponent({
         stackSizes.push(stack);
       }
 
+      const mergedStyle = splitterConfig.value?.style
+        ? [splitterConfig.value.style, attrs.style]
+        : attrs.style;
+
       return wrapSSR(
         <ResizeObserver onResize={onContainerResize}>
-          <div ref={rootRef} style={attrs.style as any} class={containerClassName.value}>
+          <div ref={rootRef} style={mergedStyle as any} class={containerClassName.value}>
             {items.map((item, idx) => {
               const panel = (
                 <InternalPanel

@@ -1,6 +1,7 @@
 import { nextTick, defineComponent } from 'vue';
 import { mount } from '@vue/test-utils';
 import Splitter from '..';
+import ConfigProvider from '../../config-provider';
 
 describe('Splitter', () => {
   it('renders panels with children content and split bars without warnings', () => {
@@ -264,5 +265,51 @@ describe('Splitter', () => {
 
   it('exposes Panel as static property', () => {
     expect(Splitter.Panel).toBeDefined();
+  });
+
+  it('supports ComponentToken defaults/overrides, RTL CSS, and ConfigProvider.splitter', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        direction: 'rtl',
+        splitter: {
+          className: 'cp-splitter',
+          style: { height: '180px' },
+        },
+        theme: {
+          cssVar: true,
+          components: {
+            Splitter: {
+              splitBarSize: 4,
+              splitTriggerSize: 10,
+              splitBarDraggableSize: 28,
+              resizeSpinnerSize: 24,
+            },
+          },
+        },
+      },
+      slots: {
+        default: () => (
+          <Splitter>
+            <Splitter.Panel>A</Splitter.Panel>
+            <Splitter.Panel>B</Splitter.Panel>
+          </Splitter>
+        ),
+      },
+    });
+    await nextTick();
+    const root = wrapper.find('.ant-splitter');
+    expect(root.classes()).toContain('cp-splitter');
+    expect(root.classes()).toContain('ant-splitter-rtl');
+    expect(root.attributes('style')).toContain('height: 180px');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('ant-splitter-rtl');
+    expect(css).toContain('--ant-splitter-split-bar-size:4px');
+    expect(css).toContain('--ant-splitter-split-trigger-size:10px');
+    expect(css).toContain('--ant-splitter-split-bar-draggable-size:28px');
+    expect(css).toContain('--ant-splitter-resize-spinner-size:24px');
   });
 });

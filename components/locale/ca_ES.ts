@@ -49,6 +49,7 @@ const localeValues: Locale = {
     selectCurrent: 'Seleccionar la pàgina actual',
     removeCurrent: 'Eliminar la selecció',
     selectAll: 'Seleccionar-ho tot',
+    deselectAll: 'Desseleccioneu totes les dades',
     removeAll: 'Eliminar-ho tot',
     selectInvert: 'Invertir la selecció',
   },

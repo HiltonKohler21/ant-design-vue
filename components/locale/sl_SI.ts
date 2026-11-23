@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Išči tukaj',
     itemUnit: 'Objekt',
     itemsUnit: 'Objektov',
+    deselectAll: 'Počisti vse podatke',
   },
   Upload: {
     uploading: 'Nalaganje...',

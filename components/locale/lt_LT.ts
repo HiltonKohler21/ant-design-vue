@@ -46,6 +46,7 @@ const localeValues: Locale = {
     itemsUnit: 'vnt.',
     remove: 'Pašalinti',
     selectAll: 'Pasirinkti visus',
+    deselectAll: 'Panaikinkite visų duomenų pasirinkimą',
     selectCurrent: 'Pasirinkite dabartinį puslapį',
     selectInvert: 'Atkeist pasirinkimą',
     removeAll: 'Ištrinti visus duomenis',

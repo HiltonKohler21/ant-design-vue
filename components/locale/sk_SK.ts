@@ -52,6 +52,7 @@ const localeValues: Locale = {
     selectCurrent: 'Vyber aktuálnu stranu',
     removeCurrent: 'Zmaž aktuálnu stranu',
     selectAll: 'Označ všetko',
+    deselectAll: 'Zrušte výber všetkých údajov',
     removeAll: 'Odznač všetko',
     selectInvert: 'Opačný výber',
   },

@@ -50,6 +50,8 @@ export interface GlobalConfigProps {
   getContainer?: () => HTMLElement;
   placement?: NotificationPlacement;
   closeIcon?: (() => VueNode) | VueNode;
+  showProgress?: boolean;
+  pauseOnHover?: boolean;
   rtl?: boolean;
   maxCount?: number;
 }
@@ -57,9 +59,13 @@ export interface GlobalConfigProps {
 export interface NotificationConfig {
   top?: number | string;
   bottom?: number | string;
+  duration?: number;
   prefixCls?: string;
   getContainer?: () => HTMLElement;
   placement?: NotificationPlacement;
+  closeIcon?: (() => VueNode) | VueNode;
+  showProgress?: boolean;
+  pauseOnHover?: boolean;
   maxCount?: number;
   rtl?: boolean;
 }

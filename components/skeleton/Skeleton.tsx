@@ -7,7 +7,7 @@ import type { SkeletonTitleProps } from './Title';
 import Title from './Title';
 import type { SkeletonParagraphProps } from './Paragraph';
 import Paragraph from './Paragraph';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import Element from './Element';
 import useStyle from './style';
 
@@ -91,6 +91,12 @@ const Skeleton = defineComponent({
   }),
   setup(props, { slots }) {
     const { prefixCls, direction } = useConfigInject('skeleton', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('skeleton');
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     return () => {
@@ -151,16 +157,22 @@ const Skeleton = defineComponent({
           );
         }
 
-        const cls = classNames(pre, props.rootClassName, {
-          [`${pre}-with-avatar`]: hasAvatar,
-          [`${pre}-active`]: active,
-          [`${pre}-rtl`]: direction.value === 'rtl',
-          [`${pre}-round`]: round,
-          [hashId.value]: true,
-        });
+        const cls = classNames(
+          pre,
+          props.rootClassName,
+          contextClassName.value,
+          contextClassNames.value.root,
+          {
+            [`${pre}-with-avatar`]: hasAvatar,
+            [`${pre}-active`]: active,
+            [`${pre}-rtl`]: direction.value === 'rtl',
+            [`${pre}-round`]: round,
+            [hashId.value]: true,
+          },
+        );
 
         return wrapSSR(
-          <div class={cls}>
+          <div class={cls} style={[contextStyle.value, contextStyles.value.root]}>
             {avatarNode}
             {contentNode}
           </div>,

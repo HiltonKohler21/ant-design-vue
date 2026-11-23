@@ -60,10 +60,32 @@ import {
 // CSSINJS
 import useStyle from './style';
 import type { CustomSlotsType } from '../_util/type';
+import VirtualList from '../vc-virtual-list';
+import { useToken } from '../theme/internal';
 
 export type { ColumnsType, TablePaginationConfig };
 
 const EMPTY_LIST: any[] = [];
+
+function flattenLeafColumns(cols: ColumnsType<any>): ColumnType<any>[] {
+  const result: ColumnType<any>[] = [];
+  (cols || []).forEach(col => {
+    if (col && 'children' in col && Array.isArray((col as any).children)) {
+      result.push(...flattenLeafColumns((col as any).children));
+    } else if (col) {
+      result.push(col as ColumnType<any>);
+    }
+  });
+  return result;
+}
+
+function getVirtualCellValue(record: any, dataIndex: any) {
+  if (dataIndex === undefined || dataIndex === null) return undefined;
+  if (Array.isArray(dataIndex)) {
+    return dataIndex.reduce((acc, key) => (acc != null ? acc[key] : undefined), record);
+  }
+  return record?.[dataIndex];
+}
 
 interface ChangeEventInfo<RecordType = DefaultRecordType> {
   pagination: {
@@ -235,6 +257,36 @@ const InternalTable = defineComponent({
 
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const [, , , realToken] = useToken();
+    const tableConfig = computed(() => configProvider.table?.value || {});
+
+    const listItemHeight = computed(() => {
+      const raw: any = realToken.value || {};
+      const fontSize = raw.fontSize ?? 14;
+      const lineHeight = raw.lineHeight ?? 1.5714285714285714;
+      const lineWidth = raw.lineWidth ?? 1;
+      const padding = raw.padding ?? 16;
+      const paddingSM = raw.paddingSM ?? 12;
+      const paddingXS = raw.paddingXS ?? 8;
+      const fontHeight = Math.floor(fontSize * lineHeight);
+      if (mergedSize.value === 'middle') {
+        return paddingSM * 2 + fontHeight + lineWidth;
+      }
+      if (mergedSize.value === 'small') {
+        return paddingXS * 2 + fontHeight + lineWidth;
+      }
+      return padding * 2 + fontHeight + lineWidth;
+    });
+
+    const virtualScrollY = computed(() => {
+      const y = props.scroll?.y;
+      if (typeof y === 'number') return y;
+      if (typeof y === 'string') {
+        const parsed = parseInt(y, 10);
+        return Number.isNaN(parsed) ? undefined : parsed;
+      }
+      return undefined;
+    });
 
     const transformCellText = computed(
       () => props.transformCellText || configProvider.transformCellText?.value,
@@ -530,7 +582,9 @@ const InternalTable = defineComponent({
 
     return () => {
       const {
-        expandIcon = slots.expandIcon || renderExpandIcon(tableLocale.value),
+        expandIcon = slots.expandIcon ||
+          tableConfig.value.expandable?.expandIcon ||
+          renderExpandIcon(tableLocale.value),
         pagination,
         loading,
         bordered,
@@ -592,6 +646,7 @@ const InternalTable = defineComponent({
 
       const wrapperClassNames = classNames(
         `${prefixCls.value}-wrapper`,
+        tableConfig.value.className,
         {
           [`${prefixCls.value}-wrapper-rtl`]: direction.value === 'rtl',
         },
@@ -599,14 +654,150 @@ const InternalTable = defineComponent({
         attrs.class,
         hashId.value,
       );
-      const tableProps = omit(props, ['columns']);
+      const wrapperStyle = tableConfig.value.style
+        ? [tableConfig.value.style as CSSProperties, attrs.style as CSSProperties]
+        : (attrs.style as CSSProperties);
+
+      const useVirtualBody = Boolean(
+        props.virtual &&
+          virtualScrollY.value &&
+          virtualScrollY.value > 0 &&
+          typeof props.components?.body !== 'function',
+      );
+
+      let mergedComponents = props.components;
+      if (useVirtualBody) {
+        const leafColumns = flattenLeafColumns(transformColumns(mergedColumns.value));
+        const renderVirtualBody = (bodyData: any[], info: any) => {
+          if (!bodyData || bodyData.length === 0) {
+            return (
+              <div class={`${prefixCls.value}-tbody-virtual ${prefixCls.value}-placeholder`}>
+                <div class={`${prefixCls.value}-cell`}>
+                  {slots.emptyText?.() || props.locale?.emptyText || renderEmpty('Table')}
+                </div>
+              </div>
+            );
+          }
+          return (
+            <VirtualList
+              prefixCls={`${prefixCls.value}-tbody-virtual`}
+              data={bodyData}
+              height={virtualScrollY.value}
+              itemHeight={listItemHeight.value}
+              itemKey={(record: any) => getRowKey.value(record)}
+              onScroll={(e: UIEvent) => {
+                info?.onScroll?.({ currentTarget: e.currentTarget as HTMLElement });
+              }}
+              v-slots={{
+                default: (record: any, rowIndex: number) => {
+                  const rowKey = getRowKey.value(record, rowIndex);
+                  const customRowProps = (props.customRow?.(record, rowIndex) || {}) as any;
+                  const {
+                    class: customRowClass,
+                    style: customRowStyle,
+                    ...restCustomRowProps
+                  } = customRowProps;
+                  return (
+                    <div
+                      key={rowKey}
+                      data-row-key={rowKey}
+                      {...restCustomRowProps}
+                      class={classNames(
+                        `${prefixCls.value}-row`,
+                        internalRowClassName(record, rowIndex, 0),
+                        customRowClass,
+                      )}
+                      style={customRowStyle}
+                    >
+                      {leafColumns.map((col, colIdx) => {
+                        const rawValue = getVirtualCellValue(record, col.dataIndex);
+                        let cellNode: any = rawValue;
+                        if (col.customRender) {
+                          cellNode = col.customRender({
+                            text: rawValue,
+                            value: rawValue,
+                            record,
+                            index: rowIndex,
+                            renderIndex: rowIndex,
+                            column: col,
+                          });
+                        } else if (slots.bodyCell) {
+                          const slotRes = slots.bodyCell({
+                            text: rawValue,
+                            value: rawValue,
+                            record,
+                            index: rowIndex,
+                            column: col,
+                          });
+                          if (slotRes !== undefined) {
+                            cellNode = slotRes;
+                          }
+                        }
+                        if (transformCellText.value) {
+                          cellNode = transformCellText.value({
+                            text: cellNode,
+                            column: col,
+                            record,
+                            index: rowIndex,
+                          });
+                        }
+                        const customCellProps = (col.customCell?.(record, rowIndex, col) ||
+                          {}) as any;
+                        const {
+                          class: customCellClass,
+                          style: customCellStyle,
+                          ...restCustomCellProps
+                        } = customCellProps;
+                        const widthStyle =
+                          col.width !== undefined
+                            ? {
+                                flex: `0 0 ${
+                                  typeof col.width === 'number' ? `${col.width}px` : col.width
+                                }`,
+                                width: typeof col.width === 'number' ? `${col.width}px` : col.width,
+                              }
+                            : { flex: '1 1 0' };
+                        return (
+                          <div
+                            key={col.key ?? String(col.dataIndex ?? colIdx)}
+                            {...restCustomCellProps}
+                            class={classNames(
+                              `${prefixCls.value}-cell`,
+                              col.className,
+                              customCellClass,
+                            )}
+                            style={[
+                              widthStyle,
+                              col.align ? { textAlign: col.align } : undefined,
+                              customCellStyle,
+                            ]}
+                          >
+                            {cellNode}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                },
+              }}
+            />
+          );
+        };
+        mergedComponents = {
+          ...props.components,
+          body: renderVirtualBody as any,
+        };
+      }
+
+      const tableProps = omit(props, ['columns', 'virtual']);
       return wrapSSR(
-        <div class={wrapperClassNames} style={attrs.style as CSSProperties}>
+        <div class={wrapperClassNames} style={wrapperStyle}>
           <Spin spinning={false} {...spinProps}>
             {topPaginationNode}
             <RcTable
               {...attrs}
               {...tableProps}
+              components={mergedComponents}
               expandedRowKeys={props.expandedRowKeys as any}
               defaultExpandedRowKeys={props.defaultExpandedRowKeys as any}
               expandIconColumnIndex={expandIconColumnIndex.value}
@@ -620,6 +811,7 @@ const InternalTable = defineComponent({
                 [`${prefixCls.value}-small`]: mergedSize.value === 'small',
                 [`${prefixCls.value}-bordered`]: bordered,
                 [`${prefixCls.value}-empty`]: rawData.value.length === 0,
+                [`${prefixCls.value}-virtual`]: !!props.virtual,
               })}
               data={pageData.value}
               rowKey={getRowKey.value}

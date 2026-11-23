@@ -449,7 +449,8 @@ export default defineComponent({
     watchEffect(() => {
       let feedbackIcon: any;
       if (props.hasFeedback) {
-        const feedbackIconsFn = feedbackIcons.value;
+        const feedbackIconsFn =
+          typeof feedbackIcons === 'function' ? feedbackIcons : feedbackIcons?.value;
         const customIcons = feedbackIconsFn
           ? feedbackIconsFn({
               status: mergedValidateStatus.value,

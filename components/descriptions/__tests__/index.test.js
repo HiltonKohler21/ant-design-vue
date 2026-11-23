@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils';
 import { h } from 'vue';
 import MockDate from 'mockdate';
 import Descriptions from '..';
+import ConfigProvider from '../../config-provider';
 import { resetWarned } from '../../_util/warning';
 import { asyncExpect } from '../../../tests/utils';
 
@@ -288,5 +289,124 @@ describe('Descriptions', () => {
     await asyncExpect(() => {
       expect(wrapper.find('.ant-descriptions-extra').exists()).toBe(false);
     });
+  });
+
+  it('classNames.label / content and styles.label / content work in non-bordered and bordered layouts', () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <Descriptions
+            labelStyle={{ fontWeight: 'bold' }}
+            contentStyle={{ fontStyle: 'italic' }}
+            classNames={{ label: 'sem-label', content: 'sem-content' }}
+            styles={{
+              label: { color: 'rgb(1, 2, 3)' },
+              content: { color: 'rgb(4, 5, 6)' },
+            }}
+          >
+            <Descriptions.Item
+              label="UserName"
+              classNames={{ label: 'item-label', content: 'item-content' }}
+              styles={{ label: { paddingLeft: '2px' }, content: { paddingRight: '3px' } }}
+            >
+              Zhou Maomao
+            </Descriptions.Item>
+          </Descriptions>
+        );
+      },
+    });
+    const labelEl = wrapper.find('.ant-descriptions-item-label');
+    const contentEl = wrapper.find('.ant-descriptions-item-content');
+    expect(labelEl.classes()).toContain('sem-label');
+    expect(labelEl.classes()).toContain('item-label');
+    expect(labelEl.element.style.fontWeight).toBe('bold');
+    expect(labelEl.element.style.color).toBe('rgb(1, 2, 3)');
+    expect(labelEl.element.style.paddingLeft).toBe('2px');
+    expect(contentEl.classes()).toContain('sem-content');
+    expect(contentEl.classes()).toContain('item-content');
+    expect(contentEl.element.style.fontStyle).toBe('italic');
+    expect(contentEl.element.style.color).toBe('rgb(4, 5, 6)');
+    expect(contentEl.element.style.paddingRight).toBe('3px');
+
+    const borderedWrapper = mount({
+      render() {
+        return (
+          <Descriptions
+            bordered
+            classNames={{ label: 'b-label', content: 'b-content' }}
+            styles={{
+              label: { backgroundColor: 'rgb(10, 20, 30)' },
+              content: { backgroundColor: 'rgb(40, 50, 60)' },
+            }}
+          >
+            <Descriptions.Item label="Product">Cloud Database</Descriptions.Item>
+          </Descriptions>
+        );
+      },
+    });
+    const th = borderedWrapper.find('th.ant-descriptions-item-label');
+    const td = borderedWrapper.find('td.ant-descriptions-item-content');
+    expect(th.classes()).toContain('b-label');
+    expect(th.element.style.backgroundColor).toBe('rgb(10, 20, 30)');
+    expect(td.classes()).toContain('b-content');
+    expect(td.element.style.backgroundColor).toBe('rgb(40, 50, 60)');
+
+    const verticalBordered = mount({
+      render() {
+        return (
+          <Descriptions
+            bordered
+            layout="vertical"
+            classNames={{ label: 'vb-label', content: 'vb-content' }}
+            styles={{
+              label: { color: 'rgb(7, 8, 9)' },
+              content: { color: 'rgb(10, 11, 12)' },
+            }}
+          >
+            <Descriptions.Item label="Product">Cloud Database</Descriptions.Item>
+          </Descriptions>
+        );
+      },
+    });
+    const vTh = verticalBordered.find('th.ant-descriptions-item-label');
+    const vTd = verticalBordered.find('td.ant-descriptions-item-content');
+    expect(vTh.classes()).toContain('vb-label');
+    expect(vTh.element.style.color).toBe('rgb(7, 8, 9)');
+    expect(vTd.classes()).toContain('vb-content');
+    expect(vTd.element.style.color).toBe('rgb(10, 11, 12)');
+  });
+
+  it('ConfigProvider.descriptions className / style / classNames / styles', () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider
+            descriptions={{
+              className: 'cp-desc',
+              style: { marginTop: '8px' },
+              classNames: { label: 'cp-label', content: 'cp-content', title: 'cp-title' },
+              styles: {
+                label: { color: 'rgb(100, 0, 0)' },
+                content: { color: 'rgb(0, 100, 0)' },
+              },
+            }}
+          >
+            <Descriptions title="Info">
+              <Descriptions.Item label="Name">Alice</Descriptions.Item>
+            </Descriptions>
+          </ConfigProvider>
+        );
+      },
+    });
+    const root = wrapper.find('.ant-descriptions');
+    expect(root.classes()).toContain('cp-desc');
+    expect(root.element.style.marginTop).toBe('8px');
+    expect(wrapper.find('.ant-descriptions-title').classes()).toContain('cp-title');
+    expect(wrapper.find('.ant-descriptions-item-label').classes()).toContain('cp-label');
+    expect(wrapper.find('.ant-descriptions-item-label').element.style.color).toBe('rgb(100, 0, 0)');
+    expect(wrapper.find('.ant-descriptions-item-content').classes()).toContain('cp-content');
+    expect(wrapper.find('.ant-descriptions-item-content').element.style.color).toBe(
+      'rgb(0, 100, 0)',
+    );
   });
 });

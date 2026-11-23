@@ -105,6 +105,7 @@ const Select = defineComponent({
     removeIcon: any;
     clearIcon: any;
     dropdownRender: any;
+    popupRender?: any;
     option: any;
     placeholder: any;
     tagRender: any;
@@ -215,6 +216,7 @@ const Select = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
         },
+        (configProvider.select?.value as any)?.className,
         props.rootClassName,
         props.classNames?.root,
         getStatusClassNames(prefixCls.value, mergedStatus.value, formItemInputContext.hasFeedback),
@@ -247,9 +249,8 @@ const Select = defineComponent({
     const mergedPopupMatchSelectWidth = computed(
       () => props.popupMatchSelectWidth ?? props.dropdownMatchSelectWidth,
     );
-    const mergedPopupRender = computed(
-      () => props.popupRender ?? props.dropdownRender ?? slots.dropdownRender,
-    );
+    const mergedPopupRender = computed(() => props.popupRender ?? slots.popupRender);
+    const mergedDropdownRender = computed(() => props.dropdownRender ?? slots.dropdownRender);
     const handleOpenChange = (open: boolean) => {
       props.onDropdownVisibleChange?.(open);
       emit('openChange', open);
@@ -307,6 +308,7 @@ const Select = defineComponent({
         'variant',
         'status',
         'popupRender',
+        'dropdownRender',
         'popupMatchSelectWidth',
         'onOpenChange',
         'dropdownMatchSelectWidth',
@@ -351,10 +353,15 @@ const Select = defineComponent({
           onChange={triggerChange}
           onBlur={handleBlur}
           id={id}
-          dropdownRender={mergedPopupRender.value}
+          popupRender={mergedPopupRender.value}
+          dropdownRender={mergedDropdownRender.value}
           onDropdownVisibleChange={handleOpenChange}
           dropdownStyle={props.styles?.popup?.root ?? props.dropdownStyle}
-          style={[props.styles?.root, attrs.style as any]}
+          style={[
+            (configProvider.select?.value as any)?.style,
+            props.styles?.root,
+            attrs.style as any,
+          ]}
           v-slots={{ option: slots.option }}
           transitionName={transitionName.value}
           children={slots.default?.()}

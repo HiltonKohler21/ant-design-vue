@@ -1,5 +1,7 @@
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import Upload from '..';
+import ConfigProvider from '../../config-provider';
 import Transfer from '../../transfer';
 import Progress from '../../progress';
 
@@ -23,6 +25,38 @@ describe('P3: upload.extra / transfer.selectionsIcon / progress.percentPosition'
     });
     expect(slotWrapper.html()).toContain('upload-extra-slot');
     expect(slotWrapper.html()).toContain('b.png');
+  });
+
+  it('Upload supports showUploadList.extra, extra CSS rules, and ConfigProvider.upload', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        upload: {
+          className: 'cp-upload',
+          style: { display: 'block' },
+        },
+      },
+      slots: {
+        default: () => (
+          <Upload
+            fileList={[{ uid: '10', name: 'doc.pdf', status: 'done', url: 'http://x' }]}
+            showUploadList={{
+              extra: file => <span class="show-list-extra">{file.name}-size</span>,
+            }}
+          />
+        ),
+      },
+    });
+    await nextTick();
+    expect(wrapper.find('.ant-upload-wrapper').classes()).toContain('cp-upload');
+    expect(wrapper.find('.ant-upload-wrapper').attributes('style')).toContain('display: block');
+    expect(wrapper.find('.ant-upload-list-item-extra .show-list-extra').text()).toBe(
+      'doc.pdf-size',
+    );
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('ant-upload-list-item-extra');
   });
 
   it('Transfer selectionsIcon 替换下拉图标', () => {

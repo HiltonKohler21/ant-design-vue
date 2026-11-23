@@ -21,7 +21,6 @@ export const unitless: Record<string, boolean> = {
   zIndexBase: true,
   zIndexPopup: true,
   opacityImage: true,
-  beamDuration: true,
 };
 
 export const ignore: Record<string, boolean> = {

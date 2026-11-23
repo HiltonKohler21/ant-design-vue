@@ -59,6 +59,7 @@ export const alertProps = () => ({
   banner: { type: Boolean, default: undefined },
   icon: PropTypes.any,
   closeIcon: PropTypes.any,
+  action: PropTypes.any,
   onClose: Function as PropType<NodeMouseEventHandler>,
 });
 
@@ -70,7 +71,8 @@ const Alert = defineComponent({
   inheritAttrs: false,
   props: alertProps(),
   setup(props, { slots, emit, attrs, expose }) {
-    const { prefixCls, direction } = useConfigInject('alert', props);
+    const { prefixCls, direction, configProvider } = useConfigInject('alert', props);
+    const alertConfig = computed(() => configProvider.alert?.value as any);
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const closing = shallowRef(false);
     const closed = shallowRef(false);
@@ -106,15 +108,27 @@ const Alert = defineComponent({
     expose({ animationEnd });
     const motionStyle = shallowRef<CSSProperties>({});
     return () => {
-      const { banner, closeIcon: customCloseIcon = slots.closeIcon?.() } = props;
+      const { banner } = props;
+      const ctxAlert = alertConfig.value;
+      const ctxClosable = ctxAlert?.closable;
+      const customCloseIcon =
+        props.closeIcon ??
+        slots.closeIcon?.() ??
+        (typeof ctxClosable === 'object' && ctxClosable !== null
+          ? ctxClosable.closeIcon
+          : undefined) ??
+        ctxAlert?.closeIcon;
 
       let { closable, showIcon } = props;
+      if (closable === undefined && ctxClosable !== undefined) {
+        closable = !!ctxClosable;
+      }
 
       const closeText = props.closeText ?? slots.closeText?.();
       const description = props.description ?? slots.description?.();
       const message = props.message ?? slots.message?.();
-      const icon = props.icon ?? slots.icon?.();
-      const action = slots.action?.();
+      const icon = props.icon ?? slots.icon?.() ?? ctxAlert?.[`${mergedType.value}Icon`];
+      const action = props.action ?? slots.action?.();
 
       // banner模式默认有 Icon
       showIcon = banner && showIcon === undefined ? true : showIcon;
@@ -157,7 +171,7 @@ const Alert = defineComponent({
       const iconNode = (icon &&
         (isValidElement(icon) ? (
           cloneElement(icon, {
-            class: `${prefixClsValue}-icon`,
+            class: classNames(icon.props?.class, `${prefixClsValue}-icon`),
           })
         ) : (
           <span class={`${prefixClsValue}-icon`}>{icon}</span>
@@ -180,9 +194,9 @@ const Alert = defineComponent({
             <div
               role="alert"
               {...attrs}
-              style={[attrs.style as CSSProperties, motionStyle.value]}
+              style={[ctxAlert?.style, attrs.style as CSSProperties, motionStyle.value]}
               v-show={!closing.value}
-              class={[attrs.class, props.rootClassName, alertCls]}
+              class={[ctxAlert?.className, attrs.class, props.rootClassName, alertCls]}
               data-show={!closing.value}
               ref={alertNode}
             >

@@ -46,3 +46,10 @@ export type TabBarExtraPosition = 'left' | 'right';
 export type TabBarExtraMap = Partial<Record<TabBarExtraPosition, any>>;
 
 export type TabBarExtraContent = VueNode;
+
+export type GetIndicatorSize = number | ((origin: number) => number);
+
+export interface IndicatorConfig {
+  size?: GetIndicatorSize | 'small' | 'large';
+  align?: 'start' | 'center' | 'end';
+}

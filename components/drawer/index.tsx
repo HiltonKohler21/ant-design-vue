@@ -28,6 +28,7 @@ import { NoCompactStyle } from '../space/Compact';
 
 import isNumeric from '../_util/isNumeric';
 import { getTransitionName, getTransitionProps } from '../_util/transition';
+import { usePanelRef } from '../watermark/context';
 
 type ILevelMove = number | [number, number];
 
@@ -169,7 +170,28 @@ const Drawer = defineComponent({
       { immediate: true },
     );
     const parentDrawerOpts = inject('parentDrawerOpts', null);
-    const { prefixCls, getPopupContainer, direction } = useConfigInject('drawer', props);
+    const { prefixCls, getPopupContainer, direction, configProvider } = useConfigInject(
+      'drawer',
+      props,
+    );
+    const drawerConfig = computed(() => (configProvider.drawer?.value as any) || {});
+    const mergedClassNames = computed<DialogSemanticClassNames>(() => ({
+      mask: classnames(drawerConfig.value.classNames?.mask, props.classNames?.mask),
+      wrapper: classnames(drawerConfig.value.classNames?.wrapper, props.classNames?.wrapper),
+      content: classnames(drawerConfig.value.classNames?.content, props.classNames?.content),
+      header: classnames(drawerConfig.value.classNames?.header, props.classNames?.header),
+      body: classnames(drawerConfig.value.classNames?.body, props.classNames?.body),
+      footer: classnames(drawerConfig.value.classNames?.footer, props.classNames?.footer),
+    }));
+    const mergedStyles = computed<DialogSemanticStyles>(() => ({
+      mask: { ...drawerConfig.value.styles?.mask, ...props.styles?.mask },
+      wrapper: { ...drawerConfig.value.styles?.wrapper, ...props.styles?.wrapper },
+      content: { ...drawerConfig.value.styles?.content, ...props.styles?.content },
+      header: { ...drawerConfig.value.styles?.header, ...props.styles?.header },
+      body: { ...drawerConfig.value.styles?.body, ...props.styles?.body },
+      footer: { ...drawerConfig.value.styles?.footer, ...props.styles?.footer },
+    }));
+    const panelRef = usePanelRef();
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const getContainer = computed(() =>
       // 有可能为 false，所以不能直接判断
@@ -326,13 +348,17 @@ const Drawer = defineComponent({
             {
               [`${prefixCls}-header-close-only`]: closable && !title && !extra,
             },
-            props.classNames?.header,
+            mergedClassNames.value.header,
           )}
-          style={[headerStyle, props.styles?.header]}
+          style={[headerStyle, mergedStyles.value.header]}
         >
           <div class={`${prefixCls}-header-title`}>
             {renderCloseIcon(prefixCls)}
-            {title && <div class={`${prefixCls}-title`}>{title}</div>}
+            {title && (
+              <div class={`${prefixCls}-title`} id={props.ariaId}>
+                {title}
+              </div>
+            )}
           </div>
           {extra && <div class={`${prefixCls}-extra`}>{extra}</div>}
         </div>
@@ -341,7 +367,9 @@ const Drawer = defineComponent({
 
     const renderCloseIcon = (prefixCls: string) => {
       const { closable } = props;
-      const $closeIcon = slots.closeIcon ? slots.closeIcon?.() : props.closeIcon;
+      const $closeIcon = slots.closeIcon
+        ? slots.closeIcon?.()
+        : props.closeIcon ?? drawerConfig.value.closeIcon;
       return (
         closable && (
           <button key="closer" onClick={close} aria-label="Close" class={`${prefixCls}-close`}>
@@ -360,14 +388,16 @@ const Drawer = defineComponent({
 
       return (
         <div
-          class={[`${prefixCls}-wrapper-body`, props.classNames?.content]}
-          style={[drawerStyle, props.styles?.content]}
+          ref={panelRef}
+          class={[`${prefixCls}-wrapper-body`, mergedClassNames.value.content]}
+          style={[drawerStyle, mergedStyles.value.content]}
+          aria-labelledby={props.ariaId}
         >
           {renderHeader(prefixCls)}
           <div
             key="body"
-            class={[`${prefixCls}-body`, props.classNames?.body]}
-            style={[bodyStyle, props.styles?.body]}
+            class={[`${prefixCls}-body`, mergedClassNames.value.body]}
+            style={[bodyStyle, mergedStyles.value.body]}
           >
             {props.loading ? (
               <Skeleton
@@ -394,8 +424,8 @@ const Drawer = defineComponent({
       const footerClassName = `${prefixCls}-footer`;
       return (
         <div
-          class={[footerClassName, props.classNames?.footer]}
-          style={[props.footerStyle, props.styles?.footer]}
+          class={[footerClassName, mergedClassNames.value.footer]}
+          style={[props.footerStyle, mergedStyles.value.footer]}
         >
           {footer}
         </div>
@@ -423,6 +453,15 @@ const Drawer = defineComponent({
 
     return () => {
       const { width, height, placement, mask, forceRender, ...rest } = props;
+      const mergedContentClass =
+        classnames(drawerConfig.value.className, attrs.class as any) || undefined;
+      const mergedContentStyle =
+        drawerConfig.value.style || attrs.style
+          ? {
+              ...(drawerConfig.value.style as CSSProperties),
+              ...(typeof attrs.style === 'object' ? (attrs.style as CSSProperties) : {}),
+            }
+          : undefined;
 
       const vcDrawerProps: any = {
         ...attrs,
@@ -444,7 +483,10 @@ const Drawer = defineComponent({
           'visible',
           'classNames',
           'styles',
+          'ariaId',
         ]),
+        class: mergedContentClass,
+        style: mergedContentStyle,
         forceRender,
         onClose: close,
         afterVisibleChange,
@@ -452,9 +494,9 @@ const Drawer = defineComponent({
         prefixCls: prefixCls.value,
         open: visible.value,
         showMask: mask,
-        maskClassName: props.classNames?.mask,
-        wrapperClassName: props.classNames?.wrapper,
-        maskStyle: { ...props.styles?.mask, ...props.maskStyle },
+        maskClassName: mergedClassNames.value.mask,
+        wrapperClassName: mergedClassNames.value.wrapper,
+        maskStyle: { ...mergedStyles.value.mask, ...props.maskStyle },
         placement,
         ref: vcDrawer,
       };

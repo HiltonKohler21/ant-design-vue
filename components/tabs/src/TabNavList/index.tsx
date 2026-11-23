@@ -10,16 +10,26 @@ import type {
   OnTabScroll,
   TabBarExtraPosition,
   TabBarExtraContent,
+  GetIndicatorSize,
+  IndicatorConfig,
 } from '../interface';
 import useOffsets from '../hooks/useOffsets';
 import OperationNode from './OperationNode';
 import { useInjectTabs } from '../TabContext';
 import useTouchMove from '../hooks/useTouchMove';
 import AddButton from './AddButton';
-import { objectType, functionType } from '../../../_util/type';
+import { objectType, functionType, someType } from '../../../_util/type';
 import type { CustomSlotsType, Key } from '../../../_util/type';
 import type { ExtractPropTypes, PropType, CSSProperties } from 'vue';
-import { shallowRef, onBeforeUnmount, defineComponent, watch, watchEffect, computed } from 'vue';
+import {
+  shallowRef,
+  onMounted,
+  onBeforeUnmount,
+  defineComponent,
+  watch,
+  watchEffect,
+  computed,
+} from 'vue';
 import PropTypes from '../../../_util/vue-types';
 import useSyncState from '../hooks/useSyncState';
 import useState from '../../../_util/hooks/useState';
@@ -43,7 +53,8 @@ export const tabNavListProps = () => {
     moreTransitionName: { type: String },
     mobile: { type: Boolean },
     tabBarGutter: { type: Number },
-    indicatorSize: [Number, String],
+    indicatorSize: someType<GetIndicatorSize | 'small' | 'large'>([Number, String, Function]),
+    indicator: objectType<IndicatorConfig>(),
     renderTabBar: { type: Function as PropType<RenderTabBar> },
     locale: objectType<TabsLocale>(),
     popupClassName: String,
@@ -65,14 +76,21 @@ interface ExtraContentProps {
   extra?: (info?: { position: 'left' | 'right' }) => TabBarExtraContent;
 }
 
-const getTabSize = (tab: HTMLElement, containerRect: { x: number; y: number }) => {
+const getTabSize = (
+  tab: HTMLElement,
+  containerRect: { x?: number; y?: number; left?: number; top?: number },
+) => {
   // tabListRef
   const { offsetWidth, offsetHeight, offsetTop, offsetLeft } = tab;
-  const { width, height, x, y } = tab.getBoundingClientRect();
+  const { width, height, x, y, left, top } = tab.getBoundingClientRect();
 
   // Use getBoundingClientRect to avoid decimal inaccuracy
   if (Math.abs(width - offsetWidth) < 1) {
-    return [width, height, x - containerRect.x, y - containerRect.y];
+    const rectX = x ?? left ?? 0;
+    const rectY = y ?? top ?? 0;
+    const containerX = containerRect.x ?? containerRect.left ?? 0;
+    const containerY = containerRect.y ?? containerRect.top ?? 0;
+    return [width, height, rectX - containerX, rectY - containerY];
   }
 
   return [offsetWidth, offsetHeight, offsetLeft, offsetTop];
@@ -321,6 +339,9 @@ export default defineComponent({
       setTabSizes(() => {
         const newSizes: TabSizeMap = new Map();
         const listRect = tabListRef.value?.getBoundingClientRect();
+        if (!listRect) {
+          return newSizes;
+        }
         tabs.value.forEach(({ key }) => {
           const btnRef = btnRefs.value.get(key);
           const btnNode = (btnRef as any)?.$el || btnRef;
@@ -332,6 +353,10 @@ export default defineComponent({
         return newSizes;
       });
     };
+
+    onMounted(() => {
+      updateTabSizes();
+    });
 
     watch(
       () => tabs.value.map(tab => tab.key).join('%%'),
@@ -380,28 +405,48 @@ export default defineComponent({
     };
 
     const getIndicatorSize = (origin: number): number => {
-      const { indicatorSize } = props;
-      if (typeof indicatorSize === 'number') {
-        return indicatorSize;
+      const size = props.indicator?.size ?? props.indicatorSize;
+      if (typeof size === 'function') {
+        return size(origin);
       }
-      if (indicatorSize === 'small') {
+      if (typeof size === 'number') {
+        return size;
+      }
+      if (size === 'small') {
         return Math.min(origin, 14);
       }
-      if (indicatorSize === 'large') {
+      if (size === 'large') {
         return Math.min(origin, 28);
       }
       return origin;
     };
 
+    const getIndicatorAlign = (): 'start' | 'center' | 'end' => {
+      return props.indicator?.align ?? 'center';
+    };
+
     watch(
-      [activeTabOffset, tabPositionTopOrBottom, () => props.rtl, () => props.indicatorSize],
+      [
+        activeTabOffset,
+        tabPositionTopOrBottom,
+        () => props.rtl,
+        () => props.indicatorSize,
+        () => props.indicator?.size,
+        () => props.indicator?.align,
+      ],
       () => {
         const newInkStyle: CSSProperties = {};
 
         if (activeTabOffset.value) {
+          const align = getIndicatorAlign();
           if (tabPositionTopOrBottom.value) {
             const inkWidth = getIndicatorSize(activeTabOffset.value.width);
-            const offset = (activeTabOffset.value.width - inkWidth) / 2;
+            let offset = 0;
+            if (align === 'center') {
+              offset = (activeTabOffset.value.width - inkWidth) / 2;
+            } else if (align === 'end') {
+              offset = activeTabOffset.value.width - inkWidth;
+            }
             if (props.rtl) {
               newInkStyle.right = toPx(activeTabOffset.value.right + offset);
             } else {
@@ -411,7 +456,12 @@ export default defineComponent({
             newInkStyle.width = toPx(inkWidth);
           } else {
             const inkHeight = getIndicatorSize(activeTabOffset.value.height);
-            const offset = (activeTabOffset.value.height - inkHeight) / 2;
+            let offset = 0;
+            if (align === 'center') {
+              offset = (activeTabOffset.value.height - inkHeight) / 2;
+            } else if (align === 'end') {
+              offset = activeTabOffset.value.height - inkHeight;
+            }
             newInkStyle.top = toPx(activeTabOffset.value.top + offset);
             newInkStyle.height = toPx(inkHeight);
           }
@@ -422,6 +472,7 @@ export default defineComponent({
           setInkStyle(newInkStyle);
         });
       },
+      { immediate: true },
     );
 
     watch(

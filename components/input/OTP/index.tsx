@@ -40,7 +40,8 @@ const OTP = defineComponent({
   inheritAttrs: false,
   props: otpProps(),
   setup(props, { attrs, emit, expose }) {
-    const { prefixCls, direction } = useConfigInject('otp', props);
+    const { configProvider, prefixCls, direction } = useConfigInject('otp', props);
+    const otpConfig = computed(() => (configProvider as any).otp?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const formContext = FormItemInputContext.useInject();
@@ -148,12 +149,18 @@ const OTP = defineComponent({
         inputMode: props.inputMode,
       };
 
+      const mergedStyle = otpConfig.value?.style
+        ? [otpConfig.value.style, attrs.style]
+        : attrs.style;
+
       return wrapSSR(
         <div
           {...attrs}
           ref={containerRef}
+          style={mergedStyle as any}
           class={classNames(
             prefixCls.value,
+            otpConfig.value?.className,
             props.rootClassName,
             {
               [`${prefixCls.value}-sm`]: props.size === 'small',

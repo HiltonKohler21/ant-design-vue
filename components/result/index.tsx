@@ -1,4 +1,4 @@
-import type { App, VNodeTypes, Plugin, ExtractPropTypes, PropType } from 'vue';
+import type { App, CSSProperties, VNodeTypes, Plugin, ExtractPropTypes, PropType } from 'vue';
 import { defineComponent, computed } from 'vue';
 import PropTypes from '../_util/vue-types';
 import CheckCircleFilled from '@ant-design/icons-vue/CheckCircleFilled';
@@ -8,7 +8,7 @@ import WarningFilled from '@ant-design/icons-vue/WarningFilled';
 import noFound from './noFound';
 import serverError from './serverError';
 import unauthorized from './unauthorized';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { CustomSlotsType } from '../_util/type';
 
@@ -76,13 +76,26 @@ const Result = defineComponent({
   }>,
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('result', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('result');
 
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const className = computed(() =>
-      classNames(prefixCls.value, hashId.value, `${prefixCls.value}-${props.status}`, {
-        [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-      }),
+      classNames(
+        prefixCls.value,
+        hashId.value,
+        `${prefixCls.value}-${props.status}`,
+        contextClassName.value,
+        contextClassNames.value.root,
+        {
+          [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+        },
+      ),
     );
     return () => {
       const title = props.title ?? slots.title?.();
@@ -91,7 +104,11 @@ const Result = defineComponent({
       const extra = props.extra ?? slots.extra?.();
       const pre = prefixCls.value;
       return wrapSSR(
-        <div {...attrs} class={[className.value, props.rootClassName, attrs.class]}>
+        <div
+          {...attrs}
+          class={[className.value, props.rootClassName, attrs.class]}
+          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+        >
           {renderIcon(pre, { status: props.status, icon })}
           <div class={`${pre}-title`}>{title}</div>
           {subTitle && <div class={`${pre}-subtitle`}>{subTitle}</div>}

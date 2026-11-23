@@ -1,5 +1,7 @@
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import ColorPicker from '..';
+import ConfigProvider from '../../config-provider';
 
 describe('ColorPicker', () => {
   it('renders trigger with default color', () => {
@@ -55,5 +57,29 @@ describe('ColorPicker', () => {
     preset?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(onChange).toHaveBeenCalled();
     wrapper.unmount();
+  });
+
+  it('supports RTL CSS and ConfigProvider.colorPicker className/style', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        direction: 'rtl',
+        colorPicker: {
+          className: 'cp-color-picker',
+          style: { padding: '4px' },
+        },
+      },
+      slots: { default: () => <ColorPicker /> },
+    });
+    await nextTick();
+    const root = wrapper.find('.ant-color-picker');
+    expect(root.classes()).toContain('ant-color-picker-rtl');
+    expect(root.classes()).toContain('cp-color-picker');
+    expect(root.attributes('style')).toContain('padding: 4px');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('ant-color-picker-rtl');
   });
 });

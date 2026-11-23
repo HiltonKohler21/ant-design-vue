@@ -7,7 +7,11 @@ import { getTransitionProps } from '../_util/transition';
 import type { ExtractPropTypes, CSSProperties, PropType } from 'vue';
 import { defineComponent, computed, ref, watch, Transition } from 'vue';
 import Ribbon from './Ribbon';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, {
+  useComponentConfig,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+} from '../config-provider/hooks/useConfigInject';
 import isNumeric from '../_util/isNumeric';
 import useStyle from './style';
 import type { PresetColorKey } from '../theme/interface';
@@ -56,6 +60,12 @@ export default defineComponent({
   }>,
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('badge', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('badge');
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     // ================================ Misc ================================
@@ -188,10 +198,13 @@ export default defineComponent({
             )
           : null;
 
+      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
+      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
       const badgeClassName = classNames(
         pre,
         props.rootClassName,
-        props.classNames?.root,
+        contextClassName.value,
+        mergedClassNames.root,
         {
           [`${pre}-status`]: hasStatus.value,
           [`${pre}-not-a-wrapper`]: !children,
@@ -205,8 +218,15 @@ export default defineComponent({
       if (!children && hasStatus.value) {
         const statusTextColor = mergedStyle.color;
         return wrapSSR(
-          <span {...attrs} class={badgeClassName} style={mergedStyle}>
-            <span class={statusCls.value} style={statusStyle.value} />
+          <span
+            {...attrs}
+            class={badgeClassName}
+            style={[contextStyle.value, mergedStyles.root, mergedStyle]}
+          >
+            <span
+              class={classNames(statusCls.value, mergedClassNames.indicator)}
+              style={[statusStyle.value, mergedStyles.indicator]}
+            />
             <span style={{ color: statusTextColor }} class={`${pre}-status-text`}>
               {text}
             </span>
@@ -224,17 +244,21 @@ export default defineComponent({
       }
 
       return wrapSSR(
-        <span {...attrs} class={badgeClassName} style={[attrs.style as any, props.styles?.root]}>
+        <span
+          {...attrs}
+          class={badgeClassName}
+          style={[contextStyle.value, mergedStyles.root, attrs.style as any]}
+        >
           {children}
           <Transition {...transitionProps}>
             <ScrollNumber
               v-show={visible}
               prefixCls={props.scrollNumberPrefixCls}
               show={visible}
-              class={classNames(scrollNumberCls.value, props.classNames?.indicator)}
+              class={classNames(scrollNumberCls.value, mergedClassNames.indicator)}
               count={displayCount.value}
               title={titleNode}
-              style={[scrollNumberStyle, props.styles?.indicator]}
+              style={[scrollNumberStyle, mergedStyles.indicator]}
               key="scrollNumber"
             >
               {displayNode}

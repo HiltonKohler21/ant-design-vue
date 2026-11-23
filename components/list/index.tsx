@@ -108,7 +108,7 @@ const List = defineComponent({
       current: 1,
       total: 0,
     };
-    const { prefixCls, direction, renderEmpty } = useConfigInject('list', props);
+    const { prefixCls, direction, renderEmpty, configProvider } = useConfigInject('list', props);
 
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -269,11 +269,13 @@ const List = defineComponent({
       const header = props.header ?? slots.header?.();
       const children = flattenChildren(slots.default?.());
       const isSomethingAfterLastItem = !!(loadMore || props.pagination || footer);
+      const contextList = configProvider.list?.value;
       const classString = classNames(
         {
           ...classObj.value,
           [`${prefixCls.value}-something-after-last-item`]: isSomethingAfterLastItem,
         },
+        contextList?.className,
         props.rootClassName,
         attrs.class,
         hashId.value,
@@ -314,7 +316,7 @@ const List = defineComponent({
 
       const paginationPosition = paginationProps.value.position || 'bottom';
       return wrapSSR(
-        <div {...attrs} class={classString}>
+        <div {...attrs} class={classString} style={[contextList?.style, attrs.style as any]}>
           {(paginationPosition === 'top' || paginationPosition === 'both') && paginationContent}
           {header && <div class={`${prefixCls.value}-header`}>{header}</div>}
           <Spin {...loadingProp.value}>

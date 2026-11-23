@@ -72,27 +72,26 @@ const genMediaBackTopStyle: GenerateStyle<BackTopToken> = token => {
   };
 };
 
-export default genComponentStyleHook<'BackTop'>('BackTop', token => {
-  const {
-    fontSizeHeading3,
-    colorTextDescription,
-    colorTextLightSolid,
-    colorText,
-
-  } = token;
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const backTopToken = mergeToken<BackTopToken>(token, {
-    zIndexPopup: rawToken.zIndexPopupBase + 10,
-    backTopBackground: colorTextDescription,
-    backTopColor: colorTextLightSolid,
-    backTopHoverBackground: colorText,
-    backTopFontSize: fontSizeHeading3,
-    backTopSize: rawToken.controlHeightLG,
-    backTopBlockEnd: rawToken.controlHeightLG * 1.25,
-    backTopInlineEnd: rawToken.controlHeightLG * 2.5,
-    backTopInlineEndMD: rawToken.controlHeightLG * 1.5,
-    backTopInlineEndXS: rawToken.controlHeightLG * 0.5,
-  });
-  return [genSharedBackTopStyle(backTopToken), genMediaBackTopStyle(backTopToken)];
-});
+export default genComponentStyleHook<'BackTop'>(
+  'BackTop',
+  token => {
+    const { fontSizeHeading3, colorTextDescription, colorTextLightSolid, colorText } = token;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const backTopToken = mergeToken<BackTopToken>(token, {
+      backTopBackground: colorTextDescription,
+      backTopColor: colorTextLightSolid,
+      backTopHoverBackground: colorText,
+      backTopFontSize: fontSizeHeading3,
+      backTopSize: rawToken.controlHeightLG,
+      backTopBlockEnd: rawToken.controlHeightLG * 1.25,
+      backTopInlineEnd: rawToken.controlHeightLG * 2.5,
+      backTopInlineEndMD: rawToken.controlHeightLG * 1.5,
+      backTopInlineEndXS: rawToken.controlHeightLG * 0.5,
+    });
+    return [genSharedBackTopStyle(backTopToken), genMediaBackTopStyle(backTopToken)];
+  },
+  token => ({
+    zIndexPopup: token.zIndexPopupBase + 10,
+  }),
+);

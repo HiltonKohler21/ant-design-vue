@@ -41,6 +41,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'ここを検索',
     itemUnit: 'アイテム',
     itemsUnit: 'アイテム',
+    deselectAll: 'すべてのデータの選択を解除する',
   },
   Upload: {
     uploading: 'アップロード中...',

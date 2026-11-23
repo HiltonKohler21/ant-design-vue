@@ -42,6 +42,11 @@ const genOTPStyle: GenerateStyle<OtpToken, CSSObject> = token => {
         textAlign: 'center',
         paddingInline: paddingXXS,
       },
+      [`${componentCls}-separator`]: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        color: token.colorTextDescription,
+      },
       [`&${componentCls}-sm ${componentCls}-input`]: {
         paddingInline: token.calc(paddingXXS).div(2).equal(),
       },

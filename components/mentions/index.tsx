@@ -123,7 +123,11 @@ const Mentions = defineComponent({
         '`Mentions.Option` is deprecated. Please use `options` instead.',
       );
     }
-    const { prefixCls, renderEmpty, direction } = useConfigInject('mentions', props);
+    const { configProvider, prefixCls, renderEmpty, direction } = useConfigInject(
+      'mentions',
+      props,
+    );
+    const mentionsConfig = computed(() => (configProvider as any).mentions?.value);
 
     // ====================== Variant =======================
     const [mergedVariant, enableVariantCls] = useVariant(
@@ -220,7 +224,8 @@ const Mentions = defineComponent({
         ...restProps
       } = props;
       const { hasFeedback, feedbackIcon } = formItemInputContext;
-      const { class: className, ...otherAttrs } = attrs;
+      const { class: className, style, ...otherAttrs } = attrs;
+      const mergedStyle = mentionsConfig.value?.style ? [mentionsConfig.value.style, style] : style;
       const otherProps = omit(restProps, [
         'defaultValue',
         'onUpdate:value',
@@ -238,6 +243,7 @@ const Mentions = defineComponent({
         },
         getStatusClassNames(prefixCls.value, mergedStatus.value),
         props.rootClassName,
+        !hasFeedback && mentionsConfig.value?.className,
         !hasFeedback && className,
         hashId.value,
       );
@@ -259,6 +265,7 @@ const Mentions = defineComponent({
             ]
           : props.options || getOptions(),
         class: mergedClassName,
+        ...(!hasFeedback && mergedStyle ? { style: mergedStyle } : undefined),
         ...otherAttrs,
         rows,
         onChange: handleChange,
@@ -286,9 +293,11 @@ const Mentions = defineComponent({
                 mergedStatus.value,
                 hasFeedback,
               ),
+              mentionsConfig.value?.className,
               className,
               hashId.value,
             )}
+            style={mergedStyle as any}
           >
             {mentions}
             <span class={`${prefixCls.value}-suffix`}>{feedbackIcon}</span>

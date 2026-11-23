@@ -10,6 +10,7 @@ import Button from '../button';
 import type { ButtonProps } from '../button';
 import defaultLocale from '../locale/en_US';
 
+import { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { VueNode } from '../_util/type';
 
 const panelRender = defineComponent({
@@ -18,6 +19,7 @@ const panelRender = defineComponent({
   props: tourStepProps(),
   setup(props, { attrs, slots }) {
     const { current, total } = toRefs(props);
+    const { componentConfig: tourConfig } = useComponentConfig('tour');
 
     const isLastStep = computed(() => current.value === total.value - 1);
 
@@ -104,7 +106,13 @@ const panelRender = defineComponent({
             >
               {arrow && <div class={`${prefixCls}-arrow`} key="arrow" />}
               <div class={`${prefixCls}-inner`}>
-                <CloseOutlined class={`${prefixCls}-close`} onClick={onClose} />
+                {tourConfig.value.closeIcon ? (
+                  <span class={`${prefixCls}-close`} onClick={onClose}>
+                    {tourConfig.value.closeIcon}
+                  </span>
+                ) : (
+                  <CloseOutlined class={`${prefixCls}-close`} onClick={onClose} />
+                )}
                 {coverNode}
                 {headerNode}
                 {descriptionNode}

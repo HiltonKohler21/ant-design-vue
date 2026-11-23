@@ -60,7 +60,7 @@ export const listItemProps = () => {
         }) => VueNode
       >(),
     itemRender: functionType<ItemRender>(),
-    extra: anyType<VueNode>(),
+    extra: anyType<VueNode | ((file: UploadFile) => VueNode)>(),
     onPreview: functionType<(file: UploadFile, e: Event) => void>(),
     onClose: functionType<(file: UploadFile) => void>(),
     onDownload: functionType<(file: UploadFile) => void>(),

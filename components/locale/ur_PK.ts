@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'موجودہ صفحہ منتخب کریں',
     removeCurrent: 'موجودہ صفحہ ہٹائیں',
     selectAll: 'تمام ڈیٹا کو منتخب کریں',
+    deselectAll: 'تمام ڈیٹا کو غیر منتخب کریں۔',
     removeAll: 'تمام ڈیٹا کو ہٹا دیں',
     selectInvert: 'موجودہ صفحے کو الٹ دیں',
   },

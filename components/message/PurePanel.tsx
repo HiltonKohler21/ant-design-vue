@@ -9,7 +9,8 @@ import CheckCircleFilled from '@ant-design/icons-vue/CheckCircleFilled';
 import InfoCircleFilled from '@ant-design/icons-vue/InfoCircleFilled';
 import type { VueNode } from '../_util/type';
 import classNames from '../_util/classNames';
-import { useConfigContextInject } from '../config-provider/context';
+import { useConfigContextInject, useComponentConfig } from '../config-provider/context';
+import type { CSSProperties } from 'vue';
 import { computed, defineComponent } from 'vue';
 
 export const TypeIcon = {
@@ -57,13 +58,27 @@ export default defineComponent<PurePanelProps>({
   props: ['prefixCls', 'class', 'type', 'icon', 'content'] as any,
   setup(props, { slots, attrs }) {
     const { getPrefixCls } = useConfigContextInject();
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('message');
     const prefixCls = computed(() => props.prefixCls || getPrefixCls('message'));
     const [, hashId] = useStyle(prefixCls);
-    return (
+    return () => (
       <Notice
         {...attrs}
         prefixCls={prefixCls.value}
-        class={classNames(hashId.value, `${prefixCls.value}-notice-pure-panel`)}
+        class={classNames(
+          hashId.value,
+          `${prefixCls.value}-notice-pure-panel`,
+          contextClassName.value,
+          contextClassNames.value.root,
+          (props as any).class,
+          attrs.class,
+        )}
+        style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
         noticeKey="pure"
         duration={null}
       >

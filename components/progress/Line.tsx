@@ -140,22 +140,92 @@ export default defineComponent({
       height: `${sizeRef.value.height}px`,
     }));
 
-    return () => (
-      <>
-        <div
-          {...attrs}
-          class={[`${props.prefixCls}-outer`, attrs.class]}
-          style={[attrs.style as CSSProperties, outerStyle.value]}
-        >
+    const parsedPercentPosition = computed(() => {
+      const { percentPosition } = props;
+      if (!percentPosition) {
+        return null;
+      }
+      if (typeof percentPosition === 'string') {
+        return {
+          align: 'end' as const,
+          type: percentPosition,
+        };
+      }
+      return {
+        align: percentPosition.align ?? ('end' as const),
+        type: percentPosition.type ?? ('outer' as const),
+      };
+    });
+
+    return () => {
+      const pos = parsedPercentPosition.value;
+      if (pos) {
+        const { align: infoAlign, type: infoPosition } = pos;
+        const lineInner = (
           <div class={`${props.prefixCls}-inner`} style={trailStyle.value}>
-            <div class={`${props.prefixCls}-bg`} style={percentStyle.value} />
+            <div
+              class={[`${props.prefixCls}-bg`, `${props.prefixCls}-bg-${infoPosition}`]}
+              style={percentStyle.value}
+            >
+              {infoPosition === 'inner' ? slots.default?.() : null}
+            </div>
             {successPercent.value !== undefined ? (
               <div class={`${props.prefixCls}-success-bg`} style={successPercentStyle.value} />
             ) : null}
           </div>
-        </div>
-        {slots.default?.()}
-      </>
-    );
+        );
+
+        if (infoPosition === 'outer' && infoAlign === 'center') {
+          return (
+            <div
+              {...attrs}
+              class={[`${props.prefixCls}-layout-bottom`, attrs.class]}
+              style={[
+                attrs.style as CSSProperties,
+                { width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px` },
+              ]}
+            >
+              {lineInner}
+              {slots.default?.()}
+            </div>
+          );
+        }
+
+        const isOuterStart = infoPosition === 'outer' && infoAlign === 'start';
+        const isOuterEnd = infoPosition === 'outer' && infoAlign === 'end';
+        return (
+          <div
+            {...attrs}
+            class={[`${props.prefixCls}-outer`, attrs.class]}
+            style={[
+              attrs.style as CSSProperties,
+              { width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px` },
+            ]}
+          >
+            {isOuterStart ? slots.default?.() : null}
+            {lineInner}
+            {isOuterEnd ? slots.default?.() : null}
+          </div>
+        );
+      }
+
+      return (
+        <>
+          <div
+            {...attrs}
+            class={[`${props.prefixCls}-outer`, attrs.class]}
+            style={[attrs.style as CSSProperties, outerStyle.value]}
+          >
+            <div class={`${props.prefixCls}-inner`} style={trailStyle.value}>
+              <div class={`${props.prefixCls}-bg`} style={percentStyle.value} />
+              {successPercent.value !== undefined ? (
+                <div class={`${props.prefixCls}-success-bg`} style={successPercentStyle.value} />
+              ) : null}
+            </div>
+          </div>
+          {slots.default?.()}
+        </>
+      );
+    };
   },
 });

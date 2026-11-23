@@ -7,7 +7,7 @@ import ExclamationCircleOutlined from '@ant-design/icons-vue/ExclamationCircleOu
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import type { VueNode } from '../_util/type';
 import { renderHelper } from '../_util/util';
-import { globalConfig } from '../config-provider';
+import { globalConfig, globalConfigForApi } from '../config-provider';
 import type { NotificationInstance as VCNotificationInstance } from '../vc-notification/Notification';
 import classNames from '../_util/classNames';
 import useStyle from './style';
@@ -46,11 +46,23 @@ let defaultPrefixCls = '';
 let defaultPlacement: NotificationPlacement = 'topRight';
 let defaultGetContainer = () => document.body;
 let defaultCloseIcon = null;
+let defaultShowProgress = false;
+let defaultPauseOnHover = true;
 let rtl = false;
 let maxCount: number;
 
 function setNotificationConfig(options: ConfigProps) {
-  const { duration, placement, bottom, top, getContainer, closeIcon, prefixCls } = options;
+  const {
+    duration,
+    placement,
+    bottom,
+    top,
+    getContainer,
+    closeIcon,
+    prefixCls,
+    showProgress,
+    pauseOnHover,
+  } = options;
   if (prefixCls !== undefined) {
     defaultPrefixCls = prefixCls;
   }
@@ -71,6 +83,12 @@ function setNotificationConfig(options: ConfigProps) {
   }
   if (closeIcon !== undefined) {
     defaultCloseIcon = closeIcon;
+  }
+  if (showProgress !== undefined) {
+    defaultShowProgress = showProgress;
+  }
+  if (pauseOnHover !== undefined) {
+    defaultPauseOnHover = pauseOnHover;
   }
   if (options.rtl !== undefined) {
     rtl = options.rtl;
@@ -160,46 +178,72 @@ export interface NotificationArgsProps {
   bottom?: string | number;
   getContainer?: () => HTMLElement;
   closeIcon?: VueNode | (() => VueNode);
+  showProgress?: boolean;
+  pauseOnHover?: boolean;
   appContext?: any;
 }
 
 function notice(args: NotificationArgsProps) {
   const { icon, type, description, message, btn } = args;
   const duration = args.duration === undefined ? defaultDuration : args.duration;
-  getNotificationInstance(args, notification => {
-    notification.notice({
-      content: ({ prefixCls: outerPrefixCls }) => {
-        const prefixCls = `${outerPrefixCls}-notice`;
-        let iconNode = null;
-        if (icon) {
-          iconNode = () => <span class={`${prefixCls}-icon`}>{renderHelper(icon)}</span>;
-        } else if (type) {
-          const Icon = typeToIcon[type];
-          iconNode = () => <Icon class={`${prefixCls}-icon ${prefixCls}-icon-${type}`} />;
-        }
-        return (
-          <div class={iconNode ? `${prefixCls}-with-icon` : ''}>
-            {iconNode && iconNode()}
-            <div class={`${prefixCls}-message`}>
-              {!description && iconNode ? (
-                <span class={`${prefixCls}-message-single-line-auto-margin`} />
-              ) : null}
-              {renderHelper(message)}
+  const contextNotification = globalConfigForApi.notification;
+  const { getPrefixCls } = globalConfig();
+  const resolvedPrefixCls = getPrefixCls('notification', args.prefixCls || defaultPrefixCls);
+  const mergedCloseIcon =
+    args.closeIcon !== undefined
+      ? args.closeIcon
+      : defaultCloseIcon !== null
+      ? defaultCloseIcon
+      : contextNotification?.closeIcon;
+  getNotificationInstance(
+    {
+      ...args,
+      closeIcon: mergedCloseIcon,
+    },
+    notification => {
+      notification.notice({
+        content: ({ prefixCls: outerPrefixCls }) => {
+          const prefixCls = `${outerPrefixCls}-notice`;
+          let iconNode = null;
+          if (icon) {
+            iconNode = () => <span class={`${prefixCls}-icon`}>{renderHelper(icon)}</span>;
+          } else if (type) {
+            const Icon = typeToIcon[type];
+            iconNode = () => <Icon class={`${prefixCls}-icon ${prefixCls}-icon-${type}`} />;
+          }
+          return (
+            <div class={iconNode ? `${prefixCls}-with-icon` : ''}>
+              {iconNode && iconNode()}
+              <div class={`${prefixCls}-message`}>
+                {!description && iconNode ? (
+                  <span class={`${prefixCls}-message-single-line-auto-margin`} />
+                ) : null}
+                {renderHelper(message)}
+              </div>
+              <div class={`${prefixCls}-description`}>{renderHelper(description)}</div>
+              {btn ? <span class={`${prefixCls}-btn`}>{renderHelper(btn)}</span> : null}
             </div>
-            <div class={`${prefixCls}-description`}>{renderHelper(description)}</div>
-            {btn ? <span class={`${prefixCls}-btn`}>{renderHelper(btn)}</span> : null}
-          </div>
-        );
-      },
-      duration,
-      closable: true,
-      onClose: args.onClose,
-      onClick: args.onClick,
-      key: args.key,
-      style: args.style || {},
-      class: args.class,
-    });
-  });
+          );
+        },
+        duration,
+        closable: true,
+        ...(mergedCloseIcon !== undefined && mergedCloseIcon !== null
+          ? {
+              closeIcon: (
+                <span class={`${resolvedPrefixCls}-close-x`}>{renderHelper(mergedCloseIcon)}</span>
+              ),
+            }
+          : {}),
+        showProgress: args.showProgress ?? defaultShowProgress,
+        pauseOnHover: args.pauseOnHover ?? defaultPauseOnHover,
+        onClose: args.onClose,
+        onClick: args.onClick,
+        key: args.key,
+        style: { ...(contextNotification?.style as CSSProperties), ...(args.style || {}) },
+        class: classNames(contextNotification?.className, args.class),
+      });
+    },
+  );
 }
 
 const api: any = {

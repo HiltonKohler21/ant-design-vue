@@ -15,7 +15,7 @@ import addEventListener from '../vc-util/Dom/addEventListener';
 import Affix from '../affix';
 import scrollTo from '../_util/scrollTo';
 import getScroll from '../_util/getScroll';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import useProvideAnchor from './context';
 import useStyle from './style';
 import type { AnchorLinkItemProps } from './AnchorLink';
@@ -91,6 +91,12 @@ export default defineComponent({
   props: anchorProps(),
   setup(props, { emit, attrs, slots, expose }) {
     const { prefixCls, getTargetContainer, direction } = useConfigInject('anchor', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('anchor');
     const anchorDirection = computed(() => props.direction ?? 'vertical');
 
     if (process.env.NODE_ENV !== 'production') {
@@ -300,10 +306,17 @@ export default defineComponent({
         [`${pre}-ink-visible`]: activeLink.value,
       });
 
-      const wrapperClass = classNames(hashId.value, props.wrapperClass, `${pre}-wrapper`, {
-        [`${pre}-wrapper-horizontal`]: anchorDirection.value === 'horizontal',
-        [`${pre}-rtl`]: direction.value === 'rtl',
-      });
+      const wrapperClass = classNames(
+        hashId.value,
+        props.wrapperClass,
+        contextClassName.value,
+        contextClassNames.value.root,
+        `${pre}-wrapper`,
+        {
+          [`${pre}-wrapper-horizontal`]: anchorDirection.value === 'horizontal',
+          [`${pre}-rtl`]: direction.value === 'rtl',
+        },
+      );
 
       const anchorClass = classNames(pre, {
         [`${pre}-fixed`]: !affix && !showInkInFixed,
@@ -311,6 +324,8 @@ export default defineComponent({
 
       const wrapperStyle = {
         maxHeight: offsetTop ? `calc(100vh - ${offsetTop}px)` : '100vh',
+        ...contextStyle.value,
+        ...contextStyles.value.root,
         ...props.wrapperStyle,
       };
       const anchorContent = (

@@ -30,6 +30,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Введіть текст для пошуку',
     itemUnit: 'елем.',
     itemsUnit: 'елем.',
+    deselectAll: 'Очистити вибір',
   },
   Upload: {
     uploading: 'Завантаження ...',

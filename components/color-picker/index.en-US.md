@@ -2,8 +2,8 @@
 category: Components
 type: Data Entry
 title: ColorPicker
-cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*2k5wR4L6y5gAAAAAAAAAAAAADrJ8AQ/original
-coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*eM07S6sQ0uUAAAAAAAAAAAAADrJ8AQ/original
+cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*PpY4RYNM8UcAAAAAAAAAAAAADrJ8AQ/original
+coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EHL-QYJofZsAAAAAAAAAAAAADrJ8AQ/original
 ---
 
 Provide color selection input, supporting solid colors, gradients, preset palettes, alpha channels, and multiple color formats.
@@ -52,6 +52,6 @@ Provide color selection input, supporting solid colors, gradients, preset palett
 
 ### Slots
 
-| Slot Name | Description | Arguments |
-| --- | --- | --- |
-| default | Custom trigger element | - |
+| Slot Name | Description            | Arguments |
+| --------- | ---------------------- | --------- |
+| default   | Custom trigger element | -         |

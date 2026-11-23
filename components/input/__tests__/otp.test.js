@@ -1,5 +1,7 @@
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import Input from '..';
+import ConfigProvider from '../../config-provider';
 
 const { OTP } = Input;
 
@@ -59,5 +61,25 @@ describe('Input.OTP', () => {
     expect(wrapper.find('.ant-otp-mask-icon').text()).toBe('*');
     await wrapper.setProps({ mask: '#' });
     expect(wrapper.find('.ant-otp-mask-icon').text()).toBe('#');
+  });
+
+  it('wires ConfigProvider.otp and generates separator CSS', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        otp: {
+          className: 'cp-otp',
+          style: { gap: '12px' },
+        },
+      },
+      slots: { default: () => <OTP length={3} separator="-" /> },
+    });
+    await nextTick();
+    expect(wrapper.find('.ant-otp').classes()).toContain('cp-otp');
+    expect(wrapper.find('.ant-otp').attributes('style')).toContain('gap: 12px');
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('ant-otp-separator');
   });
 });

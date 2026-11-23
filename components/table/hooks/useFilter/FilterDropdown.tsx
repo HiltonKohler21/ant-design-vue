@@ -141,12 +141,24 @@ export default defineComponent<FilterDropdownProps<any>>({
     const contextSlots = useInjectSlots();
     const filterMode = computed(() => props.filterMode ?? 'menu');
     const filterSearch = computed(() => props.filterSearch ?? false);
+    const mergedFilterDropdownProps = computed(
+      () => props.filterDropdownProps ?? props.column.filterDropdownProps ?? {},
+    );
+    const mergedFilterOnClose = computed(
+      () => props.filterOnClose ?? props.column.filterOnClose ?? true,
+    );
     const filterDropdownOpen = computed(
-      () => props.column.filterDropdownOpen || props.column.filterDropdownVisible,
+      () =>
+        mergedFilterDropdownProps.value.open ??
+        props.column.filterDropdownOpen ??
+        props.column.filterDropdownVisible,
     );
-    const onFilterDropdownOpenChange = computed(
-      () => props.column.onFilterDropdownOpenChange || props.column.onFilterDropdownVisibleChange,
-    );
+    const onFilterDropdownOpenChange = computed(() => (newVisible: boolean) => {
+      mergedFilterDropdownProps.value.onOpenChange?.(newVisible);
+      (props.column.onFilterDropdownOpenChange || props.column.onFilterDropdownVisibleChange)?.(
+        newVisible,
+      );
+    });
 
     if (process.env.NODE_ENV !== 'production') {
       [
@@ -313,8 +325,8 @@ export default defineComponent<FilterDropdownProps<any>>({
       }
       triggerVisible(newVisible);
 
-      // Default will filter when closed
-      if (!newVisible && !filterDropdownRef.value) {
+      // Default will filter when closed unless filterOnClose is false
+      if (!newVisible && !filterDropdownRef.value && mergedFilterOnClose.value) {
         onConfirm();
       }
     };
@@ -547,16 +559,29 @@ export default defineComponent<FilterDropdownProps<any>>({
         filterIcon = <FilterFilled />;
       }
 
+      const {
+        popupRender,
+        dropdownRender,
+        open: _ignoredOpen,
+        onOpenChange: _ignoredOnOpenChange,
+        ...restFilterDropdownProps
+      } = mergedFilterDropdownProps.value;
+
+      const customOverlayRender = popupRender ?? dropdownRender;
+      const mergedMenu =
+        typeof customOverlayRender === 'function' ? customOverlayRender(menu) : menu;
+
       return (
         <div class={`${prefixCls}-column`}>
           <span class={`${tablePrefixCls}-column-title`}>{slots.default?.()}</span>
           <Dropdown
-            overlay={menu}
             trigger={['click']}
-            open={mergedVisible.value}
-            onOpenChange={onVisibleChange}
             getPopupContainer={getPopupContainer}
             placement={direction.value === 'rtl' ? 'bottomLeft' : 'bottomRight'}
+            {...restFilterDropdownProps}
+            overlay={mergedMenu}
+            open={mergedVisible.value}
+            onOpenChange={onVisibleChange}
           >
             <span
               role="button"

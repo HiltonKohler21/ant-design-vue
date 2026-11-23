@@ -87,6 +87,7 @@ const localeValues: Locale = {
     searchPlaceholder: 'Որոնեք այստեղ',
     itemUnit: 'պարագան',
     itemsUnit: 'պարագաները',
+    deselectAll: 'Ապաընտրել բոլոր տվյալները',
   },
   Upload: {
     uploading: 'Ներբեռնում...',

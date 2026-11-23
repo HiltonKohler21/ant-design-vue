@@ -51,6 +51,7 @@ const localeValues: Locale = {
     selectCurrent: 'वर्तमान पृष्ठ का चयन करें',
     removeCurrent: 'वर्तमान पृष्ठ हटाएं',
     selectAll: 'सभी डेटा का चयन करें',
+    deselectAll: 'सभी डेटा का चयन रद्द करें',
     removeAll: 'सभी डेटा हटाएं',
     selectInvert: 'वर्तमान पृष्ठ को उल्टा करें',
   },

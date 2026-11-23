@@ -56,6 +56,7 @@ const localeValues: Locale = {
     selectCurrent: 'Selecionar página atual',
     removeCurrent: 'Remover página atual',
     selectAll: 'Selecionar todos',
+    deselectAll: 'Desmarcar todos os dados',
     removeAll: 'Remover todos',
     selectInvert: 'Inverter seleção atual',
   },

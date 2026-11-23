@@ -120,7 +120,20 @@ describe('站点 token 派生（cssVar 模式）', () => {
     expect(Object.keys(parsed).length).toBeGreaterThanOrEqual(60);
     expect(parsed.Avatar.component.containerSize).toBe(32);
     expect(parsed.Avatar.component.groupBorderColor).toBe('#ffffff');
-    expect(parsed.BorderBeam.component.beamDefaultColor).toBe('#1677ff');
+    expect(parsed.BorderBeam.component).toEqual({});
+    expect(parsed.Splitter.component).toEqual({
+      splitBarSize: 2,
+      splitTriggerSize: 6,
+      splitBarDraggableSize: 0,
+      resizeSpinnerSize: 20,
+    });
+    expect(parsed.BackTop.component.zIndexPopup).toBe(1010);
+    expect(parsed.FloatButton.component.zIndexPopup).toBe(1010);
+    expect(parsed.Divider.component.textPaddingInline).toBe('1em');
+    expect(parsed.Divider.component.orientationMargin).toBe(0.05);
+    expect(parsed.Divider.component.verticalMarginInline).toBe(8);
+    expect(parsed.Button.component.solidBg).toBe('rgb(0, 0, 0)');
+    expect(parsed.OTP).toBeDefined();
     expect(parsed.Menu.component.dropdownWidth).toBe(160);
   });
 });
