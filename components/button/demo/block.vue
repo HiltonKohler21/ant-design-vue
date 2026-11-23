@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 13
 title:
   zh-CN: Block 按钮
   en-US: Block Button
@@ -12,15 +12,16 @@ title:
 
 ## en-US
 
-`block` property will make the button fit to its parent width.
+The `block` property will make a button fit to its parent width.
 </docs>
 
 <template>
-  <a-space wrap>
+  <a-flex vertical gap="small" style="width: 100%">
     <a-button type="primary" block>Primary</a-button>
     <a-button block>Default</a-button>
     <a-button type="dashed" block>Dashed</a-button>
-    <a-button danger block>Danger</a-button>
+    <a-button disabled block>disabled</a-button>
+    <a-button type="text" block>text</a-button>
     <a-button type="link" block>Link</a-button>
-  </a-space>
+  </a-flex>
 </template>

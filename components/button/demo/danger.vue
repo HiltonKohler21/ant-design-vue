@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 12
 title:
   zh-CN: 危险按钮
   en-US: Danger Buttons
@@ -12,16 +12,15 @@ title:
 
 ## en-US
 
-danger is a property of button after antd 2.2.0.
-
+The `danger` is a property of buttons after ant-design-vue 2.2.0.
 </docs>
 
 <template>
-  <a-space warp>
+  <a-flex wrap="wrap" gap="small">
     <a-button type="primary" danger>Primary</a-button>
     <a-button danger>Default</a-button>
     <a-button type="dashed" danger>Dashed</a-button>
     <a-button type="text" danger>Text</a-button>
     <a-button type="link" danger>Link</a-button>
-  </a-space>
+  </a-flex>
 </template>

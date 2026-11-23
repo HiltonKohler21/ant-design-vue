@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 3
 title:
   zh-CN: 按钮图标
   en-US: Icon
@@ -8,20 +8,16 @@ title:
 
 ## zh-CN
 
-当需要在 `Button` 内嵌入 `Icon` 时，可以设置 `icon` 属性，或者直接在 `Button` 内使用 `Icon` 组件。
-
-如果想控制 `Icon` 具体的位置，只能直接使用 `Icon` 组件，而非 `icon` 属性。
+可以通过 `icon` 属性添加图标。
 
 ## en-US
 
-`Button` components can contain an `Icon`. This is done by setting the `icon` property or placing an `Icon` component within the `Button`.
-
-If you want specific control over the positioning and placement of the `Icon`, then that should be done by placing the `Icon` component within the `Button` rather than using the `icon` property.
+You can add an icon using the `icon` property.
 </docs>
 
 <template>
-  <a-space direction="vertical">
-    <a-space wrap>
+  <a-flex gap="small" vertical>
+    <a-flex wrap="wrap" gap="small">
       <a-tooltip title="search">
         <a-button type="primary" shape="circle" :icon="h(SearchOutlined)" />
       </a-tooltip>
@@ -31,8 +27,8 @@ If you want specific control over the positioning and placement of the `Icon`, t
         <a-button shape="circle" :icon="h(SearchOutlined)" />
       </a-tooltip>
       <a-button :icon="h(SearchOutlined)">Search</a-button>
-    </a-space>
-    <a-space wrap>
+    </a-flex>
+    <a-flex wrap="wrap" gap="small">
       <a-tooltip title="search">
         <a-button shape="circle" :icon="h(SearchOutlined)" />
       </a-tooltip>
@@ -41,10 +37,11 @@ If you want specific control over the positioning and placement of the `Icon`, t
         <a-button type="dashed" shape="circle" :icon="h(SearchOutlined)" />
       </a-tooltip>
       <a-button type="dashed" :icon="h(SearchOutlined)">Search</a-button>
-      <a-button :icon="h(SearchOutlined)" href="https://www.google.com" />
-    </a-space>
-  </a-space>
+      <a-button :icon="h(SearchOutlined)" href="https://www.google.com" target="_blank" />
+    </a-flex>
+  </a-flex>
 </template>
+
 <script lang="ts" setup>
 import { h } from 'vue';
 import { SearchOutlined } from '@ant-design/icons-vue';

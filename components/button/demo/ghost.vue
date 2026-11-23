@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 11
 title:
   zh-CN: 幽灵按钮
   en-US: Ghost Button
@@ -12,20 +12,18 @@ title:
 
 ## en-US
 
-`ghost` property will make button's background transparent, it is commonly used in colored background.
-
+The `ghost` property will make a button's background transparent, this is commonly used in colored background.
 </docs>
 
 <template>
-  <div class="site-button-ghost-wrapper">
-    <a-space>
-      <a-button type="primary" ghost>Primary</a-button>
-      <a-button ghost>Default</a-button>
-      <a-button type="dashed" ghost>Dashed</a-button>
-      <a-button type="primary" danger ghost>Danger</a-button>
-    </a-space>
-  </div>
+  <a-flex wrap="wrap" gap="small" class="site-button-ghost-wrapper">
+    <a-button type="primary" ghost>Primary</a-button>
+    <a-button ghost>Default</a-button>
+    <a-button type="dashed" ghost>Dashed</a-button>
+    <a-button type="primary" danger ghost>Danger</a-button>
+  </a-flex>
 </template>
+
 <style scoped>
 .site-button-ghost-wrapper {
   padding: 16px;

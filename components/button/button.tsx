@@ -224,7 +224,7 @@ export default defineComponent({
       const colorCls = resolvedColor === 'danger' ? 'dangerous' : resolvedColor;
       const pre = prefixCls.value;
 
-      const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
+      const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined, medium: undefined };
       const sizeFullname = mergedSize.value;
       const sizeCls = sizeFullname ? sizeClassNameMap[sizeFullname] || '' : '';
 
@@ -432,7 +432,7 @@ export default defineComponent({
 
       if (!isUnBorderedButtonType(mergedType.value)) {
         buttonNode = (
-          <Wave ref="wave" disabled={!!innerLoading.value}>
+          <Wave ref="wave" component="Button" disabled={!!innerLoading.value}>
             {buttonNode}
           </Wave>
         );

@@ -2,8 +2,11 @@
   <demo-sort>
     <basic />
     <color-variant />
+    <debug-color-variant />
     <icon />
-    <icon-position />
+    <icon-placement />
+    <debug-icon />
+    <debug-block />
     <size />
     <disabled />
     <loading />
@@ -12,21 +15,38 @@
     <danger />
     <block />
     <button-group />
+    <chinese-chars-loading />
+    <component-token />
+    <linear-gradient />
+    <wave />
+    <chinese-space />
+    <custom-disabled-bg />
+    <style-class />
   </demo-sort>
 </template>
 <script lang="ts">
-import ButtonGroup from './button-group.vue';
 import Basic from './basic.vue';
 import ColorVariant from './color-variant.vue';
-import Disabled from './disabled.vue';
-import Ghost from './ghost.vue';
+import DebugColorVariant from './debug-color-variant.vue';
 import Icon from './icon.vue';
-import IconPosition from './icon-position.vue';
+import IconPlacement from './icon-placement.vue';
+import DebugIcon from './debug-icon.vue';
+import DebugBlock from './debug-block.vue';
+import Size from './size.vue';
+import Disabled from './disabled.vue';
 import Loading from './loading.vue';
 import Multiple from './multiple.vue';
-import Size from './size.vue';
-import Block from './block.vue';
+import Ghost from './ghost.vue';
 import Danger from './danger.vue';
+import Block from './block.vue';
+import ButtonGroup from './button-group.vue';
+import ChineseCharsLoading from './chinese-chars-loading.vue';
+import ComponentToken from './component-token.vue';
+import LinearGradient from './linear-gradient.vue';
+import Wave from './wave.vue';
+import ChineseSpace from './chinese-space.vue';
+import CustomDisabledBg from './custom-disabled-bg.vue';
+import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -35,35 +55,31 @@ export default defineComponent({
   CN,
   US,
   components: {
-    ButtonGroup,
     Basic,
     ColorVariant,
-    Disabled,
-    Ghost,
+    DebugColorVariant,
     Icon,
-    IconPosition,
+    IconPlacement,
+    DebugIcon,
+    DebugBlock,
+    Size,
+    Disabled,
     Loading,
     Multiple,
-    Size,
-    Block,
+    Ghost,
     Danger,
+    Block,
+    ButtonGroup,
+    ChineseCharsLoading,
+    ComponentToken,
+    LinearGradient,
+    Wave,
+    ChineseSpace,
+    CustomDisabledBg,
+    StyleClass,
   },
   setup() {
     return {};
   },
 });
 </script>
-<style scoped>
-:deep([id^='components-button-demo-'] .ant-btn) {
-  margin-right: 8px;
-  margin-bottom: 12px;
-}
-:deep([id^='components-button-demo-'] .ant-btn-rtl) {
-  margin-right: 0;
-  margin-left: 8px;
-}
-:deep([id^='components-button-demo-'] .ant-btn-group > .ant-btn),
-:deep([id^='components-button-demo-'] .ant-btn-group > span > .ant-btn) {
-  margin-right: 0;
-}
-</style>

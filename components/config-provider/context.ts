@@ -17,6 +17,9 @@ import type { AliasToken, SeedToken } from '../theme/internal';
 import type { MapToken, OverrideToken } from '../theme/interface';
 import type { VueNode } from '../_util/type';
 import { objectType } from '../_util/type';
+import type { ShowWaveEffect, WaveConfig } from '../_util/wave/interface';
+
+export type { ShowWaveEffect, WaveConfig };
 
 export const defaultIconPrefixCls = 'anticon';
 
@@ -397,7 +400,7 @@ export interface ConfigComponentProps {
   typography?: TypographyConfig;
   upload?: UploadConfig;
   watermark?: WatermarkConfig;
-  wave?: { disabled?: boolean };
+  wave?: WaveConfig;
 }
 
 export const WarningContextKey: InjectionKey<ComputedRef<WarningConfig | undefined>> =
@@ -478,9 +481,7 @@ export const configProviderProps = () => ({
   pagination: objectType<PaginationConfig>(),
   theme: objectType<ThemeConfig>(),
   select: objectType<SelectConfig>(),
-  wave: objectType<{
-    disabled?: boolean;
-  }>(),
+  wave: objectType<WaveConfig>(),
   // ====================== 组件级默认配置（对齐 antd@6.7.2 全量 72 个组件配置）======================
   affix: objectType<AffixConfig>(),
   alert: objectType<AlertConfig>(),
@@ -587,9 +588,7 @@ export interface ConfigProviderInnerProps {
   componentSize?: ComputedRef<SizeType>;
   componentDisabled?: ComputedRef<boolean>;
   transformCellText?: ComputedRef<(tableProps: TransformCellTextProps) => any>;
-  wave?: ComputedRef<{
-    disabled?: boolean;
-  }>;
+  wave?: ComputedRef<WaveConfig>;
   flex?: ComputedRef<FlexConfig>;
   image?: ComputedRef<ImageConfig>;
   empty?: ComputedRef<EmptyConfig>;

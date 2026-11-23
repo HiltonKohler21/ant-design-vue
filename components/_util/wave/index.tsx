@@ -14,8 +14,11 @@ import { findDOMNode } from '../props-util';
 import useStyle from './style';
 import useWave from './useWave';
 
+export type { ShowWave, ShowWaveEffect, WaveConfig } from './interface';
+
 export interface WaveProps {
   disabled?: boolean;
+  component?: string;
 }
 
 export default defineComponent({
@@ -23,10 +26,12 @@ export default defineComponent({
   name: 'Wave',
   props: {
     disabled: Boolean,
+    component: String,
   },
   setup(props, { slots }) {
     const instance = getCurrentInstance();
-    const { prefixCls, wave } = useConfigInject('wave', props);
+    const { prefixCls, configProvider } = useConfigInject('wave', props);
+    const wave = computed(() => configProvider.wave?.value);
 
     // ============================== Style ===============================
     const [, hashId] = useStyle(prefixCls);
@@ -35,21 +40,23 @@ export default defineComponent({
     const showWave = useWave(
       computed(() => classNames(prefixCls.value, hashId.value)),
       wave,
+      computed(() => props.component),
+      hashId,
     );
     let onClick: (e: MouseEvent) => void;
     const clear = () => {
       const node = findDOMNode(instance) as HTMLElement;
-      node.removeEventListener('click', onClick, true);
+      node?.removeEventListener('click', onClick, true);
     };
     onMounted(() => {
       watch(
-        () => props.disabled,
+        () => [props.disabled, wave.value?.disabled],
         () => {
           clear();
           nextTick(() => {
             const node: HTMLElement = findDOMNode(instance);
             node?.removeEventListener('click', onClick, true);
-            if (!node || node.nodeType !== 1 || props.disabled) {
+            if (!node || node.nodeType !== 1 || props.disabled || wave.value?.disabled) {
               return;
             }
 
@@ -57,19 +64,23 @@ export default defineComponent({
             onClick = (e: MouseEvent) => {
               // Fix radio button click twice
               if (
+                wave.value?.disabled ||
                 (e.target as HTMLElement).tagName === 'INPUT' ||
                 !isVisible(e.target as HTMLElement) ||
                 // No need wave
                 !node.getAttribute ||
                 node.getAttribute('disabled') ||
                 (node as HTMLInputElement).disabled ||
-                node.className.includes('disabled') ||
-                node.className.includes('-leave')
+                (typeof node.className === 'string' &&
+                  node.className.includes('disabled') &&
+                  !node.className.includes('disabled:')) ||
+                node.getAttribute('aria-disabled') === 'true' ||
+                (typeof node.className === 'string' && node.className.includes('-leave'))
               ) {
                 return;
               }
 
-              showWave();
+              showWave(e);
             };
 
             // Bind events
