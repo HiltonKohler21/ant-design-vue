@@ -14,7 +14,7 @@
             {{ presetLabel }} · {{ rawToken.colorPrimary }} · {{ rawToken.borderRadius }}px
           </div>
         </div>
-        <a-tag color="processing" :bordered="false">
+        <a-tag color="processing" variant="filled">
           {{ isZhCN ? '实时生效' : 'Live' }}
         </a-tag>
       </div>
@@ -43,7 +43,7 @@
             <a-alert
               type="info"
               show-icon
-              :message="
+              :title="
                 isZhCN
                   ? '嵌套 ConfigProvider 独立运行，不影响站点全局主题'
                   : 'Isolated nested ConfigProvider — zero side effects on page theme'
@@ -143,7 +143,7 @@
                     <span :style="{ color: rawToken.colorTextSecondary, fontSize: '12px' }">
                       {{ isZhCN ? '单元测试覆盖' : 'Unit Test Coverage' }}
                     </span>
-                    <a-tag color="success" :bordered="false">100%</a-tag>
+                    <a-tag color="success" variant="filled">100%</a-tag>
                   </div>
                   <a-progress :percent="100" size="small" />
                 </div>

@@ -406,7 +406,7 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
         [`${componentCls}-submenu-open${componentCls}-submenu-inline > ${componentCls}-submenu-title > ${componentCls}-submenu-arrow`]:
           {
             // ↑
-            transform: `translateY(-${unit(token.calc(menuArrowSize).mul(0.2).equal())})`,
+            transform: `translateY(${unit(token.calc(menuArrowSize).mul(-0.2).equal())})`,
 
             '&::after': {
               transform: `rotate(-45deg) translateX(-${menuArrowOffset})`,
@@ -456,7 +456,7 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
         menuItemPaddingInline: token.margin,
         menuArrowSize,
         menuHorizontalHeight: rawToken.controlHeightLG * 1.15,
-        menuArrowOffset: `${unit(token.calc(menuArrowSize).mul(0.25).equal())}`,
+        menuArrowOffset: `${menuArrowSize * 0.25}px`,
         menuPanelMaskInset: -7, // Still a hardcode here since it's offset by rc-align
         menuSubMenuBg: colorBgElevated,
       });

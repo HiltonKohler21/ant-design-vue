@@ -10,7 +10,7 @@
  * 逐组件拆分的意义：既能定位到具体组件，也避免某个组件的渲染问题掩盖其它组件的检查结果。
  */
 import { mount } from '@vue/test-utils';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import ConfigProvider from '../../components/config-provider';
 import Button from '../../components/button';
 import Input from '../../components/input';
@@ -82,7 +82,7 @@ import Splitter from '../../components/splitter';
 import ColorPicker from '../../components/color-picker';
 import useMessageStyle from '../../components/message/style';
 import useNotificationStyle from '../../components/notification/style';
-import { ref } from 'vue';
+import { genCalc } from '../../components/_util/cssinjs';
 
 const collectCss = () =>
   Array.from(document.querySelectorAll('style'))
@@ -110,7 +110,149 @@ const ILLEGAL = [
   { name: 'NaN', re: /NaN/g },
   { name: 'undefined', re: /undefined/g },
   { name: '[object Object]', re: /\[object Object\]/g },
+  { name: 'pxpx', re: /\dpxpx\b/g },
+  { name: 'calc()后缀单位', re: /calc\([^;{}]*\)(?:px|em|rem|%)/g },
+  { name: '-calc()', re: /(?<![\w)-])-calc\(/g },
 ];
+
+const DIMENSION_PROPS = new Set([
+  'padding',
+  'padding-top',
+  'padding-right',
+  'padding-bottom',
+  'padding-left',
+  'padding-inline',
+  'padding-inline-start',
+  'padding-inline-end',
+  'padding-block',
+  'padding-block-start',
+  'padding-block-end',
+  'margin',
+  'margin-top',
+  'margin-right',
+  'margin-bottom',
+  'margin-left',
+  'margin-inline',
+  'margin-inline-start',
+  'margin-inline-end',
+  'margin-block',
+  'margin-block-start',
+  'margin-block-end',
+  'width',
+  'min-width',
+  'max-width',
+  'height',
+  'min-height',
+  'max-height',
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'inset',
+  'inset-block',
+  'inset-block-start',
+  'inset-block-end',
+  'inset-inline',
+  'inset-inline-start',
+  'inset-inline-end',
+  'font-size',
+  'border-radius',
+  'border-top-left-radius',
+  'border-top-right-radius',
+  'border-bottom-left-radius',
+  'border-bottom-right-radius',
+  'border-start-start-radius',
+  'border-start-end-radius',
+  'border-end-start-radius',
+  'border-end-end-radius',
+  'border-width',
+  'border-top-width',
+  'border-right-width',
+  'border-bottom-width',
+  'border-left-width',
+  'border-inline-width',
+  'border-inline-start-width',
+  'border-inline-end-width',
+  'border-block-width',
+  'border-block-start-width',
+  'border-block-end-width',
+  'gap',
+  'row-gap',
+  'column-gap',
+]);
+
+/** 剥离顶层函数调用（calc(...) / var(...) / min(...) 等），仅保留外层空白分隔 token */
+const stripParenGroups = str => {
+  let out = '';
+  let depth = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    const ch = str[i];
+    if (ch === '(') {
+      depth += 1;
+      out += ' ';
+    } else if (ch === ')') {
+      depth = Math.max(0, depth - 1);
+      out += ' ';
+    } else if (depth === 0) {
+      out += ch;
+    }
+  }
+  return out;
+};
+
+/**
+ * 检查声明级非法值（覆盖 Hash 模式与 cssVar 模式）：
+ *   1) 尺寸属性出现非零无单位数值（如 padding: -1 7px; padding-inline: 7; inset-inline-start: 11;）
+ *   2) line-height 出现 >= 10 的无单位数值（如 line-height: 28; line-height: 30;）
+ *   3) z-index 误带 px 后缀（如 z-index: 1081px; z-index: calc(2px + 1px);）
+ */
+const findDeclarationUnitBugs = css => {
+  const unitlessDims = [];
+  const absurdLineHeights = [];
+  const zIndexWithPx = [];
+  const reBlock = /([^{}@]+)\{([^{}]*)\}/g;
+  let m = reBlock.exec(css);
+  while (m) {
+    const sel = m[1].trim().split(',').pop().trim();
+    const body = m[2];
+    const decls = body.split(';');
+    for (let i = 0; i < decls.length; i += 1) {
+      const decl = decls[i].trim();
+      if (!decl) continue;
+      const colon = decl.indexOf(':');
+      if (colon <= 0) continue;
+      const prop = decl.slice(0, colon).trim().toLowerCase();
+      if (prop.startsWith('--')) continue;
+      const rawVal = decl
+        .slice(colon + 1)
+        .replace(/!important\s*$/i, '')
+        .trim();
+
+      if (DIMENSION_PROPS.has(prop)) {
+        const topTokens = stripParenGroups(rawVal)
+          .replace(/\b(?:calc|var|min|max|clamp|env)\b/gi, ' ')
+          .split(/[\s/]+/)
+          .filter(Boolean);
+        const badTok = topTokens.find(
+          tok => /^-?(?:\d+\.?\d*|\.\d+)$/.test(tok) && parseFloat(tok) !== 0,
+        );
+        if (badTok !== undefined) {
+          unitlessDims.push(`${sel} :: ${prop}:${rawVal}`);
+        }
+      } else if (prop === 'line-height') {
+        if (/^-?(?:\d+\.?\d*|\.\d+)$/.test(rawVal) && parseFloat(rawVal) >= 10) {
+          absurdLineHeights.push(`${sel} :: ${prop}:${rawVal}`);
+        }
+      } else if (prop === 'z-index') {
+        if (/\dpx\b/.test(rawVal)) {
+          zIndexWithPx.push(`${sel} :: ${prop}:${rawVal}`);
+        }
+      }
+    }
+    m = reBlock.exec(css);
+  }
+  return { unitlessDims, absurdLineHeights, zIndexWithPx };
+};
 
 /**
  * 找出「未被 calc() 包裹」的变量算术（真非法）：
@@ -398,11 +540,11 @@ const CASES = [
   ],
 ];
 
-const check = async slot => {
+const check = async (slot, { cssVar = true } = {}) => {
   document.head.innerHTML = '';
   document.body.innerHTML = '';
   mount(ConfigProvider, {
-    props: { theme: { cssVar: true } },
+    props: { theme: { cssVar } },
     slots: { default: slot },
     attachTo: 'body',
   });
@@ -429,6 +571,7 @@ const check = async slot => {
     let cm = reC.exec(css);
     let cnt = 0;
     while (cm && cnt < 5) {
+      // eslint-disable-next-line no-console
       console.log(
         '    concat: …' +
           css.slice(Math.max(0, cm.index - 40), cm.index + 40).replace(/\n/g, ' ') +
@@ -439,18 +582,34 @@ const check = async slot => {
     }
   }
 
+  const { unitlessDims, absurdLineHeights, zIndexWithPx } = findDeclarationUnitBugs(css);
+  if (unitlessDims.length) {
+    hits.push(`无单位尺寸 × ${unitlessDims.length} (${unitlessDims.slice(0, 3).join(' | ')})`);
+  }
+  if (absurdLineHeights.length) {
+    hits.push(
+      `异常无单位 line-height × ${absurdLineHeights.length} (${absurdLineHeights
+        .slice(0, 3)
+        .join(' | ')})`,
+    );
+  }
+  if (zIndexWithPx.length) {
+    hits.push(`z-index 带 px × ${zIndexWithPx.length} (${zIndexWithPx.slice(0, 3).join(' | ')})`);
+  }
+
   if (hits.length) {
     const uniq = new Set();
-    const reRule = /([^{}]+)\{([^{}]*(?:NaN|undefined|\[object Object\])[^{}]*)\}/g;
+    const reRule = /([^{}]+)\{([^{}]*(?:NaN|undefined|\[object Object\]|\dpxpx|-calc\()[^{}]*)\}/g;
     let rm = reRule.exec(css);
     while (rm) {
       const sel = rm[1].trim().split(',').pop().trim();
       rm[2]
         .split(';')
-        .filter(d => /NaN|undefined|\[object Object\]/.test(d))
-        .forEach(d => uniq.add(`${sel} :: ${d.trim().split(':')[0]}`));
+        .filter(d => /NaN|undefined|\[object Object\]|\dpxpx|-calc\(/.test(d))
+        .forEach(d => uniq.add(`${sel} :: ${d.trim()}`));
       rm = reRule.exec(css);
     }
+    // eslint-disable-next-line no-console
     [...uniq].slice(0, 10).forEach(x => console.log(`    src: ${x}`));
   }
 
@@ -460,13 +619,94 @@ const check = async slot => {
 describe('cssVar 非法 CSS 检测（逐组件）', () => {
   jest.setTimeout(600000);
 
-  it.each(CASES)('%s 不产生非法 CSS', async (name, slot) => {
-    const { cssBytes, hits } = await check(slot);
+  it.each(CASES)('%s [cssVar: true] 不产生非法 CSS', async (name, slot) => {
+    const { cssBytes, hits } = await check(slot, { cssVar: true });
     expect(hits).toEqual([]);
     // 顺带记录体积，便于发现「样式没生成」的异常
     expect(cssBytes).toBeGreaterThan(100);
     // eslint-disable-next-line no-console
-    console.log(`  ✓ ${name}（${cssBytes} B）`);
+    console.log(`  ✓ [cssVar] ${name}（${cssBytes} B）`);
+  });
+
+  it.each(CASES)('%s [cssVar: false / Hash 模式] 不产生非法 CSS 与单位缺失', async (name, slot) => {
+    const { cssBytes, hits } = await check(slot, { cssVar: false });
+    expect(hits).toEqual([]);
+    expect(cssBytes).toBeGreaterThan(100);
+    // eslint-disable-next-line no-console
+    console.log(`  ✓ [hash] ${name}（${cssBytes} B）`);
+  });
+
+  it('嵌套 ConfigProvider（自动回退 Hash 模式）不产生单位缺失或异常 line-height', async () => {
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: { theme: { cssVar: true } },
+      slots: {
+        default: () => (
+          <ConfigProvider
+            theme={{
+              inherit: false,
+              token: { colorPrimary: '#eb2f96', colorInfo: '#eb2f96', borderRadius: 2 },
+            }}
+          >
+            <div>
+              <Segmented options={['Overview', 'Kanban', 'Analytics']} value="Overview" />
+              <Select
+                open
+                value="production"
+                options={[{ value: 'production', label: 'Production' }]}
+              />
+              <Button size="small" type="primary">
+                New Release
+              </Button>
+              <Tag color="processing">Live</Tag>
+              <Progress percent={78} status="active" />
+            </div>
+          </ConfigProvider>
+        ),
+      },
+      attachTo: 'body',
+    });
+    await nextTick();
+    await new Promise(r => setTimeout(r, 100));
+
+    const css = collectCss();
+    const { unitlessDims, absurdLineHeights, zIndexWithPx } = findDeclarationUnitBugs(css);
+    expect(unitlessDims).toEqual([]);
+    expect(absurdLineHeights).toEqual([]);
+    expect(zIndexWithPx).toEqual([]);
+    for (const { re } of ILLEGAL) {
+      expect(css.match(re)).toBeNull();
+    }
+    wrapper.unmount();
+  });
+
+  it('NumCalculator 契约：支持嵌套 .equal() 字符串解析、默认补 px、{ unit: false } 输出无单位', () => {
+    const calc = genCalc('number', new Set());
+    // 嵌套 .equal()（Segmented / Select / Button 核心表达式）
+    expect(calc(32).sub(calc(2).mul(2).equal()).equal()).toBe('28px');
+    expect(calc(32).sub(calc(1).mul(2).equal()).equal()).toBe('30px');
+    expect(
+      calc(
+        calc(24)
+          .sub(
+            calc(14)
+              .mul(22 / 14)
+              .equal(),
+          )
+          .equal(),
+      )
+        .div(2)
+        .sub(1)
+        .equal(),
+    ).toBe('0px');
+    // 字符串与负值
+    expect(calc('12px').sub(1).equal()).toBe('11px');
+    expect(calc('8').sub(1).equal()).toBe('7px');
+    expect(calc(1).mul(-1).equal()).toBe('-1px');
+    // 无单位模式（z-index / unitless line-height）
+    expect(calc(1080).add(1).equal({ unit: false })).toBe('1081');
+    expect(calc(1.5).sub(0.0002).equal({ unit: false })).toBe('1.4998');
   });
 
   it('组件级 zIndexPopup 变量必须是无单位纯整数（无 px 后缀）', async () => {

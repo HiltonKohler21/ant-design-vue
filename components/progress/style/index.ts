@@ -252,6 +252,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
 
 const genCircleStyle: GenerateStyle<ProgressToken> = token => {
   const { componentCls: progressCls, iconCls: iconPrefixCls } = token;
+  const rawToken: any = (token as any)._realToken ?? token;
 
   return {
     [progressCls]: {
@@ -280,7 +281,7 @@ const genCircleStyle: GenerateStyle<ProgressToken> = token => {
         transform: 'translateY(-50%)',
 
         [iconPrefixCls]: {
-          fontSize: `${token.calc(token.fontSize).div(token.fontSizeSM).equal()}em`,
+          fontSize: `${rawToken.fontSize / rawToken.fontSizeSM}em`,
         },
       },
 

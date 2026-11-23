@@ -20,7 +20,15 @@ const genStepsProgressStyle: GenerateStyle<StepsToken, CSSObject> = token => {
         paddingInlineStart: token.paddingXXS,
         [`> ${componentCls}-item-container > ${componentCls}-item-tail`]: {
           top: token.marginXXS,
-          insetInlineStart: token.calc(token.calc(token.calc(token.stepsIconSize).div(2).equal()).sub(token.lineWidth).equal()).add(token.paddingXXS).equal(),
+          insetInlineStart: token
+            .calc(
+              token
+                .calc(token.calc(token.stepsIconSize).div(2).equal())
+                .sub(token.lineWidth)
+                .equal(),
+            )
+            .add(token.paddingXXS)
+            .equal(),
         },
       },
 
@@ -33,12 +41,20 @@ const genStepsProgressStyle: GenerateStyle<StepsToken, CSSObject> = token => {
 
       [`&${componentCls}-small${componentCls}-vertical > ${componentCls}-item > ${componentCls}-item-container > ${componentCls}-item-tail`]:
         {
-          insetInlineStart: token.calc(token.calc(token.calc(token.stepsSmallIconSize).div(2).equal()).sub(token.lineWidth).equal()).add(token.paddingXXS).equal(),
+          insetInlineStart: token
+            .calc(
+              token
+                .calc(token.calc(token.stepsSmallIconSize).div(2).equal())
+                .sub(token.lineWidth)
+                .equal(),
+            )
+            .add(token.paddingXXS)
+            .equal(),
         },
 
       [`&${componentCls}-label-vertical`]: {
         [`${componentCls}-item ${componentCls}-item-tail`]: {
-          top: token.calc(token.margin).sub(token.calc(2).mul(token.lineWidth).equal()).equal(),
+          top: token.calc(token.margin).sub(token.calc(token.lineWidth).mul(2).equal()).equal(),
         },
       },
 

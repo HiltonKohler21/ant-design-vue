@@ -597,14 +597,14 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
         width: 'min-content',
         minWidth: '100%',
         lineHeight: `${unit(
-          token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal(),
+          token.calc(pickerTextHeight).sub(token.calc(lineWidth).mul(2).equal()).equal(),
         )}`,
         textAlign: 'center',
 
         '&-extra': {
-          padding: `0 ${paddingSM}`,
+          padding: `0 ${unit(paddingSM)}`,
           lineHeight: `${unit(
-            token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal(),
+            token.calc(pickerTextHeight).sub(token.calc(lineWidth).mul(2).equal()).equal(),
           )}`,
           textAlign: 'start',
 
@@ -1453,7 +1453,7 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
             lineHeight: `${unit(
               token
                 .calc(
-                  token.calc(pickerTextHeight).sub(token.calc(2).mul(lineWidth).equal()).equal(),
+                  token.calc(pickerTextHeight).sub(token.calc(lineWidth).mul(2).equal()).equal(),
                 )
                 .sub(token.calc(paddingXS).div(2).equal())
                 .equal(),

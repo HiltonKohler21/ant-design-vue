@@ -225,6 +225,7 @@ const previewTheme = computed(() => {
     algorithm: algorithms,
     token: {
       colorPrimary: primaryColor.value,
+      colorInfo: primaryColor.value,
       borderRadius: borderRadius.value,
     },
   };

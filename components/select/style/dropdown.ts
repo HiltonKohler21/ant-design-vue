@@ -29,7 +29,7 @@ const genItemStyle: GenerateStyle<SelectToken, CSSObject> = token => {
         )
         .div(2)
         .equal(),
-    )} ${controlPaddingHorizontal}`,
+    )} ${unit(controlPaddingHorizontal)}`,
     color: token.colorText,
     fontWeight: 'normal',
     fontSize: token.fontSize,

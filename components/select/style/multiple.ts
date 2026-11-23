@@ -55,7 +55,9 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         flexWrap: 'wrap',
         alignItems: 'center',
         // Multiple is little different that horizontal is follow the vertical
-        padding: `${unit(token.calc(selectItemDist).sub(FIXED_ITEM_MARGIN).equal())} ${unit(token.calc(FIXED_ITEM_MARGIN).mul(2).equal())}`,
+        padding: `${unit(token.calc(selectItemDist).sub(FIXED_ITEM_MARGIN).equal())} ${unit(
+          token.calc(FIXED_ITEM_MARGIN).mul(2).equal(),
+        )}`,
         borderRadius: token.borderRadius,
 
         [`${componentCls}-show-search&`]: {
@@ -71,7 +73,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
           display: 'inline-block',
           width: 0,
           margin: `${unit(FIXED_ITEM_MARGIN)} 0`,
-          lineHeight: selectItemHeight,
+          lineHeight: unit(selectItemHeight),
           content: '"\\a0"',
         },
       },
@@ -80,7 +82,10 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         &${componentCls}-show-arrow ${componentCls}-selector,
         &${componentCls}-allow-clear ${componentCls}-selector
       `]: {
-        paddingInlineEnd: token.calc(token.fontSizeIcon).add(token.controlPaddingHorizontal).equal(),
+        paddingInlineEnd: token
+          .calc(token.fontSizeIcon)
+          .add(token.controlPaddingHorizontal)
+          .equal(),
       },
 
       // ======================== Selections ========================
@@ -94,9 +99,9 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         marginTop: FIXED_ITEM_MARGIN,
         marginBottom: FIXED_ITEM_MARGIN,
         lineHeight: token
-            .calc(selectItemHeight)
-            .sub(token.calc(token.lineWidth).mul(2).equal())
-            .equal(),
+          .calc(selectItemHeight)
+          .sub(token.calc(token.lineWidth).mul(2).equal())
+          .equal(),
         background: token.colorFillSecondary,
         border: `${unit(token.lineWidth)} solid ${token.colorSplit}`,
         borderRadius: token.borderRadiusSM,
@@ -161,7 +166,7 @@ function genSizeStyle(token: SelectToken, suffix?: string): CSSObject {
         `]: {
           height: selectItemHeight,
           fontFamily: token.fontFamily,
-          lineHeight: selectItemHeight,
+          lineHeight: unit(selectItemHeight),
           transition: `all ${token.motionDurationSlow}`,
         },
 
@@ -215,7 +220,10 @@ export default function genMultipleStyle(token: SelectToken): CSSInterpolation {
     {
       [`${componentCls}-multiple${componentCls}-sm`]: {
         [`${componentCls}-selection-placeholder`]: {
-          insetInlineStart: token.calc(token.controlPaddingHorizontalSM).sub(token.lineWidth).equal(),
+          insetInlineStart: token
+            .calc(token.controlPaddingHorizontalSM)
+            .sub(token.lineWidth)
+            .equal(),
           insetInlineEnd: token.calc(token.controlPaddingHorizontalSM).sub(token.lineWidth).equal(),
         },
 

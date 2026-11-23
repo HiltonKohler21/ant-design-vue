@@ -17,7 +17,9 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
         [`> ${componentCls}-content, > ${componentCls}-body`]: {
           '> table > tbody > tr > td': {
             [`> ${componentCls}-expanded-row-fixed`]: {
-              margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} -${unit(token.calc(paddingHorizontal).add(token.lineWidth).equal())}`,
+              margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} ${unit(
+                token.calc(paddingHorizontal).add(token.lineWidth).mul(-1).equal(),
+              )}`,
             },
           },
         },
@@ -80,9 +82,9 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
               // ========================== Expandable ==========================
               '> tbody > tr > td': {
                 [`> ${componentCls}-expanded-row-fixed`]: {
-                  margin: `${unit(token.calc(token.tablePaddingVertical).mul(-1).equal())} -${
-                    token.calc(token.tablePaddingHorizontal).add(token.lineWidth).equal()
-                  }px`,
+                  margin: `${unit(token.calc(token.tablePaddingVertical).mul(-1).equal())} ${unit(
+                    token.calc(token.tablePaddingHorizontal).add(token.lineWidth).mul(-1).equal(),
+                  )}`,
 
                   '&::after': {
                     position: 'absolute',

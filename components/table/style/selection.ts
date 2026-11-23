@@ -21,7 +21,10 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-bordered ${componentCls}-selection-col`]: {
-        width: token.calc(token.tableSelectionColumnWidth).add(token.calc(paddingXS).mul(2).equal()).equal(),
+        width: token
+          .calc(token.tableSelectionColumnWidth)
+          .add(token.calc(paddingXS).mul(2).equal())
+          .equal(),
       },
 
       [`
@@ -38,7 +41,7 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`table tr th${componentCls}-selection-column${componentCls}-cell-fix-left`]: {
-        zIndex: token.calc(token.zIndexTableFixed).add(1).equal(),
+        zIndex: token.calc(token.zIndexTableFixed).add(1).equal({ unit: false }),
       },
 
       [`table tr th${componentCls}-selection-column::after`]: {

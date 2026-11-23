@@ -904,7 +904,7 @@ const genSearchInputStyle: GenerateStyle<InputToken> = (token: InputToken) => {
       // fix slight height diff in Firefox:
       // https://ant.design/components/auto-complete-cn/#components-auto-complete-demo-certain-category
       [`${componentCls}-lg`]: {
-        lineHeight: token.calc(token.lineHeightLG).sub(0.0002).equal(),
+        lineHeight: token.calc(token.lineHeightLG).sub(0.0002).equal({ unit: false }),
       },
 
       [`> ${componentCls}-group`]: {

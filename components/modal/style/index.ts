@@ -217,7 +217,7 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
             .sub(token.modalCloseBtnSize)
             .div(2)
             .equal(),
-          zIndex: token.calc(token.zIndexPopupBase).add(10).equal(),
+          zIndex: token.calc(token.zIndexPopupBase).add(10).equal({ unit: false }),
           padding: 0,
           color: token.modalCloseColor,
           fontWeight: token.fontWeightStrong,
