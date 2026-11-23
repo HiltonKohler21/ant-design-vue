@@ -36,7 +36,6 @@ export default {
   optimizeDeps: {
     include: [
       'fetch-jsonp',
-      '@ant-design/icons-vue',
       'lodash-es',
       'dayjs',
       'vue',
