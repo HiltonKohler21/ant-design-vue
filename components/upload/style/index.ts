@@ -8,7 +8,13 @@ import genRtlStyle from './rtl';
 import { resetComponent } from '../../style';
 import { genCollapseMotion } from '../../style/motion';
 
-export interface ComponentToken {}
+export interface ComponentToken {
+  /**
+   * @desc 操作按钮颜色
+   * @descEN Action button color
+   */
+  actionsColor: string;
+}
 
 export interface UploadToken extends FullToken<'Upload'> {
   uploadThumbnailSize: number;
@@ -43,25 +49,31 @@ const genBaseStyle: GenerateStyle<UploadToken> = token => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Upload', token => {
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawUploadToken: any = (token as any)._realToken ?? token;
-  const listItemHeightSM = Math.round(rawUploadToken.fontSize * rawUploadToken.lineHeight);
+export default genComponentStyleHook(
+  'Upload',
+  token => {
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawUploadToken: any = (token as any)._realToken ?? token;
+    const listItemHeightSM = Math.round(rawUploadToken.fontSize * rawUploadToken.lineHeight);
 
-  const uploadToken = mergeToken<UploadToken>(token, {
-    uploadThumbnailSize: rawUploadToken.fontSizeHeading3 * 2,
-    uploadProgressOffset: listItemHeightSM / 2 + rawUploadToken.lineWidth,
-    uploadPicCardSize: rawUploadToken.controlHeightLG * 2.55,
-  });
+    const uploadToken = mergeToken<UploadToken>(token, {
+      uploadThumbnailSize: rawUploadToken.fontSizeHeading3 * 2,
+      uploadProgressOffset: listItemHeightSM / 2 + rawUploadToken.lineWidth,
+      uploadPicCardSize: rawUploadToken.controlHeightLG * 2.55,
+    });
 
-  return [
-    genBaseStyle(uploadToken),
-    genDraggerStyle(uploadToken),
-    genPictureStyle(uploadToken),
-    genPictureCardStyle(uploadToken),
-    genListStyle(uploadToken),
-    genMotionStyle(uploadToken),
-    genRtlStyle(uploadToken),
-    genCollapseMotion(uploadToken),
-  ];
-});
+    return [
+      genBaseStyle(uploadToken),
+      genDraggerStyle(uploadToken),
+      genPictureStyle(uploadToken),
+      genPictureCardStyle(uploadToken),
+      genListStyle(uploadToken),
+      genMotionStyle(uploadToken),
+      genRtlStyle(uploadToken),
+      genCollapseMotion(uploadToken),
+    ];
+  },
+  token => ({
+    actionsColor: token.colorTextDescription,
+  }),
+);

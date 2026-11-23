@@ -5,7 +5,14 @@ import confirm, { withWarn, withInfo, withSuccess, withError, withConfirm } from
 import useModal from './useModal';
 import destroyFns from './destroyFns';
 export type { ActionButtonProps } from '../_util/ActionButton';
-export type { ModalProps, ModalFuncProps } from './Modal';
+export type {
+  ModalProps,
+  ModalFuncProps,
+  ModalClosableType,
+  ClosableType,
+  MaskConfig,
+  MaskType,
+} from './Modal';
 
 function modalWarn(props: ModalFuncProps) {
   return confirm(withWarn(props));

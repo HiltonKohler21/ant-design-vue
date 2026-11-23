@@ -2,6 +2,7 @@ import type { ComputedRef } from 'vue';
 import { computed, inject } from 'vue';
 import type { Variant } from '../../config-provider/context';
 import { configProviderKey, defaultConfigProvider, Variants } from '../../config-provider/context';
+import { useInjectFormVariant } from '../context';
 
 /** 支持 `variant` 的组件名（对应 ConfigProvider 上的同名配置项） */
 export type VariantComponent =
@@ -54,7 +55,7 @@ const COMPONENT_OWN_VARIANTS: Partial<
 /**
  * 解析组件的视觉变体，兼容 antd 5.13 之前的 `bordered` 属性。
  *
- * 优先级：props.variant > props.bordered(false) > 组件级 ConfigProvider 配置 > 回退组件配置（如 textArea -> input）> 全局 ConfigProvider
+ * 优先级：props.variant > props.bordered(false) > Form variant 上下文（仅标准表单控件）> 组件级 ConfigProvider 配置 > 回退组件配置（如 textArea -> input）> 全局 ConfigProvider > defaultVariant
  *
  * @see https://github.com/ant-design/ant-design/blob/master/components/form/hooks/useVariants.ts
  */
@@ -65,6 +66,7 @@ export default function useVariant<T extends string = Variant>(
   fallbackComponent?: VariantComponent,
 ): [ComputedRef<T>, ComputedRef<boolean>] {
   const configProvider = inject(configProviderKey, defaultConfigProvider);
+  const ctxVariant = useInjectFormVariant();
   const isOptions =
     legacyBordered &&
     typeof legacyBordered === 'object' &&
@@ -98,6 +100,7 @@ export default function useVariant<T extends string = Variant>(
   const mergedVariant = computed<T>(() => {
     if (variant.value !== undefined) return variant.value;
     if (borderedRef?.value === false) return 'borderless' as T;
+    if (!options && ctxVariant.value !== undefined) return ctxVariant.value as T;
     if (configComponentVariant.value !== undefined) return configComponentVariant.value;
     const globalVariant = configProvider.variant?.value;
     if (globalVariant !== undefined && supportedVariants.includes(globalVariant)) {

@@ -87,6 +87,7 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
             // https://github.com/ant-design/ant-design/issues/19542
             maxHeight: tableFilterDropdownHeight,
             overflowX: 'hidden',
+            backgroundColor: token.filterDropdownMenuBg,
             border: 0,
             boxShadow: 'none',
 

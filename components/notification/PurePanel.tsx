@@ -89,7 +89,16 @@ export interface PurePanelProps
 export default defineComponent<PurePanelProps>({
   name: 'PurePanel',
   inheritAttrs: false,
-  props: ['prefixCls', 'icon', 'type', 'message', 'description', 'btn', 'closeIcon'] as any,
+  props: [
+    'prefixCls',
+    'icon',
+    'type',
+    'message',
+    'description',
+    'btn',
+    'closable',
+    'closeIcon',
+  ] as any,
   setup(props, { attrs }) {
     const { getPrefixCls, configProvider } = useConfigInject('notification', props);
     const prefixCls = computed(() => props.prefixCls || getPrefixCls('notification'));

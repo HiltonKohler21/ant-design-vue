@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, Ref } from 'vue';
 import type { Key, VueNode } from '../_util/type';
 
 export type NotificationPlacement =
@@ -10,6 +10,25 @@ export type NotificationPlacement =
   | 'bottomRight';
 
 export type IconType = 'success' | 'info' | 'error' | 'warning';
+
+export interface NotificationClosableType {
+  closeIcon?: (() => VueNode) | VueNode;
+  disabled?: boolean;
+  onClose?: () => void;
+  'aria-label'?: string;
+  [key: `aria-${string}`]: any;
+  [key: `data-${string}`]: any;
+}
+
+export type NotificationClosable = boolean | NotificationClosableType;
+
+export interface StackConfig {
+  threshold?: number;
+  offset?: number;
+  gap?: number;
+}
+
+export type NotificationStack = boolean | StackConfig;
 
 export interface ArgsProps {
   message: (() => VueNode) | VueNode;
@@ -28,6 +47,7 @@ export interface ArgsProps {
   class?: string;
   readonly type?: IconType;
   onClick?: () => void;
+  closable?: NotificationClosable;
   closeIcon?: (() => VueNode) | VueNode;
 }
 
@@ -49,9 +69,11 @@ export interface GlobalConfigProps {
   prefixCls?: string;
   getContainer?: () => HTMLElement;
   placement?: NotificationPlacement;
+  closable?: NotificationClosable;
   closeIcon?: (() => VueNode) | VueNode;
   showProgress?: boolean;
   pauseOnHover?: boolean;
+  stack?: NotificationStack;
   rtl?: boolean;
   maxCount?: number;
 }
@@ -63,9 +85,11 @@ export interface NotificationConfig {
   prefixCls?: string;
   getContainer?: () => HTMLElement;
   placement?: NotificationPlacement;
+  closable?: NotificationClosable;
   closeIcon?: (() => VueNode) | VueNode;
   showProgress?: boolean;
   pauseOnHover?: boolean;
+  stack?: NotificationStack | Ref<NotificationStack>;
   maxCount?: number;
   rtl?: boolean;
 }

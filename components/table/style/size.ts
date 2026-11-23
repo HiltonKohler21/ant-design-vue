@@ -25,20 +25,22 @@ const genSizeStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-filter-trigger`]: {
-        marginInlineEnd: `-${unit(token.calc(paddingHorizontal).div(2).equal())}`,
+        marginInlineEnd: unit(token.calc(paddingHorizontal).div(2).mul(-1).equal()),
       },
 
       [`${componentCls}-expanded-row-fixed`]: {
-        margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} ${unit(token.calc(paddingHorizontal).mul(-1).equal())}`,
+        margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} ${unit(
+          token.calc(paddingHorizontal).mul(-1).equal(),
+        )}`,
       },
 
       [`${componentCls}-tbody`]: {
         // ========================= Nest Table ===========================
         [`${componentCls}-wrapper:only-child ${componentCls}`]: {
           marginBlock: `${unit(token.calc(paddingVertical).mul(-1).equal())}`,
-          marginInline: `${
-            token.calc(token.tableExpandColumnWidth).sub(paddingHorizontal).equal()
-          }px ${unit(token.calc(paddingHorizontal).mul(-1).equal())}`,
+          marginInline: `${unit(
+            token.calc(token.tableExpandColumnWidth).sub(paddingHorizontal).equal(),
+          )} ${unit(token.calc(paddingHorizontal).mul(-1).equal())}`,
         },
       },
 

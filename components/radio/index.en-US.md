@@ -31,6 +31,7 @@ Radio group can wrap a group of `Radio`。
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| block | Option to fit RadioGroup width to its parent width | boolean | false | 4.3.0 |
 | buttonStyle | style type of radio button | `outline` \| `solid` | `outline` |  |
 | defaultValue | Default selected value | any | - | 4.3.0 |
 | disabled | Disable all radio buttons | boolean | false |  |
@@ -38,8 +39,10 @@ Radio group can wrap a group of `Radio`。
 | name | The `name` property of all `input[type="radio"]` children | string | - |  |
 | options | set children optional | string\[] \| number\[] \| Array&lt;{ label: string value: string disabled?: boolean }> | - |  |
 | optionType | Set Radio optionType | `default` \| `button` | `default` | 3.0.0 |
+| orientation | Orientation of RadioGroup | `'horizontal'` \| `'vertical'` | `'horizontal'` | 4.3.0 |
 | size | size for radio button style | `large` \| `default` \| `small` | `default` |  |
 | value(v-model) | Used for setting the currently selected value. | any | - |  |
+| vertical | If true, RadioGroup will be vertical | boolean | false | 4.3.0 |
 
 ### RadioGroup Events
 

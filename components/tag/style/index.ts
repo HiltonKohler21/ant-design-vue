@@ -1,3 +1,4 @@
+import { TinyColor } from '@ctrl/tinycolor';
 import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken } from '../../theme/internal';
@@ -6,17 +7,45 @@ import { genPresetColor, resetComponent } from '../../style';
 import type { CSSProperties } from 'vue';
 import { capitalize } from '../../_util/util';
 
-export interface ComponentToken {}
+export interface ComponentToken {
+  /**
+   * @desc 默认背景色
+   * @descEN Default background color
+   */
+  defaultBg: string;
+  /**
+   * @desc 默认文字颜色
+   * @descEN Default text color
+   */
+  defaultColor: string;
+  /**
+   * @desc 默认实心标签的文本色
+   * @descEN Default text color for solid tag.
+   */
+  solidTextColor: string;
+}
 
 interface TagToken extends FullToken<'Tag'> {
   tagFontSize: number;
   tagLineHeight: CSSProperties['lineHeight'];
-  tagDefaultBg: string;
-  tagDefaultColor: string;
   tagIconSize: number;
   tagPaddingHorizontal: number;
   tagBorderlessBg: string;
+  tagSolidBg: string;
 }
+
+const compositeOnBackground = (foreground: string, background: string): string => {
+  const fg = new TinyColor(foreground);
+  const bg = new TinyColor(background);
+  const alpha = fg.getAlpha();
+  if (alpha >= 1) {
+    return fg.toHexString();
+  }
+  const r = Math.round(fg.r * alpha + bg.r * (1 - alpha));
+  const g = Math.round(fg.g * alpha + bg.g * (1 - alpha));
+  const b = Math.round(fg.b * alpha + bg.b * (1 - alpha));
+  return new TinyColor({ r, g, b }).toHexString();
+};
 
 // ============================== Styles ==============================
 
@@ -29,12 +58,25 @@ const genTagStatusStyle = (
 ): CSSObject => {
   const capitalizedCssVariableType = capitalize(cssVariableType);
   return {
-    [`${token.componentCls}-${status}`]: {
+    [`${token.componentCls}${token.componentCls}-${status}:not(${token.componentCls}-disabled)`]: {
       color: token[`color${cssVariableType}`],
       background: token[`color${capitalizedCssVariableType}Bg`],
       borderColor: token[`color${capitalizedCssVariableType}Border`],
-      [`&${token.componentCls}-borderless`]: {
+
+      [`&${token.componentCls}-outlined`]: {
+        backgroundColor: token[`color${capitalizedCssVariableType}Bg`],
+        borderColor: token[`color${capitalizedCssVariableType}Border`],
+        color: token[`color${cssVariableType}`],
+      },
+      [`&${token.componentCls}-solid`]: {
+        backgroundColor: token[`color${cssVariableType}`],
+        borderColor: token[`color${cssVariableType}`],
+        color: token.colorTextLightSolid,
+      },
+      [`&${token.componentCls}-filled, &${token.componentCls}-borderless`]: {
+        backgroundColor: token[`color${capitalizedCssVariableType}Bg`],
         borderColor: 'transparent',
+        color: token[`color${cssVariableType}`],
       },
     },
   };
@@ -42,21 +84,28 @@ const genTagStatusStyle = (
 
 const genPresetStyle = (token: TagToken) =>
   genPresetColor(token, (colorKey, { textColor, lightBorderColor, lightColor, darkColor }) => ({
-    [`${token.componentCls}-${colorKey}`]: {
-      color: textColor,
-      background: lightColor,
-      borderColor: lightBorderColor,
+    [`${token.componentCls}${token.componentCls}-${colorKey}:not(${token.componentCls}-disabled)`]:
+      {
+        color: textColor,
+        background: lightColor,
+        borderColor: lightBorderColor,
 
-      // Inverse color
-      '&-inverse': {
-        color: token.colorTextLightSolid,
-        background: darkColor,
-        borderColor: darkColor,
+        [`&${token.componentCls}-outlined`]: {
+          backgroundColor: lightColor,
+          borderColor: lightBorderColor,
+          color: textColor,
+        },
+        [`&${token.componentCls}-solid, &-inverse`]: {
+          color: token.colorTextLightSolid,
+          backgroundColor: darkColor,
+          borderColor: darkColor,
+        },
+        [`&${token.componentCls}-filled, &${token.componentCls}-borderless`]: {
+          backgroundColor: lightColor,
+          borderColor: 'transparent',
+          color: textColor,
+        },
       },
-      [`&${token.componentCls}-borderless`]: {
-        borderColor: 'transparent',
-      },
-    },
   }));
 
 const genBaseStyle = (token: TagToken): CSSObject => {
@@ -75,12 +124,13 @@ const genBaseStyle = (token: TagToken): CSSObject => {
       fontSize: token.tagFontSize,
       lineHeight: `${unit(token.tagLineHeight)}`,
       whiteSpace: 'nowrap',
-      background: token.tagDefaultBg,
+      backgroundColor: token.defaultBg,
       border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
       borderRadius: token.borderRadiusSM,
       opacity: 1,
       transition: `all ${token.motionDurationMid}`,
       textAlign: 'start',
+      position: 'relative',
 
       // RTL
       [`&${componentCls}-rtl`]: {
@@ -88,12 +138,12 @@ const genBaseStyle = (token: TagToken): CSSObject => {
       },
 
       '&, a, a:hover': {
-        color: token.tagDefaultColor,
+        color: token.defaultColor,
       },
 
       [`${componentCls}-close-icon`]: {
         marginInlineStart: iconMarginInline,
-        color: token.colorTextDescription,
+        color: token.colorIcon,
         fontSize: token.tagIconSize,
         cursor: 'pointer',
         transition: `all ${token.motionDurationMid}`,
@@ -135,51 +185,171 @@ const genBaseStyle = (token: TagToken): CSSObject => {
         '&:active': {
           backgroundColor: token.colorPrimaryActive,
         },
+
+        '&-disabled': {
+          cursor: 'not-allowed',
+
+          [`&:not(${componentCls}-checkable-checked)`]: {
+            color: token.colorTextDisabled,
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          },
+
+          [`&${componentCls}-checkable-checked`]: {
+            color: token.colorTextDisabled,
+            backgroundColor: token.colorBgContainerDisabled,
+          },
+
+          '&:hover, &:active': {
+            backgroundColor: token.colorBgContainerDisabled,
+            color: token.colorTextDisabled,
+          },
+
+          [`&:not(${componentCls}-checkable-checked):hover`]: {
+            color: token.colorTextDisabled,
+          },
+        },
+
+        '&-group': {
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: token.paddingXS,
+        },
       },
 
       [`&-hidden`]: {
         display: 'none',
       },
 
+      '> svg': {
+        display: 'inline-block',
+        verticalAlign: 'middle',
+        marginBlockEnd: '0.2em',
+      },
+
       // To ensure that a space will be placed between character and `Icon`.
-      [`> ${token.iconCls} + span, > span + ${token.iconCls}`]: {
+      [`> ${token.iconCls} + span, > span + ${token.iconCls}, > svg + span, > span + svg`]: {
         marginInlineStart: paddingInline,
       },
     },
-    [`${componentCls}-borderless`]: {
+
+    [`${componentCls}-outlined`]: {
+      backgroundColor: token.defaultBg,
+      borderColor: token.colorBorder,
+    },
+
+    [`${componentCls}-solid`]: {
       borderColor: 'transparent',
-      background: token.tagBorderlessBg,
+      color: token.colorTextLightSolid,
+      backgroundColor: token.tagSolidBg,
+
+      [`&, a, a:hover, ${componentCls}-close-icon, ${componentCls}-close-icon:hover`]: {
+        color: token.colorTextLightSolid,
+      },
+
+      [`&${componentCls}-default`]: {
+        color: token.solidTextColor,
+        [`a, a:hover, ${componentCls}-close-icon, ${componentCls}-close-icon:hover`]: {
+          color: token.solidTextColor,
+        },
+      },
+    },
+
+    [`${componentCls}-filled, ${componentCls}-borderless`]: {
+      borderColor: 'transparent',
+      backgroundColor: token.tagBorderlessBg,
+    },
+
+    [`${componentCls}-disabled`]: {
+      color: token.colorTextDisabled,
+      cursor: 'not-allowed',
+      backgroundColor: token.colorBgContainerDisabled,
+
+      a: {
+        cursor: 'not-allowed',
+        pointerEvents: 'none',
+        color: token.colorTextDisabled,
+        '&:hover': {
+          color: token.colorTextDisabled,
+        },
+      },
+
+      'a&': {
+        '&:hover, &:active': {
+          color: token.colorTextDisabled,
+        },
+      },
+
+      [`&${componentCls}-outlined`]: {
+        borderColor: token.colorBorder,
+      },
+
+      [`&${componentCls}-solid, &${componentCls}-filled`]: {
+        color: token.colorTextDisabled,
+        [`${componentCls}-close-icon`]: {
+          color: token.colorTextDisabled,
+        },
+      },
+
+      [`${componentCls}-close-icon`]: {
+        cursor: 'not-allowed',
+        color: token.colorTextDisabled,
+        '&:hover': {
+          color: token.colorTextDisabled,
+        },
+      },
     },
   };
 };
 
+export const prepareComponentToken = (token: any): ComponentToken => {
+  const isDarkBg = new TinyColor(token.colorBgBase || '#fff').isDark();
+  const rawTextBase = token.colorTextBase || (isDarkBg ? '#fff' : '#000');
+  const solidBg =
+    token.colorBgSolid || new TinyColor(rawTextBase).setAlpha(isDarkBg ? 0.95 : 1).toRgbString();
+  const solidTextColor = new TinyColor(solidBg).isLight() ? '#000' : '#fff';
+
+  return {
+    defaultBg: compositeOnBackground(token.colorFillTertiary, token.colorBgContainer),
+    defaultColor: token.colorText,
+    solidTextColor,
+  };
+};
+
 // ============================== Export ==============================
-export default genComponentStyleHook('Tag', token => {
-  // 尺寸派生需要真实数值（cssVar 模式下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const tagHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
+export default genComponentStyleHook(
+  'Tag',
+  token => {
+    // 尺寸派生需要真实数值（cssVar 模式下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const tagHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
+    const isDarkBg = new TinyColor(rawToken.colorBgBase || '#fff').isDark();
+    const rawTextBase = rawToken.colorTextBase || (isDarkBg ? '#fff' : '#000');
+    const tagSolidBg =
+      rawToken.colorBgSolid ||
+      new TinyColor(rawTextBase).setAlpha(isDarkBg ? 0.95 : 1).toRgbString();
 
-  const tagFontSize = token.fontSizeSM;
-  const tagLineHeight = tagHeight - rawToken.lineWidth * 2;
-  const tagDefaultBg = token.colorFillAlter;
-  const tagDefaultColor = token.colorText;
+    const tagFontSize = token.fontSizeSM;
+    const tagLineHeight = tagHeight - rawToken.lineWidth * 2;
 
-  const tagToken = mergeToken<TagToken>(token, {
-    tagFontSize,
-    tagLineHeight,
-    tagDefaultBg,
-    tagDefaultColor,
-    tagIconSize: rawToken.fontSizeIcon - 2 * rawToken.lineWidth, // Tag icon is much more smaller
-    tagPaddingHorizontal: 8, // Fixed padding.
-    tagBorderlessBg: token.colorFillTertiary,
-  });
+    const tagToken = mergeToken<TagToken>(token, {
+      tagFontSize,
+      tagLineHeight,
+      tagIconSize: rawToken.fontSizeIcon - 2 * rawToken.lineWidth, // Tag icon is much more smaller
+      tagPaddingHorizontal: 8, // Fixed padding.
+      tagBorderlessBg: token.defaultBg,
+      tagSolidBg,
+    });
 
-  return [
-    genBaseStyle(tagToken),
-    genPresetStyle(tagToken),
-    genTagStatusStyle(tagToken, 'success', 'Success'),
-    genTagStatusStyle(tagToken, 'processing', 'Info'),
-    genTagStatusStyle(tagToken, 'error', 'Error'),
-    genTagStatusStyle(tagToken, 'warning', 'Warning'),
-  ];
-});
+    return [
+      genBaseStyle(tagToken),
+      genPresetStyle(tagToken),
+      genTagStatusStyle(tagToken, 'success', 'Success'),
+      genTagStatusStyle(tagToken, 'processing', 'Info'),
+      genTagStatusStyle(tagToken, 'error', 'Error'),
+      genTagStatusStyle(tagToken, 'warning', 'Warning'),
+    ];
+  },
+  prepareComponentToken,
+);

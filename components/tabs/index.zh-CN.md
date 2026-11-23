@@ -36,14 +36,25 @@ Ant Design 依次提供了三级选项卡，分别用于不同的场景。
 | indicator | 自定义指示条的大小和对齐方式 | `{ size?: number \| ((origin: number) => number); align?: 'start' \| 'center' \| 'end' }` | - | 4.3.0 |
 | indicatorSize | 自定义指示条的长度（已废弃，请使用 `indicator.size`） | `number \| ((origin: number) => number) \| 'small' \| 'large'` | - | 4.3.0 |
 | items | 配置选项卡内容 | [TabItemType](#tabitemtype)[] | [] | 4.3.0 |
+| more | 自定义折叠菜单属性 | [MoreProps](#moreprops) | `{ icon: <EllipsisOutlined />, trigger: ['hover'] }` | 4.3.0 |
 | popupClassName | 更多菜单的 className | string | - |  |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
 | size | 大小，提供 `large` `middle` 和 `small` 三种大小 | string | `middle` |  |
 | tabBarExtraContent | tab bar 上额外的元素（已废弃，请使用 `leftExtra` / `rightExtra` 插槽） | VueNode \| slot | - |  |
 | tabBarGutter | tabs 之间的间隙 | number | - |  |
 | tabBarStyle | tab bar 的样式对象 | CSSProperties | - |  |
-| tabPosition | 页签位置，可选值有 `top` `right` `bottom` `left` | string | `top` |  |
+| tabPlacement | 页签位置，可选值有 `top` `right` `bottom` `left` `start` `end` | `top` \| `right` \| `bottom` \| `left` \| `start` \| `end` | `top` | 4.3.0 |
+| ~~tabPosition~~ | 页签位置，可选值有 `top` `right` `bottom` `left`（已废弃，请使用 `tabPlacement`） | string | `top` |  |
 | type | 页签的基本样式，可选 `line`、`card` `editable-card` 类型 | string | `line` |  |
+
+### MoreProps
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| icon | 自定义折叠图标 | VueNode | `<EllipsisOutlined />` | 4.3.0 |
+| trigger | 触发下拉的行为 | `Array<'click' \| 'hover' \| 'contextmenu'>` \| `'click' \| 'hover' \| 'contextmenu'` | `['hover']` | 4.3.0 |
+| overlayClassName | 折叠菜单下拉根元素的类名称 | string | - | 4.3.0 |
+| overlayStyle | 折叠菜单下拉根元素的样式 | CSSProperties | - | 4.3.0 |
 
 ### TabItemType
 

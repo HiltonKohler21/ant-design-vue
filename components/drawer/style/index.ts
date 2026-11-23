@@ -4,12 +4,17 @@ import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import genMotionStyle from './motion';
 
 export interface ComponentToken {
+  /**
+   * @desc 弹窗 z-index
+   * @descEN z-index of drawer
+   */
   zIndexPopup: number;
 }
 
 export interface DrawerToken extends FullToken<'Drawer'> {
   drawerFooterPaddingVertical: number;
   drawerFooterPaddingHorizontal: number;
+  drawerDraggerSize: number;
 }
 
 // =============================== Base ===============================
@@ -35,9 +40,11 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
     fontWeightStrong,
     drawerFooterPaddingVertical,
     drawerFooterPaddingHorizontal,
+    drawerDraggerSize,
   } = token;
 
   const wrapperCls = `${componentCls}-content-wrapper`;
+  const draggerCls = `${componentCls}-resizable-dragger`;
 
   return {
     [componentCls]: {
@@ -75,12 +82,18 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
         zIndex: zIndexPopup,
         background: colorBgMask,
         pointerEvents: 'auto',
+
+        [`&${componentCls}-mask-blur`]: {
+          backdropFilter: 'blur(4px)',
+        },
       },
 
       // ==================== Content =====================
       [wrapperCls]: {
         position: 'absolute',
         zIndex: zIndexPopup,
+        maxWidth: '100vw',
+        maxHeight: '100vh',
         transition: `all ${motionDurationSlow}`,
 
         '&-hidden': {
@@ -128,6 +141,7 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
 
       // ===================== Panel ======================
       [`${componentCls}-wrapper-body`]: {
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
@@ -179,6 +193,17 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
           color: colorIconHover,
           textDecoration: 'none',
         },
+
+        [`&${componentCls}-close-end`]: {
+          marginInlineEnd: 0,
+          marginInlineStart: marginSM,
+        },
+
+        '&:disabled': {
+          pointerEvents: 'none',
+          cursor: 'not-allowed',
+          opacity: 0.45,
+        },
       },
 
       [`${componentCls}-title`]: {
@@ -197,6 +222,13 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
         minHeight: 0,
         padding: paddingLG,
         overflow: 'auto',
+
+        [`${componentCls}-body-skeleton`]: {
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+        },
       },
 
       // Footer
@@ -204,6 +236,61 @@ const genDrawerStyle: GenerateStyle<DrawerToken> = (token: DrawerToken) => {
         flexShrink: 0,
         padding: `${unit(drawerFooterPaddingVertical)} ${unit(drawerFooterPaddingHorizontal)}`,
         borderTop: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
+      },
+
+      // ==================== Resizable ===================
+      [draggerCls]: {
+        position: 'absolute',
+        zIndex: 1,
+        backgroundColor: 'transparent',
+        userSelect: 'none',
+        pointerEvents: 'auto',
+
+        '&:hover': {
+          backgroundColor: token.colorPrimary,
+          opacity: 0.2,
+        },
+
+        '&-dragging': {
+          backgroundColor: token.colorPrimary,
+          opacity: 0.3,
+        },
+      },
+
+      [`${draggerCls}-left`]: {
+        top: 0,
+        bottom: 0,
+        right: {
+          _skip_check_: true,
+          value: 0,
+        },
+        width: drawerDraggerSize,
+        cursor: 'col-resize',
+      },
+
+      [`${draggerCls}-right`]: {
+        top: 0,
+        bottom: 0,
+        left: {
+          _skip_check_: true,
+          value: 0,
+        },
+        width: drawerDraggerSize,
+        cursor: 'col-resize',
+      },
+
+      [`${draggerCls}-top`]: {
+        insetInline: 0,
+        bottom: 0,
+        height: drawerDraggerSize,
+        cursor: 'row-resize',
+      },
+
+      [`${draggerCls}-bottom`]: {
+        insetInline: 0,
+        top: 0,
+        height: drawerDraggerSize,
+        cursor: 'row-resize',
       },
 
       // ====================== RTL =======================
@@ -221,6 +308,7 @@ export default genComponentStyleHook(
     const drawerToken = mergeToken<DrawerToken>(token, {
       drawerFooterPaddingVertical: token.paddingXS,
       drawerFooterPaddingHorizontal: token.padding,
+      drawerDraggerSize: 4,
     });
 
     return [genDrawerStyle(drawerToken), genMotionStyle(drawerToken)];

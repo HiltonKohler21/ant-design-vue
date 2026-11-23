@@ -16,17 +16,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*M7_ER7GJr6wAAA
 
 ## API
 
-| 属性           | 说明                   | 类型           | 默认值             | 版本  |
-| -------------- | ---------------------- | -------------- | ------------------ | ----- |
-| allowClear     | 是否允许再次点击后清除 | boolean        | true               |       |
-| allowHalf      | 是否允许半选           | boolean        | false              |       |
-| autofocus      | 自动获取焦点           | boolean        | false              |       |
-| character      | 自定义字符             | string \| slot | `<StarOutlined />` |       |
-| count          | star 总数              | number         | 5                  |       |
-| disabled       | 只读，无法进行交互     | boolean        | false              |       |
-| rootClassName  | 根节点类名             | string         | -                  | 4.3.0 |
-| tooltips       | 自定义每项的提示信息   | string[]       | -                  |       |
-| value(v-model) | 当前数，受控值         | number         | -                  |       |
+| 属性 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| allowClear | 是否允许再次点击后清除 | boolean | true |  |
+| allowHalf | 是否允许半选 | boolean | false |  |
+| autofocus | 自动获取焦点 | boolean | false |  |
+| character | 自定义字符 | string \| slot | `<StarOutlined />` |  |
+| count | star 总数 | number | 5 |  |
+| disabled | 只读，无法进行交互 | boolean | false |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| size | 评分组件尺寸 | `'small'` \| `'middle'` \| `'medium'` \| `'large'` | `'middle'` | 4.3.0 |
+| tooltips | 自定义每项的提示信息 | string[] | - |  |
+| value(v-model) | 当前数，受控值 | number | - |  |
 
 ### 事件
 

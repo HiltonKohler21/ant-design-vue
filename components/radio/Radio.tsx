@@ -117,6 +117,7 @@ export default defineComponent({
           [`${prefixCls.value}-wrapper-disabled`]: rProps.disabled,
           [`${prefixCls.value}-wrapper-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-wrapper-in-form-item`]: formItemInputContext.isFormItemInput,
+          [`${prefixCls.value}-wrapper-block`]: !!radioGroup?.block?.value,
         },
         contextClassName.value,
         contextClassNames.value.root,

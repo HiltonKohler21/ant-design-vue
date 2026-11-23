@@ -6,6 +6,7 @@ import PropTypes from '../_util/vue-types';
 import addEventListener from '../vc-util/Dom/addEventListener';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import Button from '../button';
+import Skeleton from '../skeleton';
 import type { ButtonProps as ButtonPropsType, LegacyButtonType } from '../button/buttonTypes';
 import { convertLegacyProps } from '../button/buttonTypes';
 import { useLocaleReceiver } from '../locale-provider/LocaleReceiver';
@@ -41,14 +42,38 @@ if (canUseDocElement()) {
   addEventListener(document.documentElement, 'click', getClickPosition, true);
 }
 
+export interface ModalClosableType {
+  closeIcon?: VueNode;
+  disabled?: boolean;
+  afterClose?: () => void;
+  onClose?: () => void;
+  'aria-label'?: string;
+  [key: `aria-${string}`]: any;
+  [key: `data-${string}`]: any;
+}
+
+export type ClosableType = boolean | ModalClosableType;
+
+export interface MaskConfig {
+  enabled?: boolean;
+  blur?: boolean;
+  closable?: boolean;
+}
+
+export type MaskType = boolean | MaskConfig;
+
 export const modalProps = () => ({
   prefixCls: String,
   /** @deprecated Please use `open` instead. */
   visible: { type: Boolean, default: undefined },
   open: { type: Boolean, default: undefined },
   confirmLoading: { type: Boolean, default: undefined },
+  loading: { type: Boolean, default: undefined },
   title: PropTypes.any,
-  closable: { type: Boolean, default: undefined },
+  closable: {
+    type: [Boolean, Object] as PropType<ClosableType>,
+    default: undefined,
+  },
   closeIcon: PropTypes.any,
   onOk: Function as PropType<(e: MouseEvent) => void>,
   /** onOk 别名 */
@@ -91,7 +116,10 @@ export const modalProps = () => ({
   zIndex: Number,
   bodyStyle: objectType<CSSProperties>(),
   maskStyle: objectType<CSSProperties>(),
-  mask: { type: Boolean, default: undefined },
+  mask: {
+    type: [Boolean, Object] as PropType<MaskType>,
+    default: undefined,
+  },
   keyboard: { type: Boolean, default: undefined },
   wrapProps: Object,
   focusTriggerAfterClose: { type: Boolean, default: undefined },
@@ -105,9 +133,10 @@ export interface ModalFuncProps {
   prefixCls?: string;
   class?: string;
   open?: boolean;
+  loading?: boolean;
   title?: string | (() => VueNode) | VueNode;
   footer?: string | (() => VueNode) | VueNode;
-  closable?: boolean;
+  closable?: ClosableType;
   content?: string | (() => VueNode) | VueNode;
   // TODO: find out exact types
   onOk?: (...args: any[]) => any;
@@ -124,7 +153,7 @@ export interface ModalFuncProps {
   wrapClassName?: String;
   /* Deprecated */
   iconType?: string;
-  mask?: boolean;
+  mask?: MaskType;
   maskClosable?: boolean;
   zIndex?: number;
   okCancel?: boolean;
@@ -206,6 +235,11 @@ export default defineComponent({
       emit('update:open', false);
       emit('cancel', e);
       emit('change', false);
+      const rawClosable =
+        props.closable !== undefined ? props.closable : modalConfig.value.closable;
+      if (rawClosable && typeof rawClosable === 'object') {
+        (rawClosable as ModalClosableType).onClose?.();
+      }
     };
 
     const handleOk = (e: MouseEvent) => {
@@ -241,11 +275,15 @@ export default defineComponent({
         prefixCls: customizePrefixCls,
         visible,
         open,
+        loading,
+        closable,
+        mask,
+        maskClosable,
         rootClassName,
         wrapClassName,
         centered,
         getContainer,
-        closeIcon = slots.closeIcon?.() ?? modalConfig.value.closeIcon,
+        closeIcon,
         focusTriggerAfterClose = true,
         destroyOnHidden,
         classNames: semanticClassNames,
@@ -254,10 +292,55 @@ export default defineComponent({
         ...restProps
       } = props;
 
+      const rawClosable = closable !== undefined ? closable : modalConfig.value.closable;
+      const closableObj =
+        rawClosable && typeof rawClosable === 'object' ? (rawClosable as ModalClosableType) : null;
+      const mergedClosableBool = rawClosable === undefined ? undefined : rawClosable !== false;
+      const closeDisabled = Boolean(closableObj?.disabled);
+      const closableAriaOrDataProps: Record<string, any> = {};
+      if (closableObj) {
+        Object.keys(closableObj).forEach(key => {
+          if (key.startsWith('aria-') || key.startsWith('data-')) {
+            closableAriaOrDataProps[key] = (closableObj as any)[key];
+          }
+        });
+      }
+      const mergedCloseIcon =
+        closableObj?.closeIcon !== undefined
+          ? closableObj.closeIcon
+          : closeIcon ?? slots.closeIcon?.() ?? modalConfig.value.closeIcon;
+
+      const ctxMask = modalConfig.value.mask;
+      let mergedMask: boolean | undefined = undefined;
+      let maskBlur = false;
+      let maskClosableFromMask: boolean | undefined = undefined;
+
+      if (typeof ctxMask === 'boolean') {
+        mergedMask = ctxMask;
+      } else if (ctxMask && typeof ctxMask === 'object') {
+        if (ctxMask.enabled !== undefined) mergedMask = ctxMask.enabled;
+        if (ctxMask.blur !== undefined) maskBlur = ctxMask.blur;
+        if (ctxMask.closable !== undefined) maskClosableFromMask = ctxMask.closable;
+      }
+
+      if (typeof mask === 'boolean') {
+        mergedMask = mask;
+        maskBlur = false;
+      } else if (mask && typeof mask === 'object') {
+        if (mask.enabled !== undefined) mergedMask = mask.enabled;
+        if (mask.blur !== undefined) maskBlur = mask.blur;
+        if (mask.closable !== undefined) maskClosableFromMask = mask.closable;
+      }
+
+      const mergedMaskClosable =
+        maskClosableFromMask !== undefined ? maskClosableFromMask : maskClosable;
+
       const ctxClassNames = modalConfig.value.classNames || {};
       const ctxStyles = modalConfig.value.styles || {};
       const mergedSemanticClassNames: DialogSemanticClassNames = {
-        mask: classNames(ctxClassNames.mask, semanticClassNames?.mask),
+        mask: classNames(ctxClassNames.mask, semanticClassNames?.mask, {
+          [`${prefixCls.value}-mask-blur`]: maskBlur,
+        }),
         wrapper: classNames(ctxClassNames.wrapper, semanticClassNames?.wrapper),
         content: classNames(ctxClassNames.content, semanticClassNames?.content),
         header: classNames(ctxClassNames.header, semanticClassNames?.header),
@@ -281,12 +364,44 @@ export default defineComponent({
         ? [modalConfig.value.style as CSSProperties, attrs.style as CSSProperties]
         : attrs.style;
 
+      const patchCloserInOrigin = (originVNode: VueNode): VueNode => {
+        if (
+          !closableObj ||
+          (!closeDisabled && Object.keys(closableAriaOrDataProps).length === 0) ||
+          !isVNode(originVNode) ||
+          !Array.isArray(originVNode.children)
+        ) {
+          return originVNode;
+        }
+        const nextChildren = originVNode.children.map(child => {
+          if (
+            isVNode(child) &&
+            child.type === 'button' &&
+            child.props?.class === `${prefixCls.value}-close`
+          ) {
+            const clonedCloser = cloneVNode(child, {
+              ...closableAriaOrDataProps,
+              ...(closeDisabled ? { disabled: true } : {}),
+            });
+            if (closeDisabled && clonedCloser.props) {
+              clonedCloser.props = { ...clonedCloser.props, onClick: undefined };
+            }
+            return clonedCloser;
+          }
+          return child;
+        });
+        const clonedOrigin = cloneVNode(originVNode);
+        clonedOrigin.children = nextChildren;
+        return clonedOrigin;
+      };
+
       const mergedModalRender = ({ originVNode }: { originVNode: VueNode }) => {
+        const patchedOrigin = patchCloserInOrigin(originVNode);
         const node = modalRender
-          ? modalRender({ originVNode })
+          ? modalRender({ originVNode: patchedOrigin })
           : slots.modalRender
-          ? slots.modalRender({ originVNode })
-          : originVNode;
+          ? slots.modalRender({ originVNode: patchedOrigin })
+          : patchedOrigin;
         if (isVNode(node)) {
           return cloneVNode(node, { ref: panelRef });
         }
@@ -297,6 +412,10 @@ export default defineComponent({
         <Dialog
           {...restProps}
           {...attrs}
+          footer={loading ? null : restProps.footer}
+          closable={mergedClosableBool}
+          mask={mergedMask}
+          maskClosable={mergedMaskClosable}
           style={mergedStyle}
           rootClassName={classNames(rootClassName, hashId.value)}
           class={classNames(hashId.value, modalConfig.value.className, attrs.class)}
@@ -319,6 +438,7 @@ export default defineComponent({
           onClose={handleCancel}
           afterClose={() => {
             props.afterClose?.();
+            closableObj?.afterClose?.();
             props.afterOpenChange?.(false);
           }}
           focusTriggerAfterClose={focusTriggerAfterClose}
@@ -332,11 +452,21 @@ export default defineComponent({
           mousePosition={restProps.mousePosition ?? mousePosition}
           v-slots={{
             ...slots,
-            footer: slots.footer || renderFooter,
+            default: loading
+              ? () => (
+                  <Skeleton
+                    active
+                    title={false}
+                    paragraph={{ rows: 4 }}
+                    class={`${prefixCls.value}-body-skeleton`}
+                  />
+                )
+              : slots.default,
+            footer: loading ? undefined : slots.footer || renderFooter,
             closeIcon: () => {
               return (
                 <span class={`${prefixCls.value}-close-x`}>
-                  {closeIcon || <CloseOutlined class={`${prefixCls.value}-close-icon`} />}
+                  {mergedCloseIcon || <CloseOutlined class={`${prefixCls.value}-close-icon`} />}
                 </span>
               );
             },

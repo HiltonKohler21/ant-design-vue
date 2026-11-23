@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'vue';
+import { ref } from 'vue';
 import Notification from '../vc-notification';
 import CheckCircleOutlined from '@ant-design/icons-vue/CheckCircleOutlined';
 import InfoCircleOutlined from '@ant-design/icons-vue/InfoCircleOutlined';
@@ -10,9 +11,17 @@ import { renderHelper } from '../_util/util';
 import { globalConfig, globalConfigForApi } from '../config-provider';
 import type { NotificationInstance as VCNotificationInstance } from '../vc-notification/Notification';
 import classNames from '../_util/classNames';
+import type {
+  NotificationClosable,
+  NotificationClosableType,
+  NotificationStack,
+  StackConfig,
+} from './interface';
 import useStyle from './style';
 import useNotification from './useNotification';
 import { getPlacementStyle } from './util';
+
+export type { NotificationClosable, NotificationClosableType, NotificationStack, StackConfig };
 
 export type NotificationPlacement =
   | 'top'
@@ -31,9 +40,11 @@ export interface ConfigProps {
   prefixCls?: string;
   placement?: NotificationPlacement;
   getContainer?: () => HTMLElement;
+  closable?: NotificationClosable;
   closeIcon?: VueNode | (() => VueNode);
   showProgress?: boolean;
   pauseOnHover?: boolean;
+  stack?: NotificationStack;
   rtl?: boolean;
   maxCount?: number;
 }
@@ -45,9 +56,11 @@ let defaultBottom = '24px';
 let defaultPrefixCls = '';
 let defaultPlacement: NotificationPlacement = 'topRight';
 let defaultGetContainer = () => document.body;
+let defaultClosable: NotificationClosable = true;
 let defaultCloseIcon = null;
 let defaultShowProgress = false;
 let defaultPauseOnHover = true;
+const defaultStack = ref<NotificationStack>({ threshold: 3 });
 let rtl = false;
 let maxCount: number;
 
@@ -58,10 +71,12 @@ function setNotificationConfig(options: ConfigProps) {
     bottom,
     top,
     getContainer,
+    closable,
     closeIcon,
     prefixCls,
     showProgress,
     pauseOnHover,
+    stack,
   } = options;
   if (prefixCls !== undefined) {
     defaultPrefixCls = prefixCls;
@@ -81,6 +96,9 @@ function setNotificationConfig(options: ConfigProps) {
   if (getContainer !== undefined) {
     defaultGetContainer = getContainer;
   }
+  if (closable !== undefined) {
+    defaultClosable = closable;
+  }
   if (closeIcon !== undefined) {
     defaultCloseIcon = closeIcon;
   }
@@ -89,6 +107,9 @@ function setNotificationConfig(options: ConfigProps) {
   }
   if (pauseOnHover !== undefined) {
     defaultPauseOnHover = pauseOnHover;
+  }
+  if (stack !== undefined) {
+    defaultStack.value = stack;
   }
   if (options.rtl !== undefined) {
     rtl = options.rtl;
@@ -143,6 +164,7 @@ function getNotificationInstance(
         return closeIconToRender;
       },
       maxCount,
+      stack: defaultStack,
       hasTransitionName: true,
     },
     (notification: any) => {
@@ -177,6 +199,7 @@ export interface NotificationArgsProps {
   top?: string | number;
   bottom?: string | number;
   getContainer?: () => HTMLElement;
+  closable?: NotificationClosable;
   closeIcon?: VueNode | (() => VueNode);
   showProgress?: boolean;
   pauseOnHover?: boolean;
@@ -189,12 +212,28 @@ function notice(args: NotificationArgsProps) {
   const contextNotification = globalConfigForApi.notification;
   const { getPrefixCls } = globalConfig();
   const resolvedPrefixCls = getPrefixCls('notification', args.prefixCls || defaultPrefixCls);
+  const rawClosable = args.closable !== undefined ? args.closable : defaultClosable;
   const mergedCloseIcon =
     args.closeIcon !== undefined
       ? args.closeIcon
       : defaultCloseIcon !== null
       ? defaultCloseIcon
       : contextNotification?.closeIcon;
+  const resolvedClosable: NotificationClosable =
+    rawClosable && typeof rawClosable === 'object'
+      ? {
+          ...rawClosable,
+          ...(rawClosable.closeIcon !== undefined
+            ? {
+                closeIcon: (
+                  <span class={`${resolvedPrefixCls}-close-x`}>
+                    {renderHelper(rawClosable.closeIcon)}
+                  </span>
+                ),
+              }
+            : {}),
+        }
+      : rawClosable;
   getNotificationInstance(
     {
       ...args,
@@ -226,7 +265,7 @@ function notice(args: NotificationArgsProps) {
           );
         },
         duration,
-        closable: true,
+        closable: resolvedClosable,
         ...(mergedCloseIcon !== undefined && mergedCloseIcon !== null
           ? {
               closeIcon: (

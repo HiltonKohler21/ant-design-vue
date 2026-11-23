@@ -10,7 +10,7 @@ import type {
 } from '../../vc-picker/RangePicker';
 import type { Locale as RcPickerLocale } from '../../vc-picker/interface';
 import type { TimePickerLocale } from '../../time-picker';
-import type { SizeType } from '../../config-provider';
+import type { SizeType, Variant } from '../../config-provider';
 
 type InjectDefaultProps<Props> = Omit<
   Props,
@@ -26,6 +26,8 @@ type InjectDefaultProps<Props> = Omit<
   locale?: PickerLocale;
   size?: SizeType;
   bordered?: boolean;
+  variant?: Variant;
+  needConfirm?: boolean;
 };
 
 export type PickerLocale = {

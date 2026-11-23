@@ -1,5 +1,6 @@
 import type { InjectionKey, ComputedRef } from 'vue';
 import { inject, provide, computed } from 'vue';
+import type { Variant } from '../config-provider/context';
 import type { ColProps } from '../grid';
 import type { RequiredMark } from './Form';
 import type { ValidateStatus, FieldExpose } from './FormItem';
@@ -74,4 +75,18 @@ export const useInjectFormItemPrefix = () => {
   return inject(FormItemPrefixContextKey, {
     prefixCls: computed(() => ''),
   });
+};
+
+export const FormVariantContextKey: InjectionKey<ComputedRef<Variant | undefined>> =
+  Symbol('formVariantContextKey');
+
+export const useProvideFormVariant = (variant: ComputedRef<Variant | undefined>) => {
+  provide(FormVariantContextKey, variant);
+};
+
+export const useInjectFormVariant = () => {
+  return inject(
+    FormVariantContextKey,
+    computed<Variant | undefined>(() => undefined),
+  );
 };

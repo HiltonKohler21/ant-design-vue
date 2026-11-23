@@ -9,6 +9,17 @@ interface DivProps extends HTMLAttributes {
   'data-testid'?: string;
 }
 
+export interface NoticeClosableType {
+  closeIcon?: any;
+  disabled?: boolean;
+  onClose?: () => void;
+  'aria-label'?: string;
+  [key: `aria-${string}`]: any;
+  [key: `data-${string}`]: any;
+}
+
+export type NoticeClosable = boolean | NoticeClosableType;
+
 export interface NoticeProps {
   prefixCls: string;
   duration?: number | null;
@@ -16,7 +27,7 @@ export interface NoticeProps {
   /** Mark as final key since set maxCount may keep the key but user pass key is different */
   noticeKey: Key;
   closeIcon?: any;
-  closable?: boolean;
+  closable?: NoticeClosable;
   showProgress?: boolean;
   pauseOnHover?: boolean;
   props?: DivProps;
@@ -111,12 +122,27 @@ export default defineComponent<NoticeProps>({
       }
     };
 
+    const closableObj = computed<NoticeClosableType | null>(() =>
+      props.closable && typeof props.closable === 'object'
+        ? (props.closable as NoticeClosableType)
+        : null,
+    );
+    const closeDisabled = computed(() => Boolean(closableObj.value?.disabled));
+
     const close = (e?: MouseEvent) => {
+      if (e && closeDisabled.value) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
       if (e) {
         e.stopPropagation();
       }
       clearCloseTimer();
       const { onClose, noticeKey } = props;
+      if (e) {
+        closableObj.value?.onClose?.();
+      }
       if (onClose) {
         onClose(noticeKey);
       }
@@ -182,6 +208,23 @@ export default defineComponent<NoticeProps>({
       const { prefixCls, closable, closeIcon = slots.closeIcon?.(), onClick, holder } = props;
       const { class: className, style } = attrs;
       const componentClass = `${prefixCls}-notice`;
+      const isClosable = Boolean(closable);
+      const closableConfig = closableObj.value;
+      const closableAriaOrDataProps: Record<string, any> = {};
+      if (closableConfig) {
+        Object.keys(closableConfig).forEach(key => {
+          if (key.startsWith('aria-') || key.startsWith('data-')) {
+            closableAriaOrDataProps[key] = (closableConfig as any)[key];
+          }
+        });
+      }
+      const rawClosableIcon = closableConfig?.closeIcon;
+      const mergedCloseIcon =
+        rawClosableIcon !== undefined
+          ? typeof rawClosableIcon === 'function'
+            ? rawClosableIcon()
+            : rawClosableIcon
+          : closeIcon;
       const dataOrAriaAttributeProps = Object.keys(attrs).reduce(
         (acc: Record<string, string>, key: string) => {
           if (key.startsWith('data-') || key.startsWith('aria-') || key === 'role') {
@@ -195,7 +238,7 @@ export default defineComponent<NoticeProps>({
       const node = (
         <div
           class={classNames(componentClass, className, {
-            [`${componentClass}-closable`]: closable,
+            [`${componentClass}-closable`]: isClosable,
           })}
           style={style as CSSProperties}
           onMouseenter={handleMouseEnter}
@@ -204,9 +247,17 @@ export default defineComponent<NoticeProps>({
           {...dataOrAriaAttributeProps}
         >
           <div class={`${componentClass}-content`}>{slots.default?.()}</div>
-          {closable ? (
-            <a tabindex={0} onClick={close} class={`${componentClass}-close`}>
-              {closeIcon || <span class={`${componentClass}-close-x`} />}
+          {isClosable ? (
+            <a
+              tabindex={closeDisabled.value ? -1 : 0}
+              onClick={close}
+              aria-disabled={closeDisabled.value ? 'true' : undefined}
+              class={classNames(`${componentClass}-close`, {
+                [`${componentClass}-close-disabled`]: closeDisabled.value,
+              })}
+              {...closableAriaOrDataProps}
+            >
+              {mergedCloseIcon || <span class={`${componentClass}-close-x`} />}
             </a>
           ) : null}
           {showProgress.value ? (

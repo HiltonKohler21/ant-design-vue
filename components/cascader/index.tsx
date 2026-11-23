@@ -9,10 +9,9 @@ import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 import LeftOutlined from '@ant-design/icons-vue/LeftOutlined';
 import getIcons from '../select/utils/iconUtil';
 import type { VueNode } from '../_util/type';
-import { withInstall } from '../_util/type';
 import omit from '../_util/omit';
 import { computed, defineComponent, ref, watchEffect } from 'vue';
-import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
+import type { App, CSSProperties, ExtractPropTypes, Plugin, PropType } from 'vue';
 import PropTypes from '../_util/vue-types';
 import { initDefaultProps } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
@@ -35,6 +34,9 @@ import { deprecated } from '../_util/warning';
 import useSelectStyle from '../select/style';
 import useStyle from './style';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
+import CascaderPanel from './Panel';
+export type { CascaderPanelProps } from './Panel';
+export { CascaderPanel };
 // Align the design since we use `rc-select` in root. This help:
 // - List search content will show all content
 // - Hover opacity style
@@ -398,14 +400,18 @@ const Cascader = defineComponent({
     };
   },
 });
-export default withInstall<
-  typeof Cascader & {
-    SHOW_PARENT: typeof SHOW_PARENT;
-    SHOW_CHILD: typeof SHOW_CHILD;
-  }
->(
-  Object.assign(Cascader, {
-    SHOW_CHILD,
-    SHOW_PARENT,
-  } as any),
-);
+export default Object.assign(Cascader, {
+  SHOW_CHILD,
+  SHOW_PARENT,
+  Panel: CascaderPanel,
+  install: (app: App) => {
+    app.component(Cascader.name, Cascader);
+    app.component(CascaderPanel.name, CascaderPanel);
+    return app;
+  },
+}) as typeof Cascader &
+  Plugin & {
+    readonly SHOW_PARENT: typeof SHOW_PARENT;
+    readonly SHOW_CHILD: typeof SHOW_CHILD;
+    readonly Panel: typeof CascaderPanel;
+  };

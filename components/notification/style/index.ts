@@ -1,5 +1,4 @@
-import { unit } from '../../_util/cssinjs';
-import { Keyframes } from '../../_util/cssinjs';
+import { Keyframes, unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import genNotificationPlacementStyle from './placement';
@@ -7,8 +6,20 @@ import { resetComponent } from '../../style';
 
 /** Component only token. Which will handle additional calculation of alias token */
 export interface ComponentToken {
+  /**
+   * @desc 提醒框 z-index
+   * @descEN z-index of Notification
+   */
   zIndexPopup: number;
+  /**
+   * @desc 提醒框宽度
+   * @descEN Width of Notification
+   */
   width: number;
+  /**
+   * @desc 提醒框进度条背景色
+   * @descEN Background color of Notification progress bar
+   */
   progressBg: string;
 }
 
@@ -143,6 +154,49 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
         // placement
         ...genNotificationPlacementStyle(token),
 
+        // stack
+        [`&${componentCls}-stack`]: {
+          [`> div`]: {
+            position: 'relative',
+          },
+
+          [noticeCls]: {
+            transition: `transform ${motionDurationMid} ${motionEaseInOut}, opacity ${motionDurationMid} ${motionEaseInOut}, box-shadow ${motionDurationMid} ${motionEaseInOut}`,
+            transformOrigin: 'top center',
+          },
+
+          [`&:not(${componentCls}-stack-expanded)`]: {
+            [`> div`]: {
+              display: 'grid',
+            },
+
+            [noticeCls]: {
+              gridArea: '1 / 1',
+              marginBottom: 0,
+              transform:
+                'translateY(calc(min(var(--notification-index, 0), 2) * 8px)) scale(calc(1 - min(var(--notification-index, 0), 2) * 0.06))',
+            },
+
+            [`${noticeCls}-stack-hidden`]: {
+              opacity: 0,
+              pointerEvents: 'none',
+            },
+          },
+
+          [`&${componentCls}-bottom, &${componentCls}-bottomLeft, &${componentCls}-bottomRight`]: {
+            [noticeCls]: {
+              transformOrigin: 'bottom center',
+            },
+
+            [`&:not(${componentCls}-stack-expanded)`]: {
+              [noticeCls]: {
+                transform:
+                  'translateY(calc(min(var(--notification-index, 0), 2) * -8px)) scale(calc(1 - min(var(--notification-index, 0), 2) * 0.06))',
+              },
+            },
+          },
+        },
+
         // RTL
         '&-rtl': {
           direction: 'rtl',
@@ -241,6 +295,12 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
           '&:hover': {
             color: token.colorIconHover,
             backgroundColor: token.wireframe ? 'transparent' : token.colorFillContent,
+          },
+
+          '&-disabled': {
+            pointerEvents: 'none',
+            cursor: 'not-allowed',
+            opacity: 0.45,
           },
         },
 

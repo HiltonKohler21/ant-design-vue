@@ -1,11 +1,12 @@
 import type { RadioProps } from './Radio';
-import type { Ref } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 export interface RadioChangeEventTarget extends RadioProps {
   checked: boolean;
 }
 
 export type RadioGroupButtonStyle = 'outline' | 'solid';
 export type RadioGroupOptionType = 'default' | 'button';
+export type RadioGroupOrientation = 'horizontal' | 'vertical';
 
 export interface RadioChangeEvent {
   target: RadioChangeEventTarget;
@@ -26,6 +27,7 @@ export interface RadioGroupContext {
    * @internal
    */
   optionType?: Ref<RadioGroupOptionType>;
+  block?: ComputedRef<boolean>;
 }
 
 export type RadioOptionTypeContextProps = RadioGroupOptionType;

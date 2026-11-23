@@ -48,3 +48,22 @@ Display statistic number.
 | ----------- | ---------------------------- | ------------------------ |
 | change      | Trigger when time's changing | (value?: number) => void |
 | finish      | Trigger when time's up       | () => void               |
+
+### Statistic.Timer `4.3.0`
+
+| Property | Description | Type | Default |
+| --- | --- | --- | --- |
+| format | Format as [dayjs](https://day.js.org/) | string | 'HH:mm:ss' |
+| prefix | prefix node of value | string \| v-slot | - |
+| suffix | suffix node of value | string \| v-slot | - |
+| title | Display title | string \| v-slot | - |
+| type | Timer type, countdown or countup | `'countdown'` \| `'countup'` | `'countdown'` |
+| value | Set target timestamp | number \| string \| dayjs | - |
+| valueStyle | Set value css style | style | - |
+
+#### Statistic.Timer Events
+
+| Events Name | Description | Arguments |
+| --- | --- | --- |
+| change | Trigger when time's changing | (value?: number) => void |
+| finish | Trigger when time's up (only called when `type="countdown"`) | () => void |

@@ -2,12 +2,101 @@ import type { CSSObject } from '../../_util/cssinjs';
 import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
+import type { TokenWithCommonCls } from '../../theme/util/genComponentStyleHook';
 import type { GlobalToken } from '../../theme/interface';
 import { clearFix, resetComponent } from '../../style';
 import { genCompactItemStyle } from '../../style/compact-item';
 import { genVariantsStyle } from './variants';
 
-export type InputToken<T extends GlobalToken = FullToken<'Input'>> = T & {
+export interface ComponentToken {
+  /**
+   * @desc 输入框纵向内边距
+   * @descEN Vertical padding of input
+   */
+  paddingBlock: number;
+  /**
+   * @desc 小号输入框纵向内边距
+   * @descEN Vertical padding of small input
+   */
+  paddingBlockSM: number;
+  /**
+   * @desc 大号输入框纵向内边距
+   * @descEN Vertical padding of large input
+   */
+  paddingBlockLG: number;
+  /**
+   * @desc 输入框横向内边距
+   * @descEN Horizontal padding of input
+   */
+  paddingInline: number;
+  /**
+   * @desc 小号输入框横向内边距
+   * @descEN Horizontal padding of small input
+   */
+  paddingInlineSM: number;
+  /**
+   * @desc 大号输入框横向内边距
+   * @descEN Horizontal padding of large input
+   */
+  paddingInlineLG: number;
+  /**
+   * @desc 前/后置标签背景色
+   * @descEN Background color of addon
+   */
+  addonBg: string;
+  /**
+   * @desc 激活态边框色
+   * @descEN Active border color
+   */
+  activeBorderColor: string;
+  /**
+   * @desc 悬浮态边框色
+   * @descEN Hover border color
+   */
+  hoverBorderColor: string;
+  /**
+   * @desc 激活态阴影
+   * @descEN Box-shadow when active
+   */
+  activeShadow: string;
+  /**
+   * @desc 错误状态时激活态阴影
+   * @descEN Box-shadow when active in error status
+   */
+  errorActiveShadow: string;
+  /**
+   * @desc 警告状态时激活态阴影
+   * @descEN Box-shadow when active in warning status
+   */
+  warningActiveShadow: string;
+  /**
+   * @desc 输入框悬浮态背景颜色
+   * @descEN Background color when input hovers
+   */
+  hoverBg: string;
+  /**
+   * @desc 输入框激活态背景颜色
+   * @descEN Background color when input is active
+   */
+  activeBg: string;
+  /**
+   * @desc 字体大小
+   * @descEN Font size
+   */
+  inputFontSize: number;
+  /**
+   * @desc 大号字体大小
+   * @descEN Font size of large
+   */
+  inputFontSizeLG: number;
+  /**
+   * @desc 小号字体大小
+   * @descEN Font size of small
+   */
+  inputFontSizeSM: number;
+}
+
+export type InputToken<T extends GlobalToken = TokenWithCommonCls<GlobalToken>> = T & {
   inputAffixPadding: number;
   inputPaddingVertical: number;
   inputPaddingVerticalLG: number;
@@ -17,6 +106,15 @@ export type InputToken<T extends GlobalToken = FullToken<'Input'>> = T & {
   inputPaddingHorizontalSM: number;
   inputBorderHoverColor: string;
   inputBorderActiveColor: string;
+  addonBg?: string;
+  activeShadow?: string;
+  errorActiveShadow?: string;
+  warningActiveShadow?: string;
+  hoverBg?: string;
+  activeBg?: string;
+  inputFontSize?: number;
+  inputFontSizeLG?: number;
+  inputFontSizeSM?: number;
 };
 
 export const genPlaceholderStyle = (color: string): CSSObject => ({
@@ -36,13 +134,16 @@ export const genPlaceholderStyle = (color: string): CSSObject => ({
 export const genHoverStyle = (token: InputToken): CSSObject => ({
   borderColor: token.inputBorderHoverColor,
   borderInlineEndWidth: token.lineWidth,
+  ...(token.hoverBg ? { backgroundColor: token.hoverBg } : {}),
 });
 
 export const genActiveStyle = (token: InputToken) => ({
-  borderColor: token.inputBorderHoverColor,
-  boxShadow: `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
+  borderColor: token.inputBorderActiveColor,
+  boxShadow:
+    token.activeShadow ?? `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
   borderInlineEndWidth: token.lineWidth,
   outline: 0,
+  ...(token.activeBg ? { backgroundColor: token.activeBg } : {}),
 });
 
 export const genDisabledStyle = (token: InputToken): CSSObject => ({
@@ -54,7 +155,12 @@ export const genDisabledStyle = (token: InputToken): CSSObject => ({
   opacity: 1,
 
   '&:hover': {
-    ...genHoverStyle(mergeToken<InputToken>(token, { inputBorderHoverColor: token.colorBorder })),
+    ...genHoverStyle(
+      mergeToken<InputToken>(token, {
+        inputBorderHoverColor: token.colorBorder,
+        hoverBg: token.colorBgContainerDisabled,
+      }),
+    ),
   },
 });
 
@@ -69,16 +175,15 @@ const genInputLargeStyle = (token: InputToken): CSSObject => {
 
   return {
     padding: `${unit(inputPaddingVerticalLG)} ${unit(inputPaddingHorizontalLG)}`,
-    fontSize: fontSizeLG,
+    fontSize: token.inputFontSizeLG ?? fontSizeLG,
     lineHeight: lineHeightLG,
     borderRadius: borderRadiusLG,
   };
 };
 
 export const genInputSmallStyle = (token: InputToken): CSSObject => ({
-  padding: `${unit(token.inputPaddingVerticalSM)} ${unit(
-    token.calc(token.controlPaddingHorizontalSM).sub(1).equal(),
-  )}`,
+  padding: `${unit(token.inputPaddingVerticalSM)} ${unit(token.inputPaddingHorizontalSM)}`,
+  fontSize: token.inputFontSizeSM ?? token.fontSize,
   borderRadius: token.borderRadiusSM,
 });
 
@@ -107,6 +212,9 @@ export const genStatusStyle = (token: InputToken, parentCls: string): CSSObject 
             inputBorderActiveColor: colorError,
             inputBorderHoverColor: colorError,
             controlOutline: colorErrorOutline,
+            activeShadow:
+              token.errorActiveShadow ??
+              `0 0 0 ${unit(token.controlOutlineWidth)} ${colorErrorOutline}`,
           }),
         ),
       },
@@ -128,6 +236,9 @@ export const genStatusStyle = (token: InputToken, parentCls: string): CSSObject 
             inputBorderActiveColor: colorWarning,
             inputBorderHoverColor: colorWarning,
             controlOutline: colorWarningOutline,
+            activeShadow:
+              token.warningActiveShadow ??
+              `0 0 0 ${unit(token.controlOutlineWidth)} ${colorWarningOutline}`,
           }),
         ),
       },
@@ -146,7 +257,7 @@ export const genBasicInputStyle = (token: InputToken): CSSObject => ({
   minWidth: 0,
   padding: `${unit(token.inputPaddingVertical)} ${unit(token.inputPaddingHorizontal)}`,
   color: token.colorText,
-  fontSize: token.fontSize,
+  fontSize: token.inputFontSize ?? token.fontSize,
   lineHeight: token.lineHeight,
   backgroundColor: token.colorBgContainer,
   backgroundImage: 'none',
@@ -265,7 +376,7 @@ export const genInputGroupStyle = (token: InputToken): CSSObject => {
         fontWeight: 'normal',
         fontSize: token.fontSize,
         textAlign: 'center',
-        backgroundColor: token.colorFillAlter,
+        backgroundColor: token.addonBg ?? token.colorFillAlter,
         border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
         borderRadius: token.borderRadius,
         transition: `all ${token.motionDurationSlow}`,
@@ -981,37 +1092,94 @@ const genTextAreaStyle: GenerateStyle<InputToken> = token => {
   };
 };
 
-// ============================== Export ==============================
-export default genComponentStyleHook('Input', token => {
-  // 尺寸派生需要真实数值（cssVar 模式下 token 值是 var() 字符串），
-  // 因此内边距类 token 从 realToken 派生，其余 token 仍走 CSS 变量。
-  const rawToken = (token as any)._realToken ?? token;
-  const numericPaddings = initInputToken<FullToken<'Input'>>(rawToken);
-  const inputToken = mergeToken<InputToken<FullToken<'Input'>>>(
-    initInputToken<FullToken<'Input'>>(token),
-    {
-      inputPaddingVertical: numericPaddings.inputPaddingVertical,
-      inputPaddingVerticalLG: numericPaddings.inputPaddingVerticalLG,
-      inputPaddingVerticalSM: numericPaddings.inputPaddingVerticalSM,
-      inputPaddingHorizontal: numericPaddings.inputPaddingHorizontal,
-      inputPaddingHorizontalLG: numericPaddings.inputPaddingHorizontalLG,
-      inputPaddingHorizontalSM: numericPaddings.inputPaddingHorizontalSM,
-    },
-  );
+export const initComponentToken = (token: GlobalToken): ComponentToken => {
+  const {
+    controlHeight,
+    fontSize,
+    lineHeight,
+    lineWidth,
+    controlHeightSM,
+    controlHeightLG,
+    fontSizeLG,
+    lineHeightLG,
+    paddingSM,
+    paddingXS,
+    controlPaddingHorizontal,
+    colorFillAlter,
+    colorPrimaryHover,
+    colorPrimary,
+    controlOutlineWidth,
+    controlOutline,
+    colorErrorOutline,
+    colorWarningOutline,
+    colorBgContainer,
+  } = token;
 
-  return [
-    genInputStyle(inputToken),
-    genTextAreaStyle(inputToken),
-    genAffixStyle(inputToken),
-    genGroupStyle(inputToken),
-    genSearchInputStyle(inputToken),
-    // =====================================================
-    // ==                Variant                          ==
-    // =====================================================
-    genVariantsStyle(inputToken),
-    // =====================================================
-    // ==             Space Compact                       ==
-    // =====================================================
-    genCompactItemStyle(inputToken),
-  ];
-});
+  const paddingBlock = Math.max(
+    Math.round(((controlHeight - fontSize * lineHeight) / 2) * 10) / 10 - lineWidth,
+    3,
+  );
+  const paddingBlockSM = Math.max(
+    Math.round(((controlHeightSM - fontSize * lineHeight) / 2) * 10) / 10 - lineWidth,
+    0,
+  );
+  const paddingBlockLG =
+    Math.ceil(((controlHeightLG - fontSizeLG * lineHeightLG) / 2) * 10) / 10 - lineWidth;
+
+  return {
+    paddingBlock,
+    paddingBlockSM,
+    paddingBlockLG,
+    paddingInline: paddingSM - lineWidth,
+    paddingInlineSM: paddingXS - lineWidth,
+    paddingInlineLG: controlPaddingHorizontal - lineWidth,
+    addonBg: colorFillAlter,
+    activeBorderColor: colorPrimary,
+    hoverBorderColor: colorPrimaryHover,
+    activeShadow: `0 0 0 ${controlOutlineWidth}px ${controlOutline}`,
+    errorActiveShadow: `0 0 0 ${controlOutlineWidth}px ${colorErrorOutline}`,
+    warningActiveShadow: `0 0 0 ${controlOutlineWidth}px ${colorWarningOutline}`,
+    hoverBg: colorBgContainer,
+    activeBg: colorBgContainer,
+    inputFontSize: fontSize,
+    inputFontSizeLG: fontSizeLG,
+    inputFontSizeSM: fontSize,
+  };
+};
+
+// ============================== Export ==============================
+export default genComponentStyleHook(
+  'Input',
+  token => {
+    const inputToken = mergeToken<InputToken<FullToken<'Input'>>>(
+      initInputToken<FullToken<'Input'>>(token),
+      {
+        inputPaddingVertical: token.paddingBlock,
+        inputPaddingVerticalLG: token.paddingBlockLG,
+        inputPaddingVerticalSM: token.paddingBlockSM,
+        inputPaddingHorizontal: token.paddingInline,
+        inputPaddingHorizontalLG: token.paddingInlineLG,
+        inputPaddingHorizontalSM: token.paddingInlineSM,
+        inputBorderHoverColor: token.hoverBorderColor,
+        inputBorderActiveColor: token.activeBorderColor,
+      },
+    );
+
+    return [
+      genInputStyle(inputToken),
+      genTextAreaStyle(inputToken),
+      genAffixStyle(inputToken),
+      genGroupStyle(inputToken),
+      genSearchInputStyle(inputToken),
+      // =====================================================
+      // ==                Variant                          ==
+      // =====================================================
+      genVariantsStyle(inputToken),
+      // =====================================================
+      // ==             Space Compact                       ==
+      // =====================================================
+      genCompactItemStyle(inputToken),
+    ];
+  },
+  initComponentToken,
+);

@@ -17,7 +17,7 @@ import PropTypes from '../_util/vue-types';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { objectType, withInstall } from '../_util/type';
-import type { CustomSlotsType } from '../_util/type';
+import type { CustomSlotsType, VueNode } from '../_util/type';
 import type { DialogSemanticClassNames, DialogSemanticStyles } from '../_util/semantic';
 import omit from '../_util/omit';
 import devWarning from '../vc-util/devWarning';
@@ -42,11 +42,41 @@ export interface PushState {
   distance: string | number;
 }
 
+export interface DrawerClosableType {
+  closeIcon?: VueNode;
+  disabled?: boolean;
+  placement?: 'start' | 'end';
+  'aria-label'?: string;
+  [key: `aria-${string}`]: any;
+  [key: `data-${string}`]: any;
+}
+
+export type DrawerClosable = boolean | DrawerClosableType;
+
+export interface DrawerMaskConfig {
+  enabled?: boolean;
+  blur?: boolean;
+  closable?: boolean;
+}
+
+export type DrawerMaskType = boolean | DrawerMaskConfig;
+
+export interface DrawerResizableConfig {
+  onResizeStart?: () => void;
+  onResize?: (size: number) => void;
+  onResizeEnd?: () => void;
+}
+
+export type DrawerResizable = boolean | DrawerResizableConfig;
+
 const defaultPushState: PushState = { distance: 180 };
 type getContainerFunc = () => HTMLElement;
 export const drawerProps = () => ({
   autofocus: { type: Boolean, default: undefined },
-  closable: { type: Boolean, default: undefined },
+  closable: {
+    type: [Boolean, Object] as PropType<DrawerClosable>,
+    default: undefined,
+  },
   closeIcon: PropTypes.any,
   /** 语义化 classNames（antd 5.25+）：mask / wrapper / content / header / body / footer */
   classNames: objectType<DialogSemanticClassNames>(),
@@ -65,12 +95,19 @@ export const drawerProps = () => ({
     default: undefined as string | HTMLElement | getContainerFunc | false,
   },
   maskClosable: { type: Boolean, default: undefined },
-  mask: { type: Boolean, default: undefined },
+  mask: {
+    type: [Boolean, Object] as PropType<DrawerMaskType>,
+    default: undefined,
+  },
   maskStyle: objectType<CSSProperties>(),
   rootClassName: String,
   rootStyle: objectType<CSSProperties>(),
   size: {
-    type: String as PropType<sizeType>,
+    type: [String, Number] as PropType<sizeType | number | string>,
+  },
+  resizable: {
+    type: [Boolean, Object] as PropType<DrawerResizable>,
+    default: undefined,
   },
   drawerStyle: objectType<CSSProperties>(),
   headerStyle: objectType<CSSProperties>(),
@@ -102,6 +139,7 @@ export const drawerProps = () => ({
   handle: PropTypes.any,
   /** @deprecated Use `@afterVisibleChange` instead */
   afterVisibleChange: Function as PropType<(visible: boolean) => void>,
+  afterOpenChange: Function as PropType<(open: boolean) => void>,
   /** @deprecated Please use `@afterOpenChange` instead */
   onAfterVisibleChange: Function as PropType<(visible: boolean) => void>,
   onAfterOpenChange: Function as PropType<(open: boolean) => void>,
@@ -120,8 +158,6 @@ const Drawer = defineComponent({
   props: initDefaultProps(drawerProps(), {
     closable: true,
     placement: 'right',
-    maskClosable: true,
-    mask: true,
     level: null,
     keyboard: true,
     push: defaultPushState,
@@ -192,6 +228,13 @@ const Drawer = defineComponent({
       footer: { ...drawerConfig.value.styles?.footer, ...props.styles?.footer },
     }));
     const panelRef = usePanelRef();
+    const wrapperBodyRef = shallowRef<HTMLElement | null>(null);
+    const setWrapperBodyRef = (el: any) => {
+      wrapperBodyRef.value = el as HTMLElement | null;
+      if (typeof panelRef === 'function') {
+        panelRef(el);
+      }
+    };
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const getContainer = computed(() =>
       // 有可能为 false，所以不能直接判断
@@ -242,6 +285,7 @@ const Drawer = defineComponent({
     });
 
     onUnmounted(() => {
+      cleanupResizeListeners();
       if (parentDrawerOpts) {
         parentDrawerOpts.setPull();
       }
@@ -250,6 +294,9 @@ const Drawer = defineComponent({
     watch(
       visible,
       () => {
+        if (!visible.value) {
+          cleanupResizeListeners();
+        }
         if (parentDrawerOpts) {
           if (visible.value) {
             parentDrawerOpts.setPush();
@@ -282,9 +329,67 @@ const Drawer = defineComponent({
         }
       }
       props.afterVisibleChange?.(open);
+      props.afterOpenChange?.(open);
       emit('afterVisibleChange', open);
       emit('afterOpenChange', open);
     };
+
+    // ============================ Mask ============================
+    const mergedMaskConfig = computed(() => {
+      const ctxMask = drawerConfig.value.mask;
+      const rawMask = props.mask;
+      let enabled = true;
+      let blur = false;
+      let closable: boolean | undefined;
+
+      if (typeof ctxMask === 'boolean') {
+        enabled = ctxMask;
+      } else if (ctxMask && typeof ctxMask === 'object') {
+        if (ctxMask.enabled !== undefined) enabled = ctxMask.enabled;
+        if (ctxMask.blur !== undefined) blur = ctxMask.blur;
+        if (ctxMask.closable !== undefined) closable = ctxMask.closable;
+      }
+
+      if (typeof rawMask === 'boolean') {
+        enabled = rawMask;
+        blur = false;
+      } else if (rawMask && typeof rawMask === 'object') {
+        if (rawMask.enabled !== undefined) enabled = rawMask.enabled;
+        if (rawMask.blur !== undefined) blur = rawMask.blur;
+        if (rawMask.closable !== undefined) closable = rawMask.closable;
+      }
+
+      return {
+        enabled,
+        blur,
+        closable: closable ?? props.maskClosable ?? true,
+      };
+    });
+
+    // ========================== Closable ==========================
+    const mergedClosableInfo = computed(() => {
+      const rawClosable = props.closable;
+      const obj =
+        rawClosable && typeof rawClosable === 'object' ? (rawClosable as DrawerClosableType) : null;
+      const enabled = rawClosable !== false;
+      const disabled = Boolean(obj?.disabled);
+      const placement: 'start' | 'end' = obj?.placement === 'end' ? 'end' : 'start';
+      const ariaOrDataProps: Record<string, any> = {};
+      if (obj) {
+        Object.keys(obj).forEach(key => {
+          if (key.startsWith('aria-') || key.startsWith('data-')) {
+            ariaOrDataProps[key] = (obj as any)[key];
+          }
+        });
+      }
+      return {
+        enabled,
+        disabled,
+        placement,
+        closeIcon: obj?.closeIcon,
+        ariaOrDataProps,
+      };
+    });
 
     const pushTransform = computed(() => {
       const { push, placement } = props;
@@ -305,13 +410,152 @@ const Drawer = defineComponent({
       }
       return null;
     });
-    // ============================ Size ============================
-    const mergedWidth = computed(() => props.width ?? (props.size === 'large' ? 736 : 378));
-    const mergedHeight = computed(() => props.height ?? (props.size === 'large' ? 736 : 378));
+    // ============================ Size & Resize ============================
+    const isDragging = shallowRef(false);
+    const dragSize = shallowRef<number | null>(null);
+    let resizeMoveListener: ((e: MouseEvent) => void) | null = null;
+    let resizeUpListener: (() => void) | null = null;
+    let resizeTouchMoveListener: ((e: TouchEvent) => void) | null = null;
+    let resizeTouchEndListener: (() => void) | null = null;
+
+    const cleanupResizeListeners = () => {
+      if (typeof window !== 'undefined') {
+        if (resizeMoveListener) {
+          window.removeEventListener('mousemove', resizeMoveListener);
+          resizeMoveListener = null;
+        }
+        if (resizeUpListener) {
+          window.removeEventListener('mouseup', resizeUpListener);
+          resizeUpListener = null;
+        }
+        if (resizeTouchMoveListener) {
+          window.removeEventListener('touchmove', resizeTouchMoveListener);
+          resizeTouchMoveListener = null;
+        }
+        if (resizeTouchEndListener) {
+          window.removeEventListener('touchend', resizeTouchEndListener);
+          resizeTouchEndListener = null;
+        }
+      }
+      isDragging.value = false;
+    };
+
+    watch([() => props.width, () => props.height, () => props.size, () => props.placement], () => {
+      dragSize.value = null;
+    });
+
+    const resolvedSizeFromProp = computed(() => {
+      const { size } = props;
+      if (typeof size === 'number') {
+        return size;
+      }
+      if (size === 'large') {
+        return 736;
+      }
+      if (size === 'default' || size === undefined) {
+        return 378;
+      }
+      if (/^\d+(\.\d+)?$/.test(size)) {
+        return Number(size);
+      }
+      return size;
+    });
+
+    const isHorizontalPlacement = computed(
+      () => props.placement === 'left' || props.placement === 'right',
+    );
+
+    const baseWidth = computed(() => props.width ?? resolvedSizeFromProp.value);
+    const baseHeight = computed(() => props.height ?? resolvedSizeFromProp.value);
+
+    const mergedWidth = computed(() =>
+      isHorizontalPlacement.value && dragSize.value !== null ? dragSize.value : baseWidth.value,
+    );
+    const mergedHeight = computed(() =>
+      !isHorizontalPlacement.value && dragSize.value !== null ? dragSize.value : baseHeight.value,
+    );
+
+    const startResize = (startClientPos: number, isTouch: boolean) => {
+      if (!props.resizable || isDragging.value) {
+        return;
+      }
+      const resizableConfig =
+        typeof props.resizable === 'object' ? (props.resizable as DrawerResizableConfig) : null;
+      const placement = props.placement || 'right';
+      const horizontal = placement === 'left' || placement === 'right';
+      const rect = wrapperBodyRef.value?.getBoundingClientRect();
+      const measuredSize = horizontal ? rect?.width : rect?.height;
+      const fallbackSize = parseFloat(String(horizontal ? mergedWidth.value : mergedHeight.value));
+      const startSize =
+        measuredSize && measuredSize > 0
+          ? measuredSize
+          : Number.isFinite(fallbackSize)
+          ? fallbackSize
+          : 378;
+
+      isDragging.value = true;
+      resizableConfig?.onResizeStart?.();
+
+      const updateSize = (clientPos: number) => {
+        const delta = clientPos - startClientPos;
+        let nextSize = startSize;
+        if (placement === 'left' || placement === 'top') {
+          nextSize = startSize + delta;
+        } else {
+          nextSize = startSize - delta;
+        }
+        const clampedSize = Math.max(0, Math.round(nextSize));
+        dragSize.value = clampedSize;
+        resizableConfig?.onResize?.(clampedSize);
+      };
+
+      const finishResize = () => {
+        cleanupResizeListeners();
+        resizableConfig?.onResizeEnd?.();
+      };
+
+      if (typeof window !== 'undefined') {
+        if (isTouch) {
+          resizeTouchMoveListener = (e: TouchEvent) => {
+            if (e.touches.length > 0) {
+              updateSize(horizontal ? e.touches[0].clientX : e.touches[0].clientY);
+            }
+          };
+          resizeTouchEndListener = finishResize;
+          window.addEventListener('touchmove', resizeTouchMoveListener);
+          window.addEventListener('touchend', resizeTouchEndListener);
+        } else {
+          resizeMoveListener = (e: MouseEvent) => {
+            updateSize(horizontal ? e.clientX : e.clientY);
+          };
+          resizeUpListener = finishResize;
+          window.addEventListener('mousemove', resizeMoveListener);
+          window.addEventListener('mouseup', resizeUpListener);
+        }
+      }
+    };
+
+    const handleResizeMouseDown = (e: MouseEvent) => {
+      if (e.button !== undefined && e.button !== 0) {
+        return;
+      }
+      e.preventDefault();
+      const horizontal = isHorizontalPlacement.value;
+      startResize(horizontal ? e.clientX : e.clientY, false);
+    };
+
+    const handleResizeTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) {
+        return;
+      }
+      const horizontal = isHorizontalPlacement.value;
+      startResize(horizontal ? e.touches[0].clientX : e.touches[0].clientY, true);
+    };
+
     const offsetStyle = computed(() => {
       // https://github.com/ant-design/ant-design/issues/24287
-      const { mask, placement } = props;
-      if (!visible.value && !mask) {
+      const { placement } = props;
+      if (!visible.value && !mergedMaskConfig.value.enabled) {
         return {};
       }
       const val: CSSProperties = {};
@@ -326,19 +570,48 @@ const Drawer = defineComponent({
     const wrapperStyle = computed(() => {
       const { zIndex, contentWrapperStyle } = props;
       const val = offsetStyle.value;
+      const draggingStyle: CSSProperties | undefined = isDragging.value
+        ? { transition: 'none', userSelect: 'none' }
+        : undefined;
       return [
-        { zIndex, transform: sPush.value ? pushTransform.value : undefined },
+        { zIndex, transform: sPush.value ? pushTransform.value : undefined, ...draggingStyle },
         { ...contentWrapperStyle },
         val,
       ];
     });
 
     const renderHeader = (prefixCls: string) => {
-      const { closable, headerStyle } = props;
+      const { headerStyle } = props;
+      const { enabled: closable, placement: closablePlacement } = mergedClosableInfo.value;
       const extra = getPropsSlot(slots, props, 'extra');
       const title = getPropsSlot(slots, props, 'title');
       if (!title && !closable) {
         return null;
+      }
+
+      if (closablePlacement === 'end') {
+        return (
+          <div
+            class={classnames(
+              `${prefixCls}-header`,
+              {
+                [`${prefixCls}-header-close-only`]: closable && !title && !extra,
+              },
+              mergedClassNames.value.header,
+            )}
+            style={[headerStyle, mergedStyles.value.header]}
+          >
+            <div class={`${prefixCls}-header-title`}>
+              {title && (
+                <div class={`${prefixCls}-title`} id={props.ariaId}>
+                  {title}
+                </div>
+              )}
+            </div>
+            {extra && <div class={`${prefixCls}-extra`}>{extra}</div>}
+            {renderCloseIcon(prefixCls)}
+          </div>
+        );
       }
 
       return (
@@ -366,18 +639,49 @@ const Drawer = defineComponent({
     };
 
     const renderCloseIcon = (prefixCls: string) => {
-      const { closable } = props;
+      const {
+        enabled: closable,
+        disabled: closeDisabled,
+        placement: closablePlacement,
+        closeIcon: closableCloseIcon,
+        ariaOrDataProps,
+      } = mergedClosableInfo.value;
       const $closeIcon = slots.closeIcon
         ? slots.closeIcon?.()
+        : closableCloseIcon !== undefined
+        ? closableCloseIcon
         : props.closeIcon ?? drawerConfig.value.closeIcon;
       return (
         closable && (
-          <button key="closer" onClick={close} aria-label="Close" class={`${prefixCls}-close`}>
+          <button
+            key="closer"
+            onClick={closeDisabled ? undefined : close}
+            aria-label="Close"
+            {...ariaOrDataProps}
+            disabled={closeDisabled || undefined}
+            class={classnames(`${prefixCls}-close`, {
+              [`${prefixCls}-close-end`]: closablePlacement === 'end',
+            })}
+          >
             {$closeIcon === undefined ? <CloseOutlined></CloseOutlined> : $closeIcon}
           </button>
         )
       );
     };
+
+    const renderResizeDragger = (prefixCls: string) => (
+      <div
+        class={classnames(
+          `${prefixCls}-resizable-dragger`,
+          `${prefixCls}-resizable-dragger-${props.placement}`,
+          {
+            [`${prefixCls}-resizable-dragger-dragging`]: isDragging.value,
+          },
+        )}
+        onMousedown={handleResizeMouseDown}
+        onTouchstart={handleResizeTouchStart}
+      />
+    );
 
     const renderBody = (prefixCls: string) => {
       if (destroyClose.value && !props.forceRender && !load.value) {
@@ -385,31 +689,50 @@ const Drawer = defineComponent({
       }
 
       const { bodyStyle, drawerStyle } = props;
+      const bodyContent = (
+        <div
+          key="body"
+          class={[`${prefixCls}-body`, mergedClassNames.value.body]}
+          style={[bodyStyle, mergedStyles.value.body]}
+        >
+          {props.loading ? (
+            <Skeleton
+              active
+              title={false}
+              paragraph={{ rows: 5 }}
+              class={`${prefixCls}-body-skeleton`}
+            />
+          ) : (
+            slots.default?.()
+          )}
+        </div>
+      );
+
+      if (props.resizable) {
+        return (
+          <div
+            ref={setWrapperBodyRef}
+            class={[`${prefixCls}-wrapper-body`, mergedClassNames.value.content]}
+            style={[drawerStyle, mergedStyles.value.content]}
+            aria-labelledby={props.ariaId}
+          >
+            {renderHeader(prefixCls)}
+            {bodyContent}
+            {renderFooter(prefixCls)}
+            {renderResizeDragger(prefixCls)}
+          </div>
+        );
+      }
 
       return (
         <div
-          ref={panelRef}
+          ref={setWrapperBodyRef}
           class={[`${prefixCls}-wrapper-body`, mergedClassNames.value.content]}
           style={[drawerStyle, mergedStyles.value.content]}
           aria-labelledby={props.ariaId}
         >
           {renderHeader(prefixCls)}
-          <div
-            key="body"
-            class={[`${prefixCls}-body`, mergedClassNames.value.body]}
-            style={[bodyStyle, mergedStyles.value.body]}
-          >
-            {props.loading ? (
-              <Skeleton
-                active
-                title={false}
-                paragraph={{ rows: 5 }}
-                class={`${prefixCls}-body-skeleton`}
-              />
-            ) : (
-              slots.default?.()
-            )}
-          </div>
+          {bodyContent}
           {renderFooter(prefixCls)}
         </div>
       );
@@ -434,7 +757,7 @@ const Drawer = defineComponent({
     const drawerClassName = computed(() =>
       classnames(
         {
-          'no-mask': !props.mask,
+          'no-mask': !mergedMaskConfig.value.enabled,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
         props.rootClassName,
@@ -467,6 +790,7 @@ const Drawer = defineComponent({
         ...attrs,
         ...omit(rest, [
           'size',
+          'resizable',
           'closeIcon',
           'closable',
           'destroyOnClose',
@@ -476,6 +800,7 @@ const Drawer = defineComponent({
           'bodyStyle',
           'title',
           'push',
+          'afterOpenChange',
           'onAfterVisibleChange',
           'onClose',
           'onUpdate:visible',
@@ -493,8 +818,11 @@ const Drawer = defineComponent({
         handler: false,
         prefixCls: prefixCls.value,
         open: visible.value,
-        showMask: mask,
-        maskClassName: mergedClassNames.value.mask,
+        showMask: mergedMaskConfig.value.enabled,
+        maskClosable: mergedMaskConfig.value.closable,
+        maskClassName: classnames(mergedClassNames.value.mask, {
+          [`${prefixCls.value}-mask-blur`]: mergedMaskConfig.value.blur,
+        }),
         wrapperClassName: mergedClassNames.value.wrapper,
         maskStyle: { ...mergedStyles.value.mask, ...props.maskStyle },
         placement,

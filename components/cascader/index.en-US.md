@@ -103,3 +103,9 @@ interface Option {
 | ------- | ------------ |
 | blur()  | remove focus |
 | focus() | get focus    |
+
+### Cascader.Panel
+
+> Available since `4.3.0`. Can be used as `<a-cascader-panel>` or `<Cascader.Panel>`.
+
+Renders the cascader menu panel directly without a dropdown popup. Supports `value(v-model)`, `defaultValue`, `options`, `fieldNames`, `multiple`, `changeOnSelect`, `showCheckedStrategy`, `expandTrigger`, `loadData`, `disabled`, `notFoundContent`, `expandIcon`, `loadingIcon`, `direction`, `rootClassName`, `popupMenuColumnStyle`, and `change` event (same API as `Cascader`).

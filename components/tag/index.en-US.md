@@ -17,29 +17,59 @@ Tag for categorizing or markup.
 
 ### Tag
 
-| Property      | Description                        | Type          | Default | Version |
-| ------------- | ---------------------------------- | ------------- | ------- | ------- |
-| bordered      | Whether has border style           | boolean       | `true`  | 4.x     |
-| closable      | Whether the Tag can be closed      | boolean       | `false` |         |
-| closeIcon     | Custom close icon                  | VNode \| slot | -       | 2.0.0   |
-| color         | Color of the Tag                   | string        | -       |         |
-| icon          | Set the icon of tag                | VNode \| slot | -       | 2.0.0   |
-| rootClassName | The class name of the root element | string        | -       | 4.3.0   |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| ~~bordered~~ | Whether has border style, please use `variant="filled"` instead of `bordered={false}` | boolean | `true` | 4.x |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
+| closable | Whether to show close button. Object configures `closeIcon`, `disabled`, and `aria-*` attributes | `boolean \| { closeIcon?: VueNode; disabled?: boolean; 'aria-label'?: string }` | `false` | 4.3.0 |
+| closeIcon | Custom close icon | VueNode \| slot | - | 2.0.0 |
+| color | Color of the Tag | string | - |  |
+| disabled | Whether the tag is disabled | boolean | `false` | 4.3.0 |
+| href | Redirect URL when clicked; renders Tag as an `<a>` element when set | string | - | 4.3.0 |
+| icon | Set the icon of tag | VueNode \| slot | - | 2.0.0 |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
+| target | Same as `target` attribute of `<a>`, works when `href` is specified | string | - | 4.3.0 |
+| variant | Variant of the tag | `'filled' \| 'solid' \| 'outlined'` | `'outlined'` | 4.3.0 |
+
+> Supported `SemanticDOM` keys: `root` \| `icon` \| `content` \| `close`.
 
 ### Tag Events
 
-| Events Name | Description                          | Arguments   |
-| ----------- | ------------------------------------ | ----------- |
-| close       | Callback executed when tag is closed | (e) => void |
+| Events Name | Description | Arguments |
+| --- | --- | --- |
+| close | Callback executed when tag is closed (can be prevented via `e.preventDefault()`) | (e: MouseEvent) => void |
 
 ### Tag.CheckableTag
 
-| Property         | Description           | Type    | Default |
-| ---------------- | --------------------- | ------- | ------- |
-| checked(v-model) | Checked status of Tag | boolean | `false` |
+| Property         | Description           | Type            | Default | Version |
+| ---------------- | --------------------- | --------------- | ------- | ------- |
+| checked(v-model) | Checked status of Tag | boolean         | `false` |         |
+| disabled         | Disable check/uncheck | boolean         | `false` | 4.3.0   |
+| icon             | Set the icon of tag   | VueNode \| slot | -       | 4.3.0   |
 
 ### Tag.CheckableTag Events
 
-| Events Name | Description                                     | Arguments         |
-| ----------- | ----------------------------------------------- | ----------------- |
-| change      | Callback executed when Tag is checked/unchecked | (checked) => void |
+| Events Name | Description                                     | Arguments                  |
+| ----------- | ----------------------------------------------- | -------------------------- |
+| change      | Callback executed when Tag is checked/unchecked | (checked: boolean) => void |
+
+### Tag.CheckableTagGroup
+
+Selectable tag group (registered globally as `<a-checkable-tag-group>`).
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure (`root` \| `item`). Supports object or function | `Record<'root' \| 'item', string> \| (info: { props }) => Record<'root' \| 'item', string>` | - | 4.3.0 |
+| defaultValue | Initial checked value(s) | `string \| number \| Array<string \| number> \| null` | - | 4.3.0 |
+| disabled | Disable all options | boolean | `false` | 4.3.0 |
+| multiple | Enable multiple selection mode | boolean | `false` | 4.3.0 |
+| options | Option list. Object options support `className`, `style`, `disabled`, `icon` | `Array<{ value: string \| number; label: VueNode; className?: string; style?: CSSProperties; disabled?: boolean; icon?: VueNode } \| string \| number>` | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure (`root` \| `item`). Supports object or function | `Record<'root' \| 'item', CSSProperties> \| (info: { props }) => Record<'root' \| 'item', CSSProperties>` | - | 4.3.0 |
+| value(v-model) | Controlled value of checked tag(s) | `string \| number \| Array<string \| number> \| null` | - | 4.3.0 |
+
+### Tag.CheckableTagGroup Events
+
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| change | Callback when checked tag(s) change | `(value: string \| number \| Array<string \| number> \| null) => void` | 4.3.0 |

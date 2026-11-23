@@ -18,9 +18,12 @@ import type { FocusEventHandler, KeyboardEventHandler } from '../_util/EventInte
 
 import useStyle from './style';
 
+export type RateSize = 'small' | 'middle' | 'medium' | 'large';
+
 export const rateProps = () => ({
   prefixCls: String,
   rootClassName: String,
+  size: String as PropType<RateSize>,
   count: Number,
   value: Number,
   allowHalf: { type: Boolean, default: undefined },
@@ -56,7 +59,7 @@ const Rate = defineComponent({
   }),
   // emits: ['hoverChange', 'update:value', 'change', 'focus', 'blur', 'keydown'],
   setup(props, { slots, attrs, emit, expose }) {
-    const { prefixCls, direction } = useConfigInject('rate', props);
+    const { prefixCls, direction, size } = useConfigInject('rate', props);
     const { className: contextClassName, style: contextStyle } = useComponentConfig('rate');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const formItemContext = useInjectFormItemContext();
@@ -237,6 +240,8 @@ const Rate = defineComponent({
         {
           [hashId.value]: true,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+          [`${prefixCls.value}-small`]: size.value === 'small',
+          [`${prefixCls.value}-large`]: size.value === 'large',
         },
       );
       return wrapSSR(

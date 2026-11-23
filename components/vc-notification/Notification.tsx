@@ -1,6 +1,6 @@
 import { getTransitionGroupProps } from '../_util/transition';
 import type { Key, VueNode } from '../_util/type';
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, Ref } from 'vue';
 import {
   toRaw,
   shallowRef,
@@ -8,6 +8,8 @@ import {
   computed,
   defineComponent,
   ref,
+  unref,
+  watch,
   TransitionGroup,
   onMounted,
   render as vueRender,
@@ -59,6 +61,14 @@ export interface NotificationInstance {
   component: Notification;
 }
 
+export interface StackConfig {
+  threshold?: number;
+  offset?: number;
+  gap?: number;
+}
+
+export type StackType = boolean | StackConfig;
+
 export interface NotificationProps {
   prefixCls?: string;
   transitionName?: string;
@@ -66,6 +76,7 @@ export interface NotificationProps {
   maxCount?: number;
   closeIcon?: any;
   hashId?: string;
+  stack?: StackType | Ref<StackType>;
 }
 
 type NotificationState = {
@@ -75,13 +86,38 @@ type NotificationState = {
   holderCallback?: HolderReadyCallback;
 }[];
 
+const DEFAULT_STACK_THRESHOLD = 3;
+
+const resolveStackConfig = (stack?: StackType) => {
+  if (!stack) {
+    return { enabled: false, threshold: DEFAULT_STACK_THRESHOLD };
+  }
+  if (typeof stack === 'object') {
+    return {
+      enabled: true,
+      threshold: stack.threshold ?? DEFAULT_STACK_THRESHOLD,
+    };
+  }
+  return { enabled: true, threshold: DEFAULT_STACK_THRESHOLD };
+};
+
 const Notification = defineComponent({
   name: 'Notification',
   inheritAttrs: false,
-  props: ['prefixCls', 'transitionName', 'animation', 'maxCount', 'closeIcon', 'hashId'],
+  props: ['prefixCls', 'transitionName', 'animation', 'maxCount', 'closeIcon', 'hashId', 'stack'],
   setup(props, { attrs, expose, slots }) {
     const hookRefs = new Map<Key, HTMLDivElement>();
     const notices = ref<NotificationState>([]);
+    const expanded = ref(false);
+    const stackConfig = computed(() => resolveStackConfig(unref(props.stack)));
+    const isStacked = computed(
+      () => stackConfig.value.enabled && notices.value.length >= stackConfig.value.threshold,
+    );
+    watch(isStacked, val => {
+      if (!val) {
+        expanded.value = false;
+      }
+    });
     const transitionProps = computed(() => {
       const { prefixCls, animation = 'fade' } = props;
       let name = props.transitionName;
@@ -140,16 +176,27 @@ const Notification = defineComponent({
     });
     return () => {
       const { prefixCls, closeIcon = slots.closeIcon?.({ prefixCls }) } = props;
+      const stacked = isStacked.value;
+      const total = notices.value.length;
       const noticeNodes = notices.value.map(({ notice, holderCallback }, index) => {
-        const updateMark = index === notices.value.length - 1 ? notice.updateMark : undefined;
+        const updateMark = index === total - 1 ? notice.updateMark : undefined;
         const { key, userPassKey } = notice;
+        const stackIndex = total - 1 - index;
 
         const { content } = notice;
+        const noticeStyle = stacked
+          ? {
+              ...(notice.style || {}),
+              '--notification-index': stackIndex,
+              zIndex: total - stackIndex,
+            }
+          : notice.style;
         const noticeProps = {
           prefixCls,
           closeIcon: typeof closeIcon === 'function' ? closeIcon({ prefixCls }) : closeIcon,
           ...(notice as any),
           ...notice.props,
+          style: noticeStyle,
           key,
           noticeKey: userPassKey || key,
           updateMark,
@@ -180,7 +227,12 @@ const Notification = defineComponent({
           );
         }
         return (
-          <Notice {...noticeProps} class={classNames(noticeProps.class, props.hashId)}>
+          <Notice
+            {...noticeProps}
+            class={classNames(noticeProps.class, props.hashId, {
+              [`${prefixCls}-notice-stack-hidden`]: stacked && stackIndex >= 3,
+            })}
+          >
             {typeof content === 'function' ? content({ prefixCls }) : content}
           </Notice>
         );
@@ -189,6 +241,8 @@ const Notification = defineComponent({
         [prefixCls]: 1,
         [attrs.class as string]: !!attrs.class,
         [props.hashId]: true,
+        [`${prefixCls}-stack`]: stacked,
+        [`${prefixCls}-stack-expanded`]: stacked && expanded.value,
       };
       return (
         <div
@@ -199,6 +253,16 @@ const Notification = defineComponent({
               left: '50%',
             }
           }
+          onMouseenter={() => {
+            if (isStacked.value) {
+              expanded.value = true;
+            }
+          }}
+          onMouseleave={() => {
+            if (expanded.value) {
+              expanded.value = false;
+            }
+          }}
         >
           <TransitionGroup tag="div" {...transitionProps.value}>
             {noticeNodes}

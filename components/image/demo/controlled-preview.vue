@@ -8,23 +8,23 @@ title:
 
 ## zh-CN
 
-可以使预览受控。
+可以使用 `open` 与 `onOpenChange` 使预览受控（同时兼容旧版 `visible` / `onVisibleChange`）。
 
 ## en-US
 
-You can make preview controlled.
+You can make preview controlled via `open` and `onOpenChange` (backwards-compatible with `visible` / `onVisibleChange`).
 
 </docs>
 
 <template>
   <div>
-    <a-button type="primary" @click="() => setVisible(true)">show image preview</a-button>
+    <a-button type="primary" @click="() => setOpen(true)">show image preview</a-button>
     <a-image
       :width="200"
       :style="{ display: 'none' }"
       :preview="{
-        visible,
-        onVisibleChange: setVisible,
+        open,
+        onOpenChange: setOpen,
       }"
       src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
     />
@@ -32,8 +32,8 @@ You can make preview controlled.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-const visible = ref<boolean>(false);
-const setVisible = (value): void => {
-  visible.value = value;
+const open = ref<boolean>(false);
+const setOpen = (value: boolean): void => {
+  open.value = value;
 };
 </script>

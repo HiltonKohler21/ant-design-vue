@@ -1,9 +1,51 @@
-import { unit } from '../../_util/cssinjs';
+import { Keyframes, unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
-import { Keyframes } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { genPresetColor, resetComponent } from '../../style';
+
+export interface ComponentToken {
+  /**
+   * @desc 徽标 z-index
+   * @descEN z-index of badge
+   */
+  indicatorZIndex: number | string;
+  /**
+   * @desc 徽标高度
+   * @descEN Height of badge
+   */
+  indicatorHeight: number;
+  /**
+   * @desc 小号徽标高度
+   * @descEN Height of small badge
+   */
+  indicatorHeightSM: number;
+  /**
+   * @desc 点状徽标尺寸
+   * @descEN Size of dot badge
+   */
+  dotSize: number;
+  /**
+   * @desc 徽标文本尺寸
+   * @descEN Font size of badge text
+   */
+  textFontSize: number;
+  /**
+   * @desc 小号徽标文本尺寸
+   * @descEN Font size of small badge text
+   */
+  textFontSizeSM: number;
+  /**
+   * @desc 徽标文本粗细
+   * @descEN Font weight of badge text
+   */
+  textFontWeight: number | string;
+  /**
+   * @desc 状态徽标尺寸
+   * @descEN Size of status badge
+   */
+  statusSize: number;
+}
 
 interface BadgeToken extends FullToken<'Badge'> {
   badgeFontHeight: number;
@@ -11,7 +53,7 @@ interface BadgeToken extends FullToken<'Badge'> {
   badgeHeight: number;
   badgeHeightSm: number;
   badgeTextColor: string;
-  badgeFontWeight: string;
+  badgeFontWeight: number | string;
   badgeFontSize: number;
   badgeColor: string;
   badgeColorHover: string;
@@ -335,47 +377,61 @@ const genSharedBadgeStyle: GenerateStyle<BadgeToken> = (token: BadgeToken): CSSO
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Badge', token => {
-  const { fontSize, fontSizeSM, marginXS, colorBorderBg } = token;
+export default genComponentStyleHook(
+  'Badge',
+  token => {
+    const { marginXS, colorBorderBg } = token;
 
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const badgeFontHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
-  const badgeShadowSize = rawToken.lineWidth;
-  const badgeZIndex = 'auto';
-  const badgeHeight = badgeFontHeight - 2 * badgeShadowSize;
-  const badgeTextColor = token.colorBgContainer;
-  const badgeFontWeight = 'normal';
-  const badgeFontSize = fontSizeSM;
-  const badgeColor = token.colorError;
-  const badgeColorHover = token.colorErrorHover;
-  const badgeHeightSm = fontSize;
-  const badgeDotSize = rawToken.fontSizeSM / 2;
-  const badgeFontSizeSm = fontSizeSM;
-  const badgeStatusSize = rawToken.fontSizeSM / 2;
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const badgeFontHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
+    const badgeShadowSize = rawToken.lineWidth;
+    const badgeTextColor = token.colorBgContainer;
+    const badgeColor = token.colorError;
+    const badgeColorHover = token.colorErrorHover;
 
-  const badgeToken = mergeToken<BadgeToken>(token, {
-    badgeFontHeight,
-    badgeShadowSize,
-    badgeZIndex,
-    badgeHeight,
-    badgeTextColor,
-    badgeFontWeight,
-    badgeFontSize,
-    badgeColor,
-    badgeColorHover,
-    badgeShadowColor: colorBorderBg,
-    badgeHeightSm,
-    badgeDotSize,
-    badgeFontSizeSm,
-    badgeStatusSize,
-    badgeProcessingDuration: '1.2s',
-    badgeRibbonOffset: marginXS,
+    const badgeToken = mergeToken<BadgeToken>(token, {
+      badgeFontHeight,
+      badgeShadowSize,
+      badgeZIndex: token.indicatorZIndex,
+      badgeHeight: token.indicatorHeight,
+      badgeTextColor,
+      badgeFontWeight: token.textFontWeight,
+      badgeFontSize: token.textFontSize,
+      badgeColor,
+      badgeColorHover,
+      badgeShadowColor: colorBorderBg,
+      badgeHeightSm: token.indicatorHeightSM,
+      badgeDotSize: token.dotSize,
+      badgeFontSizeSm: token.textFontSizeSM,
+      badgeStatusSize: token.statusSize,
+      badgeProcessingDuration: '1.2s',
+      badgeRibbonOffset: marginXS,
 
-    // Follow token just by Design. Not related with token
-    badgeRibbonCornerTransform: 'scaleY(0.75)',
-    badgeRibbonCornerFilter: `brightness(75%)`,
-  });
+      // Follow token just by Design. Not related with token
+      badgeRibbonCornerTransform: 'scaleY(0.75)',
+      badgeRibbonCornerFilter: `brightness(75%)`,
+    });
 
-  return [genSharedBadgeStyle(badgeToken)];
-});
+    return [genSharedBadgeStyle(badgeToken)];
+  },
+  token => {
+    const { fontSize, lineHeight, fontSizeSM, lineWidth } = token;
+    return {
+      indicatorZIndex: 'auto',
+      indicatorHeight: Math.round(fontSize * lineHeight) - 2 * lineWidth,
+      indicatorHeightSM: fontSize,
+      dotSize: fontSizeSM / 2,
+      textFontSize: fontSizeSM,
+      textFontSizeSM: fontSizeSM,
+      textFontWeight: 'normal',
+      statusSize: fontSizeSM / 2,
+    };
+  },
+  {
+    unitless: {
+      indicatorZIndex: true,
+      textFontWeight: true,
+    },
+  },
+);

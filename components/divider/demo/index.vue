@@ -7,6 +7,7 @@
     <size />
     <vertical />
     <customize-style />
+    <style-class />
   </demo-sort>
 </template>
 
@@ -18,6 +19,7 @@ import Variant from './variant.vue';
 import Size from './size.vue';
 import Vertical from './vertical.vue';
 import CustomizeStyle from './customize-style.vue';
+import StyleClass from './style-class.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -34,6 +36,7 @@ export default defineComponent({
     Size,
     Vertical,
     CustomizeStyle,
+    StyleClass,
   },
   setup() {
     return {};

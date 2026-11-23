@@ -26,9 +26,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*nF6hQpM0XtEAAA
 | type | 类型，影响底色与文字颜色 | `default` \| `primary` | `default` |  |
 | open | 打开引导 | `boolean` | - |  |
 | current(v-model) | 当前处于哪一步 | `number` | - |  |
+| keyboard | 是否启用键盘快捷行为（方向左/右切换步骤，Escape 关闭引导） | `boolean` | `true` | 4.3.0 |
 | rootClassName | 根节点 className | `string` | - | 4.3.0 |
 | scrollIntoViewOptions | 是否支持当前元素滚动到视窗内，也可传入配置指定滚动视窗的相关参数 | `boolean` \| `ScrollIntoViewOptions` | `true` |  |
-| indicatorsRender | 自定义指示器 | `v-slot:indicatorsRender="{current, total}"` | - |  |
+| indicatorsRender | 自定义指示器 | `(current: number, total: number) => VueNode` \| `v-slot:indicatorsRender="{current, total}"` | - | 4.3.0 |
 | zIndex | Tour 的层级 | `number` | `1001` |  |
 
 ### Tour events

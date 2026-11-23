@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { h } from 'vue';
+import { h, nextTick } from 'vue';
 import MockDate from 'mockdate';
 import Descriptions from '..';
 import ConfigProvider from '../../config-provider';
@@ -408,5 +408,165 @@ describe('Descriptions', () => {
     expect(wrapper.find('.ant-descriptions-item-content').element.style.color).toBe(
       'rgb(0, 100, 0)',
     );
+  });
+
+  describe('items prop', () => {
+    it('renders config-driven items with label, children, span, class, style, labelStyle, contentStyle', () => {
+      const wrapper = mount(Descriptions, {
+        props: {
+          title: 'User Info',
+          column: 3,
+          items: [
+            {
+              key: '1',
+              label: 'UserName',
+              children: 'Zhou Maomao',
+              class: 'user-item',
+              style: { backgroundColor: 'rgb(240, 240, 240)' },
+              labelStyle: { fontWeight: 'bold' },
+              contentStyle: { color: 'rgb(1, 2, 3)' },
+            },
+            {
+              key: '2',
+              label: 'Telephone',
+              children: '1810000000',
+              span: 2,
+            },
+            {
+              key: '3',
+              label: 'Address',
+              children: 'Hangzhou, Zhejiang',
+            },
+          ],
+        },
+      });
+
+      const rows = wrapper.findAll('tr.ant-descriptions-row');
+      expect(rows).toHaveLength(2);
+      const firstRowCells = rows[0].findAll('td');
+      expect(firstRowCells).toHaveLength(2);
+      expect(firstRowCells[0].classes()).toContain('user-item');
+      expect(firstRowCells[0].attributes('colspan')).toBe('1');
+      expect(firstRowCells[0].element.style.backgroundColor).toBe('rgb(240, 240, 240)');
+      expect(firstRowCells[0].find('.ant-descriptions-item-label').element.style.fontWeight).toBe(
+        'bold',
+      );
+      expect(firstRowCells[0].find('.ant-descriptions-item-content').element.style.color).toBe(
+        'rgb(1, 2, 3)',
+      );
+      expect(firstRowCells[1].attributes('colspan')).toBe('2');
+
+      const secondRowCells = rows[1].findAll('td');
+      expect(secondRowCells).toHaveLength(1);
+      expect(secondRowCells[0].attributes('colspan')).toBe('3');
+      expect(secondRowCells[0].find('.ant-descriptions-item-content').text()).toBe(
+        'Hangzhou, Zhejiang',
+      );
+    });
+
+    it('supports span="filled" to fill remaining columns of the current row', () => {
+      const wrapper = mount(Descriptions, {
+        props: {
+          column: 3,
+          items: [
+            { key: '1', label: 'A', children: '1', span: 1 },
+            { key: '2', label: 'B', children: '2', span: 'filled' },
+            { key: '3', label: 'C', children: '3' },
+          ],
+        },
+      });
+
+      const rows = wrapper.findAll('tr.ant-descriptions-row');
+      expect(rows).toHaveLength(2);
+      const row0Tds = rows[0].findAll('td');
+      expect(row0Tds).toHaveLength(2);
+      expect(row0Tds[0].attributes('colspan')).toBe('1');
+      expect(row0Tds[1].attributes('colspan')).toBe('2');
+
+      const row1Tds = rows[1].findAll('td');
+      expect(row1Tds).toHaveLength(1);
+      expect(row1Tds[0].attributes('colspan')).toBe('3');
+      expect(errorSpy).not.toHaveBeenCalled();
+    });
+
+    it('supports responsive span object on items', async () => {
+      const wrapper = mount(Descriptions, {
+        props: {
+          column: 4,
+          items: [
+            { key: '1', label: 'A', children: '1', span: { xs: 2, sm: 3, md: 4 } },
+            { key: '2', label: 'B', children: '2' },
+          ],
+        },
+        attachTo: 'body',
+      });
+
+      await asyncExpect(() => {
+        const tds = wrapper.findAll('td');
+        expect(tds).toHaveLength(2);
+        // In jsdom matchMedia defaults to xs matching
+        expect(parseInt(tds[0].attributes('colspan'), 10)).toBe(2);
+        expect(parseInt(tds[1].attributes('colspan'), 10)).toBe(2);
+      }, 50);
+
+      wrapper.unmount();
+    });
+
+    it('supports items with bordered and vertical layouts', () => {
+      const wrapper = mount(Descriptions, {
+        props: {
+          bordered: true,
+          layout: 'vertical',
+          column: 2,
+          items: [
+            { key: '1', label: 'Product', children: 'Cloud Database' },
+            { key: '2', label: 'Billing', children: 'Prepaid' },
+          ],
+        },
+      });
+
+      const rows = wrapper.findAll('tr.ant-descriptions-row');
+      expect(rows).toHaveLength(2);
+      expect(rows[0].findAll('th.ant-descriptions-item-label')).toHaveLength(2);
+      expect(rows[1].findAll('td.ant-descriptions-item-content')).toHaveLength(2);
+    });
+
+    it('generates valid cssVar styles and component tokens without illegal CSS', async () => {
+      document.head.innerHTML = '';
+      const wrapper = mount({
+        render() {
+          return (
+            <ConfigProvider
+              theme={{
+                cssVar: true,
+                components: {
+                  Descriptions: {
+                    labelBg: '#fafafa',
+                    itemPaddingEnd: 20,
+                  },
+                },
+              }}
+            >
+              <Descriptions
+                bordered
+                title="Info"
+                extra="More"
+                items={[{ key: '1', label: 'L', children: 'C' }]}
+              />
+            </ConfigProvider>
+          );
+        },
+      });
+      await nextTick();
+      const css = Array.from(document.querySelectorAll('style'))
+        .map(s => s.innerHTML)
+        .join('\n');
+      expect(css).toContain('--ant-descriptions-label-bg:#fafafa');
+      expect(css).toContain('--ant-descriptions-item-padding-end:20px');
+      expect(css).not.toMatch(/NaN|undefined|\[object Object\]/);
+      expect(css).not.toMatch(/(?<![\w)])-var\(--ant-/);
+      expect(css).not.toMatch(/var\(--ant-[a-z0-9-]+\)(?=[A-Za-z0-9.-]+)/);
+      wrapper.unmount();
+    });
   });
 });

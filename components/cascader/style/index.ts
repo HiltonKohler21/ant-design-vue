@@ -2,7 +2,7 @@ import { unit } from '../../_util/cssinjs';
 import { getStyle as getCheckboxStyle } from '../../checkbox/style';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook } from '../../theme/internal';
-import { textEllipsis } from '../../style';
+import { resetComponent, textEllipsis } from '../../style';
 import { genCompactItemStyle } from '../../style/compact-item';
 
 export interface ComponentToken {
@@ -38,17 +38,12 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
       },
     },
     // =====================================================
-    // ==                      Popup                      ==
+    // ==                 Popup & Panel                   ==
     // =====================================================
     {
-      [`${componentCls}-dropdown`]: [
+      [`${componentCls}-dropdown, ${componentCls}-panel`]: [
         // ==================== Checkbox ====================
         getCheckboxStyle(`${prefixCls}-checkbox`, token),
-        {
-          [`&${antCls}-select-dropdown`]: {
-            padding: 0,
-          },
-        },
         {
           [componentCls]: {
             // ================== Checkbox ==================
@@ -145,11 +140,43 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
         },
       ],
     },
+    {
+      [`${componentCls}-dropdown`]: {
+        [`&${antCls}-select-dropdown`]: {
+          padding: 0,
+        },
+      },
+    },
+    // =====================================================
+    // ==                      Panel                      ==
+    // =====================================================
+    {
+      [`${componentCls}-panel`]: {
+        ...resetComponent(token),
+        display: 'inline-flex',
+        backgroundColor: token.colorBgContainer,
+        border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
+        borderRadius: token.borderRadiusLG,
+        overflowX: 'auto',
+        maxWidth: '100%',
+
+        [`${componentCls}-menus`]: {
+          alignItems: 'stretch',
+        },
+        [`${componentCls}-menu`]: {
+          height: 'auto',
+        },
+
+        '&-empty': {
+          padding: token.paddingXXS,
+        },
+      },
+    },
     // =====================================================
     // ==                       RTL                       ==
     // =====================================================
     {
-      [`${componentCls}-dropdown-rtl`]: {
+      [`${componentCls}-dropdown-rtl, ${componentCls}-panel-rtl`]: {
         direction: 'rtl',
       },
     },

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'vue';
 import type { Key, VueNode } from '../../_util/type';
 import type { TabPaneProps } from './TabPanelList/TabPane';
 
@@ -13,6 +14,24 @@ export interface TabOffset {
 export type TabOffsetMap = Map<Key, TabOffset>;
 
 export type TabPosition = 'left' | 'right' | 'top' | 'bottom';
+
+export type TabPlacement = 'top' | 'right' | 'bottom' | 'left' | 'start' | 'end';
+
+export interface MoreProps {
+  icon?: VueNode;
+  trigger?: ('click' | 'hover' | 'contextmenu')[] | 'click' | 'hover' | 'contextmenu';
+  overlayClassName?: string;
+  overlayStyle?: CSSProperties;
+  transitionName?: string;
+  open?: boolean;
+  /** @deprecated Please use `open` instead */
+  visible?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** @deprecated Please use `onOpenChange` instead */
+  onVisibleChange?: (open: boolean) => void;
+  getPopupContainer?: (triggerNode?: HTMLElement) => HTMLElement;
+  [key: string]: any;
+}
 
 export interface Tab extends TabPaneProps {
   key: Key;

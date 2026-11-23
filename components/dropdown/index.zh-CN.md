@@ -24,6 +24,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5qm4S4Zgh2QAAA
 | --- | --- | --- | --- | --- |
 | align | 该值将合并到 placement 的配置中，设置参考 [dom-align](https://github.com/yiminghe/dom-align) | Object | - |  |
 | arrow | 下拉框箭头是否显示 | boolean \| { pointAtCenter: boolean } | false | 3.3.0 |
+| autoAdjustOverflow | 下拉框被遮挡时自动调整位置 | boolean \| { adjustX?: 0 \| 1; adjustY?: 0 \| 1 } | true | 4.3.0 |
 | destroyOnHidden | 关闭后是否销毁 Dropdown（替代 `destroyPopupOnHide`） | boolean | false | 4.3.0 |
 | ~~destroyPopupOnHide~~ | 关闭后是否销毁 Dropdown（已废弃，请使用 `destroyOnHidden`） | boolean | false | 3.0 |
 | disabled | 菜单是否禁用 | boolean | - |  |

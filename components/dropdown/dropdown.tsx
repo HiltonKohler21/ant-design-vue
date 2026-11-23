@@ -27,6 +27,7 @@ const Dropdown = defineComponent({
     mouseLeaveDelay: 0.1,
     placement: 'bottomLeft',
     trigger: 'hover',
+    autoAdjustOverflow: true,
   }),
   // emits: ['visibleChange', 'update:visible'],
   slots: Object as CustomSlotsType<{
@@ -187,7 +188,7 @@ const Dropdown = defineComponent({
 
       const builtinPlacements = getPlacements({
         arrowPointAtCenter: typeof arrow === 'object' && arrow.pointAtCenter,
-        autoAdjustOverflow: true,
+        autoAdjustOverflow: props.autoAdjustOverflow ?? true,
       });
       const dropdownProps = omit(
         {
@@ -208,7 +209,7 @@ const Dropdown = defineComponent({
           destroyOnHidden: undefined,
           rootClassName: props.rootClassName,
         },
-        ['overlay', 'onUpdate:visible'],
+        ['overlay', 'onUpdate:visible', 'autoAdjustOverflow'],
       );
       return wrapSSR(
         <RcDropdown {...dropdownProps} v-slots={{ overlay: renderOverlay }}>

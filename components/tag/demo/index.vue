@@ -2,7 +2,9 @@
   <demo-sort>
     <Basic />
     <Checkable />
+    <CheckableGroup />
     <Colorful />
+    <Variant />
     <Control />
     <HotTags />
     <Icon />
@@ -16,7 +18,9 @@
 <script lang="ts">
 import Basic from './basic.vue';
 import Checkable from './checkable.vue';
+import CheckableGroup from './checkable-group.vue';
 import Colorful from './colorful.vue';
+import Variant from './variant.vue';
 import Control from './control.vue';
 import HotTags from './hot-tags.vue';
 import Icon from './icon.vue';
@@ -34,7 +38,9 @@ export default defineComponent({
   components: {
     Basic,
     Checkable,
+    CheckableGroup,
     Colorful,
+    Variant,
     Control,
     HotTags,
     Icon,

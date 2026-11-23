@@ -24,6 +24,7 @@ Rate component.
 | count | star count | number | 5 |  |
 | disabled | read only, unable to interact | boolean | false |  |
 | rootClassName | Root class name | string | - | 4.3.0 |
+| size | Size of Rate | `'small'` \| `'middle'` \| `'medium'` \| `'large'` | `'middle'` | 4.3.0 |
 | tooltips | Customize tooltip by each character | string[] | - |  |
 | value(v-model) | current value | number | - |  |
 

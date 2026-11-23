@@ -19,18 +19,37 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Tr90QKrE_LcAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| dropdownIcon | 自定义下拉菜单图标 | VNode \| slot | `<DownOutlined />` | 4.3.0 |
 | itemRender | 自定义链接函数，和 vue-router 配置使用， 也可使用 #itemRender="props" | ({route, params, routes, paths}) => vNode | - |  |
+| items | 路由栈信息 | [ItemType\[\]](#itemtype) | - | 4.3.0 |
 | params | 路由的参数 | object | - |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
-| routes | router 的路由栈信息 | [routes\[\]](#routes) | - |  |
+| ~~routes~~ | router 的路由栈信息（已废弃，请使用 `items` 代替） | [routes\[\]](#routes) | - |  |
 | separator | 分隔符自定义 | string \| slot | `'/'` |  |
+
+### ItemType
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| class | 自定义类名 | string | - | 4.3.0 |
+| dropdownProps | 弹出下拉菜单的自定义配置 | [Dropdown](/components/dropdown-cn/#api) | - | 4.3.0 |
+| href | 链接的目的地，不能和 `path` 共用 | string | - | 4.3.0 |
+| key | 唯一标识 | string \| number | - | 4.3.0 |
+| menu | 菜单配置项 | [MenuProps](/components/menu-cn/#api) | - | 4.3.0 |
+| onClick | 单击事件 | (e: MouseEvent) => void | - | 4.3.0 |
+| path | 拼接路径，每一层都会拼接前一个 `path` 信息。不能和 `href` 共用 | string | - | 4.3.0 |
+| separator | 自定义分隔符（当 `type` 为 `'separator'` 时生效） | string \| VNode | `'/'` | 4.3.0 |
+| title | 名称 | string \| VNode | - | 4.3.0 |
+| type | 项类型，设置为 `'separator'` 时渲染自定义分隔符 | `'separator'` | - | 4.3.0 |
 
 ### Breadcrumb.Item
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| dropdownIcon | 自定义下拉菜单图标 | VNode \| slot | `<DownOutlined />` | 4.3.0 |
 | dropdownProps | 弹出下拉菜单的自定义配置 | [Dropdown](/components/dropdown-cn/#api) | - | 4.3.0 |
 | href | 链接的目的地 | string | - | 1.5.0 |
+| menu | 下拉菜单配置项 | [MenuProps](/components/menu-cn/#api) | - | 4.3.0 |
 | overlay | 下拉菜单的内容 | [Menu](/components/menu-cn) \| () => Menu | - | 1.5.0 |
 
 #### 事件

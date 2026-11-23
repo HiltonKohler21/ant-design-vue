@@ -20,6 +20,7 @@ When a numeric value needs to be provided.
 | addonBefore | The label text displayed before (on the left side of) the input field | slot | - | 3.0 |
 | autofocus | Get focus when component mounted | boolean | false |  |
 | ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true | 3.0 |
+| changeOnWheel | Allows to change value by wheel | boolean | false | 4.3.0 |
 | controls | Whether to show `+-` controls | boolean | true | 3.0 |
 | decimalSeparator | Decimal separator | string | - |  |
 | defaultValue | Initial value | number | - |  |
@@ -38,6 +39,7 @@ When a numeric value needs to be provided.
 | status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
 | step | The number to which the current value is increased or decreased. It can be an integer or decimal. | number \| string | 1 |  |
 | stringMode | Set value as string to support high precision decimals. Will return string value by `change` | boolean | false | 3.0 |
+| suffix | The suffix icon for the Input | string \| slot | - | 4.3.0 |
 | upIcon | Custom up icon | slot | `<UpOutlined />` | 3.3.0 |
 | value(v-model) | Current value | number | - |  |
 | variant | Variants of InputNumber | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |

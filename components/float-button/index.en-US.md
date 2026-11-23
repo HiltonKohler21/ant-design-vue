@@ -23,7 +23,8 @@ FloatButton. Available since `4.0.0`.
 | --- | --- | --- | --- | --- |
 | backTop | Whether to scroll back to top when clicked | boolean | false | 4.3.0 |
 | badge | Attach Badge to FloatButton. `status` and other props related are not supported. | [BadgeProps](/components/badge#api) | - |  |
-| description | Text and other | string \| slot | - |  |
+| content | Text and other (replaces `description`) | string \| slot | - | 4.3.0 |
+| ~~description~~ | Text and other (deprecated, please use `content` instead) | string \| slot | - |  |
 | disabled | Disabled state of button | boolean | false | 4.3.0 |
 | href | The target of hyperlink | string | - |  |
 | htmlType | Set the original html `type` of `button`, see: [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-type) | `'submit'` \| `'reset'` \| `'button'` | `'button'` | 4.3.0 |
@@ -47,6 +48,7 @@ FloatButton. Available since `4.0.0`.
 | closeIcon | Customize close button icon | slot | `<CloseOutlined />` |  |
 | items | Config-based list of child FloatButtons | [FloatButtonProps](#common-api)\[] | - | 4.3.0 |
 | open(v-model) | Whether the menu is visible or not | boolean | - |  |
+| placement | Customize menu animation placement | `top` \| `right` \| `bottom` \| `left` | `top` | 4.3.0 |
 | shape | Setting button shape of children | `circle` \| `square` | `circle` |  |
 | trigger | Which action can trigger menu open/close | `click` \| `hover` | - |  |
 

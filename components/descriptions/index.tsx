@@ -27,14 +27,30 @@ import { cloneElement } from '../_util/vnode';
 import { flattenChildren } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
-import type { CustomSlotsType } from '../_util/type';
+import type { CustomSlotsType, Key, VueNode } from '../_util/type';
 import type { DescriptionsSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import useStyle from './style';
+
+export type DescriptionsItemSpan = number | 'filled' | Partial<Record<Breakpoint, number>>;
+
+export interface DescriptionsItemType {
+  key?: Key;
+  label?: VueNode;
+  children?: VueNode;
+  span?: DescriptionsItemSpan;
+  labelStyle?: CSSProperties;
+  contentStyle?: CSSProperties;
+  class?: any;
+  className?: string;
+  style?: CSSProperties;
+  classNames?: SemanticNames<'label' | 'content'>;
+  styles?: SemanticStylesMap<'label' | 'content'>;
+}
 
 export const DescriptionsItemProps = {
   prefixCls: String,
   label: PropTypes.any,
-  span: Number,
+  span: [Number, String, Object] as PropType<DescriptionsItemSpan>,
 };
 
 const descriptionsItemProp = () => ({
@@ -50,7 +66,10 @@ const descriptionsItemProp = () => ({
     type: Object as PropType<SemanticStylesMap<'label' | 'content'>>,
     default: undefined,
   },
-  span: { type: Number, default: 1 },
+  span: {
+    type: [Number, String, Object] as PropType<DescriptionsItemSpan>,
+    default: 1 as DescriptionsItemSpan,
+  },
 });
 
 export type DescriptionsItemProp = Partial<
@@ -110,28 +129,63 @@ function getFilledItem(node: VNode, rowRestCol: number, span?: number): VNode {
   return clone;
 }
 
-function getRows(children: VNode[], column: number) {
+function resolveItemSpan(
+  span: DescriptionsItemSpan | undefined,
+  screens: ScreenMap,
+): { span?: number; filled?: boolean } {
+  if (span === 'filled') {
+    return { filled: true };
+  }
+  if (typeof span === 'number') {
+    return { span };
+  }
+  if (span && typeof span === 'object') {
+    for (let i = 0; i < responsiveArray.length; i++) {
+      const breakpoint: Breakpoint = responsiveArray[i];
+      if (screens[breakpoint] && span[breakpoint] !== undefined) {
+        return { span: span[breakpoint] };
+      }
+    }
+    return { span: undefined };
+  }
+  return { span: undefined };
+}
+
+function getRows(children: VNode[], column: number, screens: ScreenMap) {
   const childNodes = flattenChildren(children);
   const rows: VNode[][] = [];
 
   let tmpRow: VNode[] = [];
   let rowRestCol = column;
   childNodes.forEach((node, index) => {
-    const span: number = node.props?.span;
+    const rawSpan: DescriptionsItemSpan | undefined = node.props?.span;
+    const { span, filled } = resolveItemSpan(rawSpan, screens);
     const mergedSpan = span || 1;
+    const normalizedNode =
+      rawSpan !== undefined && typeof rawSpan !== 'number' && !filled
+        ? cloneElement(node, { span: mergedSpan })
+        : node;
+
+    if (filled) {
+      tmpRow.push(cloneElement(node, { span: rowRestCol }));
+      rows.push(tmpRow);
+      rowRestCol = column;
+      tmpRow = [];
+      return;
+    }
 
     // Additional handle last one
     if (index === childNodes.length - 1) {
-      tmpRow.push(getFilledItem(node, rowRestCol, span));
+      tmpRow.push(getFilledItem(normalizedNode, rowRestCol, span));
       rows.push(tmpRow);
       return;
     }
 
     if (mergedSpan < rowRestCol) {
       rowRestCol -= mergedSpan;
-      tmpRow.push(node);
+      tmpRow.push(normalizedNode);
     } else {
-      tmpRow.push(getFilledItem(node, rowRestCol, mergedSpan));
+      tmpRow.push(getFilledItem(normalizedNode, rowRestCol, mergedSpan));
       rows.push(tmpRow);
       rowRestCol = column;
       tmpRow = [];
@@ -166,6 +220,7 @@ export const descriptionsProps = () => ({
   colon: { type: Boolean, default: undefined },
   labelStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   contentStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
+  items: { type: Array as PropType<DescriptionsItemType[]> },
 });
 
 export type DescriptionsProps = HTMLAttributes &
@@ -231,9 +286,6 @@ const Descriptions = defineComponent({
 
     onBeforeMount(() => {
       token = responsiveObserve.value.subscribe(screen => {
-        if (typeof props.column !== 'object') {
-          return;
-        }
         screens.value = screen;
       });
     });
@@ -259,10 +311,27 @@ const Descriptions = defineComponent({
         colon = true,
         title = slots.title?.(),
         extra = slots.extra?.(),
+        items,
       } = props;
 
-      const children = slots.default?.();
-      const rows = getRows(children, mergeColumn.value);
+      const children = items
+        ? items.map((item, index) => (
+            <DescriptionsItem
+              key={item.key ?? index}
+              label={item.label}
+              span={item.span}
+              labelStyle={item.labelStyle}
+              contentStyle={item.contentStyle}
+              class={classNames(item.class, item.className) || undefined}
+              style={item.style}
+              classNames={item.classNames}
+              styles={item.styles}
+            >
+              {item.children}
+            </DescriptionsItem>
+          ))
+        : slots.default?.();
+      const rows = getRows(children, mergeColumn.value, screens.value);
 
       return wrapSSR(
         <div

@@ -4,6 +4,8 @@ import TabPanelList from './TabPanelList';
 import TabPane from './TabPanelList/TabPane';
 import type {
   TabPosition,
+  TabPlacement,
+  MoreProps,
   RenderTabBar,
   TabsLocale,
   EditableConfig,
@@ -47,6 +49,7 @@ import omit from '../../_util/omit';
 import useStyle from '../style';
 export type TabsType = 'line' | 'card' | 'editable-card';
 export type TabsPosition = 'top' | 'right' | 'bottom' | 'left';
+export type { TabPlacement, MoreProps };
 
 // Used for accessibility
 let uuid = 0;
@@ -67,6 +70,9 @@ export const tabsProps = () => {
     tabBarGutter: { type: Number },
     tabBarStyle: objectType<CSSProperties>(),
     tabPosition: stringType<TabPosition>(),
+    tabPlacement: stringType<TabPlacement>(),
+    more: objectType<MoreProps>(),
+    moreIcon: PropTypes.any,
     destroyInactiveTabPane: booleanType(),
     destroyOnHidden: booleanType(),
     rootClassName: String,
@@ -205,9 +211,20 @@ const InternalTabs = defineComponent({
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const contextTabs = computed(() => configProvider.tabs?.value as any);
     const rtl = computed(() => direction.value === 'rtl');
+    const resolvedTabPosition = computed<TabPosition>(() => {
+      const placement = props.tabPlacement ?? props.tabPosition ?? 'top';
+      switch (placement) {
+        case 'start':
+          return rtl.value ? 'right' : 'left';
+        case 'end':
+          return rtl.value ? 'left' : 'right';
+        default:
+          return placement;
+      }
+    });
     const mergedAnimated = computed<AnimatedConfig>(() => {
-      const { animated, tabPosition } = props;
-      if (animated === false || ['left', 'right'].includes(tabPosition)) {
+      const { animated } = props;
+      if (animated === false || ['left', 'right'].includes(resolvedTabPosition.value)) {
         return {
           inkBar: false,
           tabPane: false,
@@ -256,11 +273,11 @@ const InternalTabs = defineComponent({
       value: computed(() => props.id),
     });
 
-    const mergedTabPosition = computed(() => {
-      if (mobile.value && !['left', 'right'].includes(props.tabPosition)) {
+    const mergedTabPosition = computed<TabPosition>(() => {
+      if (mobile.value && !['left', 'right'].includes(resolvedTabPosition.value)) {
         return 'top';
       } else {
-        return props.tabPosition;
+        return resolvedTabPosition.value;
       }
     });
 
@@ -340,8 +357,25 @@ const InternalTabs = defineComponent({
 
       let tabNavBar;
 
+      const mergedMore: MoreProps | undefined =
+        props.more ||
+        ctxTabs?.more ||
+        props.moreIcon !== undefined ||
+        ctxTabs?.moreIcon !== undefined
+          ? {
+              ...ctxTabs?.more,
+              ...props.more,
+              icon:
+                props.more?.icon ??
+                props.moreIcon ??
+                (slots.moreIcon ? undefined : ctxTabs?.more?.icon ?? ctxTabs?.moreIcon),
+            }
+          : undefined;
+
       const tabNavBarProps = {
         ...sharedProps,
+        more: mergedMore,
+        moreIcon: props.moreIcon,
         moreTransitionName: `${rootPrefixCls.value}-slide-up`,
         editable,
         locale,

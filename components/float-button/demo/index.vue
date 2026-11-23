@@ -7,6 +7,7 @@
     <tooltip></tooltip>
     <group></group>
     <group-menu></group-menu>
+    <placement></placement>
     <back-top></back-top>
     <badge></badge>
   </demo-sort>
@@ -20,6 +21,7 @@ import Description from './description.vue';
 import Tooltip from './tooltip.vue';
 import group from './group.vue';
 import GroupMenu from './group-menu.vue';
+import Placement from './placement.vue';
 import BackTop from './back-top.vue';
 import Badge from './badge.vue';
 
@@ -38,6 +40,7 @@ export default defineComponent({
     Tooltip,
     group,
     GroupMenu,
+    Placement,
     BackTop,
     Badge,
   },

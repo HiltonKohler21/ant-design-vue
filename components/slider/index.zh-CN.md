@@ -32,11 +32,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*XkgXTaudeosAAA
 | marks | 刻度标记，key 的类型必须为 `number` 且取值在闭区间 \[min, max] 内，每个标签可以单独设置样式 | object | { number: string\|VNode } or { number: { style: object, label: string\|VNode } } or { number: () => VNode } |  |
 | max | 最大值 | number | 100 |  |
 | min | 最小值 | number | 0 |  |
+| orientation | 滑动输入条方向（优先于 `vertical`） | `'horizontal'` \| `'vertical'` | `'horizontal'` | 4.3.0 |
 | range | 双滑块模式 | boolean \| `{ draggableTrack?: boolean }` | false |  |
 | reverse | 反向坐标轴 | boolean | false | 1.5.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | step | 步长，取值必须大于 0，并且可被 (max - min) 整除。当 `marks` 不为空对象时，可以设置 `step` 为 `null`，此时 Slider 的可选值仅有 marks 标出来的部分。 | number\|null | 1 |  |
 | styles | 用于自定义 Slider 组件内部各语义化结构的行内 style | `{ root?: CSSProperties; tracks?: CSSProperties; track?: CSSProperties; rail?: CSSProperties; handle?: CSSProperties }` | - | 4.3.0 |
+| tooltip | 设置 Tooltip 相关属性 | [tooltip](#tooltip) | - | 4.3.0 |
 | trackStyle | 选中部分轨道样式（已废弃，请使用 `styles.track` 替代） | CSSProperties \| CSSProperties\[] | - |  |
 | value(v-model) | 设置当前取值。当 `range` 为 `false` 时，使用 `number`，否则用 `[number, number]` | number\|number\[] | - |  |
 | vertical | 值为 `true` 时，Slider 为垂直方向 | Boolean | false |  |
@@ -44,6 +46,17 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*XkgXTaudeosAAA
 | tooltipPlacement | 设置 Tooltip 展示位置。参考 [`Tooltip`](/components/tooltip/)。 | string | - | 1.5.0 |
 | tooltipOpen | 值为`true`时，Tooltip 将会始终显示；否则始终不显示，哪怕在拖拽及移入时。 | Boolean | - | 4.0 |
 | getTooltipPopupContainer | Tooltip 渲染父节点，默认渲染到 body 上。 | Function | () => document.body | 1.5.0 |
+
+### tooltip
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| autoAdjustOverflow | 气泡被遮挡时自动调整位置 | boolean | true | 4.3.0 |
+| formatter | Slider 会把当前值传给 `formatter`，并在 Tooltip 中显示 `formatter` 的返回值，若为 null，则隐藏 Tooltip | ((value?: number) => VueNode) \| null | IDENTITY | 4.3.0 |
+| getPopupContainer | Tooltip 渲染父节点，默认渲染到 body 上 | (triggerNode: HTMLElement) => HTMLElement | () => document.body | 4.3.0 |
+| open | 值为 `true` 时，Tooltip 将会始终显示；否则始终不显示，哪怕在拖拽及移入时 | boolean | - | 4.3.0 |
+| placement | 设置 Tooltip 展示位置。参考 [`Tooltip`](/components/tooltip/) | string | - | 4.3.0 |
+| prefixCls | 自定义 Tooltip 类名前缀 | string | - | 4.3.0 |
 
 ### 事件
 

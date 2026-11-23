@@ -8,6 +8,7 @@ import type {
   FloatButtonShape,
   FloatButtonType,
   FloatButtonGroupProps,
+  FloatButtonGroupPlacement,
   BackTopProps,
 } from './interface';
 
@@ -18,6 +19,7 @@ export type {
   FloatButtonShape,
   FloatButtonType,
   FloatButtonGroupProps,
+  FloatButtonGroupPlacement,
   BackTopProps,
   FloatButtonSize,
 };

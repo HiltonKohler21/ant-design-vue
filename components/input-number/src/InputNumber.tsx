@@ -53,6 +53,7 @@ export const inputNumberProps = () => ({
   disabled: booleanType(),
   autofocus: booleanType(),
   keyboard: booleanType(true),
+  changeOnWheel: booleanType(false),
 
   /** Parse display value to validate number */
   parser: functionType<(displayValue: string | undefined) => ValueType>(),
@@ -486,6 +487,28 @@ export default defineComponent({
       },
     );
 
+    // ============================ Wheel =============================
+    watch(
+      [inputRef, () => props.changeOnWheel],
+      ([inputEl, changeOnWheel], _prev, onCleanup) => {
+        if (!inputEl || !changeOnWheel) {
+          return;
+        }
+        const onWheel = (e: WheelEvent) => {
+          if (!focus.value || props.disabled || props.readonly || !e.deltaY) {
+            return;
+          }
+          e.preventDefault();
+          onInternalStep(e.deltaY < 0);
+        };
+        inputEl.addEventListener('wheel', onWheel, { passive: false });
+        onCleanup(() => {
+          inputEl.removeEventListener('wheel', onWheel);
+        });
+      },
+      { immediate: true, flush: 'post' },
+    );
+
     expose({
       focus: () => {
         inputRef.value?.focus();
@@ -506,6 +529,7 @@ export default defineComponent({
         disabled,
         readonly,
         keyboard,
+        changeOnWheel,
         controls = true,
         autofocus,
 

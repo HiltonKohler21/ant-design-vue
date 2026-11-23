@@ -2,6 +2,9 @@
   <demo-sort>
     <Basic />
     <RangePicker />
+    <Variant />
+    <Multiple />
+    <NeedConfirm />
     <Bordered />
     <Format />
     <Time />
@@ -38,6 +41,9 @@ import Switchable from './switchable.vue';
 import Time from './time.vue';
 import Suffix from './suffix.vue';
 import Bordered from './bordered.vue';
+import Variant from './variant.vue';
+import Multiple from './multiple.vue';
+import NeedConfirm from './need-confirm.vue';
 import RangePicker from './range-picker.vue';
 import placementVue from './placement.vue';
 import statusVue from './status.vue';
@@ -67,6 +73,9 @@ export default defineComponent({
     Suffix,
     SelectInRnage,
     Bordered,
+    Variant,
+    Multiple,
+    NeedConfirm,
     RangePicker,
   },
 });

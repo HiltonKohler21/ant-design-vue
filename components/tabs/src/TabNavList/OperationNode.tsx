@@ -1,9 +1,9 @@
 import Menu, { MenuItem } from '../../../menu';
 import Dropdown from '../../../vc-dropdown';
-import type { Tab, TabsLocale, EditableConfig } from '../interface';
+import type { Tab, TabsLocale, EditableConfig, MoreProps } from '../interface';
 import AddButton from './AddButton';
 import type { CustomSlotsType, Key } from '../../../_util/type';
-import { functionType } from '../../../_util/type';
+import { functionType, objectType } from '../../../_util/type';
 import KeyCode from '../../../_util/KeyCode';
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import classNames from '../../../_util/classNames';
@@ -21,6 +21,7 @@ export const operationNodeProps = {
   tabBarGutter: { type: Number },
   activeKey: { type: [String, Number] },
   mobile: { type: Boolean },
+  more: objectType<MoreProps>(),
   moreIcon: PropTypes.any,
   moreTransitionName: { type: String },
   editable: { type: Object as PropType<EditableConfig> },
@@ -48,6 +49,12 @@ export default defineComponent({
   setup(props, { attrs, slots }) {
     // ======================== Dropdown ========================
     const [open, setOpen] = useState(false);
+    const mergedOpen = computed(() => props.more?.open ?? props.more?.visible ?? open.value);
+    const handleVisibleChange = (nextOpen: boolean) => {
+      setOpen(nextOpen);
+      props.more?.onOpenChange?.(nextOpen);
+      props.more?.onVisibleChange?.(nextOpen);
+    };
     const [selectedKey, setSelectedKey] = useState<Key>(null);
     const selectOffset = (offset: -1 | 1) => {
       const enabledTabs = props.tabs.filter(tab => !tab.disabled);
@@ -67,9 +74,9 @@ export default defineComponent({
     const onKeyDown = (e: KeyboardEvent) => {
       const { which } = e;
 
-      if (!open.value) {
+      if (!mergedOpen.value) {
         if ([KeyCode.DOWN, KeyCode.SPACE, KeyCode.ENTER].includes(which)) {
-          setOpen(true);
+          handleVisibleChange(true);
           e.preventDefault();
         }
         return;
@@ -85,7 +92,7 @@ export default defineComponent({
           e.preventDefault();
           break;
         case KeyCode.ESC:
-          setOpen(false);
+          handleVisibleChange(false);
           break;
         case KeyCode.SPACE:
         case KeyCode.ENTER:
@@ -121,8 +128,8 @@ export default defineComponent({
       );
     });
 
-    watch(open, () => {
-      if (!open.value) {
+    watch(mergedOpen, () => {
+      if (!mergedOpen.value) {
         setSelectedKey(null);
       }
     });
@@ -134,7 +141,8 @@ export default defineComponent({
         tabs,
         locale,
         mobile,
-        moreIcon = slots.moreIcon?.() || <EllipsisOutlined />,
+        more,
+        moreIcon,
         moreTransitionName,
         editable,
         tabBarGutter,
@@ -147,6 +155,28 @@ export default defineComponent({
 
       const dropdownAriaLabel = locale?.dropdownAriaLabel;
 
+      const {
+        icon: morePropIcon,
+        trigger: moreTrigger = ['hover'],
+        overlayClassName: moreOverlayClassName,
+        overlayStyle: moreOverlayStyle,
+        transitionName: morePropTransitionName,
+        open: _moreOpen,
+        visible: _moreVisible,
+        onOpenChange: _moreOnOpenChange,
+        onVisibleChange: _moreOnVisibleChange,
+        getPopupContainer: moreGetPopupContainer,
+        ...restMoreProps
+      } = more || {};
+
+      const resolvedMoreIcon =
+        morePropIcon !== undefined
+          ? morePropIcon
+          : moreIcon !== undefined
+          ? moreIcon
+          : slots.moreIcon?.() || <EllipsisOutlined />;
+      const normalizedTrigger = Array.isArray(moreTrigger) ? moreTrigger : [moreTrigger];
+
       // ========================= Render =========================
       const moreStyle: CSSProperties = {
         [rtl ? 'marginRight' : 'marginLeft']: tabBarGutter,
@@ -156,27 +186,32 @@ export default defineComponent({
         moreStyle.order = 1;
       }
 
-      const overlayClassName = classNames({
-        [`${dropdownPrefix}-rtl`]: rtl,
-        [`${popupClassName}`]: true,
-      });
+      const overlayClassName = classNames(
+        {
+          [`${dropdownPrefix}-rtl`]: rtl,
+        },
+        popupClassName,
+        moreOverlayClassName,
+      );
       const moreNode = mobile ? null : (
         <Dropdown
+          {...restMoreProps}
           prefixCls={dropdownPrefix}
-          trigger={['hover']}
-          visible={open.value}
-          transitionName={moreTransitionName}
-          onVisibleChange={setOpen}
+          trigger={normalizedTrigger}
+          visible={mergedOpen.value}
+          transitionName={morePropTransitionName ?? moreTransitionName}
+          onVisibleChange={handleVisibleChange}
           overlayClassName={overlayClassName}
+          overlayStyle={moreOverlayStyle}
           mouseEnterDelay={0.1}
           mouseLeaveDelay={0.1}
-          getPopupContainer={props.getPopupContainer}
+          getPopupContainer={moreGetPopupContainer ?? props.getPopupContainer}
           v-slots={{
             overlay: () => (
               <Menu
                 onClick={({ key, domEvent }) => {
                   onTabClick(key, domEvent);
-                  setOpen(false);
+                  handleVisibleChange(false);
                 }}
                 id={popupId.value}
                 tabindex={-1}
@@ -227,10 +262,10 @@ export default defineComponent({
                 aria-haspopup="listbox"
                 aria-controls={popupId.value}
                 id={`${id}-more`}
-                aria-expanded={open.value}
+                aria-expanded={mergedOpen.value}
                 onKeydown={onKeyDown}
               >
-                {moreIcon}
+                {resolvedMoreIcon}
               </button>
             ),
           }}

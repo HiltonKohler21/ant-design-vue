@@ -2,6 +2,7 @@ import CalendarOutlined from '@ant-design/icons-vue/CalendarOutlined';
 import ClockCircleOutlined from '@ant-design/icons-vue/ClockCircleOutlined';
 import CloseCircleFilled from '@ant-design/icons-vue/CloseCircleFilled';
 import RCPicker from '../../vc-picker';
+import EnhancedPicker from './EnhancedPicker';
 import type { PanelMode, PickerMode } from '../../vc-picker/interface';
 import type { GenerateConfig } from '../../vc-picker/generate/index';
 import enUS from '../locale/en_US';
@@ -114,10 +115,15 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
             pickerRef.value?.blur();
           },
         });
-        const maybeToString = (date: DateType) => {
+        const maybeToString = (date: any) => {
+          if (Array.isArray(date)) {
+            return props.valueFormat
+              ? date.map(d => (d ? generateConfig.toString(d, props.valueFormat) : d))
+              : date;
+          }
           return props.valueFormat ? generateConfig.toString(date, props.valueFormat) : date;
         };
-        const onChange = (date: DateType, dateString: string) => {
+        const onChange = (date: any, dateString: any) => {
           const value = maybeToString(date);
           emit('update:value', value);
           emit('change', value, dateString);
@@ -138,29 +144,34 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
           const value = maybeToString(date);
           emit('panelChange', value, mode);
         };
-        const onOk = (date: DateType) => {
+        const onOk = (date: any) => {
           const value = maybeToString(date);
           emit('ok', value);
         };
 
         const [contextLocale] = useLocaleReceiver('DatePicker', enUS);
 
-        const value = computed(() => {
-          if (props.value) {
+        const parseValue = (val: any) => {
+          if (props.multiple) {
+            if (val === undefined) return undefined;
+            if (!val) return [];
+            const arr = Array.isArray(val) ? val : [val];
             return props.valueFormat
-              ? generateConfig.toDate(props.value as string | DateType, props.valueFormat)
-              : props.value;
+              ? arr.map(item =>
+                  item ? generateConfig.toDate(item as string | DateType, props.valueFormat) : item,
+                )
+              : arr;
           }
-          return (props.value === '' ? undefined : props.value) as DateType;
-        });
-        const defaultValue = computed(() => {
-          if (props.defaultValue) {
+          if (val) {
             return props.valueFormat
-              ? generateConfig.toDate(props.defaultValue as string | DateType, props.valueFormat)
-              : props.defaultValue;
+              ? generateConfig.toDate(val as string | DateType, props.valueFormat)
+              : val;
           }
-          return (props.defaultValue === '' ? undefined : props.defaultValue) as DateType;
-        });
+          return (val === '' ? undefined : val) as DateType;
+        };
+
+        const value = computed(() => parseValue(props.value));
+        const defaultValue = computed(() => parseValue(props.defaultValue));
         const defaultPickerValue = computed(() => {
           if (props.defaultPickerValue) {
             return props.valueFormat
@@ -181,6 +192,10 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
           const {
             bordered: _bordered,
             variant: _variant,
+            multiple,
+            maxTagCount,
+            maxTagPlaceholder,
+            needConfirm,
             placeholder,
             suffixIcon = slots.suffixIcon?.() ??
               pickerConfig.value.suffix ??
@@ -227,70 +242,87 @@ export default function generateSinglePicker<DateType, ExtraProps = {}>(
               {formItemInputContext.hasFeedback && formItemInputContext.feedbackIcon}
             </>
           );
-          return wrapSSR(
-            <RCPicker
-              monthCellRender={monthCellRender}
-              dateRender={dateRender}
-              renderExtraFooter={renderExtraFooter}
-              ref={pickerRef}
-              placeholder={getPlaceholder(locale, mergedPicker, placeholder)}
-              suffixIcon={suffixNode}
-              dropdownAlign={transPlacement2DropdownAlign(direction.value, props.placement)}
-              clearIcon={clearIcon || <CloseCircleFilled />}
-              allowClear={allowClear}
-              transitionName={transitionName || `${rootPrefixCls.value}-slide-up`}
-              {...restProps}
-              {...additionalOverrideProps}
-              id={id}
-              picker={mergedPicker}
-              value={value.value}
-              defaultValue={defaultValue.value}
-              defaultPickerValue={defaultPickerValue.value}
-              showToday={showToday}
-              locale={locale!.lang}
-              class={classNames(
-                rootClassName,
-                contextClassName.value,
-                contextClassNames.value.root,
-                {
-                  [`${pre}-${mergedSize.value}`]: mergedSize.value,
-                  [`${pre}-borderless`]: mergedVariant.value === 'borderless',
-                  [`${pre}-${mergedVariant.value}`]: enableVariantCls.value,
-                },
-                getStatusClassNames(
-                  pre,
-                  getMergedStatus(formItemInputContext.status, props.status),
-                  formItemInputContext.hasFeedback,
-                ),
-                attrs.class,
-                hashId.value,
-                compactItemClassnames.value,
-              )}
-              style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
-              disabled={disabled.value}
-              prefixCls={pre}
-              getPopupContainer={attrs.getCalendarContainer || getPopupContainer.value}
-              generateConfig={generateConfig}
-              prevIcon={slots.prevIcon?.() || <span class={`${pre}-prev-icon`} />}
-              nextIcon={slots.nextIcon?.() || <span class={`${pre}-next-icon`} />}
-              superPrevIcon={slots.superPrevIcon?.() || <span class={`${pre}-super-prev-icon`} />}
-              superNextIcon={slots.superNextIcon?.() || <span class={`${pre}-super-next-icon`} />}
-              components={Components}
-              direction={direction.value}
-              dropdownClassName={classNames(
-                hashId.value,
-                contextClassNames.value.popup?.root,
-                props.popupClassName,
-                props.dropdownClassName,
-              )}
-              onChange={onChange}
-              onOpenChange={onOpenChange}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onPanelChange={onPanelChange}
-              onOk={onOk}
-            />,
-          );
+          const defaultNeedsConfirm =
+            (mergedPicker === 'date' && !!showTime) || mergedPicker === 'time';
+          const useEnhanced =
+            !!multiple || (needConfirm !== undefined && needConfirm !== defaultNeedsConfirm);
+
+          const sharedPickerProps = {
+            monthCellRender,
+            dateRender,
+            renderExtraFooter,
+            ref: pickerRef,
+            placeholder: getPlaceholder(locale, mergedPicker, placeholder),
+            suffixIcon: suffixNode,
+            dropdownAlign: transPlacement2DropdownAlign(direction.value, props.placement),
+            clearIcon: clearIcon || <CloseCircleFilled />,
+            allowClear,
+            transitionName: transitionName || `${rootPrefixCls.value}-slide-up`,
+            ...restProps,
+            ...additionalOverrideProps,
+            id,
+            picker: mergedPicker,
+            value: value.value,
+            defaultValue: defaultValue.value,
+            defaultPickerValue: defaultPickerValue.value,
+            showToday,
+            locale: locale!.lang,
+            class: classNames(
+              rootClassName,
+              contextClassName.value,
+              contextClassNames.value.root,
+              {
+                [`${pre}-${mergedSize.value}`]: mergedSize.value,
+                [`${pre}-borderless`]: mergedVariant.value === 'borderless',
+                [`${pre}-${mergedVariant.value}`]: enableVariantCls.value,
+              },
+              getStatusClassNames(
+                pre,
+                getMergedStatus(formItemInputContext.status, props.status),
+                formItemInputContext.hasFeedback,
+              ),
+              attrs.class,
+              hashId.value,
+              compactItemClassnames.value,
+            ),
+            style: [contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties],
+            disabled: disabled.value,
+            prefixCls: pre,
+            getPopupContainer: attrs.getCalendarContainer || getPopupContainer.value,
+            generateConfig,
+            prevIcon: slots.prevIcon?.() || <span class={`${pre}-prev-icon`} />,
+            nextIcon: slots.nextIcon?.() || <span class={`${pre}-next-icon`} />,
+            superPrevIcon: slots.superPrevIcon?.() || <span class={`${pre}-super-prev-icon`} />,
+            superNextIcon: slots.superNextIcon?.() || <span class={`${pre}-super-next-icon`} />,
+            components: Components,
+            direction: direction.value,
+            dropdownClassName: classNames(
+              hashId.value,
+              contextClassNames.value.popup?.root,
+              props.popupClassName,
+              props.dropdownClassName,
+            ),
+            onChange,
+            onOpenChange,
+            onFocus,
+            onBlur,
+            onPanelChange,
+            onOk,
+          };
+
+          if (useEnhanced) {
+            return wrapSSR(
+              <EnhancedPicker
+                {...(sharedPickerProps as any)}
+                multiple={!!multiple}
+                maxTagCount={maxTagCount}
+                maxTagPlaceholder={maxTagPlaceholder}
+                needConfirm={needConfirm}
+              />,
+            );
+          }
+
+          return wrapSSR(<RCPicker {...(sharedPickerProps as any)} />);
         };
       },
     });

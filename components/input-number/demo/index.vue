@@ -10,6 +10,8 @@
     <outOfRangeVue />
     <borderlessVue />
     <prefixVue />
+    <presuffixVue />
+    <changeOnWheelVue />
     <statusVue />
     <iconVue />
   </demo-sort>
@@ -25,6 +27,8 @@ import borderlessVue from './borderless.vue';
 import keyboardVue from './keyboard.vue';
 import outOfRangeVue from './out-of-range.vue';
 import prefixVue from './prefix.vue';
+import presuffixVue from './presuffix.vue';
+import changeOnWheelVue from './change-on-wheel.vue';
 import statusVue from './status.vue';
 import iconVue from './icon.vue';
 import CN from '../index.zh-CN.md';
@@ -38,6 +42,8 @@ export default defineComponent({
     iconVue,
     statusVue,
     prefixVue,
+    presuffixVue,
+    changeOnWheelVue,
     Basic,
     Disabled,
     Digit,

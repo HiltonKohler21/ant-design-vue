@@ -160,6 +160,7 @@ const genPickerCellInnerStyle = (token: SharedPickerToken): CSSObject => {
 
     // >>> Selected
     [`&-in-view${pickerCellCls}-selected ${pickerCellInnerCls},
+      &-in-view ${pickerCellInnerCls}-multiple-selected,
       &-in-view${pickerCellCls}-range-start ${pickerCellInnerCls},
       &-in-view${pickerCellCls}-range-end ${pickerCellInnerCls}`]: {
       color: colorTextLightSolid,
@@ -588,7 +589,7 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
       },
 
       // ======================== Footer ========================
-      [`&-panel ${componentCls}-footer`]: {
+      [`&-panel ${componentCls}-footer, &-panel-wrapper > ${componentCls}-footer`]: {
         borderTop: `${unit(lineWidth)} ${lineType} ${colorSplit}`,
       },
 
@@ -1073,6 +1074,133 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
           [`&${componentCls}-focused`]: {
             borderColor: `transparent transparent ${colorPrimary} transparent`,
             boxShadow: 'none',
+          },
+        },
+
+        // ======================= Multiple =======================
+        [`&${componentCls}-multiple`]: {
+          width: '100%',
+          minHeight: rawPicker.controlHeight,
+          paddingBlock: Math.max(rawPicker.paddingXXS - rawPicker.lineWidth - 2, 0),
+          paddingInlineStart: Math.max(rawPicker.paddingXXS - rawPicker.lineWidth, 0),
+          paddingInlineEnd: rawPicker.paddingSM - rawPicker.lineWidth,
+          cursor: 'text',
+
+          [`&${componentCls}-large`]: {
+            minHeight: rawPicker.controlHeightLG,
+            [`${componentCls}-selection-item`]: {
+              height: rawPicker.controlHeightLG - 8,
+              lineHeight: `${unit(rawPicker.controlHeightLG - 8 - rawPicker.lineWidth * 2)}`,
+              fontSize: fontSizeLG,
+            },
+          },
+
+          [`&${componentCls}-small`]: {
+            minHeight: rawPicker.controlHeightSM,
+            paddingInlineEnd: rawPicker.paddingXS - rawPicker.lineWidth,
+            [`${componentCls}-selection-item`]: {
+              height: Math.max(rawPicker.controlHeightSM - 8, 16),
+              lineHeight: `${unit(
+                Math.max(rawPicker.controlHeightSM - 8 - rawPicker.lineWidth * 2, 14),
+              )}`,
+            },
+          },
+
+          [`${componentCls}-selector`]: {
+            position: 'relative',
+            display: 'flex',
+            flex: 'auto',
+            alignItems: 'center',
+            minWidth: 0,
+            padding: 0,
+          },
+
+          [`${componentCls}-selection-overflow`]: {
+            position: 'relative',
+            display: 'flex',
+            flex: 'auto',
+            flexWrap: 'wrap',
+            maxWidth: '100%',
+
+            '&-item': {
+              flex: 'none',
+              alignSelf: 'center',
+              maxWidth: 'calc(100% - 4px)',
+              display: 'inline-flex',
+            },
+          },
+
+          [`${componentCls}-selection-item`]: {
+            display: 'flex',
+            alignSelf: 'center',
+            alignItems: 'center',
+            flex: 'none',
+            boxSizing: 'border-box',
+            maxWidth: '100%',
+            height: rawPicker.controlHeight - 8,
+            lineHeight: `${unit(rawPicker.controlHeight - 8 - rawPicker.lineWidth * 2)}`,
+            marginBlock: 2,
+            marginInlineEnd: 4,
+            paddingInlineStart: paddingXS,
+            paddingInlineEnd: token.calc(paddingXS).div(2).equal(),
+            background: token.colorFillSecondary,
+            border: `${unit(lineWidth)} ${lineType} transparent`,
+            borderRadius: borderRadiusSM,
+            cursor: 'default',
+            transition: `font-size ${motionDurationSlow}, line-height ${motionDurationSlow}, height ${motionDurationSlow}`,
+
+            '&-content': {
+              display: 'inline-block',
+              marginInlineEnd: token.calc(paddingXS).div(2).equal(),
+              overflow: 'hidden',
+              whiteSpace: 'pre',
+              textOverflow: 'ellipsis',
+            },
+
+            '&-remove': {
+              display: 'inline-flex',
+              alignItems: 'center',
+              color: colorTextDescription,
+              fontWeight: 700,
+              fontSize: 10,
+              lineHeight: 'inherit',
+              cursor: 'pointer',
+              transition: `color ${motionDurationMid}`,
+
+              '&:hover': {
+                color: token.colorText,
+              },
+            },
+          },
+
+          [`${componentCls}-selection-placeholder`]: {
+            position: 'absolute',
+            top: '50%',
+            insetInlineStart: paddingXS,
+            insetInlineEnd: 0,
+            transform: 'translateY(-50%)',
+            color: colorTextPlaceholder,
+            pointerEvents: 'none',
+            ...textEllipsis,
+          },
+
+          [`${componentCls}-multiple-input`]: {
+            width: 0,
+            height: 0,
+            border: 0,
+            visibility: 'hidden',
+            position: 'absolute',
+            zIndex: -1,
+          },
+
+          [`${componentCls}-clear`]: {
+            insetInlineEnd: rawPicker.paddingSM - rawPicker.lineWidth,
+          },
+
+          '&:hover': {
+            [`${componentCls}-clear`]: {
+              opacity: 1,
+            },
           },
         },
 

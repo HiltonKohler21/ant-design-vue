@@ -8,8 +8,12 @@ export const tourProps = () => ({
   prefixCls: { type: String },
   current: { type: Number },
   type: { type: String as PropType<'default' | 'primary'> }, //	default	类型，影响底色与文字颜色
+  /** 自定义指示器 */
+  indicatorsRender: { type: Function as PropType<(current: number, total: number) => VueNode> },
   /** 自定义底部操作按钮渲染 */
   actionsRender: { type: Function as PropType<(originNode: any, info: any) => any> },
+  /** 是否启用键盘快捷行为 */
+  keyboard: { type: Boolean, default: true },
   'onUpdate:current': Function as PropType<(val: number) => void>,
 });
 
@@ -32,6 +36,8 @@ export const tourStepProps = () => ({
     type: Object as PropType<TourBtnProps>,
   },
   current: { type: Number },
+  /** 自定义指示器 */
+  indicatorsRender: { type: Function as PropType<(current: number, total: number) => VueNode> },
   /** 5.4+ 自定义底部操作按钮渲染 */
   actionsRender: { type: Function as PropType<(originNode: any, info: any) => any> },
   type: { type: String as PropType<'default' | 'primary'> }, //	default	类型，影响底色与文字颜色

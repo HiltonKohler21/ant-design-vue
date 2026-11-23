@@ -42,7 +42,7 @@ const genStickyStyle: GenerateStyle<TableToken, CSSObject> = token => {
           '&-bar': {
             height: tableScrollThumbSize,
             backgroundColor: tableScrollThumbBg,
-            borderRadius: 100,
+            borderRadius: token.stickyScrollBarBorderRadius,
             transition: `all ${token.motionDurationSlow}, transform none`,
             position: 'absolute',
             bottom: 0,

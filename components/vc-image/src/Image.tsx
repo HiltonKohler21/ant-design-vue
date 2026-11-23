@@ -3,26 +3,92 @@ import { ref, watch, defineComponent, computed, onMounted, onUnmounted } from 'v
 import isNumber from 'lodash-es/isNumber';
 import cn from '../../_util/classNames';
 import PropTypes from '../../_util/vue-types';
+import type { VueNode } from '../../_util/type';
+import { objectType } from '../../_util/type';
 import { getOffset } from '../../vc-util/Dom/css';
 import useMergedState from '../../_util/hooks/useMergedState';
 import Preview from './Preview';
+import type {
+  PreviewPopupClassNames,
+  PreviewPopupStyles,
+  PreviewProps,
+  TransformAction,
+  TransformType,
+  ToolbarRenderInfoType,
+  ImgInfo,
+} from './Preview';
 
 import type { MouseEventHandler } from '../../_util/EventInterface';
 import PreviewGroup, { context } from './PreviewGroup';
 import type { IDialogChildProps } from '../../vc-dialog/IDialogPropTypes';
+
 export type GetContainer = string | HTMLElement | (() => HTMLElement);
-import type { PreviewProps } from './Preview';
+
+export interface CoverConfig {
+  coverNode?: VueNode;
+  placement?: 'top' | 'bottom' | 'center';
+}
+
+export type PreviewMaskType =
+  | boolean
+  | {
+      enabled?: boolean;
+      blur?: boolean;
+      closable?: boolean;
+    };
 
 export type ImagePreviewType = Omit<
   IDialogChildProps,
   'mask' | 'visible' | 'closable' | 'prefixCls' | 'onClose' | 'afterClose' | 'wrapClassName'
 > & {
   src?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean, info?: { current?: number }) => void;
+  /** @deprecated Use `open` instead */
   visible?: boolean;
+  /** @deprecated Use `onOpenChange` instead */
   onVisibleChange?: (value: boolean, prevValue: boolean) => void;
   getContainer?: GetContainer | false;
   maskClassName?: string;
+  mask?: PreviewMaskType | VueNode;
+  maskClosable?: boolean;
+  cover?: VueNode | CoverConfig | false;
+  closeIcon?: VueNode | boolean | null;
   icons?: PreviewProps['icons'];
+  minScale?: number;
+  maxScale?: number;
+  scaleStep?: number;
+  movable?: boolean;
+  wheel?: boolean;
+  actionsRender?: PreviewProps['actionsRender'];
+  /** @deprecated Use `actionsRender` instead */
+  toolbarRender?: PreviewProps['toolbarRender'];
+  imageRender?: PreviewProps['imageRender'];
+  countRender?: PreviewProps['countRender'];
+  onTransform?: PreviewProps['onTransform'];
+};
+
+export interface ImageSemanticClassNames {
+  root?: string;
+  image?: string;
+  cover?: string;
+  popup?: PreviewPopupClassNames;
+}
+
+export interface ImageSemanticStyles {
+  root?: CSSProperties;
+  image?: CSSProperties;
+  cover?: CSSProperties;
+  popup?: PreviewPopupStyles;
+}
+
+export type {
+  TransformType,
+  TransformAction,
+  ToolbarRenderInfoType,
+  ImgInfo,
+  PreviewPopupClassNames,
+  PreviewPopupStyles,
 };
 
 export const imageProps = () => ({
@@ -44,6 +110,8 @@ export const imageProps = () => ({
     type: [Boolean, Object] as PropType<boolean | ImagePreviewType>,
     default: true as boolean | ImagePreviewType,
   },
+  semanticClassNames: objectType<ImageSemanticClassNames>(),
+  semanticStyles: objectType<ImageSemanticStyles>(),
   onClick: {
     type: Function as PropType<MouseEventHandler>,
   },
@@ -64,6 +132,13 @@ export const mergeDefaultValue = <T extends object>(obj: T, defaultValues: objec
   return res;
 };
 let uuid = 0;
+
+const isCoverConfig = (val: unknown): val is CoverConfig =>
+  typeof val === 'object' &&
+  val !== null &&
+  !Array.isArray(val) &&
+  ('coverNode' in val || 'placement' in val);
+
 const ImageInternal = defineComponent({
   compatConfig: { MODE: 3 },
   name: 'VcImage',
@@ -76,10 +151,12 @@ const ImageInternal = defineComponent({
     const preview = computed<ImagePreviewType>(() => {
       const defaultValues = {
         visible: undefined,
-        onVisibleChange: () => {},
+        open: undefined,
+        onVisibleChange: undefined,
+        onOpenChange: undefined,
         getContainer: undefined,
       };
-      return typeof props.preview === 'object'
+      return typeof props.preview === 'object' && props.preview !== null
         ? mergeDefaultValue(props.preview, defaultValues)
         : defaultValues;
     });
@@ -87,11 +164,12 @@ const ImageInternal = defineComponent({
     const isCustomPlaceholder = computed(
       () => (props.placeholder && props.placeholder !== true) || slots.placeholder,
     );
-    const previewVisible = computed(() => preview.value.visible);
+    const previewVisible = computed(() => preview.value.open ?? preview.value.visible);
     const getPreviewContainer = computed(() => preview.value.getContainer);
     const isControlled = computed(() => previewVisible.value !== undefined);
 
-    const onPreviewVisibleChange = (val, preval) => {
+    const onPreviewVisibleChange = (val: boolean, preval: boolean) => {
+      preview.value.onOpenChange?.(val);
       preview.value.onVisibleChange?.(val, preval);
     };
     const [isShowPreview, setShowPreview] = useMergedState(!!previewVisible.value, {
@@ -115,9 +193,12 @@ const ImageInternal = defineComponent({
       setShowPreview: setGroupShowPreview,
       setMousePosition: setGroupMousePosition,
       registerImage,
+      fallback: groupFallback,
     } = groupContext;
     const currentId = ref(uuid++);
     const canPreview = computed(() => props.preview && !isError.value);
+    const mergedFallback = computed(() => props.fallback ?? groupFallback?.value);
+
     const onLoad = () => {
       status.value = 'normal';
     };
@@ -178,7 +259,11 @@ const ImageInternal = defineComponent({
             return () => {};
           }
 
-          unRegister = registerImage(currentId.value, src.value, canPreview.value);
+          unRegister = registerImage(currentId.value, src.value, canPreview.value, {
+            alt: (attrs as any).alt,
+            width: props.width,
+            height: props.height,
+          });
 
           if (!canPreview.value) {
             unRegister();
@@ -198,7 +283,6 @@ const ImageInternal = defineComponent({
       const {
         prefixCls,
         wrapperClassName,
-        fallback,
         src: imgSrc,
         placeholder,
         wrapperStyle,
@@ -214,9 +298,23 @@ const ImageInternal = defineComponent({
         class: cls,
         style,
       } = { ...props, ...attrs } as any;
-      const { icons, maskClassName, ...dialogProps } = preview.value;
+      const fallback = mergedFallback.value;
+      const {
+        icons,
+        maskClassName,
+        mask: previewMaskProp,
+        cover,
+        open: _open,
+        visible: _visible,
+        onOpenChange: _onOpenChange,
+        onVisibleChange: _onVisibleChange,
+        ...dialogProps
+      } = preview.value;
 
-      const wrappperClass = cn(prefixCls, wrapperClassName, rootClassName, {
+      const semanticCls = props.semanticClassNames;
+      const semanticSty = props.semanticStyles;
+
+      const wrappperClass = cn(prefixCls, wrapperClassName, rootClassName, semanticCls?.root, {
         [`${prefixCls}-error`]: isError.value,
       });
       const mergedSrc = isError.value && fallback ? fallback : src.value;
@@ -235,12 +333,34 @@ const ImageInternal = defineComponent({
             [`${prefixCls}-img-placeholder`]: placeholder === true,
           },
           cls,
+          semanticCls?.image,
         ),
         style: {
           height: toSizePx(height),
           ...(style as CSSProperties),
+          ...semanticSty?.image,
         },
       };
+
+      // Cover / PreviewMask resolution
+      let showCover = false;
+      let coverNode: VueNode = null;
+      let coverPlacement: 'top' | 'bottom' | 'center' | undefined;
+
+      if (cover === false) {
+        showCover = false;
+      } else if (cover !== undefined && cover !== true) {
+        showCover = true;
+        if (isCoverConfig(cover)) {
+          coverNode = cover.coverNode ?? slots.previewMask?.();
+          coverPlacement = cover.placement;
+        } else {
+          coverNode = cover;
+        }
+      } else if (slots.previewMask) {
+        showCover = true;
+        coverNode = slots.previewMask();
+      }
 
       return (
         <>
@@ -257,6 +377,7 @@ const ImageInternal = defineComponent({
               width: toSizePx(width),
               height: toSizePx(height),
               ...wrapperStyle,
+              ...semanticSty?.root,
             }}
           >
             <img
@@ -274,14 +395,29 @@ const ImageInternal = defineComponent({
                 {placeholder || (slots.placeholder && slots.placeholder())}
               </div>
             )}
-            {/* Preview Click Mask */}
-            {slots.previewMask && canPreview.value && (
-              <div class={[`${prefixCls}-mask`, maskClassName]}>{slots.previewMask()}</div>
+            {/* Preview Click Mask / Cover */}
+            {showCover && canPreview.value && (
+              <div
+                class={cn(
+                  `${prefixCls}-mask`,
+                  `${prefixCls}-cover`,
+                  {
+                    [`${prefixCls}-cover-${coverPlacement}`]:
+                      coverPlacement === 'top' || coverPlacement === 'bottom',
+                  },
+                  maskClassName,
+                  semanticCls?.cover,
+                )}
+                style={semanticSty?.cover}
+              >
+                {coverNode}
+              </div>
             )}
           </div>
           {!isPreviewGroup.value && canPreview.value && (
             <Preview
               {...dialogProps}
+              mask={typeof previewMaskProp === 'boolean' ? previewMaskProp : true}
               aria-hidden={!isShowPreview.value}
               visible={isShowPreview.value}
               prefixCls={previewPrefixCls.value}
@@ -289,8 +425,13 @@ const ImageInternal = defineComponent({
               mousePosition={mousePosition.value}
               src={mergedSrc}
               alt={alt}
+              width={width}
+              height={height}
+              fallback={fallback}
               getContainer={getPreviewContainer.value}
               icons={icons}
+              popupClassNames={semanticCls?.popup}
+              popupStyles={semanticSty?.popup}
               rootClassName={cn(dialogProps.rootClassName, rootClassName)}
             />
           )}

@@ -4,11 +4,45 @@ import type { AliasToken, FullToken, GenerateStyle } from '../../theme/internal'
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import type { TokenWithCommonCls } from '../../theme/util/genComponentStyleHook';
 import { clearFix, genFocusStyle, resetComponent } from '../../style';
-import { CSSProperties } from 'vue';
+import type { CSSProperties } from 'vue';
 
 /** Component only token. Which will handle additional calculation of alias token */
 export interface ComponentToken {
-  // Component token here
+  /**
+   * @desc 顶部背景色
+   * @descEN Background color of header
+   */
+  headerBg: string;
+  /**
+   * @desc 标题行高
+   * @descEN Line height of title
+   */
+  titleLineHeight: number | string;
+  /**
+   * @desc 标题字体大小
+   * @descEN Font size of title
+   */
+  titleFontSize: number | string;
+  /**
+   * @desc 标题字体颜色
+   * @descEN Font color of title
+   */
+  titleColor: string;
+  /**
+   * @desc 内容区域背景色
+   * @descEN Background color of content
+   */
+  contentBg: string;
+  /**
+   * @desc 底部区域背景色
+   * @descEN Background color of footer
+   */
+  footerBg: string;
+  /**
+   * @desc 关闭按钮悬浮背景色
+   * @descEN Hover background color of close button
+   */
+  closeBtnHoverBg: string;
 }
 
 export interface ModalToken extends FullToken<'Modal'> {
@@ -18,8 +52,8 @@ export interface ModalToken extends FullToken<'Modal'> {
   modalHeaderPadding: string;
   modalHeaderBorderWidth: number;
   modalHeaderBorderStyle: string;
-  modalHeaderTitleLineHeight: number;
-  modalHeaderTitleFontSize: number;
+  modalHeaderTitleLineHeight: number | string;
+  modalHeaderTitleFontSize: number | string;
   modalHeaderBorderColorSplit: string;
   modalHeaderCloseSize: number;
   modalContentBg: string;
@@ -73,6 +107,9 @@ export const genModalMaskStyle: GenerateStyle<TokenWithCommonCls<AliasToken>> = 
           backgroundColor: token.colorBgMask,
           [`${componentCls}-hidden`]: {
             display: 'none',
+          },
+          [`&${componentCls}-mask-blur`]: {
+            backdropFilter: 'blur(4px)',
           },
         },
 
@@ -205,9 +242,15 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
             textRendering: 'auto',
           },
 
+          '&:disabled': {
+            pointerEvents: 'none',
+            cursor: 'not-allowed',
+            opacity: 0.45,
+          },
+
           '&:hover': {
             color: token.modalIconHoverColor,
-            backgroundColor: token.wireframe ? 'transparent' : token.colorFillContent,
+            backgroundColor: token.closeBtnHoverBg,
             textDecoration: 'none',
           },
 
@@ -229,6 +272,15 @@ const genModalStyle: GenerateStyle<ModalToken> = token => {
           fontSize: token.fontSize,
           lineHeight: token.lineHeight,
           wordWrap: 'break-word',
+
+          [`${componentCls}-body-skeleton`]: {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: `${unit(token.margin)} auto`,
+          },
         },
 
         [`${componentCls}-footer`]: {
@@ -440,45 +492,60 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Modal', token => {
-  const headerPaddingVertical = token.padding;
-  const headerFontSize = token.fontSizeHeading5;
-  const headerLineHeight = token.lineHeightHeading5;
+export default genComponentStyleHook(
+  'Modal',
+  token => {
+    const headerPaddingVertical = token.padding;
 
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const modalToken = mergeToken<ModalToken>(token, {
-    modalBodyPadding: token.paddingLG,
-    modalHeaderBg: token.colorBgElevated,
-    modalHeaderPadding: `${unit(headerPaddingVertical)} ${unit(token.paddingLG)}`,
-    modalHeaderBorderWidth: token.lineWidth,
-    modalHeaderBorderStyle: token.lineType,
-    modalHeaderTitleLineHeight: headerLineHeight,
-    modalHeaderTitleFontSize: headerFontSize,
-    modalHeaderBorderColorSplit: token.colorSplit,
-    modalHeaderCloseSize:
-      rawToken.lineHeightHeading5 * rawToken.fontSizeHeading5 + rawToken.padding * 2,
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const modalToken = mergeToken<ModalToken>(token, {
+      modalBodyPadding: token.paddingLG,
+      modalHeaderBg: token.headerBg,
+      modalHeaderPadding: `${unit(headerPaddingVertical)} ${unit(token.paddingLG)}`,
+      modalHeaderBorderWidth: token.lineWidth,
+      modalHeaderBorderStyle: token.lineType,
+      modalHeaderTitleLineHeight: token.titleLineHeight,
+      modalHeaderTitleFontSize: token.titleFontSize,
+      modalHeaderBorderColorSplit: token.colorSplit,
+      modalHeaderCloseSize:
+        rawToken.lineHeightHeading5 * rawToken.fontSizeHeading5 + rawToken.padding * 2,
 
-    modalContentBg: token.colorBgElevated,
-    modalHeadingColor: token.colorTextHeading,
-    modalCloseColor: token.colorTextDescription,
-    modalFooterBg: 'transparent',
-    modalFooterBorderColorSplit: token.colorSplit,
-    modalFooterBorderStyle: token.lineType,
-    modalFooterPaddingVertical: token.paddingXS,
-    modalFooterPaddingHorizontal: token.padding,
-    modalFooterBorderWidth: token.lineWidth,
-    modalConfirmTitleFontSize: token.fontSizeLG,
-    modalIconHoverColor: token.colorIconHover,
-    modalConfirmIconSize: rawToken.fontSize * rawToken.lineHeight,
-    modalCloseBtnSize: rawToken.controlHeightLG * 0.55,
-  });
-  return [
-    genModalStyle(modalToken),
-    genModalConfirmStyle(modalToken),
-    genRTLStyle(modalToken),
-    genModalMaskStyle(modalToken),
-    token.wireframe && genWireframeStyle(modalToken),
-    initZoomMotion(modalToken, 'zoom'),
-  ];
-});
+      modalContentBg: token.contentBg,
+      modalHeadingColor: token.titleColor,
+      modalCloseColor: token.colorTextDescription,
+      modalFooterBg: token.footerBg,
+      modalFooterBorderColorSplit: token.colorSplit,
+      modalFooterBorderStyle: token.lineType,
+      modalFooterPaddingVertical: token.paddingXS,
+      modalFooterPaddingHorizontal: token.padding,
+      modalFooterBorderWidth: token.lineWidth,
+      modalConfirmTitleFontSize: token.fontSizeLG,
+      modalIconHoverColor: token.colorIconHover,
+      modalConfirmIconSize: rawToken.fontSize * rawToken.lineHeight,
+      modalCloseBtnSize: rawToken.controlHeightLG * 0.55,
+    });
+    return [
+      genModalStyle(modalToken),
+      genModalConfirmStyle(modalToken),
+      genRTLStyle(modalToken),
+      genModalMaskStyle(modalToken),
+      token.wireframe && genWireframeStyle(modalToken),
+      initZoomMotion(modalToken, 'zoom'),
+    ];
+  },
+  token => ({
+    headerBg: token.colorBgElevated,
+    titleLineHeight: token.lineHeightHeading5,
+    titleFontSize: token.fontSizeHeading5,
+    titleColor: token.colorTextHeading,
+    contentBg: token.colorBgElevated,
+    footerBg: 'transparent',
+    closeBtnHoverBg: token.wireframe ? 'transparent' : token.colorFillContent,
+  }),
+  {
+    unitless: {
+      titleLineHeight: true,
+    },
+  },
+);

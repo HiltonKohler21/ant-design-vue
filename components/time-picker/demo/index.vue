@@ -1,6 +1,8 @@
 <template>
   <demo-sort>
     <Basic />
+    <Variant />
+    <NeedConfirm />
     <Bordered />
     <RangePicker />
     <Hours />
@@ -27,6 +29,8 @@ import IntervalOptions from './interval-options.vue';
 import Size from './size.vue';
 import Suffix from './suffix.vue';
 import Bordered from './bordered.vue';
+import Variant from './variant.vue';
+import NeedConfirm from './need-confirm.vue';
 import RangePicker from './range-picker.vue';
 import placementVue from './placement.vue';
 import statusVue from './status.vue';
@@ -49,6 +53,8 @@ export default {
     Size,
     Suffix,
     Bordered,
+    Variant,
+    NeedConfirm,
     RangePicker,
   },
 };

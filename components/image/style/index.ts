@@ -1,5 +1,5 @@
 import { unit } from '../../_util/cssinjs';
-import { CSSObject } from '../../_util/cssinjs';
+import type { CSSObject } from '../../_util/cssinjs';
 import { TinyColor } from '@ctrl/tinycolor';
 import { genModalMaskStyle } from '../../modal/style';
 import { initZoomMotion, initFadeMotion } from '../../style/motion';
@@ -8,10 +8,36 @@ import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent, textEllipsis } from '../../style';
 
 export interface ComponentToken {
+  /**
+   * @desc 预览浮层 z-index
+   * @descEN z-index of preview popup
+   */
   zIndexPopup: number;
+  /**
+   * @desc 预览操作图标大小
+   * @descEN Size of preview operation icon
+   */
   previewOperationSize: number;
+  /**
+   * @desc 预览操作图标颜色
+   * @descEN Color of preview operation icon
+   */
   previewOperationColor: string;
+  /**
+   * @desc 预览操作图标悬浮颜色
+   * @descEN Color of hovered preview operation icon
+   */
+  previewOperationHoverColor: string;
+  /**
+   * @desc 预览操作图标禁用颜色
+   * @descEN Disabled color of preview operation icon
+   */
   previewOperationColorDisabled: string;
+  /**
+   * @desc 加载动画基础时长
+   * @descEN Base duration of loading animation
+   */
+  progressAnimationDuration: string;
 }
 
 export interface ImageToken extends FullToken<'Image'> {
@@ -55,8 +81,14 @@ export const genImageMaskStyle = (token: ImageToken): CSSObject => {
 };
 
 export const genPreviewOperationsStyle = (token: ImageToken): CSSObject => {
-  const { previewCls, modalMaskBg, paddingSM, previewOperationColorDisabled, motionDurationSlow } =
-    token;
+  const {
+    previewCls,
+    modalMaskBg,
+    paddingSM,
+    previewOperationHoverColor,
+    previewOperationColorDisabled,
+    motionDurationSlow,
+  } = token;
 
   const operationBg = new TinyColor((token as any)._realToken?.modalMaskBg ?? modalMaskBg).setAlpha(
     0.1,
@@ -82,6 +114,7 @@ export const genPreviewOperationsStyle = (token: ImageToken): CSSObject => {
         userSelect: 'none',
 
         '&:hover': {
+          color: previewOperationHoverColor,
           background: operationBgHover.toRgbString(),
         },
 
@@ -144,6 +177,7 @@ export const genPreviewSwitchStyle = (token: ImageToken): CSSObject => {
       userSelect: 'none',
 
       '&:hover': {
+        color: token.previewOperationHoverColor,
         background: operationBgHover.toRgbString(),
       },
 
@@ -184,6 +218,18 @@ export const genImagePreviewStyle: GenerateStyle<ImageToken> = (token: ImageToke
           pointerEvents: 'none',
         },
 
+        [`${previewCls}-mask`]: {
+          transition: `backdrop-filter ${motionDurationSlow}`,
+
+          [`&${previewCls}-mask-blur`]: {
+            backdropFilter: 'blur(4px)',
+          },
+
+          [`&${previewCls}-mask-hidden`]: {
+            display: 'none',
+          },
+        },
+
         [`${previewCls}-body`]: {
           ...genBoxStyle(),
           overflow: 'hidden',
@@ -217,6 +263,12 @@ export const genImagePreviewStyle: GenerateStyle<ImageToken> = (token: ImageToke
               marginInlineEnd: -1,
               content: '""',
             },
+          },
+        },
+
+        [`${previewCls}-not-movable`]: {
+          [`${previewCls}-img`]: {
+            cursor: 'default',
           },
         },
 
@@ -280,6 +332,14 @@ const genImageStyle: GenerateStyle<ImageToken> = (token: ImageToken) => {
       [`${componentCls}-mask:hover`]: {
         opacity: 1,
       },
+      [`${componentCls}-cover-top`]: {
+        inset: '0 0 auto 0',
+        justifyContent: 'center',
+      },
+      [`${componentCls}-cover-bottom`]: {
+        inset: 'auto 0 0 0',
+        justifyContent: 'center',
+      },
       [`${componentCls}-placeholder`]: {
         ...genBoxStyle(),
       },
@@ -295,6 +355,17 @@ const genPreviewMotion: GenerateStyle<ImageToken> = token => {
     [`&`]: initFadeMotion(token, true),
   };
 };
+
+export const prepareComponentToken = (token: any): ComponentToken => ({
+  zIndexPopup: token.zIndexPopupBase + 80,
+  previewOperationColor: new TinyColor(token.colorTextLightSolid).setAlpha(0.65).toRgbString(),
+  previewOperationHoverColor: new TinyColor(token.colorTextLightSolid).setAlpha(0.85).toRgbString(),
+  previewOperationColorDisabled: new TinyColor(token.colorTextLightSolid)
+    .setAlpha(0.25)
+    .toRgbString(),
+  previewOperationSize: token.fontSizeIcon * 1.5, // FIXME: fontSizeIconLG
+  progressAnimationDuration: '3s',
+});
 
 // ============================== Export ==============================
 export default genComponentStyleHook(
@@ -315,12 +386,5 @@ export default genComponentStyleHook(
       genPreviewMotion(imageToken),
     ];
   },
-  token => ({
-    zIndexPopup: token.zIndexPopupBase + 80,
-    previewOperationColor: new TinyColor(token.colorTextLightSolid).toRgbString(),
-    previewOperationColorDisabled: new TinyColor(token.colorTextLightSolid)
-      .setAlpha(0.25)
-      .toRgbString(),
-    previewOperationSize: token.fontSizeIcon * 1.5, // FIXME: fontSizeIconLG
-  }),
+  prepareComponentToken,
 );

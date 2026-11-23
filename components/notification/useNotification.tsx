@@ -1,5 +1,5 @@
-import type { VNode } from 'vue';
-import { shallowRef, computed, defineComponent } from 'vue';
+import type { Ref, VNode } from 'vue';
+import { shallowRef, computed, defineComponent, unref } from 'vue';
 import { useNotification as useVcNotification } from '../vc-notification';
 import type { NotificationAPI } from '../vc-notification';
 import type {
@@ -7,6 +7,8 @@ import type {
   ArgsProps,
   NotificationPlacement,
   NotificationConfig,
+  NotificationClosable,
+  NotificationStack,
 } from './interface';
 
 import useStyle from './style';
@@ -49,9 +51,11 @@ const Holder = defineComponent({
     'getContainer',
     'getPopupContainer',
     'placement',
+    'closable',
     'closeIcon',
     'showProgress',
     'pauseOnHover',
+    'stack',
     'maxCount',
     'rtl',
   ],
@@ -78,12 +82,17 @@ const Holder = defineComponent({
     const getNotificationMotion = () => getMotion(prefixCls.value);
 
     // ============================== Origin ===============================
+    const mergedStack = computed<NotificationStack>(() => {
+      const rawStack = unref(props.stack);
+      return rawStack === undefined ? { threshold: 3 } : rawStack;
+    });
+
     const [api, holder] = useVcNotification({
       prefixCls: prefixCls.value,
       getStyles,
       getClassName,
       motion: getNotificationMotion,
-      closable: true,
+      closable: props.closable ?? true,
       closeIcon: getCloseIcon(
         prefixCls.value,
         typeof props.closeIcon === 'function'
@@ -93,6 +102,7 @@ const Holder = defineComponent({
       duration: props.duration ?? DEFAULT_DURATION,
       showProgress: props.showProgress,
       pauseOnHover: props.pauseOnHover,
+      stack: mergedStack,
       getContainer: () =>
         props.getContainer?.() ||
         props.getPopupContainer?.() ||
@@ -118,7 +128,7 @@ const Holder = defineComponent({
 // ==                                   Hook                                   ==
 // ==============================================================================
 export function useInternalNotification(
-  notificationConfig?: HolderProps,
+  notificationConfig?: HolderProps | Ref<HolderProps>,
 ): readonly [NotificationInstance, () => VNode] {
   const holderRef = shallowRef<HolderRef>(null);
   const holderKey = Symbol('notificationHolderKey');
@@ -130,6 +140,7 @@ export function useInternalNotification(
     if (!holderRef.value) {
       return;
     }
+    const resolvedConfig = unref(notificationConfig);
     const {
       open: originOpen,
       prefixCls,
@@ -148,6 +159,7 @@ export function useInternalNotification(
       actions,
       class: className,
       style,
+      closable,
       closeIcon,
       showProgress,
       pauseOnHover,
@@ -157,12 +169,35 @@ export function useInternalNotification(
     const resolvedCloseIcon =
       closeIcon !== undefined
         ? closeIcon
-        : notificationConfig?.closeIcon !== undefined
-        ? notificationConfig.closeIcon
+        : resolvedConfig?.closeIcon !== undefined
+        ? resolvedConfig.closeIcon
         : contextNotification?.closeIcon;
+    const rawClosable: NotificationClosable =
+      closable !== undefined
+        ? closable
+        : resolvedConfig?.closable !== undefined
+        ? resolvedConfig.closable
+        : true;
+    const resolvedClosable: NotificationClosable =
+      rawClosable && typeof rawClosable === 'object'
+        ? {
+            ...rawClosable,
+            ...(rawClosable.closeIcon !== undefined
+              ? {
+                  closeIcon: getCloseIcon(
+                    prefixCls,
+                    typeof rawClosable.closeIcon === 'function'
+                      ? rawClosable.closeIcon()
+                      : rawClosable.closeIcon,
+                  ),
+                }
+              : {}),
+          }
+        : rawClosable;
     return originOpen({
-      placement: notificationConfig?.placement ?? 'topRight',
+      placement: resolvedConfig?.placement ?? 'topRight',
       ...restConfig,
+      closable: resolvedClosable,
       ...(resolvedCloseIcon !== undefined
         ? {
             closeIcon: getCloseIcon(
@@ -171,8 +206,8 @@ export function useInternalNotification(
             ),
           }
         : {}),
-      showProgress: showProgress ?? notificationConfig?.showProgress,
-      pauseOnHover: pauseOnHover ?? notificationConfig?.pauseOnHover,
+      showProgress: showProgress ?? resolvedConfig?.showProgress,
+      pauseOnHover: pauseOnHover ?? resolvedConfig?.pauseOnHover,
       content: () => (
         <PureContent
           prefixCls={noticePrefixCls}
@@ -220,10 +255,22 @@ export function useInternalNotification(
   // ============================== Return ===============================
   return [
     wrapAPI,
-    () => <Holder key={holderKey} {...notificationConfig} ref={holderRef} />,
+    () => {
+      const resolvedConfig = unref(notificationConfig);
+      return (
+        <Holder
+          key={holderKey}
+          {...resolvedConfig}
+          stack={resolvedConfig ? unref(resolvedConfig.stack) : undefined}
+          ref={holderRef}
+        />
+      );
+    },
   ] as const;
 }
 
-export default function useNotification(notificationConfig?: NotificationConfig) {
+export default function useNotification(
+  notificationConfig?: NotificationConfig | Ref<NotificationConfig>,
+) {
   return useInternalNotification(notificationConfig);
 }

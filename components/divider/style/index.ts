@@ -6,12 +6,25 @@ import { resetComponent } from '../../style';
 
 /** Component only token. Which will handle additional calculation of alias token */
 export interface ComponentToken {
+  /**
+   * @desc 边缘水平内间距
+   * @descEN Horizontal edge padding size
+   */
   sizePaddingEdgeHorizontal?: number;
-  /** 文本横向内间距 */
+  /**
+   * @desc 文本横向内间距
+   * @descEN Horizontal padding of text
+   */
   textPaddingInline: number | string;
-  /** 文本与边缘距离，取值 0 ～ 1 */
+  /**
+   * @desc 文本与边缘距离，取值 0 ～ 1
+   * @descEN Distance between text and edge, which should be a number between 0 and 1.
+   */
   orientationMargin: number;
-  /** 纵向分割线的横向外间距 */
+  /**
+   * @desc 纵向分割线的横向外间距
+   * @descEN Horizontal margin of vertical Divider
+   */
   verticalMarginInline: number | string;
 }
 
@@ -52,11 +65,16 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
     orientationMargin,
     verticalMarginInline,
   } = token;
+  const railCls = `${componentCls}-rail`;
 
   return {
     [componentCls]: {
       ...resetComponent(token),
       borderBlockStart: `${unit(lineWidth)} solid ${colorSplit}`,
+
+      [railCls]: {
+        borderBlockStart: `${unit(lineWidth)} solid ${colorSplit}`,
+      },
 
       '&-rtl': {
         direction: 'rtl',
@@ -104,6 +122,19 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
           transform: 'translateY(50%)',
           content: "''",
         },
+
+        [`${railCls}-start, ${railCls}-end`]: {
+          width: '50%',
+          borderBlockStartColor: 'inherit',
+          borderBlockEnd: 0,
+        },
+      },
+
+      [`&-horizontal${componentCls}-has-rail`]: {
+        '&::before, &::after': {
+          display: 'none',
+          content: 'none',
+        },
       },
 
       [`&-horizontal${componentCls}-with-text-left`]: {
@@ -114,6 +145,14 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         '&::after': {
           width: `calc(100% - ${orientationMargin} * 100%)`,
         },
+
+        [`${railCls}-start`]: {
+          width: `calc(${orientationMargin} * 100%)`,
+        },
+
+        [`${railCls}-end`]: {
+          width: `calc(100% - ${orientationMargin} * 100%)`,
+        },
       },
 
       [`&-horizontal${componentCls}-with-text-right`]: {
@@ -122,6 +161,14 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         },
 
         '&::after': {
+          width: `calc(${orientationMargin} * 100%)`,
+        },
+
+        [`${railCls}-start`]: {
+          width: `calc(100% - ${orientationMargin} * 100%)`,
+        },
+
+        [`${railCls}-end`]: {
           width: `calc(${orientationMargin} * 100%)`,
         },
       },
@@ -137,6 +184,9 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         borderColor: colorSplit,
         borderStyle: 'dashed',
         borderWidth: `${unit(lineWidth)} 0 0`,
+        [railCls]: {
+          borderBlockStart: `${unit(lineWidth)} dashed ${colorSplit}`,
+        },
       },
 
       '&-dotted': {
@@ -144,10 +194,16 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
         borderColor: colorSplit,
         borderStyle: 'dotted',
         borderWidth: `${unit(lineWidth)} 0 0`,
+        [railCls]: {
+          borderBlockStart: `${unit(lineWidth)} dotted ${colorSplit}`,
+        },
       },
 
       [`&-horizontal${componentCls}-with-text${componentCls}-dashed`]: {
         '&::before, &::after': {
+          borderStyle: 'dashed none none',
+        },
+        [`${railCls}-start, ${railCls}-end`]: {
           borderStyle: 'dashed none none',
         },
       },
@@ -161,6 +217,9 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
 
       [`&-horizontal${componentCls}-with-text${componentCls}-dotted`]: {
         '&::before, &::after': {
+          borderStyle: 'dotted none none',
+        },
+        [`${railCls}-start, ${railCls}-end`]: {
           borderStyle: 'dotted none none',
         },
       },
@@ -189,6 +248,14 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
             width: '100%',
           },
 
+          [`${railCls}-start`]: {
+            width: 0,
+          },
+
+          [`${railCls}-end`]: {
+            width: '100%',
+          },
+
           [`${componentCls}-inner-text`]: {
             paddingInlineStart: sizePaddingEdgeHorizontal,
           },
@@ -201,6 +268,14 @@ const genSharedDividerStyle: GenerateStyle<DividerToken> = (token): CSSObject =>
           },
 
           '&::after': {
+            width: 0,
+          },
+
+          [`${railCls}-start`]: {
+            width: '100%',
+          },
+
+          [`${railCls}-end`]: {
             width: 0,
           },
 

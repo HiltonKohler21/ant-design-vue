@@ -18,19 +18,38 @@ A breadcrumb displays the current location within a hierarchy. It allows going b
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| dropdownIcon | Custom dropdown icon for items with menu/overlay | VNode \| slot | `<DownOutlined />` | 4.3.0 |
 | itemRender | Custom item renderer, #itemRender="{route, params, routes, paths}" | ({route, params, routes, paths}) => vNode | - |  |
+| items | The routing stack information of router | [ItemType\[\]](#itemtype) | - | 4.3.0 |
 | params | Routing parameters | object | - |  |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
-| routes | The routing stack information of router | [routes\[\]](#routes) | - |  |
+| ~~routes~~ | The routing stack information of router (deprecated, please use `items` instead) | [routes\[\]](#routes) | - |  |
 | separator | Custom separator | string \| slot | `/` |  |
+
+### ItemType
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| class | Additional css class | string | - | 4.3.0 |
+| dropdownProps | The dropdown props | [Dropdown](/components/dropdown/#api) | - | 4.3.0 |
+| href | Target of hyperlink. Can not work with `path` | string | - | 4.3.0 |
+| key | Unique key of the item | string \| number | - | 4.3.0 |
+| menu | The menu props | [MenuProps](/components/menu/#api) | - | 4.3.0 |
+| onClick | Set the handler to handle `click` event | (e: MouseEvent) => void | - | 4.3.0 |
+| path | Connected path. Each path will connect with prev one. Can not work with `href` | string | - | 4.3.0 |
+| separator | Custom separator (when `type` is `'separator'`) | string \| VNode | `/` | 4.3.0 |
+| title | Item name | string \| VNode | - | 4.3.0 |
+| type | Item type, set to `'separator'` to render an inline separator | `'separator'` | - | 4.3.0 |
 
 ### Breadcrumb.Item
 
-| Property      | Description         | Type                                   | Default | Version |
-| ------------- | ------------------- | -------------------------------------- | ------- | ------- |
-| dropdownProps | The dropdown props  | [Dropdown](/components/dropdown/#api)  | -       | 4.3.0   |
-| href          | Target of hyperlink | string                                 | -       | 1.5.0   |
-| overlay       | The dropdown menu   | [Menu](/components/menu) \| () => Menu | -       | 1.5.0   |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| dropdownIcon | Custom dropdown icon | VNode \| slot | `<DownOutlined />` | 4.3.0 |
+| dropdownProps | The dropdown props | [Dropdown](/components/dropdown/#api) | - | 4.3.0 |
+| href | Target of hyperlink | string | - | 1.5.0 |
+| menu | The dropdown menu config | [MenuProps](/components/menu/#api) | - | 4.3.0 |
+| overlay | The dropdown menu | [Menu](/components/menu) \| () => Menu | - | 1.5.0 |
 
 #### Events
 

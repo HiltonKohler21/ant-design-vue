@@ -92,6 +92,7 @@ The following APIs are shared by DatePicker, RangePicker.
 | inputReadOnly | Set the `readonly` attribute of the input tag (avoids virtual keyboard on touch devices) | boolean | false |  |
 | locale | Localization configuration | object | [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
 | mode | The picker panel mode | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |
+| needConfirm | Require clicking the OK button to confirm selection (defaults to `true` when `showTime` or `TimePicker` is used) | boolean | - | 4.3.0 |
 | nextIcon | The custom next icon | slot | - | 3.0 |
 | open | The open state of picker | boolean | - |  |
 | panelRender | Customize panel render | `(panelNode: VNode) => VNode` | - |  |
@@ -133,6 +134,9 @@ The following APIs are shared by DatePicker, RangePicker.
 | defaultValue | To set default date | [dayjs](https://day.js.org/) | - |  |
 | disabledTime | To specify the time that cannot be selected | function(date) | - |  |
 | format | To set the date format, refer to [dayjs](https://day.js.org/) | [formatType](#formattype) | `YYYY-MM-DD` |  |
+| maxTagCount | Max tag count to show in `multiple` mode, `responsive` will collapse automatically | number \| `'responsive'` | - | 4.3.0 |
+| maxTagPlaceholder | Placeholder for omitted tags | VNode \| (omittedValues) => VNode | - | 4.3.0 |
+| multiple | Allow selecting multiple dates (not supported with `showTime`) | boolean | false | 4.3.0 |
 | renderExtraFooter | Render extra footer in panel | v-slot:renderExtraFooter="mode" | - |  |
 | showNow | Whether to show 'Now' button on panel when `showTime` is set | boolean | - |  |
 | showTime | To provide an additional time selection | object \| boolean | [TimePicker Options](/components/time-picker/#api) |  |

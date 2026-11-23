@@ -23,7 +23,7 @@ When requiring users to interact with the application, but without jumping to a 
 | cancelText | Text of the Cancel button | string\|slot | `Cancel` |  |
 | centered | Centered Modal | boolean | `false` |  |
 | classNames | Semantic DOM class names | `{ mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string }` | - | 4.3.0 |
-| closable | Whether a close (x) button is visible on top right of the modal dialog or not | boolean | true |  |
+| closable | Whether a close (x) button is visible on top right of the modal dialog or not | boolean \| `{ closeIcon?: VueNode; disabled?: boolean; afterClose?: () => void; onClose?: () => void; 'aria-label'?: string }` | true | 4.3.0 |
 | closeIcon | custom close icon | VNode \| slot | - |  |
 | confirmLoading | Whether to apply loading visual effect for OK button or not | boolean | false |  |
 | destroyOnClose | Whether to unmount child components on close (Deprecated, please use `destroyOnHidden` instead) | boolean | false |  |
@@ -32,7 +32,8 @@ When requiring users to interact with the application, but without jumping to a 
 | forceRender | Force render Modal | boolean | false |  |
 | getContainer | Return the mount node for Modal | (instance): HTMLElement | () => document.body |  |
 | keyboard | Whether support press esc to close | boolean | true |  |
-| mask | Whether show mask or not. | boolean | true |  |
+| loading | Show the skeleton loading state | boolean | false | 4.3.0 |
+| mask | Whether show mask or not, or configure mask behavior and blur effect | boolean \| `{ enabled?: boolean; blur?: boolean; closable?: boolean }` | true | 4.3.0 |
 | maskClosable | Whether to close the modal dialog when the mask (area outside the modal) is clicked | boolean | true |  |
 | maskStyle | Style for modal's mask element. (Deprecated, please use `styles.mask` instead) | object | {} |  |
 | modalRender | Custom modal content render | (arg: { originVNode: VueNode }) => VueNode \| slot | - |  |

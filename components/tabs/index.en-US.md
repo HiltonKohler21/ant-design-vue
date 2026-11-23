@@ -33,14 +33,25 @@ Ant Design has 3 types of Tabs for different situations.
 | indicator | Customize indicator size and alignment | `{ size?: number \| ((origin: number) => number); align?: 'start' \| 'center' \| 'end' }` | - | 4.3.0 |
 | indicatorSize | Customize indicator size (deprecated, please use `indicator.size`) | `number \| ((origin: number) => number) \| 'small' \| 'large'` | - | 4.3.0 |
 | items | Configure tab content | [TabItemType](#tabitemtype)[] | [] | 4.3.0 |
+| more | Customize the collapse menu | [MoreProps](#moreprops) | `{ icon: <EllipsisOutlined />, trigger: ['hover'] }` | 4.3.0 |
 | popupClassName | ClassName for more dropdown | string | - |  |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
 | size | preset tab bar size | `large` \| `middle` \| `small` | `middle` |  |
 | tabBarExtraContent | Extra content in tab bar (deprecated, please use `leftExtra` / `rightExtra` slot) | VueNode \| slot | - |  |
 | tabBarGutter | The gap between tabs | number | - |  |
 | tabBarStyle | Tab bar style object | CSSProperties | - |  |
-| tabPosition | Position of tabs | `top` \| `right` \| `bottom` \| `left` | `top` |  |
+| tabPlacement | Placement of tabs | `top` \| `right` \| `bottom` \| `left` \| `start` \| `end` | `top` | 4.3.0 |
+| ~~tabPosition~~ | Position of tabs (deprecated, please use `tabPlacement` instead) | `top` \| `right` \| `bottom` \| `left` | `top` |  |
 | type | Basic style of tabs | `line` \| `card` \| `editable-card` | `line` |  |
+
+### MoreProps
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| icon | The custom collapse icon | VueNode | `<EllipsisOutlined />` | 4.3.0 |
+| trigger | The trigger mode of the collapse dropdown | `Array<'click' \| 'hover' \| 'contextmenu'>` \| `'click' \| 'hover' \| 'contextmenu'` | `['hover']` | 4.3.0 |
+| overlayClassName | Class name of the collapse dropdown root element | string | - | 4.3.0 |
+| overlayStyle | Style of the collapse dropdown root element | CSSProperties | - | 4.3.0 |
 
 ### TabItemType
 

@@ -59,11 +59,15 @@ export function formatTimeStr(duration: number, format: string) {
   });
 }
 
-export function formatCountdown(value: valueType, config: CountdownFormatConfig) {
+export function formatCounter(value: valueType, config: CountdownFormatConfig, down: boolean) {
   const { format = '' } = config;
-  const target = new Date(value).getTime();
+  const target = new Date(value as any).getTime();
   const current = Date.now();
-  const diff = Math.max(target - current, 0);
+  const diff = down ? Math.max(target - current, 0) : Math.max(current - target, 0);
 
   return formatTimeStr(diff, format);
+}
+
+export function formatCountdown(value: valueType, config: CountdownFormatConfig) {
+  return formatCounter(value, config, true);
 }

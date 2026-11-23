@@ -22,12 +22,13 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 
 | Props | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| afterOpenChange | Callback after the animation ends when switching drawers | (open: boolean) => void | - | 4.3.0 |
 | ariaId | Accessibility `aria-labelledby` identifier bound to the Drawer root and title element `id` | string | - | 4.3.0 |
 | autofocus | Whether Drawer should get focused after open | boolean | `true` | 3.0.0 |
 | ~~bodyStyle~~ | Style of the drawer content part (deprecated, use `styles.body` instead) | CSSProperties | - |  |
 | class | Config Drawer Panel className. Use `rootClassName` if you want to config top dom style | string | - |  |
 | classNames | Semantic DOM class names | { mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string } | - | 4.3.0 |
-| closable | Whether a close (x) button is visible on top left of the Drawer dialog or not | boolean | `true` |  |
+| closable | Whether a close (x) button is visible or custom close button config | boolean \| `{ closeIcon?: VueNode; disabled?: boolean; placement?: 'start' \| 'end'; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | Custom close icon | VueNode \| slot | `<CloseOutlined />` | 3.0.0 |
 | ~~contentWrapperStyle~~ | Style of the drawer wrapper of content part (deprecated, use `styles.wrapper` instead) | CSSProperties | - | 3.0.0 |
 | ~~destroyOnClose~~ | Whether to unmount child components on closing drawer or not (deprecated, use `destroyOnHidden` instead) | boolean | `false` |  |
@@ -42,15 +43,16 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 | height | Placement is `top` or `bottom`, height of the Drawer dialog | string \| number | `378` |  |
 | keyboard | Whether support press esc to close | boolean | `true` |  |
 | loading | Show the skeleton loading state | boolean | `false` | 4.3.0 |
-| mask | Whether to show mask or not | boolean | `true` |  |
+| mask | Whether to show mask or not, or configure mask blur/closable | boolean \| `{ enabled?: boolean; blur?: boolean; closable?: boolean }` | `true` | 4.3.0 |
 | maskClosable | Clicking on the mask (area outside the Drawer) to close the Drawer or not | boolean | `true` |  |
 | ~~maskStyle~~ | Style for Drawer's mask element (deprecated, use `styles.mask` instead) | CSSProperties | `{}` |  |
 | open(v-model) | Whether the Drawer dialog is visible or not | boolean | - | 4.0 |
 | placement | The placement of the Drawer | `top` \| `right` \| `bottom` \| `left` | `right` |  |
 | push | Nested drawers push behavior | boolean \| { distance: string \| number } | `{ distance: 180 }` | 3.0.0 |
+| resizable | Whether the Drawer can be resized by dragging its edge | boolean \| `{ onResizeStart?: () => void; onResize?: (size: number) => void; onResizeEnd?: () => void }` | `false` | 4.3.0 |
 | rootClassName | The class name of the container of the Drawer dialog | string | - | 4.0 |
 | rootStyle | Style of wrapper element which **contains mask** compared to `style` | CSSProperties | - | 4.0 |
-| size | Presetted size of drawer, default `378px` and large `736px` | `default` \| `large` | `default` | 3.0.0 |
+| size | Presetted size of drawer (`default` 378px, `large` 736px) or custom width/height | `default` \| `large` \| number \| string | `default` | 3.0.0 |
 | style | Style of Drawer panel. Use `styles.body` if you want to config body only | CSSProperties | - |  |
 | styles | Semantic DOM inline styles | { mask?: CSSProperties; wrapper?: CSSProperties; content?: CSSProperties; header?: CSSProperties; body?: CSSProperties; footer?: CSSProperties } | - | 4.3.0 |
 | title | The title for Drawer | string \| slot | - |  |

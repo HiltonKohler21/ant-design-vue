@@ -71,7 +71,9 @@ const panelRender = defineComponent({
 
       let mergeIndicatorNode: VueNode;
 
-      if (slots.indicatorsRender) {
+      if (props.indicatorsRender) {
+        mergeIndicatorNode = props.indicatorsRender(current.value, total.value);
+      } else if (slots.indicatorsRender) {
         mergeIndicatorNode = slots.indicatorsRender({ current: current.value, total: total.value });
       } else {
         mergeIndicatorNode = [...Array.from({ length: total.value }).keys()].map(

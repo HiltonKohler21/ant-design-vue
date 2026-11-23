@@ -1,13 +1,19 @@
+import { TinyColor } from '@ctrl/tinycolor';
 import { unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { mergeToken, genComponentStyleHook } from '../../theme/internal';
 import { resetComponent } from '../../style';
 
-export interface ComponentToken {}
+export interface ComponentToken {
+  /**
+   * @desc QRCode 遮罩背景颜色
+   * @descEN Cover background color of QRCode
+   */
+  QRCodeCoverBackgroundColor: string;
+}
 
 interface QRCodeToken extends FullToken<'QRCode'> {
   QRCodeTextColor: string;
-  QRCodeMaskBackgroundColor: string;
 }
 
 const genQRCodeStyle: GenerateStyle<QRCodeToken> = token => {
@@ -39,7 +45,7 @@ const genQRCodeStyle: GenerateStyle<QRCodeToken> = token => {
         height: '100%',
         color: token.colorText,
         lineHeight: token.lineHeight,
-        background: token.QRCodeMaskBackgroundColor,
+        background: token.QRCodeCoverBackgroundColor,
         textAlign: 'center',
         [`& > ${componentCls}-expired , & > ${componentCls}-scanned`]: {
           color: token.QRCodeTextColor,
@@ -56,11 +62,15 @@ const genQRCodeStyle: GenerateStyle<QRCodeToken> = token => {
   };
 };
 
-export default genComponentStyleHook<'QRCode'>('QRCode', token =>
-  genQRCodeStyle(
-    mergeToken<QRCodeToken>(token, {
-      QRCodeTextColor: 'rgba(0, 0, 0, 0.88)',
-      QRCodeMaskBackgroundColor: 'rgba(255, 255, 255, 0.96)',
-    }),
-  ),
+export default genComponentStyleHook<'QRCode'>(
+  'QRCode',
+  token =>
+    genQRCodeStyle(
+      mergeToken<QRCodeToken>(token, {
+        QRCodeTextColor: 'rgba(0, 0, 0, 0.88)',
+      }),
+    ),
+  token => ({
+    QRCodeCoverBackgroundColor: new TinyColor(token.colorBgContainer).setAlpha(0.96).toRgbString(),
+  }),
 );

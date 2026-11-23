@@ -1,11 +1,36 @@
-import { unit } from '../../_util/cssinjs';
+import { Keyframes, unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
-import { Keyframes } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
 
-export interface ComponentToken {}
+export interface ComponentToken {
+  /**
+   * @desc 进度条默认颜色
+   * @descEN Default color of progress bar
+   */
+  defaultColor: string;
+  /**
+   * @desc 进度条剩余部分颜色
+   * @descEN Color of remaining part of progress bar
+   */
+  remainingColor: string;
+  /**
+   * @desc 圆形进度条文字颜色
+   * @descEN Text color of circular progress bar
+   */
+  circleTextColor: string;
+  /**
+   * @desc 条状进度条圆角
+   * @descEN Border radius of line progress bar
+   */
+  lineBorderRadius: number;
+  /**
+   * @desc 圆形进度条文本大小
+   * @descEN Text size of circular progress bar
+   */
+  circleTextFontSize: string;
+}
 
 interface ProgressToken extends FullToken<'Progress'> {
   progressLineRadius: number;
@@ -102,13 +127,13 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
 
       [`${progressCls}-inner:not(${progressCls}-circle-gradient)`]: {
         [`${progressCls}-circle-path`]: {
-          stroke: token.colorInfo,
+          stroke: token.progressDefaultColor,
         },
       },
 
       [`${progressCls}-success-bg, ${progressCls}-bg`]: {
         position: 'relative',
-        backgroundColor: token.colorInfo,
+        backgroundColor: token.progressDefaultColor,
         borderRadius: token.progressLineRadius,
         transition: `all ${token.motionDurationSlow} ${token.motionEaseInOutCirc}`,
       },
@@ -247,7 +272,8 @@ const genCircleStyle: GenerateStyle<ProgressToken> = token => {
         width: '100%',
         margin: 0,
         padding: 0,
-        color: token.colorText,
+        color: token.circleTextColor,
+        fontSize: token.circleTextFontSize,
         lineHeight: 1,
         whiteSpace: 'normal',
         textAlign: 'center',
@@ -299,7 +325,7 @@ const genStepStyle: GenerateStyle<ProgressToken> = (token: ProgressToken): CSSOb
           transition: `all ${token.motionDurationSlow}`,
 
           '&-active': {
-            backgroundColor: token.colorInfo,
+            backgroundColor: token.progressDefaultColor,
           },
         },
       },
@@ -320,22 +346,32 @@ const genSmallLine: GenerateStyle<ProgressToken> = (token: ProgressToken): CSSOb
   };
 };
 
-export default genComponentStyleHook('Progress', token => {
-  const progressStepMarginInlineEnd = token.calc(token.marginXXS).div(2).equal();
+export default genComponentStyleHook(
+  'Progress',
+  token => {
+    const progressStepMarginInlineEnd = token.calc(token.marginXXS).div(2).equal();
 
-  const progressToken = mergeToken<ProgressToken>(token, {
-    progressLineRadius: 100, // magic for capsule shape, should be a very large number
-    progressInfoTextColor: token.colorText,
-    progressDefaultColor: token.colorInfo,
-    progressRemainingColor: token.colorFillSecondary,
-    progressStepMarginInlineEnd,
-    progressStepMinWidth: progressStepMarginInlineEnd,
-    progressActiveMotionDuration: '2.4s',
-  });
-  return [
-    genBaseStyle(progressToken),
-    genCircleStyle(progressToken),
-    genStepStyle(progressToken),
-    genSmallLine(progressToken),
-  ];
-});
+    const progressToken = mergeToken<ProgressToken>(token, {
+      progressLineRadius: token.lineBorderRadius,
+      progressInfoTextColor: token.colorText,
+      progressDefaultColor: token.defaultColor,
+      progressRemainingColor: token.remainingColor,
+      progressStepMarginInlineEnd,
+      progressStepMinWidth: progressStepMarginInlineEnd,
+      progressActiveMotionDuration: '2.4s',
+    });
+    return [
+      genBaseStyle(progressToken),
+      genCircleStyle(progressToken),
+      genStepStyle(progressToken),
+      genSmallLine(progressToken),
+    ];
+  },
+  token => ({
+    circleTextColor: token.colorText,
+    defaultColor: token.colorInfo,
+    remainingColor: token.colorFillSecondary,
+    lineBorderRadius: 100, // magic for capsule shape, should be a very large number
+    circleTextFontSize: '1em',
+  }),
+);

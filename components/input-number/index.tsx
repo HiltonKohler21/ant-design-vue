@@ -42,6 +42,7 @@ export const inputNumberProps = () => ({
   addonBefore: PropTypes.any,
   addonAfter: PropTypes.any,
   prefix: PropTypes.any,
+  suffix: PropTypes.any,
   'onUpdate:value': baseProps.onChange,
   valueModifiers: Object,
   status: stringType<InputStatus>(),
@@ -59,6 +60,7 @@ const InputNumber = defineComponent({
     addonBefore?: any;
     addonAfter?: any;
     prefix?: any;
+    suffix?: any;
     default?: any;
     upIcon?: any;
     downIcon?: any;
@@ -131,12 +133,17 @@ const InputNumber = defineComponent({
         addonBefore = slots.addonBefore?.(),
         addonAfter = slots.addonAfter?.(),
         prefix = slots.prefix?.(),
+        suffix = slots.suffix?.(),
         valueModifiers = {},
         ...others
       } = { ...attrs, ...props, id, disabled: mergedDisabled.value } as InputNumberProps &
         HTMLAttributes;
 
       const preCls = prefixCls.value;
+      const hasAddon = isValidValue(addonBefore) || isValidValue(addonAfter);
+      const hasPrefix = isValidValue(prefix);
+      const hasSuffix = isValidValue(suffix);
+      const hasAffix = hasPrefix || hasSuffix || hasFeedback;
 
       const inputNumberClass = classNames(
         {
@@ -150,8 +157,8 @@ const InputNumber = defineComponent({
           [`${preCls}-in-form-item`]: isFormItemInput,
         },
         getStatusClassNames(preCls, mergedStatus.value),
-        className,
-        props.rootClassName,
+        !hasAffix && !hasAddon && className,
+        !hasAffix && !hasAddon && props.rootClassName,
         compactItemClassnames.value,
         hashId.value,
       );
@@ -178,9 +185,7 @@ const InputNumber = defineComponent({
           }}
         />
       );
-      const hasAddon = isValidValue(addonBefore) || isValidValue(addonAfter);
-      const hasPrefix = isValidValue(prefix);
-      if (hasPrefix || hasFeedback) {
+      if (hasAffix) {
         const affixWrapperCls = classNames(
           `${preCls}-affix-wrapper`,
           getStatusClassNames(`${preCls}-affix-wrapper`, mergedStatus.value, hasFeedback),
@@ -194,16 +199,23 @@ const InputNumber = defineComponent({
             [`${preCls}-affix-wrapper-borderless`]: mergedVariant.value === 'borderless',
             [`${preCls}-affix-wrapper-${mergedVariant.value}`]:
               enableVariantCls.value && mergedVariant.value !== 'outlined',
+            [`${preCls}-affix-wrapper-without-controls`]: !props.controls,
             // className will go to addon wrapper
             [`${className}`]: !hasAddon && className,
           },
+          !hasAddon && props.rootClassName,
           hashId.value,
         );
         element = (
-          <div class={affixWrapperCls} style={style} onClick={focus}>
+          <div class={affixWrapperCls} style={!hasAddon ? style : undefined} onClick={focus}>
             {hasPrefix && <span class={`${preCls}-prefix`}>{prefix}</span>}
             {element}
-            {hasFeedback && <span class={`${preCls}-suffix`}>{feedbackIcon}</span>}
+            {(hasSuffix || hasFeedback) && (
+              <span class={`${preCls}-suffix`}>
+                {suffix}
+                {hasFeedback && feedbackIcon}
+              </span>
+            )}
           </div>
         );
       }
@@ -234,6 +246,7 @@ const InputNumber = defineComponent({
           },
           getStatusClassNames(`${prefixCls}-group-wrapper`, mergedStatus.value, hasFeedback),
           className,
+          props.rootClassName,
           hashId.value,
         );
         element = (

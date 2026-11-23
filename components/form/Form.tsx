@@ -35,8 +35,9 @@ import type {
   FormLabelAlign,
 } from './interface';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
-import { useProvideForm } from './context';
+import { useProvideForm, useProvideFormVariant } from './context';
 import type { SizeType } from '../config-provider';
+import type { Variant } from '../config-provider/context';
 import useForm from './useForm';
 import { useInjectGlobalForm } from '../config-provider/context';
 import useStyle from './style';
@@ -72,6 +73,7 @@ export const formProps = () => ({
   validateTrigger: someType<string | string[]>([String, Array]),
   size: stringType<SizeType>(),
   disabled: booleanType(),
+  variant: stringType<Variant>(),
   onValuesChange: functionType<Callbacks['onValuesChange']>(),
   onFieldsChange: functionType<Callbacks['onFieldsChange']>(),
   onFinish: functionType<Callbacks['onFinish']>(),
@@ -146,7 +148,9 @@ const Form = defineComponent({
     useProviderSize(size);
     useProviderDisabled(disabled);
     useProvideFormFeedbackIcons(computed(() => props.feedbackIcons));
-    const mergedColon = computed(() => props.colon ?? contextForm.value?.colon);
+    const mergedVariant = computed(() => props.variant ?? contextForm?.value?.variant);
+    useProvideFormVariant(mergedVariant);
+    const mergedColon = computed(() => props.colon ?? contextForm?.value?.colon);
     const { validateMessages: globalValidateMessages } = useInjectGlobalForm();
     const validateMessages = computed(() => {
       return {

@@ -4,7 +4,73 @@ import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { clearFix, resetComponent, textEllipsis } from '../../style';
 
-export interface ComponentToken {}
+export interface ComponentToken {
+  /**
+   * @desc 卡片头部背景色
+   * @descEN Background color of card header
+   */
+  headerBg: string;
+  /**
+   * @desc 卡片头部文字大小
+   * @descEN Font size of card header
+   */
+  headerFontSize: number;
+  /**
+   * @desc 小号卡片头部文字大小
+   * @descEN Font size of small card header
+   */
+  headerFontSizeSM: number;
+  /**
+   * @desc 卡片头部高度
+   * @descEN Height of card header
+   */
+  headerHeight: number;
+  /**
+   * @desc 小号卡片头部高度
+   * @descEN Height of small card header
+   */
+  headerHeightSM: number;
+  /**
+   * @desc 操作区背景色
+   * @descEN Background color of card actions
+   */
+  actionsBg: string;
+  /**
+   * @desc 操作区每一项的外间距
+   * @descEN Margin of each item in card actions
+   */
+  actionsLiMargin: string;
+  /**
+   * @desc 内置标签页组件下间距
+   * @descEN Margin bottom of tabs component
+   */
+  tabsMarginBottom: number;
+  /**
+   * @desc 额外区文字颜色
+   * @descEN Text color of extra area
+   */
+  extraColor: string;
+  /**
+   * @desc 卡片内边距
+   * @descEN Padding of card body
+   */
+  bodyPadding: number;
+  /**
+   * @desc 小号卡片内边距
+   * @descEN Padding of small card body
+   */
+  bodyPaddingSM: number;
+  /**
+   * @desc 卡片头部内边距
+   * @descEN Padding of card head
+   */
+  headerPadding: number;
+  /**
+   * @desc 小号卡片头部内边距
+   * @descEN Padding of small card head
+   */
+  headerPaddingSM: number;
+}
 
 interface CardToken extends FullToken<'Card'> {
   cardHeadHeight: number;
@@ -22,7 +88,7 @@ interface CardToken extends FullToken<'Card'> {
 
 // ============================== Head ==============================
 const genCardHeadStyle: GenerateStyle<CardToken> = (token): CSSObject => {
-  const { antCls, componentCls, cardHeadHeight, cardPaddingBase, cardHeadTabsMarginBottom } = token;
+  const { antCls, componentCls, cardHeadHeight, headerPadding, cardHeadTabsMarginBottom } = token;
 
   return {
     display: 'flex',
@@ -30,11 +96,11 @@ const genCardHeadStyle: GenerateStyle<CardToken> = (token): CSSObject => {
     flexDirection: 'column',
     minHeight: cardHeadHeight,
     marginBottom: -1, // Fix card grid overflow bug: https://gw.alipayobjects.com/zos/rmsportal/XonYxBikwpgbqIQBeuhk.png
-    padding: `0 ${unit(cardPaddingBase)}`,
+    padding: `0 ${unit(headerPadding)}`,
     color: token.colorTextHeading,
     fontWeight: token.fontWeightStrong,
-    fontSize: token.fontSizeLG,
-    background: 'transparent',
+    fontSize: token.headerFontSize,
+    background: token.headerBg,
     borderBottom: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorderSecondary}`,
     borderRadius: `${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} 0 0`,
 
@@ -108,7 +174,7 @@ const genCardActionsStyle: GenerateStyle<CardToken> = (token): CSSObject => {
     margin: 0,
     padding: 0,
     listStyle: 'none',
-    background: token.colorBgContainer,
+    background: token.actionsBg,
     borderTop: `${unit(token.lineWidth)} ${token.lineType} ${colorBorderSecondary}`,
     display: 'flex',
     borderRadius: `0 0 ${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)} `,
@@ -190,11 +256,11 @@ const genCardMetaStyle: GenerateStyle<CardToken> = (token): CSSObject => ({
 
 // ============================== Inner ==============================
 const genCardTypeInnerStyle: GenerateStyle<CardToken> = (token): CSSObject => {
-  const { componentCls, cardPaddingBase, colorFillAlter } = token;
+  const { componentCls, headerPadding, bodyPadding, colorFillAlter } = token;
 
   return {
     [`${componentCls}-head`]: {
-      padding: `0 ${unit(cardPaddingBase)}`,
+      padding: `0 ${unit(headerPadding)}`,
       background: colorFillAlter,
 
       '&-title': {
@@ -203,7 +269,7 @@ const genCardTypeInnerStyle: GenerateStyle<CardToken> = (token): CSSObject => {
     },
 
     [`${componentCls}-body`]: {
-      padding: `${unit(token.padding)} ${unit(cardPaddingBase)}`,
+      padding: `${unit(token.padding)} ${unit(bodyPadding)}`,
     },
   };
 };
@@ -223,14 +289,7 @@ const genCardLoadingStyle: GenerateStyle<CardToken> = (token): CSSObject => {
 
 // ============================== Basic ==============================
 const genCardStyle: GenerateStyle<CardToken> = (token): CSSObject => {
-  const {
-    componentCls,
-    cardShadow,
-    cardHeadPadding,
-    colorBorderSecondary,
-    boxShadow,
-    cardPaddingBase,
-  } = token;
+  const { componentCls, cardShadow, cardHeadPadding, colorBorderSecondary, boxShadow } = token;
 
   return {
     [componentCls]: {
@@ -249,13 +308,13 @@ const genCardStyle: GenerateStyle<CardToken> = (token): CSSObject => {
       [`${componentCls}-extra`]: {
         // https://stackoverflow.com/a/22429853/3040605
         marginInlineStart: 'auto',
-        color: '',
+        color: token.extraColor,
         fontWeight: 'normal',
         fontSize: token.fontSize,
       },
 
       [`${componentCls}-body`]: {
-        padding: cardPaddingBase,
+        padding: token.bodyPadding,
         borderRadius: ` 0 0 ${unit(token.borderRadiusLG)} ${unit(token.borderRadiusLG)}`,
         ...clearFix(),
       },
@@ -331,14 +390,15 @@ const genCardStyle: GenerateStyle<CardToken> = (token): CSSObject => {
 
 // ============================== Size ==============================
 const genCardSizeStyle: GenerateStyle<CardToken> = (token): CSSObject => {
-  const { componentCls, cardPaddingSM, cardHeadHeightSM } = token;
+  const { componentCls, bodyPaddingSM, headerPaddingSM, cardHeadHeightSM, headerFontSizeSM } =
+    token;
 
   return {
     [`${componentCls}-small`]: {
       [`> ${componentCls}-head`]: {
         minHeight: cardHeadHeightSM,
-        padding: `0 ${unit(cardPaddingSM)}`,
-        fontSize: token.fontSize,
+        padding: `0 ${unit(headerPaddingSM)}`,
+        fontSize: headerFontSizeSM,
 
         [`> ${componentCls}-head-wrapper`]: {
           [`> ${componentCls}-extra`]: {
@@ -348,7 +408,7 @@ const genCardSizeStyle: GenerateStyle<CardToken> = (token): CSSObject => {
       },
 
       [`> ${componentCls}-body`]: {
-        padding: cardPaddingSM,
+        padding: bodyPaddingSM,
       },
     },
     [`${componentCls}-small${componentCls}-contain-tabs`]: {
@@ -365,26 +425,42 @@ const genCardSizeStyle: GenerateStyle<CardToken> = (token): CSSObject => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Card', token => {
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const cardToken = mergeToken<CardToken>(token, {
-    cardShadow: token.boxShadowCard,
-    cardHeadHeight: rawToken.fontSizeLG * rawToken.lineHeightLG + rawToken.padding * 2,
-    cardHeadHeightSM: rawToken.fontSize * rawToken.lineHeight + rawToken.paddingXS * 2,
-    cardHeadPadding: token.padding,
-    cardPaddingBase: token.paddingLG,
-    cardHeadTabsMarginBottom: rawToken.lineWidth - rawToken.padding,
-    cardActionsLiMargin: `${unit(token.paddingSM)} 0`,
-    cardActionsIconSize: token.fontSize,
-    cardPaddingSM: 12, // Fixed padding.
-  });
+export default genComponentStyleHook(
+  'Card',
+  token => {
+    const cardToken = mergeToken<CardToken>(token, {
+      cardShadow: token.boxShadowCard,
+      cardHeadHeight: token.headerHeight,
+      cardHeadHeightSM: token.headerHeightSM,
+      cardHeadPadding: token.padding,
+      cardPaddingBase: token.bodyPadding,
+      cardHeadTabsMarginBottom: token.tabsMarginBottom,
+      cardActionsLiMargin: token.actionsLiMargin,
+      cardActionsIconSize: token.fontSize,
+      cardPaddingSM: token.bodyPaddingSM,
+    });
 
-  return [
-    // Style
-    genCardStyle(cardToken),
+    return [
+      // Style
+      genCardStyle(cardToken),
 
-    // Size
-    genCardSizeStyle(cardToken),
-  ];
-});
+      // Size
+      genCardSizeStyle(cardToken),
+    ];
+  },
+  token => ({
+    headerBg: 'transparent',
+    headerFontSize: token.fontSizeLG,
+    headerFontSizeSM: token.fontSize,
+    headerHeight: token.fontSizeLG * token.lineHeightLG + token.padding * 2,
+    headerHeightSM: token.fontSize * token.lineHeight + token.paddingXS * 2,
+    actionsBg: token.colorBgContainer,
+    actionsLiMargin: `${token.paddingSM}px 0`,
+    tabsMarginBottom: -token.padding - token.lineWidth,
+    extraColor: token.colorText,
+    bodyPadding: token.paddingLG,
+    bodyPaddingSM: 12, // Fixed padding.
+    headerPadding: token.paddingLG,
+    headerPaddingSM: 12,
+  }),
+);

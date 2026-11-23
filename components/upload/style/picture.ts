@@ -15,7 +15,11 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
       [`${listCls}${listCls}-picture, ${listCls}${listCls}-picture-card`]: {
         [itemCls]: {
           position: 'relative',
-          height: uploadThumbnailSize + token.calc(token.lineWidth).mul(2).equal() + token.calc(token.paddingXS).mul(2).equal(),
+          height: token
+            .calc(uploadThumbnailSize)
+            .add(token.calc(token.lineWidth).mul(2).equal())
+            .add(token.calc(token.paddingXS).mul(2).equal())
+            .equal(),
           padding: token.paddingXS,
           border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
           borderRadius: token.borderRadiusLG,
@@ -49,10 +53,7 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
             bottom: uploadProgressOffset,
             width: `calc(100% - ${unit(token.calc(token.paddingSM).mul(2).equal())})`,
             marginTop: 0,
-            paddingInlineStart: token
-              .calc(uploadThumbnailSize)
-              .add(token.paddingXS)
-              .equal(),
+            paddingInlineStart: token.calc(uploadThumbnailSize).add(token.paddingXS).equal(),
           },
         },
 
@@ -84,6 +85,7 @@ const genPictureStyle: GenerateStyle<UploadToken> = token => {
 
 const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
   const { componentCls, iconCls, fontSizeLG, colorTextLightSolid } = token;
+  const rawToken: any = (token as any)._realToken ?? token;
 
   const listCls = `${componentCls}-list`;
   const itemCls = `${listCls}-item`;
@@ -181,7 +183,7 @@ const genPictureCardStyle: GenerateStyle<UploadToken> = token => {
 
         [`${itemCls}-actions, ${itemCls}-actions:hover`]: {
           [`${iconCls}-eye, ${iconCls}-download, ${iconCls}-delete`]: {
-            color: new TinyColor(colorTextLightSolid).setAlpha(0.65).toRgbString(),
+            color: new TinyColor(rawToken.colorTextLightSolid).setAlpha(0.65).toRgbString(),
             '&:hover': {
               color: colorTextLightSolid,
             },

@@ -1,12 +1,67 @@
+import type { CSSProperties } from 'vue';
 import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import { genCollapseMotion, zoomIn } from '../../style/motion';
 import type { AliasToken, FullToken, GenerateStyle } from '../../theme/internal';
+import type { GlobalToken } from '../../theme/interface';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
 import genFormValidateMotionStyle from './explain';
 
-export interface FormToken extends FullToken<'Form'> {
+export interface ComponentToken {
+  /**
+   * @desc 必填项标记颜色
+   * @descEN Required mark color
+   */
+  labelRequiredMarkColor: string;
+  /**
+   * @desc 标签颜色
+   * @descEN Label color
+   */
+  labelColor: string;
+  /**
+   * @desc 标签字体大小
+   * @descEN Label font size
+   */
+  labelFontSize: number;
+  /**
+   * @desc 标签高度
+   * @descEN Label height
+   */
+  labelHeight: number | string;
+  /**
+   * @desc 标签冒号前间距
+   * @descEN Label colon margin-inline-start
+   */
+  labelColonMarginInlineStart: number;
+  /**
+   * @desc 标签冒号后间距
+   * @descEN Label colon margin-inline-end
+   */
+  labelColonMarginInlineEnd: number;
+  /**
+   * @desc 表单项间距
+   * @descEN Form item margin bottom
+   */
+  itemMarginBottom: number;
+  /**
+   * @desc 行内布局表单项间距
+   * @descEN Inline layout form item margin bottom
+   */
+  inlineItemMarginBottom: number;
+  /**
+   * @desc 垂直布局标签内边距
+   * @descEN Vertical layout label padding
+   */
+  verticalLabelPadding: CSSProperties['padding'];
+  /**
+   * @desc 垂直布局标签外边距
+   * @descEN Vertical layout label margin
+   */
+  verticalLabelMargin: CSSProperties['margin'];
+}
+
+export interface FormToken extends FullToken<'Form'>, ComponentToken {
   formItemCls: string;
   rootPrefixCls: string;
 }
@@ -114,13 +169,25 @@ const genFormStyle: GenerateStyle<FormToken> = token => {
 };
 
 const genFormItemStyle: GenerateStyle<FormToken> = token => {
-  const { formItemCls, iconCls, componentCls, rootPrefixCls } = token;
+  const {
+    formItemCls,
+    iconCls,
+    componentCls,
+    rootPrefixCls,
+    labelRequiredMarkColor,
+    labelColor,
+    labelFontSize,
+    labelHeight,
+    labelColonMarginInlineStart,
+    labelColonMarginInlineEnd,
+    itemMarginBottom,
+  } = token;
 
   return {
     [formItemCls]: {
       ...resetComponent(token),
 
-      marginBottom: token.marginLG,
+      marginBottom: itemMarginBottom,
       verticalAlign: 'top',
 
       '&-with-help': {
@@ -171,9 +238,9 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
           display: 'inline-flex',
           alignItems: 'center',
           maxWidth: '100%',
-          height: token.controlHeight,
-          color: token.colorTextHeading,
-          fontSize: token.fontSize,
+          height: labelHeight,
+          color: labelColor,
+          fontSize: labelFontSize,
 
           [`> ${iconCls}`]: {
             fontSize: token.fontSize,
@@ -184,7 +251,7 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
           [`&${formItemCls}-required:not(${formItemCls}-required-mark-optional)::before`]: {
             display: 'inline-block',
             marginInlineEnd: token.marginXXS,
-            color: token.colorError,
+            color: labelRequiredMarkColor,
             fontSize: token.fontSize,
             fontFamily: 'SimSun, sans-serif',
             lineHeight: 1,
@@ -218,8 +285,8 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
             content: '":"',
             position: 'relative',
             marginBlock: 0,
-            marginInlineStart: token.calc(token.marginXXS).div(2).equal(),
-            marginInlineEnd: token.marginXS,
+            marginInlineStart: labelColonMarginInlineStart,
+            marginInlineEnd: labelColonMarginInlineEnd,
           },
 
           [`&${formItemCls}-no-colon::after`]: {
@@ -347,7 +414,7 @@ const genHorizontalStyle: GenerateStyle<FormToken> = token => {
 };
 
 const genInlineStyle: GenerateStyle<FormToken> = token => {
-  const { componentCls, formItemCls } = token;
+  const { componentCls, formItemCls, inlineItemMarginBottom, itemMarginBottom } = token;
 
   return {
     [`${componentCls}-inline`]: {
@@ -358,10 +425,10 @@ const genInlineStyle: GenerateStyle<FormToken> = token => {
         flex: 'none',
         flexWrap: 'nowrap',
         marginInlineEnd: token.margin,
-        marginBottom: 0,
+        marginBottom: inlineItemMarginBottom,
 
         '&-with-help': {
-          marginBottom: token.marginLG,
+          marginBottom: itemMarginBottom,
         },
 
         [`> ${formItemCls}-label,
@@ -387,8 +454,8 @@ const genInlineStyle: GenerateStyle<FormToken> = token => {
 };
 
 const makeVerticalLayoutLabel = (token: FormToken): CSSObject => ({
-  margin: 0,
-  padding: `0 0 ${unit(token.paddingXS)}`,
+  margin: token.verticalLabelMargin,
+  padding: token.verticalLabelPadding,
   whiteSpace: 'initial',
   textAlign: 'start',
 
@@ -474,20 +541,37 @@ const genVerticalStyle: GenerateStyle<FormToken> = token => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Form', (token, { rootPrefixCls }) => {
-  const formToken = mergeToken<FormToken>(token, {
-    formItemCls: `${token.componentCls}-item`,
-    rootPrefixCls,
-  });
-
-  return [
-    genFormStyle(formToken),
-    genFormItemStyle(formToken),
-    genFormValidateMotionStyle(formToken),
-    genHorizontalStyle(formToken),
-    genInlineStyle(formToken),
-    genVerticalStyle(formToken),
-    genCollapseMotion(formToken),
-    zoomIn,
-  ];
+export const prepareComponentToken = (token: GlobalToken): ComponentToken => ({
+  labelRequiredMarkColor: token.colorError,
+  labelColor: token.colorTextHeading,
+  labelFontSize: token.fontSize,
+  labelHeight: token.controlHeight,
+  labelColonMarginInlineStart: token.marginXXS / 2,
+  labelColonMarginInlineEnd: token.marginXS,
+  itemMarginBottom: token.marginLG,
+  inlineItemMarginBottom: 0,
+  verticalLabelPadding: `0 0 ${token.paddingXS}px`,
+  verticalLabelMargin: 0,
 });
+
+export default genComponentStyleHook(
+  'Form',
+  (token, { rootPrefixCls }) => {
+    const formToken = mergeToken<FormToken>(token, {
+      formItemCls: `${token.componentCls}-item`,
+      rootPrefixCls,
+    });
+
+    return [
+      genFormStyle(formToken),
+      genFormItemStyle(formToken),
+      genFormValidateMotionStyle(formToken),
+      genHorizontalStyle(formToken),
+      genInlineStyle(formToken),
+      genVerticalStyle(formToken),
+      genCollapseMotion(formToken),
+      zoomIn,
+    ];
+  },
+  prepareComponentToken,
+);

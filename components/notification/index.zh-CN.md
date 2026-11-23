@@ -37,6 +37,7 @@ config 参数如下：
 | bottom | 消息从底部弹出时，距离底部的位置，单位像素。 | string | `24px` |  |
 | btn | 自定义关闭按钮（已废弃，请使用 `actions` 替代） | VNode \| () => VNode | - |  |
 | class | 自定义 CSS class | string | - |  |
+| closable | 是否显示关闭按钮，或自定义关闭按钮配置 | boolean \| `{ closeIcon?: VueNode \| (() => VueNode); disabled?: boolean; onClose?: () => void; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | 自定义关闭图标 | VNode \| () => VNode | - |  |
 | description | 通知提醒内容，必选 | string \| VNode \| () => VNode | - |  |
 | duration | 默认 4.5 秒后自动关闭，配置为 null 则不自动关闭 | number \| null | 4.5 |  |
@@ -72,6 +73,7 @@ notification.config({
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | bottom | 消息从底部弹出时，距离底部的位置，单位像素。 | string | `24px` |  |
+| closable | 是否显示关闭按钮，或自定义关闭按钮配置 | boolean \| `{ closeIcon?: VueNode \| (() => VueNode); disabled?: boolean; onClose?: () => void; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | 自定义关闭图标 | VNode \| () => VNode | - |  |
 | duration | 默认自动关闭延时，单位秒 | number | 4.5 |  |
 | getContainer | 配置渲染节点的输出位置 | () => HTMLNode | () => document.body |  |
@@ -80,6 +82,7 @@ notification.config({
 | placement | 弹出位置，可选 `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` |  |
 | rtl | 是否开启 RTL 模式 | boolean | false | 3.0 |
 | showProgress | 显示自动关闭进度条 | boolean | false | 4.3.0 |
+| stack | 通知数量达到阈值时折叠堆叠，鼠标移入展开 | boolean \| `{ threshold?: number }` | `{ threshold: 3 }` | 4.3.0 |
 | top | 消息从顶部弹出时，距离顶部的位置，单位像素。 | string | `24px` |  |
 
 ## FAQ

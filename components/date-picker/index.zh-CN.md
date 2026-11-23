@@ -93,6 +93,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3OpRQKcygo8AAA
 | inputReadOnly | 设置输入框为只读（避免在移动设备上打开虚拟键盘） | boolean | false |  |
 | locale | 国际化配置 | object | [默认配置](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) | - |
 | mode | 日期面板的状态 | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |
+| needConfirm | 是否需要点击确认按钮触发值变更（`showTime` / `TimePicker` 默认为 `true`） | boolean | - | 4.3.0 |
 | nextIcon | 自定义下一个图标 | slot | - | 3.0 |
 | open | 控制弹层是否展开 | boolean | - |  |
 | panelRender | 自定义渲染面板 | `(panelNode: VNode) => VNode` | - |  |
@@ -134,6 +135,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3OpRQKcygo8AAA
 | defaultValue | 默认日期 | [dayjs](https://day.js.org/) | - |  |
 | disabledTime | 不可选择的时间 | function(date) | - |  |
 | format | 展示的日期格式，配置参考 [dayjs](https://day.js.org/docs/zh-CN/display/format) | [formatType](#formattype) | `YYYY-MM-DD` |  |
+| maxTagCount | 多选模式下最多展示的标签数量，`responsive` 表示自适应折叠 | number \| `'responsive'` | - | 4.3.0 |
+| maxTagPlaceholder | 隐藏 tag 时显示的内容 | VNode \| (omittedValues) => VNode | - | 4.3.0 |
+| multiple | 是否支持多选日期（不支持与 `showTime` 同时使用） | boolean | false | 4.3.0 |
 | renderExtraFooter | 在面板中添加额外的页脚 | v-slot:renderExtraFooter="mode" | - |  |
 | showNow | 当设定了 `showTime` 的时候，面板是否显示“此刻”按钮 | boolean | - |  |
 | showTime | 增加时间选择功能 | Object \| boolean | [TimePicker Options](/components/time-picker/#api) |  |

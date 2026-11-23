@@ -15,6 +15,7 @@
     <button-props />
     <fullscreen />
     <modalRenderVue />
+    <loading />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -33,6 +34,7 @@ import Fullscreen from './fullscreen.vue';
 import ButtonProps from './button-props.vue';
 import modalRenderVue from './modal-render.vue';
 import HookModal from './hook-modal.vue';
+import Loading from './loading.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -55,6 +57,7 @@ export default defineComponent({
     Fullscreen,
     modalRenderVue,
     HookModal,
+    Loading,
   },
   setup() {
     return {};

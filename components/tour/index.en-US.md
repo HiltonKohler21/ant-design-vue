@@ -25,9 +25,10 @@ Use when you want to guide users through a product.
 | type | Type, affects the background color and text color | `default` \| `primary` | `default` |  |
 | open | Open tour | `boolean` | - |  |
 | current(v-model) | What is the current step | `number` | - |  |
+| keyboard | Whether to enable keyboard shortcuts (`ArrowLeft` / `ArrowRight` / `Escape`) | `boolean` | `true` | 4.3.0 |
 | rootClassName | The class name of the root element | `string` | - | 4.3.0 |
 | scrollIntoViewOptions | support pass custom scrollIntoView options | `boolean` \| `ScrollIntoViewOptions` | `true` |  |
-| indicatorsRender | custom indicator | `v-slot:indicatorsRender="{current, total}"` | - |  |
+| indicatorsRender | custom indicator | `(current: number, total: number) => VueNode` \| `v-slot:indicatorsRender="{current, total}"` | - | 4.3.0 |
 | zIndex | Tour's zIndex | `number` | `1001` |  |
 
 ### Tour events

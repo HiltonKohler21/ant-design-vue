@@ -84,6 +84,81 @@ describe('Divider', () => {
     expect(startRtl.find('.ant-divider').classes()).toContain('ant-divider-with-text-left');
   });
 
+  it('supports v6 orientation=vertical/horizontal, vertical shorthand, and titlePlacement', () => {
+    const orientVert = mount(Divider, { props: { orientation: 'vertical' } });
+    expect(orientVert.classes()).toContain('ant-divider-vertical');
+
+    const verticalShorthand = mount(Divider, { props: { vertical: true } });
+    expect(verticalShorthand.classes()).toContain('ant-divider-vertical');
+
+    // orientation takes precedence over vertical
+    const orientPrecedence = mount(Divider, {
+      props: { orientation: 'horizontal', vertical: true },
+    });
+    expect(orientPrecedence.classes()).toContain('ant-divider-horizontal');
+
+    const placedStart = mount(Divider, {
+      props: { titlePlacement: 'start' },
+      slots: { default: () => 'Title' },
+    });
+    expect(placedStart.classes()).toContain('ant-divider-with-text-left');
+
+    const placedEnd = mount(Divider, {
+      props: { titlePlacement: 'end' },
+      slots: { default: () => 'Title' },
+    });
+    expect(placedEnd.classes()).toContain('ant-divider-with-text-right');
+
+    // titlePlacement takes precedence over legacy orientation
+    const placedOverride = mount(Divider, {
+      props: { orientation: 'left', titlePlacement: 'right' },
+      slots: { default: () => 'Override' },
+    });
+    expect(placedOverride.classes()).toContain('ant-divider-with-text-right');
+  });
+
+  it('supports semantic classNames and styles (object and functional) for root, rail, and content', () => {
+    const withText = mount(Divider, {
+      props: {
+        variant: 'dashed',
+        titlePlacement: 'start',
+        classNames: ({ props }) => ({
+          root: `sem-root-${props.variant}`,
+          rail: 'sem-rail',
+          content: 'sem-content',
+        }),
+        styles: {
+          root: { margin: '10px 0' },
+          rail: { borderColor: 'rgb(22, 119, 255)' },
+          content: { color: 'rgb(82, 196, 26)' },
+        },
+      },
+      slots: { default: () => 'Semantic' },
+    });
+    expect(withText.classes()).toContain('sem-root-dashed');
+    expect(withText.classes()).toContain('ant-divider-has-rail');
+    expect(withText.find('.ant-divider-rail-start').classes()).toContain('sem-rail');
+    expect(withText.find('.ant-divider-rail-end').classes()).toContain('sem-rail');
+    expect(withText.find('.ant-divider-rail-start').attributes('style')).toContain(
+      'border-color: rgb(22, 119, 255)',
+    );
+    expect(withText.find('.ant-divider-inner-text').classes()).toContain('sem-content');
+    expect(withText.find('.ant-divider-inner-text').attributes('style')).toContain(
+      'color: rgb(82, 196, 26)',
+    );
+
+    const plainLine = mount(Divider, {
+      props: {
+        classNames: { root: 'line-root', rail: 'line-rail' },
+        styles: { rail: { borderColor: 'rgb(250, 140, 22)' } },
+      },
+    });
+    expect(plainLine.classes()).toContain('line-root');
+    expect(plainLine.classes()).toContain('line-rail');
+    expect(plainLine.classes()).toContain('ant-divider-rail');
+    expect(plainLine.attributes('style')).toContain('border-color: rgb(250, 140, 22)');
+  });
+
   it('wires ConfigProvider.divider (className, style, variant) and ComponentToken overrides', async () => {
     document.head.innerHTML = '';
     const wrapper = mount(ConfigProvider, {

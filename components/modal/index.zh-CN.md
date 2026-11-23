@@ -26,7 +26,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*fBrgSJBmavgAAA
 | cancelText | 取消按钮文字 | string\| slot | 取消 |  |
 | centered | 垂直居中展示 Modal | boolean | `false` |  |
 | classNames | 用于自定义 Modal 组件内部各语义化结构的 class | `{ mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string }` | - | 4.3.0 |
-| closable | 是否显示右上角的关闭按钮 | boolean | true |  |
+| closable | 是否显示右上角的关闭按钮 | boolean \| `{ closeIcon?: VueNode; disabled?: boolean; afterClose?: () => void; onClose?: () => void; 'aria-label'?: string }` | true | 4.3.0 |
 | closeIcon | 自定义关闭图标 | VNode \| slot | - |  |
 | confirmLoading | 确定按钮 loading | boolean | false |  |
 | destroyOnClose | 关闭时销毁 Modal 里的子元素（已废弃，请使用 `destroyOnHidden` 替代） | boolean | false |  |
@@ -35,7 +35,8 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*fBrgSJBmavgAAA
 | forceRender | 强制渲染 Modal | boolean | false |  |
 | getContainer | 指定 Modal 挂载的 HTML 节点 | (instance): HTMLElement | () => document.body |  |
 | keyboard | 是否支持键盘 esc 关闭 | boolean | true |  |
-| mask | 是否展示遮罩 | boolean | true |  |
+| loading | 显示骨架屏加载状态 | boolean | false | 4.3.0 |
+| mask | 是否展示遮罩，或配置遮罩毛玻璃与点击关闭行为 | boolean \| `{ enabled?: boolean; blur?: boolean; closable?: boolean }` | true | 4.3.0 |
 | maskClosable | 点击蒙层是否允许关闭 | boolean | true |  |
 | maskStyle | 遮罩样式（已废弃，请使用 `styles.mask` 替代） | object | {} |  |
 | modalRender | 自定义渲染对话框 | (arg: { originVNode: VueNode }) => VueNode \| slot | - |  |

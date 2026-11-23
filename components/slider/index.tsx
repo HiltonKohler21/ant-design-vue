@@ -44,6 +44,15 @@ interface HandleGeneratorInfo {
 export interface SliderRange {
   draggableTrack?: boolean;
 }
+export type Formatter = ((value?: number) => VueNode) | null;
+export interface SliderTooltipProps {
+  open?: boolean;
+  formatter?: Formatter;
+  placement?: TooltipPlacement;
+  getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+  autoAdjustOverflow?: boolean;
+  prefixCls?: string;
+}
 export type HandleGeneratorFn = (config: {
   tooltipPrefixCls?: string;
   prefixCls?: string;
@@ -69,6 +78,8 @@ export const sliderProps = () => ({
   included: booleanType(),
   disabled: booleanType(),
   vertical: booleanType(),
+  orientation: stringType<'horizontal' | 'vertical'>(),
+  tooltip: objectType<SliderTooltipProps>(),
   tipFormatter: someType<((value?: number) => any) | null>(
     [Function, Object],
     () => defaultTipFormatter,
@@ -96,7 +107,7 @@ export const sliderProps = () => ({
   /** 5.0+ 拖拽结束回调（onAfterChange 别名） */
   onChangeComplete: functionType<(value: Value) => void>(),
   /** 5.20+ tooltip 格式化（tipFormatter 别名） */
-  formatter: functionType<(value?: number) => any>(),
+  formatter: someType<Formatter>([Function, Object]),
   /** 5.20+ 自定义 handle 渲染 */
   handleRender:
     functionType<(node: any, info: { index: number; value: number; dragging: boolean }) => any>(),
@@ -141,11 +152,15 @@ const Slider = defineComponent({
     const toggleTooltipOpen = (index: number, visible: boolean) => {
       visibles.value[index] = visible;
     };
+    const mergedVertical = computed(() =>
+      props.orientation !== undefined ? props.orientation === 'vertical' : !!props.vertical,
+    );
     const tooltipPlacement = computed(() => {
-      if (props.tooltipPlacement) {
-        return props.tooltipPlacement;
+      const customPlacement = props.tooltip?.placement ?? props.tooltipPlacement;
+      if (customPlacement) {
+        return customPlacement;
       }
-      if (!props.vertical) {
+      if (!mergedVertical.value) {
         return 'top';
       }
       return direction.value === 'rtl' ? 'left' : 'right';
@@ -178,15 +193,29 @@ const Slider = defineComponent({
       info: { value, dragging, index, ...restProps },
     }) => {
       const {
+        tooltip,
         tipFormatter,
-        tooltipOpen = props.tooltipVisible,
+        tooltipOpen,
+        tooltipVisible,
         getTooltipPopupContainer,
+        autoAdjustOverflow,
         formatter,
         handleRender,
       } = props;
-      const mergedFormatter = formatter ?? tipFormatter;
+      const mergedTooltipOpen = tooltip?.open ?? tooltipOpen ?? tooltipVisible;
+      const mergedFormatter =
+        tooltip && 'formatter' in tooltip && tooltip.formatter !== undefined
+          ? tooltip.formatter
+          : formatter !== undefined
+          ? formatter
+          : tipFormatter;
+      const mergedGetPopupContainer =
+        tooltip?.getPopupContainer ?? getTooltipPopupContainer ?? getPopupContainer?.value;
+      const mergedAutoAdjustOverflow = tooltip?.autoAdjustOverflow ?? autoAdjustOverflow;
       const isTipFormatter = mergedFormatter ? visibles.value[index] || dragging : false;
-      const open = tooltipOpen || (tooltipOpen === undefined && isTipFormatter);
+      const open =
+        mergedFormatter !== null &&
+        (mergedTooltipOpen || (mergedTooltipOpen === undefined && isTipFormatter));
       const handleNode = (
         <SliderTooltip
           prefixCls={tooltipPrefixCls}
@@ -196,7 +225,10 @@ const Slider = defineComponent({
           transitionName={`${rootPrefixCls.value}-zoom-down`}
           key={index}
           overlayClassName={`${prefixCls.value}-tooltip`}
-          getPopupContainer={getTooltipPopupContainer || getPopupContainer?.value}
+          getPopupContainer={mergedGetPopupContainer}
+          {...(mergedAutoAdjustOverflow !== undefined
+            ? { autoAdjustOverflow: mergedAutoAdjustOverflow }
+            : {})}
         >
           <VcHandle
             {...restProps}
@@ -214,6 +246,9 @@ const Slider = defineComponent({
     return () => {
       const {
         tooltipPrefixCls: customizeTooltipPrefixCls,
+        tooltip,
+        orientation: _orientation,
+        vertical: _vertical,
         range,
         id = formItemContext.id.value,
         classNames: semanticClassNames,
@@ -246,7 +281,10 @@ const Slider = defineComponent({
       const mergedTrackClassName =
         classNames(mergedSemanticClassNames.tracks, mergedSemanticClassNames.track) || undefined;
 
-      const tooltipPrefixCls = configProvider.getPrefixCls('tooltip', customizeTooltipPrefixCls);
+      const tooltipPrefixCls = configProvider.getPrefixCls(
+        'tooltip',
+        tooltip?.prefixCls ?? customizeTooltipPrefixCls,
+      );
       const cls = classNames(
         contextSlider?.className,
         attrs.class,
@@ -265,7 +303,7 @@ const Slider = defineComponent({
       ];
 
       // make reverse default on rtl direction
-      if (direction.value === 'rtl' && !restProps.vertical) {
+      if (direction.value === 'rtl' && !mergedVertical.value) {
         restProps.reverse = !restProps.reverse;
       }
 
@@ -308,6 +346,7 @@ const Slider = defineComponent({
           <VcRange
             {...attrs}
             {...restProps}
+            vertical={mergedVertical.value}
             step={restProps.step!}
             draggableTrack={draggableTrack}
             class={cls}
@@ -338,6 +377,7 @@ const Slider = defineComponent({
         <VcSlider
           {...attrs}
           {...restProps}
+          vertical={mergedVertical.value}
           id={id}
           step={restProps.step!}
           class={cls}

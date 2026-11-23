@@ -104,4 +104,10 @@ interface Option {
 | blur()  | 移除焦点 |
 | focus() | 获取焦点 |
 
+### Cascader.Panel
+
+> `4.3.0` 新增，支持 `<a-cascader-panel>` 与 `<Cascader.Panel>`。
+
+直接内联渲染级联选择面板（无下拉浮层）。支持 `value(v-model)`、`defaultValue`、`options`、`fieldNames`、`multiple`、`changeOnSelect`、`showCheckedStrategy`、`expandTrigger`、`loadData`、`disabled`、`notFoundContent`、`expandIcon`、`loadingIcon`、`direction`、`rootClassName`、`popupMenuColumnStyle` 与 `change` 事件，用法与 `Cascader` 一致。
+
 > 注意，如果需要获得中国省市区数据，可以参考 react 组件的实现 [china-division](https://gist.github.com/afc163/7582f35654fd03d5be7009444345ea17)。

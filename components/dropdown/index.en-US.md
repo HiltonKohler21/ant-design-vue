@@ -20,6 +20,7 @@ When there are more than a few options to choose from, you can wrap them in a `D
 | --- | --- | --- | --- | --- |
 | align | This value will be merged into placement's config, please refer to the settings [dom-align](https://github.com/yiminghe/dom-align) | Object | - |  |
 | arrow | Whether the dropdown arrow should be visible | boolean \| { pointAtCenter: boolean } | false | 3.3.0 |
+| autoAdjustOverflow | Whether to adjust dropdown placement automatically when dropdown is off screen | boolean \| { adjustX?: 0 \| 1; adjustY?: 0 \| 1 } | true | 4.3.0 |
 | destroyOnHidden | Whether destroy dropdown when hidden (replaces `destroyPopupOnHide`) | boolean | false | 4.3.0 |
 | ~~destroyPopupOnHide~~ | Whether destroy dropdown when hidden (deprecated, please use `destroyOnHidden` instead) | boolean | false | 3.0 |
 | disabled | Whether the dropdown menu is disabled | boolean | - |  |

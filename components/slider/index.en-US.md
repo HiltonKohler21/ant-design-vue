@@ -31,11 +31,13 @@ To input a value in a range.
 | marks | Tick mark of Slider, type of key must be `number`, and must in closed interval \[min, max], each mark can declare its own style. | object | { number: string\|VNode } or { number: { style: object, label: string\|VNode } } or { number: () => VNode } |  |
 | max | The maximum value the slider can slide to | number | 100 |  |
 | min | The minimum value the slider can slide to. | number | 0 |  |
+| orientation | Slider orientation (takes precedence over `vertical`) | `'horizontal'` \| `'vertical'` | `'horizontal'` | 4.3.0 |
 | range | dual thumb mode | boolean \| `{ draggableTrack?: boolean }` | false |  |
 | reverse | reverse the component | boolean | false | 1.5.0 |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | step | The granularity the slider can step through values. Must greater than 0, and be divided by (max - min) . When `marks` no null, `step` can be `null`. | number\|null | 1 |  |
 | styles | Semantic DOM inline styles | `{ root?: CSSProperties; tracks?: CSSProperties; track?: CSSProperties; rail?: CSSProperties; handle?: CSSProperties }` | - | 4.3.0 |
+| tooltip | The tooltip related props | [tooltip](#tooltip) | - | 4.3.0 |
 | trackStyle | The style of slider track (Deprecated, please use `styles.track` instead) | CSSProperties \| CSSProperties\[] | - |  |
 | value(v-model) | The value of slider. When `range` is `false`, use `number`, otherwise, use `[number, number]` | number\|number\[] | - |  |
 | vertical | If true, the slider will be vertical. | Boolean | false |  |
@@ -43,6 +45,17 @@ To input a value in a range.
 | tooltipPlacement | Set Tooltip display position. Ref [`Tooltip`](/components/tooltip/). | string | - | 1.5.0 |
 | tooltipOpen | If true, Tooltip will show always, or it will not show anyway, even if dragging or hovering. | Boolean | - | 4.0 |
 | getTooltipPopupContainer | The DOM container of the Tooltip, the default behavior is to create a div element in body. | Function | () => document.body | 1.5.0 |
+
+### tooltip
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| autoAdjustOverflow | Whether to adjust popup placement automatically when popup is off screen | boolean | true | 4.3.0 |
+| formatter | Slider will pass its value to `formatter`, and display its value in Tooltip, and hide Tooltip when return value is null | ((value?: number) => VueNode) \| null | IDENTITY | 4.3.0 |
+| getPopupContainer | The DOM container of the Tooltip, the default behavior is to create a div element in body | (triggerNode: HTMLElement) => HTMLElement | () => document.body | 4.3.0 |
+| open | If true, Tooltip will show always, or it will not show anyway, even if dragging or hovering | boolean | - | 4.3.0 |
+| placement | Set Tooltip display position. Ref [`Tooltip`](/components/tooltip/) | string | - | 4.3.0 |
+| prefixCls | Custom Tooltip prefixCls | string | - | 4.3.0 |
 
 ### events
 

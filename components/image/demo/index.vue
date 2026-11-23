@@ -7,6 +7,9 @@
     <previewGroupVisibleVue />
     <previewSrc />
     <controlled-preview />
+    <toolbar-render />
+    <image-render />
+    <mask-demo />
     <nested />
   </demo-sort>
 </template>
@@ -19,6 +22,9 @@ import previewSrc from './preview-src.vue';
 import PreviewGroup from './preview-group.vue';
 import ControlledPreview from './controlled-preview.vue';
 import previewGroupVisibleVue from './preview-group-visible.vue';
+import ToolbarRender from './toolbar-render.vue';
+import ImageRender from './image-render.vue';
+import MaskDemo from './mask.vue';
 import Nested from './nested.vue';
 
 import CN from '../index.zh-CN.md';
@@ -35,6 +41,9 @@ export default defineComponent({
     PreviewGroup,
     ControlledPreview,
     previewGroupVisibleVue,
+    ToolbarRender,
+    ImageRender,
+    MaskDemo,
     Nested,
   },
 });

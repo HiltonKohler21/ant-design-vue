@@ -3,6 +3,7 @@ import TabNode from './TabNode';
 import type {
   TabSizeMap,
   TabPosition,
+  MoreProps,
   RenderTabBar,
   TabsLocale,
   EditableConfig,
@@ -49,6 +50,7 @@ export const tabNavListProps = () => {
     rtl: { type: Boolean },
     animated: objectType<AnimatedConfig>(),
     editable: objectType<EditableConfig>(),
+    more: objectType<MoreProps>(),
     moreIcon: PropTypes.any,
     moreTransitionName: { type: String },
     mobile: { type: Boolean },

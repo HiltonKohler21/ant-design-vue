@@ -29,13 +29,35 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*yIl9S4hAIBcAAA
 
 时间轴。
 
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| mode | 通过设置 `mode` 可以改变时间轴和内容的相对位置 | `left` \| `alternate` \| `right` |  |
-| pending | 指定最后一个幽灵节点是否存在或内容 | boolean \| string \| slot | false |
-| pendingDot | 当最后一个幽灵节点存在时，指定其时间图点 | string \| slot | `<LoadingOutlined />` |
-| reverse | 节点排序 | boolean | false |
-| rootClassName | 根节点 className | string | - |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| items | 选项配置 | [TimelineItemType\[\]](#timelineitemtype) | - | 4.3.0 |
+| mode | 通过设置 `mode` 可以改变时间轴和内容的相对位置 | `left` \| `alternate` \| `right` \| `start` \| `end` |  |  |
+| orientation | 时间轴方向 | `vertical` \| `horizontal` | `vertical` | 4.3.0 |
+| pending | 指定最后一个幽灵节点是否存在或内容 | boolean \| string \| slot | false |  |
+| pendingDot | 当最后一个幽灵节点存在时，指定其时间图点 | string \| slot | `<LoadingOutlined />` |  |
+| reverse | 节点排序 | boolean | false |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
+| titleSpan | 自定义标题/标签区域宽度（数字表示 24 栅格占比，字符串表示具体 CSS 长度或百分比） | number \| string | - | 4.3.0 |
+| variant | 节点视觉变体 | `outlined` \| `filled` | `outlined` | 4.3.0 |
+
+### TimelineItemType
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| ~~children~~ | 节点内容（`content` 的别名） | string \| VNode | - | 4.3.0 |
+| class | 节点自定义类名 | string | - | 4.3.0 |
+| color | 指定圆圈颜色 `blue, red, green, gray`，或自定义的色值 | string | `blue` | 4.3.0 |
+| content | 节点内容 | string \| VNode | - | 4.3.0 |
+| ~~dot~~ | 自定义时间轴点（`icon` 的别名） | string \| VNode | - | 4.3.0 |
+| icon | 自定义节点图标 | string \| VNode | - | 4.3.0 |
+| key | 唯一标识 | string \| number | - | 4.3.0 |
+| ~~label~~ | 设置标签（`title` 的别名） | string \| VNode | - | 4.3.0 |
+| loading | 节点是否为加载状态 | boolean | false | 4.3.0 |
+| placement | 自定义节点位置 | `start` \| `end` | - | 4.3.0 |
+| ~~position~~ | 自定义节点位置（`placement` 的别名） | `left` \| `right` \| `start` \| `end` | - | 4.3.0 |
+| style | 节点行内样式 | CSSProperties | - | 4.3.0 |
+| title | 设置标题/标签 | string \| VNode | - | 4.3.0 |
 
 ### Timeline.Item
 

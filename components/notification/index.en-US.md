@@ -36,6 +36,7 @@ The properties of config are as follows:
 | bottom | Distance from the bottom of the viewport, when `placement` is `bottomRight` or `bottomLeft` (unit: pixels). | string | `24px` |  |
 | btn | Customized close button (Deprecated, please use `actions` instead) | VNode \| () => VNode | - |  |
 | class | Customized CSS class | string | - |  |
+| closable | Whether to show the close button or custom close button config | boolean \| `{ closeIcon?: VueNode \| (() => VueNode); disabled?: boolean; onClose?: () => void; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | custom close icon | VNode \| () => VNode | - |  |
 | description | The content of notification box (required) | string\| VNode \| () => VNode | - |  |
 | duration | Time in seconds before Notification is closed. When set to 0 or null, it will never be closed automatically | number \| null | 4.5 |  |
@@ -71,6 +72,7 @@ notification.config({
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | bottom | Distance from the bottom of the viewport, when `placement` is `bottomRight` or `bottomLeft` (unit: pixels). | string | `24px` |  |
+| closable | Whether to show the close button or custom close button config | boolean \| `{ closeIcon?: VueNode \| (() => VueNode); disabled?: boolean; onClose?: () => void; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | custom close icon | VNode \| () => VNode | - |  |
 | duration | Time in seconds before Notification is closed. When set to 0 or null, it will never be closed automatically | number | 4.5 |  |
 | getContainer | Return the mount node for Notification | () => HTMLNode | () => document.body |  |
@@ -79,6 +81,7 @@ notification.config({
 | placement | Position of Notification, can be one of `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` |  |
 | rtl | Whether to enable RTL mode | boolean | false | 3.0 |
 | showProgress | Show progress bar for auto-closing notification | boolean | false | 4.3.0 |
+| stack | Notifications will be stacked when count reaches threshold, and expand on hover | boolean \| `{ threshold?: number }` | `{ threshold: 3 }` | 4.3.0 |
 | top | Distance from the top of the viewport, when `placement` is `topRight` or `topLeft` (unit: pixels). | string | `24px` |  |
 
 ## FAQ

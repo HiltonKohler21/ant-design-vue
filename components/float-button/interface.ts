@@ -10,12 +10,15 @@ export type FloatButtonShape = 'circle' | 'square';
 
 export type FloatButtonGroupTrigger = 'click' | 'hover';
 
+export type FloatButtonGroupPlacement = 'top' | 'right' | 'bottom' | 'left';
+
 export type FloatButtonBadgeProps = Omit<BadgeProps, 'status' | 'text' | 'title' | 'children'>;
 
 export const floatButtonProps = () => {
   return {
     prefixCls: String,
     rootClassName: String,
+    content: PropTypes.any,
     description: PropTypes.any,
     type: stringType<FloatButtonType>('default'),
     shape: stringType<FloatButtonShape>('circle'),
@@ -51,6 +54,8 @@ export const floatButtonGroupProps = () => {
     // 包含的 Float Button
     // 触发方式 (有触发方式为菜单模式）
     trigger: stringType<FloatButtonGroupTrigger>(),
+    // 自定义菜单弹出位置
+    placement: stringType<FloatButtonGroupPlacement>('top'),
     // 受控展开
     open: booleanType(),
     // 展开收起的回调

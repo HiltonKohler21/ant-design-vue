@@ -4,17 +4,35 @@ import PropTypes from '../_util/vue-types';
 import { getPropsSlot } from '../_util/props-util';
 import type { DropdownProps } from '../dropdown/dropdown';
 import Dropdown from '../dropdown/dropdown';
+import type { MenuProps } from '../menu';
+import Menu from '../menu';
 import DownOutlined from '@ant-design/icons-vue/DownOutlined';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import { eventType, objectType } from '../_util/type';
-import type { CustomSlotsType, VueNode } from '../_util/type';
+import type { CustomSlotsType, Key, VueNode } from '../_util/type';
+
+export interface BreadcrumbMenuItem {
+  key?: Key;
+  title?: VueNode;
+  label?: VueNode;
+  path?: string;
+  href?: string;
+  onClick?: MouseEventHandler;
+  [key: string]: any;
+}
+
+export type BreadcrumbMenuProps = Omit<MenuProps, 'items'> & {
+  items?: BreadcrumbMenuItem[];
+};
 
 export const breadcrumbItemProps = () => ({
   prefixCls: String,
   href: String,
   separator: PropTypes.any,
   dropdownProps: objectType<DropdownProps>(),
+  dropdownIcon: PropTypes.any,
+  menu: objectType<BreadcrumbMenuProps>(),
   overlay: PropTypes.any,
   onClick: eventType<MouseEventHandler>(),
 });
@@ -30,22 +48,60 @@ export default defineComponent({
   slots: Object as CustomSlotsType<{
     separator: any;
     overlay: any;
+    dropdownIcon: any;
     default: any;
   }>,
   setup(props, { slots, attrs, emit }) {
     const { prefixCls } = useConfigInject('breadcrumb', props);
     /**
-     * if overlay is have
+     * if menu or overlay is present
      * Wrap a Dropdown
      */
     const renderBreadcrumbNode = (breadcrumbItem: VueNode, prefixCls: string) => {
       const overlay = getPropsSlot(slots, props, 'overlay');
-      if (overlay) {
+      const customDropdownIcon = getPropsSlot(slots, props, 'dropdownIcon');
+      const dropdownIcon = customDropdownIcon !== undefined ? customDropdownIcon : <DownOutlined />;
+
+      if (props.menu) {
+        const { items, ...menuProps } = props.menu;
+        const menuOverlay = (
+          <Menu
+            {...menuProps}
+            items={
+              items?.map(({ key, title, label, path, href: itemHref, ...itemProps }, index) => {
+                let mergedLabel: VueNode = label ?? title;
+
+                if (path) {
+                  mergedLabel = <a href={`${props.href ?? ''}${path}`}>{mergedLabel}</a>;
+                } else if (itemHref !== undefined) {
+                  mergedLabel = <a href={itemHref}>{mergedLabel}</a>;
+                }
+
+                return {
+                  ...itemProps,
+                  key: key ?? index,
+                  label: mergedLabel,
+                };
+              }) as MenuProps['items']
+            }
+          />
+        );
         return (
-          <Dropdown {...props.dropdownProps} overlay={overlay} placement="bottom">
+          <Dropdown placement="bottom" {...props.dropdownProps} overlay={menuOverlay}>
             <span class={`${prefixCls}-overlay-link`}>
               {breadcrumbItem}
-              <DownOutlined />
+              {dropdownIcon}
+            </span>
+          </Dropdown>
+        );
+      }
+
+      if (overlay) {
+        return (
+          <Dropdown placement="bottom" {...props.dropdownProps} overlay={overlay}>
+            <span class={`${prefixCls}-overlay-link`}>
+              {breadcrumbItem}
+              {dropdownIcon}
             </span>
           </Dropdown>
         );
@@ -62,7 +118,12 @@ export default defineComponent({
       let link: VueNode;
       if (props.href !== undefined) {
         link = (
-          <a class={`${prefixCls.value}-link`} onClick={handleClick} {...restAttrs}>
+          <a
+            class={`${prefixCls.value}-link`}
+            href={props.href || undefined}
+            onClick={handleClick}
+            {...restAttrs}
+          >
             {children}
           </a>
         );

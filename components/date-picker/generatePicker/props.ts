@@ -72,9 +72,9 @@ function commonProps<DateType = any>() {
     getPopupContainer: functionType<(node: HTMLElement) => HTMLElement>(),
     panelRender: functionType<(originPanel: VueNode) => VueNode>(),
     // // Events
-    onChange: functionType<(value: DateType | string | null, dateString: string) => void>(),
-    'onUpdate:value': functionType<(value: DateType | string | null) => void>(),
-    onOk: functionType<(value: DateType | string | null) => void>(),
+    onChange: functionType<(value: any, dateString: any) => void>(),
+    'onUpdate:value': functionType<(value: any) => void>(),
+    onOk: functionType<(value: any) => void>(),
     onOpenChange: functionType<(open: boolean) => void>(),
     'onUpdate:open': functionType<(open: boolean) => void>(),
     onFocus: functionType<FocusEventHandler>(),
@@ -98,6 +98,8 @@ function commonProps<DateType = any>() {
     bordered: booleanType(),
     /** 视觉变体（antd 5.13+）：outlined / borderless / filled / underlined */
     variant: stringType<Variant>(),
+    /** 是否需要确认按钮（antd 5.14+） */
+    needConfirm: booleanType(),
     dateRender: functionType<DateRender<DateType>>(),
     disabledDate: functionType<(date: DateType) => boolean>(),
     mode: stringType<PanelMode>(),
@@ -169,6 +171,7 @@ export interface CommonProps<DateType> {
   size?: SizeType;
   bordered?: boolean;
   variant?: Variant;
+  needConfirm?: boolean;
   dateRender?: DateRender<DateType>;
   disabledDate?: (date: DateType) => boolean;
   mode?: PanelMode;
@@ -182,8 +185,18 @@ function datePickerProps<DateType = any>() {
   return {
     rootClassName: String,
     defaultPickerValue: someType<DateType | string>([Object, String]),
-    defaultValue: someType<DateType | string>([Object, String]),
-    value: someType<DateType | string>([Object, String]),
+    defaultValue: someType<DateType | string | DateType[] | string[]>([Object, String, Array]),
+    value: someType<DateType | string | DateType[] | string[]>([Object, String, Array]),
+    /** 是否支持多选日期（antd 5.14+） */
+    multiple: booleanType(),
+    /** 多选模式下最多展示的标签数量（支持数字或 'responsive'） */
+    maxTagCount: someType<number | 'responsive'>([Number, String]),
+    /** 隐藏 tag 时显示的内容 */
+    maxTagPlaceholder: someType<VueNode | ((omittedValues: any[]) => VueNode)>([
+      Function,
+      String,
+      Object,
+    ]),
     presets: arrayType<PresetDate<DateType>[]>(),
     disabledTime: functionType<DisabledTime<DateType>>(),
     renderExtraFooter: functionType<(mode: PanelMode) => VueNode>(),
@@ -196,8 +209,11 @@ function datePickerProps<DateType = any>() {
 
 export interface DatePickerProps<DateType> {
   defaultPickerValue?: DateType | string;
-  defaultValue?: DateType | string;
-  value?: DateType | string;
+  defaultValue?: DateType | string | DateType[] | string[];
+  value?: DateType | string | DateType[] | string[];
+  multiple?: boolean;
+  maxTagCount?: number | 'responsive';
+  maxTagPlaceholder?: VueNode | ((omittedValues: any[]) => VueNode);
   presets?: PresetDate<DateType>[];
   disabledTime?: DisabledTime<DateType>;
   renderExtraFooter?: (mode: PanelMode) => VueNode;
@@ -293,8 +309,12 @@ export interface RangePickerProps<DateType> {
 export type ExtraDatePickerProps<DateType> = {
   valueFormat?: string;
   defaultPickerValue?: DateType | string;
-  defaultValue?: DateType | string;
-  value?: DateType | string;
+  defaultValue?: DateType | string | DateType[] | string[];
+  value?: DateType | string | DateType[] | string[];
+  multiple?: boolean;
+  maxTagCount?: number | 'responsive';
+  maxTagPlaceholder?: VueNode | ((omittedValues: any[]) => VueNode);
+  needConfirm?: boolean;
 };
 
 export type ExtraRangePickerProps<DateType> = {
@@ -302,6 +322,7 @@ export type ExtraRangePickerProps<DateType> = {
   defaultPickerValue?: RangeValue<DateType> | RangeValue<string>;
   defaultValue?: RangeValue<DateType> | RangeValue<string>;
   value?: RangeValue<DateType> | RangeValue<string>;
+  needConfirm?: boolean;
 };
 
 export { commonProps, datePickerProps, rangePickerProps };

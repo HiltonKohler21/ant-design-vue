@@ -1,17 +1,44 @@
 import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
+import type { GlobalToken } from '../../theme/interface';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
 
-export type ComponentToken = {};
-
-interface RateToken extends FullToken<'Rate'> {
-  rateStarColor: string;
-  rateStarSize: number;
-  rateStarHoverScale: CSSObject['transform'];
-  defaultColor: string;
+export interface ComponentToken {
+  /**
+   * @desc 星星颜色
+   * @descEN Star color
+   */
+  starColor: string;
+  /**
+   * @desc 星星尺寸
+   * @descEN Star size
+   */
+  starSize: number;
+  /**
+   * @desc 小星星尺寸
+   * @descEN Small star size
+   */
+  starSizeSM: number;
+  /**
+   * @desc 大星星尺寸
+   * @descEN Large star size
+   */
+  starSizeLG: number;
+  /**
+   * @desc 星星悬浮时的缩放
+   * @descEN Scale of star when hover
+   */
+  starHoverScale: CSSObject['transform'];
+  /**
+   * @desc 星星背景色
+   * @descEN Star background color
+   */
+  starBg: string;
 }
+
+type RateToken = FullToken<'Rate'>;
 
 const genRateStarStyle: GenerateStyle<RateToken, CSSObject> = token => {
   const { componentCls } = token;
@@ -31,7 +58,7 @@ const genRateStarStyle: GenerateStyle<RateToken, CSSObject> = token => {
         transition: `all ${token.motionDurationMid}, outline 0s`,
 
         '&:hover': {
-          transform: token.rateStarHoverScale,
+          transform: token.starHoverScale,
         },
 
         '&:focus': {
@@ -39,13 +66,13 @@ const genRateStarStyle: GenerateStyle<RateToken, CSSObject> = token => {
         },
 
         '&:focus-visible': {
-          outline: `${unit(token.lineWidth)} dashed ${token.rateStarColor}`,
-          transform: token.rateStarHoverScale,
+          outline: `${unit(token.lineWidth)} dashed ${token.starColor}`,
+          transform: token.starHoverScale,
         },
       },
 
       '&-first, &-second': {
-        color: token.defaultColor,
+        color: token.starBg,
         transition: `all ${token.motionDurationMid}`,
         userSelect: 'none',
 
@@ -91,11 +118,19 @@ const genRateStyle: GenerateStyle<RateToken> = token => {
       display: 'inline-block',
       margin: 0,
       padding: 0,
-      color: token.rateStarColor,
-      fontSize: token.rateStarSize,
+      color: token.starColor,
+      fontSize: token.starSize,
       lineHeight: 'unset',
       listStyle: 'none',
       outline: 'none',
+
+      '&-small': {
+        fontSize: token.starSizeSM,
+      },
+
+      '&-large': {
+        fontSize: token.starSizeLG,
+      },
 
       // disable styles
       [`&-disabled${componentCls} ${componentCls}-star`]: {
@@ -123,16 +158,20 @@ const genRateStyle: GenerateStyle<RateToken> = token => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Rate', token => {
-  const { colorFillContent } = token;
-
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const rateToken = mergeToken<RateToken>(token, {
-    rateStarColor: token['yellow-6'],
-    rateStarSize: rawToken.controlHeightLG * 0.5,
-    rateStarHoverScale: 'scale(1.1)',
-    defaultColor: colorFillContent,
-  });
-  return [genRateStyle(rateToken)];
+export const prepareComponentToken = (token: GlobalToken): ComponentToken => ({
+  starColor: token['yellow-6'],
+  starSize: token.controlHeight * 0.625,
+  starSizeSM: token.controlHeightSM * 0.625,
+  starSizeLG: token.controlHeightLG * 0.625,
+  starHoverScale: 'scale(1.1)',
+  starBg: token.colorFillContent,
 });
+
+export default genComponentStyleHook(
+  'Rate',
+  token => {
+    const rateToken = mergeToken<RateToken>(token, {});
+    return [genRateStyle(rateToken)];
+  },
+  prepareComponentToken,
+);

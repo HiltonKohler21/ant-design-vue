@@ -51,6 +51,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*ylFATY6w-ygAAA
 | validateMessages | 验证提示模板 | ValidateMessages | - |  |
 | validateOnRuleChange | 是否在 rules 属性改变后立即触发一次验证 | boolean | true |  |
 | validateTrigger | 统一设置字段校验规则 | string \| string\[] | `change` | 2.0.0 |
+| variant | 表单内控件变体 | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 | wrapperCol | 需要为输入控件设置布局样式时，使用该属性，用法同 labelCol | [object](/components/grid-cn/#col) | - |  |
 
 ### 事件

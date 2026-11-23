@@ -1,5 +1,6 @@
 import type { HTMLAttributes, App, PropType, ExtractPropTypes, Plugin, CSSProperties } from 'vue';
 import { shallowRef, defineComponent, watchEffect, computed } from 'vue';
+import { TinyColor } from '@ctrl/tinycolor';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
@@ -7,13 +8,55 @@ import Wave from '../_util/wave';
 import type { PresetColorType, PresetStatusColorType } from '../_util/colors';
 import { isPresetColor, isPresetStatusColor } from '../_util/colors';
 import { eventType } from '../_util/type';
-import type { CustomSlotsType, LiteralUnion } from '../_util/type';
-
+import type { CustomSlotsType, LiteralUnion, VueNode } from '../_util/type';
+import { isValidElement } from '../_util/props-util';
+import { cloneElement } from '../_util/vnode';
+import pickAttrs from '../_util/pickAttrs';
 import CheckableTag from './CheckableTag';
+import type { CheckableTagProps } from './CheckableTag';
+import CheckableTagGroup from './CheckableTagGroup';
+import type { CheckableTagGroupProps, CheckableTagOption } from './CheckableTagGroup';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import { useInjectDisabled } from '../config-provider/DisabledContext';
+import { mergeSemanticClassNames, mergeSemanticStyles } from '../config-provider/context';
 import warning from '../_util/warning';
 
 import useStyle from './style';
+
+export type TagVariant = 'filled' | 'solid' | 'outlined';
+
+export type TagSemanticName = 'root' | 'icon' | 'content' | 'close';
+export type TagSemanticClassNames = Partial<Record<TagSemanticName, string>>;
+export type TagSemanticStyles = Partial<Record<TagSemanticName, CSSProperties>>;
+
+export type TagClassNamesType =
+  | TagSemanticClassNames
+  | ((info: { props: TagProps }) => TagSemanticClassNames);
+
+export type TagStylesType = TagSemanticStyles | ((info: { props: TagProps }) => TagSemanticStyles);
+
+export interface TagClosableConfig {
+  closeIcon?: VueNode;
+  disabled?: boolean;
+  'aria-label'?: string;
+  [key: `aria-${string}`]: any;
+  [key: `data-${string}`]: any;
+}
+
+export type TagClosableType = boolean | TagClosableConfig;
+
+const isPlainObj = (val: unknown): val is Record<string, any> =>
+  typeof val === 'object' && val !== null && !Array.isArray(val);
+
+const resolveSemantic = <T, P>(
+  semantic: T | ((info: { props: P }) => T) | undefined,
+  props: P,
+): T | undefined => {
+  if (typeof semantic === 'function') {
+    return (semantic as (info: { props: P }) => T)({ props });
+  }
+  return semantic;
+};
 
 export const tagProps = () => ({
   prefixCls: String,
@@ -21,7 +64,14 @@ export const tagProps = () => ({
   color: {
     type: String as PropType<LiteralUnion<PresetColorType | PresetStatusColorType>>,
   },
-  closable: { type: Boolean, default: false },
+  variant: {
+    type: String as PropType<TagVariant>,
+    default: undefined,
+  },
+  closable: {
+    type: [Boolean, Object] as PropType<TagClosableType>,
+    default: undefined,
+  },
   closeIcon: PropTypes.any,
   /** @deprecated `visible` will be removed in next major version. */
   visible: { type: Boolean, default: undefined },
@@ -31,7 +81,13 @@ export const tagProps = () => ({
   onClick: eventType<(e: MouseEvent) => void>(),
   'onUpdate:visible': Function as PropType<(vis: boolean) => void>,
   icon: PropTypes.any,
+  /** @deprecated Please use `variant="filled"` instead */
   bordered: { type: Boolean, default: true },
+  disabled: { type: Boolean, default: undefined },
+  href: String,
+  target: String,
+  classNames: [Object, Function] as PropType<TagClassNamesType>,
+  styles: [Object, Function] as PropType<TagStylesType>,
 });
 
 export type TagProps = HTMLAttributes & Partial<ExtractPropTypes<ReturnType<typeof tagProps>>>;
@@ -41,14 +97,16 @@ const Tag = defineComponent({
   name: 'ATag',
   inheritAttrs: false,
   props: tagProps(),
-  // emits: ['update:visible', 'close'],
   slots: Object as CustomSlotsType<{
     closeIcon: any;
     icon: any;
     default: any;
   }>,
   setup(props, { slots, emit, attrs }) {
-    const { prefixCls, direction } = useConfigInject('tag', props);
+    const { prefixCls, direction, configProvider } = useConfigInject('tag', props);
+    const disabledContext = useInjectDisabled();
+    const mergedDisabled = computed(() => props.disabled ?? disabledContext.value);
+    const tagConfig = computed(() => configProvider.tag?.value as any);
 
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
@@ -69,7 +127,69 @@ const Tag = defineComponent({
       }
     });
 
+    const colorState = computed(() => {
+      const { color, variant, bordered } = props;
+      const ctxVariant = tagConfig.value?.variant as TagVariant | undefined;
+      const isInverseColor = typeof color === 'string' && color.endsWith('-inverse');
+
+      let explicitVariant: TagVariant | undefined;
+      if (variant) {
+        explicitVariant = variant;
+      } else if (isInverseColor) {
+        explicitVariant = 'solid';
+      } else if (bordered === false) {
+        explicitVariant = 'filled';
+      } else if (ctxVariant) {
+        explicitVariant = ctxVariant;
+      }
+
+      const mergedVariant: TagVariant = explicitVariant ?? 'outlined';
+
+      let nextColor = isInverseColor ? color.replace(/-inverse$/, '') : color;
+      if (nextColor === undefined && mergedVariant === 'solid') {
+        nextColor = 'default';
+      }
+
+      const nextIsPreset = isPresetColor(nextColor, false);
+      const nextIsStatus = isPresetStatusColor(nextColor);
+      const isInternal = nextIsPreset || nextIsStatus;
+
+      const customStyle: CSSProperties = {};
+      if (!isInternal && nextColor) {
+        if (!explicitVariant || mergedVariant === 'solid') {
+          customStyle.backgroundColor = nextColor;
+        } else {
+          const tc = new TinyColor(nextColor);
+          if (tc.isValid) {
+            const hsl = tc.toHsl();
+            hsl.l = 0.95;
+            customStyle.backgroundColor = new TinyColor(hsl).toHexString();
+          }
+          customStyle.color = nextColor;
+          if (mergedVariant === 'outlined') {
+            customStyle.borderColor = nextColor;
+          }
+        }
+      }
+
+      return {
+        explicitVariant,
+        mergedVariant,
+        mergedColor: nextColor,
+        isInverseColor,
+        isInternalColor: isInternal,
+        customStyle,
+      };
+    });
+
     const handleCloseClick = (e: MouseEvent) => {
+      const closableObj = isPlainObj(props.closable) ? props.closable : undefined;
+      const ctxClosableObj = isPlainObj(tagConfig.value?.closable)
+        ? tagConfig.value.closable
+        : undefined;
+      if (mergedDisabled.value || closableObj?.disabled || ctxClosableObj?.disabled) {
+        return;
+      }
       e.stopPropagation();
       emit('update:visible', false);
       emit('close', e);
@@ -77,79 +197,193 @@ const Tag = defineComponent({
       if (e.defaultPrevented) {
         return;
       }
+      if (props.href) {
+        e.preventDefault();
+      }
       if (props.visible === undefined) {
         visible.value = false;
       }
     };
 
-    // const isPresetColor = computed(() => {
-    //   const { color } = props;
-    //   if (!color) {
-    //     return false;
-    //   }
-    //   return PresetColorRegex.test(color) || PresetStatusColorRegex.test(color);
-    // });
+    const handleCloseKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (!e.repeat) {
+          (e.currentTarget as HTMLElement)?.click();
+        }
+      }
+    };
 
-    const isInternalColor = computed(
-      () => isPresetColor(props.color) || isPresetStatusColor(props.color),
-    );
-
-    const tagClassName = computed(() =>
-      classNames(prefixCls.value, hashId.value, {
-        [`${prefixCls.value}-${props.color}`]: isInternalColor.value,
-        [`${prefixCls.value}-has-color`]: props.color && !isInternalColor.value,
+    const tagClassName = computed(() => {
+      const { explicitVariant, mergedColor, isInverseColor, isInternalColor } = colorState.value;
+      return classNames(prefixCls.value, hashId.value, {
+        [`${prefixCls.value}-${explicitVariant}`]: !!explicitVariant,
+        [`${prefixCls.value}-${mergedColor}`]: isInternalColor,
+        ...(isInverseColor ? { [`${prefixCls.value}-${props.color}`]: true } : {}),
+        [`${prefixCls.value}-has-color`]:
+          props.color && !isInternalColor && (!explicitVariant || explicitVariant === 'solid'),
         [`${prefixCls.value}-hidden`]: !visible.value,
         [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         [`${prefixCls.value}-borderless`]: !props.bordered,
-      }),
-    );
+        [`${prefixCls.value}-disabled`]: mergedDisabled.value,
+      });
+    });
+
     const handleClick = (e: MouseEvent) => {
+      if (mergedDisabled.value) {
+        e.preventDefault();
+        return;
+      }
       emit('click', e);
     };
+
     return () => {
-      const {
-        icon = slots.icon?.(),
-        color,
-        closeIcon = slots.closeIcon?.(),
-        closable = false,
-      } = props;
+      const ctxTag = tagConfig.value;
+      const { icon = slots.icon?.(), href, target } = props;
+      const closableObj = isPlainObj(props.closable) ? props.closable : undefined;
+      const ctxClosableObj = isPlainObj(ctxTag?.closable) ? ctxTag.closable : undefined;
+      const slotCloseIcon = slots.closeIcon?.();
+
+      const customCloseIcon =
+        closableObj?.closeIcon ??
+        props.closeIcon ??
+        slotCloseIcon ??
+        ctxClosableObj?.closeIcon ??
+        ctxTag?.closeIcon;
+
+      const isClosable = (() => {
+        if (closableObj) {
+          return true;
+        }
+        if (typeof props.closable === 'boolean') {
+          return props.closable;
+        }
+        if (
+          (props.closeIcon !== false &&
+            props.closeIcon !== undefined &&
+            props.closeIcon !== null) ||
+          slotCloseIcon !== undefined
+        ) {
+          return true;
+        }
+        return !!ctxTag?.closable;
+      })();
+
+      const closeDisabled = !!(
+        mergedDisabled.value ||
+        closableObj?.disabled ||
+        ctxClosableObj?.disabled
+      );
+
+      const closeAriaProps = pickAttrs(closableObj ?? ctxClosableObj ?? {}, {
+        aria: true,
+        data: true,
+      });
+
+      const mergedPropsForSemantic = {
+        ...props,
+        color: colorState.value.mergedColor,
+        variant: colorState.value.mergedVariant,
+        disabled: mergedDisabled.value,
+      } as TagProps;
+
+      const mergedClassNames = mergeSemanticClassNames<TagSemanticClassNames>(
+        resolveSemantic(ctxTag?.classNames, mergedPropsForSemantic),
+        resolveSemantic(props.classNames, mergedPropsForSemantic),
+      );
+      const mergedStyles = mergeSemanticStyles<TagSemanticStyles>(
+        resolveSemantic(ctxTag?.styles, mergedPropsForSemantic),
+        resolveSemantic(props.styles, mergedPropsForSemantic),
+      );
 
       const renderCloseIcon = () => {
-        if (closable) {
-          return closeIcon ? (
-            <span class={`${prefixCls.value}-close-icon`} onClick={handleCloseClick}>
-              {closeIcon}
-            </span>
-          ) : (
-            <CloseOutlined class={`${prefixCls.value}-close-icon`} onClick={handleCloseClick} />
-          );
+        if (!isClosable || customCloseIcon === false || customCloseIcon === null) {
+          return null;
         }
-        return null;
+        const iconContent =
+          customCloseIcon === undefined || customCloseIcon === true ? (
+            <CloseOutlined />
+          ) : (
+            customCloseIcon
+          );
+        return (
+          <span
+            role="button"
+            tabindex={closeDisabled ? -1 : 0}
+            aria-disabled={closeDisabled || undefined}
+            class={classNames(`${prefixCls.value}-close-icon`, mergedClassNames.close)}
+            style={mergedStyles.close}
+            onClick={handleCloseClick}
+            onKeydown={handleCloseKeyDown}
+            {...closeAriaProps}
+          >
+            {iconContent}
+          </span>
+        );
       };
 
-      const tagStyle = {
-        backgroundColor: color && !isInternalColor.value ? color : undefined,
-      };
+      const tagStyle: CSSProperties = mergedDisabled.value
+        ? { ...mergedStyles.root }
+        : { ...colorState.value.customStyle, ...mergedStyles.root };
 
-      const iconNode = icon || null;
+      const iconNode = icon ? (
+        isValidElement(icon) ? (
+          cloneElement(icon, {
+            class: classNames(icon.props?.class, mergedClassNames.icon),
+            style: mergedStyles.icon ? [icon.props?.style, mergedStyles.icon] : icon.props?.style,
+          })
+        ) : mergedClassNames.icon || mergedStyles.icon ? (
+          <span class={mergedClassNames.icon} style={mergedStyles.icon}>
+            {icon}
+          </span>
+        ) : (
+          icon
+        )
+      ) : null;
+
       const children = slots.default?.();
+      const needsContentWrap = !!(iconNode || mergedClassNames.content || mergedStyles.content);
       const kids = iconNode ? (
         <>
           {iconNode}
-          <span>{children}</span>
+          <span class={mergedClassNames.content} style={mergedStyles.content}>
+            {children}
+          </span>
         </>
+      ) : needsContentWrap ? (
+        <span class={mergedClassNames.content} style={mergedStyles.content}>
+          {children}
+        </span>
       ) : (
         children
       );
 
-      const isNeedWave = props.onClick !== undefined;
-      const tagNode = (
-        <span
-          {...attrs}
-          onClick={handleClick}
-          class={[tagClassName.value, props.rootClassName, attrs.class]}
-          style={[tagStyle, attrs.style as CSSProperties]}
+      const isNeedWave = props.onClick !== undefined && !mergedDisabled.value;
+      const commonProps = {
+        ...attrs,
+        onClick: mergedDisabled.value ? undefined : handleClick,
+        class: [
+          tagClassName.value,
+          ctxTag?.className,
+          props.rootClassName,
+          mergedClassNames.root,
+          attrs.class,
+        ],
+        style: [ctxTag?.style, tagStyle, attrs.style as CSSProperties],
+      };
+
+      const tagNode = href ? (
+        <a
+          {...commonProps}
+          href={mergedDisabled.value ? undefined : href}
+          target={target}
+          aria-disabled={mergedDisabled.value || undefined}
         >
+          {kids}
+          {renderCloseIcon()}
+        </a>
+      ) : (
+        <span {...commonProps}>
           {kids}
           {renderCloseIcon()}
         </span>
@@ -161,16 +395,20 @@ const Tag = defineComponent({
 });
 
 Tag.CheckableTag = CheckableTag;
+Tag.CheckableTagGroup = CheckableTagGroup;
 
 Tag.install = function (app: App) {
   app.component(Tag.name, Tag);
   app.component(CheckableTag.name, CheckableTag);
+  app.component(CheckableTagGroup.name, CheckableTagGroup);
   return app;
 };
 
-export { CheckableTag };
+export { CheckableTag, CheckableTagGroup };
+export type { CheckableTagProps, CheckableTagGroupProps, CheckableTagOption };
 
 export default Tag as typeof Tag &
   Plugin & {
     readonly CheckableTag: typeof CheckableTag;
+    readonly CheckableTagGroup: typeof CheckableTagGroup;
   };

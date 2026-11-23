@@ -11,9 +11,13 @@ export const timelineItemProps = () => ({
   prefixCls: String,
   color: String,
   dot: PropTypes.any,
+  icon: PropTypes.any,
   pending: booleanType(),
-  position: PropTypes.oneOf(tuple('left', 'right', '')).def(''),
+  position: PropTypes.oneOf(tuple('left', 'right', 'start', 'end', '')).def(''),
+  placement: PropTypes.oneOf(tuple('start', 'end', '')).def(''),
   label: PropTypes.any,
+  title: PropTypes.any,
+  content: PropTypes.any,
 });
 
 export type TimelineItemProps = Partial<ExtractPropTypes<ReturnType<typeof timelineItemProps>>>;
@@ -45,7 +49,9 @@ export default defineComponent({
       [`${prefixCls.value}-item-head-${props.color || 'blue'}`]: !customColor.value,
     }));
     return () => {
-      const { label = slots.label?.(), dot = slots.dot?.() } = props;
+      const label = props.title ?? props.label ?? slots.label?.();
+      const dot = props.icon ?? props.dot ?? slots.dot?.();
+      const content = props.content ?? slots.default?.();
       return (
         <li class={itemClassName.value}>
           {label && <div class={`${prefixCls.value}-item-label`}>{label}</div>}
@@ -56,7 +62,7 @@ export default defineComponent({
           >
             {dot}
           </div>
-          <div class={`${prefixCls.value}-item-content`}>{slots.default?.()}</div>
+          <div class={`${prefixCls.value}-item-content`}>{content}</div>
         </li>
       );
     };

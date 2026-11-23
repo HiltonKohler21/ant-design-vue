@@ -344,6 +344,8 @@ const genAffixWrapperStyles: GenerateStyle<InputNumberToken> = (token: InputNumb
     controlWidth,
     borderRadiusLG,
     borderRadiusSM,
+    motionDurationMid,
+    handleVisible,
   } = token;
 
   return {
@@ -381,7 +383,9 @@ const genAffixWrapperStyles: GenerateStyle<InputNumberToken> = (token: InputNumb
       },
 
       [`> div${componentCls}`]: {
+        position: 'static',
         width: '100%',
+        minWidth: 0,
         border: 'none',
         outline: 'none',
 
@@ -404,6 +408,26 @@ const genAffixWrapperStyles: GenerateStyle<InputNumberToken> = (token: InputNumb
         zIndex: 2,
       },
 
+      [`&:not(${componentCls}-affix-wrapper-disabled):not(${componentCls}-affix-wrapper-readonly):not(${componentCls}-affix-wrapper-without-controls)`]:
+        {
+          ...(handleVisible === true
+            ? {
+                [`${componentCls}-suffix`]: {
+                  marginInlineEnd: token.calc(token.handleWidth).add(inputAffixPadding).equal(),
+                },
+              }
+            : {
+                [`&:hover, &${componentCls}-affix-wrapper-focused`]: {
+                  [`${componentCls}-handler-wrap`]: {
+                    opacity: 1,
+                  },
+                  [`${componentCls}-suffix`]: {
+                    marginInlineEnd: token.calc(token.handleWidth).add(inputAffixPadding).equal(),
+                  },
+                },
+              }),
+        },
+
       [componentCls]: {
         '&-prefix, &-suffix': {
           display: 'flex',
@@ -417,13 +441,10 @@ const genAffixWrapperStyles: GenerateStyle<InputNumberToken> = (token: InputNumb
         },
 
         '&-suffix': {
-          position: 'absolute',
-          insetBlockStart: 0,
-          insetInlineEnd: 0,
           zIndex: 1,
-          height: '100%',
           marginInlineEnd: inputPaddingHorizontal,
           marginInlineStart: inputAffixPadding,
+          transition: `margin ${motionDurationMid}`,
         },
       },
     },

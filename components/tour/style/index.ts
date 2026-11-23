@@ -5,14 +5,33 @@ import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
 import getArrowStyle, { MAX_VERTICAL_CONTENT_RADIUS } from '../../style/placementArrow';
 
-export interface ComponentToken {}
+export interface ComponentToken {
+  /**
+   * @desc 弹层 z-index
+   * @descEN Tour popup z-index
+   */
+  zIndexPopup: number;
+  /**
+   * @desc 关闭按钮尺寸
+   * @descEN Close button size
+   */
+  closeBtnSize: number;
+  /**
+   * @desc Primary 模式上一步按钮背景色
+   * @descEN Background color of previous button in primary type
+   */
+  primaryPrevBtnBg: string;
+  /**
+   * @desc Primary 模式下一步按钮悬浮背景色
+   * @descEN Hover background color of next button in primary type
+   */
+  primaryNextBtnHoverBg: string;
+}
 
 interface TourToken extends FullToken<'Tour'> {
-  tourZIndexPopup: number;
   indicatorWidth: number;
   indicatorHeight: number;
   tourBorderRadius: number;
-  tourCloseSize: number;
 }
 
 // =============================== Base ===============================
@@ -30,7 +49,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
     indicatorHeight,
     indicatorWidth,
     boxShadowTertiary,
-    tourZIndexPopup,
+    zIndexPopup,
 
     colorBgContainer,
     fontWeightStrong,
@@ -38,8 +57,9 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
     colorTextLightSolid,
     tourBorderRadius,
     colorWhite,
-    colorBgTextHover,
-    tourCloseSize,
+    primaryPrevBtnBg,
+    primaryNextBtnHoverBg,
+    closeBtnSize,
     motionDurationSlow,
     antCls,
     fontSize,
@@ -53,7 +73,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
         color: colorText,
         position: 'absolute',
-        zIndex: tourZIndexPopup,
+        zIndex: zIndexPopup,
         display: 'block',
         visibility: 'visible',
         fontSize,
@@ -90,8 +110,8 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
             insetInlineEnd: padding,
             color: token.colorIcon,
             outline: 'none',
-            width: tourCloseSize,
-            height: tourCloseSize,
+            width: closeBtnSize,
+            height: closeBtnSize,
             borderRadius: token.borderRadiusSM,
             transition: `background-color ${token.motionDurationMid}, color ${token.motionDurationMid}`,
             display: 'flex',
@@ -106,13 +126,17 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
           [`${componentCls}-cover`]: {
             textAlign: 'center',
-            padding: `${unit(token.calc(token.calc(padding).add(tourCloseSize).equal()).add(paddingXS).equal())} ${unit(padding)} 0`,
+            padding: `${unit(token.calc(padding).add(closeBtnSize).add(paddingXS).equal())} ${unit(
+              padding,
+            )} 0`,
             img: {
               width: '100%',
             },
           },
           [`${componentCls}-header`]: {
             padding: `${unit(padding)} ${unit(padding)} ${unit(paddingXS)}`,
+            width: `calc(100% - ${unit(closeBtnSize)})`,
+            wordBreak: 'break-word',
 
             [`${componentCls}-title`]: {
               lineHeight,
@@ -177,7 +201,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
             [`${componentCls}-indicators`]: {
               [`${componentCls}-indicator`]: {
-                background: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid).setAlpha(0.15).toRgbString(),
+                background: primaryPrevBtnBg,
                 '&-active': {
                   background: colorTextLightSolid,
                 },
@@ -186,11 +210,11 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 
             [`${componentCls}-prev-btn`]: {
               color: colorTextLightSolid,
-              borderColor: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid).setAlpha(0.15).toRgbString(),
+              borderColor: primaryPrevBtnBg,
               backgroundColor: colorPrimary,
 
               '&:hover': {
-                backgroundColor: new TinyColor((token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid).setAlpha(0.15).toRgbString(),
+                backgroundColor: primaryPrevBtnBg,
                 borderColor: 'transparent',
               },
             },
@@ -201,7 +225,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
               background: colorWhite,
 
               '&:hover': {
-                background: new TinyColor(colorBgTextHover).onBackground(colorWhite).toRgbString(),
+                background: primaryNextBtnHoverBg,
               },
             },
           },
@@ -243,16 +267,28 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Tour', token => {
-  const { borderRadiusLG } = token;
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const TourToken = mergeToken<TourToken>(token, {
-    tourZIndexPopup: rawToken.zIndexPopupBase + 70,
-    indicatorWidth: 6,
-    indicatorHeight: 6,
-    tourBorderRadius: borderRadiusLG,
-    tourCloseSize: rawToken.fontSize * rawToken.lineHeight,
-  });
-  return [genBaseStyle(TourToken)];
-});
+export default genComponentStyleHook(
+  'Tour',
+  token => {
+    const { borderRadiusLG } = token;
+    const TourToken = mergeToken<TourToken>(token, {
+      indicatorWidth: 6,
+      indicatorHeight: 6,
+      tourBorderRadius: borderRadiusLG,
+    });
+    return [genBaseStyle(TourToken)];
+  },
+  token => ({
+    zIndexPopup: token.zIndexPopupBase + 70,
+    closeBtnSize: token.fontSize * token.lineHeight,
+    primaryPrevBtnBg: new TinyColor(token.colorTextLightSolid).setAlpha(0.15).toRgbString(),
+    primaryNextBtnHoverBg: new TinyColor(token.colorBgTextHover)
+      .onBackground(token.colorWhite)
+      .toRgbString(),
+  }),
+  {
+    unitless: {
+      zIndexPopup: true,
+    },
+  },
+);

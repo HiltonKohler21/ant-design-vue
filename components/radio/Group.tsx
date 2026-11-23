@@ -5,7 +5,12 @@ import PropTypes from '../_util/vue-types';
 import Radio from './Radio';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { booleanType, stringType, arrayType, functionType } from '../_util/type';
-import type { RadioChangeEvent, RadioGroupButtonStyle, RadioGroupOptionType } from './interface';
+import type {
+  RadioChangeEvent,
+  RadioGroupButtonStyle,
+  RadioGroupOptionType,
+  RadioGroupOrientation,
+} from './interface';
 import { useInjectFormItemContext } from '../form/FormItemContext';
 import { useProvideRadioGroupContext } from './context';
 
@@ -36,6 +41,9 @@ export const radioGroupProps = () => ({
   buttonStyle: stringType<RadioGroupButtonStyle>('outline'),
   id: String,
   optionType: stringType<RadioGroupOptionType>('default'),
+  block: booleanType(),
+  orientation: stringType<RadioGroupOrientation>(),
+  vertical: booleanType(),
   onChange: functionType<(e: RadioChangeEvent) => void>(),
   'onUpdate:value': functionType<(val: any) => void>(),
 });
@@ -84,12 +92,20 @@ export default defineComponent({
       });
     };
 
+    const isVertical = computed(() => {
+      if (props.orientation !== undefined) {
+        return props.orientation === 'vertical';
+      }
+      return !!props.vertical;
+    });
+
     useProvideRadioGroupContext({
       onChange: onRadioChange,
       value: stateValue,
       disabled: computed(() => props.disabled),
       name: computed(() => props.name),
       optionType: computed(() => props.optionType),
+      block: computed(() => props.block),
     });
 
     return () => {
@@ -103,6 +119,8 @@ export default defineComponent({
         {
           [`${groupPrefixCls}-${size.value}`]: size.value,
           [`${groupPrefixCls}-rtl`]: direction.value === 'rtl',
+          [`${groupPrefixCls}-block`]: props.block,
+          [`${groupPrefixCls}-vertical`]: isVertical.value,
         },
         attrs.class,
         hashId.value,

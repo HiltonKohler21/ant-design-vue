@@ -4,6 +4,7 @@ import PropTypes from '../_util/vue-types';
 import buttonTypes from '../button/buttonTypes';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import type { MenuProps } from '../menu';
+import type { AdjustOverflow } from '../_util/placements';
 import { booleanType, eventType, functionType, objectType, someType } from '../_util/type';
 
 export type Align = {
@@ -30,6 +31,7 @@ const dropdownProps = () => ({
   dropdownRender: functionType<(menu: any) => any>(),
   popupRender: functionType<(menu: any) => any>(),
   arrow: someType<boolean | DropdownArrowOptions>([Boolean, Object]),
+  autoAdjustOverflow: someType<boolean | AdjustOverflow>([Boolean, Object], true),
   trigger: {
     type: [Array, String] as PropType<Trigger[] | Trigger>,
   },

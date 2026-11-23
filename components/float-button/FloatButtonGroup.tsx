@@ -22,6 +22,7 @@ const FloatButtonGroup = defineComponent({
   props: initDefaultProps(floatButtonGroupProps(), {
     type: 'default',
     shape: 'circle',
+    placement: 'top',
   } as FloatButtonGroupProps),
   setup(props, { attrs, slots, emit }) {
     const { configProvider, prefixCls, direction } = useConfigInject(floatButtonPrefixCls, props);
@@ -91,7 +92,21 @@ const FloatButtonGroup = defineComponent({
     });
 
     return () => {
-      const { shape = 'circle', type = 'default', tooltip, description, trigger, items } = props;
+      const {
+        shape = 'circle',
+        type = 'default',
+        tooltip,
+        content,
+        description,
+        trigger,
+        placement = 'top',
+        items,
+      } = props;
+
+      const isMenuMode = Boolean(trigger && ['click', 'hover'].includes(trigger));
+      const mergedPlacement = ['top', 'left', 'right', 'bottom'].includes(placement)
+        ? placement
+        : 'top';
 
       const childrenNode = items
         ? items.map((item, index) => <FloatButton key={index} {...item} />)
@@ -108,6 +123,8 @@ const FloatButtonGroup = defineComponent({
           [`${groupPrefixCls}-rtl`]: direction.value === 'rtl',
           [`${groupPrefixCls}-${shape}`]: shape,
           [`${groupPrefixCls}-${shape}-shadow`]: !trigger,
+          [`${groupPrefixCls}-${mergedPlacement}`]: isMenuMode,
+          [`${groupPrefixCls}-menu-mode`]: isMenuMode,
         },
       );
       const mergedStyle = floatButtonGroupConfig.value?.style
@@ -126,7 +143,7 @@ const FloatButtonGroup = defineComponent({
           class={groupCls}
           {...hoverAction.value}
         >
-          {trigger && ['click', 'hover'].includes(trigger) ? (
+          {isMenuMode ? (
             <>
               <Transition {...transitionProps}>
                 <div v-show={open.value} class={wrapperCls}>
@@ -138,6 +155,7 @@ const FloatButtonGroup = defineComponent({
                 type={type}
                 shape={shape}
                 tooltip={tooltip}
+                content={content}
                 description={description}
                 v-slots={{
                   icon: () =>
@@ -145,6 +163,7 @@ const FloatButtonGroup = defineComponent({
                       ? slots.closeIcon?.() || <CloseOutlined />
                       : slots.icon?.() || <FileTextOutlined />,
                   tooltip: slots.tooltip,
+                  content: slots.content,
                   description: slots.description,
                 }}
               ></FloatButton>

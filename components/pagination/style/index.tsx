@@ -10,6 +10,54 @@ import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { genFocusOutline, genFocusStyle, resetComponent } from '../../style';
 
+export interface ComponentToken {
+  /**
+   * @desc 页码选项背景色
+   * @descEN Background color of Pagination item
+   */
+  itemBg: string;
+  /**
+   * @desc 页码尺寸
+   * @descEN Size of Pagination item
+   */
+  itemSize: number;
+  /**
+   * @desc 小号页码尺寸
+   * @descEN Size of small Pagination item
+   */
+  itemSizeSM: number;
+  /**
+   * @desc 页码激活态背景色
+   * @descEN Background color of active Pagination item
+   */
+  itemActiveBg: string;
+  /**
+   * @desc 页码链接背景色
+   * @descEN Background color of Pagination item link
+   */
+  itemLinkBg: string;
+  /**
+   * @desc 页码激活态禁用状态文字颜色
+   * @descEN Text color of disabled active Pagination item
+   */
+  itemActiveColorDisabled: string;
+  /**
+   * @desc 页码激活态禁用状态背景色
+   * @descEN Background color of disabled active Pagination item
+   */
+  itemActiveBgDisabled: string;
+  /**
+   * @desc 输入框背景色
+   * @descEN Background color of input
+   */
+  itemInputBg: string;
+  /**
+   * @desc 每页展示数量选择器 top
+   * @descEN Top of Pagination size changer
+   */
+  miniOptionsSizeChangerTop: number;
+}
+
 interface PaginationToken extends InputToken<FullToken<'Pagination'>> {
   paginationItemSize: number;
   paginationFontFamily: string;
@@ -274,7 +322,9 @@ const genPaginationSimpleStyle: GenerateStyle<PaginationToken, CSSObject> = toke
 
         '&:focus': {
           borderColor: token.colorPrimaryHover,
-          boxShadow: `${unit(token.inputOutlineOffset)} 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
+          boxShadow: `${unit(token.inputOutlineOffset)} 0 ${unit(token.controlOutlineWidth)} ${
+            token.controlOutline
+          }`,
         },
 
         '&[disabled]': {
@@ -473,7 +523,7 @@ const genPaginationItemStyle: GenerateStyle<PaginationToken, CSSObject> = token 
       textAlign: 'center',
       verticalAlign: 'middle',
       listStyle: 'none',
-      backgroundColor: 'transparent',
+      backgroundColor: token.paginationItemBg,
       border: `${unit(token.lineWidth)} ${token.lineType} transparent`,
       borderRadius: token.borderRadius,
       outline: 0,
@@ -692,36 +742,50 @@ const genBorderedStyle: GenerateStyle<PaginationToken> = token => {
 };
 
 // ============================== Export ==============================
-export default genComponentStyleHook('Pagination', token => {
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const paginationToken = mergeToken<PaginationToken>(
-    token,
-    {
-      paginationItemSize: token.controlHeight,
-      paginationFontFamily: token.fontFamily,
-      paginationItemBg: token.colorBgContainer,
-      paginationItemBgActive: token.colorBgContainer,
-      paginationFontWeightActive: token.fontWeightStrong,
-      paginationItemSizeSM: token.controlHeightSM,
-      paginationItemInputBg: token.colorBgContainer,
-      paginationMiniOptionsSizeChangerTop: 0,
-      paginationItemDisabledBgActive: token.controlItemBgActiveDisabled,
-      paginationItemDisabledColorActive: token.colorTextDisabled,
-      paginationItemLinkBg: token.colorBgContainer,
-      inputOutlineOffset: '0 0',
-      paginationMiniOptionsMarginInlineStart: rawToken.marginXXS / 2,
-      paginationMiniQuickJumperInputWidth: rawToken.controlHeightLG * 1.1,
-      paginationItemPaddingInline: rawToken.marginXXS * 1.5,
-      paginationEllipsisLetterSpacing: rawToken.marginXXS / 2,
-      paginationSlashMarginInlineStart: token.marginXXS,
-      paginationSlashMarginInlineEnd: token.marginSM,
-      paginationEllipsisTextIndent: '0.13em', // magic for ui experience
-    },
-    initInputToken(token),
-  );
-  return [
-    genPaginationStyle(paginationToken),
-    token.wireframe && genBorderedStyle(paginationToken),
-  ];
-});
+export default genComponentStyleHook(
+  'Pagination',
+  token => {
+    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
+    const rawToken: any = (token as any)._realToken ?? token;
+    const paginationToken = mergeToken<PaginationToken>(
+      token,
+      {
+        paginationItemSize: token.itemSize,
+        paginationFontFamily: token.fontFamily,
+        paginationItemBg: token.itemBg,
+        paginationItemBgActive: token.itemActiveBg,
+        paginationFontWeightActive: token.fontWeightStrong,
+        paginationItemSizeSM: token.itemSizeSM,
+        paginationItemInputBg: token.itemInputBg,
+        paginationMiniOptionsSizeChangerTop: token.miniOptionsSizeChangerTop,
+        paginationItemDisabledBgActive: token.itemActiveBgDisabled,
+        paginationItemDisabledColorActive: token.itemActiveColorDisabled,
+        paginationItemLinkBg: token.itemLinkBg,
+        inputOutlineOffset: '0 0',
+        paginationMiniOptionsMarginInlineStart: rawToken.marginXXS / 2,
+        paginationMiniQuickJumperInputWidth: rawToken.controlHeightLG * 1.1,
+        paginationItemPaddingInline: rawToken.marginXXS * 1.5,
+        paginationEllipsisLetterSpacing: rawToken.marginXXS / 2,
+        paginationSlashMarginInlineStart: token.marginXXS,
+        paginationSlashMarginInlineEnd: token.marginSM,
+        paginationEllipsisTextIndent: '0.13em', // magic for ui experience
+      },
+      initInputToken(token),
+    );
+    return [
+      genPaginationStyle(paginationToken),
+      token.wireframe && genBorderedStyle(paginationToken),
+    ];
+  },
+  token => ({
+    itemBg: token.colorBgContainer,
+    itemSize: token.controlHeight,
+    itemSizeSM: token.controlHeightSM,
+    itemActiveBg: token.colorBgContainer,
+    itemLinkBg: token.colorBgContainer,
+    itemActiveColorDisabled: token.colorTextDisabled,
+    itemActiveBgDisabled: token.controlItemBgActiveDisabled,
+    itemInputBg: token.colorBgContainer,
+    miniOptionsSizeChangerTop: 0,
+  }),
+);

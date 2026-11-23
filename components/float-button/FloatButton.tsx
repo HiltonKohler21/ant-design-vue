@@ -37,14 +37,17 @@ const FloatButton = defineComponent({
       const {
         prefixCls: customPrefixCls,
         type = 'default',
-        shape = 'circle',
-        description = slots.description?.(),
+        shape,
+        content,
+        description,
         tooltip,
         badge = {},
         backTop,
         htmlType,
         ...restProps
       } = props;
+
+      const mergedContent = content ?? slots.content?.() ?? description ?? slots.description?.();
 
       const handleClick = (e: MouseEvent) => {
         if (props.backTop) {
@@ -84,7 +87,7 @@ const FloatButton = defineComponent({
                     prefixCls={prefixCls.value}
                     v-slots={{
                       icon: slots.icon,
-                      description: () => description,
+                      description: () => mergedContent,
                     }}
                   ></Content>
                 </div>
@@ -96,7 +99,7 @@ const FloatButton = defineComponent({
 
       if (process.env.NODE_ENV !== 'production') {
         warning(
-          !(shape === 'circle' && description),
+          !(mergeShape.value === 'circle' && mergedContent),
           'FloatButton',
           'supported only when `shape` is `square`. Due to narrow space for text, short sentence is recommended.',
         );

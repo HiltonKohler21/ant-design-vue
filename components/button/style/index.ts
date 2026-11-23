@@ -11,16 +11,138 @@ import { genCompactItemVerticalStyle } from '../../style/compact-item-vertical';
 
 /** Component only token. Which will handle additional calculation of alias token */
 export interface ComponentToken {
+  /**
+   * @desc 实心按钮背景色
+   * @descEN Background color of solid button
+   */
   solidBg?: string;
+  /**
+   * @desc 实心按钮悬浮态背景色
+   * @descEN Background color of solid button when hover
+   */
   solidBgHover?: string;
+  /**
+   * @desc 实心按钮激活态背景色
+   * @descEN Background color of solid button when active
+   */
   solidBgActive?: string;
+  /**
+   * @desc 默认实心按钮的文本色
+   * @descEN Default text color for solid buttons
+   */
   solidTextColor?: string;
+  /**
+   * @desc 文字字重
+   * @descEN Font weight of text
+   */
+  fontWeight: number | string;
+  /**
+   * @desc 默认按钮阴影
+   * @descEN Shadow of default button
+   */
+  defaultShadow: string;
+  /**
+   * @desc 主要按钮阴影
+   * @descEN Shadow of primary button
+   */
+  primaryShadow: string;
+  /**
+   * @desc 危险按钮阴影
+   * @descEN Shadow of danger button
+   */
+  dangerShadow: string;
+  /**
+   * @desc 主要按钮文本颜色
+   * @descEN Text color of primary button
+   */
+  primaryColor: string;
+  /**
+   * @desc 默认按钮文本颜色
+   * @descEN Text color of default button
+   */
+  defaultColor: string;
+  /**
+   * @desc 默认按钮背景色
+   * @descEN Background color of default button
+   */
+  defaultBg: string;
+  /**
+   * @desc 默认按钮边框颜色
+   * @descEN Border color of default button
+   */
+  defaultBorderColor: string;
+  /**
+   * @desc 按钮内容字体大小
+   * @descEN Font size of button content
+   */
+  contentFontSize: number;
+  /**
+   * @desc 大号按钮内容字体大小
+   * @descEN Font size of large button content
+   */
+  contentFontSizeLG: number;
+  /**
+   * @desc 小号按钮内容字体大小
+   * @descEN Font size of small button content
+   */
+  contentFontSizeSM: number;
+  /**
+   * @desc 按钮横向内间距
+   * @descEN Horizontal padding of button
+   */
+  paddingInline: number;
+  /**
+   * @desc 大号按钮横向内间距
+   * @descEN Horizontal padding of large button
+   */
+  paddingInlineLG: number;
+  /**
+   * @desc 小号按钮横向内间距
+   * @descEN Horizontal padding of small button
+   */
+  paddingInlineSM: number;
+  /**
+   * @desc 只有图标的按钮图标尺寸
+   * @descEN Icon size of button which only contains icon
+   */
+  onlyIconSize: number | string;
+  /**
+   * @desc 大号只有图标的按钮图标尺寸
+   * @descEN Icon size of large button which only contains icon
+   */
+  onlyIconSizeLG: number | string;
+  /**
+   * @desc 小号只有图标的按钮图标尺寸
+   * @descEN Icon size of small button which only contains icon
+   */
+  onlyIconSizeSM: number | string;
+  /**
+   * @desc 按钮组边框颜色
+   * @descEN Border color of button group
+   */
+  groupBorderColor: string;
+  /**
+   * @desc 链接按钮悬浮态背景色
+   * @descEN Background color of link button when hover
+   */
+  linkHoverBg: string;
+  /**
+   * @desc 文本按钮悬浮态背景色
+   * @descEN Background color of text button when hover
+   */
+  textHoverBg: string;
+  /**
+   * @desc 幽灵按钮背景色
+   * @descEN Background color of ghost button
+   */
+  ghostBg: string;
 }
 
 export interface ButtonToken extends FullToken<'Button'> {
   // FIXME: should be removed
   colorOutlineDefault: string;
   buttonPaddingHorizontal: number;
+  buttonIconOnlyFontSize: number | string;
 }
 
 // ============================== Shared ==============================
@@ -32,7 +154,7 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
       outline: 'none',
       position: 'relative',
       display: 'inline-block',
-      fontWeight: 400,
+      fontWeight: token.fontWeight,
       whiteSpace: 'nowrap',
       textAlign: 'center',
       backgroundImage: 'none',
@@ -167,20 +289,21 @@ const genGhostButtonStyle = (
   borderColorDisabled: string | false,
   hoverStyle?: CSSObject,
   activeStyle?: CSSObject,
+  ghostBg = 'transparent',
 ): CSSObject => ({
   [`&${btnCls}-background-ghost`]: {
     color: textColor || undefined,
-    backgroundColor: 'transparent',
+    backgroundColor: ghostBg,
     borderColor: borderColor || undefined,
     boxShadow: 'none',
 
     ...genHoverActiveButtonStyle(
       {
-        backgroundColor: 'transparent',
+        backgroundColor: ghostBg,
         ...hoverStyle,
       },
       {
-        backgroundColor: 'transparent',
+        backgroundColor: ghostBg,
         ...activeStyle,
       },
     ),
@@ -214,10 +337,11 @@ const genPureDisabledButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token 
 const genDefaultButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   ...genSolidButtonStyle(token),
 
-  backgroundColor: token.colorBgContainer,
-  borderColor: token.colorBorder,
+  color: token.defaultColor,
+  backgroundColor: token.defaultBg,
+  borderColor: token.defaultBorderColor,
 
-  boxShadow: `0 ${unit(token.controlOutlineWidth)} 0 ${token.controlTmpOutline}`,
+  boxShadow: token.defaultShadow,
 
   ...genHoverActiveButtonStyle(
     {
@@ -236,6 +360,9 @@ const genDefaultButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
     token.colorBgContainer,
     token.colorTextDisabled,
     token.colorBorder,
+    undefined,
+    undefined,
+    token.ghostBg,
   ),
 
   [`&${token.componentCls}-dangerous`]: {
@@ -259,6 +386,9 @@ const genDefaultButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
       token.colorError,
       token.colorTextDisabled,
       token.colorBorder,
+      undefined,
+      undefined,
+      token.ghostBg,
     ),
     ...genSolidDisabledButtonStyle(token),
   },
@@ -268,18 +398,18 @@ const genDefaultButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
 const genPrimaryButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   ...genSolidButtonStyle(token),
 
-  color: token.colorTextLightSolid,
+  color: token.primaryColor,
   backgroundColor: token.colorPrimary,
 
-  boxShadow: `0 ${unit(token.controlOutlineWidth)} 0 ${token.controlOutline}`,
+  boxShadow: token.primaryShadow,
 
   ...genHoverActiveButtonStyle(
     {
-      color: token.colorTextLightSolid,
+      color: token.primaryColor,
       backgroundColor: token.colorPrimaryHover,
     },
     {
-      color: token.colorTextLightSolid,
+      color: token.primaryColor,
       backgroundColor: token.colorPrimaryActive,
     },
   ),
@@ -298,11 +428,12 @@ const genPrimaryButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
       color: token.colorPrimaryActive,
       borderColor: token.colorPrimaryActive,
     },
+    token.ghostBg,
   ),
 
   [`&${token.componentCls}-dangerous`]: {
     backgroundColor: token.colorError,
-    boxShadow: `0 ${unit(token.controlOutlineWidth)} 0 ${token.colorErrorOutline}`,
+    boxShadow: token.dangerShadow,
 
     ...genHoverActiveButtonStyle(
       {
@@ -327,6 +458,7 @@ const genPrimaryButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
         color: token.colorErrorActive,
         borderColor: token.colorErrorActive,
       },
+      token.ghostBg,
     ),
     ...genSolidDisabledButtonStyle(token),
   },
@@ -345,6 +477,7 @@ const genLinkButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   ...genHoverActiveButtonStyle(
     {
       color: token.colorLinkHover,
+      backgroundColor: token.linkHoverBg,
     },
     {
       color: token.colorLinkActive,
@@ -374,7 +507,7 @@ const genTextButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token => ({
   ...genHoverActiveButtonStyle(
     {
       color: token.colorText,
-      backgroundColor: token.colorBgTextHover,
+      backgroundColor: token.textHoverBg,
     },
     {
       color: token.colorText,
@@ -791,7 +924,7 @@ const genVariantColorButtonStyle: GenerateStyle<ButtonToken, CSSObject> = token 
 };
 
 // =============================== Size ===============================
-const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls: string = ''): CSSInterpolation => {
+const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls = ''): CSSInterpolation => {
   const {
     componentCls,
     iconCls,
@@ -809,7 +942,7 @@ const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls: string = ''): CSS
     .div(2)
     .sub(lineWidth)
     .equal();
-  const paddingHorizontal = token.calc(buttonPaddingHorizontal).sub(lineWidth).equal();
+  const paddingHorizontal = buttonPaddingHorizontal;
 
   const iconOnlyCls = `${componentCls}-icon-only`;
 
@@ -828,6 +961,9 @@ const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls: string = ''): CSS
           paddingInlineEnd: 0,
           [`&${componentCls}-round`]: {
             width: 'auto',
+          },
+          [iconCls]: {
+            fontSize: token.buttonIconOnlyFontSize,
           },
           '> span': {
             transform: 'scale(1.143)', // 14px -> 16px
@@ -860,13 +996,22 @@ const genSizeButtonStyle = (token: ButtonToken, sizePrefixCls: string = ''): CSS
   ];
 };
 
-const genSizeBaseButtonStyle: GenerateStyle<ButtonToken> = token => genSizeButtonStyle(token);
+const genSizeBaseButtonStyle: GenerateStyle<ButtonToken> = token =>
+  genSizeButtonStyle(
+    mergeToken<ButtonToken>(token, {
+      fontSize: token.contentFontSize,
+      buttonPaddingHorizontal: token.paddingInline,
+      buttonIconOnlyFontSize: token.onlyIconSize,
+    }),
+  );
 
 const genSizeSmallButtonStyle: GenerateStyle<ButtonToken> = token => {
   const smallToken = mergeToken<ButtonToken>(token, {
     controlHeight: token.controlHeightSM,
+    fontSize: token.contentFontSizeSM,
     padding: token.paddingXS,
-    buttonPaddingHorizontal: 8, // Fixed padding
+    buttonPaddingHorizontal: token.paddingInlineSM,
+    buttonIconOnlyFontSize: token.onlyIconSizeSM,
     borderRadius: token.borderRadiusSM,
   });
 
@@ -876,7 +1021,9 @@ const genSizeSmallButtonStyle: GenerateStyle<ButtonToken> = token => {
 const genSizeLargeButtonStyle: GenerateStyle<ButtonToken> = token => {
   const largeToken = mergeToken<ButtonToken>(token, {
     controlHeight: token.controlHeightLG,
-    fontSize: token.fontSizeLG,
+    fontSize: token.contentFontSizeLG,
+    buttonPaddingHorizontal: token.paddingInlineLG,
+    buttonIconOnlyFontSize: token.onlyIconSizeLG,
     borderRadius: token.borderRadiusLG,
   });
 
@@ -898,10 +1045,11 @@ const genBlockButtonStyle: GenerateStyle<ButtonToken> = token => {
 export default genComponentStyleHook(
   'Button',
   token => {
-    const { controlTmpOutline, paddingContentHorizontal } = token;
+    const { controlTmpOutline, paddingInline, onlyIconSize } = token;
     const buttonToken = mergeToken<ButtonToken>(token, {
       colorOutlineDefault: controlTmpOutline,
-      buttonPaddingHorizontal: paddingContentHorizontal,
+      buttonPaddingHorizontal: paddingInline,
+      buttonIconOnlyFontSize: onlyIconSize,
     });
 
     return [
@@ -948,6 +1096,32 @@ export default genComponentStyleHook(
       solidBgHover,
       solidBgActive,
       solidTextColor,
+      fontWeight: 400,
+      defaultShadow: `0 ${token.controlOutlineWidth}px 0 ${token.controlTmpOutline}`,
+      primaryShadow: `0 ${token.controlOutlineWidth}px 0 ${token.controlOutline}`,
+      dangerShadow: `0 ${token.controlOutlineWidth}px 0 ${token.colorErrorOutline}`,
+      primaryColor: token.colorTextLightSolid,
+      defaultColor: token.colorText,
+      defaultBg: token.colorBgContainer,
+      defaultBorderColor: token.colorBorder,
+      contentFontSize: token.fontSize,
+      contentFontSizeLG: token.fontSizeLG,
+      contentFontSizeSM: token.fontSize,
+      paddingInline: token.paddingContentHorizontal - token.lineWidth,
+      paddingInlineLG: token.paddingContentHorizontal - token.lineWidth,
+      paddingInlineSM: 8 - token.lineWidth,
+      onlyIconSize: 'inherit',
+      onlyIconSizeLG: 'inherit',
+      onlyIconSizeSM: 'inherit',
+      groupBorderColor: token.colorPrimaryHover,
+      linkHoverBg: 'transparent',
+      textHoverBg: token.colorBgTextHover,
+      ghostBg: 'transparent',
     };
+  },
+  {
+    unitless: {
+      fontWeight: true,
+    },
   },
 );

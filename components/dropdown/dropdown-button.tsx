@@ -53,6 +53,7 @@ export default defineComponent({
         htmlType,
         class: className = '',
         overlay = slots.overlay?.(),
+        autoAdjustOverflow,
         trigger,
         align,
         open,
@@ -75,6 +76,7 @@ export default defineComponent({
 
       const dropdownProps = {
         align,
+        autoAdjustOverflow,
         disabled,
         trigger: disabled ? [] : trigger,
         placement,
@@ -116,7 +118,9 @@ export default defineComponent({
         >
           {slots.leftButton ? slots.leftButton({ button: leftButtonToRender }) : leftButtonToRender}
           <Dropdown {...dropdownProps} v-slots={{ overlay: () => overlay }}>
-            {slots.rightButton ? slots.rightButton({ button: rightButtonToRender }) : rightButtonToRender}
+            {slots.rightButton
+              ? slots.rightButton({ button: rightButtonToRender })
+              : rightButtonToRender}
           </Dropdown>
         </ButtonGroup>,
       );

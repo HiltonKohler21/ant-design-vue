@@ -71,6 +71,7 @@ export default defineComponent<ConfirmDialogProps>({
     'wrapClassName',
     'confirmPrefixCls',
     'footer',
+    'loading',
   ] as any,
   setup(props, { attrs }) {
     const [locale] = useLocaleReceiver('Modal');
@@ -195,6 +196,7 @@ export default defineComponent<ConfirmDialogProps>({
           getContainer={getContainer}
           closable={closable}
           closeIcon={closeIcon}
+          loading={props.loading}
           modalRender={modalRender}
           focusTriggerAfterClose={focusTriggerAfterClose}
         >

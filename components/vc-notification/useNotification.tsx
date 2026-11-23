@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'vue';
-import { shallowRef, watch } from 'vue';
+import type { CSSProperties, Ref } from 'vue';
+import { shallowRef, unref, watch } from 'vue';
 import HookNotification, { getUuid } from './HookNotification';
-import type { NotificationInstance, OpenConfig, Placement } from './Notification';
+import type { NotificationInstance, OpenConfig, Placement, StackType } from './Notification';
+import type { NoticeClosable } from './Notice';
 import type { CSSMotionProps } from '../_util/transition';
 import type { Key, VueNode } from '../_util/type';
 import type { HolderReadyCallback, NoticeContent } from './HookNotification';
@@ -16,11 +17,12 @@ export interface NotificationConfig {
   getContainer?: () => HTMLElement;
   motion?: CSSMotionProps | ((placement?: Placement) => CSSMotionProps);
   closeIcon?: VueNode;
-  closable?: boolean;
+  closable?: NoticeClosable;
   maxCount?: number;
   duration?: number;
   showProgress?: boolean;
   pauseOnHover?: boolean;
+  stack?: StackType | Ref<StackType>;
   /** @private. Config for notification holder style. Safe to remove if refactor */
   getClassName?: (placement?: Placement) => string;
   /** @private. Config for notification holder style. Safe to remove if refactor */
@@ -78,6 +80,7 @@ export default function useNotification(rootConfig: NotificationConfig = {}) {
     motion,
     prefixCls,
     maxCount,
+    stack,
     getClassName,
     getStyles,
     onAllRemoved,
@@ -123,6 +126,7 @@ export default function useNotification(rootConfig: NotificationConfig = {}) {
       ref={notificationsRef}
       prefixCls={prefixCls}
       maxCount={maxCount}
+      stack={unref(stack)}
       notices={notices.value}
       remove={removeNotice}
       getClassName={getClassName}

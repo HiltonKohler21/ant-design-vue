@@ -122,7 +122,7 @@ const BackTop = defineComponent({
     });
     const floatButtonGroupContext = useInjectFloatButtonGroupContext();
     return () => {
-      const { description, type, shape, tooltip, badge } = props;
+      const { content, description, type, shape, tooltip, badge } = props;
 
       const floatButtonProps = {
         ...attrs,
@@ -133,6 +133,7 @@ const BackTop = defineComponent({
           [`${attrs.class}`]: attrs.class,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
+        content,
         description,
         type,
         tooltip,

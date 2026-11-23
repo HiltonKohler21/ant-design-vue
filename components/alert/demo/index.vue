@@ -2,6 +2,7 @@
   <demo-sort>
     <basic />
     <four-style />
+    <filled />
     <closable />
     <description />
     <icon />
@@ -9,6 +10,7 @@
     <banner />
     <custom-icon />
     <smooth-closed />
+    <error-boundary />
     <action />
     <loop-banner />
     <custom-title-alignment />
@@ -23,7 +25,9 @@ import Description from './description.vue';
 import Icon from './icon.vue';
 import Action from './action.vue';
 import Style from './style.vue';
+import Filled from './filled.vue';
 import SmoothClosed from './smooth-closed.vue';
+import ErrorBoundary from './error-boundary.vue';
 import CustomIcon from './custom-icon.vue';
 import LoopBanner from './loop-banner.vue';
 import CustomTitleAlignment from './custom-title-alignment.vue';
@@ -41,7 +45,9 @@ export default defineComponent({
     Description,
     Icon,
     FourStyle: Style, //style 标签报错
+    Filled,
     SmoothClosed,
+    ErrorBoundary,
     CustomIcon,
     Action,
     LoopBanner,

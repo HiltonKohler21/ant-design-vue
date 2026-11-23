@@ -50,6 +50,7 @@ A form consists of one or more form fields whose type includes input, textarea, 
 | validateMessages | Validation prompt template | ValidateMessages | - |  |
 | validateOnRuleChange | Whether to trigger validation when the `rules` prop is changed | boolean | true |  |
 | validateTrigger | Config field validate trigger | string \| string\[] | `change` | 2.0.0 |
+| variant | Variant of components inside form | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 | wrapperCol | The layout for input controls, same as `labelCol` | [object](/components/grid/#col) | - |  |
 
 ### Events

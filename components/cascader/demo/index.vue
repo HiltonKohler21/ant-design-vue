@@ -13,6 +13,8 @@
     <suffix />
     <multipleVue />
     <tagRender />
+    <panelVue />
+    <variantVue />
   </demo-sort>
 </template>
 <script>
@@ -29,6 +31,8 @@ import FieldsName from './fields-name.vue';
 import Suffix from './suffix.vue';
 import multipleVue from './multiple.vue';
 import tagRender from './tagRender.vue';
+import panelVue from './panel.vue';
+import variantVue from './variant.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -50,6 +54,8 @@ export default defineComponent({
     Suffix,
     multipleVue,
     tagRender,
+    panelVue,
+    variantVue,
   },
 });
 </script>
