@@ -1,20 +1,38 @@
 <template>
   <demo-sort :cols="1">
     <Basic />
-    <Titlt />
-    <Text />
+    <TitleDemo />
+    <ParagraphDebug />
+    <TextDemo />
+    <Shimmer />
+    <Editable />
+    <Copyable />
     <Ellipsis />
+    <EllipsisControlled />
+    <EllipsisMiddle />
+    <EllipsisDebug />
     <Suffix />
-    <Interactive />
+    <ComponentTokenDebug />
+    <LinkDangerDebug />
+    <TableDemo />
   </demo-sort>
 </template>
 <script lang="ts">
 import Basic from './basic.vue';
+import TitleDemo from './title.vue';
+import ParagraphDebug from './paragraph-debug.vue';
+import TextDemo from './text.vue';
+import Shimmer from './shimmer.vue';
+import Editable from './editable.vue';
+import Copyable from './copyable.vue';
 import Ellipsis from './ellipsis.vue';
-import Interactive from './interactive.vue';
+import EllipsisControlled from './ellipsis-controlled.vue';
+import EllipsisMiddle from './ellipsis-middle.vue';
+import EllipsisDebug from './ellipsis-debug.vue';
 import Suffix from './suffix.vue';
-import Text from './text.vue';
-import Titlt from './title.vue';
+import ComponentTokenDebug from './componentToken-debug.vue';
+import LinkDangerDebug from './link-danger-debug.vue';
+import TableDemo from './table.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -24,11 +42,20 @@ export default defineComponent({
   US,
   components: {
     Basic,
+    TitleDemo,
+    ParagraphDebug,
+    TextDemo,
+    Shimmer,
+    Editable,
+    Copyable,
     Ellipsis,
-    Interactive,
-    Text,
+    EllipsisControlled,
+    EllipsisMiddle,
+    EllipsisDebug,
     Suffix,
-    Titlt,
+    ComponentTokenDebug,
+    LinkDangerDebug,
+    TableDemo,
   },
   setup() {
     return {};

@@ -44,7 +44,12 @@ describe('Typography', () => {
   // Mock getComputedStyle
   const originGetComputedStyle = window.getComputedStyle;
   window.getComputedStyle = ele => {
-    const style = originGetComputedStyle(ele);
+    let style;
+    try {
+      style = originGetComputedStyle(ele);
+    } catch {
+      style = { getPropertyValue: () => '' };
+    }
     style.lineHeight = '16px';
     return style;
   };
@@ -210,6 +215,122 @@ describe('Typography', () => {
 
         await sleep(20);
         expect(wrapper.findAll('.ant-typography-ellipsis-single-line').length).toBeTruthy();
+      });
+      it('should ellipsis work with default slot text', async () => {
+        const suffix = '--William Shakespeare';
+        const wrapper = mount(Paragraph, {
+          props: {
+            ellipsis: {
+              rows: 1,
+              expandable: true,
+              suffix,
+            },
+          },
+          slots: {
+            default: () => fullStr,
+          },
+        });
+
+        await sleep(20);
+        expect(wrapper.find('.ant-typography-expand').exists()).toBe(true);
+        expect(wrapper.text()).toContain('...');
+        expect(wrapper.text()).toContain(suffix);
+      });
+
+      it('should support collapsible and controlled expanded', async () => {
+        const onExpand = jest.fn();
+        const expanded = ref(false);
+        const Comp = {
+          setup() {
+            return () => (
+              <Paragraph
+                ellipsis={{
+                  rows: 1,
+                  expandable: 'collapsible',
+                  expanded: expanded.value,
+                  symbol: isExpanded => (isExpanded ? 'Less' : 'More'),
+                  onExpand: (e, info) => {
+                    onExpand(info);
+                    expanded.value = info.expanded;
+                  },
+                }}
+              >
+                {fullStr}
+              </Paragraph>
+            );
+          },
+        };
+        const wrapper = mount(Comp);
+        await sleep(20);
+
+        expect(wrapper.find('.ant-typography-expand').text()).toBe('More');
+        await wrapper.find('.ant-typography-expand').trigger('click');
+        await sleep(20);
+        expect(onExpand).toHaveBeenCalledWith({ expanded: true });
+        expect(wrapper.find('.ant-typography-collapse').text()).toBe('Less');
+
+        await wrapper.find('.ant-typography-collapse').trigger('click');
+        await sleep(20);
+        expect(onExpand).toHaveBeenCalledWith({ expanded: false });
+        expect(wrapper.find('.ant-typography-expand').text()).toBe('More');
+      });
+
+      it('should support shimmer, actions placement, semantic classNames/styles, and link class', async () => {
+        const shimmerWrapper = mount(Typography.Text, {
+          props: {
+            shimmer: { duration: [2, 3] },
+            classNames: ({ props }) => ({
+              root: props.shimmer ? 'custom-shimmer-root' : '',
+            }),
+            styles: { root: { letterSpacing: '1px' } },
+          },
+          slots: { default: () => 'Thinking...' },
+        });
+        expect(shimmerWrapper.classes()).toContain('ant-typography-shimmer');
+        expect(shimmerWrapper.classes()).toContain('custom-shimmer-root');
+        expect(shimmerWrapper.attributes('aria-busy')).toBe('true');
+        expect(
+          shimmerWrapper.element.style.getPropertyValue('--ant-typography-shimmer-motion-time'),
+        ).toBe('2');
+        expect(
+          shimmerWrapper.element.style.getPropertyValue('--ant-typography-shimmer-wait-time'),
+        ).toBe('3');
+
+        const startActionsWrapper = mount(Paragraph, {
+          props: {
+            copyable: true,
+            actions: { placement: 'start' },
+          },
+          slots: { default: () => 'Start action text' },
+        });
+        expect(startActionsWrapper.find('.ant-typography-actions-start').exists()).toBe(true);
+        expect(startActionsWrapper.element.firstElementChild.className).toContain(
+          'ant-typography-actions',
+        );
+
+        const iconOnlyCopy = mount(Typography.Text, {
+          props: { copyable: { text: 'only icon' } },
+        });
+        expect(iconOnlyCopy.find('.ant-typography-copy-icon-only').exists()).toBe(true);
+
+        const dangerLink = mount(Link, {
+          props: { href: 'https://ant.design', type: 'danger' },
+          slots: { default: () => 'Danger' },
+        });
+        expect(dangerLink.classes()).toContain('ant-typography-link');
+        expect(dangerLink.classes()).toContain('ant-typography-danger');
+      });
+
+      it('should support editable enterIcon null', async () => {
+        const wrapper = mount(Paragraph, {
+          props: {
+            editable: { editing: true, enterIcon: null },
+          },
+          slots: { default: () => 'No enter icon' },
+        });
+        await sleep(20);
+        expect(wrapper.find('textarea').exists()).toBe(true);
+        expect(wrapper.find('.ant-typography-edit-content-confirm').exists()).toBe(false);
       });
     });
 

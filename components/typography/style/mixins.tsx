@@ -1,4 +1,3 @@
-import { unit } from '../../_util/cssinjs';
 /*
 .typography-title(@fontSize; @fontWeight; @lineHeight; @headingColor; @headingMarginBottom;) {
   margin-bottom: @headingMarginBottom;
@@ -9,23 +8,23 @@ import { unit } from '../../_util/cssinjs';
 }
 */
 import { gold } from '@ant-design/colors';
+import { Keyframes, unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { TypographyToken } from '.';
-import { initInputToken } from '../../input/style';
 import type { GenerateStyle } from '../../theme/internal';
-import { operationUnit } from '../../style';
+import { operationUnit, textEllipsis } from '../../style';
 
 // eslint-disable-next-line import/prefer-default-export
 const getTitleStyle = (
-  fontSize: number,
+  fontSize: number | string,
   lineHeight: number,
   color: string,
   token: TypographyToken,
 ) => {
-  const { sizeMarginHeadingVerticalEnd, fontWeightStrong } = token;
+  const { titleMarginBottom, fontWeightStrong } = token;
 
   return {
-    marginBottom: sizeMarginHeadingVerticalEnd,
+    marginBottom: titleMarginBottom,
     color,
     fontWeight: fontWeightStrong,
     fontSize,
@@ -58,10 +57,12 @@ export const getTitleStyles: GenerateStyle<TypographyToken, CSSObject> = token =
 
 export const getLinkStyles: GenerateStyle<TypographyToken, CSSObject> = token => {
   const { componentCls } = token;
+  const linkCls = `${componentCls}-link`;
 
   return {
-    'a&, a': {
+    [`&${linkCls}`]: {
       ...operationUnit(token),
+      userSelect: 'text',
       textDecoration: token.linkDecoration,
 
       '&:active, &:hover': {
@@ -78,141 +79,215 @@ export const getLinkStyles: GenerateStyle<TypographyToken, CSSObject> = token =>
 
         '&:active': {
           pointerEvents: 'none',
+
+          // Action buttons (copy, edit, expand) must remain interactive even when
+          // the disabled link is being clicked, otherwise their click events get
+          // swallowed by the parent's pointer-events: none during :active.
+          [`${componentCls}-actions`]: {
+            pointerEvents: 'auto',
+          },
         },
       },
     },
   };
 };
 
-export const getResetStyles = (): CSSObject => ({
-  code: {
-    margin: '0 0.2em',
-    paddingInline: '0.4em',
-    paddingBlock: '0.2em 0.1em',
-    fontSize: '85%',
-    background: 'rgba(150, 150, 150, 0.1)',
-    border: '1px solid rgba(100, 100, 100, 0.2)',
-    borderRadius: 3,
-  },
+export const getResetStyles: GenerateStyle<TypographyToken, CSSObject> = token => {
+  const fontFamilyCode =
+    (token as any).fontFamilyCode ||
+    "'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace";
 
-  kbd: {
-    margin: '0 0.2em',
-    paddingInline: '0.4em',
-    paddingBlock: '0.15em 0.1em',
-    fontSize: '90%',
-    background: 'rgba(150, 150, 150, 0.06)',
-    border: '1px solid rgba(100, 100, 100, 0.2)',
-    borderBottomWidth: 2,
-    borderRadius: 3,
-  },
-
-  mark: {
-    padding: 0,
-    // FIXME hardcode in v4
-    backgroundColor: gold[2],
-  },
-
-  'u, ins': {
-    textDecoration: 'underline',
-    textDecorationSkipInk: 'auto',
-  },
-
-  's, del': {
-    textDecoration: 'line-through',
-  },
-
-  strong: {
-    fontWeight: 600,
-  },
-
-  // list
-  'ul, ol': {
-    marginInline: 0,
-    marginBlock: '0 1em',
-    padding: 0,
-
-    li: {
-      marginInline: '20px 0',
-      marginBlock: 0,
-      paddingInline: '4px 0',
-      paddingBlock: 0,
+  return {
+    code: {
+      margin: '0 0.2em',
+      paddingInline: '0.4em',
+      paddingBlock: '0.2em 0.1em',
+      fontSize: '85%',
+      fontFamily: fontFamilyCode,
+      background: 'rgba(150, 150, 150, 0.1)',
+      border: `${unit(token.lineWidth)} ${token.lineType} rgba(100, 100, 100, 0.2)`,
+      borderRadius: 3,
     },
-  },
 
-  ul: {
-    listStyleType: 'circle',
+    kbd: {
+      margin: '0 0.2em',
+      paddingInline: '0.4em',
+      paddingBlock: '0.15em 0.1em',
+      fontSize: '90%',
+      fontFamily: fontFamilyCode,
+      background: 'rgba(150, 150, 150, 0.06)',
+      border: `${unit(token.lineWidth)} ${token.lineType} rgba(100, 100, 100, 0.2)`,
+      borderBottomWidth: 2,
+      borderRadius: 3,
+    },
+
+    mark: {
+      padding: 0,
+      // FIXME hardcode in v4
+      backgroundColor: gold[2],
+    },
+
+    'u, ins': {
+      textDecoration: 'underline',
+      textDecorationSkipInk: 'auto',
+    },
+
+    's, del': {
+      textDecoration: 'line-through',
+    },
+
+    strong: {
+      fontWeight: token.fontWeightStrong,
+    },
+
+    // list
+    'ul, ol': {
+      marginInline: 0,
+      marginBlock: '0 1em',
+      padding: 0,
+
+      li: {
+        marginInline: '20px 0',
+        marginBlock: 0,
+        paddingInline: '4px 0',
+        paddingBlock: 0,
+      },
+    },
 
     ul: {
-      listStyleType: 'disc',
+      listStyleType: 'circle',
+
+      ul: {
+        listStyleType: 'disc',
+      },
     },
-  },
 
-  ol: {
-    listStyleType: 'decimal',
-  },
-
-  // pre & block
-  'pre, blockquote': {
-    margin: '1em 0',
-  },
-
-  pre: {
-    padding: '0.4em 0.6em',
-    whiteSpace: 'pre-wrap',
-    wordWrap: 'break-word',
-    background: 'rgba(150, 150, 150, 0.1)',
-    border: '1px solid rgba(100, 100, 100, 0.2)',
-    borderRadius: 3,
-
-    // Compatible for marked
-    code: {
-      display: 'inline',
-      margin: 0,
-      padding: 0,
-      fontSize: 'inherit',
-      fontFamily: 'inherit',
-      background: 'transparent',
-      border: 0,
+    ol: {
+      listStyleType: 'decimal',
     },
-  },
 
-  blockquote: {
-    paddingInline: '0.6em 0',
-    paddingBlock: 0,
-    borderInlineStart: '4px solid rgba(100, 100, 100, 0.2)',
-    opacity: 0.85,
-  },
-});
+    // pre & block
+    'pre, blockquote': {
+      margin: '1em 0',
+    },
+
+    pre: {
+      padding: '0.4em 0.6em',
+      whiteSpace: 'pre-wrap',
+      wordWrap: 'break-word',
+      background: 'rgba(150, 150, 150, 0.1)',
+      border: `${unit(token.lineWidth)} ${token.lineType} rgba(100, 100, 100, 0.2)`,
+      borderRadius: 3,
+      fontFamily: fontFamilyCode,
+
+      // Compatible for marked
+      code: {
+        display: 'inline',
+        margin: 0,
+        padding: 0,
+        fontSize: 'inherit',
+        fontFamily: 'inherit',
+        background: 'transparent',
+        border: 0,
+      },
+    },
+
+    blockquote: {
+      paddingInline: '0.6em 0',
+      paddingBlock: 0,
+      borderInlineStart: '4px solid rgba(100, 100, 100, 0.2)',
+      opacity: 0.85,
+    },
+
+    // table - Follow Table component default style
+    table: {
+      width: '100%',
+      textAlign: 'start',
+      borderCollapse: 'separate',
+      borderSpacing: 0,
+      marginBlock: '1em',
+
+      'th, td': {
+        padding: unit(token.padding),
+        overflowWrap: 'break-word',
+        borderBottom: `${unit(token.lineWidth)} ${token.lineType} ${token.colorSplit}`,
+      },
+
+      'thead > tr:first-child > th:first-child': {
+        borderStartStartRadius: token.borderRadiusLG,
+      },
+
+      'thead > tr:first-child > th:last-child': {
+        borderStartEndRadius: token.borderRadiusLG,
+      },
+
+      'thead > tr > th': {
+        textAlign: 'start',
+        position: 'relative',
+        color: token.colorTextHeading,
+        fontWeight: token.fontWeightStrong,
+        backgroundColor: token.colorFillAlter,
+        transition: `background-color ${token.motionDurationMid} ease`,
+
+        '&:not(:last-child)::before': {
+          position: 'absolute',
+          top: '50%',
+          insetInlineEnd: 0,
+          width: 1,
+          height: '1.6em',
+          backgroundColor: token.colorSplit,
+          transform: 'translateY(-50%)',
+          content: '""',
+        },
+      },
+
+      'tbody > tr': {
+        '> th, > td': {
+          transition: `background-color ${token.motionDurationMid} ease`,
+        },
+        '&:hover > th, &:hover > td': {
+          backgroundColor: token.colorFillAlter,
+        },
+      },
+    },
+  };
+};
 
 export const getEditableStyles: GenerateStyle<TypographyToken, CSSObject> = token => {
-  const { componentCls } = token;
+  const { componentCls, paddingSM } = token;
 
-  const inputToken = initInputToken(token);
-  const inputShift = inputToken.inputPaddingVertical + 1;
+  const inputShift = paddingSM;
   return {
     '&-edit-content': {
       position: 'relative',
 
       'div&': {
         insetInlineStart: token.calc(token.paddingSM).mul(-1).equal(),
-        marginTop: -inputShift,
-        marginBottom: `calc(1em - ${unit(inputShift)})`,
+        insetBlockStart: token.calc(inputShift).div(-2).add(1).equal(),
+        marginBottom: token.calc(inputShift).div(2).sub(2).equal(),
       },
 
       [`${componentCls}-edit-content-confirm`]: {
         position: 'absolute',
         insetInlineEnd: token.calc(token.marginXS).add(2).equal(),
         insetBlockEnd: token.marginXS,
-        color: token.colorTextDescription,
+        color: token.colorIcon,
         // default style
-        fontWeight: 'normal',
+        fontWeight: 400,
         fontSize: token.fontSize,
         fontStyle: 'normal',
         pointerEvents: 'none',
       },
 
-      textarea: {
+      // Double the `-edit-content` class to raise this selector's specificity
+      // above Input's own `textarea.ant-input { line-height: token.lineHeight }`
+      // rule so inherited font props (notably `line-height` and heading sizes) apply.
+      [`&${componentCls}-edit-content textarea`]: {
         margin: '0!important',
+        fontSize: 'inherit',
+        lineHeight: 'inherit',
+        fontFamily: 'inherit',
+        fontWeight: 'inherit',
         // Fix Editable Textarea flash in Firefox
         MozTransition: 'none',
         height: '1em',
@@ -221,37 +296,42 @@ export const getEditableStyles: GenerateStyle<TypographyToken, CSSObject> = toke
   };
 };
 
-export const getCopiableStyles: GenerateStyle<TypographyToken, CSSObject> = token => ({
-  '&-copy-success': {
-    [`
-    &,
-    &:hover,
-    &:focus`]: {
+export const getCopyableStyles: GenerateStyle<TypographyToken, CSSObject> = token => ({
+  [`${token.componentCls}-copy-success`]: {
+    '&, &:hover, &:focus': {
       color: token.colorSuccess,
     },
   },
+  [`${token.componentCls}-copy-icon-only`]: {
+    marginInlineStart: 0,
+  },
 });
 
+export const getCopiableStyles = getCopyableStyles;
+
 export const getEllipsisStyles = (): CSSObject => ({
-  [`
-  a&-ellipsis,
-  span&-ellipsis
-  `]: {
+  'a&-ellipsis, span&-ellipsis': {
     display: 'inline-block',
     maxWidth: '100%',
   },
 
-  '&-single-line': {
-    whiteSpace: 'nowrap',
-  },
-
   '&-ellipsis-single-line': {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    ...textEllipsis,
 
     // https://blog.csdn.net/iefreer/article/details/50421025
     'a&, span&': {
       verticalAlign: 'bottom',
+    },
+
+    '> code': {
+      paddingBlock: 0,
+      maxWidth: 'calc(100% - 1.2em)',
+      display: 'inline-block',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      verticalAlign: 'bottom',
+      // https://github.com/ant-design/ant-design/issues/45953
+      boxSizing: 'content-box',
     },
   },
 
@@ -262,3 +342,34 @@ export const getEllipsisStyles = (): CSSObject => ({
     WebkitBoxOrient: 'vertical',
   },
 });
+
+export const getShimmerStyles = (token: TypographyToken): CSSObject => {
+  const rootPrefix = token.antCls.replace(/^\./, '') || 'ant';
+  const motionTime = `var(--${rootPrefix}-typography-shimmer-motion-time, 1)`;
+  const waitTime = `var(--${rootPrefix}-typography-shimmer-wait-time, 1)`;
+  const shimmerAnimation = new Keyframes('antTypographyShimmer', {
+    '0%': {
+      backgroundPosition: '-66.6667% 100%, 0 0',
+    },
+    '100%': {
+      backgroundPosition: `calc(166.6667% + 233.3334% * ${waitTime} / ${motionTime}) 100%, 0 0`,
+    },
+  });
+
+  return {
+    backgroundClip: 'text, text',
+    WebkitBackgroundClip: 'text, text',
+    WebkitTextFillColor: 'transparent',
+    backgroundImage: [
+      'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), white, rgba(255, 255, 255, 0.8), transparent)',
+      'linear-gradient(currentColor, currentColor)',
+    ].join(', '),
+    backgroundSize: '40% 100%, 100% 100%',
+    backgroundRepeat: 'no-repeat',
+    animationName: shimmerAnimation,
+    animationDuration: `calc((${motionTime} + ${waitTime}) * 1s)`,
+    animationIterationCount: 'infinite',
+    animationTimingFunction: 'linear',
+    animationFillMode: 'forwards',
+  };
+};

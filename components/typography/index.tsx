@@ -6,7 +6,27 @@ import Text from './Text';
 import Title from './Title';
 import Typography from './Typography';
 
-export type { TypographyProps } from './Typography';
+export type {
+  TypographyProps,
+  TypographySemanticName,
+  TypographySemanticClassNames,
+  TypographySemanticStyles,
+  TypographyClassNamesType,
+  TypographyStylesType,
+} from './Typography';
+export type {
+  BlockProps,
+  BaseType,
+  CopyConfig,
+  EditConfig,
+  EllipsisConfig,
+  ShimmerConfig,
+  ActionsConfig,
+} from './Base';
+export type { TextProps } from './Text';
+export type { TitleProps } from './Title';
+export type { ParagraphProps } from './Paragraph';
+export type { LinkProps } from './Link';
 
 Typography.Text = Text;
 Typography.Title = Title;

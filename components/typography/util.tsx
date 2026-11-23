@@ -12,6 +12,7 @@ interface Option {
 }
 
 // We only handle element & text node.
+const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
 
@@ -24,7 +25,7 @@ const wrapperStyle: CSSProperties = {
   lineHeight: 'inherit',
 };
 
-function resetDomStyles(target: HTMLElement, origin: HTMLElement) {
+function resetDomStyles(target: HTMLElement, origin: HTMLElement, forceNormalWrap = false) {
   target.setAttribute('aria-hidden', 'true');
   const originStyle = window.getComputedStyle(origin);
   const originCSS = styleToString(originStyle);
@@ -32,24 +33,61 @@ function resetDomStyles(target: HTMLElement, origin: HTMLElement) {
   target.setAttribute('style', originCSS);
   target.style.position = 'fixed';
   target.style.left = '0';
+  target.style.top = '-999999px';
+  target.style.zIndex = '-1000';
+  target.style.display = 'block';
+  target.style.boxSizing = 'border-box';
+
+  // Match exact rendered width of origin when available
+  const originRect = origin.getBoundingClientRect();
+  if (originRect && originRect.width > 0) {
+    target.style.width = `${originRect.width}px`;
+    target.style.inlineSize = `${originRect.width}px`;
+  }
+  target.style.minWidth = '0';
+  target.style.maxWidth = 'none';
+  target.style.minInlineSize = '0';
+  target.style.maxInlineSize = 'none';
+
+  // Reset BOTH physical and logical height/padding/border properties
+  // (Chromium's getComputedStyle includes `block-size`, `padding-block`, `border-block-width`, etc.)
   target.style.height = 'auto';
   target.style.minHeight = 'auto';
   target.style.maxHeight = 'auto';
+  target.style.blockSize = 'auto';
+  target.style.minBlockSize = 'auto';
+  target.style.maxBlockSize = 'auto';
   target.style.paddingTop = '0';
   target.style.paddingBottom = '0';
+  target.style.paddingBlock = '0';
   target.style.borderTopWidth = '0';
   target.style.borderBottomWidth = '0';
-  target.style.top = '-999999px';
-  target.style.zIndex = '-1000';
-  // clean up css overflow
+  target.style.borderBlockWidth = '0';
+
+  // Clean up css overflow / line-clamp / nowrap
+  target.style.overflow = 'visible';
+  target.style.overflowX = 'visible';
+  target.style.overflowY = 'visible';
   target.style.textOverflow = 'clip';
-  target.style.whiteSpace = 'normal';
+  const originWhiteSpace = originStyle.whiteSpace;
+  if (
+    !forceNormalWrap &&
+    (originWhiteSpace === 'pre' ||
+      originWhiteSpace === 'pre-wrap' ||
+      originWhiteSpace === 'pre-line')
+  ) {
+    target.style.whiteSpace = 'pre-wrap';
+  } else {
+    target.style.whiteSpace = 'normal';
+  }
+  (target.style as any).textWrap = 'wrap';
   (target.style as any).webkitLineClamp = 'none';
+  (target.style as any).webkitBoxOrient = 'horizontal';
 }
 
 function getRealLineHeight(originElement: HTMLElement) {
   const heightContainer = document.createElement('div');
-  resetDomStyles(heightContainer, originElement);
+  resetDomStyles(heightContainer, originElement, true);
   heightContainer.appendChild(document.createTextNode('text'));
   document.body.appendChild(heightContainer);
   // The element real height is always less than multiple of line-height
@@ -59,10 +97,47 @@ function getRealLineHeight(originElement: HTMLElement) {
   return realHeight;
 }
 
+/**
+ * Check if element has native CSS ellipsis overflow
+ */
+export function isEleEllipsis(ele: HTMLElement): boolean {
+  const childDiv = document.createElement('em');
+  ele.appendChild(childDiv);
+
+  if (process.env.NODE_ENV !== 'production') {
+    childDiv.className = 'ant-typography-css-ellipsis-content-measure';
+  }
+
+  const rect = ele.getBoundingClientRect();
+  const childRect = childDiv.getBoundingClientRect();
+
+  ele.removeChild(childDiv);
+
+  const horizontalTolerance = 0.001;
+
+  const isOverflow =
+    rect.left - childRect.left > horizontalTolerance ||
+    childRect.right - rect.right > horizontalTolerance ||
+    rect.top > childRect.top ||
+    childRect.bottom > rect.bottom;
+
+  if (isOverflow) {
+    return true;
+  }
+
+  // Direct `> code` child clips its own text via `.ant-typography-ellipsis-single-line > code`
+  const firstChild = ele.firstElementChild as HTMLElement | null;
+  if (firstChild && firstChild.tagName === 'CODE') {
+    return firstChild.scrollWidth > firstChild.clientWidth;
+  }
+
+  return false;
+}
+
 export default (
   originElement: HTMLElement,
   option: Option,
-  content: string,
+  content: string | VNodeTypes[],
   fixedContent: VNodeTypes[],
   ellipsisStr: string,
 ): {
@@ -82,15 +157,30 @@ export default (
 
   resetDomStyles(ellipsisContainer, originElement);
 
+  const isArrayContent = Array.isArray(content);
+  const contentList: VNodeTypes[] = isArrayContent
+    ? (content as VNodeTypes[]).filter(item => item !== '' && item !== null && item !== undefined)
+    : [content];
+
   // Render in the fake container
   const vm = createApp({
     render() {
       return (
         <div style={wrapperStyle}>
           <span style={wrapperStyle}>
-            {content}
-            {suffix}
+            {isArrayContent
+              ? contentList.map((item, idx) =>
+                  typeof item === 'string' || typeof item === 'number' ? (
+                    item
+                  ) : (
+                    <span key={idx} style={wrapperStyle}>
+                      {item}
+                    </span>
+                  ),
+                )
+              : content}
           </span>
+          {suffix ? <span style={wrapperStyle}>{suffix}</span> : null}
           <span style={wrapperStyle}>{fixedContent}</span>
         </div>
       );
@@ -107,20 +197,27 @@ export default (
 
   // Skip ellipsis if already match
   if (inRange()) {
+    const htmlText = ellipsisContainer.innerHTML;
     vm.unmount();
-    return { content, text: ellipsisContainer.innerHTML, ellipsis: false };
+    return { content, text: htmlText, ellipsis: false };
   }
-  const childNodes = Array.prototype.slice
-    .apply(ellipsisContainer.childNodes[0].childNodes[0].cloneNode(true).childNodes)
-    .filter(({ nodeType, data }) => nodeType !== COMMENT_NODE && data !== '');
-  const fixedNodes = Array.prototype.slice.apply(
-    ellipsisContainer.childNodes[0].childNodes[1].cloneNode(true).childNodes,
-  );
+
+  const wrapperNode = ellipsisContainer.childNodes[0];
+  const contentSpan = wrapperNode?.childNodes[0];
+  const fixedSpan = wrapperNode?.lastChild;
+  const childNodes: ChildNode[] = contentSpan
+    ? Array.prototype.slice
+        .apply(contentSpan.cloneNode(true).childNodes)
+        .filter(({ nodeType, data }: any) => nodeType !== COMMENT_NODE && data !== '')
+    : [];
+  const fixedNodes: ChildNode[] = fixedSpan
+    ? Array.prototype.slice.apply(fixedSpan.cloneNode(true).childNodes)
+    : [];
 
   vm.unmount();
 
   // ========================= Find match ellipsis content =========================
-  const ellipsisChildren = [];
+  const ellipsisChildren: VNodeTypes[] = [];
   ellipsisContainer.innerHTML = '';
 
   // Create origin content holder
@@ -176,26 +273,25 @@ export default (
     return measureText(textNode, fullText, startLoc, midLoc, lastSuccessLoc);
   }
 
-  function measureNode(childNode: ChildNode): MeasureResult {
+  function measureNode(childNode: ChildNode, index: number): MeasureResult {
     const type = childNode.nodeType;
-    // console.log('type', type);
-    // if (type === ELEMENT_NODE) {
-    //   // We don't split element, it will keep if whole element can be displayed.
-    //   appendChildNode(childNode);
-    //   if (inRange()) {
-    //     return {
-    //       finished: false,
-    //       vNode: contentList[index],
-    //     };
-    //   }
+    if (type === ELEMENT_NODE) {
+      // We don't split element, it will keep if whole element can be displayed.
+      appendChildNode(childNode);
+      if (inRange()) {
+        return {
+          finished: false,
+          vNode: contentList[index],
+        };
+      }
 
-    //   // Clean up if can not pull in
-    //   ellipsisContentHolder.removeChild(childNode);
-    //   return {
-    //     finished: true,
-    //     vNode: null,
-    //   };
-    // }
+      // Clean up if can not pull in
+      ellipsisContentHolder.removeChild(childNode);
+      return {
+        finished: true,
+        vNode: null,
+      };
+    }
     if (type === TEXT_NODE) {
       const fullText = childNode.textContent || '';
       const textNode = document.createTextNode(fullText);
@@ -210,8 +306,8 @@ export default (
     };
   }
 
-  childNodes.some(childNode => {
-    const { finished, vNode } = measureNode(childNode);
+  childNodes.some((childNode, index) => {
+    const { finished, vNode } = measureNode(childNode, index);
     if (vNode) {
       ellipsisChildren.push(vNode);
     }

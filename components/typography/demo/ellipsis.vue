@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 7
 title:
   zh-CN: 省略号
   en-US: Ellipsis
@@ -12,37 +12,48 @@ title:
 
 ## en-US
 
-Multiple line ellipsis support. You can use `tooltip` to config ellipsis tooltip. Recommend `expandable` when have lots of content.
+Multiple line ellipsis support. You can use `tooltip` to configure ellipsis tooltip. The `expandable` property is recommended when you have lots of content.
 </docs>
 <template>
   <a-switch v-model:checked="ellipsis" />
-  <a-typography-paragraph
-    :ellipsis="ellipsis"
-    content=" Ant Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team."
-  />
+
+  <a-typography-paragraph :ellipsis="ellipsis">
+    Ant Design, a design language for background applications, is refined by Ant UED Team. Ant
+    Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a
+    design language for background applications, is refined by Ant UED Team. Ant Design, a design
+    language for background applications, is refined by Ant UED Team. Ant Design, a design language
+    for background applications, is refined by Ant UED Team. Ant Design, a design language for
+    background applications, is refined by Ant UED Team.
+  </a-typography-paragraph>
 
   <a-typography-paragraph
     :ellipsis="ellipsis ? { rows: 2, expandable: true, symbol: 'more' } : false"
-    content="Ant Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team. Ant
-    Design, a design language for background applications, is refined by Ant UED Team."
-  />
+  >
+    Ant Design, a design language for background applications, is refined by Ant UED Team. Ant
+    Design, a design language for background applications, is refined by Ant UED Team. Ant Design, a
+    design language for background applications, is refined by Ant UED Team. Ant Design, a design
+    language for background applications, is refined by Ant UED Team. Ant Design, a design language
+    for background applications, is refined by Ant UED Team. Ant Design, a design language for
+    background applications, is refined by Ant UED Team.
+  </a-typography-paragraph>
 
   <a-typography-text
-    :style="ellipsis ? { width: '100px' } : {}"
+    :style="ellipsis ? { width: '200px' } : undefined"
     :ellipsis="ellipsis ? { tooltip: 'I am ellipsis now!' } : false"
-    content="Ant Design, a design language for background applications, is refined by Ant UED Team."
-  />
+  >
+    Ant Design, a design language for background applications, is refined by Ant UED Team.
+  </a-typography-text>
+
+  <a-typography-text
+    code
+    :style="ellipsis ? { width: '200px' } : undefined"
+    :ellipsis="ellipsis ? { tooltip: 'I am ellipsis now!' } : false"
+  >
+    Ant Design, a design language for background applications, is refined by Ant UED Team.
+  </a-typography-text>
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
+
 const ellipsis = ref(true);
 </script>
