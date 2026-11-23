@@ -1,8 +1,8 @@
 # 通用属性
 
-`ant-design-vue@4.3.0` 在组件库层面统一了一组跨组件通用的属性与样式定制协议，涵盖根容器类名、语义化 DOM 定制、视觉形态变体、弹层销毁策略以及 `ConfigProvider` 全局组件默认配置。
+`ant-design-vue@4.3.0` 在组件库层面统一了一组跨组件通用的属性与样式定制协议，涵盖根容器类名、覆盖 31 个组件的静态与函数式**语义化 DOM（`classNames` / `styles`）**、视觉形态变体 `variant`、弹层统一销毁策略以及 **72 项 `ConfigProvider` 组件级默认配置**。
 
-> 以下通用属性适用于绝大多数组件；个别无 DOM 容器或特殊结构的组件请以对应组件 API 文档为准。
+> 以下通用属性适用于绝大多数组件；个别无 DOM 容器或特殊结构的组件请以对应组件 API 文档与交互式 `#semantic-dom` 预览器为准。
 
 ## 基础通用属性
 
@@ -11,9 +11,9 @@
 | `class` | 自定义组件主容器类名（Vue 原生 attribute 透传） | `string \| Record<string, boolean> \| Array<any>` | - | - |
 | `style` | 自定义组件主容器内联样式（Vue 原生 attribute 透传） | `CSSProperties` | - | - |
 | `rootClassName` | 添加在组件最外层根节点（含弹层根容器）的类名，便于精准样式覆盖 | `string` | - | `4.2.7` |
-| `classNames` | 语义化内部结构类名映射，用于精细定制组件各部位类名 | `Record<SemanticName, string>` 或函数 | - | `4.2.7` / `4.3.0` |
-| `styles` | 语义化内部结构内联样式映射，替代零散的 `bodyStyle` / `headStyle` 等旧属性 | `Record<SemanticName, CSSProperties>` 或函数 | - | `4.2.7` / `4.3.0` |
-| `variant` | 组件形态变体，替代旧版布尔值 `bordered` 或 `dashed` | 见下方 [形态变体 `variant`](#形态变体-variant) | `outlined` | `4.2.7` |
+| `classNames` | 语义化内部结构类名映射（支持静态对象或函数），用于精细定制组件各部位类名 | `Record<SemanticName, string> \| ((info: { props }) => Record<SemanticName, string>)` | - | `4.2.7` / `4.3.0` |
+| `styles` | 语义化内部结构内联样式映射（支持静态对象或函数），替代 `bodyStyle` / `headStyle` 等旧属性 | `Record<SemanticName, CSSProperties> \| ((info: { props }) => Record<SemanticName, CSSProperties>)` | - | `4.2.7` / `4.3.0` |
+| `variant` | 组件形态变体，替代旧版布尔值 `bordered` 或 `dashed` | 见下方 [形态变体 `variant`](#形态变体-variant) | `outlined` | `4.2.7` / `4.3.0` |
 | `destroyOnHidden` | 隐藏或关闭时销毁内部子节点，替代 `destroyOnClose` / `destroyInactiveTabPane` 等旧属性 | `boolean` | `false` | `4.2.7` |
 | `prefixCls` | 自定义组件样式前缀（通常通过 `ConfigProvider` 统一配置） | `string` | `ant-<component>` | - |
 
@@ -32,26 +32,15 @@
 </template>
 ```
 
-## 语义化 `classNames` 与 `styles`
+## 语义化 DOM（`classNames` 与 `styles`）
 
-`ant-design-vue` 通过成对的 `classNames` 和 `styles` 属性开放组件内部各语义部位的定制能力，替代过去分散的 `bodyStyle`、`headStyle`、`maskStyle`、`dropdownStyle`、`imageStyle` 等属性。
+`ant-design-vue` 通过成对的 `classNames` 和 `styles` 属性开放组件内部各语义部位的定制能力，替代过去分散的 `bodyStyle`、`headStyle`、`headerStyle`、`footerStyle`、`maskStyle`、`dropdownStyle`、`imageStyle`、`wrapperStyle` 与 `orientationMargin` 等属性。
 
-### 常见组件的语义位参考
+> **交互式语义化 DOM 预览器**：所有支持语义化样式的组件文档页均在 `#design-tokens` 上方内置了 **`语义化 DOM`（`#semantic-dom`）** 实时预览器（例如体验 [Alert 语义化 DOM](/components/alert-cn#semantic-dom)、[Card 语义化 DOM](/components/card-cn#semantic-dom) 或 [Button 语义化 DOM](/components/button-cn#semantic-dom)）。悬停或点击右侧语义位即可高亮对应的真实 DOM 节点，并支持一键复制键名与查看示例代码。
 
-| 组件 | 可用语义位（`classNames` / `styles` 键名） |
-| --- | --- |
-| `Modal` / `Drawer` | `mask`、`wrapper`、`content`、`header`、`body`、`footer` |
-| `Card` | `header`、`body`、`extra`、`actions`、`title`、`cover` |
-| `Descriptions` | `root`、`header`、`title`、`extra`、`label`、`content` |
-| `Input` / `Input.TextArea` | `prefix`、`suffix`、`input`、`count` |
-| `Select` / `TreeSelect` / `Cascader` / `AutoComplete` | `root`、`popup: { root }` |
-| `Slider` | `root`、`tracks`、`track`、`rail`、`handle` |
-| `Button` | `icon` |
-| `Listy` | `root`、`item`、`groupHeader`、`groupSection`、`holder`、`scrollbar`（同时支持函数式 `({ props }) => ...`） |
-| `Masonry` | `root`、`item` |
-| `Empty` / `Badge` / `Space` / `Tooltip` / `List` | 详见各自组件 API 文档 |
+### 静态对象写法
 
-### 使用示例
+直接传入以语义位名称为键的普通对象即可定制任意内部结构：
 
 ```vue
 <template>
@@ -68,32 +57,102 @@
 </template>
 ```
 
-在 `Listy` 等支持函数式语义位的组件中，还可以根据当前 `props` 动态返回样式：
+### 函数式写法（`({ props }) => ...`）
+
+在 `4.3.0` 中，`classNames` 与 `styles` 支持传入**回调函数**，通过 `{ props }` 读取组件当前属性动态计算类名与内联样式，并可与 `ConfigProvider` 全局默认语义配置自动合并：
 
 ```vue
 <template>
-  <a-listy
-    :items="items"
-    row-key="id"
-    :height="240"
-    :styles="({ props }) => ({ item: { fontWeight: props.rowHoverable ? 500 : 400 } })"
-  />
+  <a-space orientation="vertical" :size="16" style="width: 100%">
+    <a-alert
+      title="动态语义化样式"
+      description="根据当前 props 动态调整提示框圆角与标题字重。"
+      type="info"
+      variant="filled"
+      show-icon
+      :class-names="({ props }) => ({ root: props.variant === 'filled' ? 'alert-filled-box' : '' })"
+      :styles="
+        ({ props }) => ({
+          root: { borderRadius: '10px' },
+          title: { fontWeight: props.variant === 'filled' ? 600 : 500 },
+        })
+      "
+    />
+
+    <a-listy
+      :items="items"
+      row-key="id"
+      :height="200"
+      :styles="({ props }) => ({ item: { fontWeight: props.rowHoverable ? 500 : 400 } })"
+    >
+      <template #item="{ item }">
+        <div>{{ item.name }}</div>
+      </template>
+    </a-listy>
+  </a-space>
 </template>
+
+<script setup lang="ts">
+const items = [
+  { id: 1, name: '函数式 classNames' },
+  { id: 2, name: '函数式 styles' },
+];
+</script>
 ```
+
+### 全部 31 个支持语义化 DOM 的组件清单
+
+点击下方链接可直接跳转对应组件页的 **`语义化 DOM`（`#semantic-dom`）** 交互预览器：
+
+| 组件 | 可用语义位（`classNames` / `styles` 键名） | 交互式预览器 |
+| --- | --- | --- |
+| `Alert` | `root`、`icon`、`section`、`title`、`description`、`actions`、`close` | [Alert `#semantic-dom`](/components/alert-cn#semantic-dom) |
+| `AutoComplete` | `root`、`prefix`、`suffix`、`popup: { root }` | [AutoComplete `#semantic-dom`](/components/auto-complete-cn#semantic-dom) |
+| `Badge` | `root`、`indicator` | [Badge `#semantic-dom`](/components/badge-cn#semantic-dom) |
+| `Button` | `root`、`icon`、`content` | [Button `#semantic-dom`](/components/button-cn#semantic-dom) |
+| `Card` | `root`、`header`、`title`、`extra`、`body`、`actions`、`cover` | [Card `#semantic-dom`](/components/card-cn#semantic-dom) |
+| `Cascader` | `root`、`prefix`、`suffix`、`popup: { root }` | [Cascader `#semantic-dom`](/components/cascader-cn#semantic-dom) |
+| `Collapse` | `root`、`header`、`title`、`body`、`icon` | [Collapse `#semantic-dom`](/components/collapse-cn#semantic-dom) |
+| `Descriptions` | `root`、`header`、`title`、`extra`、`label`、`content` | [Descriptions `#semantic-dom`](/components/descriptions-cn#semantic-dom) |
+| `Divider` | `root`、`rail`、`content` | [Divider `#semantic-dom`](/components/divider-cn#semantic-dom) |
+| `Drawer` | `mask`、`wrapper`、`content`、`header`、`body`、`footer` | [Drawer `#semantic-dom`](/components/drawer-cn#semantic-dom) |
+| `Empty` | `root`、`image`、`description`、`footer` | [Empty `#semantic-dom`](/components/empty-cn#semantic-dom) |
+| `Image` | `root`、`image`、`cover`、`popup: { root, mask, body, footer, actions, close }` | [Image `#semantic-dom`](/components/image-cn#semantic-dom) |
+| `Input` | `root`、`prefix`、`suffix`、`input`、`count`（覆盖 `Input`/`TextArea`/`Password`/`Search`/`OTP`） | [Input `#semantic-dom`](/components/input-cn#semantic-dom) |
+| `List` | `root`、`header`、`item`、`actions`、`extra`、`footer` | [List `#semantic-dom`](/components/list-cn#semantic-dom) |
+| `Listy` | `root`、`item`、`groupHeader`、`groupSection`、`holder`、`scrollbar` | [Listy `#semantic-dom`](/components/listy-cn#semantic-dom) |
+| `Masonry` | `root`、`item` | [Masonry `#semantic-dom`](/components/masonry-cn#semantic-dom) |
+| `Modal` | `mask`、`wrapper`、`content`、`header`、`body`、`footer` | [Modal `#semantic-dom`](/components/modal-cn#semantic-dom) |
+| `Popconfirm` | `root`、`container`（`body`）、`title`、`content`、`arrow` | [Popconfirm `#semantic-dom`](/components/popconfirm-cn#semantic-dom) |
+| `Popover` | `root`、`container`（`body`）、`title`、`content`、`arrow` | [Popover `#semantic-dom`](/components/popover-cn#semantic-dom) |
+| `Progress` | `root`、`rail`、`track`、`indicator` | [Progress `#semantic-dom`](/components/progress-cn#semantic-dom) |
+| `Segmented` | `root`、`item`、`label`、`icon` | [Segmented `#semantic-dom`](/components/segmented-cn#semantic-dom) |
+| `Select` | `root`、`prefix`、`suffix`、`popup: { root }` | [Select `#semantic-dom`](/components/select-cn#semantic-dom) |
+| `Slider` | `root`、`tracks`、`track`、`rail`、`handle` | [Slider `#semantic-dom`](/components/slider-cn#semantic-dom) |
+| `Space` | `root`、`item`、`separator` | [Space `#semantic-dom`](/components/space-cn#semantic-dom) |
+| `Spin` | `root`、`wrapper`、`mask`、`section`、`indicator`、`description`（`tip`） | [Spin `#semantic-dom`](/components/spin-cn#semantic-dom) |
+| `Splitter` | `root`、`panel`、`dragger` | [Splitter `#semantic-dom`](/components/splitter-cn#semantic-dom) |
+| `Steps` | `root`、`item`、`itemIcon`、`itemTitle`、`itemContent`、`itemRail` | [Steps `#semantic-dom`](/components/steps-cn#semantic-dom) |
+| `Tag` | `root`、`icon`、`content`、`close`（`CheckableTagGroup`：`root`、`item`） | [Tag `#semantic-dom`](/components/tag-cn#semantic-dom) |
+| `Tooltip` | `root`、`container`（`body`）、`arrow` | [Tooltip `#semantic-dom`](/components/tooltip-cn#semantic-dom) |
+| `Transfer` | `root`、`section`、`header`、`title`、`list`、`item`、`footer`、`actions` | [Transfer `#semantic-dom`](/components/transfer-cn#semantic-dom) |
+| `TreeSelect` | `root`、`prefix`、`suffix`、`popup: { root }` | [TreeSelect `#semantic-dom`](/components/tree-select-cn#semantic-dom) |
 
 ## 形态变体 `variant`
 
 `variant` 将过去分散的 `bordered` / `dashed` / `type` 等布尔或离散属性收敛为一致的视觉形态：
 
-- **表单录入类**（`Input`、`InputNumber`、`Input.OTP`、`Select`、`Cascader`、`TreeSelect`、`Mentions`、`AutoComplete`、`DatePicker`、`TimePicker`、`RangePicker`）：
+- **表单录入类**（`Input`、`InputNumber`、`Input.OTP`、`Select`、`Cascader`、`TreeSelect`、`Mentions`、`AutoComplete`、`DatePicker`、`TimePicker`、`RangePicker`、`Space.Addon`）：
   - `'outlined'`（默认描边）、`'filled'`（浅底填充）、`'borderless'`（无边框）、`'underlined'`（底部下划线）
 - **卡片 `Card`**：`'outlined'`（默认）、`'borderless'`
 - **按钮 `Button`**：`'outlined'`、`'dashed'`、`'solid'`、`'filled'`、`'text'`、`'link'`（搭配 `color` 使用）
 - **分割线 `Divider`**：`'solid'`（默认）、`'dashed'`、`'dotted'`
+- **警告提示 `Alert` / 步骤条 `Steps` / 时间轴 `Timeline`**：`'outlined'`（默认）、`'filled'`
+- **标签 `Tag`**：`'outlined'`（默认）、`'filled'`、`'solid'`
 
 ```vue
 <template>
-  <a-space direction="vertical" style="width: 320px">
+  <a-space orientation="vertical" style="width: 320px">
     <a-input variant="outlined" placeholder="Outlined（默认）" />
     <a-input variant="filled" placeholder="Filled（填充）" />
     <a-input variant="borderless" placeholder="Borderless（无边框）" />
@@ -116,9 +175,9 @@
 </template>
 ```
 
-## `ConfigProvider` 全局组件默认配置
+## `ConfigProvider` 全局组件默认配置（72 项组件配置）
 
-在 `4.3.0` 中，`ConfigProvider` 支持 **72 项组件级默认配置**。配置中传入的 `className`、`style`、`classNames`、`styles` 会与组件实例自身传入的值**智能合并**（类名拼接、样式对象浅合并，组件自身属性优先级更高）：
+在 `4.3.0` 中，`ConfigProvider` 支持 **72 项组件级默认配置**。配置中传入的 `className`、`style`、`classNames`、`styles`（含函数式语义位回调）会与组件实例自身传入的值**智能合并**（类名拼接、样式对象浅合并，组件自身属性优先级更高）：
 
 ```vue
 <template>
@@ -126,6 +185,7 @@
     variant="filled"
     :button="{ autoInsertSpace: false, className: 'brand-btn' }"
     :card="{ variant: 'borderless', styles: { body: { padding: '20px' } } }"
+    :alert="{ variant: 'filled' }"
     :modal="{ centered: true, styles: { header: { paddingBottom: '12px' } } }"
     :space="{ size: 'middle' }"
     :pagination="{ showSizeChanger: true }"
@@ -136,4 +196,4 @@
 </template>
 ```
 
-完整 72 项组件配置及其支持字段请参考 [ConfigProvider API 文档](/components/config-provider-cn)。
+完整 72 项组件配置请参考 [ConfigProvider API 文档](/components/config-provider-cn)，更多 4.3.0 升级模式请查阅 [从 4.2.6 升级到 4.3.0](/docs/vue/migration-v43-cn)。

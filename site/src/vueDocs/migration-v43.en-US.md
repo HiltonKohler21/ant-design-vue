@@ -1,8 +1,17 @@
 # Migrating from 4.2.6 to 4.3.0
 
-This guide helps you upgrade smoothly from `ant-design-vue@4.2.6` to `ant-design-vue@4.3.0` (covering both `4.2.7` and `4.3.0` improvements). `4.3.0` adopts the Ant Design v6 performance layer — **CSS Variables enabled by default** and **zero-runtime static CSS extraction** — adds 6 new components (`Masonry`, `BorderBeam`, `Listy`, `Splitter`, `ColorPicker`, `Input.OTP`), wires 72 `ConfigProvider` per-component defaults, and modernizes component APIs across the library.
+This handbook guides you through upgrading smoothly from `ant-design-vue@4.2.6` to `ant-design-vue@4.3.0` (covering all `4.2.7` and `4.3.0` improvements). `4.3.0` brings the Ant Design v6 performance layer (**native CSS Variables enabled by default** and **zero-runtime static CSS extraction**), adds **6 new top-level components** and **6 new subcomponents**, introduces **functional Semantic DOM (`classNames`/`styles`)** across 30+ components, wires **72 `ConfigProvider` per-component defaults**, expands **Component Design Tokens to 317+**, and modernizes component APIs across the entire library.
 
 > Upgrading from `3.x`? Please follow the [V3 to V4 Migration Guide](/docs/vue/migration-v4) first.
+
+## Compatibility Guarantee
+
+Upgrading from `4.2.6` to `4.3.0` is designed to be **incremental and low-risk**:
+
+- **100% Backwards-Compatible Component APIs**: Every deprecated component prop (`visible`, `bordered`, `dropdownRender`, `dropdownClassName`, `dropdownMatchSelectWidth`, `destroyOnClose`, `bodyStyle` / `headStyle` / `maskStyle`, `Divider.type`, `Alert.message` / `closeText` / `closeIcon`, `Tag.bordered`, `Image.preview.visible`, `Slider.tooltipOpen` / `tipFormatter` / `onAfterChange`, `Space.direction` / `split`, `Steps.direction` / `labelPlacement`, `Tabs.tabPosition`, `Carousel.dotPosition`, `Collapse.expandIconPosition`, `Spin.tip`, `Transfer.operations`, `Listy.data` / `itemKey`, etc.) **remains fully functional in `4.3.0`** (selected props log helpful development-mode deprecation notices). You can upgrade the package first and adopt modern APIs at your own pace.
+- **Only Behavioral Watchpoint — Default `cssVar: true`**: In `4.3.0`, CSS Variables mode is enabled by default, so `theme.useToken()` returns CSS variable strings (`var(--ant-*)`) on `token` instead of raw numbers/colors. Use `realToken` for JS math, Canvas, SVG, or chart libraries — or pass `:theme="{ cssVar: false }"` on your root `<a-config-provider>` for an **instant one-line fallback** to legacy hashed mode while auditing custom token code.
+
+---
 
 ## 1. Upgrade Steps & Requirements
 
@@ -32,6 +41,8 @@ If your project uses Ant Design icons, update `@ant-design/icons-vue` to the lat
 npm install @ant-design/icons-vue@latest
 ```
 
+Using Vite? See [Use in Vite](/docs/vue/use-with-vite) for recommended plugin and CSS setup.
+
 ---
 
 ## 2. Default CSS Variables Mode (`cssVar: true`)
@@ -46,9 +57,9 @@ Starting in `4.3.0`, `<a-config-provider>` enables **CSS Variables mode by defau
   - **Incremental multi-theme growth (1 → 3 themes)**: **-86.8%** (`+312.1 KB` hashed vs `+41.3 KB` cssVar)
   - **Single-theme baseline**: `+21.5%` (for `:root` variable declarations and `calc()` chains, in exchange for zero-recompilation dynamic theming)
 
-### Critical Breaking Pitfall: `token` vs `realToken`
+### Critical Watchpoint: `token` vs `realToken`
 
-> **Must-check before deploying**: This is the #1 breaking behavior change when upgrading from `4.2.6` to `4.3.0`.
+> **Must-check before deploying**: This is the primary behavioral change when upgrading from `4.2.6` to `4.3.0`.
 
 In `4.2.6` (hashed mode), `theme.useToken()` returned raw values: `token.value.borderRadius` was `6` (number), `token.value.padding` was `16` (number), and `token.value.colorPrimary` was `'#1677ff'`.
 
@@ -58,7 +69,7 @@ In `4.3.0` with default `cssVar: true`:
   - `token.value.borderRadius` → `'var(--ant-border-radius)'` (the variable declaration already includes `px`: `--ant-border-radius: 6px;`)
   - `token.value.padding` → `'var(--ant-padding)'`
   - `token.value.colorPrimary` → `'var(--ant-color-primary)'`
-- Any custom code that appends `px` to `token.value.*`, runs JS arithmetic on it, passes it to `TinyColor`, or draws with Canvas / SVG / ECharts will emit invalid CSS (`var(--ant-border-radius)px`, `NaNpx`) or parse colors as black!
+- Any custom code that appends `px` to `token.value.*`, runs JS arithmetic on it, passes it to `TinyColor`, or draws with Canvas / SVG / ECharts will emit invalid CSS (`var(--ant-border-radius)px`, `NaNpx`) or parse colors as black.
 
 #### ❌ Wrong (Breaks under 4.3.0 default `cssVar: true`)
 
@@ -110,7 +121,7 @@ const canvasConfig = computed(() => ({
 
 > **Quick audit tip**: Search your repository for `${token.` and arithmetic operators (`*`, `+`, `-`, `/`) involving `token.value.`, and update them to Option A or Option B.
 
-### Opting Out (Fallback to Legacy Hash Mode)
+### Instant Opt-Out (Fallback to Legacy Hash Mode)
 
 If you have a single-theme app or want a gradual migration path while auditing custom `useToken()` usage, opt out explicitly on your root `ConfigProvider`:
 
@@ -159,26 +170,38 @@ createApp(App).use(Antd).mount('#app');
 
 ---
 
-## 3. New Components & Upgrading `List` → `Listy`
+## 3. New Components, New Subcomponents & Upgrading `List` → `Listy`
 
-Six new components have been added between `4.2.6` and `4.3.0`:
+### 6 New Top-Level Components
 
 | Component | Version | Highlights | Docs |
 | --- | --- | --- | --- |
-| `Masonry` | `4.3.0` | Responsive masonry grid with breakpoint `columns`/`gutter`, shortest-column packing, `ResizeObserver` relayout | [Masonry](/components/masonry) |
-| `BorderBeam` | `4.3.0` | `offset-path` animated rounded border comet with multi-beam `items`, gradient `color`, `duration`, `outset`, `size` | [BorderBeam](/components/border-beam) |
-| `Listy` | `4.3.0` | Virtualized list container with `items`, `rowKey`, `group`, `sticky`, `scrollWidth`, auto `itemHeight`, `scrollTo` | [Listy](/components/listy) |
-| `Splitter` | `4.2.7` / `4.3.0` | Resizable split panes supporting `horizontal`/`vertical`, `lazy` drag, `collapsible`, `min`/`max` constraints | [Splitter](/components/splitter) |
+| `Masonry` | `4.3.0` | Responsive masonry grid with breakpoint `columns`/`gutter`, shortest-column packing, image load/error reflow, `fresh`, `MasonryRef`, functional `classNames`/`styles` | [Masonry](/components/masonry) |
+| `BorderBeam` | `4.3.0` | `offset-path` animated rounded border comet with multi-beam `items`, gradient `color`, `duration`, `lineWidth`, `outset`, `size` | [BorderBeam](/components/border-beam) |
+| `Listy` | `4.3.0` | Virtualized list container with `items`, `rowKey`, `group`, `sticky`, `scrollWidth`, auto `itemHeight`, pixel/key/index/group `scrollTo`, functional `classNames`/`styles` | [Listy](/components/listy) |
+| `Splitter` | `4.2.7` / `4.3.0` | Resizable split panes supporting `orientation` (`horizontal`/`vertical`), `lazy` drag, `collapsible`/`collapsibleIcon`, `draggerIcon`, `onDraggerDoubleClick`, `min`/`max` | [Splitter](/components/splitter) |
 | `ColorPicker` | `4.2.7` / `4.3.0` | Solid & gradient color picker with HEX/RGB/HSB `format`, alpha control, `presets`, `allowClear`, `onChangeComplete` | [ColorPicker](/components/color-picker) |
 | `Input.OTP` | `4.2.7` | One-time password input (`<a-input-otp>`) with `length`, `mask`, `separator`, `formatter`, and auto focus advancing | [Input](/components/input) |
 
-### Quick-Start Snippets
+### 6 New Subcomponents + `Image.PreviewGroup.items`
+
+| Subcomponent | Registered Tag | Highlights | Docs |
+| --- | --- | --- | --- |
+| `Alert.ErrorBoundary` | `<a-alert-error-boundary>` | Vue 3 `onErrorCaptured` error boundary rendering a fallback error `Alert` (`title`/`description` props & slots) | [Alert](/components/alert) |
+| `Tag.CheckableTagGroup` | `<a-checkable-tag-group>` | Single/multi selectable tag group (`options`, `multiple`, `v-model:value`, `disabled`, semantic `classNames`/`styles`) | [Tag](/components/tag) |
+| `Cascader.Panel` | `<a-cascader-panel>` | Inline multi-column cascader panel without dropdown popup (`options`, `multiple`, `changeOnSelect`, `loadData`, `v-model:value`) | [Cascader](/components/cascader) |
+| `Statistic.Timer` | `<a-statistic-timer>` | Unified countdown & countup timer (`type: 'countdown' \| 'countup'`, `value`, `format`, `onFinish`, `onChange`) | [Statistic](/components/statistic) |
+| `Space.Addon` | `<a-space-addon>` | Compact addon wrapper for `<a-space-compact>` supporting `variant`, `status`, `disabled`, and `size` | [Space](/components/space) |
+| `Tooltip.UniqueProvider` | `<a-tooltip-unique-provider>` | Smooth-transition context provider so sibling `<a-tooltip>` popups glide seamlessly between triggers | [Tooltip](/components/tooltip) |
+| `Image.PreviewGroup.items` | `<a-image-preview-group>` | Config-driven gallery `items` (`string \| { src, alt?, ... }`) with `countRender`, `actionsRender`, `imageRender`, and `mask` blur | [Image](/components/image) |
+
+### Quick-Start Snippets (New Top-Level Components)
 
 #### Masonry
 
 ```vue
 <template>
-  <a-masonry :columns="{ xs: 1, sm: 2, lg: 3 }" :gutter="16" :items="items">
+  <a-masonry ref="masonryRef" :columns="{ xs: 1, sm: 2, lg: 3 }" :gutter="16" :items="items">
     <template #item="{ item }">
       <a-card :title="item.data.title">{{ item.data.desc }}</a-card>
     </template>
@@ -186,10 +209,14 @@ Six new components have been added between `4.2.6` and `4.3.0`:
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import type { MasonryRef } from 'ant-design-vue';
+
+const masonryRef = ref<MasonryRef>();
 const items = [
   { key: '1', data: { title: 'Card 1', desc: 'Packed into the shortest column automatically' } },
-  { key: '2', data: { title: 'Card 2', desc: 'Responsive breakpoints and live ResizeObserver' } },
-  { key: '3', data: { title: 'Card 3', desc: 'Supports semantic classNames and styles' } },
+  { key: '2', data: { title: 'Card 2', desc: 'Responsive breakpoints and image load reflow' } },
+  { key: '3', data: { title: 'Card 3', desc: 'Supports functional classNames and styles' } },
 ];
 </script>
 ```
@@ -208,52 +235,123 @@ const items = [
 
 ```vue
 <template>
-  <a-splitter style="height: 240px">
-    <a-splitter-panel default-size="40%" min="20%" max="70%" collapsible>
+  <a-splitter orientation="horizontal" style="height: 240px" @dragger-double-click="resetSizes">
+    <a-splitter-panel v-model:size="sizes[0]" min="20%" max="70%" collapsible>
       <div style="padding: 16px">Left Pane</div>
     </a-splitter-panel>
-    <a-splitter-panel>
+    <a-splitter-panel v-model:size="sizes[1]">
       <div style="padding: 16px">Right Pane</div>
     </a-splitter-panel>
   </a-splitter>
 </template>
-```
-
-#### ColorPicker (Solid + Gradient)
-
-```vue
-<template>
-  <a-color-picker
-    v-model:value="color"
-    :mode="['single', 'gradient']"
-    show-text
-    allow-clear
-    @change-complete="val => console.log('Selected:', val)"
-  />
-</template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-const color = ref('#1677ff');
+
+const sizes = ref<(number | string)[]>(['40%', '60%']);
+const resetSizes = () => {
+  sizes.value = ['50%', '50%'];
+};
 </script>
 ```
 
-#### Input.OTP
+#### ColorPicker (Solid + Gradient) & Input.OTP
 
 ```vue
 <template>
-  <a-input-otp v-model:value="code" :length="6" :formatter="str => str.toUpperCase()" />
+  <a-space orientation="vertical" :size="16">
+    <a-color-picker
+      v-model:value="color"
+      :mode="['single', 'gradient']"
+      show-text
+      allow-clear
+      @change-complete="val => console.log('Selected:', val)"
+    />
+    <a-input-otp v-model:value="code" :length="6" :formatter="str => str.toUpperCase()" />
+  </a-space>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+
+const color = ref('#1677ff');
 const code = ref('');
+</script>
+```
+
+### Quick-Start Snippets (New Subcomponents & `Image.PreviewGroup.items`)
+
+```vue
+<template>
+  <a-space orientation="vertical" :size="20" style="width: 100%">
+    <!-- 1. Alert.ErrorBoundary -->
+    <a-alert-error-boundary title="Widget failed to render">
+      <RiskyChildComponent />
+    </a-alert-error-boundary>
+
+    <!-- 2. Tag.CheckableTagGroup -->
+    <a-checkable-tag-group v-model:value="selectedTags" multiple :options="tagOptions" />
+
+    <!-- 3. Cascader.Panel -->
+    <a-cascader-panel v-model:value="regionPath" :options="regionOptions" />
+
+    <!-- 4. Statistic.Timer (countdown & countup) -->
+    <a-space :size="32">
+      <a-statistic-timer type="countdown" title="Launch In" :value="deadline" />
+      <a-statistic-timer type="countup" title="Uptime" :value="startTime" />
+    </a-space>
+
+    <!-- 5. Space.Addon -->
+    <a-space-compact>
+      <a-space-addon>https://</a-space-addon>
+      <a-input v-model:value="domain" placeholder="antdv.com" />
+      <a-space-addon>.com</a-space-addon>
+    </a-space-compact>
+
+    <!-- 6. Tooltip.UniqueProvider -->
+    <a-tooltip-unique-provider>
+      <a-space>
+        <a-tooltip title="Quick Action A"><a-button>Action A</a-button></a-tooltip>
+        <a-tooltip title="Quick Action B"><a-button>Action B</a-button></a-tooltip>
+      </a-space>
+    </a-tooltip-unique-provider>
+
+    <!-- 7. Image.PreviewGroup.items -->
+    <a-image-preview-group
+      :items="[
+        'https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp',
+        'https://gw.alipayobjects.com/zos/antfincdn/cV16ZqzMjW/photo-1473091540282-9b846e7965e3.webp',
+      ]"
+      :preview="{ mask: { blur: true } }"
+    >
+      <a-image
+        :width="120"
+        src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
+      />
+    </a-image-preview-group>
+  </a-space>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const selectedTags = ref<string[]>(['Vue 3']);
+const tagOptions = ['Vue 3', 'TypeScript', 'CSS Variables', 'Zero Runtime'];
+
+const regionPath = ref<(string | number)[]>(['zhejiang', 'hangzhou']);
+const regionOptions = [
+  { value: 'zhejiang', label: 'Zhejiang', children: [{ value: 'hangzhou', label: 'Hangzhou' }] },
+];
+
+const deadline = Date.now() + 1000 * 60 * 60;
+const startTime = Date.now() - 1000 * 60 * 5;
+const domain = ref('');
 </script>
 ```
 
 ### Migrating from `List` to `Listy`
 
-With `List` deprecated upstream, `4.3.0` introduces **`Listy`** as the modern virtualized list container with built-in grouping, sticky headers, horizontal scrolling, and semantic styling.
+With `List` deprecated upstream, `4.3.0` introduces **`Listy`** as the modern virtualized list container with built-in grouping, sticky headers, horizontal scrolling (`scrollWidth`), imperative pixel/key/index/group `scrollTo`, and functional semantic styling.
 
 #### Key API Mapping
 
@@ -262,10 +360,10 @@ With `List` deprecated upstream, `4.3.0` introduces **`Listy`** as the modern vi
 | Data source | `dataSource` | `items` | Legacy alias `data` is deprecated (still works with dev warning) |
 | Row identity | `rowKey` | `rowKey` | Legacy alias `itemKey` is deprecated (still works with dev warning) |
 | Item rendering | `#renderItem="{ item, index }"` | `#item="{ item, index }"` or `:item-render` | Cleaner scoped slot API |
-| Virtualization | Requires 3rd-party library | `:height="360"` + `virtual` (`itemHeight` auto-calculated if omitted) | Also supports `scrollWidth` for horizontal overflow |
+| Virtualization & Horizontal scroll | Requires 3rd-party library | `:height="360"` + `virtual` (`itemHeight` auto-calculated if omitted) + `scrollWidth` | Built-in vertical virtualization & horizontal overflow |
 | Grouping & Sticky | Not supported | `:group="{ key, title }"` + `sticky` | Supports `#groupTitle="{ groupKey, items }"` |
 | Imperative scrolling | Not supported | `ref.scrollTo(number \| { top, left } \| { index, align, offset } \| { key, align, offset } \| { groupKey, align, offset })` | Plus `ref.scrollToIndex(index)` |
-| Semantic styling | Limited | `classNames` / `styles` (object or function) | Slots: `root`, `item`, `groupHeader`, `groupSection`, `holder`, `scrollbar` |
+| Semantic styling | Limited | `classNames` / `styles` (static object or function) | Slots: `root`, `item`, `groupHeader`, `groupSection`, `holder`, `scrollbar` |
 
 #### Before (`List`) → After (`Listy`)
 
@@ -281,15 +379,19 @@ With `List` deprecated upstream, `4.3.0` introduces **`Listy`** as the modern vi
 ```
 
 ```vue
-<!-- ✅ After: 4.3.0 Listy (virtualized, grouped, sticky headers, scrollTo) -->
+<!-- ✅ After: 4.3.0 Listy (virtualized, grouped, sticky headers, scrollWidth, scrollTo) -->
 <template>
-  <a-space direction="vertical" style="width: 100%">
-    <a-button @click="listyRef?.scrollTo({ index: 50, align: 'top' })">Scroll to #51</a-button>
+  <a-space orientation="vertical" style="width: 100%">
+    <a-space>
+      <a-button @click="listyRef?.scrollTo({ index: 50, align: 'top' })">Scroll to #51</a-button>
+      <a-button @click="listyRef?.scrollTo({ top: 0, left: 0 })">Back to Top</a-button>
+    </a-space>
     <a-listy
       ref="listyRef"
       :items="users"
       row-key="id"
       :height="320"
+      :scroll-width="640"
       virtual
       sticky
       :group="{ key: 'role', title: role => `Role: ${role}` }"
@@ -316,9 +418,35 @@ const users = Array.from({ length: 200 }, (_, i) => ({
 
 ---
 
-## 4. Unified `ConfigProvider` Component Defaults (72 Component Configs)
+## 4. Semantic DOM, 72 `ConfigProvider` Configs & 317+ Component Design Tokens
 
-`4.3.0` wires all **72 component-level default configs** in `ConfigProvider` (including `button`, `card`, `empty`, `space`, `pagination`, `input`, `select`, `table`, `modal`, `drawer`, `tabs`, `divider`, `listy`, `masonry`, `splitter`, `colorPicker`, `borderBeam`, and more), alongside global `variant`, `popupMatchSelectWidth`, `popupOverflow`, `holderRender`, `componentDisabled`, and `warning`.
+### Functional Semantic DOM (`classNames` / `styles`)
+
+`4.3.0` standardizes semantic styling across **31 components** (`Alert`, `AutoComplete`, `Badge`, `Button`, `Card`, `Cascader`, `Collapse`, `Descriptions`, `Divider`, `Drawer`, `Empty`, `Image`, `Input`, `List`, `Listy`, `Masonry`, `Modal`, `Popconfirm`, `Popover`, `Progress`, `Segmented`, `Select`, `Slider`, `Space`, `Spin`, `Splitter`, `Steps`, `Tag`, `Tooltip`, `Transfer`, `TreeSelect`). Both `classNames` and `styles` accept either a **static object** or a **dynamic function** `({ props }) => ({ ... })`, and every semantic-enabled component page now includes an interactive **`Semantic DOM` (`#semantic-dom`)** previewer:
+
+```vue
+<template>
+  <a-alert
+    title="Release 4.3.0 Ready"
+    description="Semantic styles can react dynamically to component props."
+    type="info"
+    variant="filled"
+    show-icon
+    :styles="
+      ({ props }) => ({
+        root: { borderRadius: '10px' },
+        title: { fontWeight: props.variant === 'filled' ? 600 : 500 },
+      })
+    "
+  />
+</template>
+```
+
+See [Common Props](/docs/vue/common-props) for the complete semantic slot reference across all 31 components.
+
+### Unified `ConfigProvider` Component Defaults (72 Component Configs)
+
+`4.3.0` wires all **72 component-level default configs** in `ConfigProvider` (including `alert`, `button`, `card`, `divider`, `drawer`, `empty`, `form`, `image`, `input`, `listy`, `masonry`, `modal`, `pagination`, `select`, `space`, `splitter`, `table`, `tabs`, `tag`, `timeline`, `colorPicker`, `borderBeam`, and more), alongside global `variant`, `popupMatchSelectWidth`, `popupOverflow`, `holderRender`, `componentDisabled`, and `warning`:
 
 ```vue
 <template>
@@ -328,6 +456,7 @@ const users = Array.from({ length: 200 }, (_, i) => ({
     popup-overflow="viewport"
     :button="{ autoInsertSpace: false, className: 'app-btn' }"
     :card="{ variant: 'borderless', styles: { body: { padding: '20px' } } }"
+    :alert="{ variant: 'filled' }"
     :empty="{ image: Empty.PRESENTED_IMAGE_SIMPLE }"
     :space="{ size: 'middle' }"
     :pagination="{ showSizeChanger: true }"
@@ -348,135 +477,130 @@ const holderRender = (children: any) => h(ConfigProvider, { prefixCls: 'ant' }, 
 </script>
 ```
 
-See [ConfigProvider](/components/config-provider) and [Common Props](/docs/vue/common-props) for the full list of 72 component config props.
+### 317+ Component Design Tokens
+
+`4.3.0` expands runtime Component Design Tokens from `112` to **317+** (with **341** documented tokens across **61** components in `token-meta.json` and full TypeScript typing in `ComponentTokenMap`). Component documentation pages (`#design-tokens`) now feature bilingual token descriptions, real-time search/filtering, click-to-copy names, and `@since` badges:
+
+```vue
+<template>
+  <a-config-provider
+    :theme="{
+      components: {
+        Button: { fontWeight: 600, primaryShadow: '0 4px 12px rgba(22, 119, 255, 0.25)' },
+        Alert: { defaultPadding: '10px 14px' },
+        Tag: { defaultBg: '#f5f7fa', solidTextColor: '#ffffff' },
+        Form: { itemMarginBottom: 18, labelFontSize: 14 },
+        Table: { headerBg: '#fafafa', rowHoverBg: '#f0f7ff' },
+      },
+    }"
+  >
+    <RouterView />
+  </a-config-provider>
+</template>
+```
 
 ---
 
-## 5. API Upgrades & Deprecated Prop Mapping Table
+## 5. Backwards-Compatible v6 API Upgrades & Mapping Table
 
-Legacy props below remain backward-compatible in `4.3.0` (some log dev deprecation warnings), so you can migrate incrementally:
+All legacy `4.2.6` props below remain **100% backwards-compatible in `4.3.0`** so you can migrate incrementally:
 
-| Components | Legacy Prop (Deprecated) | Recommended API (4.3.0) | Notes |
+| Components | Legacy `4.2.6` Prop (Still Works) | Recommended `4.3.0` API | Notes |
 | --- | --- | --- | --- |
-| Modal / Drawer / Tooltip / Popover / Dropdown / Popconfirm / Image | `v-model:visible` / `:visible` | `v-model:open` / `:open` | Unified overlay visibility prop |
-| Input / InputNumber / Select / Cascader / TreeSelect / Mentions / AutoComplete / DatePicker / TimePicker / Card | `:bordered="false"` | `variant="borderless"` (`outlined` / `filled` / `borderless` / `underlined` for inputs; `outlined` / `borderless` for Card) | Also configurable globally via `ConfigProvider.variant` |
-| Select / TreeSelect / Cascader / AutoComplete / Dropdown | `dropdownRender` | `popupRender` | **Signature change**: `popupRender` receives `menuNode` directly (`(menuNode) => VNode`), not `{ menuNode }` |
-| Select / TreeSelect / Cascader / AutoComplete / DatePicker / Mentions | `dropdownClassName` | `popupClassName` (or `classNames.popup.root`) | Prefer `classNames.popup.root` where supported |
-| Select / TreeSelect / Cascader / AutoComplete / ConfigProvider | `dropdownMatchSelectWidth` | `popupMatchSelectWidth` | Controls popup width matching trigger |
-| Modal / Drawer / Tabs / Dropdown / Tooltip / Collapse | `destroyOnClose` / `destroyInactiveTabPane` / `destroyPopupOnHide` / `destroyTooltipOnHide` / `destroyInactivePanel` | `destroyOnHidden` | Unified unmount-on-hide prop |
-| Modal / Drawer / Card / Descriptions / Empty / Slider / Tooltip | `bodyStyle` / `headStyle` / `headerStyle` / `footerStyle` / `maskStyle` / `imageStyle` | `styles` (e.g. `styles.body`, `styles.header`, `styles.mask`) | Paired with semantic `classNames` |
-| Slider | `@after-change` / `onAfterChange` | `@change-complete` / `onChangeComplete` | Fired when drag or keyboard interaction finishes |
-| Button | `type` + `danger` / `ghost` | `variant` (`outlined`/`dashed`/`solid`/`filled`/`text`/`link`) + `color` (`default`/`primary`/`danger` + **13 preset colors**) + `iconPosition` | 13 presets: `blue`, `purple`, `cyan`, `green`, `magenta`, `pink`, `red`, `orange`, `yellow`, `volcano`, `geekblue`, `lime`, `gold` |
-| Divider | `dashed` | `variant` (`solid` / `dashed` / `dotted`) + `size` (`small` / `middle` / `medium` / `large`) + `orientation` (`start` / `end`) | RTL-aware orientation & dotted border |
-| Avatar.Group | `maxCount` / `maxStyle` / `maxPopoverPlacement` / `maxPopoverTrigger` | `:max="{ count, style, popover }"` | Unified object config (still accepts `number`) |
-| Progress | `strokeLinecap="round"` / custom label position | `rounding` + `:percent-position="{ align: 'start' \| 'center' \| 'end', type: 'inner' \| 'outer' }"` | Supports inner progress bar percentage text |
-| Tabs | `<a-tab-pane>` / `indicatorSize` | `:items="tabItems"` + `:indicator="{ size, align }"` + `destroyOnHidden` | Config-driven tabs and custom indicator sizing/alignment |
-| Table | Non-virtual large tables / legacy filter props | `virtual` (with `:scroll="{ y: 360 }"`) + `Column.sortIcon` + `filterOnClose` + `filterDropdownProps` | Built-in virtual scrolling & customizable sort/filter |
-| Notification | `btn` | `actions` + `showProgress` + `pauseOnHover` | Countdown progress bar & hover pause |
-| Alert | Custom right-side controls | `action` prop / `#action` slot | Dedicated action slot |
-| BackTop | Standalone `<a-back-top>` | `<a-float-button-back-top>` (`FloatButton.BackTop`) | Standalone `BackTop` is deprecated |
+| Modal / Drawer / Tooltip / Popover / Dropdown / Popconfirm / Image | `v-model:visible` / `:visible` | `v-model:open` / `:open` | Unified overlay visibility prop (`Image`: `preview.open` / `onOpenChange`) |
+| Modal / Drawer / Tabs / Dropdown / Tooltip / Collapse / Splitter.Panel | `destroyOnClose` / `destroyInactiveTabPane` / `destroyPopupOnHide` / `destroyTooltipOnHide` / `destroyInactivePanel` | `destroyOnHidden` | Unified unmount-on-hide prop |
+| Modal / Drawer / Card / Descriptions / Empty / Slider / Tooltip / Alert / Tag / Image / Divider | `bodyStyle` / `headStyle` / `headerStyle` / `footerStyle` / `maskStyle` / `imageStyle` / `wrapperStyle` / `orientationMargin` | `styles` + `classNames` (static object or `({ props }) => ...`) | Unified Semantic DOM styling |
+| Input / InputNumber / Select / Cascader / TreeSelect / Mentions / AutoComplete / DatePicker / TimePicker / Card / Form | `:bordered="false"` | `variant="borderless"` (`outlined` / `filled` / `borderless` / `underlined`; `Card`: `outlined` / `borderless`) | Inheritable from `<a-form variant="...">` and `<a-config-provider variant="...">` |
+| Select / TreeSelect / Cascader / AutoComplete / Dropdown | `dropdownRender` / `dropdownClassName` / `dropdownMatchSelectWidth` | `popupRender` / `popupClassName` (or `classNames.popup.root`) / `popupMatchSelectWidth` | **Signature note**: `popupRender` receives `menuNode` directly (`(menuNode) => VNode`); also adds `suffix` alias & `Select.loadingIcon` |
+| Divider | `type="vertical"` / `orientation="left"` / `dashed` | `orientation="vertical"` (or `vertical`) / `titlePlacement="start"` / `variant="solid" \| "dashed" \| "dotted"` + `size` | RTL-aware `start`/`end` and semantic `rail`/`content` |
+| Alert | `message` / `closeText` / `closeIcon` / `afterClose` | `title` / `:closable="{ closeIcon, disabled, afterClose, onClose }"` + `variant="filled"` + `action` + `Alert.ErrorBoundary` | `message` remains supported as fallback |
+| Tag | `:bordered="false"` / `closeIcon` | `variant="filled" \| "solid" \| "outlined"` / `:closable="{ closeIcon, disabled }"` + `disabled` + `href`/`target` + `Tag.CheckableTagGroup` | `CheckableTag` also adds `icon` & `disabled` |
+| Image | `preview.visible` / `onVisibleChange` / `toolbarRender` / `previewMask` | `preview.open` / `onOpenChange` / `actionsRender` / `imageRender` / `mask` (`{ enabled, blur, closable }`) / `cover` / `Image.PreviewGroup.items` | Adds `minScale`, `maxScale`, `scaleStep`, `movable`, `wheel`, `onTransform`, `countRender` |
+| List | `<a-list :data-source="..." />` | `<a-listy :items="..." row-key="..." :group="..." sticky virtual :scroll-width="..." />` | Built-in virtualization, grouping, sticky headers, and pixel/key/index/group `scrollTo` |
+| Drawer | `afterVisibleChange` / `maskClosable` | `afterOpenChange` + `resizable` (`boolean \| { onResizeStart, onResize, onResizeEnd }`) + `loading` + `closable`/`mask` objects | `closable.placement` (`start`/`end`), `mask.blur`, numeric/string `size` |
+| Modal | `maskClosable` / `closeIcon` | `loading` (Skeleton body) + `afterOpenChange` + `closable`/`mask` objects | `mask: { enabled, blur, closable }` |
+| Notification | `btn` | `actions` + `stack` (`boolean \| { threshold }`) + `showProgress` + `pauseOnHover` + `closable` object | Collapsed card stack with hover expand & countdown bar |
+| Timeline | `<a-timeline-item>` | `:items="timelineItems"` (`content`, `title`, `icon`, `placement`) + `orientation="horizontal" \| "vertical"` + `variant="filled" \| "outlined"` + `titleSpan` | Config-driven items & horizontal timeline |
+| Breadcrumb / Descriptions | `routes` / `<a-descriptions-item>` | Config-driven `:items="..."` (`Breadcrumb` adds `dropdownIcon`; `Descriptions.items` supports numeric, `'filled'`, & responsive `span`) | Slot children remain fully supported |
+| DatePicker / TimePicker | Single selection / immediate select | `variant`, `multiple` (`DatePicker` with `maxTagCount`), `needConfirm` | Inherits `Form.variant` |
+| InputNumber / Radio / Rate | Manual suffix / full-width CSS / fixed star size | `InputNumber`: `suffix` + `changeOnWheel`; `Radio.Group`: `block` + `orientation`/`vertical`; `Rate`: `size` (`small`/`middle`/`medium`/`large`) | Native props with Component Tokens |
+| Slider | `tooltipOpen` / `tipFormatter` / `tooltipPlacement` / `onAfterChange` | `:tooltip="{ open, formatter, placement, getPopupContainer, autoAdjustOverflow }"` + `orientation` + `@change-complete` + `handleRender` | Unified `tooltip` config object |
+| Table | Non-virtual / manual column filtering | `virtual` (with `:scroll="{ y: 360 }"`) + `column.hidden` (incl. nested groups) + `column.sortIcon` + `filterOnClose` + `filterDropdownProps` | Built-in virtualization & declarative column hiding |
+| Space / Tooltip | `Space`: `direction` / `split` | `Space`: `orientation` / `vertical` / `separator` + `Space.Addon`; `Tooltip`: `Tooltip.UniqueProvider` + `defaultOpen` + `afterOpenChange` | Smooth sibling tooltip transitions |
+| Steps / Splitter / Tabs | `Steps.direction` / `labelPlacement`; `Splitter.layout`; `Tabs.tabPosition` / `moreIcon` | `Steps`: `orientation` / `titlePlacement` / `variant` / `ellipsis` / `items[].content`; `Splitter`: `orientation` / `collapsibleIcon` / `draggerIcon` / `onDraggerDoubleClick`; `Tabs`: `items` / `tabPlacement` (`start`/`end`) / `more` / `indicator` | Consistent v6 naming across navigation & layout |
+| Carousel / Progress / Button / Collapse | `Carousel.dotPosition`; `Progress.gapPosition` / `trailColor`; `Button.iconPosition`; `Collapse.expandIconPosition` | `Carousel`: `dotPlacement` + `:autoplay="{ dotDuration: true }"`; `Progress`: `gapPlacement` / `railColor` / `percentPosition` / `rounding`; `Button`: `variant` + `color` (13 presets) + `iconPlacement`; `Collapse`: `expandIconPlacement` + `size` | Full v6 prop aliases & styles |
+| Spin / Segmented / Flex / Transfer / Watermark | `Spin.tip`; `Segmented`/`Flex` `vertical`; `Transfer.operations` | `Spin`: `description` + `percent="auto"` + `fullscreen`; `Segmented`/`Flex`: `orientation`; `Transfer`: `actions` + `deselectAll` + `selectionsIcon`; `Watermark`: `onRemove` + `{ text, font }` per-line `content` | Modernized props with full compatibility |
+| FloatButton / BackTop / Dropdown / Tour / Avatar.Group / Input.Search | Standalone `<a-back-top>`; `FloatButton.description`; `Avatar.Group.maxCount` | `<a-float-button-back-top>` + `FloatButton.Group.placement` + `content`; `Dropdown.autoAdjustOverflow`; `Tour.indicatorsRender` + `keyboard`; `Avatar.Group`: `:max="{ count, style, popover }"`; `Input.Search`: `searchIcon` | Standalone `BackTop` deprecated in favor of `FloatButton.BackTop` |
 
 ### Before → After Migration Examples
 
-#### 1. Form `variant`, `popupRender`, and `popupMatchSelectWidth`
+#### 1. `Divider`, `Alert`, `Tag`, and `Image` v6 Upgrades
 
 ```vue
-<!-- ❌ Before -->
+<!-- ❌ Before (4.2.6) -->
 <template>
-  <a-input :bordered="false" placeholder="Borderless" />
-  <a-select
-    :bordered="false"
-    dropdown-class-name="custom-dropdown"
-    :dropdown-match-select-width="false"
-    :dropdown-render="({ menuNode }) => h('div', { class: 'wrap' }, [menuNode])"
-    :options="options"
+  <a-divider type="horizontal" orientation="left" dashed>Section</a-divider>
+  <a-alert message="Notice" close-text="Dismiss" closable />
+  <a-tag :bordered="false" color="blue">Beta</a-tag>
+  <a-image
+    src="/demo.png"
+    :preview="{ visible: previewOpen, onVisibleChange: v => (previewOpen = v) }"
   />
 </template>
 ```
 
 ```vue
-<!-- ✅ After -->
+<!-- ✅ After (4.3.0) -->
 <template>
-  <a-input variant="borderless" placeholder="Borderless" />
-  <a-input variant="filled" placeholder="Filled" />
-  <a-input variant="underlined" placeholder="Underlined" />
-
-  <a-select
-    variant="filled"
-    popup-class-name="custom-dropdown"
-    :popup-match-select-width="false"
-    :popup-render="menuNode => h('div', { class: 'wrap' }, [menuNode])"
-    :options="options"
-  />
-</template>
-```
-
-#### 2. Semantic `styles` & `destroyOnHidden` on `Card` and `Modal`
-
-```vue
-<!-- ❌ Before -->
-<template>
-  <a-card :bordered="false" :head-style="{ color: '#1677ff' }" :body-style="{ padding: '16px' }" />
-  <a-modal v-model:visible="open" destroy-on-close :body-style="{ padding: '24px' }" />
-</template>
-```
-
-```vue
-<!-- ✅ After -->
-<template>
-  <a-card
-    variant="borderless"
-    :styles="{ header: { color: '#1677ff' }, body: { padding: '16px' } }"
-  />
-  <a-modal v-model:open="open" destroy-on-hidden :styles="{ body: { padding: '24px' } }" />
-</template>
-```
-
-#### 3. `Button` Presets, `Divider`, `Avatar.Group`, `Progress`, `Tabs`, `Table`, `Alert`, `Notification`, `FloatButton.BackTop`
-
-```vue
-<template>
-  <!-- Button: color (incl. 13 presets) + variant -->
-  <a-space wrap>
-    <a-button color="purple" variant="solid">Purple Solid</a-button>
-    <a-button color="cyan" variant="filled">Cyan Filled</a-button>
-    <a-button color="danger" variant="outlined">Danger Outlined</a-button>
-  </a-space>
-
-  <!-- Divider: variant + size + start/end -->
-  <a-divider variant="dotted" size="small" orientation="start">Section</a-divider>
-
-  <!-- Avatar.Group: max object -->
-  <a-avatar-group
-    :max="{
-      count: 2,
-      style: { color: '#f56a00', backgroundColor: '#fde3cf' },
-      popover: { trigger: 'click' },
+  <a-divider orientation="horizontal" title-placement="start" variant="dashed" size="small">
+    Section
+  </a-divider>
+  <a-alert title="Notice" variant="filled" :closable="{ closeIcon: 'Dismiss' }" />
+  <a-tag variant="filled" color="blue" href="https://antdv.com" target="_blank">Beta</a-tag>
+  <a-image
+    src="/demo.png"
+    :preview="{
+      open: previewOpen,
+      onOpenChange: v => (previewOpen = v),
+      mask: { blur: true },
     }"
-  >
-    <a-avatar>A</a-avatar>
-    <a-avatar>B</a-avatar>
-    <a-avatar>C</a-avatar>
-  </a-avatar-group>
-
-  <!-- Progress: percentPosition object -->
-  <a-progress
-    :percent="68"
-    :size="['100%', 20]"
-    :percent-position="{ align: 'center', type: 'inner' }"
   />
+</template>
 
-  <!-- Tabs: items + indicator -->
-  <a-tabs
-    :items="tabItems"
-    :indicator="{ size: origin => origin - 20, align: 'center' }"
-    destroy-on-hidden
-  />
+<script setup lang="ts">
+import { ref } from 'vue';
+const previewOpen = ref(false);
+</script>
+```
 
-  <!-- Slider: onChangeComplete -->
-  <a-slider v-model:value="sliderVal" @change-complete="onDone" />
+#### 2. `Form.variant`, `DatePicker` (`multiple` / `needConfirm`), `InputNumber`, `Radio.Group.block`, `Rate.size`, `Slider`, and `Table`
 
-  <!-- Table: virtual scrolling + filterOnClose -->
+```vue
+<template>
+  <a-form variant="filled" layout="vertical">
+    <a-space orientation="vertical" :size="12" style="width: 100%">
+      <!-- Inherits variant="filled" from Form -->
+      <a-date-picker v-model:value="dates" multiple max-tag-count="responsive" />
+      <a-time-picker v-model:value="time" need-confirm />
+      <a-input-number v-model:value="price" prefix="$" suffix="USD" change-on-wheel />
+      <a-select
+        v-model:value="selected"
+        popup-class-name="custom-dropdown"
+        :popup-match-select-width="false"
+        :popup-render="menuNode => h('div', { class: 'wrap' }, [menuNode])"
+        :options="options"
+      />
+      <a-radio-group v-model:value="plan" block option-type="button" :options="planOptions" />
+      <a-rate v-model:value="score" size="large" />
+      <a-slider
+        v-model:value="sliderVal"
+        :tooltip="{ open: true, formatter: val => `${val}%` }"
+        @change-complete="val => console.log('Done:', val)"
+      />
+    </a-space>
+  </a-form>
+
+  <!-- Table: virtual scrolling + column.hidden -->
   <a-table
     virtual
     :scroll="{ y: 360 }"
@@ -484,31 +608,117 @@ Legacy props below remain backward-compatible in `4.3.0` (some log dev deprecati
     :data-source="rows"
     :pagination="false"
   />
+</template>
 
-  <!-- Alert: action slot -->
-  <a-alert message="Ant Design Vue 4.3.0 is available" type="info" show-icon>
-    <template #action>
-      <a-button size="small" type="primary">View Notes</a-button>
-    </template>
-  </a-alert>
+<script setup lang="ts">
+import { h, ref } from 'vue';
+import type { Dayjs } from 'dayjs';
+import type { TableColumnsType } from 'ant-design-vue';
 
-  <!-- FloatButton.BackTop replaces deprecated BackTop -->
-  <a-float-button-back-top :visibility-height="300" />
+const dates = ref<Dayjs[]>([]);
+const time = ref<Dayjs>();
+const price = ref(99);
+const selected = ref<string>();
+const options = [
+  { label: 'Vue', value: 'vue' },
+  { label: 'Vite', value: 'vite' },
+];
+const plan = ref('pro');
+const planOptions = [
+  { label: 'Starter', value: 'starter' },
+  { label: 'Pro', value: 'pro' },
+  { label: 'Enterprise', value: 'enterprise' },
+];
+const score = ref(4);
+const sliderVal = ref(30);
+
+const hideInternalId = ref(true);
+const columns: TableColumnsType = [
+  { title: 'Internal ID', dataIndex: 'id', key: 'id', hidden: hideInternalId.value },
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+];
+const rows = [{ id: 1, name: 'Ant Design Vue 4.3.0' }];
+</script>
+```
+
+#### 3. `Drawer` (`resizable`), `Modal` (`loading` + `mask.blur`), `Notification` (`stack`), `Timeline` / `Breadcrumb` / `Descriptions` (`items`), `Button`, `Tabs`, `Carousel`, `Spin`, `Watermark`
+
+```vue
+<template>
+  <a-space orientation="vertical" :size="16" style="width: 100%">
+    <!-- Button: color (incl. 13 presets) + variant + iconPlacement -->
+    <a-space wrap>
+      <a-button color="purple" variant="solid">Purple Solid</a-button>
+      <a-button color="cyan" variant="filled">Cyan Filled</a-button>
+      <a-button color="danger" variant="outlined" icon-placement="end">Danger</a-button>
+      <a-button @click="drawerOpen = true">Open Resizable Drawer</a-button>
+      <a-button @click="modalOpen = true">Open Loading Modal</a-button>
+      <a-button @click="openNotice">Stacked Notification</a-button>
+    </a-space>
+
+    <!-- Config-driven Breadcrumb, Descriptions, Timeline -->
+    <a-breadcrumb :items="[{ title: 'Home', href: '/' }, { title: 'Migration 4.3.0' }]" />
+    <a-descriptions
+      bordered
+      :items="[
+        { key: '1', label: 'Version', children: '4.3.0' },
+        { key: '2', label: 'Theme Mode', children: 'CSS Variables (default)', span: 'filled' },
+      ]"
+    />
+    <a-timeline
+      orientation="horizontal"
+      variant="filled"
+      :items="[
+        { title: '4.2.6', content: 'Legacy hash mode' },
+        { title: '4.3.0', content: 'Default cssVar + v6 APIs' },
+      ]"
+    />
+
+    <!-- Tabs, Carousel dotDuration, Spin percent="auto" -->
+    <a-tabs :items="tabItems" tab-placement="top" destroy-on-hidden />
+    <a-carousel :autoplay="{ dotDuration: true }" dot-placement="bottom">
+      <div>Slide 1</div>
+      <div>Slide 2</div>
+    </a-carousel>
+    <a-spin description="Loading..." percent="auto" />
+
+    <!-- Resizable Drawer & Loading Modal -->
+    <a-drawer
+      v-model:open="drawerOpen"
+      title="Inspector"
+      resizable
+      :mask="{ blur: true }"
+      :after-open-change="open => console.log('Drawer:', open)"
+    >
+      Drag the left edge to resize this drawer.
+    </a-drawer>
+
+    <a-modal
+      v-model:open="modalOpen"
+      title="Order Summary"
+      :loading="modalLoading"
+      destroy-on-hidden
+      :mask="{ blur: true }"
+      :styles="{ body: { padding: '24px' } }"
+    >
+      Loaded modal content.
+    </a-modal>
+  </a-space>
 </template>
 
 <script setup lang="ts">
 import { h, ref } from 'vue';
 import { App, Button } from 'ant-design-vue';
 
-const sliderVal = ref(30);
-const onDone = (val: number) => console.log('Slider complete:', val);
+const drawerOpen = ref(false);
+const modalOpen = ref(false);
+const modalLoading = ref(false);
 
 const tabItems = [
   { key: '1', label: 'Overview', children: 'Overview content' },
   { key: '2', label: 'Settings', children: 'Settings content' },
 ];
 
-// Notification: showProgress + pauseOnHover + actions
 const { notification } = App.useApp();
 const openNotice = () => {
   notification.open({
@@ -528,10 +738,10 @@ const openNotice = () => {
 
 ### Post-Upgrade Checklist
 
-1. **Audit `theme.useToken()` usage**: Search for `${token.` and JS math/color operations on `token.value.*`. Use `token.value.*` directly in CSS styles, or switch to `realToken.value.*` for numeric/color computations and Canvas/SVG/ECharts.
+1. **Audit `theme.useToken()` usage**: Search for `${token.` and JS math/color operations on `token.value.*`. Use `token.value.*` directly in CSS styles, or switch to `realToken.value.*` for numeric/color computations and Canvas/SVG/ECharts (or temporarily pass `:theme="{ cssVar: false }"`).
 2. **Verify `popupRender` callbacks**: When migrating from `dropdownRender` to `popupRender`, ensure the function receives `menuNode` directly as its first parameter.
-3. **Check overlay props**: Ensure `Modal`, `Drawer`, `Tooltip`, `Popover`, and `Dropdown` use `v-model:open` instead of `v-model:visible`.
-4. **Inspect dev console warnings**: Visit primary pages in development mode and resolve deprecation warnings (`Listy` `data`/`itemKey`, `Select` `dropdownClassName`, etc.).
+3. **Check overlay props**: Ensure `Modal`, `Drawer`, `Tooltip`, `Popover`, `Dropdown`, and `Image` (`preview.open`) use `open` instead of `visible`.
+4. **Inspect dev console warnings**: Visit primary pages in development mode and gradually migrate any deprecation warnings (`Listy` `data`/`itemKey`, `Select` `dropdownClassName`, `Divider` `type`, etc.).
 5. **Verify styling & SSR**: If using TailwindCSS v4 or Nuxt 3 / Vite SSR, check the FAQs below.
 
 ### Common Upgrade FAQs

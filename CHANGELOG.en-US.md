@@ -14,11 +14,19 @@
 
 `2026-11-23`
 
-`Adopt the antd v6 performance layer: CSS variables and zero runtime`
+`Adopt the antd v6 performance layer: CSS variables, zero runtime, semantic DOM & 317+ component tokens`
 
-- 🌟 Add `Masonry` layout component (responsive `columns`/`gutter`, `itemRender`, `onLayoutChange`, shortest-column packing).
+- 🌟 Add `Masonry` layout component (responsive `columns`/`gutter`, `itemRender`, `onLayoutChange`, shortest-column packing, `MasonryRef`, automatic image load/error reflow, `fresh`, and functional `classNames`/`styles`).
 - 🌟 Add `BorderBeam` component (aligned with antd v6 `offset-path` rounded comet motion; `color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`).
-- 🌟 Add `Listy` list component (row hover, semantic `classNames`/`styles`, virtual scrolling via `height`+`itemHeight`, `scrollTo`).
+- 🌟 Add `Listy` list component with full antd v6 alignment (`items`, `rowKey`, `group`, `sticky`, `scrollWidth`, auto `itemHeight`, virtual scrolling, pixel/index/key/group `scrollTo`, and functional `classNames`/`styles`; legacy `data`/`itemKey` kept backwards-compatible).
+- 🌟 Add 6 new subcomponents and gallery config: `Alert.ErrorBoundary` (`<a-alert-error-boundary>`), `Tag.CheckableTagGroup` (`<a-checkable-tag-group>`), `Cascader.Panel` (`<a-cascader-panel>`), `Statistic.Timer` (`<a-statistic-timer>` countdown & countup), `Space.Addon` (`<a-space-addon>`), `Tooltip.UniqueProvider` (`<a-tooltip-unique-provider>`), and `Image.PreviewGroup.items`.
+- 🌟 Add backwards-compatible Ant Design v6 API upgrades across components:
+  - `Alert` (`title`, `variant="filled"`, `closable` object), `Tag` (`variant`, `disabled`, `href`/`target`, `closable` object), `Image` (`preview.open`/`onOpenChange`, `actionsRender`, `imageRender`, `mask` blur, `cover`), and `Divider` (`orientation`/`vertical`, `titlePlacement`).
+  - `DatePicker`/`TimePicker` (`multiple`, `needConfirm`, `variant`), `Form` (`variant` propagation), `InputNumber` (`suffix`, `changeOnWheel`), `Radio.Group` (`block`, `orientation`/`vertical`), `Rate` (`size`), `Slider` (`tooltip` object, `orientation`), `Table` (`column.hidden`), and `Watermark` (`onRemove`, per-line styled `content`).
+  - `Breadcrumb`/`Descriptions`/`Timeline` config-driven `items` (`Timeline` `orientation`/`variant`/`titleSpan`), `Modal` (`loading`, `closable`/`mask` objects), `Drawer` (`resizable`, `afterOpenChange`, `closable`/`mask` objects), `Notification` (`stack`, `closable` object), `FloatButton.Group` (`placement`, `content`), `Dropdown` (`autoAdjustOverflow`), `Tabs` (`more`, `tabPlacement`), and `Tour` (`indicatorsRender`, `keyboard`).
+  - `Space` (`orientation`/`separator`), `Steps`/`Splitter`/`Progress`/`Button`/`Collapse`/`Carousel` (`autoplay.dotDuration`, `dotPlacement`)/`Segmented`/`Flex`/`Spin` (`description`, `percent="auto"`)/`Transfer`/`Input.Search` (`searchIcon`)/`Select` (`suffix`, `loadingIcon`) v6 aliases and enhancements.
+- 🌟 Standardize Semantic DOM (`classNames`/`styles` supporting both static objects and functional `(info) => ...` callbacks) across 31 components, and wire all **72 `ConfigProvider` per-component default configs**.
+- 🌟 Expand Component Design Tokens from 112 to **317+ runtime tokens** (341 documented across 61 components in `token-meta.json`, typing all `ComponentTokenMap` entries), and upgrade `ComponentTokenTable` with bilingual descriptions, real-time search/filter, click-to-copy, and `@since` tags.
 - 🌟 Add CSS variable mode and enable it **by default** (aligned with antd v6). Styles are generated once, cutting CSS size by 50.5% with three themes and reducing multi-theme increments from 312129 B to 41299 B (-86.8%); a single theme costs +21.5% in exchange for theme switching. Pass `theme: { cssVar: false }` to keep the previous hashed-mode behavior.
 - 🐞 Fix theme customization being silently ignored in CSS-variable mode (`theme.token`, `theme.algorithm` and runtime theme switching had no effect): variable blocks were prepended to `<head>`, so the outer default `:root` won the cascade. Blocks are now appended in registration order.
 - 🌟 Add `theme.zeroRuntime`. When enabled, no `<style>` is injected at runtime; pair it with pre-extracted static CSS.
@@ -31,7 +39,7 @@
 - 🐞 Fix Select status border width, which referenced an undefined token.
 - 🐞 Fix runtime logic that depends on real color/number values after enabling CSS variables: Empty dark-mode detection (spurious opacity), Empty/Table/dark Menu/DatePicker/Slider/Tour/Image colors turning solid black, QRCode size and foreground color, Steps dimensions, and Watermark canvas font size/color.
 - 🐞 Fix Layout, Upload, Carousel, BackTop, Anchor, Form, InputNumber, Popconfirm, Tour, DatePicker, dark Menu, Tree, Cascader, Transfer, Dropdown, Table and Image emitting invalid `NaN` / concatenated `var()` CSS in CSS-variable mode.
-- 📖 Upgrade the documentation site to an ant.design-inspired layout with a live nested `ConfigProvider` theme playground, component showcase, command-palette search (`Ctrl/⌘ + K`), per-component Design Token tables, For AI Agents / MCP / `DESIGN.md` / `llms.txt` guides, and esbuild dev-mode library pre-bundling.
+- 📖 Upgrade the documentation site to an ant.design-inspired layout with an interactive **Semantic DOM (`#semantic-dom`) previewer** across 31 components, searchable Design Token tables with descriptions, a live nested `ConfigProvider` theme playground, upgraded Command-K search (`Ctrl/⌘ + K`, indexing docs, subcomponents & Design Tokens), TypeScript-aware StackBlitz export, expanded Theme Editor previews, the **4.2.6 → 4.3.0 Migration Guide** (`/docs/vue/migration-v43`), Vite & Common Props guides, For AI Agents / MCP / `DESIGN.md` / `llms.txt` assets, and esbuild dev-mode library pre-bundling.
 
 ## 4.2.7
 

@@ -14,11 +14,19 @@
 
 `2026-11-23`
 
-`引入 antd v6 的性能层：CSS 变量与零运行时`
+`引入 antd v6 性能层与现代体验：CSS 变量、零运行时、语义化 DOM 与 317+ 组件 Design Token`
 
-- 🌟 新增 Masonry 瀑布流布局组件（`columns`/`gutter` 支持响应式断点、`itemRender`、`onLayoutChange`，按最短列自动分配）。
+- 🌟 新增 Masonry 瀑布流布局组件（响应式 `columns`/`gutter`、`itemRender`、`onLayoutChange`、最短列分配、`MasonryRef`、图片加载重排、`fresh` 与函数式 `classNames`/`styles`）。
 - 🌟 新增 BorderBeam 边框光束组件（对齐 antd v6 `offset-path` 圆角光束动效，支持 `color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`）。
-- 🌟 新增 Listy 列表组件（行 hover、语义化 `classNames`/`styles`，支持 `height`+`itemHeight` 的虚拟滚动与 `scrollTo`）。
+- 🌟 新增 Listy 列表组件并全面对齐 antd v6（支持 `items`、`rowKey`、分组 `group`、吸顶 `sticky`、`scrollWidth`、自动 `itemHeight`、虚拟滚动、像素/索引/键值/分组 `scrollTo` 与函数式语义 `classNames`/`styles`；旧别名 `data`/`itemKey` 保持向下兼容）。
+- 🌟 新增 6 个高频子组件与图库配置：`Alert.ErrorBoundary`（`<a-alert-error-boundary>`）、`Tag.CheckableTagGroup`（`<a-checkable-tag-group>`）、`Cascader.Panel`（`<a-cascader-panel>`）、`Statistic.Timer`（`<a-statistic-timer>` 倒计时/正计时）、`Space.Addon`（`<a-space-addon>`）、`Tooltip.UniqueProvider`（`<a-tooltip-unique-provider>`）及 `Image.PreviewGroup.items`。
+- 🌟 全库向下兼容升级 Ant Design v6 API：
+  - `Alert`（`title`、`variant="filled"`、`closable` 对象）、`Tag`（`variant`、`disabled`、`href`/`target`、`closable` 对象）、`Image`（`preview.open`/`onOpenChange`、`actionsRender`、`imageRender`、`mask` 模糊、`cover`）与 `Divider`（`orientation`/`vertical`、`titlePlacement`）。
+  - `DatePicker`/`TimePicker`（`multiple`、`needConfirm`、`variant`）、`Form`（`variant` 上下文透传）、`InputNumber`（`suffix`、`changeOnWheel`）、`Radio.Group`（`block`、`orientation`/`vertical`）、`Rate`（`size`）、`Slider`（`tooltip` 对象、`orientation`）、`Table`（`column.hidden`）与 `Watermark`（`onRemove`、分行样式 `content`）。
+  - `Breadcrumb`/`Descriptions`/`Timeline` 配置式 `items`（`Timeline` 新增 `orientation`/`variant`/`titleSpan`）、`Modal`（`loading`、`closable`/`mask` 对象）、`Drawer`（`resizable` 拖拽调整尺寸、`afterOpenChange`、`closable`/`mask` 对象）、`Notification`（`stack` 堆叠、`closable` 对象）、`FloatButton.Group`（`placement`、`content`）、`Dropdown`（`autoAdjustOverflow`）、`Tabs`（`more`、`tabPlacement`）与 `Tour`（`indicatorsRender`、`keyboard`）。
+  - `Space`（`orientation`/`separator`）、`Steps`/`Splitter`/`Progress`/`Button`/`Collapse`/`Carousel`（`autoplay.dotDuration`、`dotPlacement`）/`Segmented`/`Flex`/`Spin`（`description`、`percent="auto"`）/`Transfer`/`Input.Search`（`searchIcon`）/`Select`（`suffix`、`loadingIcon`）v6 别名与增强。
+- 🌟 在 31 个组件上统一语义化 DOM（`classNames`/`styles` 同时支持静态对象与函数式 `(info) => ...`），并完成全量 **72 项 `ConfigProvider` 组件默认配置**。
+- 🌟 将组件级 Design Token 从 112 项扩展至 **317+ 项运行时 Token**（`token-meta.json` 收录 61 个组件、341 项带中英文注释 Token，补齐全部 `ComponentTokenMap` 类型），全面升级 `ComponentTokenTable`（中英文说明列、实时搜索过滤、一键复制与 `@since` 版本标签）。
 - 🌟 新增 CSS 变量模式并**默认开启**（对齐 antd v6），样式只生成一次，多主题场景下组件样式只生成一份（14 组件实测：3 套主题 CSS 体积 -50.5%，多主题增量 hash +312129 B vs cssVar +41299 B（降低 86.8%）；单主题为 +21.5%（换取主题可切换性））。若需保持旧行为，传 `theme: { cssVar: false }` 即可回到 hash 模式。
 - 🐞 修复 CSS 变量模式下主题定制静默失效的问题（`theme.token`、`theme.algorithm` 与运行时切换主题均不生效）：变量声明块原先前插到 `<head>`，导致外层默认 `:root` 在层叠中胜出；改为按注册顺序追加后恢复。
 - 🌟 新增 `theme.zeroRuntime`，开启后运行时不再注入 `<style>`，需配合预提取的静态 CSS 使用。
@@ -31,7 +39,7 @@
 - 🐞 修复 Select 状态样式引用了未定义变量导致边框宽度失效的问题。
 - 🐞 修复开启 CSS 变量后，依赖真实色值/数值的运行时逻辑出现退化：Empty 暗色判断失效并误加透明度、Empty/Table/Menu 暗色/DatePicker/Slider/Tour/Image 部分配色变纯黑、QRCode 尺寸与前景色、Steps 尺寸、Watermark Canvas 字号与颜色。
 - 🐞 修复 Layout、Upload、Carousel、BackTop、Anchor、Form、InputNumber、Popconfirm、Tour、DatePicker、Menu（暗色）、Tree、Cascader、Transfer、Dropdown、Table、Image 在 CSS 变量模式下产生 `NaN` / `var() 拼数字` 等非法 CSS 的问题（尺寸派生统一改用 calc 链或真实数值 token）。
-- 📖 官网文档站全面升级至 ant.design 风格布局：全新首页实时嵌套 `ConfigProvider` 主题预览与组件展示、命令面板全局搜索（`Ctrl/⌘ + K`）、组件级 Design Token 文档表、For AI Agents / MCP / `DESIGN.md` / `llms.txt` 规范，以及基于 esbuild 的开发环境极速预打包。
+- 📖 官网文档站全面升级至 ant.design 风格布局：新增覆盖 31 个组件的交互式 **语义化 DOM（`#semantic-dom`）预览器**、支持搜索与中英文说明的 Design Token 表格、首页实时嵌套 `ConfigProvider` 主题预览、命令面板全局搜索（`Ctrl/⌘ + K`，支持检索文档、子组件与 Design Token）、支持 TypeScript 的 StackBlitz 导出、扩展后的主题编辑器预览、完整的 **4.2.6 → 4.3.0 升级指南**（`/docs/vue/migration-v43-cn`）、Vite 集成与通用属性文档、For AI Agents / MCP / `DESIGN.md` / `llms.txt` 资产，以及基于 esbuild 的开发环境极速预打包。
 
 ## 4.2.7
 

@@ -1,6 +1,6 @@
 # Ant Design Vue Design Specification (DESIGN.md)
 
-> This document defines the core visual design language, token hierarchy, and UI architectural rules of Ant Design Vue. It serves as an authoritative specification for AI coding agents, design tools, and developers building user interfaces with `ant-design-vue`.
+> This document defines the core visual design language, token hierarchy (317+ Component Design Tokens), Semantic DOM styling architecture, and UI architectural rules of Ant Design Vue `4.3.0`. It serves as an authoritative specification for AI coding agents, design tools, and developers building user interfaces with `ant-design-vue`.
 
 ---
 
@@ -17,11 +17,11 @@ Ant Design is guided by four core values:
 
 ## 2. Design Token System
 
-Ant Design Vue 4.x (with native `--ant-*` CSS Variables enabled by default and optional zero-runtime mode in 4.3.0+) adopts a four-tier token architecture powered by CSS-in-JS:
+Ant Design Vue 4.x (with native `--ant-*` CSS Variables enabled by default and optional `zeroRuntime` static extraction in `4.3.0+`) adopts a four-tier token architecture powered by CSS-in-JS:
 
 ```
 Seed Token  --->  Map Token  --->  Alias Token  --->  Component Token
-(Atomic values)   (Theme gradients) (Semantic bindings) (Component overrides)
+(Atomic values)   (Theme gradients) (Semantic bindings) (317+ component overrides)
 ```
 
 ### 2.1 Seed Tokens (Base Units)
@@ -70,7 +70,7 @@ Neutral colors establish visual depth and reading hierarchy:
 
 ### 2.3 Preset Palettes
 
-Ant Design Vue includes 13 preset color palettes accessible via theme tokens and component props:
+Ant Design Vue includes 13 preset color palettes accessible via theme tokens and component props (including `Button.color` and `Tag.color`):
 
 - `blue`: `#1677ff`
 - `purple`: `#722ed1`
@@ -85,6 +85,12 @@ Ant Design Vue includes 13 preset color palettes accessible via theme tokens and
 - `geekblue`: `#2f54eb`
 - `gold`: `#faad14`
 - `lime`: `#a0d911`
+
+### 2.4 Component Design Tokens (317+ Tokens) & Semantic DOM
+
+`ant-design-vue@4.3.0` exposes **317+ runtime Component Design Tokens** (341 documented in `token-meta.json` across 61 components with full `ComponentTokenMap` TypeScript types), allowing scoped component styling via `theme.components` without mutating global seed tokens (e.g., `Button` 25 tokens, `Table` 31 tokens, `Input` 17 tokens, `Radio` 14 tokens, `Card` 13 tokens, `Switch` 13 tokens, `Form` 10 tokens, `Descriptions` 9 tokens, `Pagination` 9 tokens, `Badge` 8 tokens, `Breadcrumb` 7 tokens, `Modal` 7 tokens, `Segmented` 7 tokens, `Rate` 6 tokens, `Timeline` 6 tokens, `Progress` 5 tokens, `Alert` 4 tokens, `Collapse` 4 tokens, `Tour` 4 tokens, `Tag` 3 tokens). Every component documentation page includes a searchable `#design-tokens` table with descriptions and click-to-copy names.
+
+For structural DOM customization beyond tokens, **31 components** expose unified **Semantic DOM (`classNames` & `styles`)** props supporting both static maps and dynamic functions `({ props }) => ({ ... })`, paired with interactive `#semantic-dom` previewers on component pages and global merging via **72 `ConfigProvider` per-component configs**. See [Common Props & Semantic DOM](https://antdv.com/docs/vue/common-props).
 
 ---
 
@@ -119,13 +125,12 @@ Use `<a-row>` and `<a-col>` for structured responsive layouts:
   - `xl`: `>= 1200px` (Large desktop)
   - `xxl`: `>= 1600px` (Ultra-wide displays)
 
-### 3.3 Flexbox Layout (`<a-flex>`)
+### 3.3 Flexbox, Masonry & Split Layouts
 
-Use `<a-flex>` for modern CSS Flexbox arrangements:
-
-- `gap`: `'small' | 'middle' | 'large'` or direct pixel numbers.
-- `justify`: `'start' | 'end' | 'center' | 'space-between' | 'space-around'`.
-- `align`: `'start' | 'end' | 'center' | 'baseline' | 'stretch'`.
+- **`<a-flex>`**: Modern CSS Flexbox (`gap`, `justify`, `align`, `orientation`).
+- **`<a-space>` / `<a-space-compact>` / `<a-space-addon>`**: Consistent inline/vertical spacing and compact input addons (`Space.Addon`, new in `4.3.0`).
+- **`<a-masonry>`**: Responsive multi-column waterfall layout with shortest-column packing and image load reflow.
+- **`<a-splitter>`**: Resizable, collapsible split panes (`orientation`, `draggerIcon`, `onDraggerDoubleClick`).
 
 ---
 
@@ -178,36 +183,36 @@ All interactive transitions utilize cubic-bezier curves matching natural physics
 
 ### 6.1 Action Controls (Buttons)
 
-- **Primary (`type="primary"`)**: Exactly one primary action per view or modal footer.
+- **Primary (`type="primary"` or `color="primary" variant="solid"`)**: Exactly one primary action per view or modal footer.
 - **Default (`type="default"`)**: Secondary actions, cancellations, neutral interactions.
-- **Dashed (`type="dashed"`)**: Common for adding new items to dynamic lists.
-- **Link (`type="link"`)**: Inline navigational actions, table row actions.
-- **Text (`type="text"`)**: Low-emphasis toolbar buttons, icon triggers.
-- **Danger (`danger`)**: Destructive operations (delete, remove, revoke); always pair with confirmation (`<a-popconfirm>`).
+- **Semantic Color + Variant (`4.3.0`)**: Combine `variant` (`outlined`, `dashed`, `solid`, `filled`, `text`, `link`) with `color` (`default`, `primary`, `danger`, or 13 presets) and `iconPlacement`.
+- **Danger (`danger` / `color="danger"`)**: Destructive operations (delete, remove, revoke); always pair with confirmation (`<a-popconfirm>`).
 
-### 6.2 Forms
+### 6.2 Forms & Data Entry
 
-- Standardize layout: `layout="vertical"` is preferred for modern enterprise forms and compact screens; `layout="horizontal"` is reserved for simple search bars or settings panels.
+- Standardize layout: `layout="vertical"` is preferred for modern enterprise forms and compact screens; use `<a-form variant="filled">` to propagate a unified visual `variant` across child inputs (`Input`, `InputNumber`, `Select`, `Cascader`, `TreeSelect`, `DatePicker`, `TimePicker`, `Mentions`, `AutoComplete`).
 - Bind form controls with `v-model:value` (e.g. `<a-input v-model:value="state.name" />`).
+- Use specialized 4.3.0 controls when applicable: `Input.OTP` (`<a-input-otp>`), `ColorPicker`, `Cascader.Panel` (`<a-cascader-panel>`), `DatePicker` (`multiple`, `needConfirm`), `Space.Addon` (`<a-space-addon>`), `Radio.Group` (`block`), and `Rate` (`size`).
 - Field validation: Define rules with `async-validator` schema on `<a-form-item :rules="[...]">`.
 
-### 6.3 Data Tables
+### 6.3 Data Display & Tables
 
-- Always supply unique `row-key="id"` (or field name).
-- Use typed columns (`TableColumnsType`).
-- Position actions column last with fixed right alignment (`fixed: 'right'`) when horizontal scrolling is expected.
+- **Data Tables (`<a-table>`)**: Always supply unique `row-key="id"`, use typed columns (`TableColumnsType`), enable `virtual` with `:scroll="{ y: 360 }"` for large datasets, and use `column.hidden` for declarative column toggles.
+- **Virtualized Lists (`<a-listy>`)**: Prefer `<a-listy>` over legacy `<a-list>` for long or grouped lists (`items`, `rowKey`, `group`, `sticky`, `scrollWidth`, imperative `scrollTo`).
+- **Modern Display Subcomponents (`4.3.0`)**: Use `Tag.CheckableTagGroup` (`<a-checkable-tag-group>`) for tag filters, `Statistic.Timer` (`<a-statistic-timer>`) for countdown/countup KPIs, `Image.PreviewGroup.items` for galleries, `Tooltip.UniqueProvider` (`<a-tooltip-unique-provider>`) for smooth sibling tooltips, and `BorderBeam` for highlighted AI/featured cards.
 
 ### 6.4 Feedback & Overlays
 
-- **Modals (`<a-modal v-model:open="isOpen">`)**: Reserved for critical, focused tasks requiring full attention.
-- **Drawers (`<a-drawer v-model:open="isOpen">`)**: Ideal for viewing details, complex multi-step forms, or secondary side panels without breaking the page context.
-- **Contextual Notifications**: Always use `const { message, modal, notification } = App.useApp()` inside `<a-app>` rather than raw static singletons.
+- **Modals (`<a-modal v-model:open="isOpen">`)**: Reserved for critical, focused tasks; supports `loading` skeleton, `destroyOnHidden`, and `mask: { blur: true }`.
+- **Drawers (`<a-drawer v-model:open="isOpen">`)**: Ideal for detail inspectors or secondary forms; supports `resizable`, `loading`, `afterOpenChange`, and `mask: { blur: true }`.
+- **Error Boundaries & Alerts**: Use `<a-alert title="..." variant="filled">` and wrap unstable subtrees in `<a-alert-error-boundary>` (`Alert.ErrorBoundary`).
+- **Contextual Notifications**: Always use `const { message, modal, notification } = App.useApp()` inside `<a-app>` rather than raw static singletons (`Notification` supports `stack`, `showProgress`, `pauseOnHover`, and `actions`).
 
 ---
 
 ## 7. Dynamic Theming & Token Consumption in Vue 3
 
-### 7.1 Applying Global Theme in ConfigProvider
+### 7.1 Applying Global & Component Tokens in ConfigProvider
 
 ```html
 <template>
@@ -216,6 +221,10 @@ All interactive transitions utilize cubic-bezier curves matching natural physics
       token: {
         colorPrimary: '#722ed1',
         borderRadius: 8,
+      },
+      components: {
+        Button: { fontWeight: 600 },
+        Card: { bodyPadding: 20 },
       },
       algorithm: theme.defaultAlgorithm,
     }"
@@ -262,4 +271,11 @@ AI agents can consume the current theme tokens reactively:
 </script>
 ```
 
-> **Note**: Since 4.3.0, `cssVar: true` is enabled by default, so `token.value.borderRadius` and `token.value.padding` resolve to CSS variable references that already include units (e.g., `var(--ant-border-radius)`). Assign them directly without appending `px`; destructure `realToken` from `theme.useToken()` whenever JS numeric or color calculations are needed.
+> **Note**: Since `4.3.0`, `cssVar: true` is enabled by default, so `token.value.borderRadius` and `token.value.padding` resolve to CSS variable references that already include units (e.g., `var(--ant-border-radius)`). Assign them directly without appending `px`; destructure `realToken` from `theme.useToken()` whenever JS numeric or color calculations are needed.
+
+### 7.3 Related Guides
+
+- [4.2.6 → 4.3.0 Migration Guide](https://antdv.com/docs/vue/migration-v43)
+- [Use in Vite](https://antdv.com/docs/vue/use-with-vite)
+- [Common Props & Semantic DOM](https://antdv.com/docs/vue/common-props)
+- [For AI Agents](https://antdv.com/docs/vue/for-agents)

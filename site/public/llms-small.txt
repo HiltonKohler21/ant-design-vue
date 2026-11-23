@@ -1,15 +1,16 @@
 # Ant Design Vue (Compact Index for AI Agents)
 
-> Ant Design Vue 4.3.0 is the enterprise Vue 3 UI library (75 components) with Composition API, `<script setup>`, TypeScript, CSS-in-JS, native CSS Variables enabled by default, and optional zero-runtime mode.
+> Ant Design Vue 4.3.0 is the enterprise Vue 3 UI library (75 components + 6 new subcomponents) with Composition API, `<script setup>`, TypeScript, CSS-in-JS, native CSS Variables enabled by default, optional `zeroRuntime`, 317+ Component Design Tokens, 72 `ConfigProvider` configs, and functional Semantic DOM (`classNames`/`styles`).
 
 ## Essential AI Coding Rules
 1. **Script Setup**: Always `<script setup lang="ts">`.
 2. **Imports**: Components from `'ant-design-vue'`; icons ONLY from `'@ant-design/icons-vue'`.
 3. **No CSS Imports**: Styles are auto-injected via CSS-in-JS. Do NOT import `antd.css`.
-4. **Form Inputs**: Use `v-model:value` (never `v-model`).
-5. **Modals / Drawers**: Use `v-model:open` (never `v-model:visible`).
+4. **Form Inputs**: Use `v-model:value` (never `v-model`). Supports `variant` (`outlined`/`filled`/`borderless`/`underlined`) inheritable from `<a-form variant="...">`.
+5. **Overlays**: Use `v-model:open` (and `preview.open` on `Image`), never `v-model:visible`. Use `destroyOnHidden` (not `destroyOnClose`).
 6. **Feedback & Context**: Wrap with `<a-app>` and use `const { message, modal, notification } = App.useApp()`.
-7. **Theming**: `<a-config-provider :theme="{ token: { colorPrimary: '#1677ff' } }">`. Access tokens via `theme.useToken()`.
+7. **Theming & `token` vs `realToken`**: `<a-config-provider :theme="{ token, components }">` supports 317+ Component Design Tokens. Under default `cssVar: true`, `theme.useToken().token` returns `var(--ant-*)` strings (with units already included) — never append `px` or do JS math on `token`; destructure `realToken` for numeric/Canvas/ECharts calculations.
+8. **Semantic DOM (`classNames` / `styles`)**: 31 components accept static object or functional `({ props }) => ({ ... })` `classNames` and `styles` (prefer over legacy `bodyStyle` / `headStyle` / `maskStyle`).
 
 ## Canonical Vue 3 Template
 ```vue
@@ -17,15 +18,15 @@
   <a-config-provider :theme="{ token: { colorPrimary: '#1677ff', borderRadius: 6 } }">
     <a-app>
       <div class="page-container">
-        <a-space direction="vertical" :size="16" style="width: 100%">
+        <a-space orientation="vertical" :size="16" style="width: 100%">
           <a-button type="primary" :icon="h(PlusOutlined)" @click="isOpen = true">
             New Item
           </a-button>
 
           <a-table :columns="columns" :data-source="dataSource" row-key="id" />
 
-          <a-modal v-model:open="isOpen" title="Create" @ok="handleSave">
-            <a-form layout="vertical">
+          <a-modal v-model:open="isOpen" title="Create" destroy-on-hidden @ok="handleSave">
+            <a-form layout="vertical" variant="filled">
               <a-form-item label="Name" required>
                 <a-input v-model:value="formData.name" placeholder="Enter name" />
               </a-form-item>
@@ -67,15 +68,20 @@ const handleSave = () => {
 </script>
 ```
 
-## Component Reference by Category (75 Components)
+## Component Reference by Category (75 Components + 4.3.0 Subcomponents)
 - **General**: Button, Icon, Typography
-- **Layout**: Divider, Flex, Grid (Row, Col), Layout, Masonry, Space, Splitter
+- **Layout**: Divider, Flex, Grid (Row, Col), Layout, Masonry, Space (`Space.Addon`), Splitter
 - **Navigation**: Anchor, Breadcrumb, Dropdown, Menu, PageHeader, Pagination, Steps
-- **Data Entry**: AutoComplete, Cascader, Checkbox, ColorPicker, DatePicker, Form, Input (Input.OTP), InputNumber, Mentions, Radio, Rate, Select, Slider, Switch, TimePicker, Transfer, TreeSelect, Upload
-- **Data Display**: Avatar, Badge, Calendar, Card, Carousel, Collapse, Comment, Descriptions, Empty, Image, List, Listy, Popover, QRCode, Segmented, Statistic, Table, Tabs, Tag, Timeline, Tooltip, Tour, Tree
-- **Feedback**: Alert, Drawer, Message, Modal, Notification, Popconfirm, Progress, Result, Skeleton, Spin, Watermark
-- **Other**: Affix, App, BackTop, BorderBeam, ConfigProvider, FloatButton
+- **Data Entry**: AutoComplete, Cascader (`Cascader.Panel`), Checkbox, ColorPicker, DatePicker, Form, Input (`Input.OTP`), InputNumber, Mentions, Radio, Rate, Select, Slider, Switch, TimePicker, Transfer, TreeSelect, Upload
+- **Data Display**: Avatar, Badge, Calendar, Card, Carousel, Collapse, Comment, Descriptions, Empty, Image (`Image.PreviewGroup.items`), List, Listy, Popover, QRCode, Segmented, Statistic (`Statistic.Timer`), Table, Tabs, Tag (`Tag.CheckableTagGroup`), Timeline, Tooltip (`Tooltip.UniqueProvider`), Tour, Tree
+- **Feedback**: Alert (`Alert.ErrorBoundary`), Drawer, Message, Modal, Notification, Popconfirm, Progress, Result, Skeleton, Spin, Watermark
+- **Other**: Affix, App, BackTop, BorderBeam, ConfigProvider (72 component configs), FloatButton (`FloatButton.BackTop`)
 
-Full documentation: https://antdv.com/llms.txt
-Agent guide: https://antdv.com/docs/vue/for-agents
-MCP server: https://antdv.com/docs/vue/mcp
+## Key Docs & Discovery URLs
+- Full index: https://antdv.com/llms.txt
+- 4.2.6 → 4.3.0 Migration Guide: https://antdv.com/docs/vue/migration-v43
+- Use in Vite: https://antdv.com/docs/vue/use-with-vite
+- Common Props & Semantic DOM: https://antdv.com/docs/vue/common-props
+- Design Specification: https://antdv.com/design.md
+- Agent guide: https://antdv.com/docs/vue/for-agents
+- MCP server: https://antdv.com/docs/vue/mcp
