@@ -18,7 +18,19 @@ import useConfigInject from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { SizeType } from '../config-provider';
 import type { Variant } from '../config-provider/context';
-import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
+import {
+  applySemanticToNode,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+  normalizePrefixNode,
+  resolveSemanticValue,
+} from '../select/utils/semanticUtil';
+import type {
+  SelectClassNamesType,
+  SelectSemanticClassNames,
+  SelectSemanticStyles,
+  SelectStylesType,
+} from '../select/utils/semanticUtil';
 import devWarning from '../vc-util/devWarning';
 import type { SelectCommonPlacement } from '../_util/transition';
 import { getTransitionDirection, getTransitionName } from '../_util/transition';
@@ -120,11 +132,20 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     /** 选择后自动清除搜索值 */
     autoClearSearchValue: { type: Boolean, default: true },
     rootClassName: String,
-    /** 语义化 classNames（antd 5.25+） */
-    classNames: { type: Object as PropType<SemanticClassNames>, default: undefined },
-    /** 语义化 styles（antd 5.25+） */
-    styles: { type: Object as PropType<SemanticStyles>, default: undefined },
+    /** 语义化 classNames（支持对象与函数式） */
+    classNames: {
+      type: [Object, Function] as PropType<SelectClassNamesType>,
+      default: undefined,
+    },
+    /** 语义化 styles（支持对象与函数式） */
+    styles: {
+      type: [Object, Function] as PropType<SelectStylesType>,
+      default: undefined,
+    },
     placement: { type: String as PropType<SelectCommonPlacement> },
+    prefix: PropTypes.any,
+    /** 自定义后缀（antd v6 替代 suffixIcon） */
+    suffix: PropTypes.any,
     suffixIcon: PropTypes.any,
     status: String as PropType<InputStatus>,
     options: Array as PropType<DataNodeType[]>,
@@ -233,10 +254,33 @@ const Cascader = defineComponent({
       return searchConfig;
     });
 
+    const cascaderConfig = computed(() => configProvider.cascader?.value);
+    const semanticInfo = computed(() => ({
+      props: {
+        ...props,
+        variant: mergedVariant.value,
+        size: mergedSize.value,
+        status: mergedStatus.value,
+        disabled: mergedDisabled.value,
+      },
+    }));
+    const mergedClassNames = computed<SelectSemanticClassNames>(() =>
+      mergeSemanticClassNames(
+        resolveSemanticValue(cascaderConfig.value?.classNames, semanticInfo.value),
+        resolveSemanticValue(props.classNames, semanticInfo.value),
+      ),
+    );
+    const mergedStyles = computed<SelectSemanticStyles>(() =>
+      mergeSemanticStyles(
+        resolveSemanticValue(cascaderConfig.value?.styles, semanticInfo.value),
+        resolveSemanticValue(props.styles, semanticInfo.value),
+      ),
+    );
+
     // =================== Dropdown ====================
     const mergedDropdownClassName = computed(() =>
       classNames(
-        props.classNames?.popup?.root,
+        mergedClassNames.value.popup?.root,
         props.popupClassName || props.dropdownClassName,
         `${cascaderPrefixCls.value}-dropdown`,
         {
@@ -287,20 +331,39 @@ const Cascader = defineComponent({
         id = formItemContext.id.value,
         ...restProps
       } = props;
+      const currentClassNames = mergedClassNames.value;
+      const currentStyles = mergedStyles.value;
       // =================== No Found ====================
       const mergedNotFoundContent = notFoundContent || renderEmpty('Cascader');
 
       // ===================== Icon ======================
-      let mergedExpandIcon = expandIcon;
-      if (!expandIcon) {
+      let mergedExpandIcon = expandIcon ?? cascaderConfig.value?.expandIcon;
+      if (!mergedExpandIcon) {
         mergedExpandIcon = isRtl.value ? <LeftOutlined /> : <RightOutlined />;
       }
 
       const loadingIcon = (
         <span class={`${prefixCls.value}-menu-item-loading-icon`}>
-          <LoadingOutlined spin />
+          {props.loadingIcon ?? cascaderConfig.value?.loadingIcon ?? <LoadingOutlined spin />}
         </span>
       );
+
+      const hasExplicitSuffix =
+        props.suffix !== undefined ||
+        !!slots.suffix ||
+        props.suffixIcon !== undefined ||
+        !!slots.suffixIcon;
+      const isSuffixHidden =
+        props.suffix === null ||
+        (props.suffix === undefined && !slots.suffix && props.suffixIcon === null);
+      const effectiveShowArrow =
+        props.showArrow !== undefined
+          ? props.showArrow
+          : isSuffixHidden
+          ? false
+          : hasExplicitSuffix && !!multiple
+          ? true
+          : undefined;
 
       // ===================== Icons =====================
       const { suffixIcon, removeIcon, clearIcon } = getIcons(
@@ -310,10 +373,29 @@ const Cascader = defineComponent({
           feedbackIcon: formItemInputContext.feedbackIcon,
           multiple,
           prefixCls: prefixCls.value,
-          showArrow: mergedShowArrow.value,
+          showArrow: effectiveShowArrow !== undefined ? effectiveShowArrow : mergedShowArrow.value,
+          suffixClassName: currentClassNames.suffix,
+          suffixStyle: currentStyles.suffix,
+          contextSuffix: cascaderConfig.value?.suffix,
+          contextSuffixIcon: cascaderConfig.value?.suffixIcon,
+          contextClearIcon: cascaderConfig.value?.clearIcon,
+          contextRemoveIcon: cascaderConfig.value?.removeIcon,
         },
         slots,
       );
+
+      const rawPrefix = props.prefix !== undefined ? props.prefix : slots.prefix?.();
+      const mergedPrefix = applySemanticToNode(
+        normalizePrefixNode(rawPrefix),
+        currentClassNames.prefix,
+        currentStyles.prefix,
+      );
+
+      const cascaderAttrs = {
+        ...attrs,
+        prefix: mergedPrefix,
+      } as any;
+
       return wrapCascaderSSR(
         wrapSelectSSR(
           <VcCascader
@@ -324,18 +406,21 @@ const Cascader = defineComponent({
               'rootClassName',
               'classNames',
               'styles',
+              'prefix',
+              'suffix',
+              'suffixIcon',
               'dropdownMenuColumnStyle',
               'popupMenuColumnStyle',
               'popupRender',
               'dropdownRender',
             ])}
-            dropdownStyle={{ ...props.styles?.popup?.root, ...props.dropdownStyle }}
+            dropdownStyle={{ ...props.dropdownStyle, ...currentStyles.popup?.root }}
             dropdownMenuColumnStyle={props.popupMenuColumnStyle ?? props.dropdownMenuColumnStyle}
             onDropdownVisibleChange={handleOpenChange}
-            {...attrs}
+            {...cascaderAttrs}
             id={id}
             prefixCls={prefixCls.value}
-            style={[configProvider.cascader?.value?.style, props.styles?.root, attrs.style as any]}
+            style={[cascaderConfig.value?.style, currentStyles.root, attrs.style as any]}
             class={[
               cascaderPrefixCls.value,
               {
@@ -347,9 +432,9 @@ const Cascader = defineComponent({
                   enableVariantCls.value && mergedVariant.value !== 'outlined',
                 [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
               },
-              configProvider.cascader?.value?.className,
+              cascaderConfig.value?.className,
               props.rootClassName,
-              props.classNames?.root,
+              currentClassNames.root,
               getStatusClassNames(
                 prefixCls.value,
                 mergedStatus.value,
@@ -389,7 +474,7 @@ const Cascader = defineComponent({
             tagRender={props.tagRender || slots.tagRender}
             displayRender={props.displayRender || slots.displayRender}
             maxTagPlaceholder={props.maxTagPlaceholder || slots.maxTagPlaceholder}
-            showArrow={formItemInputContext.hasFeedback || props.showArrow}
+            showArrow={formItemInputContext.hasFeedback || effectiveShowArrow}
             onChange={handleChange}
             onBlur={handleBlur}
             v-slots={slots}

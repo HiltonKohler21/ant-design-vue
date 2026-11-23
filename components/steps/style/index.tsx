@@ -11,7 +11,7 @@ import genStepsRTLStyle from './rtl';
 import genStepsSmallStyle from './small';
 import genStepsVerticalStyle from './vertical';
 import genStepsInlineStyle from './inline';
-import { resetComponent } from '../../style';
+import { resetComponent, textEllipsis } from '../../style';
 
 export interface ComponentToken {
   descriptionWidth: number;
@@ -287,6 +287,124 @@ const genStepsClickableStyle: GenerateStyle<StepsToken, CSSObject> = token => {
   };
 };
 
+const genStepsOutlinedStyle: GenerateStyle<StepsToken, CSSObject> = token => {
+  const {
+    componentCls,
+    colorBgContainer,
+    colorTextDisabled,
+    colorFillTertiary,
+    colorPrimary,
+    colorPrimaryBg,
+    colorPrimaryHover,
+    colorError,
+    colorErrorBg,
+    colorErrorHover,
+    lineWidth,
+    lineType,
+  } = token;
+  const itemCls = `${componentCls}-item`;
+
+  return {
+    [`&${componentCls}-outlined`]: {
+      [`&:not(${componentCls}-dot)`]: {
+        [`${itemCls}-wait:not(${itemCls}-custom)`]: {
+          [`${itemCls}-icon`]: {
+            backgroundColor: colorBgContainer,
+            borderColor: colorTextDisabled,
+            [`> ${componentCls}-icon`]: {
+              color: colorTextDisabled,
+            },
+          },
+          [`&${itemCls}-active ${itemCls}-icon`]: {
+            backgroundColor: colorFillTertiary,
+          },
+          [`&:not(${itemCls}-active) > ${itemCls}-container[role='button']:hover ${itemCls}-icon`]:
+            {
+              backgroundColor: 'transparent',
+              borderColor: colorPrimaryHover,
+              [`> ${componentCls}-icon`]: {
+                color: colorPrimaryHover,
+              },
+            },
+        },
+        [`${itemCls}-process:not(${itemCls}-custom), ${itemCls}-finish:not(${itemCls}-custom)`]: {
+          [`${itemCls}-icon`]: {
+            backgroundColor: colorBgContainer,
+            borderColor: colorPrimary,
+            [`> ${componentCls}-icon`]: {
+              color: colorPrimary,
+            },
+          },
+          [`&${itemCls}-active ${itemCls}-icon`]: {
+            backgroundColor: colorPrimaryBg,
+          },
+          [`&:not(${itemCls}-active) > ${itemCls}-container[role='button']:hover ${itemCls}-icon`]:
+            {
+              backgroundColor: 'transparent',
+              borderColor: colorPrimaryHover,
+              [`> ${componentCls}-icon`]: {
+                color: colorPrimaryHover,
+              },
+            },
+        },
+        [`${itemCls}-error:not(${itemCls}-custom)`]: {
+          [`${itemCls}-icon`]: {
+            backgroundColor: colorBgContainer,
+            borderColor: colorError,
+            [`> ${componentCls}-icon`]: {
+              color: colorError,
+            },
+          },
+          [`&${itemCls}-active ${itemCls}-icon`]: {
+            backgroundColor: colorErrorBg,
+          },
+          [`&:not(${itemCls}-active) > ${itemCls}-container[role='button']:hover ${itemCls}-icon`]:
+            {
+              backgroundColor: 'transparent',
+              borderColor: colorErrorHover,
+              [`> ${componentCls}-icon`]: {
+                color: colorErrorHover,
+              },
+            },
+        },
+      },
+      [`&${componentCls}-dot`]: {
+        [`${itemCls}-wait ${itemCls}-icon > ${componentCls}-icon ${componentCls}-icon-dot`]: {
+          background: 'transparent',
+          border: `${unit(lineWidth)} ${lineType} ${colorTextDisabled}`,
+        },
+        [`${itemCls}-process ${itemCls}-icon > ${componentCls}-icon ${componentCls}-icon-dot, ${itemCls}-finish ${itemCls}-icon > ${componentCls}-icon ${componentCls}-icon-dot`]:
+          {
+            background: 'transparent',
+            border: `${unit(lineWidth)} ${lineType} ${colorPrimary}`,
+          },
+        [`${itemCls}-error ${itemCls}-icon > ${componentCls}-icon ${componentCls}-icon-dot`]: {
+          background: 'transparent',
+          border: `${unit(lineWidth)} ${lineType} ${colorError}`,
+        },
+      },
+    },
+  };
+};
+
+const genStepsEllipsisStyle: GenerateStyle<StepsToken, CSSObject> = token => {
+  const { componentCls } = token;
+  const itemCls = `${componentCls}-item`;
+
+  return {
+    [`&${componentCls}-ellipsis`]: {
+      [`${itemCls}-content`]: {
+        minWidth: 0,
+        overflow: 'hidden',
+      },
+      [`${itemCls}-title, ${itemCls}-subtitle, ${itemCls}-description`]: {
+        ...textEllipsis,
+        maxWidth: '100%',
+      },
+    },
+  };
+};
+
 const genStepsStyle: GenerateStyle<StepsToken, CSSObject> = token => {
   const { componentCls } = token; // .ant-steps
 
@@ -319,6 +437,10 @@ const genStepsStyle: GenerateStyle<StepsToken, CSSObject> = token => {
       ...genStepsProgressStyle(token),
       // inline
       ...genStepsInlineStyle(token),
+      // outlined variant
+      ...genStepsOutlinedStyle(token),
+      // ellipsis
+      ...genStepsEllipsisStyle(token),
     },
   };
 };

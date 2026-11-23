@@ -21,14 +21,19 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tz7qSaWpi1kAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | block | 将宽度调整为父元素宽度的选项 | boolean | false |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | disabled | 是否禁用 | boolean | false |  |
 | options | 数据化配置选项内容 | string[] \| number[] \| SegmentedOption[] | [] |  |
+| orientation | 排列方向（与 `vertical` 同时存在时以 `orientation` 为准） | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | shape | 形状 | `default` \| `round` | `default` | 4.3.0 |
 | size | 控件尺寸 | `large` \| `middle` \| `small` | - |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | value | 当前选中的值 | string \| number | - |  |
-| vertical | 方向是否垂直 | boolean | false | 4.3.0 |
+| vertical | 方向是否垂直（与 `orientation` 同时存在时以 `orientation` 为准） | boolean | false | 4.3.0 |
 | label | 使用插槽自定义 label | v-slot:label="SegmentedBaseOption" | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `icon` \| `label` \| `item`。
 
 ### 事件
 

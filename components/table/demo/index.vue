@@ -33,6 +33,7 @@
     <big-data />
     <order-column />
     <virtual-list />
+    <hidden-columns />
   </demo-sort>
 </template>
 
@@ -40,6 +41,7 @@
 import OrderColumn from './order-column.vue';
 import BigData from './big-data.vue';
 import VirtualList from './virtual-list.vue';
+import HiddenColumns from './hidden-columns.vue';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Ajax from './ajax.vue';
 import Basic from './basic.vue';
@@ -82,6 +84,7 @@ export default defineComponent({
     OrderColumn,
     BigData,
     VirtualList,
+    HiddenColumns,
     filterInTreeVue,
     filterSearchVue,
     Basic,

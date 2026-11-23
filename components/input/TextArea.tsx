@@ -10,6 +10,7 @@ import {
 } from 'vue';
 import ClearableLabeledInput from './ClearableLabeledInput';
 import ResizableTextArea from './ResizableTextArea';
+import type { TextAreaSemanticClassNames, TextAreaSemanticStyles } from './inputProps';
 import { textAreaProps } from './inputProps';
 import type { InputFocusOptions } from '../vc-input/utils/commonUtils';
 import { fixControlledValue, resolveOnChange, triggerFocus } from '../vc-input/utils/commonUtils';
@@ -20,6 +21,7 @@ import useConfigInject from '../config-provider/hooks/useConfigInject';
 import omit from '../_util/omit';
 import type { VueNode } from '../_util/type';
 import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
+import { mergeSemanticClassNames, mergeSemanticStyles, resolveSemanticValue } from './util';
 
 // CSSINJS
 import useStyle from './style';
@@ -208,6 +210,28 @@ export default defineComponent({
       resolveOnChange(e.currentTarget as any, e, triggerChange, triggerValue);
       setValue(triggerValue);
     };
+    const semanticInfo = computed(() => ({
+      props: {
+        ...props,
+        disabled: props.disabled ?? disabled.value,
+        size: size.value,
+        variant: mergedVariant.value,
+        status: mergedStatus.value,
+      },
+    }));
+    const mergedSemanticClassNamesRef = computed<TextAreaSemanticClassNames>(() =>
+      mergeSemanticClassNames(
+        resolveSemanticValue(textAreaConfig.value?.classNames, semanticInfo.value),
+        resolveSemanticValue(props.classNames, semanticInfo.value),
+      ),
+    );
+    const mergedSemanticStylesRef = computed<TextAreaSemanticStyles>(() =>
+      mergeSemanticStyles(
+        resolveSemanticValue(textAreaConfig.value?.styles, semanticInfo.value),
+        resolveSemanticValue(props.styles, semanticInfo.value),
+      ),
+    );
+
     const renderTextArea = () => {
       const { class: customClass, style: customStyle } = attrs;
       const isBorderless = mergedVariant.value === 'borderless';
@@ -215,19 +239,13 @@ export default defineComponent({
         enableVariantCls.value && mergedVariant.value !== 'outlined'
           ? `${prefixCls.value}-${mergedVariant.value}`
           : undefined;
-      const mergedSemanticClassNames = {
-        ...textAreaConfig.value?.classNames,
-        ...props.classNames,
-      };
-      const mergedSemanticStyles = {
-        ...textAreaConfig.value?.styles,
-        ...props.styles,
-      };
+      const mergedSemanticClassNames = mergedSemanticClassNamesRef.value;
+      const mergedSemanticStyles = mergedSemanticStylesRef.value;
       const hasOuterWrapper =
         showCount.value || formItemInputContext.hasFeedback || props.allowClear;
       const mergedTextareaStyle =
-        !hasOuterWrapper && textAreaConfig.value?.style
-          ? [textAreaConfig.value.style, customStyle]
+        !hasOuterWrapper && (textAreaConfig.value?.style || mergedSemanticStyles.root)
+          ? [textAreaConfig.value?.style, mergedSemanticStyles.root, customStyle]
           : customStyle;
       const resizeProps = {
         ...omit(props, ['allowClear', 'rootClassName']),
@@ -245,6 +263,7 @@ export default defineComponent({
           },
           !hasOuterWrapper && textAreaConfig.value?.className,
           !hasOuterWrapper && props.rootClassName,
+          !hasOuterWrapper && mergedSemanticClassNames.root,
           getStatusClassNames(prefixCls.value, mergedStatus.value),
           hashId.value,
         ],
@@ -293,20 +312,20 @@ export default defineComponent({
     return () => {
       const { maxlength, hidden } = props;
       const { style, class: customClass } = attrs;
-      const mergedSemanticClassNames = {
-        ...textAreaConfig.value?.classNames,
-        ...props.classNames,
-      };
-      const mergedSemanticStyles = {
-        ...textAreaConfig.value?.styles,
-        ...props.styles,
-      };
-      const mergedOuterStyle = textAreaConfig.value?.style
-        ? [textAreaConfig.value.style, style]
-        : style;
+      const mergedSemanticClassNames = mergedSemanticClassNamesRef.value;
+      const mergedSemanticStyles = mergedSemanticStylesRef.value;
+      const mergedOuterStyle =
+        textAreaConfig.value?.style || mergedSemanticStyles.root
+          ? [textAreaConfig.value?.style, mergedSemanticStyles.root, style]
+          : style;
       const hasShowCountWrapper = showCount.value || formItemInputContext.hasFeedback;
       const clearableClass = !hasShowCountWrapper
-        ? classNames(textAreaConfig.value?.className, props.rootClassName, customClass)
+        ? classNames(
+            textAreaConfig.value?.className,
+            props.rootClassName,
+            mergedSemanticClassNames.root,
+            customClass,
+          )
         : customClass;
       const inputProps: any = {
         ...omit(props, ['classNames', 'styles', 'rootClassName']),
@@ -359,6 +378,7 @@ export default defineComponent({
               `${prefixCls.value}-textarea-show-count`,
               textAreaConfig.value?.className,
               props.rootClassName,
+              mergedSemanticClassNames.root,
               customClass,
               hashId.value,
             )}

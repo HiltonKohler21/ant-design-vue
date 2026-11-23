@@ -63,7 +63,10 @@ export const spaceCompactProps = () => ({
   size: {
     type: String as PropType<SizeType>,
   },
-  direction: PropTypes.oneOf(tuple('horizontal', 'vertical')).def('horizontal'),
+  /** @deprecated Please use `orientation` instead */
+  direction: PropTypes.oneOf(tuple('horizontal', 'vertical')),
+  orientation: PropTypes.oneOf(tuple('horizontal', 'vertical')),
+  vertical: booleanType(),
   align: PropTypes.oneOf(tuple('start', 'end', 'center', 'baseline')),
   block: { type: Boolean, default: undefined },
 });
@@ -92,16 +95,29 @@ const Compact = defineComponent({
   inheritAttrs: false,
   props: spaceCompactProps(),
   setup(props, { attrs, slots }) {
-    const { prefixCls, direction: directionConfig } = useConfigInject('space-compact', props);
+    const { prefixCls, configProvider } = useConfigInject('space-compact', props);
     const compactItemContext = SpaceCompactItemContext.useInject();
 
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
+    const mergedOrientation = computed<'horizontal' | 'vertical'>(() => {
+      if (props.orientation === 'horizontal' || props.orientation === 'vertical') {
+        return props.orientation;
+      }
+      if (typeof props.vertical === 'boolean') {
+        return props.vertical ? 'vertical' : 'horizontal';
+      }
+      if (props.direction === 'horizontal' || props.direction === 'vertical') {
+        return props.direction;
+      }
+      return 'horizontal';
+    });
+
     const clx = computed(() => {
       return classNames(prefixCls.value, hashId.value, {
-        [`${prefixCls.value}-rtl`]: directionConfig.value === 'rtl',
+        [`${prefixCls.value}-rtl`]: configProvider.direction?.value === 'rtl',
         [`${prefixCls.value}-block`]: props.block,
-        [`${prefixCls.value}-vertical`]: props.direction === 'vertical',
+        [`${prefixCls.value}-vertical`]: mergedOrientation.value === 'vertical',
         [`${prefixCls.value}-align-${props.align}`]: !!props.align,
       });
     });
@@ -126,7 +142,7 @@ const Compact = defineComponent({
               <CompactItem
                 key={key}
                 compactSize={props.size ?? 'middle'}
-                compactDirection={props.direction}
+                compactDirection={mergedOrientation.value}
                 isFirstItem={i === 0 && (noCompactItemContext || compactItemContext?.isFirstItem)}
                 isLastItem={
                   i === childNodes.length - 1 &&

@@ -3,6 +3,8 @@
     <basic />
     <responsive />
     <dynamic />
+    <image-demo />
+    <style-class />
   </demo-sort>
 </template>
 
@@ -13,6 +15,8 @@ import US from '../index.en-US.md';
 import Basic from './basic.vue';
 import Responsive from './responsive.vue';
 import Dynamic from './dynamic.vue';
+import ImageDemo from './image.vue';
+import StyleClass from './style-class.vue';
 
 export default defineComponent({
   CN,
@@ -21,6 +25,8 @@ export default defineComponent({
     Basic,
     Responsive,
     Dynamic,
+    ImageDemo,
+    StyleClass,
   },
 });
 </script>

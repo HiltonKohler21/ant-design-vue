@@ -178,6 +178,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | filters | 表头的筛选菜单项 | object\[] | - |  |
 | filterSearch | 筛选菜单项是否可搜索 | boolean \| function(input, filter):boolean | false | boolean:3.0 function:3.3.0 |
 | fixed | 列是否固定，可选 `true`(等效于 left) `'left'` `'right'` | boolean\|string | false |  |
+| hidden | 是否隐藏列 | boolean | false | 4.3.0 |
 | key | Vue 需要的 key，如果已经设置了唯一的 `dataIndex`，可以忽略这个属性 | string | - |  |
 | maxWidth | 拖动列最大宽度，会受到表格自动调整分配宽度影响 | number | - | 3.0 |
 | minWidth | 拖动列最小宽度，会受到表格自动调整分配宽度影响 | number | 50 | 3.0 |

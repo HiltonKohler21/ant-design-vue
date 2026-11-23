@@ -22,18 +22,24 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*cFsBQLA0b7UAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 语义化结构 class，支持对象或函数 | `StepsClassNamesType` | - | 4.3.0 |
 | current (v-model) | 指定当前步骤，从 0 开始记数。在子 Step 元素中，可以通过 `status` 属性覆盖状态, 1.5.0 后支持 v-model | number | 0 |  |
-| direction | 指定步骤条方向。目前支持水平（`horizontal`）和竖直（`vertical`）两种方向 | string | horizontal |  |
+| direction | 指定步骤条方向（已废弃，请使用 `orientation`）。支持水平（`horizontal`）和竖直（`vertical`） | string | horizontal |  |
+| ellipsis | 标题与描述文本过长时是否省略号显示 | boolean | false | 4.3.0 |
 | initial | 起始序号，从 0 开始记数 | number | 0 |  |
-| labelPlacement | 指定标签放置位置，默认水平放图标右侧，可选`vertical`放图标下方 | string | `horizontal` |  |
+| items | 配置选项卡内容 | [StepItem](#stepsstep)[] | [] |  |
+| labelPlacement | 指定标签放置位置（已废弃，请使用 `titlePlacement`），可选 `horizontal` \| `vertical` | string | `horizontal` |  |
+| orientation | 指定步骤条方向，优先级高于 `direction` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | percent | 当前 `process` 步骤显示的进度条进度（只对基本类型的 Steps 生效） | number | - | 3.0 |
 | progressDot | 点状步骤条，可以设置为一个 作用域插槽,labelPlacement 将强制为`vertical` | Boolean or v-slot:progressDot="{index, status, title, description, prefixCls, iconDot}" | false |  |
 | responsive | 当屏幕宽度小于 532px 时自动变为垂直模式 | boolean | true | 3.0 |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
 | size | 指定大小，目前支持普通（`default`）和迷你（`small`） | string | default |  |
 | status | 指定当前步骤的状态，可选 `wait` `process` `finish` `error` | string | process |  |
+| styles | 语义化结构 style，支持对象或函数 | `StepsStylesType` | - | 4.3.0 |
+| titlePlacement | 指定标签放置位置，优先级高于 `labelPlacement` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | type | 步骤条类型，有 `default`、`navigation` 和 `inline` 三种 | string | `default` | 1.5.0 |
-| items | 配置选项卡内容 | [StepItem](#stepsstep)[] | [] |  |
+| variant | 步骤条视觉变体 | `filled` \| `outlined` | `filled` | 4.3.0 |
 
 ### `type="inline"` (4.0+)
 
@@ -56,9 +62,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*cFsBQLA0b7UAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| description | 步骤的详情描述，可选 | string \| slot | - |  |
+| content | 步骤的详情描述（替代 `description`，优先级更高），可选 | string \| slot | - | 4.3.0 |
+| description | 步骤的详情描述（已废弃，请使用 `content`），可选 | string \| slot | - |  |
 | disabled | 禁用点击 | boolean | false | 1.5.0 |
 | icon | 步骤图标的类型，可选 | string \| slot | - |  |
 | status | 指定状态。当不配置该属性时，会使用 Steps 的 `current` 来自动指定状态。可选：`wait` `process` `finish` `error` | string | `wait` |  |
 | subTitle | 子标题 | string \| slot | - | 1.5.0 |
 | title | 标题 | string \| slot | - |  |
+
+### Semantic DOM
+
+`classNames` 与 `styles` 支持静态对象或 `(info: { props }) => ...` 函数形式，支持以下语义化键名：
+
+- `root` / `item` / `itemWrapper` / `itemSection` / `itemHeader` / `itemTitle` / `itemSubtitle` / `itemContent` / `itemIcon` / `itemRail` / `icon` / `title` / `description`

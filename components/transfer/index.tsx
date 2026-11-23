@@ -1,8 +1,9 @@
-import type { CSSProperties, ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import { computed, watchEffect, defineComponent, ref, watch, toRaw } from 'vue';
 import PropTypes from '../_util/vue-types';
 import { getPropsSlot } from '../_util/props-util';
 import classNames from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import List from './list';
 import Operation from './operation';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
@@ -18,10 +19,18 @@ import {
   objectType,
   functionType,
 } from '../_util/type';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 import type { TransferListBodyProps } from './ListBody';
-import type { PaginationType } from './interface';
+import type {
+  PaginationType,
+  TransferSectionSemanticName,
+  TransferSemanticName,
+  TransferSectionSemanticClassNames,
+  TransferSectionSemanticStyles,
+  TransferSemanticClassNames,
+  TransferSemanticStyles,
+} from './interface';
 import { FormItemInputContext, useInjectFormItemContext } from '../form/FormItemContext';
 import type { RenderEmptyHandler } from '../config-provider/renderEmpty';
 import type { InputStatus } from '../_util/statusUtils';
@@ -33,6 +42,34 @@ import useStyle from './style';
 export type { TransferListProps } from './list';
 export type { TransferOperationProps } from './operation';
 export type { TransferSearchProps } from './search';
+export type {
+  TransferSectionSemanticName,
+  TransferSemanticName,
+  TransferSectionSemanticClassNames,
+  TransferSectionSemanticStyles,
+  TransferSemanticClassNames,
+  TransferSemanticStyles,
+};
+
+export type TransferClassNamesType =
+  | TransferSemanticClassNames
+  | ((info: { props: TransferProps }) => TransferSemanticClassNames);
+
+export type TransferStylesType =
+  | TransferSemanticStyles
+  | ((info: { props: TransferProps }) => TransferSemanticStyles);
+
+const SECTION_SEMANTIC_KEYS: readonly TransferSectionSemanticName[] = [
+  'section',
+  'header',
+  'title',
+  'body',
+  'list',
+  'item',
+  'itemIcon',
+  'itemContent',
+  'footer',
+];
 
 export type TransferDirection = 'left' | 'right';
 
@@ -95,7 +132,20 @@ export const transferProps = () => ({
   ),
   operationStyle: objectType<CSSProperties>(undefined as CSSProperties),
   titles: arrayType<string[]>(),
+  /** 操作文案或自定义按钮集合（antd 6.x 推荐，优先级高于 operations） */
+  actions: arrayType<VueNode[]>(),
+  /** @deprecated 请使用 `actions` 替代 */
   operations: arrayType<string[]>(),
+  /** 语义化 classNames（antd 6.x 支持对象或函数） */
+  classNames: {
+    type: [Object, Function] as PropType<TransferClassNamesType>,
+    default: undefined,
+  },
+  /** 语义化 styles（antd 6.x 支持对象或函数） */
+  styles: {
+    type: [Object, Function] as PropType<TransferStylesType>,
+    default: undefined,
+  },
   showSearch: booleanType(false),
   filterOption: functionType<(inputValue: string, item: TransferItem) => boolean>(),
   searchPlaceholder: String,
@@ -143,7 +193,13 @@ const Transfer = defineComponent({
   // emits: ['update:targetKeys', 'update:selectedKeys', 'change', 'search', 'scroll', 'selectChange'],
   setup(props, { emit, attrs, slots, expose }) {
     const { configProvider, prefixCls, direction } = useConfigInject('transfer', props);
-    const transferConfig = computed(() => (configProvider as any).transfer?.value);
+    const {
+      componentConfig: transferConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('transfer');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -341,6 +397,7 @@ const Transfer = defineComponent({
     const renderTransfer = (transferLocale: TransferLocale) => {
       const {
         disabled,
+        actions,
         operations = [],
         showSearch,
         listStyle,
@@ -355,6 +412,55 @@ const Transfer = defineComponent({
       } = props;
       const { class: className, style } = attrs;
 
+      const mergedActions: VueNode[] = actions ?? operations ?? [];
+
+      const mergedPropsForSemantic: TransferProps = {
+        ...props,
+        actions: mergedActions,
+      };
+
+      const [mergedClassNames, mergedStyles] = mergeSemantic<
+        TransferSemanticClassNames,
+        TransferSemanticStyles,
+        TransferProps
+      >([contextClassNames.value, props.classNames], [contextStyles.value, props.styles], {
+        props: mergedPropsForSemantic,
+      });
+
+      const getMergedSectionClassNames = (
+        sectionKey: 'source' | 'target',
+      ): TransferSectionSemanticClassNames => {
+        const result: TransferSectionSemanticClassNames = {};
+        const dirClassNames = mergedClassNames[sectionKey];
+        SECTION_SEMANTIC_KEYS.forEach(key => {
+          const val = classNames(mergedClassNames[key], dirClassNames?.[key]);
+          if (val) {
+            result[key] = val;
+          }
+        });
+        return result;
+      };
+
+      const getMergedSectionStyles = (
+        sectionKey: 'source' | 'target',
+      ): TransferSectionSemanticStyles => {
+        const result: TransferSectionSemanticStyles = {};
+        const dirStyles = mergedStyles[sectionKey];
+        SECTION_SEMANTIC_KEYS.forEach(key => {
+          const base = mergedStyles[key];
+          const extra = dirStyles?.[key];
+          if (base || extra) {
+            result[key] = { ...base, ...extra };
+          }
+        });
+        return result;
+      };
+
+      const sourceSectionClassNames = getMergedSectionClassNames('source');
+      const targetSectionClassNames = getMergedSectionClassNames('target');
+      const sourceSectionStyles = getMergedSectionStyles('source');
+      const targetSectionStyles = getMergedSectionStyles('target');
+
       const children = slots.children;
       const mergedPagination = !children && pagination;
 
@@ -367,7 +473,8 @@ const Transfer = defineComponent({
 
       const cls = classNames(
         prefixCls.value,
-        transferConfig.value?.className,
+        contextClassName.value,
+        mergedClassNames.root,
         props.rootClassName,
         className,
         {
@@ -378,7 +485,14 @@ const Transfer = defineComponent({
         getStatusClassNames(prefixCls.value, mergedStatus.value, formItemInputContext.hasFeedback),
         hashId.value,
       );
-      const mergedStyle = transferConfig.value?.style ? [transferConfig.value.style, style] : style;
+      const mergedStyle =
+        contextStyle.value || mergedStyles.root
+          ? [contextStyle.value, mergedStyles.root, style]
+          : style;
+      const mergedOperationStyle =
+        operationStyle || mergedStyles.actions
+          ? { ...operationStyle, ...mergedStyles.actions }
+          : undefined;
       const mergedSelectionsIcon = selectionsIcon ?? (transferConfig.value as any)?.selectionsIcon;
       const titles = props.titles;
       const leftTitle =
@@ -393,6 +507,8 @@ const Transfer = defineComponent({
             dataSource={leftDataSource.value}
             filterOption={filterOption}
             style={handleListStyle(listStyle, 'left')}
+            classNames={sourceSectionClassNames}
+            styles={sourceSectionStyles}
             checkedKeys={sourceSelectedKeys.value}
             handleFilter={handleLeftFilter}
             handleClear={handleLeftClear}
@@ -413,14 +529,15 @@ const Transfer = defineComponent({
           />
           <Operation
             key="operation"
-            class={`${prefixCls.value}-operation`}
+            class={classNames(`${prefixCls.value}-operation`, mergedClassNames.actions)}
             rightActive={rightActive}
-            rightArrowText={operations[0]}
+            rightArrowText={mergedActions[0]}
             moveToRight={moveToRight}
             leftActive={leftActive}
-            leftArrowText={operations[1]}
+            leftArrowText={mergedActions[1]}
+            actions={mergedActions}
             moveToLeft={moveToLeft}
-            style={operationStyle}
+            style={mergedOperationStyle}
             disabled={disabled}
             direction={direction.value}
             oneWay={oneWay}
@@ -431,6 +548,8 @@ const Transfer = defineComponent({
             dataSource={rightDataSource.value}
             filterOption={filterOption}
             style={handleListStyle(listStyle, 'right')}
+            classNames={targetSectionClassNames}
+            styles={targetSectionStyles}
             checkedKeys={targetSelectedKeys.value}
             handleFilter={handleRightFilter}
             handleClear={handleRightClear}

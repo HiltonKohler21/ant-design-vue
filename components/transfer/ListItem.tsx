@@ -8,7 +8,8 @@ import TransButton from '../_util/transButton';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import type { ExtractPropTypes } from 'vue';
 import { defineComponent } from 'vue';
-import { booleanType } from '../_util/type';
+import { booleanType, objectType } from '../_util/type';
+import type { TransferSectionSemanticClassNames, TransferSectionSemanticStyles } from './interface';
 
 function noop() {}
 
@@ -20,6 +21,8 @@ export const transferListItemProps = {
   prefixCls: String,
   disabled: booleanType(),
   showRemove: booleanType(),
+  classNames: objectType<TransferSectionSemanticClassNames>(),
+  styles: objectType<TransferSectionSemanticStyles>(),
   onClick: Function,
   onRemove: Function,
 };
@@ -34,11 +37,24 @@ export default defineComponent({
   emits: ['click', 'remove'],
   setup(props, { emit }) {
     return () => {
-      const { renderedText, renderedEl, item, checked, disabled, prefixCls, showRemove } = props;
-      const className = classNames({
-        [`${prefixCls}-content-item`]: true,
-        [`${prefixCls}-content-item-disabled`]: disabled || item.disabled,
-      });
+      const {
+        renderedText,
+        renderedEl,
+        item,
+        checked,
+        disabled,
+        prefixCls,
+        showRemove,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
+      } = props;
+      const className = classNames(
+        {
+          [`${prefixCls}-content-item`]: true,
+          [`${prefixCls}-content-item-disabled`]: disabled || item.disabled,
+        },
+        semanticClassNames?.item,
+      );
 
       let title: string;
       if (typeof renderedText === 'string' || typeof renderedText === 'number') {
@@ -48,10 +64,20 @@ export default defineComponent({
       return (
         <LocaleReceiver componentName="Transfer" defaultLocale={defaultLocale.Transfer}>
           {(transferLocale: TransferLocale) => {
-            const labelNode = <span class={`${prefixCls}-content-item-text`}>{renderedEl}</span>;
+            const labelNode = (
+              <span
+                class={classNames(
+                  `${prefixCls}-content-item-text`,
+                  semanticClassNames?.itemContent,
+                )}
+                style={semanticStyles?.itemContent}
+              >
+                {renderedEl}
+              </span>
+            );
             if (showRemove) {
               return (
-                <li class={className} title={title}>
+                <li class={className} style={semanticStyles?.item} title={title}>
                   {labelNode}
                   <TransButton
                     disabled={disabled || item.disabled}
@@ -70,6 +96,7 @@ export default defineComponent({
             return (
               <li
                 class={className}
+                style={semanticStyles?.item}
                 title={title}
                 onClick={
                   disabled || item.disabled
@@ -80,7 +107,8 @@ export default defineComponent({
                 }
               >
                 <Checkbox
-                  class={`${prefixCls}-checkbox`}
+                  class={classNames(`${prefixCls}-checkbox`, semanticClassNames?.itemIcon)}
+                  style={semanticStyles?.itemIcon}
                   checked={checked}
                   disabled={disabled || item.disabled}
                 />

@@ -38,7 +38,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Lp1kTYmSsgoAAA
 | --- | --- | --- | --- | --- |
 | autoInsertSpace | 我们默认提供两个汉字之间的空格，可以设置 `autoInsertSpace` 为 `false` 关闭 | boolean | `true` | 4.3.0 |
 | block | 将按钮宽度调整为其父宽度的选项 | boolean | `false` |  |
-| classNames | 语义化结构 class | { icon?: string } | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | color | 设置按钮的颜色（支持语义色与 13 种预设色） | `default` \| `primary` \| `danger` \| `blue` \| `purple` \| `cyan` \| `green` \| `magenta` \| `pink` \| `red` \| `orange` \| `yellow` \| `volcano` \| `geekblue` \| `lime` \| `gold` | - | 4.3.0 |
 | danger | 设置危险按钮（语法糖，等价于 `color="danger"`） | boolean | `false` | 2.2.0 |
 | disabled | 按钮失效状态 | boolean | `false` |  |
@@ -46,15 +46,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Lp1kTYmSsgoAAA
 | href | 点击跳转的地址，指定此属性 button 的行为和 a 链接一致 | string | - |  |
 | htmlType | 设置 `button` 原生的 `type` 值，可选值请参考 [HTML 标准](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-type) | `button` \| `submit` \| `reset` | `button` |  |
 | icon | 设置按钮的图标类型 | VueNode \| v-slot | - |  |
-| iconPosition | 设置按钮图标组件的位置 | `start` \| `end` | `start` | 4.3.0 |
-| loading | 设置按钮载入状态 | boolean \| { delay?: number } | `false` |  |
+| iconPlacement | 设置按钮图标组件的位置 | `start` \| `end` | `start` | 4.3.0 |
+| ~~iconPosition~~ | 设置按钮图标组件的位置，请使用 `iconPlacement` 替代 | `start` \| `end` | `start` | 4.3.0 |
+| loading | 设置按钮载入状态 | boolean \| `{ delay?: number; icon?: VueNode }` | `false` |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | shape | 设置按钮形状 | `default` \| `circle` \| `round` | `default` |  |
 | size | 设置按钮大小 | `large` \| `middle` \| `small` | `middle` |  |
-| styles | 语义化结构 style | { icon?: CSSProperties } | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | target | 相当于 a 链接的 target 属性，href 存在时生效 | string | - |  |
 | type | 设置按钮类型（语法糖，推荐使用 `color` 与 `variant` 组合） | `primary` \| `ghost` \| `dashed` \| `link` \| `text` \| `default` | `default` |  |
 | variant | 设置按钮的形态变体 | `outlined` \| `dashed` \| `solid` \| `filled` \| `text` \| `link` | - | 4.3.0 |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `icon` \| `content`。
 
 ### 事件
 

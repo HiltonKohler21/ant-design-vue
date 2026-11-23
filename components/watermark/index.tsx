@@ -1,7 +1,16 @@
 import type { ExtractPropTypes, CSSProperties } from 'vue';
 import { computed, defineComponent, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue';
-import { getStyleStr, getPixelRatio, rotateWatermark, reRendering } from './utils';
-import { arrayType, objectType, someType, withInstall } from '../_util/type';
+import {
+  getStyleStr,
+  getPixelRatio,
+  rotateWatermark,
+  reRendering,
+  getFontSize,
+  getCanvasFont,
+  getContentLines,
+} from './utils';
+import type { WatermarkFontType, WatermarkFont, WatermarkText, WatermarkContent } from './utils';
+import { arrayType, functionType, objectType, someType, withInstall } from '../_util/type';
 import { useMutationObserver } from '../_util/hooks/_vueuse/useMutationObserver';
 import { initDefaultProps } from '../_util/props-util';
 import { useToken } from '../theme/internal';
@@ -15,6 +24,7 @@ export {
   usePanelRef,
 } from './context';
 export type { WatermarkContextProps } from './context';
+export type { WatermarkFontType, WatermarkFont, WatermarkText, WatermarkContent };
 
 /**
  * Base size of the canvas, 1 for parallel layout and 2 for alternate layout
@@ -23,26 +33,25 @@ export type { WatermarkContextProps } from './context';
 const BaseSize = 2;
 const FontGap = 3;
 
-export interface WatermarkFontType {
-  color?: string;
-  fontSize?: number | string;
-  fontWeight?: 'normal' | 'light' | 'weight' | number;
-  fontStyle?: 'none' | 'normal' | 'italic' | 'oblique';
-  fontFamily?: string;
+export interface WatermarkRef {
+  nativeElement: HTMLDivElement | undefined;
 }
+
 export const watermarkProps = () => ({
   zIndex: Number,
   rotate: Number,
   width: Number,
   height: Number,
   image: String,
-  content: someType<string | string[]>([String, Array]),
+  content: someType<WatermarkContent | WatermarkContent[]>([String, Object, Array]),
   font: objectType<WatermarkFontType>(),
   rootClassName: String,
   gap: arrayType<[number, number]>(),
   /** 子组件是否继承水印（默认 true） */
   inherit: { type: Boolean, default: true },
   offset: arrayType<[number, number]>(),
+  /** 当水印被篡改或移除时的回调 */
+  onRemove: functionType<() => void>(),
 });
 export type WatermarkProps = Partial<ExtractPropTypes<ReturnType<typeof watermarkProps>>>;
 const Watermark = defineComponent({
@@ -54,13 +63,18 @@ const Watermark = defineComponent({
     font: {},
     gap: [100, 100],
   }),
-  setup(props, { slots, attrs }) {
+  setup(props, { slots, attrs, expose }) {
     const { configProvider } = useConfigInject('watermark', props);
     const watermarkConfig = computed(() => (configProvider as any).watermark?.value || {});
     // realToken：未变量化的原始 token（Canvas 绘制需要真实字号与颜色，
     // cssVar 模式下 token 值是 var() 字符串，会导致 NaN / 黑色）
     const [, , , realToken] = useToken();
     const containerRef = shallowRef<HTMLDivElement>();
+    expose({
+      get nativeElement() {
+        return containerRef.value;
+      },
+    });
     const watermarkMap = new Map<HTMLElement, HTMLDivElement>();
     const subElements = shallowRef<Set<HTMLElement>>(new Set());
     const stopObservation = shallowRef(false);
@@ -75,6 +89,16 @@ const Watermark = defineComponent({
     const fontStyle = computed(() => props.font?.fontStyle ?? 'normal');
     const fontFamily = computed(() => props.font?.fontFamily ?? 'sans-serif');
     const color = computed(() => props.font?.color ?? realToken.value.colorFill);
+    const textAlign = computed<CanvasTextAlign>(() => props.font?.textAlign ?? 'center');
+    const mergedFont = computed<Required<WatermarkFontType>>(() => ({
+      color: color.value,
+      fontSize: fontSize.value,
+      fontWeight: fontWeight.value,
+      fontStyle: fontStyle.value,
+      fontFamily: fontFamily.value,
+      textAlign: textAlign.value,
+    }));
+    const contentLines = computed(() => getContentLines(props.content, mergedFont.value));
     const markStyle = computed(() => {
       const markStyle: CSSProperties = {
         zIndex: props.zIndex ?? 9,
@@ -148,6 +172,9 @@ const Watermark = defineComponent({
           backgroundSize: `${(gapX.value + markWidth) * BaseSize}px`,
         }),
       );
+      // Prevents using browser `Hide Element` to hide watermarks
+      watermarkEle.removeAttribute('class');
+      watermarkEle.removeAttribute('hidden');
       if (watermarkEle.parentElement !== container) {
         container.append(watermarkEle);
       }
@@ -177,16 +204,29 @@ const Watermark = defineComponent({
     const getMarkSize = (ctx: CanvasRenderingContext2D) => {
       let defaultWidth = 120;
       let defaultHeight = 64;
-      const content = props.content;
       const image = props.image;
       const width = props.width;
       const height = props.height;
       if (!image && ctx.measureText) {
-        ctx.font = `${Number(fontSize.value)}px ${fontFamily.value}`;
-        const contents = Array.isArray(content) ? content : [content];
-        const widths = contents.map(item => ctx.measureText(item!).width);
-        defaultWidth = Math.ceil(Math.max(...widths));
-        defaultHeight = Number(fontSize.value) * contents.length + (contents.length - 1) * FontGap;
+        if (contentLines.value.length) {
+          const sizes = contentLines.value.map(({ text, font: lineFont }) => {
+            ctx.font = getCanvasFont(lineFont);
+            const metrics = ctx.measureText(text);
+            const lineHeight =
+              typeof metrics.fontBoundingBoxAscent === 'number' &&
+              typeof metrics.fontBoundingBoxDescent === 'number'
+                ? metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent
+                : Number(lineFont.fontSize);
+            return [metrics.width, lineHeight] as const;
+          });
+          defaultWidth = Math.ceil(Math.max(...sizes.map(s => s[0])));
+          defaultHeight =
+            Math.ceil(sizes.reduce((total, s) => total + s[1], 0)) +
+            (contentLines.value.length - 1) * FontGap;
+        } else {
+          defaultWidth = 0;
+          defaultHeight = 0;
+        }
       }
       return [width ?? defaultWidth, height ?? defaultHeight] as const;
     };
@@ -198,16 +238,16 @@ const Watermark = defineComponent({
       drawHeight: number,
     ) => {
       const ratio = getPixelRatio();
-      const content = props.content;
-      const mergedFontSize = Number(fontSize.value) * ratio;
-      ctx.font = `${fontStyle.value} normal ${fontWeight.value} ${mergedFontSize}px/${drawHeight}px ${fontFamily.value}`;
-      ctx.fillStyle = color.value;
-      ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       ctx.translate(drawWidth / 2, 0);
-      const contents = Array.isArray(content) ? content : [content];
-      contents?.forEach((item, index) => {
-        ctx.fillText(item ?? '', drawX, drawY + index * (mergedFontSize + FontGap * ratio));
+      let top = drawY;
+      contentLines.value.forEach(({ text, font: lineFont }) => {
+        const lineFontSize = getFontSize(lineFont, ratio);
+        ctx.font = getCanvasFont(lineFont, ratio, drawHeight);
+        ctx.fillStyle = lineFont.color;
+        ctx.textAlign = lineFont.textAlign;
+        ctx.fillText(text, drawX, top);
+        top += lineFontSize + FontGap * ratio;
       });
     };
     const renderWatermark = () => {
@@ -302,21 +342,20 @@ const Watermark = defineComponent({
       if (stopObservation.value) {
         return;
       }
-      mutations.forEach(mutation => {
-        const isTargetWatermark = Array.from(watermarkMap.values()).some(wm =>
-          reRendering(mutation, wm),
-        );
-        if (isTargetWatermark) {
-          destroyWatermark();
-          renderWatermark();
-        }
-      });
+      const isTargetWatermark = mutations.some(mutation =>
+        Array.from(watermarkMap.values()).some(wm => reRendering(mutation, wm)),
+      );
+      if (isTargetWatermark) {
+        props.onRemove?.();
+        destroyWatermark();
+        renderWatermark();
+      }
     };
     useMutationObserver(containerRef, onMutate, {
       attributes: true,
       subtree: true,
       childList: true,
-      attributeFilter: ['style', 'class'],
+      attributeFilter: ['style', 'class', 'hidden'],
     });
     return () => {
       return (

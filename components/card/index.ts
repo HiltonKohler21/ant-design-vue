@@ -3,7 +3,7 @@ import Card from './Card';
 import Meta from './Meta';
 import Grid from './Grid';
 
-export type { CardProps } from './Card';
+export type { CardProps, CardSemanticName, CardClassNamesType, CardStylesType } from './Card';
 
 Card.Meta = Meta;
 Card.Grid = Grid;

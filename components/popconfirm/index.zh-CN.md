@@ -20,7 +20,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HrFtQ6jJJFQAAA
 | cancelButton | 完全自定义取消按钮 | slot | - | 3.0 |
 | cancelButtonProps | cancel 按钮 props | [ButtonProps](/components/button/#api) | - |  |
 | cancelText | 取消按钮文字 | string\|slot | 取消 |  |
-| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; body?: string }` | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | disabled | 点击 Popconfirm 子元素是否弹出气泡确认框 | boolean | false |  |
 | icon | 自定义弹出气泡 Icon 图标 | vNode\|slot | &lt;ExclamationCircleFilled /> |  |
 | okButton | 完全自定义确认按钮 | slot | - | 3.0 |
@@ -29,10 +29,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HrFtQ6jJJFQAAA
 | okType | 确认按钮类型 | string | primary |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showCancel | 是否显示取消按钮 | boolean | true | 3.0 |
-| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | 确认框的描述 | string\|slot | - |  |
 | description | 确认内容的详细描述 | string\|slot | - | 4.0 |
 | open (v-model) | 是否显示 | boolean | false | 4.0 |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `container` \| `body`（`container` 别名） \| `title` \| `content` \| `arrow` \| `icon`。
 
 ### 事件
 

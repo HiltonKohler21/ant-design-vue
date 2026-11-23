@@ -8,6 +8,7 @@ import {
   objectType,
 } from '../_util/type';
 import type { ExtractPropTypes } from 'vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
 
 export const progressStatuses = ['normal', 'exception', 'active', 'success'] as const;
 export type ProgressStatusesType = (typeof progressStatuses)[number];
@@ -18,6 +19,9 @@ export type ProgressSize = (typeof ProgressSize)[number] | number | [number, num
 export type StringGradients = { [percentage: string]: string };
 type FromToGradients = { from: string; to: string };
 export type ProgressGradient = { direction?: string } & (StringGradients | FromToGradients);
+
+export type GapPosition = 'top' | 'bottom' | 'left' | 'right';
+export type GapPlacement = GapPosition | 'start' | 'end';
 
 export interface PercentPositionType {
   align?: 'start' | 'center' | 'end';
@@ -31,7 +35,7 @@ export interface SuccessProps {
   strokeColor?: string;
 }
 
-export const progressProps = () => ({
+const progressBaseProps = () => ({
   rootClassName: String,
   prefixCls: String,
   type: stringType<ProgressType>(),
@@ -46,18 +50,40 @@ export const progressProps = () => ({
   /** 5.20+ 百分比文字位置：inner/outer 或 { align, type } */
   percentPosition: someType<'inner' | 'outer' | PercentPositionType>([String, Object]),
   strokeColor: anyType<string | string[] | ProgressGradient>(),
+  /** @deprecated Please use `railColor` instead */
   trailColor: String,
+  railColor: String,
   /** @deprecated Use `size` instead */
   width: Number,
   success: objectType<SuccessProps>(),
   gapDegree: Number,
-  gapPosition: stringType<'top' | 'bottom' | 'left' | 'right'>(),
+  /** @deprecated Please use `gapPlacement` instead */
+  gapPosition: stringType<GapPosition>(),
+  gapPlacement: stringType<GapPlacement>(),
   size: someType<ProgressSize | number | [number, number]>([String, Number, Array]),
   steps: Number,
   /** @deprecated Use `success` instead */
   successPercent: Number,
   title: String,
   progressStatus: stringType<ProgressStatusesType>(),
+});
+
+type ProgressBaseProps = Partial<ExtractPropTypes<ReturnType<typeof progressBaseProps>>>;
+
+export type ProgressSemanticName = 'root' | 'body' | 'rail' | 'track' | 'indicator';
+export type ProgressSemanticClassNames = SemanticClassNames<ProgressSemanticName>;
+export type ProgressSemanticStyles = SemanticStyles<ProgressSemanticName>;
+export type ProgressClassNamesType =
+  | ProgressSemanticClassNames
+  | ((info: { props: ProgressBaseProps }) => ProgressSemanticClassNames);
+export type ProgressStylesType =
+  | ProgressSemanticStyles
+  | ((info: { props: ProgressBaseProps }) => ProgressSemanticStyles);
+
+export const progressProps = () => ({
+  ...progressBaseProps(),
+  classNames: someType<ProgressClassNamesType>([Object, Function]),
+  styles: someType<ProgressStylesType>([Object, Function]),
 });
 
 export type ProgressProps = Partial<ExtractPropTypes<ReturnType<typeof progressProps>>>;

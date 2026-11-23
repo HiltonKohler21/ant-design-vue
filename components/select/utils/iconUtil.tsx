@@ -4,34 +4,100 @@ import CheckOutlined from '@ant-design/icons-vue/CheckOutlined';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import CloseCircleFilled from '@ant-design/icons-vue/CloseCircleFilled';
 import SearchOutlined from '@ant-design/icons-vue/SearchOutlined';
+import { applySemanticToNode } from './semanticUtil';
 
 export default function getIcons(props: any, slots: any = {}) {
-  const { loading, multiple, prefixCls, hasFeedback, feedbackIcon, showArrow } = props;
-  const suffixIcon = props.suffixIcon || (slots.suffixIcon && slots.suffixIcon());
-  const clearIcon = props.clearIcon || (slots.clearIcon && slots.clearIcon());
+  const {
+    loading,
+    multiple,
+    prefixCls,
+    hasFeedback,
+    feedbackIcon,
+    showArrow,
+    suffixClassName,
+    suffixStyle,
+    contextSuffix,
+    contextSuffixIcon,
+    contextLoadingIcon,
+    contextClearIcon,
+    contextMenuItemSelectedIcon,
+    contextRemoveIcon,
+  } = props;
+
+  const customSuffix =
+    props.suffix !== undefined
+      ? props.suffix
+      : slots.suffix
+      ? slots.suffix()
+      : props.suffixIcon !== undefined
+      ? props.suffixIcon
+      : slots.suffixIcon
+      ? slots.suffixIcon()
+      : undefined;
+
+  const mergedContextSuffix = contextSuffix !== undefined ? contextSuffix : contextSuffixIcon;
+
+  const customLoadingIcon =
+    props.loadingIcon !== undefined
+      ? props.loadingIcon
+      : slots.loadingIcon
+      ? slots.loadingIcon()
+      : contextLoadingIcon;
+
+  const clearIcon =
+    props.clearIcon !== undefined
+      ? props.clearIcon
+      : slots.clearIcon
+      ? slots.clearIcon()
+      : contextClearIcon;
+
   const menuItemSelectedIcon =
-    props.menuItemSelectedIcon || (slots.menuItemSelectedIcon && slots.menuItemSelectedIcon());
-  const removeIcon = props.removeIcon || (slots.removeIcon && slots.removeIcon());
+    props.menuItemSelectedIcon !== undefined
+      ? props.menuItemSelectedIcon
+      : slots.menuItemSelectedIcon
+      ? slots.menuItemSelectedIcon()
+      : contextMenuItemSelectedIcon;
+
+  const removeIcon =
+    props.removeIcon !== undefined
+      ? props.removeIcon
+      : slots.removeIcon
+      ? slots.removeIcon()
+      : contextRemoveIcon;
+
   // Clear Icon
   const mergedClearIcon = clearIcon ?? <CloseCircleFilled />;
   // Validation Feedback Icon
-  const getSuffixIconNode = arrowIcon => (
+  const getSuffixIconNode = (arrowIcon: any) => (
     <>
-      {showArrow !== false && arrowIcon}
+      {showArrow !== false && applySemanticToNode(arrowIcon, suffixClassName, suffixStyle)}
       {hasFeedback && feedbackIcon}
     </>
   );
   // Arrow item icon
-  let mergedSuffixIcon = null;
-  if (suffixIcon !== undefined) {
-    mergedSuffixIcon = getSuffixIconNode(suffixIcon);
+  let mergedSuffixIcon: any = null;
+  if (customSuffix !== undefined) {
+    mergedSuffixIcon =
+      typeof customSuffix === 'function'
+        ? (iconProps: any) => getSuffixIconNode(customSuffix(iconProps))
+        : getSuffixIconNode(customSuffix);
   } else if (loading) {
-    mergedSuffixIcon = getSuffixIconNode(<LoadingOutlined spin />);
+    mergedSuffixIcon = getSuffixIconNode(
+      customLoadingIcon !== undefined ? customLoadingIcon : <LoadingOutlined spin />,
+    );
   } else {
     const iconCls = `${prefixCls}-suffix`;
-    mergedSuffixIcon = ({ open, showSearch }: { open: boolean; showSearch: boolean }) => {
+    mergedSuffixIcon = (iconProps: { open: boolean; showSearch: boolean }) => {
+      const { open, showSearch } = iconProps;
       if (open && showSearch) {
         return getSuffixIconNode(<SearchOutlined class={iconCls} />);
+      }
+      if (mergedContextSuffix !== undefined) {
+        return getSuffixIconNode(
+          typeof mergedContextSuffix === 'function'
+            ? mergedContextSuffix(iconProps)
+            : mergedContextSuffix,
+        );
       }
       return getSuffixIconNode(<DownOutlined class={iconCls} />);
     };

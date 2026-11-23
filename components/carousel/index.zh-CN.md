@@ -22,10 +22,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a-58QpYnqOsAAA
 | --- | --- | --- | --- | --- |
 | adaptiveHeight | 启用自适应高度 | boolean | false |  |
 | arrows | 是否显示切换箭头 | boolean | false |  |
-| autoplay | 是否自动切换 | boolean | false |  |
+| autoplay | 是否自动切换，支持对象配置 `dotDuration` 展示指示点进度条 | `boolean \| { dotDuration?: boolean }` | false | 4.3.0 |
 | autoplaySpeed | 自动切换间隔时间（毫秒） | number | 3000 |  |
-| dotPosition | 面板指示点位置，可选 `top` `bottom` `left` `right` | string | `bottom` | 1.5.0 |
-| dots | 是否显示面板指示点 | boolean | true |  |
+| dotPlacement | 面板指示点位置，可选 `top` `bottom` `start` `end`（RTL 自适应），优先级高于 `dotPosition` | `top` \| `bottom` \| `start` \| `end` | `bottom` | 4.3.0 |
+| dotPosition | 面板指示点位置（已废弃，请使用 `dotPlacement`），可选 `top` `bottom` `left` `right` `start` `end` | string | `bottom` | 1.5.0 |
+| dots | 是否显示面板指示点，或传入 `{ className?: string }` 自定义类名 | `boolean \| { className?: string }` | true |  |
 | dotsClass | 面板指示点类名 | string | `slick-dots` |  |
 | draggable | 是否启用拖拽切换 | boolean | false |  |
 | easing | 动画效果 | string | `linear` |  |

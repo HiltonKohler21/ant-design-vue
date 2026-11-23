@@ -18,11 +18,13 @@ Comparing with `Tooltip`, besides information `Popover` card can also provide ac
 
 | Param | Description | Type | Default value | Version |
 | --- | --- | --- | --- | --- |
-| classNames | Semantic DOM class names | `{ root?: string; body?: string }` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | content | Content of the card | string\|slot\|vNode | - |  |
 | rootClassName | Root class name | string | - | 4.3.0 |
-| styles | Semantic DOM inline styles | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | Title of the card | string\|slot\|VNode | - |  |
+
+> Supported `SemanticDOM` keys: `root` \| `container` \| `body` (alias of `container`) \| `title` \| `content` \| `arrow`.
 
 Consult [Tooltip's documentation](/components/tooltip/#api) to find more APIs.
 

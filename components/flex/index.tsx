@@ -6,7 +6,7 @@ import useStyle from './style';
 import { isPresetSize } from '../_util/gapSize';
 import omit from '../_util/omit';
 import { withInstall } from '../_util/type';
-import type { FlexProps } from './interface';
+import type { FlexOrientation, FlexProps } from './interface';
 import { flexProps } from './interface';
 import createFlexClassNames from './utils';
 
@@ -19,14 +19,20 @@ const AFlex = defineComponent({
     const { prefixCls } = useConfigInject('flex', props);
     const { className: contextClassName, style: contextStyle } = useComponentConfig('flex');
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const mergedVertical = computed<boolean>(() => {
+      if (props.orientation !== undefined) {
+        return props.orientation === 'vertical';
+      }
+      return Boolean(props.vertical ?? ctxFlex?.value?.vertical);
+    });
     const mergedCls = computed(() => [
       prefixCls.value,
       hashId.value,
-      createFlexClassNames(prefixCls.value, props),
+      createFlexClassNames(prefixCls.value, { ...props, vertical: mergedVertical.value }),
       {
         [`${prefixCls.value}-rtl`]: ctxDirection.value === 'rtl',
         [`${prefixCls.value}-gap-${props.gap}`]: isPresetSize(props.gap),
-        [`${prefixCls.value}-vertical`]: props.vertical ?? ctxFlex?.value?.vertical,
+        [`${prefixCls.value}-vertical`]: mergedVertical.value,
       },
     ]);
     return () => {
@@ -47,7 +53,7 @@ const AFlex = defineComponent({
         <Component
           class={[contextClassName.value, attrs.class, props.rootClassName, mergedCls.value]}
           style={[contextStyle.value, attrs.style as CSSProperties, mergedStyle]}
-          {...omit(othersProps, ['justify', 'wrap', 'align', 'vertical'])}
+          {...omit(othersProps, ['justify', 'wrap', 'align', 'vertical', 'orientation'])}
         >
           {slots.default?.()}
         </Component>,
@@ -57,4 +63,4 @@ const AFlex = defineComponent({
 });
 
 export default withInstall(AFlex);
-export type { FlexProps };
+export type { FlexOrientation, FlexProps };

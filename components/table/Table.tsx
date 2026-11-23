@@ -67,6 +67,37 @@ export type { ColumnsType, TablePaginationConfig };
 
 const EMPTY_LIST: any[] = [];
 
+function isColumnHidden(col: any): boolean {
+  return col?.hidden === true || col?.hidden === '';
+}
+
+function filterHiddenColumns<RecordType>(
+  columns: ColumnsType<RecordType>,
+): ColumnsType<RecordType> {
+  return (columns || []).reduce<ColumnsType<RecordType>>((acc, col) => {
+    if (!col) return acc;
+    if (isColumnHidden(col)) {
+      return acc;
+    }
+    if (
+      'children' in col &&
+      Array.isArray((col as any).children) &&
+      (col as any).children.length > 0
+    ) {
+      const visibleChildren = filterHiddenColumns((col as any).children);
+      if (visibleChildren.length > 0) {
+        acc.push({
+          ...col,
+          children: visibleChildren,
+        });
+      }
+      return acc;
+    }
+    acc.push(col);
+    return acc;
+  }, []);
+}
+
 function flattenLeafColumns(cols: ColumnsType<any>): ColumnType<any>[] {
   const result: ColumnType<any>[] = [];
   (cols || []).forEach(col => {
@@ -577,7 +608,7 @@ const InternalTable = defineComponent({
           transformFilterColumns(transformSorterColumns(transformBasicColumns(innerColumns))),
         ),
       );
-      return res;
+      return filterHiddenColumns(res);
     };
 
     return () => {

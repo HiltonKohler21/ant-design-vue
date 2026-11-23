@@ -177,6 +177,7 @@ One of the Table `columns` prop for describing the table's columns, Column has t
 | filters | Filter menu config | object\[] | - |  |
 | filterSearch | Whether to be searchable for filter menu | boolean \| function(input, filter):boolean | false | boolean: 3.0 function: 3.3.0 |
 | fixed | Set column to be fixed: `true`(same as left) `'left'` `'right'` | boolean\|string | `false` |  |
+| hidden | Hide this column | boolean | `false` | 4.3.0 |
 | key | Unique key of this column, you can ignore this prop if you've set a unique `dataIndex` | string | - |  |
 | maxWidth | Drag the maximum width of the column, it will be affected by the automatic adjustment and distribution of the table width | number | - | 3.0 |
 | minWidth | Drag the minimum width of the column, it will be affected by the automatic adjustment and distribution of the table width | number | 50 | 3.0 |

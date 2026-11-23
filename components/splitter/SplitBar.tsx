@@ -1,10 +1,24 @@
-import { computed, defineComponent, ref, watch, onBeforeUnmount, type PropType } from 'vue';
+import {
+  computed,
+  defineComponent,
+  ref,
+  watch,
+  onBeforeUnmount,
+  type CSSProperties,
+  type PropType,
+} from 'vue';
 import DownOutlined from '@ant-design/icons-vue/DownOutlined';
 import LeftOutlined from '@ant-design/icons-vue/LeftOutlined';
 import RightOutlined from '@ant-design/icons-vue/RightOutlined';
 import UpOutlined from '@ant-design/icons-vue/UpOutlined';
 import classNames from '../_util/classNames';
-import type { ShowCollapsibleIconMode } from './interface';
+import { anyType, type VueNode } from '../_util/type';
+import type {
+  ShowCollapsibleIconMode,
+  SplitterCollapsibleIcon,
+  SplitterDraggerClassName,
+  SplitterDraggerStyle,
+} from './interface';
 
 const DOUBLE_CLICK_TIME_GAP = 300;
 
@@ -33,8 +47,22 @@ const splitBarProps = () => ({
     type: [Boolean, String] as PropType<ShowCollapsibleIconMode>,
     default: 'auto',
   },
+  draggerIcon: anyType<VueNode>(),
+  collapsibleIcon: {
+    type: Object as PropType<SplitterCollapsibleIcon>,
+    default: undefined,
+  },
+  draggerClassName: {
+    type: [String, Object] as PropType<SplitterDraggerClassName>,
+    default: undefined,
+  },
+  draggerStyle: {
+    type: Object as PropType<SplitterDraggerStyle>,
+    default: undefined,
+  },
   lazy: { type: Boolean, default: false },
   containerSize: { type: Number, default: 0 },
+  onDraggerDoubleClick: Function as PropType<(index: number) => void>,
   onOffsetStart: Function as PropType<(index: number) => void>,
   onOffsetUpdate: Function as PropType<
     (index: number, offsetX: number, offsetY: number, lazyEnd?: boolean) => void
@@ -216,6 +244,30 @@ export default defineComponent({
       const barCls = splitBarPrefixCls.value;
       const StartIconComp = StartIcon.value;
       const EndIconComp = EndIcon.value;
+      const hasDraggerIcon = props.draggerIcon !== undefined;
+      const startCustomize = props.collapsibleIcon?.start !== undefined;
+      const endCustomize = props.collapsibleIcon?.end !== undefined;
+
+      const normalizedDraggerClass =
+        typeof props.draggerClassName === 'string'
+          ? { default: props.draggerClassName }
+          : props.draggerClassName;
+
+      let resolvedDraggerStyle: CSSProperties | undefined;
+      if (props.draggerStyle && typeof props.draggerStyle === 'object') {
+        if ('default' in props.draggerStyle || 'active' in props.draggerStyle) {
+          const stateStyle = props.draggerStyle as {
+            default?: CSSProperties;
+            active?: CSSProperties;
+          };
+          resolvedDraggerStyle =
+            props.active && stateStyle.active
+              ? { ...stateStyle.default, ...stateStyle.active }
+              : stateStyle.default;
+        } else {
+          resolvedDraggerStyle = props.draggerStyle as CSSProperties;
+        }
+      }
 
       return (
         <div class={barCls}>
@@ -228,10 +280,17 @@ export default defineComponent({
             />
           )}
           <div
-            class={classNames(`${barCls}-dragger`, {
-              [`${barCls}-dragger-disabled`]: !props.resizable,
-              [`${barCls}-dragger-active`]: props.active,
-            })}
+            style={resolvedDraggerStyle}
+            class={classNames(
+              `${barCls}-dragger`,
+              {
+                [`${barCls}-dragger-disabled`]: !props.resizable,
+                [`${barCls}-dragger-active`]: props.active,
+                [`${barCls}-dragger-customize`]: hasDraggerIcon,
+              },
+              normalizedDraggerClass?.default,
+              props.active && normalizedDraggerClass?.active,
+            )}
             role="separator"
             aria-disabled={!props.resizable}
             aria-orientation={props.vertical ? 'horizontal' : 'vertical'}
@@ -240,12 +299,20 @@ export default defineComponent({
             aria-valuemax={getValidNumber(props.ariaMax)}
             onMousedown={onMouseDown}
             onTouchstart={onTouchStart}
-          />
+            onDblclick={() => props.onDraggerDoubleClick?.(props.index!)}
+          >
+            {hasDraggerIcon ? (
+              <div class={`${barCls}-dragger-icon`}>{props.draggerIcon}</div>
+            ) : null}
+          </div>
           {props.startCollapsible && (
             <div
               class={classNames(
                 `${barCls}-collapse-bar`,
                 `${barCls}-collapse-bar-start`,
+                {
+                  [`${barCls}-collapse-bar-customize`]: startCustomize,
+                },
                 getVisibilityClass(props.showStartCollapsibleIcon),
               )}
               role="button"
@@ -255,7 +322,7 @@ export default defineComponent({
               onKeydown={(e: KeyboardEvent) => onCollapseKeyDown(e, 'start')}
             >
               <span class={classNames(`${barCls}-collapse-icon`, `${barCls}-collapse-start`)}>
-                <StartIconComp />
+                {startCustomize ? props.collapsibleIcon!.start : <StartIconComp />}
               </span>
             </div>
           )}
@@ -264,6 +331,9 @@ export default defineComponent({
               class={classNames(
                 `${barCls}-collapse-bar`,
                 `${barCls}-collapse-bar-end`,
+                {
+                  [`${barCls}-collapse-bar-customize`]: endCustomize,
+                },
                 getVisibilityClass(props.showEndCollapsibleIcon),
               )}
               role="button"
@@ -273,7 +343,7 @@ export default defineComponent({
               onKeydown={(e: KeyboardEvent) => onCollapseKeyDown(e, 'end')}
             >
               <span class={classNames(`${barCls}-collapse-icon`, `${barCls}-collapse-end`)}>
-                <EndIconComp />
+                {endCustomize ? props.collapsibleIcon!.end : <EndIconComp />}
               </span>
             </div>
           )}

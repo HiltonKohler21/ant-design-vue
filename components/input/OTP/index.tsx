@@ -1,4 +1,13 @@
-import { Fragment, computed, defineComponent, ref, watch, type PropType } from 'vue';
+import {
+  Fragment,
+  computed,
+  defineComponent,
+  ref,
+  watch,
+  type CSSProperties,
+  type ExtractPropTypes,
+  type PropType,
+} from 'vue';
 import classNames from '../../_util/classNames';
 import useConfigInject from '../../config-provider/hooks/useConfigInject';
 import { getMergedStatus } from '../../_util/statusUtils';
@@ -7,6 +16,18 @@ import useStyle from '../style/otp';
 import OTPInput from './OTPInput';
 import type { Variant } from '../../config-provider/context';
 import type { InputStatus } from '../../_util/statusUtils';
+import {
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+  resolveSemanticValue,
+  type SemanticValue,
+} from '../util';
+
+export type OTPSemanticName = 'root' | 'input' | 'separator';
+export type OTPSemanticClassNames = Partial<Record<OTPSemanticName, string>>;
+export type OTPSemanticStyles = Partial<Record<OTPSemanticName, CSSProperties>>;
+export type OTPClassNamesType<P = Record<string, any>> = SemanticValue<OTPSemanticClassNames, P>;
+export type OTPStylesType<P = Record<string, any>> = SemanticValue<OTPSemanticStyles, P>;
 
 function strToArr(str: string): string[] {
   return (str || '').split('');
@@ -15,6 +36,16 @@ function strToArr(str: string): string[] {
 export const otpProps = () => ({
   prefixCls: String,
   rootClassName: String,
+  /** 语义化 classNames（支持对象与函数式）：root / input / separator */
+  classNames: {
+    type: [Object, Function] as PropType<OTPClassNamesType>,
+    default: undefined,
+  },
+  /** 语义化 styles（支持对象与函数式）：root / input / separator */
+  styles: {
+    type: [Object, Function] as PropType<OTPStylesType>,
+    default: undefined,
+  },
   /** 位数 */
   length: { type: Number, default: 6 },
   size: String as PropType<'large' | 'middle' | 'small'>,
@@ -33,6 +64,8 @@ export const otpProps = () => ({
   inputMode: String,
   'onUpdate:value': Function as PropType<(value: string) => void>,
 });
+
+export type OTPProps = Partial<ExtractPropTypes<ReturnType<typeof otpProps>>>;
 
 const OTP = defineComponent({
   compatConfig: { MODE: 3 },
@@ -140,8 +173,9 @@ const OTP = defineComponent({
     };
 
     return () => {
+      const mergedVariant = props.variant ?? otpConfig.value?.variant;
       const inputSharedProps = {
-        variant: props.variant,
+        variant: mergedVariant,
         disabled: props.disabled,
         status: mergedStatus.value,
         mask: props.mask,
@@ -149,9 +183,26 @@ const OTP = defineComponent({
         inputMode: props.inputMode,
       };
 
-      const mergedStyle = otpConfig.value?.style
-        ? [otpConfig.value.style, attrs.style]
-        : attrs.style;
+      const semanticInfo = {
+        props: {
+          ...props,
+          variant: mergedVariant,
+          status: mergedStatus.value,
+        },
+      };
+      const mergedClassNames = mergeSemanticClassNames<OTPSemanticClassNames>(
+        resolveSemanticValue(otpConfig.value?.classNames, semanticInfo),
+        resolveSemanticValue(props.classNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles<OTPSemanticStyles>(
+        resolveSemanticValue(otpConfig.value?.styles, semanticInfo),
+        resolveSemanticValue(props.styles, semanticInfo),
+      );
+
+      const mergedStyle =
+        otpConfig.value?.style || mergedStyles.root
+          ? [otpConfig.value?.style, mergedStyles.root, attrs.style]
+          : attrs.style;
 
       return wrapSSR(
         <div
@@ -162,6 +213,7 @@ const OTP = defineComponent({
             prefixCls.value,
             otpConfig.value?.className,
             props.rootClassName,
+            mergedClassNames.root,
             {
               [`${prefixCls.value}-sm`]: props.size === 'small',
               [`${prefixCls.value}-lg`]: props.size === 'large',
@@ -189,7 +241,8 @@ const OTP = defineComponent({
                   index={index}
                   size={props.size}
                   htmlSize={1}
-                  class={`${prefixCls.value}-input`}
+                  class={classNames(`${prefixCls.value}-input`, mergedClassNames.input)}
+                  style={mergedStyles.input}
                   onChange={onInputChange}
                   value={singleValue}
                   onActiveChange={onInputActiveChange}
@@ -200,7 +253,12 @@ const OTP = defineComponent({
                   separatorNode !== null &&
                   separatorNode !== undefined &&
                   separatorNode !== false && (
-                    <span class={`${prefixCls.value}-separator`}>{separatorNode}</span>
+                    <span
+                      class={classNames(`${prefixCls.value}-separator`, mergedClassNames.separator)}
+                      style={mergedStyles.separator}
+                    >
+                      {separatorNode}
+                    </span>
                   )}
               </Fragment>
             );

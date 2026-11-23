@@ -5,7 +5,28 @@ import Search from './Search';
 import TextArea from './TextArea';
 import Password from './Password';
 import OTP from './OTP';
-export type { InputProps, TextAreaProps } from './inputProps';
+export type {
+  InputProps,
+  TextAreaProps,
+  InputSemanticName,
+  InputSemanticClassNames,
+  InputSemanticStyles,
+  InputClassNamesType,
+  InputStylesType,
+  TextAreaSemanticName,
+  TextAreaSemanticClassNames,
+  TextAreaSemanticStyles,
+  TextAreaClassNamesType,
+  TextAreaStylesType,
+} from './inputProps';
+export type {
+  OTPProps,
+  OTPSemanticName,
+  OTPSemanticClassNames,
+  OTPSemanticStyles,
+  OTPClassNamesType,
+  OTPStylesType,
+} from './OTP';
 Input.Group = Group;
 Input.Search = Search;
 Input.TextArea = TextArea;

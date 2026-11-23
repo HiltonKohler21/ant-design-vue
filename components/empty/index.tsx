@@ -6,7 +6,7 @@ import DefaultEmptyImg from './empty';
 import SimpleEmptyImg from './simple';
 import { filterEmpty } from '../_util/props-util';
 import type { VueNode } from '../_util/type';
-import { anyType, objectType, withInstall } from '../_util/type';
+import { anyType, objectType, someType, withInstall } from '../_util/type';
 import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import useConfigInject, {
   useComponentConfig,
@@ -16,20 +16,46 @@ import useConfigInject, {
 
 import useStyle from './style';
 
+const resolveSemanticValue = <T,>(
+  val: T | ((info: { props: any }) => T) | undefined,
+  info: { props: any },
+): T | undefined => (typeof val === 'function' ? (val as any)(info) : val);
+
 interface Locale {
   description?: string;
 }
 
-export const emptyProps = () => ({
+export type EmptySemanticName = 'root' | 'image' | 'description' | 'footer';
+export type EmptySemanticClassNames = SemanticNames<EmptySemanticName>;
+export type EmptySemanticStyles = SemanticStylesMap<EmptySemanticName>;
+
+const emptyBaseProps = () => ({
   prefixCls: String,
   rootClassName: String,
-  /** 语义化 classNames（antd 5.25+）：root / image / description / footer */
-  classNames: objectType<SemanticNames<'root' | 'image' | 'description' | 'footer'>>(),
-  /** 语义化 styles（antd 5.25+）：root / image / description / footer */
-  styles: objectType<SemanticStylesMap<'root' | 'image' | 'description' | 'footer'>>(),
   imageStyle: objectType<CSSProperties>(),
   image: anyType<VueNode>(),
   description: anyType<VueNode>(),
+});
+
+type EmptySemanticProps = Partial<ExtractPropTypes<ReturnType<typeof emptyBaseProps>>> & {
+  classNames?: any;
+  styles?: any;
+};
+
+export type EmptyClassNamesType =
+  | EmptySemanticClassNames
+  | ((info: { props: EmptySemanticProps }) => EmptySemanticClassNames);
+
+export type EmptyStylesType =
+  | EmptySemanticStyles
+  | ((info: { props: EmptySemanticProps }) => EmptySemanticStyles);
+
+export const emptyProps = () => ({
+  ...emptyBaseProps(),
+  /** 语义化 classNames（antd 5.25+/6.x）：root / image / description / footer */
+  classNames: someType<EmptyClassNamesType>([Object, Function]),
+  /** 语义化 styles（antd 5.25+/6.x）：root / image / description / footer */
+  styles: someType<EmptyStylesType>([Object, Function]),
 });
 
 export type EmptyProps = Partial<ExtractPropTypes<ReturnType<typeof emptyProps>>>;
@@ -64,8 +90,15 @@ const Empty = defineComponent({
         prefixCls: _prefixCls,
         ...restProps
       } = { ...props, ...attrs };
-      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, propClassNames);
-      const mergedStyles = mergeSemanticStyles(contextStyles.value, propStyles);
+      const semanticInfo = { props: { ...props } };
+      const mergedClassNames = mergeSemanticClassNames<EmptySemanticClassNames>(
+        resolveSemanticValue(contextClassNames.value, semanticInfo),
+        resolveSemanticValue(propClassNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles<EmptySemanticStyles>(
+        resolveSemanticValue(contextStyles.value, semanticInfo),
+        resolveSemanticValue(propStyles, semanticInfo),
+      );
       const image =
         typeof mergedImage === 'function' ? (mergedImage as () => VueNode)() : mergedImage;
       const isNormal =

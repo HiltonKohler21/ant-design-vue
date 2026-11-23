@@ -3,6 +3,15 @@ import Collapse, { collapseProps } from './Collapse';
 import CollapsePanel, { collapsePanelProps } from './CollapsePanel';
 export type { CollapseProps } from './Collapse';
 export type { CollapsePanelProps } from './CollapsePanel';
+export type {
+  ExpandIconPlacement,
+  ExpandIconPosition,
+  CollapseSemanticName,
+  CollapseSemanticClassNames,
+  CollapseSemanticStyles,
+  CollapseClassNamesType,
+  CollapseStylesType,
+} from './commonProps';
 
 Collapse.Panel = CollapsePanel;
 

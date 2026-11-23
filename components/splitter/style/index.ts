@@ -34,6 +34,7 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
     controlItemBgHover,
     controlItemBgActive,
     controlItemBgActiveHover,
+    colorPrimary,
     prefixCls,
   } = token;
   const splitBarCls = `${componentCls}-bar`;
@@ -90,6 +91,11 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
               background: controlItemBgActiveHover,
             },
           },
+          [`&-active${splitBarCls}-dragger-customize`]: {
+            [`${splitBarCls}-dragger-icon`]: {
+              color: colorPrimary,
+            },
+          },
           [`&-disabled${splitBarCls}-dragger`]: {
             zIndex: 0,
             '&, &:hover, &-active': {
@@ -97,6 +103,20 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
               '&::before': {
                 background: controlItemBgHover,
               },
+            },
+            '&::after': {
+              display: 'none',
+            },
+            [`${splitBarCls}-dragger-icon`]: {
+              display: 'none',
+            },
+          },
+          '&-customize': {
+            [`${splitBarCls}-dragger-icon`]: {
+              ...centerStyle,
+              display: 'flex',
+              alignItems: 'center',
+              color: colorFill,
             },
             '&::after': {
               display: 'none',
@@ -115,16 +135,19 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          '&:hover': {
+          [`&:hover:not(${splitBarCls}-collapse-bar-customize)`]: {
             background: controlItemBgActive,
           },
-          '&:active': {
+          [`&:active:not(${splitBarCls}-collapse-bar-customize)`]: {
             background: controlItemBgActiveHover,
           },
           [`${splitBarCls}-collapse-icon`]: {
             display: 'flex',
             alignItems: 'center',
           },
+        },
+        [`${splitBarCls}-collapse-bar-customize`]: {
+          background: 'transparent',
         },
         '&:hover, &:active, &:focus-within': {
           [`${splitBarCls}-collapse-bar-hover-only`]: {

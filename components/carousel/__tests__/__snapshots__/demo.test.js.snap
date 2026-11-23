@@ -308,6 +308,88 @@ exports[`renders ./components/carousel/demo/customPaging.vue correctly 1`] = `
 </div>
 `;
 
+exports[`renders ./components/carousel/demo/dot-duration.vue correctly 1`] = `
+<div class="ant-carousel" style="--dot-duration: 5000ms;">
+  <div class="slick-slider slick-initialized" dir="ltr">
+    <!---->
+    <div class="slick-list">
+      <div class="slick-track" style="width: 900%;">
+        <div class="slick-slide slick-cloned" tabindex="-1" data-index="-1" aria-hidden="true" style="width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>4</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="0" aria-hidden="false" class="slick-slide slick-active slick-current" style="outline: none; width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>1</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="1" aria-hidden="true" class="slick-slide" style="outline: none; width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>2</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="2" aria-hidden="true" class="slick-slide" style="outline: none; width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>3</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="3" aria-hidden="true" class="slick-slide" style="outline: none; width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>4</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="4" aria-hidden="true" class="slick-slide slick-cloned" style="width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>1</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="5" aria-hidden="true" class="slick-slide slick-cloned" style="width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>2</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="6" aria-hidden="true" class="slick-slide slick-cloned" style="width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>3</h3>
+            </div>
+          </div>
+        </div>
+        <div tabindex="-1" data-index="7" aria-hidden="true" class="slick-slide slick-cloned" style="width: 11.11111111111111%;">
+          <div>
+            <div tabindex="-1" style="width: 100%; display: inline-block;">
+              <h3>4</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <ul style="display: block;" class="slick-dots slick-dots-bottom">
+      <li class="slick-active"><button>1</button></li>
+      <li class=""><button>2</button></li>
+      <li class=""><button>3</button></li>
+      <li class=""><button>4</button></li>
+    </ul>
+  </div>
+</div>
+`;
+
 exports[`renders ./components/carousel/demo/fade.vue correctly 1`] = `
 <div class="ant-carousel">
   <div class="slick-slider slick-initialized" dir="ltr">

@@ -23,15 +23,20 @@ A content area which can be collapsed and expanded.
 | accordion | If `true`, `Collapse` renders as `Accordion` | boolean | `false` |  |
 | activeKey(v-model) | Key of the active panel | string\[] \| string <br> number\[] \| number | No default value. In [accordion mode](#components-collapse-demo-accordion), it's the key of the first panel. |  |
 | bordered | Toggles rendering of the border around the collapse block | boolean | `true` |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | collapsible | Specify whether the panels of children be collapsible or the trigger area of collapsible | `header` \| `icon` \| `disabled` | - | 4.0 |
 | defaultActiveKey | Key of the initial active panel | string\[] \| string <br> number\[] \| number | - |  |
 | ~~destroyInactivePanel~~ | Destroy Inactive Panel (deprecated, please use `destroyOnHidden` instead) | boolean | `false` |  |
 | destroyOnHidden | Destroy inactive panel when collapsed | boolean | `false` | 4.3.0 |
 | expandIcon | Allow to customize collapse icon | Function(props):VNode \| v-slot:expandIcon="props" | - |  |
-| expandIconPosition | Set expand icon position | `start` \| `end` | - | 4.0 |
+| expandIconPlacement | Set expand icon placement | `start` \| `end` | `start` | 4.3.0 |
+| ~~expandIconPosition~~ | Set expand icon position, please use `expandIconPlacement` instead | `start` \| `end` \| `left` \| `right` | - | 4.0 |
 | ghost | Make the collapse borderless and its background transparent | boolean | false | 3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | size | Set the size of collapse | `large` \| `middle` \| `small` | `middle` | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
+
+> Supported `SemanticDOM` keys: `root` \| `header` \| `title` \| `body` \| `icon`.
 
 ### events
 

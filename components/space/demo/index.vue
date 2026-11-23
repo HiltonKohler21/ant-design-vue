@@ -10,6 +10,7 @@
     <Compact />
     <CompactButtons />
     <CompactButtonVertical />
+    <Addon />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -22,6 +23,7 @@ import Split from './split.vue';
 import Compact from './compact.vue';
 import CompactButtons from './compact-buttons.vue';
 import CompactButtonVertical from './compact-button-vertical.vue';
+import Addon from './addon.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -40,6 +42,7 @@ export default defineComponent({
     Compact,
     CompactButtons,
     CompactButtonVertical,
+    Addon,
     Size,
   },
   setup() {

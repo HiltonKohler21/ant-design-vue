@@ -1,5 +1,29 @@
 import type { CSSProperties } from 'vue';
-/** converting camel-cased strings to be lowercase and link it with Separato */
+
+export interface WatermarkFontType {
+  color?: CanvasFillStrokeStyles['fillStyle'];
+  fontSize?: number | string;
+  fontWeight?: 'normal' | 'light' | 'lighter' | 'weight' | 'bold' | 'bolder' | number;
+  fontStyle?: 'none' | 'normal' | 'italic' | 'oblique';
+  fontFamily?: string;
+  textAlign?: CanvasTextAlign;
+}
+
+export type WatermarkFont = WatermarkFontType;
+
+export interface WatermarkText {
+  text: string;
+  font?: WatermarkFontType;
+}
+
+export type WatermarkContent = string | WatermarkText;
+
+export interface WatermarkContentLine {
+  text: string;
+  font: Required<WatermarkFontType>;
+}
+
+/** converting camel-cased strings to be lowercase and link it with Separator */
 export function toLowercaseSeparator(key: string) {
   return key.replace(/([A-Z])/g, '-$1').toLowerCase();
 }
@@ -13,6 +37,61 @@ export function getStyleStr(style: CSSProperties): string {
 /** Returns the ratio of the device's physical pixel resolution to the css pixel resolution */
 export function getPixelRatio() {
   return window.devicePixelRatio || 1;
+}
+
+export function getFontSize(font: Required<WatermarkFontType>, ratio = 1): number {
+  return Number(font.fontSize) * ratio;
+}
+
+export function getCanvasFont(
+  font: Required<WatermarkFontType>,
+  ratio = 1,
+  lineHeight?: number,
+): string {
+  const mergedLineHeight = lineHeight === undefined ? '' : `/${lineHeight}px`;
+  const fontStyle = font.fontStyle === 'none' ? 'normal' : font.fontStyle;
+
+  return `${fontStyle} normal ${font.fontWeight} ${getFontSize(font, ratio)}px${mergedLineHeight} ${
+    font.fontFamily
+  }`;
+}
+
+export function isWatermarkText(
+  content: WatermarkContent | null | undefined,
+): content is WatermarkText {
+  return typeof content === 'object' && content !== null && 'text' in content;
+}
+
+export function getContentLines(
+  content: WatermarkContent | WatermarkContent[] | undefined,
+  defaultFont: Required<WatermarkFontType>,
+): WatermarkContentLine[] {
+  if (content === undefined || content === null) {
+    return [];
+  }
+  const list = Array.isArray(content) ? content : [content];
+  return list
+    .filter((item): item is WatermarkContent => item !== undefined && item !== null)
+    .map(item => {
+      if (isWatermarkText(item)) {
+        const lineFont = item.font || {};
+        return {
+          text: item.text ?? '',
+          font: {
+            color: lineFont.color ?? defaultFont.color,
+            fontSize: lineFont.fontSize ?? defaultFont.fontSize,
+            fontWeight: lineFont.fontWeight ?? defaultFont.fontWeight,
+            fontStyle: lineFont.fontStyle ?? defaultFont.fontStyle,
+            fontFamily: lineFont.fontFamily ?? defaultFont.fontFamily,
+            textAlign: lineFont.textAlign ?? defaultFont.textAlign,
+          },
+        };
+      }
+      return {
+        text: String(item),
+        font: defaultFont,
+      };
+    });
 }
 
 /** Rotate with the watermark as the center point */

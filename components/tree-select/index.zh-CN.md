@@ -20,7 +20,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Y5pcQLplFu4AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | allowClear | 显示清除按钮 | boolean | false |  |
-| classNames | 语义化结构 class | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | 语义化结构 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
 | defaultValue | 指定默认选中的条目 | string/string\[] | - |  |
 | disabled | 是否禁用 | boolean | false |  |
 | dropdownMatchSelectWidth | 下拉菜单和选择器同宽（已废弃，请使用 `popupMatchSelectWidth`） | boolean \| number | true |  |
@@ -40,6 +40,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Y5pcQLplFu4AAA
 | popupClassName | 下拉菜单的 className 属性 | string | - | 4.0 |
 | popupMatchSelectWidth | 下拉菜单和选择器同宽。默认将设置 `min-width`，当值小于选择框宽度时会被忽略。`false` 时会关闭虚拟滚动 | boolean \| number | true | 4.3.0 |
 | popupRender | 自定义下拉框内容 | `(menu: VueNode) => VueNode \| v-slot:popupRender` | - | 4.3.0 |
+| prefix | 自定义前缀 | VNode \| slot | - | 4.3.0 |
 | replaceFields | 替换 treeNode 中 label,value,key,children 字段为 treeData 中对应的字段 | object | {children:'children', label:'title', key:'key', value: 'value' } | 1.6.1 (3.0.0 废弃) |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
 | searchPlaceholder | 搜索框默认文字 | string\|slot | - |  |
@@ -48,8 +49,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Y5pcQLplFu4AAA
 | showSearch | 在下拉中显示搜索框(仅在单选模式下生效) | boolean | false |  |
 | size | 选择框大小，可选 `large` `small` | string | 'default' |  |
 | status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
-| styles | 语义化结构 style | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
-| suffixIcon | 自定义的选择框后缀图标 | VNode \| slot | - |  |
+| styles | 语义化结构 style（支持对象与函数式 `({ props }) => ...`） | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
+| suffix | 自定义的选择框后缀图标（替代 `suffixIcon`） | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | 自定义的选择框后缀图标（已废弃，请使用 `suffix` 替代） | VNode \| slot | - |  |
 | switcherIcon | 自定义树节点的展开/折叠图标 | VNode \| v-slot:switcherIcon | - |  |
 | tagRender | 自定义 tag 内容，多选时生效 | slot | - | 3.0 |
 | title | 自定义标题 | slot |  | 3.0.0 |

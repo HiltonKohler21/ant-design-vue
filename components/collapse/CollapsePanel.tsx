@@ -56,14 +56,20 @@ export default defineComponent({
         expandIcon = slots.expandIcon,
         extra = slots.extra?.(),
         collapsible,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
       } = props;
       const disabled = collapsible === 'disabled';
       const prefixClsValue = prefixCls.value;
-      const headerCls = classNames(`${prefixClsValue}-header`, {
-        [headerClass]: headerClass,
-        [`${prefixClsValue}-header-collapsible-only`]: collapsible === 'header',
-        [`${prefixClsValue}-icon-collapsible-only`]: collapsible === 'icon',
-      });
+      const headerCls = classNames(
+        `${prefixClsValue}-header`,
+        {
+          [headerClass]: headerClass,
+          [`${prefixClsValue}-header-collapsible-only`]: collapsible === 'header',
+          [`${prefixClsValue}-icon-collapsible-only`]: collapsible === 'icon',
+        },
+        semanticClassNames?.header,
+      );
       const itemCls = classNames({
         [`${prefixClsValue}-item`]: true,
         [`${prefixClsValue}-item-active`]: isActive,
@@ -84,6 +90,8 @@ export default defineComponent({
           isActive={isActive}
           forceRender={forceRender}
           role={accordion ? 'tabpanel' : null}
+          classNames={semanticClassNames}
+          styles={semanticStyles}
           v-slots={{ default: slots.default }}
         ></PanelContent>
       );
@@ -97,6 +105,7 @@ export default defineComponent({
         <div {...attrs} class={itemCls}>
           <div
             class={headerCls}
+            style={semanticStyles?.header}
             onClick={() => !['header', 'icon'].includes(collapsible) && handleItemClick()}
             role={accordion ? 'tab' : 'button'}
             tabindex={disabled ? -1 : 0}
@@ -106,7 +115,8 @@ export default defineComponent({
             {showArrow && icon}
             <span
               onClick={() => collapsible === 'header' && handleItemClick()}
-              class={`${prefixClsValue}-header-text`}
+              class={classNames(`${prefixClsValue}-header-text`, semanticClassNames?.title)}
+              style={semanticStyles?.title}
             >
               {header}
             </span>

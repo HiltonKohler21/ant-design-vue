@@ -11,7 +11,8 @@ import type { VNode, VNodeTypes, ExtractPropTypes, CSSProperties } from 'vue';
 import { watchEffect, computed, defineComponent, ref } from 'vue';
 import type { RadioChangeEvent } from '../radio/interface';
 import type { TransferDirection, TransferItem } from './index';
-import { stringType, arrayType, booleanType } from '../_util/type';
+import type { TransferSectionSemanticClassNames, TransferSectionSemanticStyles } from './interface';
+import { stringType, arrayType, booleanType, objectType } from '../_util/type';
 import { groupKeysMap } from '../_util/transKeys';
 import type { CustomSlotsType } from '../_util/type';
 
@@ -58,6 +59,8 @@ export const transferListProps = {
   selectionsIcon: PropTypes.any,
   showRemove: booleanType(),
   pagination: PropTypes.any,
+  classNames: objectType<TransferSectionSemanticClassNames>(),
+  styles: objectType<TransferSectionSemanticStyles>(),
   onItemSelect: Function,
   onItemSelectAll: Function,
   onItemRemove: Function,
@@ -255,9 +258,14 @@ export default defineComponent({
 
       return (
         <div
-          class={
-            showSearch ? `${prefixCls}-body ${prefixCls}-body-with-search` : `${prefixCls}-body`
-          }
+          class={classNames(
+            `${prefixCls}-body`,
+            {
+              [`${prefixCls}-body-with-search`]: showSearch,
+            },
+            props.classNames?.body,
+          )}
+          style={props.styles?.body}
           ref={transferNode}
         >
           {search}
@@ -286,12 +294,14 @@ export default defineComponent({
         showSelectAll = true,
         showRemove,
         pagination,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
       } = props;
 
       // Custom Layout
       const footerDom = slots.footer?.({ ...props });
 
-      const listCls = classNames(prefixCls, {
+      const listCls = classNames(prefixCls, semanticClassNames?.section, {
         [`${prefixCls}-with-pagination`]: !!pagination,
         [`${prefixCls}-with-footer`]: !!footerDom,
       });
@@ -307,7 +317,14 @@ export default defineComponent({
         disabled,
       );
 
-      const listFooter = footerDom ? <div class={`${prefixCls}-footer`}>{footerDom}</div> : null;
+      const listFooter = footerDom ? (
+        <div
+          class={classNames(`${prefixCls}-footer`, semanticClassNames?.footer)}
+          style={semanticStyles?.footer}
+        >
+          {footerDom}
+        </div>
+      ) : null;
 
       const checkAllCheckbox = !showRemove && !pagination && getCheckBox({ disabled, prefixCls });
 
@@ -407,9 +424,16 @@ export default defineComponent({
         </Dropdown>
       );
 
+      const sectionStyle = semanticStyles?.section
+        ? [attrs.style as CSSProperties, semanticStyles.section]
+        : (attrs.style as CSSProperties);
+
       return (
-        <div class={listCls} style={attrs.style as CSSProperties}>
-          <div class={`${prefixCls}-header`}>
+        <div class={listCls} style={sectionStyle}>
+          <div
+            class={classNames(`${prefixCls}-header`, semanticClassNames?.header)}
+            style={semanticStyles?.header}
+          >
             {showSelectAll ? (
               <>
                 {checkAllCheckbox}
@@ -418,7 +442,12 @@ export default defineComponent({
             ) : null}
             <span class={`${prefixCls}-header-selected`}>
               <span>{getSelectAllLabel(checkedKeys.length, filteredItems.value.length)}</span>
-              <span class={`${prefixCls}-header-title`}>{slots.titleText?.()}</span>
+              <span
+                class={classNames(`${prefixCls}-header-title`, semanticClassNames?.title)}
+                style={semanticStyles?.title}
+              >
+                {slots.titleText?.()}
+              </span>
             </span>
           </div>
           {listBody}

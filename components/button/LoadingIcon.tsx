@@ -1,3 +1,4 @@
+import type { CSSProperties, PropType } from 'vue';
 import { defineComponent, nextTick, Transition } from 'vue';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 const getCollapsedWidth = (node: HTMLSpanElement) => {
@@ -30,13 +31,18 @@ export default defineComponent({
     prefixCls: String,
     loading: [Boolean, Object],
     existIcon: Boolean,
+    iconClassName: String,
+    iconStyle: Object as PropType<CSSProperties>,
   },
   setup(props) {
     return () => {
-      const { existIcon, prefixCls, loading } = props;
+      const { existIcon, prefixCls, loading, iconClassName, iconStyle } = props;
+      const spanClass = iconClassName
+        ? `${prefixCls}-loading-icon ${iconClassName}`
+        : `${prefixCls}-loading-icon`;
       if (existIcon) {
         return (
-          <span class={`${prefixCls}-loading-icon`}>
+          <span class={spanClass} style={iconStyle}>
             <LoadingOutlined />
           </span>
         );
@@ -57,7 +63,7 @@ export default defineComponent({
           onAfterLeave={resetStyle}
         >
           {visible ? (
-            <span class={`${prefixCls}-loading-icon`}>
+            <span class={spanClass} style={iconStyle}>
               <LoadingOutlined />
             </span>
           ) : null}

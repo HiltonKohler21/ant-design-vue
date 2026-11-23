@@ -31,7 +31,7 @@ The differences with Select are:
 | autofocus | Get focus when component mounted | boolean | false |  |
 | backfill | Backfill selected item into the input when using keyboard | boolean | false |  |
 | ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true | 4.0 |
-| classNames | Customize class for each semantic structure inside the component | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component (supports object and function `({ props }) => ...`) | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: AutoCompleteProps }) => ...)` | - | 4.3.0 |
 | clearIcon | Use slot custom clear icon | slot | `<CloseCircleFilled />` | 4.0 |
 | default (for customize input element) | Customize input element | slot | `<Input />` |  |
 | defaultActiveFirstOption | Whether active first option by default | boolean | true |  |
@@ -50,11 +50,14 @@ The differences with Select are:
 | ~~popupClassName~~ | The className of dropdown menu (deprecated, please use `classNames.popup.root` instead) | string | - | 4.0 |
 | popupMatchSelectWidth | Determine whether the popup menu and the select input are the same width. Default set `min-width` same as input. Will ignore when value less than select width. `false` will disable virtual scroll | boolean \| number | true | 4.3.0 |
 | popupRender | Customize popup content (supports prop and `#popupRender` slot, receives the menu VNode directly) | `(originNode: VNode) => VNode` \| slot | - | 4.3.0 |
+| prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | showSearch | Whether to support search | boolean | - |  |
 | size | Size of input | `large` \| `middle` \| `small` | - |  |
 | status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
-| styles | Customize inline style for each semantic structure inside the component | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: AutoCompleteProps }) => ...)` | - | 4.3.0 |
+| suffix | The custom suffix icon (replaces `suffixIcon`) | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | The custom suffix icon (deprecated, please use `suffix` instead) | VNode \| slot | - |  |
 | v-model:value | Selected option | string \| string\[] \| { key: string, label: string \| vNodes } \| Array&lt;{ key: string, label: string \| vNodes }> | - |  |
 | variant | Variants of selector | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 

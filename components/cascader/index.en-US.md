@@ -25,7 +25,7 @@ Cascade selection box.
 | allowClear | Whether allow clear | boolean | true |  |
 | autofocus | Get focus when component mounted | boolean | false |  |
 | ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true | 3.2 |
-| classNames | Customize class for each semantic structure inside the component | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component (supports object and function `({ props }) => ...`) | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: CascaderProps }) => ...)` | - | 4.3.0 |
 | clearIcon | The custom clear icon | slot | - | 3.2 |
 | changeOnSelect | (Work on single select) change value on each selection if set to true, see above demo for details | boolean | false |  |
 | defaultValue | Initial selected value | string\[] \| number\[] | \[] |  |
@@ -48,6 +48,7 @@ Cascade selection box.
 | placement | Use preset popup align config from builtinPlacements | `bottomLeft` \| `bottomRight` \| `topLeft` \| `topRight` | `bottomLeft` | 3.0 |
 | ~~popupClassName~~ | Additional className of popup overlay (deprecated, please use `classNames.popup.root` instead) | string | - | 4.0 |
 | popupRender | Customize popup content, receives the menu VNode `menuNode` directly (supports prop and `#popupRender` slot, replaces `dropdownRender`) | `(menuNode: VNode) => VNode` \| slot | - | 4.3.0 |
+| prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
 | removeIcon | The custom remove icon | slot | - | 3.2 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | searchValue | Set search value, need work with `showSearch` | string | - | 3.0 |
@@ -55,8 +56,9 @@ Cascade selection box.
 | showSearch | Whether show search input in single mode. | boolean \| [object](#showsearch) | false |  |
 | size | Input size | `large` \| `default` \| `small` | `default` |  |
 | status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
-| styles | Customize inline style for each semantic structure inside the component | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
-| suffixIcon | The custom suffix icon | string \| VNode \| slot | - |  |
+| styles | Customize inline style for each semantic structure inside the component (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: CascaderProps }) => ...)` | - | 4.3.0 |
+| suffix | The custom suffix icon (replaces `suffixIcon`) | string \| VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | The custom suffix icon (deprecated, please use `suffix` instead) | string \| VNode \| slot | - |  |
 | tagRender | Customize tag render when `multiple` | slot | - | 3.0 |
 | value(v-model) | Selected value | string\[] \| number\[] | - |  |
 | variant | Variants of selector | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |

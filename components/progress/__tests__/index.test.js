@@ -382,4 +382,206 @@ describe('Progress', () => {
     expect(root.classes()).toContain('cp-progress');
     expect(root.element.style.marginTop).toBe('6px');
   });
+
+  it('supports railColor alias taking precedence over trailColor on line, circle, and steps', () => {
+    const lineWrapper = mount(Progress, {
+      props: { percent: 40, railColor: 'rgb(10, 20, 30)', trailColor: 'rgb(99, 99, 99)' },
+    });
+    expect(lineWrapper.find('.ant-progress-inner').element.style.backgroundColor).toBe(
+      'rgb(10, 20, 30)',
+    );
+
+    const stepsWrapper = mount(Progress, {
+      props: { steps: 4, percent: 25, railColor: 'rgb(11, 22, 33)', trailColor: 'rgb(88, 88, 88)' },
+    });
+    expect(stepsWrapper.findAll('.ant-progress-steps-item')[2].element.style.backgroundColor).toBe(
+      'rgb(11, 22, 33)',
+    );
+
+    const circleWrapper = mount(Progress, {
+      props: {
+        type: 'circle',
+        percent: 50,
+        railColor: '#abcdef',
+        trailColor: '#111111',
+      },
+    });
+    expect(circleWrapper.find('.ant-progress-circle-trail').attributes('stroke')).toBe('#abcdef');
+  });
+
+  it('supports gapPlacement with RTL-aware start/end mapping and precedence over gapPosition', () => {
+    const ltrStart = mount(Progress, {
+      props: { type: 'dashboard', percent: 50, gapPlacement: 'start', gapPosition: 'top' },
+    });
+    const ltrLeft = mount(Progress, {
+      props: { type: 'dashboard', percent: 50, gapPosition: 'left' },
+    });
+    expect(ltrStart.find('.ant-progress-circle-trail').attributes('d')).toBe(
+      ltrLeft.find('.ant-progress-circle-trail').attributes('d'),
+    );
+
+    const ltrEnd = mount(Progress, {
+      props: { type: 'dashboard', percent: 50, gapPlacement: 'end' },
+    });
+    const ltrRight = mount(Progress, {
+      props: { type: 'dashboard', percent: 50, gapPosition: 'right' },
+    });
+    expect(ltrEnd.find('.ant-progress-circle-trail').attributes('d')).toBe(
+      ltrRight.find('.ant-progress-circle-trail').attributes('d'),
+    );
+
+    const rtlStart = mount({
+      render() {
+        return (
+          <ConfigProvider direction="rtl">
+            <Progress type="dashboard" percent={50} gapPlacement="start" />
+          </ConfigProvider>
+        );
+      },
+    });
+    expect(rtlStart.find('.ant-progress-circle-trail').attributes('d')).toBe(
+      ltrRight.find('.ant-progress-circle-trail').attributes('d'),
+    );
+
+    const rtlEnd = mount({
+      render() {
+        return (
+          <ConfigProvider direction="rtl">
+            <Progress type="dashboard" percent={50} gapPlacement="end" />
+          </ConfigProvider>
+        );
+      },
+    });
+    expect(rtlEnd.find('.ant-progress-circle-trail').attributes('d')).toBe(
+      ltrLeft.find('.ant-progress-circle-trail').attributes('d'),
+    );
+  });
+
+  it('supports static and functional classNames/styles merged with ConfigProvider.progress', () => {
+    const lineWrapper = mount({
+      render() {
+        return (
+          <ConfigProvider
+            progress={{
+              classNames: ({ props }) => ({
+                root: `ctx-root-${props.type}`,
+                rail: 'ctx-rail',
+              }),
+              styles: {
+                root: { padding: '4px' },
+                indicator: { fontWeight: 'bold' },
+              },
+            }}
+          >
+            <Progress
+              percent={50}
+              classNames={({ props }) => ({
+                root: `prop-root-${props.percent}`,
+                body: 'prop-body',
+                rail: 'prop-rail',
+                track: 'prop-track',
+                indicator: 'prop-indicator',
+              })}
+              styles={({ props }) => ({
+                root: { marginBottom: props.percent === 50 ? '8px' : '0px' },
+                body: { opacity: '0.9' },
+                rail: { borderRadius: '2px' },
+                track: { boxShadow: 'none' },
+                indicator: { color: 'rgb(1, 2, 3)' },
+              })}
+            />
+          </ConfigProvider>
+        );
+      },
+    });
+
+    const root = lineWrapper.find('.ant-progress');
+    expect(root.classes()).toContain('ctx-root-line');
+    expect(root.classes()).toContain('prop-root-50');
+    expect(root.attributes('style')).toContain('padding: 4px');
+    expect(root.attributes('style')).toContain('margin-bottom: 8px');
+
+    const body = lineWrapper.find('.ant-progress-outer');
+    expect(body.classes()).toContain('prop-body');
+    expect(body.attributes('style')).toContain('opacity: 0.9');
+
+    const rail = lineWrapper.find('.ant-progress-inner');
+    expect(rail.classes()).toContain('ctx-rail');
+    expect(rail.classes()).toContain('prop-rail');
+    expect(rail.attributes('style')).toContain('border-radius: 2px');
+
+    const track = lineWrapper.find('.ant-progress-bg');
+    expect(track.classes()).toContain('prop-track');
+    expect(track.attributes('style')).toContain('box-shadow: none');
+
+    const indicator = lineWrapper.find('.ant-progress-text');
+    expect(indicator.classes()).toContain('prop-indicator');
+    expect(indicator.attributes('style')).toContain('font-weight: bold');
+    expect(indicator.attributes('style')).toContain('color: rgb(1, 2, 3)');
+
+    // Circle semantic classNames & styles
+    const circleWrapper = mount(Progress, {
+      props: {
+        type: 'circle',
+        percent: 60,
+        classNames: {
+          root: 'c-root',
+          body: 'c-body',
+          rail: 'c-rail',
+          track: 'c-track',
+          indicator: 'c-indicator',
+        },
+        styles: {
+          body: { padding: '2px' },
+          rail: { opacity: '0.4' },
+          track: { opacity: '0.8' },
+          indicator: { letterSpacing: '1px' },
+        },
+      },
+    });
+    expect(circleWrapper.find('.ant-progress').classes()).toContain('c-root');
+    expect(circleWrapper.find('.ant-progress-inner').classes()).toContain('c-body');
+    expect(circleWrapper.find('.ant-progress-inner').attributes('style')).toContain('padding: 2px');
+    expect(circleWrapper.find('.ant-progress-circle-trail').classes()).toContain('c-rail');
+    expect(circleWrapper.find('.ant-progress-circle-trail').attributes('style')).toContain(
+      'opacity: 0.4',
+    );
+    expect(circleWrapper.find('.ant-progress-circle-path').classes()).toContain('c-track');
+    expect(circleWrapper.find('.ant-progress-circle-path').attributes('style')).toContain(
+      'opacity: 0.8',
+    );
+    expect(circleWrapper.find('.ant-progress-text').classes()).toContain('c-indicator');
+    expect(circleWrapper.find('.ant-progress-text').attributes('style')).toContain(
+      'letter-spacing: 1px',
+    );
+
+    // Steps semantic classNames & styles
+    const stepsWrapper = mount(Progress, {
+      props: {
+        steps: 3,
+        percent: 34,
+        classNames: {
+          body: 's-body',
+          rail: 's-rail',
+          track: 's-track',
+          indicator: 's-indicator',
+        },
+        styles: {
+          body: { gap: '2px' },
+          rail: { opacity: '0.3' },
+          track: { opacity: '0.95' },
+        },
+      },
+    });
+    expect(stepsWrapper.find('.ant-progress-steps-outer').classes()).toContain('s-body');
+    expect(stepsWrapper.find('.ant-progress-steps-outer').attributes('style')).toContain(
+      'gap: 2px',
+    );
+    const items = stepsWrapper.findAll('.ant-progress-steps-item');
+    expect(items[0].classes()).toContain('s-track');
+    expect(items[0].attributes('style')).toContain('opacity: 0.95');
+    expect(items[1].classes()).toContain('s-rail');
+    expect(items[1].attributes('style')).toContain('opacity: 0.3');
+    expect(stepsWrapper.find('.ant-progress-text').classes()).toContain('s-indicator');
+  });
 });

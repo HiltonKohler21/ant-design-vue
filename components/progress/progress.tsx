@@ -9,9 +9,17 @@ import Line from './Line';
 import Circle from './Circle';
 import Steps from './Steps';
 import { getSize, getSuccessPercent, validProgress } from './utils';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import { useMergeSemantic } from '../_util/hooks/useMergeSemantic';
 import devWarning from '../vc-util/devWarning';
-import type { PercentPositionType } from './props';
+import type {
+  PercentPositionType,
+  ProgressClassNamesType,
+  ProgressProps,
+  ProgressSemanticClassNames,
+  ProgressSemanticStyles,
+  ProgressStylesType,
+} from './props';
 import { progressProps, progressStatuses } from './props';
 import type { VueNode, CustomSlotsType } from '../_util/type';
 import useStyle from './style';
@@ -34,7 +42,13 @@ export default defineComponent({
     format?: any;
   }>,
   setup(props, { slots, attrs }) {
-    const { prefixCls, direction, configProvider } = useConfigInject('progress', props);
+    const { prefixCls, direction } = useConfigInject('progress', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('progress');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     if (process.env.NODE_ENV !== 'production') {
       devWarning(
@@ -48,6 +62,7 @@ export default defineComponent({
     const mergedStrokeLinecap = computed(() =>
       props.rounding === true ? 'round' : props.strokeLinecap,
     );
+    const mergedRailColor = computed(() => props.railColor ?? props.trailColor);
     const strokeColorNotArray = computed(() =>
       Array.isArray(props.strokeColor) ? props.strokeColor[0] : props.strokeColor,
     );
@@ -93,6 +108,23 @@ export default defineComponent({
       }
       return status || 'normal';
     });
+
+    const mergedPropsForSemantic = computed<ProgressProps>(() => ({
+      ...props,
+      status: progressStatus.value,
+      railColor: mergedRailColor.value,
+      gapPlacement: props.gapPlacement ?? props.gapPosition,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      ProgressSemanticClassNames,
+      ProgressSemanticStyles,
+      ProgressProps
+    >(
+      () => [contextClassNames.value as ProgressClassNamesType, props.classNames],
+      () => [contextStyles.value as ProgressStylesType, props.styles],
+      () => ({ props: mergedPropsForSemantic.value }),
+    );
 
     const classString = computed(() => {
       const { type, showInfo, size, steps } = props;
@@ -159,7 +191,9 @@ export default defineComponent({
                   [`${prefixCls.value}-text-${infoPosition}`]: true,
                 }
               : undefined,
+            mergedClassNames.value.indicator,
           ]}
+          style={mergedStyles.value.indicator}
           title={title === undefined && typeof text === 'string' ? text : undefined}
         >
           {text}
@@ -170,7 +204,6 @@ export default defineComponent({
     return () => {
       const { type, steps, title } = props;
       const { class: cls, style, ...restAttrs } = attrs;
-      const contextProgress = configProvider.progress?.value;
       const progressInfo = renderProcessInfo();
       let progress: VueNode;
       // Render progress shape
@@ -178,6 +211,9 @@ export default defineComponent({
         progress = steps ? (
           <Steps
             {...props}
+            railColor={mergedRailColor.value}
+            classNames={mergedClassNames.value}
+            styles={mergedStyles.value}
             strokeColor={strokeColorNotGradient.value}
             prefixCls={prefixCls.value}
             steps={steps}
@@ -187,6 +223,9 @@ export default defineComponent({
         ) : (
           <Line
             {...props}
+            railColor={mergedRailColor.value}
+            classNames={mergedClassNames.value}
+            styles={mergedStyles.value}
             strokeLinecap={mergedStrokeLinecap.value}
             strokeColor={strokeColorNotArray.value}
             prefixCls={prefixCls.value}
@@ -200,6 +239,10 @@ export default defineComponent({
         progress = (
           <Circle
             {...props}
+            railColor={mergedRailColor.value}
+            classNames={mergedClassNames.value}
+            styles={mergedStyles.value}
+            direction={direction.value}
             strokeLinecap={mergedStrokeLinecap.value}
             prefixCls={prefixCls.value}
             strokeColor={strokeColorNotArray.value}
@@ -213,8 +256,8 @@ export default defineComponent({
         <div
           role="progressbar"
           {...restAttrs}
-          class={[classString.value, contextProgress?.className, cls]}
-          style={[contextProgress?.style, style as any]}
+          class={[classString.value, contextClassName.value, mergedClassNames.value.root, cls]}
+          style={[contextStyle.value, mergedStyles.value.root, style as any]}
           title={title}
         >
           {progress}

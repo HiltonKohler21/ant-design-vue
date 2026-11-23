@@ -16,12 +16,21 @@ import isNumeric from '../_util/isNumeric';
 import useStyle from './style';
 import type { PresetColorKey } from '../theme/interface';
 import type { LiteralUnion, CustomSlotsType } from '../_util/type';
-import { objectType } from '../_util/type';
+import { someType } from '../_util/type';
 import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import type { PresetStatusColorType } from '../_util/colors';
 import { isPresetColor } from '../_util/colors';
 
-export const badgeProps = () => ({
+const resolveSemanticValue = <T,>(
+  val: T | ((info: { props: any }) => T) | undefined,
+  info: { props: any },
+): T | undefined => (typeof val === 'function' ? (val as any)(info) : val);
+
+export type BadgeSemanticName = 'root' | 'indicator';
+export type BadgeSemanticClassNames = SemanticNames<BadgeSemanticName>;
+export type BadgeSemanticStyles = SemanticStylesMap<BadgeSemanticName>;
+
+const badgeBaseProps = () => ({
   rootClassName: String,
   /** Number to show in badge */
   count: PropTypes.any.def(null),
@@ -39,10 +48,27 @@ export const badgeProps = () => ({
   offset: Array as unknown as PropType<[number | string, number | string]>,
   numberStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
   title: String,
-  /** 语义化 classNames（antd 5.25+）：root / indicator */
-  classNames: objectType<SemanticNames<'root' | 'indicator'>>(),
-  /** 语义化 styles（antd 5.25+）：root / indicator */
-  styles: objectType<SemanticStylesMap<'root' | 'indicator'>>(),
+});
+
+type BadgeSemanticProps = Partial<ExtractPropTypes<ReturnType<typeof badgeBaseProps>>> & {
+  classNames?: any;
+  styles?: any;
+};
+
+export type BadgeClassNamesType =
+  | BadgeSemanticClassNames
+  | ((info: { props: BadgeSemanticProps }) => BadgeSemanticClassNames);
+
+export type BadgeStylesType =
+  | BadgeSemanticStyles
+  | ((info: { props: BadgeSemanticProps }) => BadgeSemanticStyles);
+
+export const badgeProps = () => ({
+  ...badgeBaseProps(),
+  /** 语义化 classNames（antd 5.25+/6.x）：root / indicator */
+  classNames: someType<BadgeClassNamesType>([Object, Function]),
+  /** 语义化 styles（antd 5.25+/6.x）：root / indicator */
+  styles: someType<BadgeStylesType>([Object, Function]),
 });
 
 export type BadgeProps = Partial<ExtractPropTypes<ReturnType<typeof badgeProps>>>;
@@ -186,20 +212,32 @@ export default defineComponent({
       const statusTextNode =
         visible || !text ? null : <span class={`${pre}-status-text`}>{text}</span>;
 
+      const semanticInfo = {
+        props: {
+          ...props,
+        },
+      };
+      const mergedClassNames = mergeSemanticClassNames<BadgeSemanticClassNames>(
+        resolveSemanticValue(contextClassNames.value, semanticInfo),
+        resolveSemanticValue(props.classNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles<BadgeSemanticStyles>(
+        resolveSemanticValue(contextStyles.value, semanticInfo),
+        resolveSemanticValue(props.styles, semanticInfo),
+      );
+
       // >>> Display Component
+      const displayNodeProps: Record<string, any> = {
+        style: { ...mergedStyle, ...mergedStyles.indicator },
+      };
+      if (mergedClassNames.indicator) {
+        displayNodeProps.class = mergedClassNames.indicator;
+      }
       const displayNode =
         typeof count === 'object' || (count === undefined && slots.count)
-          ? cloneElement(
-              count ?? slots.count?.(),
-              {
-                style: mergedStyle,
-              },
-              false,
-            )
+          ? cloneElement(count ?? slots.count?.(), displayNodeProps, false)
           : null;
 
-      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
-      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
       const badgeClassName = classNames(
         pre,
         props.rootClassName,
@@ -258,7 +296,7 @@ export default defineComponent({
               class={classNames(scrollNumberCls.value, mergedClassNames.indicator)}
               count={displayCount.value}
               title={titleNode}
-              style={[scrollNumberStyle, mergedStyles.indicator]}
+              style={{ ...scrollNumberStyle, ...mergedStyles.indicator }}
               key="scrollNumber"
             >
               {displayNode}

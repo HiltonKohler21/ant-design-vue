@@ -21,10 +21,11 @@ A carousel component. Scales with its container.
 | --- | --- | --- | --- | --- |
 | adaptiveHeight | Adjust the slide's height automatically | boolean | `false` |  |
 | arrows | Whether to show the arrow buttons | boolean | `false` |  |
-| autoplay | Whether to scroll automatically | boolean | `false` |  |
+| autoplay | Whether to scroll automatically; pass `{ dotDuration: true }` to display a progress bar on dots | `boolean \| { dotDuration?: boolean }` | `false` | 4.3.0 |
 | autoplaySpeed | Delay between each auto scroll (in milliseconds) | number | `3000` |  |
-| dotPosition | The position of the dots, which can be one of `top` `bottom` `left` `right` | string | `bottom` | 1.5.0 |
-| dots | Whether to show the dots at the bottom of the gallery | boolean | `true` |  |
+| dotPlacement | The position of the dots (`top`, `bottom`, `start`, `end`, RTL-aware), takes precedence over `dotPosition` | `top` \| `bottom` \| `start` \| `end` | `bottom` | 4.3.0 |
+| dotPosition | The position of the dots (deprecated, please use `dotPlacement`), options: `top` `bottom` `left` `right` `start` `end` | string | `bottom` | 1.5.0 |
+| dots | Whether to show the dots, or `{ className?: string }` to customize dot class name | `boolean \| { className?: string }` | `true` |  |
 | dotsClass | Class name of the dots | string | `slick-dots` |  |
 | draggable | Enable scrollable via dragging on desktop | boolean | `false` |  |
 | easing | Transition interpolation function name | string | `linear` |  |

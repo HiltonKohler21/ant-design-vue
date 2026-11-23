@@ -17,6 +17,7 @@ import { textAreaProps } from './inputProps';
 import calculateAutoSizeStyle from './calculateNodeHeight';
 import type { BaseInputExpose } from '../_util/BaseInput';
 import BaseInput from '../_util/BaseInput';
+import { resolveSemanticValue } from './util';
 
 const RESIZE_START = 0;
 const RESIZE_MEASURING = 1;
@@ -152,11 +153,13 @@ const ResizableTextArea = defineComponent({
         'styles',
         'rootClassName',
       ]);
-      const semanticClass = classNames(
-        props.classNames?.input,
-        (props.classNames as any)?.textarea,
-      );
-      const semanticStyle = props.styles?.input || (props.styles as any)?.textarea;
+      const resolvedClassNames = resolveSemanticValue(props.classNames, { props });
+      const resolvedStyles = resolveSemanticValue(props.styles, { props });
+      const semanticClass = classNames(resolvedClassNames?.input, resolvedClassNames?.textarea);
+      const semanticStyle =
+        resolvedStyles?.input || resolvedStyles?.textarea
+          ? { ...resolvedStyles?.input, ...resolvedStyles?.textarea }
+          : undefined;
       const cls = classNames(prefixCls, attrs.class, semanticClass, {
         [`${prefixCls}-disabled`]: disabled,
       });

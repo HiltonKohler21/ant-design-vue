@@ -44,6 +44,25 @@ export type MasonryGutter =
       xxl?: number;
     };
 
+export type MasonrySemanticName = 'root' | 'item';
+export type MasonrySemanticClassNames = Partial<Record<MasonrySemanticName, string>>;
+export type MasonrySemanticStyles = Partial<Record<MasonrySemanticName, CSSProperties>>;
+export type MasonryClassNamesType =
+  | MasonrySemanticClassNames
+  | ((info: { props: MasonryProps }) => MasonrySemanticClassNames);
+export type MasonryStylesType =
+  | MasonrySemanticStyles
+  | ((info: { props: MasonryProps }) => MasonrySemanticStyles);
+
+export interface MasonryRef {
+  nativeElement: HTMLDivElement | null;
+}
+
+const resolveSemanticValue = <T,>(
+  val: T | ((info: { props: MasonryProps }) => T) | undefined,
+  info: { props: MasonryProps },
+): T | undefined => (typeof val === 'function' ? (val as any)(info) : val);
+
 export const masonryProps = () => ({
   prefixCls: String,
   rootClassName: String,
@@ -59,10 +78,10 @@ export const masonryProps = () => ({
   onLayoutChange: {
     type: Function as PropType<(info: { key: string | number; column: number }[]) => void>,
   },
-  /** 强制重新布局 */
-  fresh: Boolean,
-  classNames: { type: Object as PropType<{ root?: string; item?: string }> },
-  styles: { type: Object as PropType<{ root?: CSSProperties; item?: CSSProperties }> },
+  /** 是否开启子项 ResizeObserver 自动响应尺寸变化（默认 true，设为 false 关闭） */
+  fresh: { type: Boolean, default: true },
+  classNames: { type: [Object, Function] as PropType<MasonryClassNamesType>, default: undefined },
+  styles: { type: [Object, Function] as PropType<MasonryStylesType>, default: undefined },
 });
 
 export type MasonryProps = Partial<ExtractPropTypes<ReturnType<typeof masonryProps>>>;
@@ -88,7 +107,7 @@ const Masonry = defineComponent({
   name: 'AMasonry',
   inheritAttrs: false,
   props: masonryProps(),
-  setup(props, { attrs, slots }) {
+  setup(props, { attrs, slots, expose }) {
     const { direction, getPrefixCls } = useConfigInject('masonry', props);
     const {
       className: contextClassName,
@@ -100,6 +119,11 @@ const Masonry = defineComponent({
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const screens = useBreakpoint();
     const rtl = computed(() => direction.value === 'rtl');
+
+    const rootRef = ref<HTMLDivElement | null>(null);
+    expose({
+      nativeElement: rootRef,
+    });
 
     const columnCount = computed(() => {
       const columns = props.columns;
@@ -122,6 +146,26 @@ const Masonry = defineComponent({
     let observer: ResizeObserver | null = null;
     const layoutVersion = ref(0);
 
+    const collectItemSize = () => {
+      let changed = false;
+      itemEls.forEach(el => {
+        const key = el.getAttribute('data-masonry-key');
+        if (key == null) return;
+        const rectHeight = el.getBoundingClientRect ? el.getBoundingClientRect().height : 0;
+        const height = rectHeight > 0 ? rectHeight : el.offsetHeight || 0;
+        if (
+          (height > 0 || measured[key] !== undefined) &&
+          Math.abs((measured[key] ?? 0) - height) > 0.5
+        ) {
+          measured[key] = height;
+          changed = true;
+        }
+      });
+      if (changed) {
+        layoutVersion.value += 1;
+      }
+    };
+
     const measure = (el: any, slotKey: string) => {
       const prevEl = itemEls.get(slotKey);
       if (!el) {
@@ -136,13 +180,19 @@ const Masonry = defineComponent({
         observer?.unobserve(prevEl);
       }
       itemEls.set(slotKey, nextEl);
-      if (prevEl !== nextEl) {
+      if (prevEl !== nextEl && props.fresh !== false) {
         observer?.observe(nextEl);
       }
     };
 
+    const teardownObserver = () => {
+      observer?.disconnect();
+      observer = null;
+    };
+
     const setupObserver = () => {
-      if (typeof ResizeObserver === 'undefined') return;
+      if (props.fresh === false || typeof ResizeObserver === 'undefined') return;
+      if (observer) return;
       observer = new ResizeObserver(entries => {
         let changed = false;
         entries.forEach(entry => {
@@ -160,15 +210,26 @@ const Masonry = defineComponent({
       itemEls.forEach(el => observer!.observe(el));
     };
 
+    const handleMediaReflow = () => {
+      collectItemSize();
+    };
+
     onMounted(() => {
-      setupObserver();
-      nextTick(() => {
-        itemEls.forEach(el => observer?.observe(el));
-      });
+      if (props.fresh !== false) {
+        setupObserver();
+        nextTick(() => {
+          if (props.fresh !== false) {
+            itemEls.forEach(el => observer?.observe(el));
+          }
+        });
+      }
+      rootRef.value?.addEventListener('load', handleMediaReflow, true);
+      rootRef.value?.addEventListener('error', handleMediaReflow, true);
     });
     onBeforeUnmount(() => {
-      observer?.disconnect();
-      observer = null;
+      rootRef.value?.removeEventListener('load', handleMediaReflow, true);
+      rootRef.value?.removeEventListener('error', handleMediaReflow, true);
+      teardownObserver();
       itemEls.clear();
     });
     watch(
@@ -184,8 +245,14 @@ const Masonry = defineComponent({
     );
     watch(
       () => props.fresh,
-      () => {
-        layoutVersion.value += 1;
+      nextFresh => {
+        if (nextFresh === false) {
+          teardownObserver();
+        } else {
+          setupObserver();
+          collectItemSize();
+          layoutVersion.value += 1;
+        }
       },
     );
 
@@ -238,23 +305,36 @@ const Masonry = defineComponent({
 
     return () => {
       const [gapX, gapY] = gutter.value;
-      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
-      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
+      const semanticInfo = {
+        props: {
+          ...props,
+          columns: columnCount.value,
+        } as MasonryProps,
+      };
+      const mergedClassNames = mergeSemanticClassNames(
+        resolveSemanticValue(contextClassNames.value as MasonryClassNamesType, semanticInfo),
+        resolveSemanticValue(props.classNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles(
+        resolveSemanticValue(contextStyles.value as MasonryStylesType, semanticInfo),
+        resolveSemanticValue(props.styles, semanticInfo),
+      );
       const rootStyle: CSSProperties = {
         ...contextStyle.value,
-        ...((mergedStyles as any)?.root as CSSProperties),
+        ...(mergedStyles?.root as CSSProperties),
         columnGap: `${gapX}px`,
         flexDirection: rtl.value ? 'row-reverse' : 'row',
       };
       return wrapSSR(
         <div
           {...attrs}
+          ref={rootRef}
           class={classNames(
             prefixCls.value,
             { [`${prefixCls.value}-rtl`]: rtl.value },
             props.rootClassName,
             contextClassName.value,
-            (mergedClassNames as any)?.root,
+            mergedClassNames?.root,
             attrs.class as any,
             hashId.value,
           )}
@@ -266,10 +346,10 @@ const Masonry = defineComponent({
                 <div
                   key={String(item.key)}
                   data-masonry-key={String(item.key)}
-                  class={classNames(`${prefixCls.value}-item`, (mergedClassNames as any)?.item)}
+                  class={classNames(`${prefixCls.value}-item`, mergedClassNames?.item)}
                   style={{
                     marginBottom: `${gapY}px`,
-                    ...((mergedStyles as any)?.item as CSSProperties),
+                    ...(mergedStyles?.item as CSSProperties),
                   }}
                   ref={(el: any) => measure(el, `${column}:${String(item.key)}`)}
                 >

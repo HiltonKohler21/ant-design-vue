@@ -19,8 +19,20 @@ import { initDefaultProps } from '../_util/props-util';
 
 import type { InputStatus } from '../_util/statusUtils';
 import { getStatusClassNames, getMergedStatus } from '../_util/statusUtils';
-import { stringType, someType, functionType, booleanType, objectType } from '../_util/type';
-import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
+import { stringType, someType, functionType, booleanType } from '../_util/type';
+import {
+  applySemanticToNode,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+  normalizePrefixNode,
+  resolveSemanticValue,
+} from './utils/semanticUtil';
+import type {
+  SelectClassNamesType,
+  SelectSemanticClassNames,
+  SelectSemanticStyles,
+  SelectStylesType,
+} from './utils/semanticUtil';
 import { useCompactItemContext } from '../space/Compact';
 // CSSINJS
 import useStyle from './style';
@@ -34,7 +46,16 @@ import type { CustomSlotsType } from '../_util/type';
 type RawValue = string | number;
 
 export type OptionType = typeof Option;
-export type { OptionProps, BaseSelectRef as RefSelectProps, BaseOptionType, DefaultOptionType };
+export type {
+  OptionProps,
+  BaseSelectRef as RefSelectProps,
+  BaseOptionType,
+  DefaultOptionType,
+  SelectSemanticClassNames,
+  SelectSemanticStyles,
+  SelectClassNamesType,
+  SelectStylesType,
+};
 
 export interface LabeledValue {
   key?: string;
@@ -54,7 +75,11 @@ export const selectProps = () => ({
   value: someType<SelectValue>([Array, Object, String, Number]),
   defaultValue: someType<SelectValue>([Array, Object, String, Number]),
   notFoundContent: PropTypes.any,
+  /** 选择器自定义后缀（antd v6 替代 suffixIcon） */
+  suffix: PropTypes.any,
   suffixIcon: PropTypes.any,
+  /** 加载中自定义图标（antd v6） */
+  loadingIcon: PropTypes.any,
   /** 选择器内前缀图标 */
   prefix: PropTypes.any,
   itemIcon: PropTypes.any,
@@ -63,10 +88,10 @@ export const selectProps = () => ({
   bordered: booleanType(),
   variant: stringType<Variant>(),
   rootClassName: String,
-  /** 语义化 classNames（antd 5.25+） */
-  classNames: objectType<SemanticClassNames>(),
-  /** 语义化 styles（antd 5.25+） */
-  styles: objectType<SemanticStyles>(),
+  /** 语义化 classNames（支持对象与函数式） */
+  classNames: someType<SelectClassNamesType>([Object, Function]),
+  /** 语义化 styles（支持对象与函数式） */
+  styles: someType<SelectStylesType>([Object, Function]),
   transitionName: String,
   choiceTransitionName: stringType(''),
   popupClassName: String,
@@ -99,7 +124,9 @@ const Select = defineComponent({
   SECRET_COMBOBOX_MODE_DO_NOT_USE,
   slots: Object as CustomSlotsType<{
     notFoundContent: any;
+    suffix?: any;
     suffixIcon: any;
+    loadingIcon?: any;
     prefix?: any;
     itemIcon: any;
     removeIcon: any;
@@ -205,6 +232,29 @@ const Select = defineComponent({
         props.transitionName,
       ),
     );
+    const selectConfig = computed(() => configProvider.select?.value);
+    const semanticInfo = computed(() => ({
+      props: {
+        ...props,
+        variant: mergedVariant.value,
+        status: mergedStatus.value,
+        disabled: mergedDisabled.value,
+        size: mergedSize.value,
+      },
+    }));
+    const mergedClassNames = computed<SelectSemanticClassNames>(() =>
+      mergeSemanticClassNames(
+        resolveSemanticValue(selectConfig.value?.classNames, semanticInfo.value),
+        resolveSemanticValue(props.classNames, semanticInfo.value),
+      ),
+    );
+    const mergedStyles = computed<SelectSemanticStyles>(() =>
+      mergeSemanticStyles(
+        resolveSemanticValue(selectConfig.value?.styles, semanticInfo.value),
+        resolveSemanticValue(props.styles, semanticInfo.value),
+      ),
+    );
+
     const mergedClassName = computed(() =>
       classNames(
         {
@@ -216,9 +266,9 @@ const Select = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: formItemInputContext.isFormItemInput,
         },
-        (configProvider.select?.value as any)?.className,
+        selectConfig.value?.className,
         props.rootClassName,
-        props.classNames?.root,
+        mergedClassNames.value.root,
         getStatusClassNames(prefixCls.value, mergedStatus.value, formItemInputContext.hasFeedback),
         compactItemClassnames.value,
         hashId.value,
@@ -270,7 +320,8 @@ const Select = defineComponent({
         showArrow,
       } = props;
       const { hasFeedback, feedbackIcon } = formItemInputContext;
-      const {} = configProvider;
+      const currentClassNames = mergedClassNames.value;
+      const currentStyles = mergedStyles.value;
 
       // ===================== Empty =====================
       let mergedNotFound: any;
@@ -284,6 +335,23 @@ const Select = defineComponent({
         mergedNotFound = renderEmpty?.('Select') || <DefaultRenderEmpty componentName="Select" />;
       }
 
+      const hasExplicitSuffix =
+        props.suffix !== undefined ||
+        !!slots.suffix ||
+        props.suffixIcon !== undefined ||
+        !!slots.suffixIcon;
+      const isSuffixHidden =
+        props.suffix === null ||
+        (props.suffix === undefined && !slots.suffix && props.suffixIcon === null);
+      const effectiveShowArrow =
+        showArrow !== undefined
+          ? showArrow
+          : isSuffixHidden
+          ? false
+          : hasExplicitSuffix && (isMultiple.value || mode.value === 'combobox')
+          ? true
+          : undefined;
+
       // ===================== Icons =====================
       const { suffixIcon, itemIcon, removeIcon, clearIcon } = getIcons(
         {
@@ -292,14 +360,32 @@ const Select = defineComponent({
           prefixCls: prefixCls.value,
           hasFeedback,
           feedbackIcon,
-          showArrow: mergedShowArrow.value,
+          showArrow: effectiveShowArrow !== undefined ? effectiveShowArrow : mergedShowArrow.value,
+          suffixClassName: currentClassNames.suffix,
+          suffixStyle: currentStyles.suffix,
+          contextSuffix: selectConfig.value?.suffix,
+          contextSuffixIcon: selectConfig.value?.suffixIcon,
+          contextLoadingIcon: selectConfig.value?.loadingIcon,
+          contextClearIcon: selectConfig.value?.clearIcon,
+          contextMenuItemSelectedIcon: selectConfig.value?.menuItemSelectedIcon,
+          contextRemoveIcon: selectConfig.value?.removeIcon,
         },
         slots,
       );
 
+      const rawPrefix = props.prefix !== undefined ? props.prefix : slots.prefix?.();
+      const mergedPrefix = applySemanticToNode(
+        normalizePrefixNode(rawPrefix),
+        currentClassNames.prefix,
+        currentStyles.prefix,
+      );
+
       const selectProps = omit(props, [
         'prefixCls',
+        'prefix',
+        'suffix',
         'suffixIcon',
+        'loadingIcon',
         'itemIcon',
         'removeIcon',
         'clearIcon',
@@ -319,13 +405,18 @@ const Select = defineComponent({
       ]);
 
       const rcSelectRtlDropdownClassName = classNames(
-        props.classNames?.popup?.root,
+        currentClassNames.popup?.root,
         popupClassName || dropdownClassName,
         {
           [`${prefixCls.value}-dropdown-${direction.value}`]: direction.value === 'rtl',
         },
         hashId.value,
       );
+
+      const mergedDropdownStyle =
+        currentStyles.popup?.root || props.dropdownStyle
+          ? { ...props.dropdownStyle, ...currentStyles.popup?.root }
+          : undefined;
 
       return wrapSSR(
         <RcSelect
@@ -342,7 +433,7 @@ const Select = defineComponent({
           prefixCls={prefixCls.value}
           direction={direction.value}
           inputIcon={suffixIcon}
-          prefix={props.prefix ?? slots.prefix?.()}
+          prefix={mergedPrefix}
           menuItemSelectedIcon={itemIcon}
           removeIcon={removeIcon}
           clearIcon={clearIcon}
@@ -356,19 +447,15 @@ const Select = defineComponent({
           popupRender={mergedPopupRender.value}
           dropdownRender={mergedDropdownRender.value}
           onDropdownVisibleChange={handleOpenChange}
-          dropdownStyle={props.styles?.popup?.root ?? props.dropdownStyle}
-          style={[
-            (configProvider.select?.value as any)?.style,
-            props.styles?.root,
-            attrs.style as any,
-          ]}
+          dropdownStyle={mergedDropdownStyle}
+          style={[selectConfig.value?.style, currentStyles.root, attrs.style as any]}
           v-slots={{ option: slots.option }}
           transitionName={transitionName.value}
           children={slots.default?.()}
           tagRender={props.tagRender || slots.tagRender}
           optionLabelRender={slots.optionLabel}
           maxTagPlaceholder={props.maxTagPlaceholder || slots.maxTagPlaceholder}
-          showArrow={hasFeedback || showArrow}
+          showArrow={hasFeedback || effectiveShowArrow}
           disabled={mergedDisabled.value}
         ></RcSelect>,
       );

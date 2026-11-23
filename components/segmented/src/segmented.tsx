@@ -1,6 +1,8 @@
 import { defineComponent, shallowRef, computed } from 'vue';
-import type { CSSProperties, ExtractPropTypes, FunctionalComponent } from 'vue';
+import type { CSSProperties, ExtractPropTypes, FunctionalComponent, PropType } from 'vue';
 import classNames from '../../_util/classNames';
+import { useMergeSemantic } from '../../_util/hooks/useMergeSemantic';
+import type { SemanticClassNames, SemanticStyles } from '../../_util/hooks/useMergeSemantic';
 import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
 import { initDefaultProps } from '../../_util/props-util';
 import useStyle from '../style';
@@ -10,6 +12,18 @@ import type { ChangeEvent } from '../../_util/EventInterface';
 import MotionThumb from './MotionThumb';
 export type SegmentedValue = string | number;
 export type segmentedSize = 'large' | 'small';
+export type SegmentedOrientation = 'horizontal' | 'vertical';
+
+export type SegmentedSemanticName = 'root' | 'icon' | 'label' | 'item';
+export type SegmentedSemanticClassNames = SemanticClassNames<SegmentedSemanticName>;
+export type SegmentedSemanticStyles = SemanticStyles<SegmentedSemanticName>;
+export type SegmentedClassNamesType =
+  | SegmentedSemanticClassNames
+  | ((info: { props: SegmentedProps }) => SegmentedSemanticClassNames);
+export type SegmentedStylesType =
+  | SegmentedSemanticStyles
+  | ((info: { props: SegmentedProps }) => SegmentedSemanticStyles);
+
 export interface SegmentedBaseOption {
   value: string | number;
   disabled?: boolean;
@@ -19,6 +33,7 @@ export interface SegmentedBaseOption {
    */
   title?: string;
   className?: string;
+  icon?: VueNode;
 }
 export interface SegmentedOption extends SegmentedBaseOption {
   label?: VueNode | ((option: SegmentedBaseOption) => VueNode);
@@ -46,7 +61,19 @@ export const segmentedProps = () => {
     disabled: booleanType(),
     size: stringType<segmentedSize>(),
     shape: stringType<'default' | 'round'>(),
+    /** 方向（antd 6.x 推荐，优先级高于 vertical） */
+    orientation: stringType<SegmentedOrientation>(),
     vertical: booleanType(),
+    /** 语义化 classNames（antd 6.x 支持对象或函数）：root / icon / label / item */
+    classNames: {
+      type: [Object, Function] as PropType<SegmentedClassNamesType>,
+      default: undefined,
+    },
+    /** 语义化 styles（antd 6.x 支持对象或函数）：root / icon / label / item */
+    styles: {
+      type: [Object, Function] as PropType<SegmentedStylesType>,
+      default: undefined,
+    },
     value: { ...someType<SegmentedValue>([String, Number]), required: true },
     motionName: String,
     onChange: functionType<(val: SegmentedValue) => void>(),
@@ -59,6 +86,8 @@ const SegmentedOption: FunctionalComponent<
   SegmentedOption & {
     prefixCls: string;
     checked: boolean;
+    semanticClassNames?: SegmentedSemanticClassNames;
+    semanticStyles?: SegmentedSemanticStyles;
     onChange: (_event: ChangeEvent, val: SegmentedValue) => void;
   }
 > = (props, { slots, emit }) => {
@@ -69,8 +98,11 @@ const SegmentedOption: FunctionalComponent<
     title,
     prefixCls,
     label = slots.label,
+    icon,
     checked,
     className,
+    semanticClassNames,
+    semanticStyles,
   } = props;
   const handleChange = (event: InputEvent) => {
     if (disabled) {
@@ -80,6 +112,15 @@ const SegmentedOption: FunctionalComponent<
     emit('change', event, value);
   };
 
+  const hasIcon = icon !== undefined && icon !== null && icon !== false;
+  const optionInfo = {
+    value,
+    disabled,
+    payload,
+    title,
+  };
+  const resolvedLabel = typeof label === 'function' ? label(optionInfo) : label;
+
   return (
     <label
       class={classNames(
@@ -87,7 +128,9 @@ const SegmentedOption: FunctionalComponent<
           [`${prefixCls}-item-disabled`]: disabled,
         },
         className,
+        semanticClassNames?.item,
       )}
+      style={semanticStyles?.item}
     >
       <input
         class={`${prefixCls}-item-input`}
@@ -96,15 +139,26 @@ const SegmentedOption: FunctionalComponent<
         checked={checked}
         onChange={handleChange}
       />
-      <div class={`${prefixCls}-item-label`} title={typeof title === 'string' ? title : ''}>
-        {typeof label === 'function'
-          ? label({
-              value,
-              disabled,
-              payload,
-              title,
-            })
-          : label ?? value}
+      <div
+        class={classNames(`${prefixCls}-item-label`, semanticClassNames?.label)}
+        style={semanticStyles?.label}
+        title={typeof title === 'string' ? title : ''}
+      >
+        {hasIcon ? (
+          <>
+            <span
+              class={classNames(`${prefixCls}-item-icon`, semanticClassNames?.icon)}
+              style={semanticStyles?.icon}
+            >
+              {typeof icon === 'function' ? (icon as any)(optionInfo) : icon}
+            </span>
+            {resolvedLabel !== undefined && resolvedLabel !== null && resolvedLabel !== false && (
+              <span>{resolvedLabel}</span>
+            )}
+          </>
+        ) : (
+          resolvedLabel ?? value
+        )}
       </div>
     </label>
   );
@@ -133,6 +187,35 @@ export default defineComponent({
     const rootRef = shallowRef<HTMLDivElement>();
     const thumbShow = shallowRef(false);
 
+    const mergedVertical = computed<boolean>(() => {
+      if (props.orientation !== undefined) {
+        return props.orientation === 'vertical';
+      }
+      return !!props.vertical;
+    });
+
+    const mergedOrientation = computed<SegmentedOrientation>(() =>
+      mergedVertical.value ? 'vertical' : 'horizontal',
+    );
+
+    const mergedPropsForSemantic = computed<SegmentedProps>(() => ({
+      ...props,
+      size: size.value as segmentedSize,
+      shape: props.shape ?? 'default',
+      vertical: mergedVertical.value,
+      orientation: mergedOrientation.value,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      SegmentedSemanticClassNames,
+      SegmentedSemanticStyles,
+      SegmentedProps
+    >(
+      () => [contextClassNames.value, props.classNames],
+      () => [contextStyles.value, props.styles],
+      () => ({ props: mergedPropsForSemantic.value }),
+    );
+
     const segmentedOptions = computed(() => normalizeOptions(props.options));
     const handleChange = (_event: ChangeEvent, val: SegmentedValue) => {
       if (props.disabled) {
@@ -150,11 +233,11 @@ export default defineComponent({
             pre,
             props.rootClassName,
             contextClassName.value,
-            contextClassNames.value.root,
+            mergedClassNames.value.root,
             {
               [hashId.value]: true,
               [`${pre}-block`]: props.block,
-              [`${pre}-vertical`]: props.vertical,
+              [`${pre}-vertical`]: mergedVertical.value,
               [`${pre}-shape-${props.shape}`]: props.shape === 'round',
               [`${pre}-disabled`]: props.disabled,
               [`${pre}-lg`]: size.value == 'large',
@@ -163,7 +246,7 @@ export default defineComponent({
             },
             attrs.class,
           )}
-          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+          style={[contextStyle.value, mergedStyles.value.root, attrs.style as CSSProperties]}
           ref={rootRef}
         >
           <div class={`${pre}-group`}>
@@ -173,7 +256,7 @@ export default defineComponent({
               value={props.value}
               motionName={`${pre}-${props.motionName}`}
               direction={direction.value}
-              vertical={props.vertical}
+              vertical={mergedVertical.value}
               getValueIndex={val => segmentedOptions.value.findIndex(n => n.value === val)}
               onMotionStart={() => {
                 thumbShow.value = true;
@@ -189,6 +272,8 @@ export default defineComponent({
                 checked={segmentedOption.value === props.value}
                 onChange={handleChange}
                 {...segmentedOption}
+                semanticClassNames={mergedClassNames.value}
+                semanticStyles={mergedStyles.value}
                 className={classNames(segmentedOption.className, `${pre}-item`, {
                   [`${pre}-item-selected`]:
                     segmentedOption.value === props.value && !thumbShow.value,

@@ -26,11 +26,19 @@ Add specific text or patterns to the page.
 | rotate | When the watermark is drawn, the rotation Angle, unit `°` | number | -22 |  |
 | zIndex | The z-index of the appended watermark element | number | 9 |  |
 | image | Image source, it is recommended to export 2x or 3x image, high priority | string | - |  |
-| content | Watermark text content | string \| string[] | - |  |
+| content | Watermark text content (supports multi-line array and per-line font overrides) | `string` \| [WatermarkText](#watermarktext) \| `(string \| WatermarkText)[]` | - | 4.3.0 |
 | font | Text style | [Font](#font) | [Font](#font) |  |
 | gap | The spacing between watermarks | \[number, number\] | \[100, 100\] |  |
 | offset | The offset of the watermark from the upper left corner of the container. The default is `gap/2` | \[number, number\] | \[gap\[0\]/2, gap\[1\]/2\] |  |
+| onRemove | Callback triggered when watermark tampering or removal is detected | `() => void` | - | 4.3.0 |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
+
+### WatermarkText
+
+| Property | Description                                | Type          | Default | Version |
+| -------- | ------------------------------------------ | ------------- | ------- | ------- |
+| text     | Watermark text for this line               | string        | -       | 4.3.0   |
+| font     | Per-line text style (falls back to `font`) | [Font](#font) | -       | 4.3.0   |
 
 ### Font
 
@@ -39,6 +47,7 @@ Add specific text or patterns to the page.
 | --- | --- | --- | --- | --- |
 | color | font color | string | rgba(0,0,0,.15) |  |
 | fontSize | font size | number | 16 |  |
-| fontWeight | font weight | `normal` \| `light` \| `weight` \| number | normal |  |
+| fontWeight | font weight | `normal` \| `light` \| `lighter` \| `weight` \| `bold` \| `bolder` \| number | normal |  |
 | fontFamily | font family | string | sans-serif |  |
 | fontStyle | font style  | `none` \| `normal` \| `italic` \| `oblique` | normal |  |
+| textAlign | text alignment | `left` \| `right` \| `center` \| `start` \| `end` | center | 4.3.0 |

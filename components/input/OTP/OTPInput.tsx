@@ -86,6 +86,7 @@ export default defineComponent({
           onInput={onInternalChange}
           onFocus={syncSelection}
           onKeydown={onInternalKeyDown}
+          style={attrs.style as any}
           class={classNames(attrs.class, props.className, {
             [`${prefixCls.value}-mask-input`]: props.mask,
           })}

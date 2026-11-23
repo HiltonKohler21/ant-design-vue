@@ -10,8 +10,9 @@ import Button from '../button';
 import { useLocaleReceiver } from '../locale-provider/LocaleReceiver';
 
 import defaultLocale from '../locale/en_US';
-import { anyType, objectType, stringType, withInstall } from '../_util/type';
+import { anyType, objectType, someType, stringType, withInstall } from '../_util/type';
 import type { CustomSlotsType } from '../_util/type';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 
 import useMergedState from '../_util/hooks/useMergedState';
 
@@ -30,7 +31,24 @@ import ActionButton from '../_util/ActionButton';
 import usePopconfirmStyle from './style';
 import warning from '../_util/warning';
 
-export const popconfirmProps = () => ({
+const resolveSemanticValue = <T,>(
+  val: T | ((info: { props: any }) => T) | undefined,
+  info: { props: any },
+): T | undefined => (typeof val === 'function' ? (val as any)(info) : val);
+
+export type PopconfirmSemanticName =
+  | 'root'
+  | 'container'
+  | 'body'
+  | 'title'
+  | 'content'
+  | 'arrow'
+  | 'icon';
+
+export type PopconfirmSemanticClassNames = SemanticNames<PopconfirmSemanticName>;
+export type PopconfirmSemanticStyles = SemanticStylesMap<PopconfirmSemanticName>;
+
+const popconfirmBaseProps = () => ({
   ...abstractTooltipProps(),
   prefixCls: String,
   content: anyType(),
@@ -47,6 +65,27 @@ export const popconfirmProps = () => ({
   onConfirm: Function as PropType<(e: MouseEvent) => void>,
   onCancel: Function as PropType<(e: MouseEvent) => void>,
   onPopupClick: Function as PropType<(e: MouseEvent) => void>,
+});
+
+type PopconfirmSemanticProps = Partial<ExtractPropTypes<ReturnType<typeof popconfirmBaseProps>>> & {
+  classNames?: any;
+  styles?: any;
+};
+
+export type PopconfirmClassNamesType =
+  | PopconfirmSemanticClassNames
+  | ((info: { props: PopconfirmSemanticProps }) => PopconfirmSemanticClassNames);
+
+export type PopconfirmStylesType =
+  | PopconfirmSemanticStyles
+  | ((info: { props: PopconfirmSemanticProps }) => PopconfirmSemanticStyles);
+
+export const popconfirmProps = () => ({
+  ...popconfirmBaseProps(),
+  /** 语义化 classNames（antd 5.25+/6.x）：root / container / body / title / content / arrow / icon */
+  classNames: someType<PopconfirmClassNamesType>([Object, Function]),
+  /** 语义化 styles（antd 5.25+/6.x）：root / container / body / title / content / arrow / icon */
+  styles: someType<PopconfirmStylesType>([Object, Function]),
 });
 
 export type PopconfirmProps = Partial<ExtractPropTypes<ReturnType<typeof popconfirmProps>>>;
@@ -144,6 +183,41 @@ const Popconfirm = defineComponent({
     const btnPrefixCls = computed(() => getPrefixCls('btn'));
     const [wrapSSR] = usePopconfirmStyle(prefixClsConfirm);
     const [popconfirmLocale] = useLocaleReceiver('Popconfirm', defaultLocale.Popconfirm);
+
+    const resolvedSemantics = computed(() => {
+      const mergedTrigger = props.trigger ?? popconfirmConfig.value.trigger ?? 'click';
+      const mergedMouseEnterDelay =
+        props.mouseEnterDelay ?? popconfirmConfig.value.mouseEnterDelay ?? 0.1;
+      const mergedMouseLeaveDelay =
+        props.mouseLeaveDelay ?? popconfirmConfig.value.mouseLeaveDelay ?? 0.1;
+      const mergedArrow = props.arrow ?? popconfirmConfig.value.arrow ?? true;
+      const semanticInfo = {
+        props: {
+          ...props,
+          trigger: mergedTrigger,
+          mouseEnterDelay: mergedMouseEnterDelay,
+          mouseLeaveDelay: mergedMouseLeaveDelay,
+          arrow: mergedArrow,
+        },
+      };
+      const mergedClassNames = mergeSemanticClassNames<PopconfirmSemanticClassNames>(
+        resolveSemanticValue(contextClassNames.value, semanticInfo),
+        resolveSemanticValue(props.classNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles<PopconfirmSemanticStyles>(
+        resolveSemanticValue(contextStyles.value, semanticInfo),
+        resolveSemanticValue(props.styles, semanticInfo),
+      );
+      return {
+        mergedTrigger,
+        mergedMouseEnterDelay,
+        mergedMouseLeaveDelay,
+        mergedArrow,
+        mergedClassNames,
+        mergedStyles,
+      };
+    });
+
     const renderOverlay = () => {
       const {
         okButtonProps,
@@ -156,6 +230,7 @@ const Popconfirm = defineComponent({
         icon = slots.icon?.() || <ExclamationCircleFilled />,
         showCancel = true,
       } = props;
+      const { mergedClassNames, mergedStyles } = resolvedSemantics.value;
       const { cancelButton, okButton } = slots;
       const cancelProps: ButtonProps = {
         onClick: onCancel,
@@ -171,17 +246,33 @@ const Popconfirm = defineComponent({
       return (
         <div class={`${prefixClsConfirm.value}-inner-content`} onClick={props.onPopupClick}>
           <div class={`${prefixClsConfirm.value}-message`}>
-            {icon && <span class={`${prefixClsConfirm.value}-message-icon`}>{icon}</span>}
+            {icon && (
+              <span
+                class={[`${prefixClsConfirm.value}-message-icon`, mergedClassNames.icon]}
+                style={mergedStyles.icon}
+              >
+                {icon}
+              </span>
+            )}
             <div
               class={[
                 `${prefixClsConfirm.value}-message-title`,
                 { [`${prefixClsConfirm.value}-message-title-only`]: !!description },
+                mergedClassNames.title,
               ]}
+              style={mergedStyles.title}
             >
               {title}
             </div>
           </div>
-          {description && <div class={`${prefixClsConfirm.value}-description`}>{description}</div>}
+          {description && (
+            <div
+              class={[`${prefixClsConfirm.value}-description`, mergedClassNames.content]}
+              style={mergedStyles.content}
+            >
+              {description}
+            </div>
+          )}
           <div class={`${prefixClsConfirm.value}-buttons`}>
             {showCancel ? (
               cancelButton ? (
@@ -211,14 +302,26 @@ const Popconfirm = defineComponent({
 
     return () => {
       const { placement, overlayClassName, ...restProps } = props;
-      const mergedTrigger = props.trigger ?? popconfirmConfig.value.trigger ?? 'click';
-      const mergedMouseEnterDelay =
-        props.mouseEnterDelay ?? popconfirmConfig.value.mouseEnterDelay ?? 0.1;
-      const mergedMouseLeaveDelay =
-        props.mouseLeaveDelay ?? popconfirmConfig.value.mouseLeaveDelay ?? 0.1;
-      const mergedArrow = props.arrow ?? popconfirmConfig.value.arrow ?? true;
-      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
-      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
+      const {
+        mergedTrigger,
+        mergedMouseEnterDelay,
+        mergedMouseLeaveDelay,
+        mergedArrow,
+        mergedClassNames,
+        mergedStyles,
+      } = resolvedSemantics.value;
+      const popoverClassNames = {
+        root: mergedClassNames.root,
+        container: mergedClassNames.container,
+        body: mergedClassNames.body,
+        arrow: mergedClassNames.arrow,
+      };
+      const popoverStyles = {
+        root: mergedStyles.root,
+        container: mergedStyles.container,
+        body: mergedStyles.body,
+        arrow: mergedStyles.arrow,
+      };
       const mergedOverlayStyle =
         contextStyle.value || props.overlayStyle
           ? { ...contextStyle.value, ...props.overlayStyle }
@@ -232,6 +335,8 @@ const Popconfirm = defineComponent({
         'onConfirm',
         'onCancel',
         'prefixCls',
+        'classNames',
+        'styles',
       ]);
       const overlayClassNames = classNames(
         prefixClsConfirm.value,
@@ -251,8 +356,8 @@ const Popconfirm = defineComponent({
           open={open.value}
           overlayClassName={overlayClassNames}
           overlayStyle={mergedOverlayStyle}
-          classNames={mergedClassNames}
-          styles={mergedStyles}
+          classNames={popoverClassNames}
+          styles={popoverStyles}
           transitionName={getTransitionName(rootPrefixCls.value, 'zoom-big', props.transitionName)}
           v-slots={{ content: renderOverlay }}
           ref={rootRef}

@@ -1,21 +1,24 @@
-import type { CSSProperties, ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import { ref, computed, watchEffect, defineComponent } from 'vue';
 import PropTypes from '../_util/vue-types';
 import warning from '../_util/warning';
 import classNames from '../_util/classNames';
+import omit from '../_util/omit';
 import SlickCarousel from '../vc-slick';
 import { withInstall, booleanType, functionType, stringType } from '../_util/type';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 
 // CSSINJS
-import useStyle from './style';
+import useStyle, { DotDuration } from './style';
 
 export type SwipeDirection = 'left' | 'down' | 'right' | 'up' | string;
 
 export type LazyLoadTypes = 'ondemand' | 'progressive';
 
 export type CarouselEffect = 'scrollx' | 'fade';
-export type DotPosition = 'top' | 'bottom' | 'left' | 'right';
+export type DotPlacement = 'top' | 'bottom' | 'start' | 'end';
+export type DotPosition = 'top' | 'bottom' | 'left' | 'right' | 'start' | 'end';
+export type CarouselAutoplay = boolean | { dotDuration?: boolean };
 
 export interface CarouselRef {
   goTo: (slide: number, dontAnimate?: boolean) => void;
@@ -29,9 +32,15 @@ export interface CarouselRef {
 export const carouselProps = () => ({
   rootClassName: String,
   effect: stringType<CarouselEffect>(),
-  dots: booleanType(true),
+  dots: {
+    type: [Boolean, Object] as PropType<boolean | { className?: string }>,
+    default: true,
+  },
   vertical: booleanType(),
-  autoplay: booleanType(),
+  autoplay: {
+    type: [Boolean, Object] as PropType<CarouselAutoplay>,
+    default: undefined,
+  },
   easing: String,
   beforeChange: functionType<(currentSlide: number, nextSlide: number) => void>(),
   afterChange: functionType<(currentSlide: number) => void>(),
@@ -71,7 +80,9 @@ export const carouselProps = () => ({
   useCSS: booleanType(),
   slickGoTo: Number,
   responsive: Array,
+  /** @deprecated Please use `dotPlacement` instead */
   dotPosition: stringType<DotPosition>(),
+  dotPlacement: stringType<DotPlacement>(),
   verticalSwiping: booleanType(false),
 });
 export type CarouselProps = Partial<ExtractPropTypes<ReturnType<typeof carouselProps>>>;
@@ -115,18 +126,38 @@ const Carousel = defineComponent({
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
-    const dotPosition = computed(() => {
-      if (props.dotPosition) return props.dotPosition;
-      if (props.vertical !== undefined) return props.vertical ? 'right' : 'bottom';
-      return 'bottom';
+    const isRTL = computed(() => props.rtl ?? direction.value === 'rtl');
+
+    const dotPosition = computed<'top' | 'bottom' | 'left' | 'right'>(() => {
+      const placement =
+        props.dotPlacement ??
+        props.dotPosition ??
+        (props.vertical !== undefined ? (props.vertical ? 'right' : 'bottom') : 'bottom');
+      switch (placement) {
+        case 'start':
+          return isRTL.value ? 'right' : 'left';
+        case 'end':
+          return isRTL.value ? 'left' : 'right';
+        default:
+          return placement;
+      }
     });
     const vertical = computed(() => dotPosition.value === 'left' || dotPosition.value === 'right');
+    const mergedAutoplay = computed(() => !!props.autoplay);
+    const mergedShowDuration = computed(
+      () => !!props.autoplay && typeof props.autoplay === 'object' && !!props.autoplay.dotDuration,
+    );
+    const mergedAutoplaySpeed = computed(() => props.autoplaySpeed ?? 3000);
+
     const dsClass = computed(() => {
       const dotsClass = 'slick-dots';
+      const dotsVal = props.dots as boolean | { className?: string } | undefined;
+      const dotsObjClass = typeof dotsVal === 'object' && dotsVal ? dotsVal.className : undefined;
       return classNames({
         [dotsClass]: true,
         [`${dotsClass}-${dotPosition.value}`]: true,
         [`${props.dotsClass}`]: !!props.dotsClass,
+        [`${dotsObjClass}`]: !!dotsObjClass,
       });
     });
     return () => {
@@ -144,12 +175,19 @@ const Carousel = defineComponent({
         },
         hashId.value,
       );
+      const dotDurationStyle = mergedShowDuration.value
+        ? ({ [DotDuration]: `${mergedAutoplaySpeed.value}ms` } as CSSProperties)
+        : undefined;
       return wrapSSR(
-        <div class={className} style={[contextStyle.value, style as CSSProperties]}>
+        <div
+          class={className}
+          style={[contextStyle.value, dotDurationStyle, style as CSSProperties]}
+        >
           <SlickCarousel
             ref={slickRef}
-            {...props}
+            {...omit(props, ['dotPlacement'])}
             {...restAttrs}
+            autoplay={mergedAutoplay.value}
             dots={!!dots}
             dotsClass={dsClass.value}
             arrows={arrows}

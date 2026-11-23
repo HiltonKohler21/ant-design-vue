@@ -1,4 +1,12 @@
-import { onBeforeUpdate, computed, onBeforeUnmount, onMounted, ref, defineComponent } from 'vue';
+import {
+  onBeforeUpdate,
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  onUpdated,
+  ref,
+  defineComponent,
+} from 'vue';
 import classNames from '../_util/classNames';
 import {
   FormItemInputContext,
@@ -10,12 +18,19 @@ import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 import type { InputFocusOptions } from '../vc-input/utils/commonUtils';
 import { hasPrefixSuffix } from '../vc-input/utils/commonUtils';
 import VcInput from '../vc-input/Input';
+import type { InputSemanticClassNames, InputSemanticStyles } from './inputProps';
 import inputProps from './inputProps';
 import omit from '../_util/omit';
 import CloseCircleFilled from '@ant-design/icons-vue/CloseCircleFilled';
 import { NoCompactStyle, useCompactItemContext } from '../space/Compact';
 import { deprecated } from '../_util/warning';
 import useVariant from '../form/hooks/useVariant';
+import {
+  applyDomStyle,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+  resolveSemanticValue,
+} from './util';
 
 // CSSINJS
 import useStyle from './style';
@@ -54,6 +69,46 @@ export default defineComponent({
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const disabled = useInjectDisabled();
+    const mergedDisabled = computed(() => props.disabled ?? disabled.value);
+
+    const semanticInfo = computed(() => ({
+      props: {
+        ...props,
+        size: mergedSize.value,
+        disabled: mergedDisabled.value,
+        variant: mergedVariant.value,
+        status: mergedStatus.value,
+      },
+    }));
+    const mergedClassNames = computed<InputSemanticClassNames>(() =>
+      mergeSemanticClassNames(
+        resolveSemanticValue(inputConfig.value?.classNames, semanticInfo.value),
+        resolveSemanticValue(props.classNames, semanticInfo.value),
+      ),
+    );
+    const mergedStyles = computed<InputSemanticStyles>(() =>
+      mergeSemanticStyles(
+        resolveSemanticValue(inputConfig.value?.styles, semanticInfo.value),
+        resolveSemanticValue(props.styles, semanticInfo.value),
+      ),
+    );
+
+    let lastWrappedInputStyleKeys: string[] = [];
+    let isCurrentlyWrapped = false;
+    const syncWrappedInputStyle = () => {
+      const rootEl = inputRef.value?.$el as HTMLElement | undefined;
+      if (!rootEl) return;
+      const inputEl = rootEl.tagName === 'INPUT' ? rootEl : rootEl.querySelector('input');
+      if (isCurrentlyWrapped) {
+        lastWrappedInputStyleKeys = applyDomStyle(
+          inputEl,
+          mergedStyles.value.input,
+          lastWrappedInputStyleKeys,
+        );
+      } else if (lastWrappedInputStyleKeys.length) {
+        lastWrappedInputStyleKeys = applyDomStyle(inputEl, undefined, lastWrappedInputStyleKeys);
+      }
+    };
 
     const focus = (option?: InputFocusOptions) => {
       inputRef.value?.focus(option);
@@ -99,6 +154,10 @@ export default defineComponent({
     };
     onMounted(() => {
       removePasswordTimeout();
+      syncWrappedInputStyle();
+    });
+    onUpdated(() => {
+      syncWrappedInputStyle();
     });
     onBeforeUpdate(() => {
       removePasswordTimeoutRef.value.forEach(item => clearTimeout(item));
@@ -150,19 +209,24 @@ export default defineComponent({
           : undefined;
       const isBorderless = mergedVariant.value === 'borderless';
       const clearIcon = slots.clearIcon || (() => <CloseCircleFilled />);
-      const mergedClassNames = {
-        ...inputConfig.value?.classNames,
-        ...props.classNames,
-      };
-      const mergedStyles = {
-        ...inputConfig.value?.styles,
-        ...props.styles,
-      };
-      const hasWrapper = inputHasPrefixSuffix || !!addonAfter || !!addonBefore;
-      const mergedStyle =
-        inputConfig.value?.style || (!hasWrapper && mergedStyles?.input)
-          ? [inputConfig.value?.style, attrs.style, !hasWrapper ? mergedStyles?.input : undefined]
-          : attrs.style;
+      const currentClassNames = mergedClassNames.value;
+      const currentStyles = mergedStyles.value;
+      const hasWrapper = Boolean(
+        hasPrefixSuffix({ prefix, suffix: suffixNode || props.showCount, allowClear }) ||
+          addonAfter ||
+          addonBefore,
+      );
+      isCurrentlyWrapped = hasWrapper;
+      const hasCustomStyle =
+        inputConfig.value?.style || currentStyles.root || (!hasWrapper && currentStyles.input);
+      const mergedStyle = hasCustomStyle
+        ? [
+            inputConfig.value?.style,
+            currentStyles.root,
+            !hasWrapper ? currentStyles.input : undefined,
+            attrs.style,
+          ]
+        : attrs.style;
       return wrapSSR(
         <VcInput
           {...attrs}
@@ -177,7 +241,7 @@ export default defineComponent({
           style={mergedStyle as any}
           onChange={triggerChange}
           id={id}
-          disabled={props.disabled ?? disabled.value}
+          disabled={mergedDisabled.value}
           ref={inputRef}
           prefixCls={prefixClsValue}
           autocomplete={autocomplete.value}
@@ -185,12 +249,12 @@ export default defineComponent({
           onFocus={handleFocus}
           prefix={prefix}
           suffix={suffixNode}
-          prefixClassName={mergedClassNames?.prefix}
-          suffixClassName={mergedClassNames?.suffix}
-          countClassName={mergedClassNames?.count}
-          prefixStyle={mergedStyles?.prefix}
-          suffixStyle={mergedStyles?.suffix}
-          countStyle={mergedStyles?.count}
+          prefixClassName={currentClassNames.prefix}
+          suffixClassName={currentClassNames.suffix}
+          countClassName={currentClassNames.count}
+          prefixStyle={currentStyles.prefix}
+          suffixStyle={currentStyles.suffix}
+          countStyle={currentStyles.count}
           allowClear={allowClear}
           addonAfter={
             addonAfter && (
@@ -211,6 +275,7 @@ export default defineComponent({
             attrs.class,
             compactItemClassnames.value,
             props.rootClassName,
+            currentClassNames.root,
           ]}
           inputClassName={classNames(
             {
@@ -219,7 +284,7 @@ export default defineComponent({
               [`${prefixClsValue}-rtl`]: direction.value === 'rtl',
               [`${prefixClsValue}-borderless`]: isBorderless,
               [variantCls]: !inputHasPrefixSuffix && !!variantCls,
-              [mergedClassNames?.input as string]: !!mergedClassNames?.input,
+              [currentClassNames.input as string]: !!currentClassNames.input,
             },
             !inputHasPrefixSuffix && getStatusClassNames(prefixClsValue, mergedStatus.value),
             hashId.value,

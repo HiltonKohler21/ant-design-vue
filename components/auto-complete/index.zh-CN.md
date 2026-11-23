@@ -32,7 +32,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WERTQ6qvgEYAAA
 | autofocus | 自动获取焦点 | boolean | false |  |
 | backfill | 使用键盘选择选项的时候把选中项回填到输入框中 | boolean | false |  |
 | ~~bordered~~ | 是否有边框（已废弃，请使用 `variant`） | boolean | true | 4.0 |
-| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: AutoCompleteProps }) => ...)` | - | 4.3.0 |
 | clearIcon | 使用插槽自定义清除按钮 | slot | `<CloseCircleFilled />` | 4.0 |
 | default (自定义输入框) | 自定义输入框 | slot | `<Input />` |  |
 | defaultActiveFirstOption | 是否默认高亮第一个选项。 | boolean | true |  |
@@ -51,11 +51,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WERTQ6qvgEYAAA
 | ~~popupClassName~~ | 下拉菜单的 className 属性（已废弃，请使用 `classNames.popup.root`） | string | - | 4.0 |
 | popupMatchSelectWidth | 下拉菜单和选择器同宽。默认将设置 `min-width`，当值小于选择框宽度时会被忽略。`false` 时会关闭虚拟滚动 | boolean \| number | true | 4.3.0 |
 | popupRender | 自定义下拉框内容（支持 prop 与 `#popupRender` 插槽，直接接收菜单节点） | `(originNode: VNode) => VNode` \| slot | - | 4.3.0 |
+| prefix | 自定义前缀 | VNode \| slot | - | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showSearch | 是否支持搜索 | boolean | - |  |
 | size | 输入框大小 | `large` \| `middle` \| `small` | - |  |
 | status | 设置校验状态 | `'error'` \| `'warning'` | - | 3.3.0 |
-| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style（支持对象与函数式 `({ props }) => ...`） | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: AutoCompleteProps }) => ...)` | - | 4.3.0 |
+| suffix | 自定义的选择框后缀图标（替代 `suffixIcon`） | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | 自定义的选择框后缀图标（已废弃，请使用 `suffix` 替代） | VNode \| slot | - |  |
 | v-model:value | 指定当前选中的条目 | string \| string\[] \| { key: string, label: string \| vNodes } \| Array&lt;{ key: string, label: string \| vNodes }> | 无 |  |
 | variant | 形态变体 | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 

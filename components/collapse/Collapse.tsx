@@ -5,7 +5,12 @@ import {
   isValidElement,
 } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
-import type { CollapsibleType } from './commonProps';
+import type {
+  CollapsibleType,
+  CollapseSemanticClassNames,
+  CollapseSemanticStyles,
+  ExpandIconPlacement,
+} from './commonProps';
 import { collapseProps } from './commonProps';
 import { getDataAndAriaProps } from '../_util/util';
 import type { CSSProperties, ExtractPropTypes } from 'vue';
@@ -13,6 +18,7 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import RightOutlined from '@ant-design/icons-vue/RightOutlined';
 import firstNotUndefined from '../_util/firstNotUndefined';
 import classNames from '../_util/classNames';
+import { mergeClassNames, mergeStyles, useMergeSemantic } from '../_util/hooks/useMergeSemantic';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { CollapsePanelProps } from './CollapsePanel';
 import collapseMotion from '../_util/collapseMotion';
@@ -42,7 +48,6 @@ export default defineComponent({
     accordion: false,
     destroyInactivePanel: false,
     bordered: true,
-    expandIconPosition: 'start',
   }),
   slots: Object as CustomSlotsType<{
     default?: any;
@@ -72,13 +77,33 @@ export default defineComponent({
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
-    const iconPosition = computed(() => {
-      const { expandIconPosition } = props;
-      if (expandIconPosition !== undefined) {
-        return expandIconPosition;
+    const iconPosition = computed<ExpandIconPlacement>(() => {
+      const raw = props.expandIconPlacement ?? props.expandIconPosition;
+      if (raw === 'left') {
+        return 'start';
       }
-      return direction.value === 'rtl' ? 'end' : 'start';
+      if (raw === 'right') {
+        return 'end';
+      }
+      return raw ?? 'start';
     });
+
+    const mergedPropsForSemantic = computed<CollapseProps>(() => ({
+      ...props,
+      size: props.size ?? 'middle',
+      bordered: props.bordered,
+      expandIconPlacement: iconPosition.value,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      CollapseSemanticClassNames,
+      CollapseSemanticStyles,
+      CollapseProps
+    >(
+      () => [contextClassNames.value, props.classNames],
+      () => [contextStyles.value, props.styles],
+      () => ({ props: mergedPropsForSemantic.value }),
+    );
 
     const renderExpandIcon = (panelProps: CollapsePanelProps) => {
       const { expandIcon = slots.expandIcon ?? collapseConfig.value.expandIcon } = props;
@@ -87,10 +112,13 @@ export default defineComponent({
       ) : (
         <RightOutlined rotate={panelProps.isActive ? 90 : undefined} />
       );
+      const iconCls = panelProps.classNames?.icon ?? mergedClassNames.value.icon;
+      const iconStyle = panelProps.styles?.icon ?? mergedStyles.value.icon;
 
       return (
         <div
-          class={[`${prefixCls.value}-expand-icon`, hashId.value]}
+          class={[`${prefixCls.value}-expand-icon`, iconCls, hashId.value]}
+          style={iconStyle}
           onClick={() =>
             ['header', 'icon'].includes(props.collapsible) && onClickItem(panelProps.panelKey)
           }
@@ -148,6 +176,8 @@ export default defineComponent({
         headerClass,
         collapsible: childCollapsible,
         disabled,
+        classNames: childClassNames,
+        styles: childStyles,
       } = child.props || {};
       let isActive = false;
 
@@ -162,6 +192,12 @@ export default defineComponent({
       if (disabled || disabled === '') {
         mergeCollapsible = 'disabled';
       }
+      const panelClassNames = childClassNames
+        ? mergeClassNames(mergedClassNames.value, childClassNames)
+        : mergedClassNames.value;
+      const panelStyles = childStyles
+        ? mergeStyles(mergedStyles.value, childStyles)
+        : mergedStyles.value;
       const newProps = {
         key,
         panelKey: key,
@@ -175,6 +211,8 @@ export default defineComponent({
         onItemClick: mergeCollapsible === 'disabled' ? null : onClickItem,
         expandIcon: renderExpandIcon,
         collapsible: mergeCollapsible,
+        classNames: panelClassNames,
+        styles: panelStyles,
       };
 
       return cloneElement(child, newProps);
@@ -189,7 +227,7 @@ export default defineComponent({
       const collapseClassName = classNames(
         prefixCls.value,
         contextClassName.value,
-        contextClassNames.value.root,
+        mergedClassNames.value.root,
         {
           [`${prefixCls.value}-borderless`]: !bordered,
           [`${prefixCls.value}-icon-position-${iconPosition.value}`]: true,
@@ -205,7 +243,7 @@ export default defineComponent({
         <div
           class={collapseClassName}
           {...getDataAndAriaProps(attrs)}
-          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+          style={[contextStyle.value, mergedStyles.value.root, attrs.style as CSSProperties]}
           role={accordion ? 'tablist' : null}
         >
           {getItems()}

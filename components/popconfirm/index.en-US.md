@@ -21,7 +21,7 @@ The difference with the 'confirm' modal dialog is that it's more lightweight tha
 | cancelButton | custom render cancel button | slot | - | 3.0 |
 | cancelButtonProps | The cancel button props | [ButtonProps](/components/button/#api) | - |  |
 | cancelText | text of the Cancel button | string\|slot | `Cancel` |  |
-| classNames | Semantic DOM class names | `{ root?: string; body?: string }` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | disabled | is show popconfirm when click its childrenNode | boolean | false |  |
 | icon | customize icon of confirmation | vNode\|slot | &lt;ExclamationCircleFilled /> |  |
 | okButton | custom render confirm button | slot | - | 3.0 |
@@ -30,10 +30,12 @@ The difference with the 'confirm' modal dialog is that it's more lightweight tha
 | okType | Button `type` of the Confirm button | string | `primary` |  |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | showCancel | Show cancel button | boolean | true | 3.0 |
-| styles | Semantic DOM inline styles | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | title of the confirmation box | string\|slot | - |  |
 | description | The description of the confirmation box title | string\|slot | - | 4.0 |
 | open (v-model) | Whether the popconfirm is open | boolean | false | 4.0 |
+
+> Supported `SemanticDOM` keys: `root` \| `container` \| `body` (alias of `container`) \| `title` \| `content` \| `arrow` \| `icon`.
 
 ### events
 

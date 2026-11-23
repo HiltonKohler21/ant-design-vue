@@ -78,7 +78,10 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
           `&-placement-rightBottom`,
         ].join(',')]: {
           [`${componentCls}-inner`]: {
-            borderRadius: Math.min(rawToken.tooltipBorderRadius ?? rawToken.borderRadius, MAX_VERTICAL_CONTENT_RADIUS),
+            borderRadius: Math.min(
+              rawToken.tooltipBorderRadius ?? rawToken.borderRadius,
+              MAX_VERTICAL_CONTENT_RADIUS,
+            ),
           },
         },
 
@@ -123,6 +126,27 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
       [`${componentCls}-pure`]: {
         position: 'relative',
         maxWidth: 'none',
+      },
+    },
+
+    // Unique Provider Shared Container
+    {
+      [`${componentCls}-unique-container`]: {
+        position: 'absolute',
+        zIndex: zIndexPopup,
+        pointerEvents: 'auto',
+        transition: `left ${token.motionDurationMid} ${token.motionEaseInOut}, top ${token.motionDurationMid} ${token.motionEaseInOut}, opacity ${token.motionDurationFast} ${token.motionEaseInOut}`,
+
+        '&-hidden': {
+          opacity: 0,
+          pointerEvents: 'none',
+          visibility: 'hidden',
+        },
+
+        '&-visible': {
+          opacity: 1,
+          visibility: 'visible',
+        },
       },
     },
   ];

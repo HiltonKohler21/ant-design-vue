@@ -2,7 +2,7 @@ import { defineComponent } from 'vue';
 import type { ColumnGroupProps } from '../vc-table/sugar/ColumnGroup';
 import type { CustomSlotsType } from '../_util/type';
 
-export default defineComponent<ColumnGroupProps<any>>({
+export default defineComponent<ColumnGroupProps<any> & { hidden?: boolean }>({
   name: 'ATableColumnGroup',
   slots: Object as CustomSlotsType<{
     title?: any;

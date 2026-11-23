@@ -1,11 +1,29 @@
-import type { ExtractPropTypes, PropType } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import omit from '../_util/omit';
 import type { VueNode } from '../_util/type';
 import { eventType } from '../_util/type';
 import type { CompositionEventHandler } from '../_util/EventInterface';
 import { inputProps as vcInputProps } from '../vc-input/inputProps';
 import type { Variant } from '../config-provider/context';
-import type { InputSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
+import type { SemanticValue } from './util';
+
+export type InputSemanticName = 'root' | 'prefix' | 'suffix' | 'input' | 'count';
+export type InputSemanticClassNames = Partial<Record<InputSemanticName, string>>;
+export type InputSemanticStyles = Partial<Record<InputSemanticName, CSSProperties>>;
+export type InputClassNamesType<P = Record<string, any>> = SemanticValue<
+  InputSemanticClassNames,
+  P
+>;
+export type InputStylesType<P = Record<string, any>> = SemanticValue<InputSemanticStyles, P>;
+
+export type TextAreaSemanticName = 'root' | 'textarea' | 'input' | 'count' | 'suffix';
+export type TextAreaSemanticClassNames = Partial<Record<TextAreaSemanticName, string>>;
+export type TextAreaSemanticStyles = Partial<Record<TextAreaSemanticName, CSSProperties>>;
+export type TextAreaClassNamesType<P = Record<string, any>> = SemanticValue<
+  TextAreaSemanticClassNames,
+  P
+>;
+export type TextAreaStylesType<P = Record<string, any>> = SemanticValue<TextAreaSemanticStyles, P>;
 
 export const inputDefaultValue = Symbol() as unknown as string;
 
@@ -23,14 +41,14 @@ const inputProps = () => {
     ]),
     variant: { type: String as PropType<Variant> },
     rootClassName: String,
-    /** 语义化 classNames（antd 5.25+）：prefix / suffix / input / count */
+    /** 语义化 classNames（支持对象与函数式）：root / prefix / suffix / input / count */
     classNames: {
-      type: Object as PropType<SemanticNames<InputSemanticName>>,
+      type: [Object, Function] as PropType<InputClassNamesType>,
       default: undefined,
     },
-    /** 语义化 styles（antd 5.25+）：prefix / suffix / input / count */
+    /** 语义化 styles（支持对象与函数式）：root / prefix / suffix / input / count */
     styles: {
-      type: Object as PropType<SemanticStylesMap<InputSemanticName>>,
+      type: [Object, Function] as PropType<InputStylesType>,
       default: undefined,
     },
   };
@@ -42,6 +60,14 @@ export interface ShowCountProps {
 }
 const textAreaProps = () => ({
   ...omit(inputProps(), ['prefix', 'addonBefore', 'addonAfter', 'suffix']),
+  classNames: {
+    type: [Object, Function] as PropType<TextAreaClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<TextAreaStylesType>,
+    default: undefined,
+  },
   rows: Number,
   autosize: { type: [Boolean, Object] as PropType<boolean | AutoSizeType>, default: undefined },
   autoSize: { type: [Boolean, Object] as PropType<boolean | AutoSizeType>, default: undefined },

@@ -2,7 +2,13 @@ import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { presetPrimaryColors } from '@ant-design/colors';
 import { computed, defineComponent } from 'vue';
 import type { Direction } from '../config-provider';
-import type { StringGradients, ProgressGradient, ProgressSize } from './props';
+import type {
+  StringGradients,
+  ProgressGradient,
+  ProgressSize,
+  ProgressSemanticClassNames,
+  ProgressSemanticStyles,
+} from './props';
 import { progressProps } from './props';
 import { getSize, getSuccessPercent, validProgress } from './utils';
 import devWarning from '../vc-util/devWarning';
@@ -76,6 +82,17 @@ export default defineComponent({
   inheritAttrs: false,
   props: lineProps(),
   setup(props, { slots, attrs }) {
+    const semanticClassNames = computed<ProgressSemanticClassNames>(() =>
+      props.classNames && typeof props.classNames === 'object'
+        ? (props.classNames as ProgressSemanticClassNames)
+        : {},
+    );
+    const semanticStyles = computed<ProgressSemanticStyles>(() =>
+      props.styles && typeof props.styles === 'object'
+        ? (props.styles as ProgressSemanticStyles)
+        : {},
+    );
+
     const backgroundProps = computed<CSSProperties>(() => {
       const { strokeColor, direction } = props;
       return strokeColor && typeof strokeColor !== 'string'
@@ -88,13 +105,19 @@ export default defineComponent({
       props.strokeLinecap === 'square' || props.strokeLinecap === 'butt' ? 0 : undefined,
     );
 
-    const trailStyle = computed<CSSProperties>(() =>
-      props.trailColor
+    const mergedRailColor = computed(() => props.railColor ?? props.trailColor);
+
+    const trailStyle = computed<CSSProperties>(() => {
+      const baseStyle = mergedRailColor.value
         ? {
-            backgroundColor: props.trailColor,
+            backgroundColor: mergedRailColor.value,
           }
-        : undefined,
-    );
+        : undefined;
+      if (baseStyle && semanticStyles.value.rail) {
+        return { ...baseStyle, ...semanticStyles.value.rail };
+      }
+      return semanticStyles.value.rail || baseStyle;
+    });
 
     const mergedSize = computed(
       () => props.size ?? [-1, props.strokeWidth || (props.size === 'small' ? 6 : 8)],
@@ -119,6 +142,7 @@ export default defineComponent({
         height: `${sizeRef.value.height}px`,
         borderRadius: borderRadius.value,
         ...backgroundProps.value,
+        ...semanticStyles.value.track,
       };
     });
 
@@ -132,12 +156,14 @@ export default defineComponent({
         height: `${sizeRef.value.height}px`,
         borderRadius: borderRadius.value,
         backgroundColor: success?.strokeColor,
+        ...semanticStyles.value.track,
       };
     });
 
     const outerStyle = computed<CSSProperties>(() => ({
       width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
       height: `${sizeRef.value.height}px`,
+      ...semanticStyles.value.body,
     }));
 
     const parsedPercentPosition = computed(() => {
@@ -162,15 +188,25 @@ export default defineComponent({
       if (pos) {
         const { align: infoAlign, type: infoPosition } = pos;
         const lineInner = (
-          <div class={`${props.prefixCls}-inner`} style={trailStyle.value}>
+          <div
+            class={[`${props.prefixCls}-inner`, semanticClassNames.value.rail]}
+            style={trailStyle.value}
+          >
             <div
-              class={[`${props.prefixCls}-bg`, `${props.prefixCls}-bg-${infoPosition}`]}
+              class={[
+                `${props.prefixCls}-bg`,
+                `${props.prefixCls}-bg-${infoPosition}`,
+                semanticClassNames.value.track,
+              ]}
               style={percentStyle.value}
             >
               {infoPosition === 'inner' ? slots.default?.() : null}
             </div>
             {successPercent.value !== undefined ? (
-              <div class={`${props.prefixCls}-success-bg`} style={successPercentStyle.value} />
+              <div
+                class={[`${props.prefixCls}-success-bg`, semanticClassNames.value.track]}
+                style={successPercentStyle.value}
+              />
             ) : null}
           </div>
         );
@@ -179,10 +215,17 @@ export default defineComponent({
           return (
             <div
               {...attrs}
-              class={[`${props.prefixCls}-layout-bottom`, attrs.class]}
+              class={[
+                `${props.prefixCls}-layout-bottom`,
+                semanticClassNames.value.body,
+                attrs.class,
+              ]}
               style={[
                 attrs.style as CSSProperties,
-                { width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px` },
+                {
+                  width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
+                  ...semanticStyles.value.body,
+                },
               ]}
             >
               {lineInner}
@@ -196,10 +239,13 @@ export default defineComponent({
         return (
           <div
             {...attrs}
-            class={[`${props.prefixCls}-outer`, attrs.class]}
+            class={[`${props.prefixCls}-outer`, semanticClassNames.value.body, attrs.class]}
             style={[
               attrs.style as CSSProperties,
-              { width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px` },
+              {
+                width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
+                ...semanticStyles.value.body,
+              },
             ]}
           >
             {isOuterStart ? slots.default?.() : null}
@@ -213,13 +259,22 @@ export default defineComponent({
         <>
           <div
             {...attrs}
-            class={[`${props.prefixCls}-outer`, attrs.class]}
+            class={[`${props.prefixCls}-outer`, semanticClassNames.value.body, attrs.class]}
             style={[attrs.style as CSSProperties, outerStyle.value]}
           >
-            <div class={`${props.prefixCls}-inner`} style={trailStyle.value}>
-              <div class={`${props.prefixCls}-bg`} style={percentStyle.value} />
+            <div
+              class={[`${props.prefixCls}-inner`, semanticClassNames.value.rail]}
+              style={trailStyle.value}
+            >
+              <div
+                class={[`${props.prefixCls}-bg`, semanticClassNames.value.track]}
+                style={percentStyle.value}
+              />
               {successPercent.value !== undefined ? (
-                <div class={`${props.prefixCls}-success-bg`} style={successPercentStyle.value} />
+                <div
+                  class={[`${props.prefixCls}-success-bg`, semanticClassNames.value.track]}
+                  style={successPercentStyle.value}
+                />
               ) : null}
             </div>
           </div>

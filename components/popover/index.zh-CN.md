@@ -19,11 +19,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*RMP_TrdZ3nsAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; body?: string }` | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | content | 卡片内容 | string\|slot\|VNode | - |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
-| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | 卡片标题 | string\|slot\|VNode | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `container` \| `body`（`container` 别名） \| `title` \| `content` \| `arrow`。
 
 更多属性请参考 [Tooltip](/components/tooltip-cn/#api)。
 

@@ -20,14 +20,19 @@ Segmented Controls.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | block | Option to fit width to its parent's width | boolean | false |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | disabled | Disable all segments | boolean | false |  |
 | options | Set children optional | string[] \| number[] \| SegmentedOption[] | [] |  |
+| orientation | Orientation direction (takes priority over `vertical` when set) | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | shape | Shape of Segmented | `default` \| `round` | `default` | 4.3.0 |
 | size | The size of the Segmented. | `large` \| `middle` \| `small` | - |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | value | Currently selected value | string \| number | - |  |
-| vertical | Orientation, vertical or not | boolean | false | 4.3.0 |
+| vertical | Orientation, vertical or not (`orientation` takes priority when both are set) | boolean | false | 4.3.0 |
 | label | custom label by slot | v-slot:label="SegmentedBaseOption" | - |  |
+
+> Supported `SemanticDOM` keys: `root` \| `icon` \| `label` \| `item`.
 
 ### events
 

@@ -5,7 +5,8 @@ import ListItem from './ListItem';
 import Pagination from '../pagination';
 import PropTypes from '../_util/vue-types';
 import type { TransferItem } from '.';
-import { booleanType } from '../_util/type';
+import type { TransferSectionSemanticClassNames, TransferSectionSemanticStyles } from './interface';
+import { booleanType, objectType } from '../_util/type';
 
 export const transferListBodyProps = {
   prefixCls: String,
@@ -14,6 +15,8 @@ export const transferListBodyProps = {
   disabled: booleanType(),
   showRemove: booleanType(),
   pagination: PropTypes.any,
+  classNames: objectType<TransferSectionSemanticClassNames>(),
+  styles: objectType<TransferSectionSemanticStyles>(),
   onItemSelect: Function,
   onScroll: Function,
   onItemRemove: Function,
@@ -109,6 +112,8 @@ const ListBody = defineComponent({
         selectedKeys,
         disabled: globalDisabled,
         showRemove,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
       } = props;
 
       let paginationNode = null;
@@ -143,6 +148,8 @@ const ListBody = defineComponent({
             renderedEl={renderedEl}
             checked={checked}
             prefixCls={prefixCls}
+            classNames={semanticClassNames}
+            styles={semanticStyles}
             onClick={handleItemSelect}
             onRemove={handleItemRemove}
             showRemove={showRemove}
@@ -152,9 +159,10 @@ const ListBody = defineComponent({
       return (
         <>
           <ul
-            class={classNames(`${prefixCls}-content`, {
+            class={classNames(`${prefixCls}-content`, semanticClassNames?.list, {
               [`${prefixCls}-content-show-remove`]: showRemove,
             })}
+            style={semanticStyles?.list}
             onScroll={handleScroll}
           >
             {itemsList}

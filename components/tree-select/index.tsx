@@ -40,7 +40,19 @@ import { useCompactItemContext } from '../space/Compact';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 
 import type { CustomSlotsType } from '../_util/type';
-import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
+import {
+  applySemanticToNode,
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+  normalizePrefixNode,
+  resolveSemanticValue,
+} from '../select/utils/semanticUtil';
+import type {
+  SelectClassNamesType,
+  SelectSemanticClassNames,
+  SelectSemanticStyles,
+  SelectStylesType,
+} from '../select/utils/semanticUtil';
 
 const getTransitionName = (rootPrefixCls: string, motion: string, transitionName?: string) => {
   if (transitionName !== undefined) {
@@ -74,6 +86,9 @@ export function treeSelectProps<
       'treeLine',
       'customSlots',
     ]),
+    prefix: PropTypes.any,
+    /** 自定义后缀（antd v6 替代 suffixIcon） */
+    suffix: PropTypes.any,
     suffixIcon: PropTypes.any,
     size: stringType<SizeType>(),
     bordered: booleanType(),
@@ -81,10 +96,10 @@ export function treeSelectProps<
     /** 自定义弹层宽度（antd 5.25 起替代 dropdownMatchSelectWidth） */
     popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
     rootClassName: String,
-    /** 语义化 classNames（antd 5.25+） */
-    classNames: objectType<SemanticClassNames>(),
-    /** 语义化 styles（antd 5.25+） */
-    styles: objectType<SemanticStyles>(),
+    /** 语义化 classNames（支持对象与函数式） */
+    classNames: someType<SelectClassNamesType>([Object, Function]),
+    /** 语义化 styles（支持对象与函数式） */
+    styles: someType<SelectStylesType>([Object, Function]),
     /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
     onOpenChange: functionType<(open: boolean) => void>(),
     treeLine: someType<TreeProps['showLine']>([Boolean, Object]),
@@ -126,6 +141,8 @@ const TreeSelect = defineComponent({
     default?: any;
     leafIcon?: any;
     tagRender?: any;
+    prefix?: any;
+    suffix?: any;
     suffixIcon?: any;
     popupRender?: any;
     dropdownRender?: any;
@@ -214,9 +231,32 @@ const TreeSelect = defineComponent({
     const [wrapSelectSSR, hashId] = useSelectStyle(prefixCls);
     const [wrapTreeSelectSSR] = useStyle(treeSelectPrefixCls, treePrefixCls);
 
+    const treeSelectConfig = computed(() => configProvider.treeSelect?.value);
+    const semanticInfo = computed(() => ({
+      props: {
+        ...props,
+        size: mergedSize.value,
+        disabled: mergedDisabled.value,
+        status: mergedStatus.value,
+        variant: mergedVariant.value,
+      },
+    }));
+    const mergedClassNames = computed<SelectSemanticClassNames>(() =>
+      mergeSemanticClassNames(
+        resolveSemanticValue(treeSelectConfig.value?.classNames, semanticInfo.value),
+        resolveSemanticValue(props.classNames, semanticInfo.value),
+      ),
+    );
+    const mergedStyles = computed<SelectSemanticStyles>(() =>
+      mergeSemanticStyles(
+        resolveSemanticValue(treeSelectConfig.value?.styles, semanticInfo.value),
+        resolveSemanticValue(props.styles, semanticInfo.value),
+      ),
+    );
+
     const mergedDropdownClassName = computed(() =>
       classNames(
-        props.classNames?.popup?.root,
+        mergedClassNames.value.popup?.root,
         props.popupClassName || props.dropdownClassName,
         `${treeSelectPrefixCls.value}-dropdown`,
         {
@@ -269,23 +309,54 @@ const TreeSelect = defineComponent({
         treeIcon,
         treeLine,
         showArrow,
-        switcherIcon = slots.switcherIcon?.(),
+        switcherIcon = slots.switcherIcon?.() ?? treeSelectConfig.value?.switcherIcon,
         fieldNames = props.replaceFields,
         id = formItemContext.id.value,
         placeholder = slots.placeholder?.(),
       } = props;
       const { isFormItemInput, hasFeedback, feedbackIcon } = formItemInputContext;
+      const currentClassNames = mergedClassNames.value;
+      const currentStyles = mergedStyles.value;
+
+      const hasExplicitSuffix =
+        props.suffix !== undefined ||
+        !!slots.suffix ||
+        props.suffixIcon !== undefined ||
+        !!slots.suffixIcon;
+      const isSuffixHidden =
+        props.suffix === null ||
+        (props.suffix === undefined && !slots.suffix && props.suffixIcon === null);
+      const effectiveShowArrow =
+        showArrow !== undefined
+          ? showArrow
+          : isSuffixHidden
+          ? false
+          : hasExplicitSuffix && isMultiple.value
+          ? true
+          : undefined;
+
       // ===================== Icons =====================
       const { suffixIcon, removeIcon, clearIcon } = getIcons(
         {
           ...props,
           multiple: isMultiple.value,
-          showArrow: mergedShowArrow.value,
+          showArrow: effectiveShowArrow !== undefined ? effectiveShowArrow : mergedShowArrow.value,
           hasFeedback,
           feedbackIcon,
           prefixCls: prefixCls.value,
+          suffixClassName: currentClassNames.suffix,
+          suffixStyle: currentStyles.suffix,
+          contextSuffix: (treeSelectConfig.value as any)?.suffix,
+          contextSuffixIcon: (treeSelectConfig.value as any)?.suffixIcon,
         },
         slots,
+      );
+
+      const rawPrefix = props.prefix !== undefined ? props.prefix : slots.prefix?.();
+      const mergedPrefix = applySemanticToNode(
+        normalizePrefixNode(rawPrefix),
+        currentClassNames.prefix,
+        currentStyles.prefix,
       );
 
       // ===================== Empty =====================
@@ -297,6 +368,8 @@ const TreeSelect = defineComponent({
       }
       // ==================== Render =====================
       const selectProps = omit(props as typeof props & { itemIcon: any; switcherIcon: any }, [
+        'prefix',
+        'suffix',
         'suffixIcon',
         'itemIcon',
         'removeIcon',
@@ -328,9 +401,9 @@ const TreeSelect = defineComponent({
             enableVariantCls.value && mergedVariant.value !== 'outlined',
           [`${prefixCls.value}-in-form-item`]: isFormItemInput,
         },
-        configProvider.treeSelect?.value?.className,
+        treeSelectConfig.value?.className,
         props.rootClassName,
-        props.classNames?.root,
+        currentClassNames.root,
         getStatusClassNames(prefixCls.value, mergedStatus.value, hasFeedback),
         compactItemClassnames.value,
         attrs.class,
@@ -353,12 +426,9 @@ const TreeSelect = defineComponent({
             fieldNames={fieldNames}
             ref={treeSelectRef}
             prefixCls={prefixCls.value}
+            prefix={mergedPrefix}
             class={mergedClassName}
-            style={[
-              configProvider.treeSelect?.value?.style,
-              props.styles?.root,
-              attrs.style as any,
-            ]}
+            style={[treeSelectConfig.value?.style, currentStyles.root, attrs.style as any]}
             listHeight={listHeight}
             listItemHeight={listItemHeight}
             treeLine={!!treeLine}
@@ -383,8 +453,8 @@ const TreeSelect = defineComponent({
             popupRender={props.popupRender ?? slots.popupRender}
             dropdownRender={props.dropdownRender ?? slots.dropdownRender}
             dropdownStyle={
-              props.styles?.popup?.root || props.dropdownStyle
-                ? { ...props.dropdownStyle, ...props.styles?.popup?.root }
+              currentStyles.popup?.root || props.dropdownStyle
+                ? { ...props.dropdownStyle, ...currentStyles.popup?.root }
                 : undefined
             }
             choiceTransitionName={choiceTransitionName.value}
@@ -404,7 +474,7 @@ const TreeSelect = defineComponent({
             }}
             maxTagPlaceholder={props.maxTagPlaceholder || slots.maxTagPlaceholder}
             placement={placement.value}
-            showArrow={hasFeedback || showArrow}
+            showArrow={hasFeedback || effectiveShowArrow}
             placeholder={placeholder}
           />,
         ),

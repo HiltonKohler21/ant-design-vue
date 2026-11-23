@@ -8,6 +8,11 @@ import type {
   ButtonType,
   ButtonColorType,
   ButtonVariantType,
+  ButtonSemanticName,
+  ButtonSemanticClassNames,
+  ButtonSemanticStyles,
+  ButtonClassNamesType,
+  ButtonStylesType,
 } from './buttonTypes';
 import type { ButtonGroupProps } from './button-group';
 import type { SizeType as ButtonSize } from '../config-provider';
@@ -18,6 +23,11 @@ export type {
   ButtonType,
   ButtonColorType,
   ButtonVariantType,
+  ButtonSemanticName,
+  ButtonSemanticClassNames,
+  ButtonSemanticStyles,
+  ButtonClassNamesType,
+  ButtonStylesType,
   ButtonGroupProps,
   ButtonSize,
 };

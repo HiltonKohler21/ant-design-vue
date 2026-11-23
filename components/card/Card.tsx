@@ -15,8 +15,13 @@ import devWarning from '../vc-util/devWarning';
 import useStyle from './style';
 import Skeleton from '../skeleton';
 import type { CustomSlotsType } from '../_util/type';
-import type { CardSemanticName, SemanticNames, SemanticStylesMap } from '../_util/semantic';
+import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import { customRenderSlot } from '../_util/vnode';
+
+const resolveSemanticValue = <T,>(
+  val: T | ((info: { props: any }) => T) | undefined,
+  info: { props: any },
+): T | undefined => (typeof val === 'function' ? (val as any)(info) : val);
 
 export interface CardTabListType {
   key: string;
@@ -29,18 +34,16 @@ export interface CardTabListType {
 export type CardType = 'inner';
 export type CardSize = 'default' | 'small';
 
+export type CardSemanticName = 'root' | 'header' | 'body' | 'extra' | 'actions' | 'title' | 'cover';
+
+export type CardSemanticClassNames = SemanticNames<CardSemanticName>;
+export type CardSemanticStyles = SemanticStylesMap<CardSemanticName>;
+
 const { TabPane } = Tabs;
 
-export const cardProps = () => ({
+const cardBaseProps = () => ({
   prefixCls: String,
   rootClassName: String,
-  /** 语义化 classNames（antd 5.25+）：header / body / extra / actions / title / cover */
-  classNames: { type: Object as PropType<SemanticNames<CardSemanticName>>, default: undefined },
-  /** 语义化 styles（antd 5.25+）：header / body / extra / actions / title / cover */
-  styles: {
-    type: Object as PropType<SemanticStylesMap<CardSemanticName>>,
-    default: undefined,
-  },
   title: PropTypes.any,
   extra: PropTypes.any,
   bordered: { type: Boolean, default: true },
@@ -64,6 +67,33 @@ export const cardProps = () => ({
   cover: PropTypes.any,
   onTabChange: {
     type: Function as PropType<(key: string) => void>,
+  },
+});
+
+type CardSemanticProps = Partial<ExtractPropTypes<ReturnType<typeof cardBaseProps>>> & {
+  classNames?: any;
+  styles?: any;
+};
+
+export type CardClassNamesType =
+  | CardSemanticClassNames
+  | ((info: { props: CardSemanticProps }) => CardSemanticClassNames);
+
+export type CardStylesType =
+  | CardSemanticStyles
+  | ((info: { props: CardSemanticProps }) => CardSemanticStyles);
+
+export const cardProps = () => ({
+  ...cardBaseProps(),
+  /** 语义化 classNames（antd 5.25+/6.x）：root / header / body / extra / actions / title / cover */
+  classNames: {
+    type: [Object, Function] as PropType<CardClassNamesType>,
+    default: undefined,
+  },
+  /** 语义化 styles（antd 5.25+/6.x）：root / header / body / extra / actions / title / cover */
+  styles: {
+    type: [Object, Function] as PropType<CardStylesType>,
+    default: undefined,
   },
 });
 
@@ -192,8 +222,21 @@ const Card = defineComponent({
             })}
           </Tabs>
         ) : null;
-      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
-      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
+      const semanticInfo = {
+        props: {
+          ...props,
+          size: size.value,
+          variant: mergedVariant.value,
+        },
+      };
+      const mergedClassNames = mergeSemanticClassNames<CardSemanticClassNames>(
+        resolveSemanticValue(contextClassNames.value, semanticInfo),
+        resolveSemanticValue(props.classNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles<CardSemanticStyles>(
+        resolveSemanticValue(contextStyles.value, semanticInfo),
+        resolveSemanticValue(props.styles, semanticInfo),
+      );
       if (title || extra || tabs) {
         head = (
           <div

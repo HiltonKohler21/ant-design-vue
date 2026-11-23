@@ -1,7 +1,15 @@
 import type { App, Plugin } from 'vue';
 import Spin, { setDefaultIndicator } from './Spin';
 
-export type { SpinProps } from './Spin';
+export type {
+  SpinProps,
+  SpinSize,
+  SpinSemanticName,
+  SpinSemanticClassNames,
+  SpinSemanticStyles,
+  SpinClassNamesType,
+  SpinStylesType,
+} from './Spin';
 export { spinProps } from './Spin';
 
 Spin.setDefaultIndicator = setDefaultIndicator;

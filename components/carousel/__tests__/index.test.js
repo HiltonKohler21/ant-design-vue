@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils';
-import { h, createVNode } from 'vue';
+import { nextTick, h, createVNode } from 'vue';
 import { asyncExpect, sleep } from '../../../tests/utils';
 import Carousel from '..';
+import ConfigProvider from '../../config-provider';
 import mountTest from '../../../tests/shared/mountTest';
 
 describe('Carousel', () => {
@@ -138,5 +139,131 @@ describe('Carousel', () => {
       'Warning: [ant-design-vue: Carousel] `vertical` is deprecated, please use `dotPosition` instead.',
     );
     warnSpy.mockRestore();
+  });
+
+  it('supports dotPlacement with RTL-aware start/end mapping and precedence over dotPosition', () => {
+    const ltrStart = mount({
+      render() {
+        return (
+          <Carousel dotPlacement="start" dotPosition="top">
+            <div>1</div>
+            <div>2</div>
+          </Carousel>
+        );
+      },
+    });
+    expect(ltrStart.find('.ant-carousel').classes()).toContain('ant-carousel-vertical');
+    expect(ltrStart.find('.slick-dots').classes()).toContain('slick-dots-left');
+
+    const ltrEnd = mount({
+      render() {
+        return (
+          <Carousel dotPlacement="end">
+            <div>1</div>
+            <div>2</div>
+          </Carousel>
+        );
+      },
+    });
+    expect(ltrEnd.find('.ant-carousel').classes()).toContain('ant-carousel-vertical');
+    expect(ltrEnd.find('.slick-dots').classes()).toContain('slick-dots-right');
+
+    const rtlStart = mount({
+      render() {
+        return (
+          <ConfigProvider direction="rtl">
+            <Carousel dotPlacement="start">
+              <div>1</div>
+              <div>2</div>
+            </Carousel>
+          </ConfigProvider>
+        );
+      },
+    });
+    expect(rtlStart.find('.ant-carousel').classes()).toContain('ant-carousel-vertical');
+    expect(rtlStart.find('.slick-dots').classes()).toContain('slick-dots-right');
+
+    const rtlEnd = mount({
+      render() {
+        return (
+          <ConfigProvider direction="rtl">
+            <Carousel dotPlacement="end">
+              <div>1</div>
+              <div>2</div>
+            </Carousel>
+          </ConfigProvider>
+        );
+      },
+    });
+    expect(rtlEnd.find('.ant-carousel').classes()).toContain('ant-carousel-vertical');
+    expect(rtlEnd.find('.slick-dots').classes()).toContain('slick-dots-left');
+
+    const topPlacement = mount({
+      render() {
+        return (
+          <Carousel dotPlacement="top">
+            <div>1</div>
+            <div>2</div>
+          </Carousel>
+        );
+      },
+    });
+    expect(topPlacement.find('.ant-carousel').classes()).not.toContain('ant-carousel-vertical');
+    expect(topPlacement.find('.slick-dots').classes()).toContain('slick-dots-top');
+  });
+
+  it('supports autoplay={{ dotDuration: true }} with custom autoplaySpeed and cssVar-safe CSS', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider theme={{ cssVar: true }}>
+            <Carousel autoplay={{ dotDuration: true }} autoplaySpeed={5000}>
+              <div>1</div>
+              <div>2</div>
+            </Carousel>
+          </ConfigProvider>
+        );
+      },
+    });
+    await nextTick();
+    const root = wrapper.find('.ant-carousel');
+    expect(root.attributes('style')).toContain('--dot-duration: 5000ms');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('var(--dot-duration');
+    expect(css).toContain('dot-animation');
+    expect(css).not.toContain('NaN');
+    wrapper.unmount();
+
+    const defaultSpeedWrapper = mount({
+      render() {
+        return (
+          <Carousel autoplay={{ dotDuration: true }}>
+            <div>1</div>
+            <div>2</div>
+          </Carousel>
+        );
+      },
+    });
+    expect(defaultSpeedWrapper.find('.ant-carousel').attributes('style')).toContain(
+      '--dot-duration: 3000ms',
+    );
+    defaultSpeedWrapper.unmount();
+
+    const boolAutoplayWrapper = mount({
+      render() {
+        return (
+          <Carousel autoplay>
+            <div>1</div>
+            <div>2</div>
+          </Carousel>
+        );
+      },
+    });
+    expect(boolAutoplayWrapper.find('.ant-carousel').attributes('style')).toBeUndefined();
+    boolAutoplayWrapper.unmount();
   });
 });

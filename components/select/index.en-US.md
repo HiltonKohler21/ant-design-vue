@@ -29,7 +29,7 @@ Select component to select value from options.
 | autoClearSearchValue | Whether the current search will be cleared on selecting an item. Only applies when `mode` is set to `multiple` or `tags`. | boolean | true |  |
 | autofocus | Get focus by default | boolean | false |  |
 | bordered | Whether has border style (Deprecated, please use `variant` instead) | boolean | true |  |
-| classNames | Semantic DOM class names | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: SelectProps }) => ...)` | - | 4.3.0 |
 | clearIcon | The custom clear icon | VNode \| slot | - |  |
 | defaultActiveFirstOption | Whether active first option by default | boolean | true |  |
 | defaultOpen | Initial open state of dropdown | boolean | - |  |
@@ -50,6 +50,7 @@ Select component to select value from options.
 | labelInValue | whether to embed label in value, turn the format of value from `string` to `{key: string, label: vNodes, originLabel: any}`, originLabel (3.1) maintains the original type. If the node is constructed through a-select-option children, the value is a function (the default slot of a-select-option) | boolean | false |  |
 | listHeight | Config popup height | number | 256 |  |
 | loading | indicate loading state | boolean | false |  |
+| loadingIcon | Custom loading icon when `loading` is `true` | VNode \| slot | `<LoadingOutlined spin />` | 4.3.0 |
 | maxTagCount | Max tag count to show | number | - |  |
 | maxTagPlaceholder | Placeholder for not showing tags | slot \| function(omittedValues) | - |  |
 | maxTagTextLength | Max text length to show | number | - |  |
@@ -71,8 +72,9 @@ Select component to select value from options.
 | showSearch | Whether select is searchable | boolean | single:false, multiple:true |  |
 | size | Size of Select input. `middle` `large` `small` | string | middle |  |
 | status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
-| styles | Semantic DOM inline styles | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
-| suffixIcon | The custom suffix icon | VNode \| slot | - |  |
+| styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: SelectProps }) => ...)` | - | 4.3.0 |
+| suffix | The custom suffix icon (replaces `suffixIcon`) | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | The custom suffix icon (deprecated, please use `suffix` instead) | VNode \| slot | - |  |
 | tagRender | Customize tag render, only applies when `mode` is set to `multiple` or `tags` | slot \| (props) => any | - |  |
 | tokenSeparators | Separator used to tokenize, only applies when `mode="tags"` | string\[] | - |  |
 | value(v-model) | Current selected option. | string\|number\|string\[]\|number\[] | - |  |

@@ -23,7 +23,7 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 | addonBefore | The label text displayed before (on the left side of) the input field | string \| slot | - |  |
 | allowClear | Allow to remove input content with clear icon | boolean | - |  |
 | ~~bordered~~ | Whether has border style (deprecated, use `variant` instead) | boolean | `true` | 3.0 |
-| classNames | Semantic DOM class names | { input?: string; prefix?: string; suffix?: string; count?: string } | - | 4.3.0 |
+| classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; input?: string; prefix?: string; suffix?: string; count?: string } \| ((info: { props: InputProps }) => ...)` | - | 4.3.0 |
 | clearIcon | Custom clear icon when `allowClear` is `true` | slot | `<CloseCircleFilled />` | 3.3.0 |
 | defaultValue | The initial input content | string | - |  |
 | disabled | Whether the input is disabled | boolean | `false` |  |
@@ -34,7 +34,7 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 | showCount | Whether show text count | boolean \| { formatter: (info: { value: string, count: number, maxLength?: number }) => string } | `false` | 3.0 |
 | size | The size of the input box. Note: in the context of a form, the `middle` size is used. Available: `large` `middle` `small` | `large` \| `middle` \| `small` | - |  |
 | status | Set validation status | `error` \| `warning` | - | 3.3.0 |
-| styles | Semantic DOM inline styles | { input?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; count?: CSSProperties } | - | 4.3.0 |
+| styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; input?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; count?: CSSProperties } \| ((info: { props: InputProps }) => ...)` | - | 4.3.0 |
 | suffix | The suffix icon for the Input | string \| slot | - |  |
 | type | The type of input, see: [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#Form_%3Cinput%3E_types) (use `<a-textarea />` instead of `type="textarea"`) | string | `text` |  |
 | value(v-model) | The input content value | string | - |  |
@@ -55,11 +55,11 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 | --- | --- | --- | --- | --- |
 | allowClear | Allow to remove input content with clear icon | boolean | - | 1.5.0 |
 | autoSize / autosize | Height autosize feature, can be set to `true` / `false` or an object `{ minRows: 2, maxRows: 6 }` | boolean \| { minRows?: number; maxRows?: number } | `false` |  |
-| classNames | Semantic DOM class names | { textarea?: string; count?: string } | - | 4.3.0 |
+| classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; textarea?: string; input?: string; count?: string } \| ((info: { props: TextAreaProps }) => ...)` | - | 4.3.0 |
 | defaultValue | The initial input content | string | - |  |
 | rootClassName | Root element class name | string | - | 4.3.0 |
 | showCount | Whether show text count | boolean \| { formatter: (info: { value: string, count: number, maxLength?: number }) => string } | `false` | 3.0 |
-| styles | Semantic DOM inline styles | { textarea?: CSSProperties; count?: CSSProperties } | - | 4.3.0 |
+| styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; textarea?: CSSProperties; input?: CSSProperties; count?: CSSProperties } \| ((info: { props: TextAreaProps }) => ...)` | - | 4.3.0 |
 | value(v-model) | The input content value | string | - |  |
 | variant | Variant of the textarea | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 
@@ -75,11 +75,12 @@ The rest of the props of `TextArea` are the same as the original [textarea](http
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| classNames | Semantic DOM class names | { input?: string; prefix?: string; suffix?: string; count?: string } | - | 4.3.0 |
+| classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; input?: string; prefix?: string; suffix?: string; count?: string } \| ((info: { props: SearchProps }) => ...)` | - | 4.3.0 |
 | enterButton | To show an enter button after input. This prop conflicts with addon | boolean \| VueNode \| slot | `false` |  |
 | loading | Search box with loading | boolean | `false` | 1.5.0 |
 | rootClassName | Root element class name | string | - | 4.3.0 |
-| styles | Semantic DOM inline styles | { input?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; count?: CSSProperties } | - | 4.3.0 |
+| searchIcon | Custom search icon (replaces default `<SearchOutlined />` when `enterButton` is boolean) | VueNode \| slot | `<SearchOutlined />` | 4.3.0 |
+| styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; input?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; count?: CSSProperties } \| ((info: { props: SearchProps }) => ...)` | - | 4.3.0 |
 
 ### Input.Search Events
 
@@ -107,10 +108,10 @@ Supports all props of `Input`.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| classNames | Semantic DOM class names | { input?: string; prefix?: string; suffix?: string; count?: string } | - | 4.3.0 |
+| classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; input?: string; prefix?: string; suffix?: string; count?: string } \| ((info: { props: PasswordProps }) => ...)` | - | 4.3.0 |
 | iconRender | Custom toggle button | (visible: boolean) => VueNode \| slot | - | 1.14.0 |
 | rootClassName | Root element class name | string | - | 4.3.0 |
-| styles | Semantic DOM inline styles | { input?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; count?: CSSProperties } | - | 4.3.0 |
+| styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; input?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; count?: CSSProperties } \| ((info: { props: PasswordProps }) => ...)` | - | 4.3.0 |
 | visibilityToggle | Whether show toggle button or control password visibility | boolean | `true` | 1.14.0 |
 | visible(v-model) | Password visibility | boolean | `false` | 3.0 |
 
@@ -123,6 +124,7 @@ One-time password input box (via `Input.OTP` or global tag `<a-input-o-t-p>`, av
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | autoFocus | Focus input automatically on mount | boolean | `false` | 4.3.0 |
+| classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; input?: string; separator?: string } \| ((info: { props: OTPProps }) => ...)` | - | 4.3.0 |
 | defaultValue | Default value | string | - | 4.3.0 |
 | disabled | Whether the input is disabled | boolean | `false` | 4.3.0 |
 | formatter | Format display; empty fields are ignored by `formatter` | (value: string) => string | - | 4.3.0 |
@@ -133,6 +135,7 @@ One-time password input box (via `Input.OTP` or global tag `<a-input-o-t-p>`, av
 | separator | Custom separator between input cells | string \| ((index: number) => VueNode) | - | 4.3.0 |
 | size | Size of the input box | `large` \| `middle` \| `small` | `middle` | 4.3.0 |
 | status | Set validation status | `error` \| `warning` | - | 4.3.0 |
+| styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; input?: CSSProperties; separator?: CSSProperties } \| ((info: { props: OTPProps }) => ...)` | - | 4.3.0 |
 | type | Native input type for cells | string | `text` | 4.3.0 |
 | value(v-model) | Input content value | string | - | 4.3.0 |
 | variant | Variant of the input | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |

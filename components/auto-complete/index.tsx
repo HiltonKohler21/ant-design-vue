@@ -1,22 +1,29 @@
 import type { App, VNode, ExtractPropTypes, CSSProperties, PropType } from 'vue';
 import { defineComponent, ref } from 'vue';
 import Select, { selectProps } from '../select';
+import type {
+  SelectClassNamesType,
+  SelectSemanticClassNames,
+  SelectSemanticStyles,
+  SelectStylesType,
+} from '../select/utils/semanticUtil';
+import {
+  mergeSemanticClassNames,
+  mergeSemanticStyles,
+  resolveSemanticValue,
+} from '../select/utils/semanticUtil';
 import { isValidElement, flattenChildren } from '../_util/props-util';
 import warning from '../_util/warning';
 import Option from './Option';
 import OptGroup from './OptGroup';
 import omit from '../_util/omit';
 
-import useConfigInject, {
-  useComponentConfig,
-  mergeSemanticClassNames,
-  mergeSemanticStyles,
-} from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { InputStatus } from '../_util/statusUtils';
 
 import type { CustomSlotsType } from '../_util/type';
-import type { SemanticClassNames, SemanticStyles } from '../_util/semantic';
+import { someType } from '../_util/type';
 
 function isSelectOptionOrSelectOptGroup(child: any): boolean {
   return child?.type?.isSelectOption || child?.type?.isSelectOptGroup;
@@ -40,10 +47,10 @@ export const autoCompleteProps = () => ({
     type: Function as PropType<(open: boolean) => void>,
     default: undefined,
   },
-  /** 语义化 classNames（antd 5.25+），透传给 Select */
-  classNames: { type: Object as PropType<SemanticClassNames>, default: undefined },
-  /** 语义化 styles（antd 5.25+），透传给 Select */
-  styles: { type: Object as PropType<SemanticStyles>, default: undefined },
+  /** 语义化 classNames（支持对象与函数式），透传给 Select */
+  classNames: someType<SelectClassNamesType>([Object, Function]),
+  /** 语义化 styles（支持对象与函数式），透传给 Select */
+  styles: someType<SelectStylesType>([Object, Function]),
   prefixCls: String,
   showSearch: { type: Boolean, default: undefined },
   transitionName: String,
@@ -76,6 +83,10 @@ const AutoComplete = defineComponent({
     notFoundContent: any;
     dataSource: any;
     clearIcon: any;
+    prefix?: any;
+    suffix?: any;
+    suffixIcon?: any;
+    popupRender?: any;
   }>,
   setup(props, { slots, attrs, expose }) {
     warning(
@@ -163,12 +174,46 @@ const AutoComplete = defineComponent({
         }
       }
 
-      const mergedClassNames = mergeSemanticClassNames(contextClassNames.value, props.classNames);
-      const mergedStyles = mergeSemanticStyles(contextStyles.value, props.styles);
       const mergedAllowClear = props.allowClear ?? autoCompleteConfig.value.allowClear;
       const mergedVariant =
         props.variant ??
         (props.bordered === false ? 'borderless' : autoCompleteConfig.value.variant);
+      const semanticInfo = {
+        props: {
+          ...props,
+          allowClear: mergedAllowClear,
+          variant: mergedVariant,
+        },
+      };
+      const mergedClassNames = mergeSemanticClassNames<SelectSemanticClassNames>(
+        resolveSemanticValue(contextClassNames.value as any, semanticInfo),
+        resolveSemanticValue(props.classNames, semanticInfo),
+      );
+      const mergedStyles = mergeSemanticStyles<SelectSemanticStyles>(
+        resolveSemanticValue(contextStyles.value as any, semanticInfo),
+        resolveSemanticValue(props.styles, semanticInfo),
+      );
+      const hasExplicitSuffix =
+        props.suffix !== undefined ||
+        !!slots.suffix ||
+        props.suffixIcon !== undefined ||
+        !!slots.suffixIcon;
+      const mergedSuffix =
+        props.suffix !== undefined
+          ? props.suffix
+          : slots.suffix
+          ? slots.suffix()
+          : props.suffixIcon !== undefined
+          ? props.suffixIcon
+          : slots.suffixIcon
+          ? slots.suffixIcon()
+          : undefined;
+      const mergedShowArrow =
+        props.showArrow !== undefined
+          ? props.showArrow
+          : hasExplicitSuffix && mergedSuffix !== null
+          ? true
+          : undefined;
       const selectProps = omit(
         {
           ...props,
@@ -176,8 +221,10 @@ const AutoComplete = defineComponent({
           allowClear: mergedAllowClear,
           variant: mergedVariant,
           dropdownMatchSelectWidth: dropdownMatchSelectWidth.value,
-          classNames: Object.keys(mergedClassNames).length ? mergedClassNames : props.classNames,
-          styles: Object.keys(mergedStyles).length ? mergedStyles : props.styles,
+          classNames: Object.keys(mergedClassNames).length ? mergedClassNames : undefined,
+          styles: Object.keys(mergedStyles).length ? mergedStyles : undefined,
+          ...(hasExplicitSuffix ? { suffix: mergedSuffix } : {}),
+          showArrow: mergedShowArrow,
           mode: Select.SECRET_COMBOBOX_MODE_DO_NOT_USE,
           // optionLabelProp,
           getInputElement,
@@ -188,10 +235,13 @@ const AutoComplete = defineComponent({
           popupClassName: props.popupClassName || props.dropdownClassName,
           ref: selectRef,
         },
-        ['dataSource', 'loading'],
+        ['dataSource', 'loading', 'suffixIcon'],
       );
       return (
-        <Select {...selectProps} v-slots={omit(slots, ['default', 'dataSource', 'options'])}>
+        <Select
+          {...selectProps}
+          v-slots={omit(slots, ['default', 'dataSource', 'options', 'suffix', 'suffixIcon'])}
+        >
           {optionChildren}
         </Select>
       );

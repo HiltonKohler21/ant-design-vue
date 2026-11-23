@@ -5,7 +5,19 @@ export type TriggerType = 'hover' | 'focus' | 'click' | 'contextmenu';
 import type { PresetColorType } from '../_util/colors';
 import type { LiteralUnion } from '../_util/type';
 import { objectType } from '../_util/type';
-import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
+import type {
+  SemanticClassNames,
+  SemanticClassNamesType,
+  SemanticStyles,
+  SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
+
+export type TooltipSemanticName = 'root' | 'container' | 'body' | 'arrow';
+export type TooltipSemanticClassNames = SemanticClassNames<TooltipSemanticName>;
+export type TooltipSemanticStyles = SemanticStyles<TooltipSemanticName>;
+export type TooltipClassNamesType<Props = any> = SemanticClassNamesType<Props, TooltipSemanticName>;
+export type TooltipStylesType<Props = any> = SemanticStylesType<Props, TooltipSemanticName>;
+
 export type TooltipPlacement =
   | 'top'
   | 'left'
@@ -47,16 +59,15 @@ export default () => ({
     default: undefined as boolean | AdjustOverflow,
   },
   destroyTooltipOnHide: { type: Boolean, default: undefined },
-  /** 语义化 classNames（antd 5.25+）：root / body */
   rootClassName: String,
   /** 非受控默认展开 */
   defaultOpen: { type: Boolean, default: undefined },
-  /** @deprecated Please use \`defaultOpen\` instead */
+  /** @deprecated Please use `defaultOpen` instead */
   defaultVisible: { type: Boolean, default: undefined },
-  classNames: objectType<SemanticNames<'root' | 'body'>>(),
-  /** 语义化 styles（antd 5.25+）：root / body */
-  styles: objectType<SemanticStylesMap<'root' | 'body'>>(),
-  /** @deprecated Please use `destroyOnHidden` instead */
+  /** 语义化 classNames（支持对象或函数）：root / container / body(alias) / arrow */
+  classNames: [Object, Function] as PropType<TooltipClassNamesType>,
+  /** 语义化 styles（支持对象或函数）：root / container / body(alias) / arrow */
+  styles: [Object, Function] as PropType<TooltipStylesType>,
   destroyOnHidden: { type: Boolean, default: undefined },
   align: objectType<AlignType>(),
   builtinPlacements: objectType<BuildInPlacements>(),
@@ -67,7 +78,7 @@ export default () => ({
   'onUpdate:visible': Function as PropType<(vis: boolean) => void>,
   onOpenChange: Function as PropType<(vis: boolean) => void>,
   afterOpenChange: Function as PropType<(vis: boolean) => void>,
-  /** @deprecated Please use \`afterOpenChange\` instead */
+  /** @deprecated Please use `afterOpenChange` instead */
   afterVisibleChange: Function as PropType<(vis: boolean) => void>,
   'onUpdate:open': Function as PropType<(vis: boolean) => void>,
 });

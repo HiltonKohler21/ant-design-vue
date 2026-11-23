@@ -22,6 +22,8 @@ One or more elements can be selected from either column, one click on the proper
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| actions | A set of operations sorted from top to bottom (takes priority over `operations`). Accepts strings or custom VueNodes | VueNode\[] | \['>', '&lt;'] | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | dataSource | Used for setting the source data. The elements that are part of this array will be present the left column. Except the elements whose keys are included in `targetKeys` prop. | \[{key: string.isRequired,title: string.isRequired,description: string,disabled: bool}] | \[] |  |
 | disabled | Whether disabled transfer | boolean | false |  |
 | filterOption | A function to determine whether an item should show in search result list | (inputValue, option): boolean |  |  |
@@ -29,7 +31,7 @@ One or more elements can be selected from either column, one click on the proper
 | listStyle | A custom CSS style used for rendering the transfer columns. | CSSProperties |  |  |
 | locale | i18n text including filter, empty text, item unit, `deselectAll` (4.3.0), etc | object | `{ itemUnit: 'item', itemsUnit: 'items', notFoundContent: 'The list is empty', searchPlaceholder: 'Search here' }` |  |
 | oneWay | Display as single direction style | boolean | false | 3.0.0 |
-| operations | A set of operations that are sorted from top to bottom. | string\[] | \['>', '&lt;'] |  |
+| ~~operations~~ | A set of operations that are sorted from top to bottom, please use `actions` instead | string\[] | \['>', '&lt;'] |  |
 | operationStyle | A custom CSS style used for rendering the operations column | CSSProperties | - | 3.0.0 |
 | pagination | Use pagination. Not work in render props | boolean \| { pageSize: number, simple: boolean, showSizeChanger?: boolean, showLessItems?: boolean } | false | 3.0.0 |
 | render | The function to generate the item shown on a column. Based on an record (element of the dataSource array), this function should return a element which is generated from that record. Also, it can return a plain object with `value` and `label`, `label` is a element and `value` is for title | Function(record) \| slot |  |  |
@@ -40,8 +42,11 @@ One or more elements can be selected from either column, one click on the proper
 | showSearch | If included, a search box is shown on each column. | boolean | false |  |
 | showSelectAll | Show select all checkbox on the header | boolean | true |  |
 | status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | targetKeys(v-model) | A set of keys of elements that are listed on the right column. | string\[] | \[] |  |
 | titles | A set of titles that are sorted from left to right. | string\[] | - |  |
+
+> Supported `SemanticDOM` keys: `root` \| `section` \| `header` \| `title` \| `body` \| `list` \| `item` \| `itemIcon` \| `itemContent` \| `footer` \| `actions` (and optional `source` / `target` nested overrides).
 
 ### Events
 

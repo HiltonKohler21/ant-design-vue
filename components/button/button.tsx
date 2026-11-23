@@ -11,14 +11,23 @@ import {
 } from 'vue';
 import Wave from '../_util/wave';
 import buttonProps from './buttonTypes';
-import { flattenChildren } from '../_util/props-util';
+import { filterEmpty, flattenChildren, isValidElement } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
+import { useMergeSemantic } from '../_util/hooks/useMergeSemantic';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 import devWarning from '../vc-util/devWarning';
 import LoadingIcon from './LoadingIcon';
 import useStyle from './style';
-import type { ButtonColorType, ButtonType, ButtonVariantType } from './buttonTypes';
+import type {
+  ButtonColorType,
+  ButtonProps,
+  ButtonSemanticClassNames,
+  ButtonSemanticStyles,
+  ButtonShape,
+  ButtonType,
+  ButtonVariantType,
+} from './buttonTypes';
 import type { VNode } from 'vue';
 import { GroupSizeContext } from './button-group';
 import { useCompactItemContext } from '../space/Compact';
@@ -173,8 +182,42 @@ export default defineComponent({
       return props.type || 'default';
     });
 
+    const mergedIconPlacement = computed<'start' | 'end'>(
+      () => props.iconPlacement ?? props.iconPosition ?? 'start',
+    );
+
+    const mergedShape = computed<ButtonShape>(
+      () => props.shape || (contextButton.value?.shape as ButtonShape) || 'default',
+    );
+
+    const mergedSize = computed(() => compactSize.value || groupSizeContext?.size || size.value);
+
+    const mergedPropsForSemantic = computed<ButtonProps>(() => ({
+      ...props,
+      type: mergedType.value,
+      color: colorVariantPair.value[0],
+      variant: colorVariantPair.value[1],
+      danger: props.danger || colorVariantPair.value[0] === 'danger',
+      shape: mergedShape.value,
+      size: mergedSize.value,
+      disabled: mergedDisabled.value,
+      loading: !!innerLoading.value,
+      iconPlacement: mergedIconPlacement.value,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      ButtonSemanticClassNames,
+      ButtonSemanticStyles,
+      ButtonProps
+    >(
+      () => [contextButton.value?.classNames, props.classNames],
+      () => [contextButton.value?.styles, props.styles],
+      () => ({ props: mergedPropsForSemantic.value }),
+    );
+
     const classes = computed(() => {
-      const { shape = 'default', ghost, block, danger, iconPosition = 'start' } = props;
+      const { ghost, block, danger } = props;
+      const shape = mergedShape.value;
       const [resolvedColor, resolvedVariant] = colorVariantPair.value;
       const currentType = mergedType.value;
       const mergedDanger = danger || resolvedColor === 'danger';
@@ -182,7 +225,7 @@ export default defineComponent({
       const pre = prefixCls.value;
 
       const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
-      const sizeFullname = compactSize.value || groupSizeContext?.size || size.value;
+      const sizeFullname = mergedSize.value;
       const sizeCls = sizeFullname ? sizeClassNameMap[sizeFullname] || '' : '';
 
       return [
@@ -201,7 +244,7 @@ export default defineComponent({
           [`${pre}-two-chinese-chars`]: hasTwoCNChar.value && autoInsertSpace.value,
           [`${pre}-block`]: block,
           [`${pre}-dangerous`]: !!mergedDanger,
-          [`${pre}-icon-end`]: iconPosition === 'end',
+          [`${pre}-icon-end`]: mergedIconPlacement.value === 'end',
           [`${pre}-rtl`]: direction.value === 'rtl',
         },
       ];
@@ -237,12 +280,31 @@ export default defineComponent({
 
     const insertSpace = (child: VNode, needInserted: boolean) => {
       const SPACE = needInserted ? ' ' : '';
+      const contentCls = mergedClassNames.value.content;
+      const contentStyle = mergedStyles.value.content;
       if (child.type === Text) {
         let text = (child.children as string).trim();
         if (isTwoCNChar(text)) {
           text = text.split('').join(SPACE);
         }
-        return <span>{text}</span>;
+        return (
+          <span class={contentCls} style={contentStyle}>
+            {text}
+          </span>
+        );
+      }
+      if (contentCls || contentStyle) {
+        const extraProps: Record<string, any> = {};
+        if (contentCls) extraProps.class = contentCls;
+        if (contentStyle) extraProps.style = contentStyle;
+        if (isValidElement(child)) {
+          return cloneElement(child, extraProps, false);
+        }
+        return (
+          <span class={contentCls} style={contentStyle}>
+            {child}
+          </span>
+        );
       }
       return child;
     };
@@ -283,14 +345,18 @@ export default defineComponent({
 
       const iconType = innerLoading.value ? 'loading' : icon;
       const contextStyle = contextButton.value?.style;
+      const rootStyle = mergedStyles.value.root;
       const buttonProps = {
         ...attrs,
         title,
         disabled: mergedDisabled.value,
-        ...(contextStyle ? { style: [contextStyle, attrs.style as any] } : {}),
+        ...(contextStyle || rootStyle
+          ? { style: [contextStyle, rootStyle, attrs.style as any] }
+          : {}),
         class: [
           classes.value,
           contextButton.value?.className,
+          mergedClassNames.value.root,
           props.rootClassName,
           attrs.class,
           { [`${prefixCls.value}-icon-only`]: children.length === 0 && !!iconType },
@@ -302,19 +368,47 @@ export default defineComponent({
       if (!mergedDisabled.value) {
         delete buttonProps.disabled;
       }
-      const iconNode =
-        icon && !innerLoading.value ? (
-          cloneElement(icon, {
-            class: props.classNames?.icon,
-            style: props.styles?.icon,
-          })
-        ) : (
+
+      const iconCls = mergedClassNames.value.icon;
+      const iconStyle = mergedStyles.value.icon;
+      const renderIconElement = (node: any) => {
+        const extraProps: Record<string, any> = {};
+        if (iconCls) extraProps.class = iconCls;
+        if (iconStyle) extraProps.style = iconStyle;
+        const targetNode = Array.isArray(node) ? filterEmpty(node)[0] : node;
+        if (isValidElement(targetNode)) {
+          return cloneElement(targetNode, extraProps, false);
+        }
+        if (iconCls || iconStyle) {
+          return (
+            <span class={iconCls} style={iconStyle}>
+              {node}
+            </span>
+          );
+        }
+        return node;
+      };
+
+      const customLoadingIcon =
+        (typeof props.loading === 'object' && props.loading?.icon) ||
+        contextButton.value?.loadingIcon;
+
+      let iconNode: any;
+      if (icon && !innerLoading.value) {
+        iconNode = renderIconElement(icon);
+      } else if (innerLoading.value && customLoadingIcon) {
+        iconNode = renderIconElement(customLoadingIcon);
+      } else {
+        iconNode = (
           <LoadingIcon
             existIcon={!!icon}
             prefixCls={prefixCls.value}
             loading={!!innerLoading.value}
+            iconClassName={iconCls}
+            iconStyle={iconStyle}
           />
         );
+      }
 
       const kids = children.map(child =>
         insertSpace(child, isNeedInserted && autoInsertSpace.value),

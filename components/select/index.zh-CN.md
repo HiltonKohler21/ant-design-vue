@@ -30,7 +30,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5oPiTqPxGAUAAA
 | autoClearSearchValue | 是否在选中项后清空搜索框，只在 `mode` 为 `multiple` 或 `tags` 时有效。 | boolean | true |  |
 | autofocus | 默认获取焦点 | boolean | false |  |
 | bordered | 是否有边框（已废弃，请使用 `variant` 替代） | boolean | true |  |
-| classNames | 用于自定义 Select 组件内部各语义化结构的 class | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | 用于自定义 Select 组件内部各语义化结构的 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: SelectProps }) => ...)` | - | 4.3.0 |
 | clearIcon | 自定义的多选框清空图标 | VNode \| slot | - |  |
 | defaultActiveFirstOption | 是否默认高亮第一个选项。 | boolean | true |  |
 | defaultOpen | 是否默认展开下拉菜单 | boolean | - |  |
@@ -51,6 +51,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5oPiTqPxGAUAAA
 | labelInValue | 是否把每个选项的 label 包装到 value 中，会把 Select 的 value 类型从 `string` 变为 `{key: string, label: vNodes, originLabel: any}` 的格式, originLabel（3.1） 保持原始类型，如果通过 a-select-option children 构造的节点，该值是是个函数（即 a-select-option 的默认插槽） | boolean | false |  |
 | listHeight | 设置弹窗滚动高度 | number | 256 |  |
 | loading | 加载中状态 | boolean | false |  |
+| loadingIcon | 自定义加载中图标（`loading` 为 `true` 时生效） | VNode \| slot | `<LoadingOutlined spin />` | 4.3.0 |
 | maxTagCount | 最多显示多少个 tag | number | - |  |
 | maxTagPlaceholder | 隐藏 tag 时显示的内容 | slot \| function(omittedValues) | - |  |
 | maxTagTextLength | 最大显示的 tag 文本长度 | number | - |  |
@@ -72,8 +73,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5oPiTqPxGAUAAA
 | showSearch | 配置是否可搜索 | boolean | 单选为 false,多选为 true |  |
 | size | 选择框大小，可选 `middle` `large` `small` | string | middle |  |
 | status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
-| styles | 用于自定义 Select 组件内部各语义化结构的行内 style | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
-| suffixIcon | 自定义的选择框后缀图标 | VNode \| slot | - |  |
+| styles | 用于自定义 Select 组件内部各语义化结构的行内 style（支持对象与函数式 `({ props }) => ...`） | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: SelectProps }) => ...)` | - | 4.3.0 |
+| suffix | 自定义的选择框后缀图标（替代 `suffixIcon`） | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | 自定义的选择框后缀图标（已废弃，请使用 `suffix` 替代） | VNode \| slot | - |  |
 | tagRender | 自定义 tag 内容 render，仅在 `mode` 为 `multiple` 或 `tags` 时生效 | slot \| (props) => any | - | 3.0 |
 | tokenSeparators | 自动分词的分隔符，仅在 `mode="tags"` 时生效 | string\[] | - |  |
 | value(v-model) | 指定当前选中的条目 | string\|string\[]\|number\|number\[] | - |  |

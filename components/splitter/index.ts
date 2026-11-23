@@ -2,7 +2,19 @@ import type { App, Plugin } from 'vue';
 import Splitter from './Splitter';
 import Panel from './Panel';
 
-export type { SplitterProps, PanelProps } from './interface';
+export type {
+  SplitterProps,
+  PanelProps,
+  SplitterOrientation,
+  SplitterCollapsibleIcon,
+  SplitterCollapsibleConfig,
+  SplitterDraggerClassName,
+  SplitterDraggerStyle,
+  SplitterSemanticClassNames,
+  SplitterSemanticStyles,
+  SplitterClassNamesType,
+  SplitterStylesType,
+} from './interface';
 
 Splitter.Panel = Panel;
 

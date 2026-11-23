@@ -22,7 +22,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a-8zR6rrupgAAA
 | activeTabKey | 当前激活页签的 key | string | - |  |
 | ~~bodyStyle~~ | 内容区域自定义样式（已废弃，请使用 `styles.body`） | CSSProperties | - |  |
 | ~~bordered~~ | 是否有边框（已废弃，请使用 `variant`） | boolean | `true` |  |
-| classNames | 配置卡片内置模块的 className | { header?: string; body?: string; extra?: string; actions?: string; title?: string; cover?: string } | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | defaultActiveTabKey | 初始化选中页签的 key，如果没有设置 activeTabKey | string | 第一个页签 |  |
 | extra | 卡片右上角的操作区域 | string \| slot | - |  |
 | ~~headStyle~~ | 自定义标题区域样式（已废弃，请使用 `styles.header`） | CSSProperties | - |  |
@@ -30,12 +30,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a-8zR6rrupgAAA
 | loading | 当卡片内容还在加载中时，可以用 loading 展示一个占位 | boolean | `false` |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | size | card 的尺寸 | `default` \| `small` | `default` |  |
-| styles | 配置卡片内置模块的 style | { header?: CSSProperties; body?: CSSProperties; extra?: CSSProperties; actions?: CSSProperties; title?: CSSProperties; cover?: CSSProperties } | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | tabList | 页签标题列表，可以通过 `customTab` (v3.0) 插槽自定义 tab | Array&lt;{ key: string; tab: any; disabled?: boolean }&gt; | - |  |
 | tabProps | 透传给内部 [Tabs](/components/tabs-cn/#api) 的额外属性 | TabsProps | - | 4.3.0 |
 | title | 卡片标题 | string \| slot | - |  |
 | type | 卡片类型，可设置为 `inner` 或不设置 | `inner` | - |  |
 | variant | 形态变体 | `outlined` \| `borderless` | `outlined` | 4.3.0 |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `header` \| `title` \| `extra` \| `body` \| `actions` \| `cover`。
 
 ### Card 插槽
 

@@ -7,18 +7,19 @@ cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3u9eSZO_4c0AAAAAAA
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*gwrhTozoTC4AAAAAAAAAAAAADrJ8AQ/original
 ---
 
-警告提示，展现需要关注的信息。
+简单的文字提示气泡框。
 
 ## 何时使用
 
-- 当某个页面需要向用户显示警告的信息时。
-- 非浮层的静态展现形式，始终展现，不会自动消失，用户可以点击关闭。
+- 鼠标移入则显示提示，移出消失，气泡浮层不承载复杂文本和操作。
+- 可用来代替系统默认的 `title` 提示，提供一个 `按钮/文字/操作` 的文案解释。
+- 使用 `Tooltip.UniqueProvider`（`<a-tooltip-unique-provider>`）包裹相邻的多个 Tooltip，可共享同一个浮层容器并平滑过渡切换（自 `4.3.0` 版本起支持）。
 
 ## API
 
-| 参数  | 说明     | 类型         | 默认值 |
-| ----- | -------- | ------------ | ------ |
-| title | 提示文字 | string\|slot | -      |
+| 参数  | 说明     | 类型           | 默认值 | 版本 |
+| ----- | -------- | -------------- | ------ | ---- |
+| title | 提示文字 | string \| slot | -      |      |
 
 ### 共同的 API
 
@@ -30,7 +31,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*gwrhTozoTC4AAA
 | arrowPointAtCenter | 箭头是否指向目标元素中心 | boolean | `false` |  |
 | arrow | 修改箭头的显示状态以及修改箭头是否指向目标元素中心 | boolean \| { pointAtCenter: boolean } | `true` | 4.2.0 |
 | autoAdjustOverflow | 气泡被遮挡时自动调整位置 | boolean | `true` |  |
-| classNames | 语义化结构 class | `{ root?: string; body?: string }` | - | 4.3.0 |
+| classNames | 语义化结构 class，支持静态对象或函数 | `{ root?: string; container?: string; body?: string; arrow?: string }` \| `(info: { props: TooltipProps }) => ...` | - | 4.3.0 |
 | color | 背景颜色 | string | - |  |
 | defaultOpen | 默认是否显隐 | boolean | false | 4.3.0 |
 | destroyOnHidden | 隐藏后是否销毁 tooltip | boolean | false | 4.3.0 |
@@ -44,8 +45,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*gwrhTozoTC4AAA
 | overlayInnerStyle | 卡片内容区域样式 | object | - | 4.0 |
 | placement | 气泡框位置，可选 `top` `left` `right` `bottom` `topLeft` `topRight` `bottomLeft` `bottomRight` `leftTop` `leftBottom` `rightTop` `rightBottom` | string | top |  |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
-| styles | 语义化结构 style | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
+| styles | 语义化结构 style，支持静态对象或函数 | `{ root?: CSSProperties; container?: CSSProperties; body?: CSSProperties; arrow?: CSSProperties }` \| `(info: { props: TooltipProps }) => ...` | - | 4.3.0 |
 | trigger | 触发行为，可选 `hover/focus/click/contextmenu` | string | hover |  |
+
+### Tooltip.UniqueProvider
+
+> 自 `4.3.0` 版本开始提供。
+
+为内部的多个兄弟 `<a-tooltip>` 提供共享浮层上下文，同一时间仅显示一个浮层并在触发节点之间平滑过渡移动。
 
 ### 事件
 

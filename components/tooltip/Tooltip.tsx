@@ -1,5 +1,5 @@
 import type { CSSProperties, ExtractPropTypes } from 'vue';
-import { computed, watch, defineComponent, ref } from 'vue';
+import { computed, watch, defineComponent, ref, onBeforeUnmount } from 'vue';
 import VcTooltip from '../vc-tooltip';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
@@ -12,13 +12,19 @@ import {
   isFragment,
 } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
-export type { TriggerType, TooltipPlacement } from './abstractTooltipProps';
+export type {
+  TriggerType,
+  TooltipPlacement,
+  TooltipSemanticName,
+  TooltipSemanticClassNames,
+  TooltipSemanticStyles,
+  TooltipClassNamesType,
+  TooltipStylesType,
+} from './abstractTooltipProps';
+import type { TooltipSemanticClassNames, TooltipSemanticStyles } from './abstractTooltipProps';
 import abstractTooltipProps from './abstractTooltipProps';
-import useConfigInject, {
-  useComponentConfig,
-  mergeSemanticClassNames,
-  mergeSemanticStyles,
-} from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import getPlacements from '../_util/placements';
 import firstNotUndefined from '../_util/firstNotUndefined';
 import raf from '../_util/raf';
@@ -28,6 +34,8 @@ export type { AdjustOverflow, PlacementsConfig } from '../_util/placements';
 import useStyle from './style';
 import { getTransitionName } from '../_util/transition';
 import type { CustomSlotsType } from '../_util/type';
+import { useInjectTooltipUnique } from './UniqueProvider';
+import type { UniqueTooltipState } from './UniqueProvider';
 
 // https://github.com/react-component/tooltip
 // https://github.com/yiminghe/dom-align
@@ -54,6 +62,8 @@ const splitObject = <T extends CSSProperties>(
   });
   return { picked, omitted };
 };
+
+let tooltipUniqueUid = 0;
 
 export const tooltipProps = () => ({
   ...abstractTooltipProps(),
@@ -111,6 +121,19 @@ export default defineComponent({
       styles: contextStyles,
     } = useComponentConfig('tooltip');
     const injectFromPopover = computed(() => !!(attrs as any)['data-popover-inject']);
+    const uniqueContext = useInjectTooltipUnique();
+    const useUnique = computed(() => !!uniqueContext && !injectFromPopover.value);
+    const uniqueId = `ant-tooltip-unique-${++tooltipUniqueUid}`;
+    const triggerElRef = ref<HTMLElement | null>(null);
+    let enterTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const clearEnterTimer = () => {
+      if (enterTimer !== null) {
+        clearTimeout(enterTimer);
+        enterTimer = null;
+      }
+    };
+
     const mergedArrow = computed(() => {
       const ctxArrow = injectFromPopover.value ? undefined : tooltipConfig.value.arrow;
       return props.arrow ?? ctxArrow ?? true;
@@ -152,13 +175,25 @@ export default defineComponent({
     };
 
     const getPopupDomNode = () => {
-      return tooltip.value.getPopupDomNode();
+      if (useUnique.value && uniqueContext) {
+        return uniqueContext.getPopupDomNode();
+      }
+      return tooltip.value?.getPopupDomNode();
+    };
+
+    const forcePopupAlign = () => {
+      if (useUnique.value && uniqueContext) {
+        uniqueContext.forceAlign();
+        return;
+      }
+      tooltip.value?.forcePopupAlign();
     };
 
     expose({
       getPopupDomNode,
       open: innerOpen,
-      forcePopupAlign: () => tooltip.value?.forcePopupAlign(),
+      forcePopupAlign,
+      forceAlign: forcePopupAlign,
     });
 
     const tooltipPlacements = computed(() => {
@@ -282,6 +317,97 @@ export default defineComponent({
       prefixCls,
       computed(() => !injectFromPopover.value),
     );
+
+    const setTriggerRef = (node: any) => {
+      if (!node) {
+        triggerElRef.value = null;
+        return;
+      }
+      const el =
+        typeof HTMLElement !== 'undefined' && node instanceof HTMLElement ? node : node.$el;
+      triggerElRef.value =
+        typeof HTMLElement !== 'undefined' && el instanceof HTMLElement ? el : null;
+    };
+
+    let latestUniqueState: UniqueTooltipState | null = null;
+
+    const triggerUniqueShow = (delaySec: number) => {
+      if (!uniqueContext || isNoTitle() || !latestUniqueState) return;
+      clearEnterTimer();
+      const openNow = () => {
+        if (!latestUniqueState) return;
+        const wasOpen = innerOpen.value;
+        if (mergedOpen.value === undefined) {
+          innerOpen.value = true;
+        }
+        uniqueContext.show(latestUniqueState);
+        if (!wasOpen) {
+          handleVisibleChange(true);
+        }
+      };
+      // When another sibling tooltip is already visible, switch immediately for smooth gliding!
+      if (uniqueContext.visible.value || delaySec <= 0) {
+        openNow();
+      } else {
+        enterTimer = setTimeout(openNow, delaySec * 1000);
+      }
+    };
+
+    const triggerUniqueHide = (delaySec: number) => {
+      clearEnterTimer();
+      if (!uniqueContext) return;
+      if (mergedOpen.value !== undefined) {
+        handleVisibleChange(false);
+        return;
+      }
+      uniqueContext.hide(uniqueId, delaySec * 1000);
+    };
+
+    watch(
+      [mergedOpen, useUnique],
+      ([nextOpen, isUnique]) => {
+        if (!isUnique || !uniqueContext) return;
+        if (nextOpen === true && latestUniqueState && !isNoTitle()) {
+          uniqueContext.show(latestUniqueState);
+        } else if (nextOpen === false) {
+          uniqueContext.hide(uniqueId, 0);
+        }
+      },
+      { flush: 'post' },
+    );
+
+    watch(
+      () => [
+        props.title,
+        props.placement,
+        props.color,
+        props.rootClassName,
+        props.overlayClassName,
+        props.classNames,
+        props.styles,
+      ],
+      () => {
+        if (
+          useUnique.value &&
+          uniqueContext &&
+          uniqueContext.activeId.value === uniqueId &&
+          uniqueContext.visible.value &&
+          latestUniqueState
+        ) {
+          uniqueContext.update(latestUniqueState);
+        }
+      },
+      { flush: 'post' },
+    );
+
+    onBeforeUnmount(() => {
+      clearEnterTimer();
+      raf.cancel(rafId);
+      if (uniqueContext) {
+        uniqueContext.unregister(uniqueId);
+      }
+    });
+
     return () => {
       const { openClassName, overlayClassName, overlayStyle, overlayInnerStyle } = props;
       const ctxConfig = injectFromPopover.value ? {} : tooltipConfig.value;
@@ -289,13 +415,29 @@ export default defineComponent({
       const ctxStyle = injectFromPopover.value ? undefined : contextStyle.value;
       const ctxClassNames = injectFromPopover.value ? undefined : contextClassNames.value;
       const ctxStyles = injectFromPopover.value ? undefined : contextStyles.value;
-      const semanticClassNames = mergeSemanticClassNames(ctxClassNames, props.classNames);
-      const semanticStyles = mergeSemanticStyles(ctxStyles, props.styles);
       const mergedTrigger = props.trigger ?? (ctxConfig as any).trigger ?? 'hover';
       const mergedMouseEnterDelay =
         props.mouseEnterDelay ?? (ctxConfig as any).mouseEnterDelay ?? 0.1;
       const mergedMouseLeaveDelay =
         props.mouseLeaveDelay ?? (ctxConfig as any).mouseLeaveDelay ?? 0.1;
+
+      const mergedPropsForSemantic: TooltipProps = {
+        ...props,
+        trigger: mergedTrigger,
+        mouseEnterDelay: mergedMouseEnterDelay,
+        mouseLeaveDelay: mergedMouseLeaveDelay,
+        arrow: mergedArrow.value,
+        open: innerOpen.value,
+      };
+
+      const [semanticClassNames, semanticStyles] = mergeSemantic<
+        TooltipSemanticClassNames,
+        TooltipSemanticStyles,
+        TooltipProps
+      >([ctxClassNames, props.classNames], [ctxStyles, props.styles], {
+        props: mergedPropsForSemantic,
+      });
+
       let children = filterEmpty(slots.default?.()) ?? null;
       children = children.length === 1 ? children[0] : children;
 
@@ -329,6 +471,88 @@ export default defineComponent({
         ...overlayInnerStyle,
       };
       const arrowContentStyle = colorInfo.value.arrowStyle;
+      const containerClassName = classNames(semanticClassNames.body, semanticClassNames.container);
+      const containerStyle: CSSProperties = {
+        ...formattedOverlayInnerStyle,
+        ...semanticStyles.body,
+        ...semanticStyles.container,
+      };
+      const finalOverlayClassName = classNames(
+        customOverlayClassName,
+        props.rootClassName,
+        semanticClassNames.root,
+      );
+      const finalOverlayStyle: CSSProperties = {
+        ...arrowContentStyle,
+        ...ctxStyle,
+        ...overlayStyle,
+        ...semanticStyles.root,
+      };
+
+      if (useUnique.value && uniqueContext) {
+        const triggerList = Array.isArray(mergedTrigger) ? mergedTrigger : [mergedTrigger];
+        const uniqueState: UniqueTooltipState = {
+          id: uniqueId,
+          triggerEl: triggerElRef.value,
+          placement: props.placement || 'top',
+          prefixCls: prefixCls.value,
+          hashId: hashId.value,
+          overlayClassName: finalOverlayClassName,
+          overlayStyle: finalOverlayStyle,
+          overlayInnerClassName: containerClassName,
+          overlayInnerStyle: containerStyle,
+          arrowClassName: semanticClassNames.arrow,
+          arrowStyle: semanticStyles.arrow,
+          showArrow: !!mergedArrow.value,
+          mouseLeaveDelay: mergedMouseLeaveDelay,
+          renderOverlay: getOverlay,
+          onForceClose: () => {
+            if (innerOpen.value) {
+              if (mergedOpen.value === undefined) {
+                innerOpen.value = false;
+              }
+              handleVisibleChange(false);
+            }
+          },
+        };
+        latestUniqueState = uniqueState;
+
+        const eventProps: Record<string, any> = {
+          ref: setTriggerRef,
+        };
+        if (triggerList.includes('hover')) {
+          eventProps.onMouseenter = () => triggerUniqueShow(mergedMouseEnterDelay);
+          eventProps.onMouseleave = () => triggerUniqueHide(mergedMouseLeaveDelay);
+        }
+        if (triggerList.includes('focus')) {
+          eventProps.onFocus = () => triggerUniqueShow(0);
+          eventProps.onBlur = () => triggerUniqueHide(0);
+        }
+        if (triggerList.includes('click')) {
+          eventProps.onClick = () => {
+            if (uniqueContext.activeId.value === uniqueId && uniqueContext.visible.value) {
+              triggerUniqueHide(0);
+            } else {
+              triggerUniqueShow(0);
+            }
+          };
+        }
+        if (triggerList.includes('contextmenu')) {
+          eventProps.onContextmenu = (e: Event) => {
+            e.preventDefault();
+            triggerUniqueShow(0);
+          };
+        }
+
+        const isActive =
+          uniqueContext.activeId.value === uniqueId && uniqueContext.visible.value && tempVisible;
+        if (isActive) {
+          eventProps.class = openClassName || `${prefixCls.value}-open`;
+        }
+
+        return wrapSSR(cloneElement(child, eventProps, false, true));
+      }
+
       const vcTooltipProps = {
         ...attrs,
         ...(props as TooltipProps),
@@ -341,19 +565,10 @@ export default defineComponent({
         builtinPlacements: tooltipPlacements.value,
         visible: tempVisible,
         ref: tooltip,
-        overlayClassName: classNames(
-          customOverlayClassName,
-          props.rootClassName,
-          semanticClassNames?.root,
-        ),
-        overlayInnerClassName: semanticClassNames?.body,
-        overlayStyle: {
-          ...arrowContentStyle,
-          ...ctxStyle,
-          ...overlayStyle,
-          ...semanticStyles?.root,
-        },
-        overlayInnerStyle: { ...formattedOverlayInnerStyle, ...semanticStyles?.body },
+        overlayClassName: finalOverlayClassName,
+        overlayInnerClassName: containerClassName,
+        overlayStyle: finalOverlayStyle,
+        overlayInnerStyle: containerStyle,
         onVisibleChange: handleVisibleChange,
         onPopupAlign,
         destroyTooltipOnHide: props.destroyOnHidden ?? props.destroyTooltipOnHide,
@@ -368,7 +583,12 @@ export default defineComponent({
         <VcTooltip
           {...vcTooltipProps}
           v-slots={{
-            arrowContent: () => <span class={`${prefixCls.value}-arrow-content`}></span>,
+            arrowContent: () => (
+              <span
+                class={classNames(`${prefixCls.value}-arrow-content`, semanticClassNames.arrow)}
+                style={semanticStyles.arrow}
+              ></span>
+            ),
             overlay: getOverlay,
           }}
         >

@@ -19,7 +19,7 @@ Tree selection control.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | allowClear | Whether allow clear | boolean | false |  |
-| classNames | Semantic DOM class | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
+| classNames | Semantic DOM class (supports object and function `({ props }) => ...`) | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
 | defaultValue | To set the initial selected treeNode(s). | string\|string\[] | - |  |
 | disabled | Disabled or not | boolean | false |  |
 | dropdownMatchSelectWidth | Determine whether the dropdown menu and the select input are the same width (deprecated, please use `popupMatchSelectWidth`) | boolean \| number | true |  |
@@ -39,6 +39,7 @@ Tree selection control.
 | popupClassName | className of dropdown menu | string | - | 4.0 |
 | popupMatchSelectWidth | Determine whether the popup menu and the select input are the same width. Default set `min-width` same as input. Will ignore when value less than select width. `false` will disable virtual scroll | boolean \| number | true | 4.3.0 |
 | popupRender | Customize popup content | `(menu: VueNode) => VueNode \| v-slot:popupRender` | - | 4.3.0 |
+| prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
 | replaceFields | Replace the label,value, key and children fields in treeNode with the corresponding fields in treeData | object | { children:'children', label:'title', value: 'value' } | 1.6.1 (3.0.0 deprecated) |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
 | searchPlaceholder | Placeholder of the search input | string\|slot | - |  |
@@ -47,8 +48,9 @@ Tree selection control.
 | showSearch | Whether to display a search input in the dropdown menu(valid only in the single mode) | boolean | false |  |
 | size | To set the size of the select input, options: `large` `small` | string | 'default' |  |
 | status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
-| styles | Semantic DOM style | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
-| suffixIcon | The custom suffix icon | VNode \| slot | - |  |
+| styles | Semantic DOM style (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
+| suffix | The custom suffix icon (replaces `suffixIcon`) | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | The custom suffix icon (deprecated, please use `suffix` instead) | VNode \| slot | - |  |
 | switcherIcon | Customize collapse/expand icon of tree node | VNode \| v-slot:switcherIcon | - |  |
 | tagRender | Customize tag render when `multiple` | (props) => slot | - | 3.0 |
 | title | custom title | slot |  | 3.0.0 |

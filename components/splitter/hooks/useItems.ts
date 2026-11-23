@@ -82,8 +82,14 @@ export function parseItems(children: any[]): InternalPanelItem[] {
         mergedResizable = resizable;
       }
 
-      const mergedDestroyOnHidden =
-        destroyOnHidden === '' || destroyOnHidden === true || destroyOnHidden === 'true';
+      let mergedDestroyOnHidden: boolean | undefined;
+      if (destroyOnHidden === '' || destroyOnHidden === true || destroyOnHidden === 'true') {
+        mergedDestroyOnHidden = true;
+      } else if (destroyOnHidden === false || destroyOnHidden === 'false') {
+        mergedDestroyOnHidden = false;
+      } else {
+        mergedDestroyOnHidden = undefined;
+      }
 
       return {
         ...restProps,

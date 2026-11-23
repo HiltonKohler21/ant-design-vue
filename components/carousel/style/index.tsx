@@ -1,4 +1,4 @@
-import { unit } from '../../_util/cssinjs';
+import { Keyframes, unit } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent } from '../../style';
@@ -15,11 +15,22 @@ interface CarouselToken extends FullToken<'Carousel'> {
   carouselDotInline: number;
 }
 
+export const DotDuration = '--dot-duration';
+
 const genCarouselStyle: GenerateStyle<CarouselToken> = token => {
   const { componentCls, antCls, carouselArrowSize, carouselDotOffset, marginXXS } = token;
   const arrowOffset = -carouselArrowSize * 1.25;
 
   const carouselDotMargin = marginXXS;
+
+  const dotAnimation = new Keyframes(`${token.prefixCls}-dot-animation`, {
+    from: {
+      width: 0,
+    },
+    to: {
+      width: token.dotWidthActive,
+    },
+  });
 
   return {
     [componentCls]: {
@@ -205,6 +216,24 @@ const genCarouselStyle: GenerateStyle<CarouselToken> = token => {
           textIndent: -999,
           verticalAlign: 'top',
           transition: `all ${token.motionDurationSlow}`,
+          borderRadius: token.dotHeight,
+          overflow: 'hidden',
+
+          '&::after': {
+            display: 'block',
+            position: 'absolute',
+            top: 0,
+            insetInlineStart: 0,
+            width: 0,
+            height: token.dotHeight,
+            content: '""',
+            background: 'transparent',
+            borderRadius: token.dotHeight,
+            opacity: 1,
+            outline: 'none',
+            cursor: 'pointer',
+            overflow: 'hidden',
+          },
 
           button: {
             position: 'relative',
@@ -216,13 +245,14 @@ const genCarouselStyle: GenerateStyle<CarouselToken> = token => {
             fontSize: 0,
             background: token.colorBgContainer,
             border: 0,
-            borderRadius: 1,
+            borderRadius: token.dotHeight,
             outline: 'none',
             cursor: 'pointer',
             opacity: 0.3,
             transition: `all ${token.motionDurationSlow}`,
+            overflow: 'hidden',
 
-            '&: hover, &:focus': {
+            '&:hover, &:focus': {
               opacity: 0.75,
             },
 
@@ -235,14 +265,18 @@ const genCarouselStyle: GenerateStyle<CarouselToken> = token => {
 
           '&.slick-active': {
             width: token.dotWidthActive,
+            position: 'relative',
 
-            '& button': {
-              background: token.colorBgContainer,
+            '&:hover, &:focus': {
               opacity: 1,
             },
 
-            '&: hover, &:focus': {
-              opacity: 1,
+            '&::after': {
+              background: token.colorBgContainer,
+              animationName: dotAnimation,
+              animationDuration: `var(${DotDuration}, 0s)`,
+              animationTimingFunction: 'ease-out',
+              animationFillMode: 'forwards',
             },
           },
         },
@@ -253,6 +287,15 @@ const genCarouselStyle: GenerateStyle<CarouselToken> = token => {
 
 const genCarouselVerticalStyle: GenerateStyle<CarouselToken> = token => {
   const { componentCls, carouselDotOffset, marginXXS } = token;
+
+  const dotVerticalAnimation = new Keyframes(`${token.prefixCls}-dot-vertical-animation`, {
+    from: {
+      height: 0,
+    },
+    to: {
+      height: token.dotWidthActive,
+    },
+  });
 
   const reverseSizeOfDot = {
     width: token.dotHeight,
@@ -270,12 +313,12 @@ const genCarouselVerticalStyle: GenerateStyle<CarouselToken> = token => {
         margin: 0,
         transform: 'translateY(-50%)',
 
-        '&-left': {
+        '&-left, &-start': {
           insetInlineEnd: 'auto',
           insetInlineStart: carouselDotOffset,
         },
 
-        '&-right': {
+        '&-right, &-end': {
           insetInlineEnd: carouselDotOffset,
           insetInlineStart: 'auto',
         },
@@ -288,10 +331,28 @@ const genCarouselVerticalStyle: GenerateStyle<CarouselToken> = token => {
 
           button: reverseSizeOfDot,
 
+          '&::after': {
+            ...reverseSizeOfDot,
+            height: 0,
+          },
+
           '&.slick-active': {
             ...reverseSizeOfDot,
+            height: token.dotWidthActive,
 
-            button: reverseSizeOfDot,
+            button: {
+              ...reverseSizeOfDot,
+              height: token.dotWidthActive,
+            },
+
+            '&::after': {
+              ...reverseSizeOfDot,
+              background: token.colorBgContainer,
+              animationName: dotVerticalAnimation,
+              animationDuration: `var(${DotDuration}, 0s)`,
+              animationTimingFunction: 'ease-out',
+              animationFillMode: 'forwards',
+            },
           },
         },
       },
