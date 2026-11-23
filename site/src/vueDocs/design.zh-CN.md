@@ -231,15 +231,19 @@ Ant Design Vue 提供 13 种内置调色板：
   import { theme } from 'ant-design-vue';
 
   const { useToken } = theme;
-  const { token } = useToken();
+  const { token, realToken } = useToken();
 
   const boxStyle = computed(() => ({
     backgroundColor: token.value.colorBgContainer,
     color: token.value.colorText,
-    borderRadius: `${token.value.borderRadius}px`,
+    borderRadius: token.value.borderRadius,
     border: `1px solid ${token.value.colorBorder}`,
-    padding: `${token.value.padding}px`,
+    padding: token.value.padding,
     boxShadow: token.value.boxShadowSecondary,
+    // 如需在 JS 中进行数值运算，使用原始值 realToken：
+    minHeight: `${realToken.value.controlHeight * 2}px`,
   }));
 </script>
 ```
+
+> **提示**：Ant Design Vue 4.3.0 起默认开启 `cssVar: true`，`token.value.borderRadius`、`token.value.padding` 等直接返回已含单位的 CSS 变量引用（如 `var(--ant-border-radius)`），直接赋值即可，切勿拼接 `px`；需要进行 JS 数值或色彩计算时，请从 `theme.useToken()` 解构 `realToken`。

@@ -147,8 +147,8 @@
               class="home-comp-preview"
             >
               <a-listy
-                :data="listyItems"
-                item-key="key"
+                :items="listyItems"
+                row-key="key"
                 :item-render="renderListyItem"
                 class="mini-listy"
               />

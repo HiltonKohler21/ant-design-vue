@@ -247,15 +247,19 @@ AI agents can consume the current theme tokens reactively:
   import { theme } from 'ant-design-vue';
 
   const { useToken } = theme;
-  const { token } = useToken();
+  const { token, realToken } = useToken();
 
   const customStyle = computed(() => ({
     backgroundColor: token.value.colorBgContainer,
     color: token.value.colorText,
-    borderRadius: `${token.value.borderRadius}px`,
+    borderRadius: token.value.borderRadius,
     border: `1px solid ${token.value.colorBorder}`,
-    padding: `${token.value.padding}px`,
+    padding: token.value.padding,
     boxShadow: token.value.boxShadowSecondary,
+    // For numeric JS math, use raw values from realToken:
+    minHeight: `${realToken.value.controlHeight * 2}px`,
   }));
 </script>
 ```
+
+> **Note**: Since 4.3.0, `cssVar: true` is enabled by default, so `token.value.borderRadius` and `token.value.padding` resolve to CSS variable references that already include units (e.g., `var(--ant-border-radius)`). Assign them directly without appending `px`; destructure `realToken` from `theme.useToken()` whenever JS numeric or color calculations are needed.

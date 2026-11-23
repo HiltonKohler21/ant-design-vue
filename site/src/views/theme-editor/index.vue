@@ -41,7 +41,7 @@
         </a-button>
       </div>
     </div>
-    <a-config-provider :theme="{ inherit: false }">
+    <a-config-provider :theme="{ inherit: false, cssVar: false }">
       <ThemeEditor
         :theme="{ name: 'Custom Theme', key: 'test', config: theme }"
         :style="{ height: 'calc(100vh - 64px - 56px)' }"

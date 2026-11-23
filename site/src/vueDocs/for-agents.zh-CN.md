@@ -34,6 +34,7 @@
 | 直接调用全局 `message.success(...)` | `<a-app>` 内使用 `const { message } = App.useApp()` | 确保获取动态主题 Token、语言包及响应式上下文 |
 | `Form.create({ ... })` | `<a-form>` 配合响应式对象或 `Form.useForm()` | Vue 3 组合式 API 标准范式 |
 | `<a-table>` 行内插槽直接传 slot | 使用 `#bodyCell="{ column, record }"` | Vue 3 作用域插槽现代规范 |
+| `` `${token.value.borderRadius}px` `` | 直接赋值 `token.value.borderRadius` 或使用 `` `${realToken.value.borderRadius}px` `` | 4.3.0 起默认开启 `cssVar: true`，`token.value.*` 为 `var(--ant-*)`（已含单位），拼接 `px` 会产出无效 CSS |
 
 ---
 
@@ -152,15 +153,18 @@ import { computed } from 'vue';
 import { theme } from 'ant-design-vue';
 
 const { useToken } = theme;
-const { token } = useToken();
+const { token, realToken } = useToken();
 
 const customStyle = computed(() => ({
   color: token.value.colorPrimary,
   backgroundColor: token.value.colorBgContainer,
-  borderRadius: `${token.value.borderRadius}px`,
+  borderRadius: token.value.borderRadius,
+  padding: `${realToken.value.padding}px`,
 }));
 </script>
 ```
+
+> **4.3.0 `cssVar` 默认开启提示**：自 4.3.0 起 `<a-config-provider>` 默认启用 `cssVar: true`，`token.value.borderRadius`、`token.value.padding` 等会解析为自带单位的 CSS 变量引用（如 `var(--ant-border-radius)`）。直接将其赋给 CSS 属性即可，**切勿**写成 `` `${token.value.borderRadius}px` ``（会产生无效的 `var(--ant-border-radius)px`）。若需在 JS 中做数值计算或显式拼接单位，请从 `theme.useToken()` 解构原始数值对象 `realToken`。
 
 ### 准则 8：使用 Day.js 处理日期
 

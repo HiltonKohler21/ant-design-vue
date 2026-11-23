@@ -238,7 +238,7 @@ export default defineComponent({
       <ConfigProvider
         theme={{
           algorithm: defaultAlgorithm,
-          ...props.theme,
+          ...props.theme?.config,
         }}
       >
         <ComponentTokenDrawer {...props} {...attrs} />

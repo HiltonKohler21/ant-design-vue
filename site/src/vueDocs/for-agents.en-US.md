@@ -33,6 +33,7 @@ Before writing any component code, reference this anti-pattern guardrails table:
 | `message.success('Done')` (standalone) | `const { message } = App.useApp();` inside `<a-app>` | Inherits dynamic theme tokens and reactive app context |
 | `Form.create({ ... })` | `<a-form>` with reactive state or `Form.useForm()` | Vue 3 Composition API paradigm |
 | `<a-table :columns="columns">` with inline slots | Use `#bodyCell="{ column, record }"` | Modern Vue 3 scoped slot syntax |
+| `` `${token.value.borderRadius}px` `` | Pass `token.value.borderRadius` directly or use `` `${realToken.value.borderRadius}px` `` | `cssVar: true` is enabled by default in 4.3.0+, so `token.value.*` resolves to `var(--ant-*)` (unit already included); appending `px` produces invalid CSS |
 
 ---
 
@@ -155,15 +156,18 @@ import { computed } from 'vue';
 import { theme } from 'ant-design-vue';
 
 const { useToken } = theme;
-const { token } = useToken();
+const { token, realToken } = useToken();
 
 const customStyle = computed(() => ({
   color: token.value.colorPrimary,
   backgroundColor: token.value.colorBgContainer,
-  borderRadius: `${token.value.borderRadius}px`,
+  borderRadius: token.value.borderRadius,
+  padding: `${realToken.value.padding}px`,
 }));
 </script>
 ```
+
+> **Note on default `cssVar: true` in 4.3.0+**: Native CSS variables are enabled by default in Ant Design Vue 4.3.0+, so `token.value.borderRadius` and `token.value.padding` evaluate to CSS variable references with units already attached (e.g., `var(--ant-border-radius)`). Assign them directly to CSS properties — **never** write `` `${token.value.borderRadius}px` `` (which emits invalid CSS `var(--ant-border-radius)px`). When you need raw numeric or color values for JS math or explicit unit formatting, destructure `realToken` from `theme.useToken()`.
 
 ### Rule 8: Date Handling with Day.js
 

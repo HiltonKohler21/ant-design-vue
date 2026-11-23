@@ -16,44 +16,63 @@ const client = new OSS({
   accessKeySecret,
 });
 
-const assetsPath = path.join(process.cwd(), 'site', 'dist', 'assets');
+const distPath = path.join(process.cwd(), 'site', 'dist');
 
 const put = (target, source) => {
-  return new Promise((reslove, reject) => {
+  return new Promise((resolve, reject) => {
     client
       .put(target, source)
       .then(res => {
         if (res.res.status !== 200) {
           console.log(`${res.name} upload failed!`);
-          reject();
-          process.exit(500);
+          reject(new Error(`${res.name} upload failed!`));
+          process.exit(1);
         } else {
           console.log(`${res.name} upload success!`);
-          reslove();
+          resolve();
         }
       })
       .catch(err => {
         if (err) {
-          err && console.log(err);
-          process.exit(500);
+          console.error(err);
+          process.exit(1);
         }
       });
   });
 };
 
+async function collectFiles(dir, prefix = '') {
+  const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+  const results = [];
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    const relPath = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      results.push(...(await collectFiles(fullPath, relPath)));
+    } else if (entry.isFile()) {
+      results.push({ target: relPath, source: fullPath });
+    }
+  }
+  return results;
+}
+
 async function upload() {
   try {
-    const files = await fs.promises.readdir(assetsPath, {
-      withFileTypes: true,
-    });
+    const files = await collectFiles(distPath);
+    let indexHtml = null;
     for (const file of files) {
-      if (file.isFile()) {
-        await put(`assets/${file.name}`, path.join(assetsPath, file.name));
+      if (file.target === 'index.html') {
+        indexHtml = file;
+        continue;
       }
+      await put(file.target, file.source);
     }
-    await put('index.html', path.join(process.cwd(), 'site', 'dist', 'index.html'));
+    if (indexHtml) {
+      await put(indexHtml.target, indexHtml.source);
+    }
   } catch (err) {
     console.error(err);
+    process.exit(1);
   }
 }
 upload();
