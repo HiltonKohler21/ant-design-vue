@@ -17,19 +17,23 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*pxR2S53P_xoAAA
 
 ### Mentions
 
-| 参数 | 说明 | 类型 | 默认值 |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| autofocus | 自动获得焦点 | boolean | `false` |
-| defaultValue | 默认值 | string |  |
-| filterOption | 自定义过滤逻辑 | false \| (input: string, option: OptionProps) => boolean |  |
-| getPopupContainer | 指定建议框挂载的 HTML 节点 | () => HTMLElement |  |
-| notFoundContent | 当下拉列表为空时显示的内容 | string \| slot | 'Not Found' |
-| placement | 弹出层展示位置 | `top` \| `bottom` | `bottom` |
-| prefix | 设置触发关键字 | string \| string\[] | '@' |
-| split | 设置选中项前后分隔符 | string | ' ' |
+| autofocus | 自动获得焦点 | boolean | `false` |  |
+| defaultValue | 默认值 | string | - |  |
+| filterOption | 自定义过滤逻辑 | false \| (input: string, option: OptionProps) => boolean | - |  |
+| getPopupContainer | 指定建议框挂载的 HTML 节点 | () => HTMLElement | - |  |
+| loading | 加载中状态 | boolean | `false` |  |
+| notFoundContent | 当下拉列表为空时显示的内容 | string \| slot | 'Not Found' |  |
+| placement | 弹出层展示位置 | `top` \| `bottom` | `bottom` |  |
+| popupClassName | 下拉菜单的 className 属性 | string | - |  |
+| prefix | 设置触发关键字 | string \| string\[] | '@' |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| split | 设置选中项前后分隔符 | string | ' ' |  |
 | status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
-| validateSearch | 自定义触发验证逻辑 | (text: string, props: MentionsProps) => void |  |
-| value(v-model) | 设置值 | string |  |
+| validateSearch | 自定义触发验证逻辑 | (text: string, props: MentionsProps) => void | - |  |
+| value(v-model) | 设置值 | string | - |  |
+| variant | 形态变体 | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | options | 选项配置 | [Options](#option) | \[] | 4.0 |
 | option | 通过 option 插槽，自定义节点 | v-slot:option="option" | - | 4.0 |
 
@@ -63,8 +67,8 @@ Support from v4.0
 <!-- prettier-ignore -->
 | 参数      | 说明           | 类型                | 默认值 |
 | --------- | -------------- | ------------------- | ------ |
-| value     | 选择时填充的值 | string | number             | -      |
-| label     | 选项的标题     | VueNode | (o: Option)=> VueNode     | -      |
+| value     | 选择时填充的值 | string \| number                  | -      |
+| label     | 选项的标题     | VueNode \| (o: Option) => VueNode | -      |
 | disabled  | 是否可选       | boolean             | -      |
 | class | css 类名       | string              | -      |
 | style     | 选项样式       | CSSProperties | -      |

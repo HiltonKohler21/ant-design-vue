@@ -4,12 +4,11 @@ subtitle: 包裹组件
 cols: 1
 type: 其他
 title: App
-cover: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20110%22%20fill%3D%22none%22%3E%3Crect%20x%3D%2218%22%20y%3D%2214%22%20width%3D%22144%22%20height%3D%2282%22%20rx%3D%2210%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%23e5e7eb%22%20stroke-width%3D%221.5%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2214%22%20width%3D%22144%22%20height%3D%2220%22%20rx%3D%2210%22%20fill%3D%22%23fafafa%22%2F%3E%3Cline%20x1%3D%2218%22%20y1%3D%2234%22%20x2%3D%22162%22%20y2%3D%2234%22%20stroke%3D%22%23e5e7eb%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2224%22%20r%3D%223%22%20fill%3D%22%23ff7875%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2224%22%20r%3D%223%22%20fill%3D%22%23ffc069%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2224%22%20r%3D%223%22%20fill%3D%22%2395de64%22%2F%3E%3Crect%20x%3D%2230%22%20y%3D%2244%22%20width%3D%2252%22%20height%3D%2240%22%20rx%3D%226%22%20fill%3D%22%23e6f4ff%22%20stroke%3D%22%2391caff%22%2F%3E%3Crect%20x%3D%2238%22%20y%3D%2254%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%231677ff%22%2F%3E%3Crect%20x%3D%2238%22%20y%3D%2264%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%2391caff%22%2F%3E%3Crect%20x%3D%2292%22%20y%3D%2244%22%20width%3D%2258%22%20height%3D%2217%22%20rx%3D%225%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%231677ff%22%20stroke-width%3D%221.5%22%2F%3E%3Ccircle%20cx%3D%22102%22%20cy%3D%2252.5%22%20r%3D%223.5%22%20fill%3D%22%231677ff%22%2F%3E%3Crect%20x%3D%22110%22%20y%3D%2250%22%20width%3D%2230%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23bfbfbf%22%2F%3E%3Crect%20x%3D%2292%22%20y%3D%2267%22%20width%3D%2258%22%20height%3D%2217%22%20rx%3D%225%22%20fill%3D%22%23fafafa%22%20stroke%3D%22%23e5e7eb%22%2F%3E%3Crect%20x%3D%22100%22%20y%3D%2273%22%20width%3D%2238%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23d9d9d9%22%2F%3E%3C%2Fsvg%3E'
-coverDark: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20110%22%20fill%3D%22none%22%3E%3Crect%20x%3D%2218%22%20y%3D%2214%22%20width%3D%22144%22%20height%3D%2282%22%20rx%3D%2210%22%20fill%3D%22%231f1f1f%22%20stroke%3D%22%23383838%22%20stroke-width%3D%221.5%22%2F%3E%3Crect%20x%3D%2218%22%20y%3D%2214%22%20width%3D%22144%22%20height%3D%2220%22%20rx%3D%2210%22%20fill%3D%22%23262626%22%2F%3E%3Cline%20x1%3D%2218%22%20y1%3D%2234%22%20x2%3D%22162%22%20y2%3D%2234%22%20stroke%3D%22%23383838%22%2F%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2224%22%20r%3D%223%22%20fill%3D%22%23a61d24%22%2F%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2224%22%20r%3D%223%22%20fill%3D%22%23d89614%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2224%22%20r%3D%223%22%20fill%3D%22%2349aa19%22%2F%3E%3Crect%20x%3D%2230%22%20y%3D%2244%22%20width%3D%2252%22%20height%3D%2240%22%20rx%3D%226%22%20fill%3D%22%2315325b%22%20stroke%3D%22%2315417e%22%2F%3E%3Crect%20x%3D%2238%22%20y%3D%2254%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%231668dc%22%2F%3E%3Crect%20x%3D%2238%22%20y%3D%2264%22%20width%3D%2224%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%2315417e%22%2F%3E%3Crect%20x%3D%2292%22%20y%3D%2244%22%20width%3D%2258%22%20height%3D%2217%22%20rx%3D%225%22%20fill%3D%22%23262626%22%20stroke%3D%22%231668dc%22%20stroke-width%3D%221.5%22%2F%3E%3Ccircle%20cx%3D%22102%22%20cy%3D%2252.5%22%20r%3D%223.5%22%20fill%3D%22%231668dc%22%2F%3E%3Crect%20x%3D%22110%22%20y%3D%2250%22%20width%3D%2230%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23595959%22%2F%3E%3Crect%20x%3D%2292%22%20y%3D%2267%22%20width%3D%2258%22%20height%3D%2217%22%20rx%3D%225%22%20fill%3D%22%23262626%22%20stroke%3D%22%23383838%22%2F%3E%3Crect%20x%3D%22100%22%20y%3D%2273%22%20width%3D%2238%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23434343%22%2F%3E%3C%2Fsvg%3E'
-tag: New
+cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HJz8SZos2wgAAAAAAAAAAAAADrJ8AQ/original
+coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*oC92TK44Ex8AAAAAAAAAAAAADrJ8AQ/original
 ---
 
-新的包裹组件，提供重置样式和提供消费上下文的默认环境。
+包裹组件，提供重置样式和提供消费上下文的默认环境。
 
 ## 何时使用
 
@@ -24,6 +23,7 @@ tag: New
 | --- | --- | --- | --- | --- |
 | message | App 内 Message 的全局配置 | [MessageConfig](/components/message-cn/#messageconfig) | - | 4.x |
 | notification | App 内 Notification 的全局配置 | [NotificationConfig](/components/notification-cn/#notificationconfig) | - | 4.x |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 
 ## 如何使用
 
@@ -82,10 +82,10 @@ App 组件通过 `provide/inject` 提供上下文方法调用，因而 useApp �
 
 #### 与 ConfigProvider 先后顺序
 
-App 组件只能在 `ConfigProvider` 之下才能使用 Design Token， 如果需要使用其样式重置能力，则 ConfigProvider 与 App 组件必须成对出现。
+App 组件只能在 `ConfigProvider` 之下才能使用 Design Token，如果需要使用其样式重置能力，则 ConfigProvider 与 App 组件必须成对出现。
 
 ```html
-<a-config-provider theme="{{ ... }}">
+<a-config-provider :theme="{ ... }">
   <a-app>...</a-app>
 </a-config-provider>
 ```

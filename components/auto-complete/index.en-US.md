@@ -27,37 +27,49 @@ The differences with Select are:
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| allowClear | Show clear button, effective in multiple mode only. | boolean | false |  |
-| autofocus | get focus when component mounted | boolean | false |  |
-| backfill | backfill selected item the input when using keyboard | boolean | false |  |
-| bordered | Whether has border style | boolean | true | 4.0 |
+| allowClear | Show clear button | boolean | false |  |
+| autofocus | Get focus when component mounted | boolean | false |  |
+| backfill | Backfill selected item into the input when using keyboard | boolean | false |  |
+| ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true | 4.0 |
+| classNames | Customize class for each semantic structure inside the component | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
 | clearIcon | Use slot custom clear icon | slot | `<CloseCircleFilled />` | 4.0 |
-| default (for customize input element) | customize input element | slot | `<Input />` |  |
+| default (for customize input element) | Customize input element | slot | `<Input />` |  |
 | defaultActiveFirstOption | Whether active first option by default | boolean | true |  |
 | defaultOpen | Initial open state of dropdown | boolean | - |  |
+| defaultValue | Initial selected option | string | - |  |
 | disabled | Whether disabled select | boolean | false |  |
-| popupClassName | The className of dropdown menu | string | - | 4.0 |
-| dropdownMatchSelectWidth | Determine whether the dropdown menu and the select input are the same width. Default set `min-width` same as input. Will ignore when value less than select width. `false` will disable virtual scroll | boolean \| number | true |  |
-| dropdownMenuStyle | additional style applied to dropdown menu | object |  | 1.5.0 |
-| filterOption | If true, filter options by input, if function, filter options against it. The function will receive two arguments, `inputValue` and `option`, if the function returns `true`, the option will be included in the filtered set; Otherwise, it will be excluded. | boolean or function(inputValue, option) | true |  |
+| ~~dropdownMatchSelectWidth~~ | Determine whether the dropdown menu and the select input are the same width (deprecated, please use `popupMatchSelectWidth` instead) | boolean \| number | true |  |
+| dropdownMenuStyle | Additional style applied to dropdown menu | object | - | 1.5.0 |
+| ~~dropdownRender~~ | Customize dropdown content (deprecated, please use `popupRender` instead) | `({ menuNode, props }) => VNode` \| slot | - |  |
+| filterOption | If true, filter options by input, if function, filter options against it. The function will receive two arguments, `inputValue` and `option`, if the function returns `true`, the option will be included in the filtered set; Otherwise, it will be excluded. | boolean \| function(inputValue, option) | true |  |
+| notFoundContent | Specify content to show when no result matches | string \| slot | - |  |
 | open | Controlled open state of dropdown | boolean | - |  |
-| option | custom render option by slot | v-slot:option="{value, label, [disabled, key, title]}" | - | 3.0 |
-| options | Data source for autocomplete | [DataSourceItemType](https://github.com/vueComponent/ant-design-vue/blob/724d53b907e577cf5880c1e6742d4c3f924f8f49/components/auto-complete/index.vue#L9)\[] |  |  |
-| placeholder | placeholder of input | string | - |  |
-| status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
-| v-model:value | selected option | string\|string\[]\|{ key: string, label: string\|vNodes }\|Array&lt;{ key: string, label: string\|vNodes }> | - |  |
+| option | Custom render option by slot | v-slot:option="{value, label, [disabled, key, title]}" | - | 3.0 |
+| options | Data source for autocomplete | [DataSourceItemType](https://github.com/vueComponent/ant-design-vue/blob/724d53b907e577cf5880c1e6742d4c3f924f8f49/components/auto-complete/index.vue#L9)\[] | - |  |
+| placeholder | Placeholder of input | string \| slot | - |  |
+| ~~popupClassName~~ | The className of dropdown menu (deprecated, please use `classNames.popup.root` instead) | string | - | 4.0 |
+| popupMatchSelectWidth | Determine whether the popup menu and the select input are the same width. Default set `min-width` same as input. Will ignore when value less than select width. `false` will disable virtual scroll | boolean \| number | true | 4.3.0 |
+| popupRender | Customize popup content (supports prop and `#popupRender` slot, receives the menu VNode directly) | `(originNode: VNode) => VNode` \| slot | - | 4.3.0 |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| showSearch | Whether to support search | boolean | - |  |
+| size | Size of input | `large` \| `middle` \| `small` | - |  |
+| status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
+| styles | Customize inline style for each semantic structure inside the component | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
+| v-model:value | Selected option | string \| string\[] \| { key: string, label: string \| vNodes } \| Array&lt;{ key: string, label: string \| vNodes }> | - |  |
+| variant | Variants of selector | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 
 ### events
 
-| Events Name | Description | Arguments | Version |  |
-| --- | --- | --- | --- | --- |
-| blur | Called when leaving the component. | function() |  |  |
-| change | Called when select an option or input value change, or value of input is changed | function(value) |  |  |
-| dropdownVisibleChange | Call when dropdown open | function(open) |  |  |
-| focus | Called when entering the component | function() |  |  |
-| search | Called when searching items. | function(value) | - |  |
-| select | Called when a option is selected. param is option's value and option instance. | function(value, option) |  |  |
-| clear | Called when clear | function | - | 3.3.0 |
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| blur | Called when leaving the component | function() |  |
+| change | Called when select an option or input value change, or value of input is changed | function(value) |  |
+| clear | Called when clear | function() | 3.3.0 |
+| ~~dropdownVisibleChange~~ | Call when dropdown open (deprecated, please use `openChange` instead) | function(open) |  |
+| focus | Called when entering the component | function() |  |
+| openChange | Called when dropdown open state changes | function(open: boolean) | 4.3.0 |
+| search | Called when searching items | function(value) |  |
+| select | Called when an option is selected. Param is option's value and option instance | function(value, option) |  |
 
 ## Methods
 

@@ -17,31 +17,33 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Tr90QKrE_LcAAA
 
 ## API
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| itemRender | 自定义链接函数，和 vue-router 配置使用， 也可使用 #itemRender="props" | ({route, params, routes, paths}) => vNode |  | - |
-| params | 路由的参数 | object |  | - |
-| routes | router 的路由栈信息 | [routes\[\]](#routes) |  | - |
-| separator | 分隔符自定义 | string\|slot |  | '/' |
+| itemRender | 自定义链接函数，和 vue-router 配置使用， 也可使用 #itemRender="props" | ({route, params, routes, paths}) => vNode | - |  |
+| params | 路由的参数 | object | - |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| routes | router 的路由栈信息 | [routes\[\]](#routes) | - |  |
+| separator | 分隔符自定义 | string \| slot | `'/'` |  |
 
 ### Breadcrumb.Item
 
-| 参数    | 参数           | 类型                                   | 默认值 | 版本  |
-| ------- | -------------- | -------------------------------------- | ------ | ----- |
-| href    | 链接的目的地   | string                                 | -      | 1.5.0 |
-| overlay | 下拉菜单的内容 | [Menu](/components/menu) \| () => Menu | -      | 1.5.0 |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| dropdownProps | 弹出下拉菜单的自定义配置 | [Dropdown](/components/dropdown-cn/#api) | - | 4.3.0 |
+| href | 链接的目的地 | string | - | 1.5.0 |
+| overlay | 下拉菜单的内容 | [Menu](/components/menu-cn) \| () => Menu | - | 1.5.0 |
 
 #### 事件
 
-| 事件名称 | 说明     | 回调参数             | 版本 |       |
-| -------- | -------- | -------------------- | ---- | ----- |
-| click    | 单击事件 | (e:MouseEvent)=>void | -    | 1.5.0 |
+| 事件名称 | 说明     | 回调参数                | 版本  |
+| -------- | -------- | ----------------------- | ----- |
+| click    | 单击事件 | (e: MouseEvent) => void | 1.5.0 |
 
 ### Breadcrumb.Separator `1.5.0`
 
-| 参数 | 类型 | 默认值 | 版本 |
-| ---- | ---- | ------ | ---- |
-| -    | -    | -      | -    |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| ---- | ---- | ---- | ------ | ---- |
+| -    | -    | -    | -      | -    |
 
 > 注意：在使用 `Breadcrumb.Separator` 时，其父组件的分隔符必须设置为 `separator=""`，否则会出现父组件默认的分隔符。
 

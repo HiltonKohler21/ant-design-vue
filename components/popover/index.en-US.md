@@ -16,10 +16,13 @@ Comparing with `Tooltip`, besides information `Popover` card can also provide ac
 
 ## API
 
-| Param   | Description         | Type                | Default value | Version |
-| ------- | ------------------- | ------------------- | ------------- | ------- |
-| content | Content of the card | string\|slot\|vNode | -             |         |
-| title   | Title of the card   | string\|slot\|VNode | -             |         |
+| Param | Description | Type | Default value | Version |
+| --- | --- | --- | --- | --- |
+| classNames | Semantic DOM class names | `{ root?: string; body?: string }` | - | 4.3.0 |
+| content | Content of the card | string\|slot\|vNode | - |  |
+| rootClassName | Root class name | string | - | 4.3.0 |
+| styles | Semantic DOM inline styles | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
+| title | Title of the card | string\|slot\|VNode | - |  |
 
 Consult [Tooltip's documentation](/components/tooltip/#api) to find more APIs.
 

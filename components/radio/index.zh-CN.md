@@ -23,6 +23,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a9roS6DHFIcAAA
 | autofocus        | 自动获取焦点                      | boolean | false  |
 | checked(v-model) | 指定当前是否选中                  | boolean | false  |
 | disabled         | 禁用 Radio                        | boolean | false  |
+| id               | Radio 的 `id` 属性                | string  | -      |
 | value            | 根据 value 进行比较，判断是否选中 | any     | -      |
 
 ### RadioGroup
@@ -32,7 +33,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a9roS6DHFIcAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | buttonStyle | RadioButton 的风格样式，目前有描边和填色两种风格 | `outline` \| `solid` | `outline` |  |
+| defaultValue | 默认选中的值 | any | - | 4.3.0 |
 | disabled | 禁选所有子单选器 | boolean | false |  |
+| id | RadioGroup 的 `id` 属性 | string | - |  |
 | name | RadioGroup 下所有 `input[type="radio"]` 的 `name` 属性 | string | - |  |
 | options | 以配置形式设置子元素 | string\[] \| number[] \| Array&lt;{ label: string value: string disabled?: boolean }> | - |  |
 | optionType | 用于设置 Radio `options` 类型 | `default` \| `button` | `default` | 3.0.0 |

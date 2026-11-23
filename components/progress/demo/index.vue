@@ -14,6 +14,7 @@
     <gradient-line />
     <steps />
     <Size />
+    <info-position />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -30,6 +31,7 @@ import LineCap from './linecap.vue';
 import GradientLine from './gradient-line.vue';
 import Steps from './steps.vue';
 import CircleMicro from './circle-micro.vue';
+import InfoPosition from './info-position.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -53,6 +55,7 @@ export default defineComponent({
     Steps,
     CircleMicro,
     Size,
+    InfoPosition,
   },
   setup() {
     return {};

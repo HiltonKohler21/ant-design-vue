@@ -27,8 +27,10 @@ Basic text writing, including headings, body text, lists, and more.
 | disabled | Disabled content | boolean | false |  |
 | editable | If editable. Can control edit state when is object | boolean \| [editable](#editable) | false | [editable](#editable) |
 | ellipsis | Display ellipsis when text overflows | boolean | false |  |
+| italic | Italic style | boolean | false |  |
 | keyboard | Keyboard style | boolean | false |  |
 | mark | Marked style | boolean | false |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | strong | Bold style | boolean | false |  |
 | type | Content type | `secondary` \| `success` \| `warning` \| `danger` | - |  |
 | underline | Underlined style | boolean | false |  |
@@ -44,8 +46,10 @@ Basic text writing, including headings, body text, lists, and more.
 | disabled | Disabled content | boolean | false |  |
 | editable | If editable. Can control edit state when is object | boolean \| [editable](#editable) | false | [editable](#editable) |
 | ellipsis | Display ellipsis when text overflows, can configure rows and expandable by using object | boolean \| [ellipsis](#ellipsis) | false | [ellipsis](#ellipsis) |
+| italic | Italic style | boolean | false |  |
 | level | Set content importance. Match with `h1`, `h2`, `h3`, `h4`, `h5` | number: 1, 2, 3, 4, 5 | 1 |  |
 | mark | Marked style | boolean | false |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | type | Content type | `secondary` \| `success` \| `warning` \| `danger` | - |  |
 | underline | Underlined style | boolean | false |  |
 
@@ -60,7 +64,9 @@ Basic text writing, including headings, body text, lists, and more.
 | disabled | Disabled content | boolean | false |  |
 | editable | If editable. Can control edit state when is object | boolean \| [editable](#editable) | false | [editable](#editable) |
 | ellipsis | Display ellipsis when text overflows, can configure rows and expandable by using object | boolean \| [ellipsis](#ellipsis) | false | [ellipsis](#ellipsis) |
+| italic | Italic style | boolean | false |  |
 | mark | Marked style | boolean | false |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | strong | Bold style | boolean | false |  |
 | type | Content type | `secondary` \| `success` \| `warning` \| `danger` | - |  |
 | underline | Underlined style | boolean | false |  |

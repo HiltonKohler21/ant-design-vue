@@ -5,7 +5,6 @@ type: 数据展示
 title: Segmented
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*papwTpNscPIAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tz7qSaWpi1kAAAAAAAAAAAAADrJ8AQ/original
-tag: New
 ---
 
 分段控制器。
@@ -21,18 +20,21 @@ tag: New
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| block | 将宽度调整为父元素宽度的选项 | boolean | - |  |
+| block | 将宽度调整为父元素宽度的选项 | boolean | false |  |
 | disabled | 是否禁用 | boolean | false |  |
 | options | 数据化配置选项内容 | string[] \| number[] \| SegmentedOption[] | [] |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| shape | 形状 | `default` \| `round` | `default` | 4.3.0 |
 | size | 控件尺寸 | `large` \| `middle` \| `small` | - |  |
-| value | 当前选中的值 | string \| number |  |  |
-| label | 使用插槽自定义 label | v-slot:label="SegmentedBaseOption" |  |  |
+| value | 当前选中的值 | string \| number | - |  |
+| vertical | 方向是否垂直 | boolean | false | 4.3.0 |
+| label | 使用插槽自定义 label | v-slot:label="SegmentedBaseOption" | - |  |
 
 ### 事件
 
-| 事件名称 | 说明                 | 回调参数                          |     |
-| -------- | -------------------- | --------------------------------- | --- |
-| change   | 选项变化时的回调函数 | function(value: string \| number) | -   |
+| 事件名称 | 说明                 | 回调参数                          |
+| -------- | -------------------- | --------------------------------- |
+| change   | 选项变化时的回调函数 | function(value: string \| number) |
 
 #### SegmentedBaseOption、SegmentedOption
 

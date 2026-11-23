@@ -3,17 +3,19 @@ category: Components
 type: 数据展示
 title: Listy
 cols: 1
-subtitle: 列表
-cover: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20110%22%20fill%3D%22none%22%3E%3Crect%20x%3D%2220%22%20y%3D%2214%22%20width%3D%22140%22%20height%3D%2282%22%20rx%3D%228%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%23e5e7eb%22%20stroke-width%3D%221.5%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2232%22%20r%3D%227%22%20fill%3D%22%231677ff%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2227%22%20width%3D%2258%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23bfbfbf%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2235%22%20width%3D%2238%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23d9d9d9%22%2F%3E%3Crect%20x%3D%22128%22%20y%3D%2228%22%20width%3D%2222%22%20height%3D%228%22%20rx%3D%224%22%20fill%3D%22%23e6f4ff%22%2F%3E%3Cline%20x1%3D%2228%22%20y1%3D%2247%22%20x2%3D%22152%22%20y2%3D%2247%22%20stroke%3D%22%23e5e7eb%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2260%22%20r%3D%227%22%20fill%3D%22%2391caff%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2255%22%20width%3D%2266%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23bfbfbf%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2263%22%20width%3D%2244%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23d9d9d9%22%2F%3E%3Cline%20x1%3D%2228%22%20y1%3D%2274%22%20x2%3D%22152%22%20y2%3D%2274%22%20stroke%3D%22%23e5e7eb%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2284%22%20r%3D%225%22%20fill%3D%22%23d9d9d9%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2281%22%20width%3D%2254%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23d9d9d9%22%2F%3E%3C%2Fsvg%3E'
-coverDark: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20110%22%20fill%3D%22none%22%3E%3Crect%20x%3D%2220%22%20y%3D%2214%22%20width%3D%22140%22%20height%3D%2282%22%20rx%3D%228%22%20fill%3D%22%231f1f1f%22%20stroke%3D%22%23383838%22%20stroke-width%3D%221.5%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2232%22%20r%3D%227%22%20fill%3D%22%231668dc%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2227%22%20width%3D%2258%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23595959%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2235%22%20width%3D%2238%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23434343%22%2F%3E%3Crect%20x%3D%22128%22%20y%3D%2228%22%20width%3D%2222%22%20height%3D%228%22%20rx%3D%224%22%20fill%3D%22%2315325b%22%2F%3E%3Cline%20x1%3D%2228%22%20y1%3D%2247%22%20x2%3D%22152%22%20y2%3D%2247%22%20stroke%3D%22%23383838%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2260%22%20r%3D%227%22%20fill%3D%22%2315417e%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2255%22%20width%3D%2266%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23595959%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2263%22%20width%3D%2244%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23434343%22%2F%3E%3Cline%20x1%3D%2228%22%20y1%3D%2274%22%20x2%3D%22152%22%20y2%3D%2274%22%20stroke%3D%22%23383838%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2284%22%20r%3D%225%22%20fill%3D%22%23434343%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2281%22%20width%3D%2254%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23434343%22%2F%3E%3C%2Fsvg%3E'
+subtitle: 虚拟列表
+tag: 4.3.0
+cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EYuhSpw1iSwAAAAAAAAAAAAADrJ8AQ/original
+coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tBzwQ7raKX8AAAAAAAAAAAAADrJ8AQ/original
 ---
 
-轻量列表容器，内置行 hover、分隔线与可选虚拟滚动。
+高性能列表组件，内置行悬浮、分组吸顶、横向滚动与可选虚拟滚动，推荐用于替代传统 `List` 处理长列表与轻量列表场景。
 
 ## 何时使用
 
-- 需要展示中等规模的行式数据（消息、日志、选项等）；
-- 数据量较大、需要虚拟滚动时（传 `height` + `itemHeight` 或 `virtual`）。
+- 需要渲染长列表，又不想为每一行付出挂载成本时 —— 开启 `virtual` 并配合 `height` 仅渲染视口内的行。
+- 列表需要分组展示，并让分组标题吸顶（`group` + `sticky`）时。
+- 需要以命令式方式控制滚动位置（跳到某一项、某个分组或某个像素位置）时。
 
 ## API
 
@@ -21,21 +23,58 @@ coverDark: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| data | 数据源 | any[] | [] | 4.3.0 |
-| itemRender | 自定义渲染 | (item, index) => VueNode | - | 4.3.0 |
-| itemKey | 行 key（字段名或函数） | string \| (item) => Key | - | 4.3.0 |
-| height | 列表高度（虚拟滚动必填） | number | - | 4.3.0 |
-| itemHeight | 行高（虚拟滚动必填） | number | - | 4.3.0 |
-| virtual | 是否虚拟滚动，未指定时有 height + itemHeight 即开启 | boolean | - | 4.3.0 |
-| rowHoverable | 行 hover 背景 | boolean | true | 4.3.0 |
-| classNames | 语义化类名 `{ root, item }` | object | - | 4.3.0 |
-| styles | 语义化样式 `{ root, item }` | object | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record\<`root` \| `item` \| `groupHeader` \| `groupSection` \| `holder` \| `scrollbar`, string\> \| (info: { props: ListyProps }) => Record\<string, string\> | - | 4.3.0 |
+| group | 分组配置，见下方 [Group](#group) | [ListyGroupConfig](#group) | - | 4.3.0 |
+| height | 滚动容器高度，内容超出后滚动（虚拟与非虚拟模式均生效） | number | - | 4.3.0 |
+| itemHeight | 行高覆写（可选；未传入时自动基于主题 Token 计算） | number | - | 4.3.0 |
+| itemRender | 渲染单行内容，也支持 `#item="{ item, index }"` 插槽 | (item: T, index: number) => VueNode | - | 4.3.0 |
+| items | 列表数据源 | T[] | `[]` | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
-| onScroll | 滚动回调 | (e: UIEvent) => void | - | 4.3.0 |
+| rowHoverable | 列表行是否开启 hover 交互 | boolean | `true` | 4.3.0 |
+| rowKey | 每一项的唯一键，字段名或取值函数 | string \| (item: T, index?: number) => Key | - | 4.3.0 |
+| scrollWidth | 内容的横向滚动宽度，超出容器宽度时可横向滚动 | number | - | 4.3.0 |
+| sticky | 分组标题是否吸顶 | boolean | `false` | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record\<`root` \| `item` \| `groupHeader` \| `groupSection` \| `holder` \| `scrollbar`, CSSProperties\> \| (info: { props: ListyProps }) => Record\<string, CSSProperties\> | - | 4.3.0 |
+| virtual | 是否开启虚拟滚动，仅渲染视口内的行，需配合 `height` 使用（未指定时回退到 `ConfigProvider.virtual`） | boolean | `false` | 4.3.0 |
+| ~~data~~ | 已废弃，请使用 `items` 替代 | T[] | - | 4.3.0 |
+| ~~itemKey~~ | 已废弃，请使用 `rowKey` 替代 | string \| (item: T, index?: number) => Key | - | 4.3.0 |
 
-### 实例方法
+### 事件
 
-| 方法                               | 说明           |
-| ---------------------------------- | -------------- |
-| scrollTo({ index, align, offset }) | 滚动到指定项   |
-| scrollToIndex(index)               | 滚动到指定下标 |
+| 事件名称 | 说明                                       | 回调参数             | 版本  |
+| -------- | ------------------------------------------ | -------------------- | ----- |
+| scroll   | 原生滚动事件回调（也支持 `onScroll` 属性） | (e: UIEvent) => void | 4.3.0 |
+
+### 插槽
+
+| 插槽名称 | 说明 | 参数 | 版本 |
+| --- | --- | --- | --- |
+| item | 自定义渲染单行内容（优先级低于 `itemRender`） | { item: T, index: number } | 4.3.0 |
+| groupTitle | 自定义渲染分组标题（优先级低于 `group.title`） | { groupKey: K, items: T[] } | 4.3.0 |
+
+### Group
+
+| 参数 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| key | 计算每条数据所属的分组键（字段名或函数），返回值相同的数据归为一组 | string \| (item: T) => K | - |
+| title | 渲染分组标题，入参为分组键与该组数据 | (groupKey: K, items: T[]) => VueNode | - |
+
+### Ref
+
+| 名称 | 说明 | 类型 |
+| --- | --- | --- |
+| nativeElement | 组件根 DOM 节点 | HTMLElement |
+| scrollTo | 滚动到某个像素位置、某一项或某个分组 | (config?: ListyScrollToConfig) => void |
+| scrollToIndex | 快捷滚动到指定下标项（等价于 `scrollTo({ index })`） | (index: number) => void |
+
+`ListyScrollToConfig` 为以下之一：
+
+| 形态                            | 说明                                |
+| ------------------------------- | ----------------------------------- |
+| number                          | 滚动到某个像素位置（`scrollTop`）   |
+| `{ top?, left? }`               | 滚动到绝对像素坐标                  |
+| `{ key, align?, offset? }`      | 滚动到 `rowKey` 等于 `key` 的数据项 |
+| `{ groupKey, align?, offset? }` | 滚动到某个分组标题                  |
+| `{ index, align?, offset? }`    | 滚动到指定下标数据项                |
+
+`align` 可选 `'top' | 'bottom' | 'auto'`；`offset` 为对齐后额外的像素偏移。

@@ -9,7 +9,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*8HMoTZUoSGoAAA
 
 Tabs make it easy to switch between different views.
 
-### When To Use
+## When To Use
 
 Ant Design has 3 types of Tabs for different situations.
 
@@ -23,26 +23,47 @@ Ant Design has 3 types of Tabs for different situations.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| activeKey(v-model) | Current TabPane's key | string | - |  |
-| animated | Whether to change tabs with animation. Only works while tabPosition=`"top"` \| `"bottom"` | boolean \| {inkBar:boolean, tabPane:boolean} | `true`, `false` when `type="card"` |  |
+| activeKey(v-model) | Current TabPane's key | string \| number | - |  |
+| animated | Whether to change tabs with animation. Only works while tabPosition=`"top"` \| `"bottom"` | boolean \| { inkBar: boolean, tabPane: boolean } | `true`, `false` when `type="card"` |  |
 | centered | Whether to display the labels in the center | boolean | false | 3.0 |
-| destroyInactiveTabPane | Whether destroy inactive TabPane when change tab | boolean | false |  |
-| hideAdd | Hide plus icon or not. Only works while `type="editable-card"` | boolean | `false` | } |
+| defaultActiveKey | Initial active TabPane's key, if `activeKey` is not set | string \| number | first panel's key | 4.3.0 |
+| destroyInactiveTabPane | Whether destroy inactive TabPane when change tab (deprecated, please use `destroyOnHidden`) | boolean | false |  |
+| destroyOnHidden | Whether destroy inactive TabPane when change tab | boolean | false | 4.3.0 |
+| hideAdd | Hide plus icon or not. Only works while `type="editable-card"` | boolean | `false` |  |
+| indicator | Customize indicator size and alignment | `{ size?: number \| ((origin: number) => number); align?: 'start' \| 'center' \| 'end' }` | - | 4.3.0 |
+| indicatorSize | Customize indicator size (deprecated, please use `indicator.size`) | `number \| ((origin: number) => number) \| 'small' \| 'large'` | - | 4.3.0 |
+| items | Configure tab content | [TabItemType](#tabitemtype)[] | [] | 4.3.0 |
+| popupClassName | ClassName for more dropdown | string | - |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | size | preset tab bar size | `large` \| `middle` \| `small` | `middle` |  |
+| tabBarExtraContent | Extra content in tab bar (deprecated, please use `leftExtra` / `rightExtra` slot) | VueNode \| slot | - |  |
 | tabBarGutter | The gap between tabs | number | - |  |
 | tabBarStyle | Tab bar style object | CSSProperties | - |  |
 | tabPosition | Position of tabs | `top` \| `right` \| `bottom` \| `left` | `top` |  |
 | type | Basic style of tabs | `line` \| `card` \| `editable-card` | `line` |  |
 
+### TabItemType
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| children | TabPane's content | VueNode | - | 4.3.0 |
+| closable | Whether show close icon, only works while `type="editable-card"` | boolean | true | 4.3.0 |
+| closeIcon | Customize close icon, only works while `type="editable-card"` | VueNode | - | 4.3.0 |
+| destroyInactiveTabPane | Whether destroy inactive TabPane when change tab | boolean | false | 4.3.0 |
+| disabled | Disabled a tab | boolean | false | 4.3.0 |
+| forceRender | Forced render of content in tabs, not lazy render after clicking on tabs | boolean | false | 4.3.0 |
+| key | TabPane's key | string \| number | - | 4.3.0 |
+| label | Show text in TabPane's head | VueNode | - | 4.3.0 |
+
 ### Tabs Slots
 
-| Slot Name    | Description                    | Type              |     |
-| ------------ | ------------------------------ | ----------------- | --- |
-| addIcon      | Customize add icon             | -                 | -   |
-| leftExtra    | Extra content in tab bar left  | -                 | -   |
-| moreIcon     | The custom icon of ellipsis    | -                 | -   |
-| renderTabBar | Replace the TabBar             | { DefaultTabBar } |     |
-| rightExtra   | Extra content in tab bar right | -                 | -   |
+| Slot Name    | Description                    | Type              |
+| ------------ | ------------------------------ | ----------------- |
+| addIcon      | Customize add icon             | -                 |
+| leftExtra    | Extra content in tab bar left  | -                 |
+| moreIcon     | The custom icon of ellipsis    | -                 |
+| renderTabBar | Replace the TabBar             | { DefaultTabBar } |
+| rightExtra   | Extra content in tab bar right | -                 |
 
 ### Tabs Events
 
@@ -50,17 +71,19 @@ Ant Design has 3 types of Tabs for different situations.
 | --- | --- | --- |
 | change | Callback executed when active tab is changed | Function(activeKey) {} |
 | edit | Callback executed when tab is added or removed. Only works while `type="editable-card"` | (action === 'add' ? event : targetKey, action): void |
-| nextClick | Callback executed when next button is clicked | Function |
-| prevClick | Callback executed when prev button is clicked | Function |
-| tabClick | Callback executed when tab is clicked | Function |
+| tabClick | Callback executed when tab is clicked | Function(key, event) |
+| tabScroll | Trigger when tab scroll | { direction: 'left' \| 'right' \| 'top' \| 'bottom' } |
 
 ### Tabs.TabPane
 
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
+| closable | Whether show close icon, only works while `type="editable-card"` | boolean | true |
+| destroyInactiveTabPane | Whether destroy inactive TabPane when change tab | boolean | false |
+| disabled | Disabled a tab | boolean | false |
 | forceRender | Forced render of content in tabs, not lazy render after clicking on tabs | boolean | false |
-| key | TabPane's key | string | - |
-| tab | Show text in TabPane's head | string\|slot | - |
+| key | TabPane's key | string \| number | - |
+| tab | Show text in TabPane's head | string \| slot | - |
 
 ### Tabs.TabPane Slots
 

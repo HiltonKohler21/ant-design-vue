@@ -21,6 +21,7 @@ By clicking the input box, you can select a time from a popup panel.
 | bordered | Whether has border style | boolean | true |  |
 | clearIcon | The custom clear icon | v-slot:clearIcon | - |  |
 | clearText | The clear tooltip of icon | string | clear |  |
+| defaultValue | To set default time | [dayjs](https://day.js.org/) \| string | - |  |
 | disabled | Determine whether the TimePicker is disabled | boolean | false |  |
 | disabledTime | To specify the time that cannot be selected | [DisabledTime](#disabledtime) | - | 3.3.0 |
 | format | To set the time format | string | `HH:mm:ss` |  |
@@ -35,12 +36,16 @@ By clicking the input box, you can select a time from a popup panel.
 | popupClassName | The className of panel | string | - |  |
 | popupStyle | The style of panel | CSSProperties | - |  |
 | renderExtraFooter | Called from time picker panel to render some addon to its bottom | v-slot:renderExtraFooter | - |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | secondStep | Interval between seconds in picker | number | 1 |  |
 | showNow | Whether to show `Now` button on panel | boolean | - |  |
+| size | To determine the size of the input box, the height of `large` and `small` are 40px and 24px respectively, while default size is 32px | `large` \| `middle` \| `small` | - |  |
+| status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
 | suffixIcon | The custom suffix icon | v-slot:suffixIcon | - |  |
 | use12Hours | Display as 12 hours format, with default format `h:mm:ss a` | boolean | false |  |
 | value(v-model) | To set time | [dayjs](https://day.js.org/) | - |  |
 | valueFormat | optional, format of binding value. If not specified, the binding value will be a Date object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
+| variant | Variants of picker | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 
 #### DisabledTime
 
@@ -52,7 +57,7 @@ type DisabledTime = (now: Dayjs) => {
 };
 ```
 
-### events
+### Events
 
 | Events Name | Description | Arguments |
 | --- | --- | --- |
@@ -74,6 +79,12 @@ Same props from [RangePicker](/components/date-picker/#rangepicker) of DatePicke
 | --- | --- | --- | --- | --- |
 | order | Order start and end time | boolean | true |  |
 | disabledTime | To specify the time that cannot be selected | [RangeDisabledTime](#rangedisabledtime) | - | 3.3.0 |
+
+#### TimeRangePicker Events
+
+| Events Name | Description | Arguments |
+| --- | --- | --- |
+| calendarChange | Callback function, can be executed when the start time or the end time of the range is changing | function(dates: \[dayjs, dayjs], dateStrings: \[string, string], info: { range: `start` \| `end` }) |
 
 #### RangeDisabledTime
 

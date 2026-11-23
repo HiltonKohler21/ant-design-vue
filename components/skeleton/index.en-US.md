@@ -19,15 +19,17 @@ Provide a placeholder while you wait for content to load, or to visualise conten
 
 ### Skeleton
 
-| Property | Description | Type | Default |
-| --- | --- | --- | --- |
-| active | Show animation effect | boolean | false |
-| avatar | Show avatar placeholder | boolean \| [SkeletonAvatarProps](#skeletonavatarprops) | false |
-| loading | Display the skeleton when `true` | boolean | - |
-| paragraph | Show paragraph placeholder | boolean \| [SkeletonParagraphProps](#skeletonparagraphprops) | true |
-| title | Show title placeholder | boolean \| [SkeletonTitleProps](#skeletontitleprops) | true |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| active | Show animation effect | boolean | false |  |
+| avatar | Show avatar placeholder | boolean \| [SkeletonAvatarProps](#skeletonavatarprops) | false |  |
+| loading | Display the skeleton when `true` | boolean | - |  |
+| paragraph | Show paragraph placeholder | boolean \| [SkeletonParagraphProps](#skeletonparagraphprops) | true |  |
+| rootClassName | Root class name | string | - | 4.3.0 |
+| round | Show paragraph and title radius when `true` | boolean | false |  |
+| title | Show title placeholder | boolean \| [SkeletonTitleProps](#skeletontitleprops) | true |  |
 
-## SkeletonAvatarProps
+### SkeletonAvatarProps
 
 | Property | Description             | Type                                      | Default |
 | -------- | ----------------------- | ----------------------------------------- | ------- |

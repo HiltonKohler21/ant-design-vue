@@ -27,10 +27,11 @@ A long list can be divided into several pages using `Pagination`, and only one p
 | defaultPageSize | default number of data items per page | number | 10 |  |
 | disabled | Disable pagination | boolean | - | 1.5.0 |
 | hideOnSinglePage | Whether to hide pager on single page | boolean | false |  |
-| itemRender | to customize item innerHTML | (page, type: 'page' \| 'prev' \| 'next', originalElement) => vNode \| v-slot | - |  |
+| itemRender | to customize item innerHTML | ({ page, type: 'page' \| 'prev' \| 'next', originalElement }) => vNode \| v-slot | - |  |
 | pageSize(v-model) | number of data items per page | number | - |  |
 | pageSizeOptions | specify the sizeChanger options | string\[] \| number\[] | \['10', '20', '50', '100'] |  |
 | responsive | If `size` is not specified, `Pagination` would resize according to the width of the window | boolean | - | 3.1 |
+| rootClassName | Root class name | string | - | 4.3.0 |
 | showLessItems | Show less page items | boolean | false | 1.5.0 |
 | showQuickJumper | determine whether you can jump to pages directly | boolean | false |  |
 | showSizeChanger | Determine whether to show `pageSize` select, it will be true when `total > 50` | boolean | - |  |
@@ -39,6 +40,7 @@ A long list can be divided into several pages using `Pagination`, and only one p
 | simple | whether to use simple mode | boolean | - |  |
 | size | specify the size of `Pagination`, can be set to `small` | string | "" |  |
 | total | total number of data items | number | 0 |  |
+| totalBoundaryShowSizeChanger | Determine when to show `pageSize` select when `total` exceeds this value | number | 50 |  |
 
 ### events
 

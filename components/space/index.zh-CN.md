@@ -25,9 +25,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*37T2R6O9oi0AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | align | 对齐方式 | `start` \| `end` \|`center` \|`baseline` | - | 1.6.5 |
+| classNames | 语义化结构 class | `{ item?: string }` | - | 4.3.0 |
 | direction | 间距方向 | `vertical` \| `horizontal` | `horizontal` | 1.6.5 |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | size | 间距大小 | `small` \| `middle` \| `large` \| `number` | `small` | 1.6.5 |
 | split | 设置拆分 | VueNode \| v-slot | - | 2.2.0 |
+| styles | 语义化结构 style | `{ item?: CSSProperties }` | - | 4.3.0 |
 | wrap | 是否自动换行，仅在 `horizontal` 时有效 | boolean | false | 2.2.0 |
 
 ### Space.Compact
@@ -45,8 +48,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*37T2R6O9oi0AAA
 - TimePicker
 - TreeSelect
 
-| 参数      | 说明                         | 类型                           | 默认值       | 版本  |
-| --------- | ---------------------------- | ------------------------------ | ------------ | ----- |
-| block     | 将宽度调整为父元素宽度的选项 | boolean                        | false        | 4.0.0 |
-| direction | 指定排列方向                 | `vertical` \| `horizontal`     | `horizontal` | 4.0.0 |
-| size      | 子组件大小                   | `large` \| `middle` \| `small` | `middle`     | 4.0.0 |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| align | 对齐方式 | `start` \| `end` \| `center` \| `baseline` | - | 4.3.0 |
+| block | 将宽度调整为父元素宽度的选项 | boolean | false | 4.0.0 |
+| direction | 指定排列方向 | `vertical` \| `horizontal` | `horizontal` | 4.0.0 |
+| size | 子组件大小 | `large` \| `middle` \| `small` | `middle` | 4.0.0 |

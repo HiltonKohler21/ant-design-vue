@@ -29,14 +29,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*v8EQT7KoGbcAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; indicator?: string }` | - | 4.3.0 |
 | color | 自定义小圆点的颜色 | string | - | 1.5.0 |
-| count | 展示的数字，大于 overflowCount 时显示为 `${overflowCount}+`，为 0 时隐藏 | number \| string \| slot |  |  |
+| count | 展示的数字，大于 overflowCount 时显示为 `${overflowCount}+`，为 0 时隐藏 | number \| string \| slot | - |  |
 | dot | 不展示数字，只有一个小红点 | boolean | false |  |
 | numberStyle | 设置状态点的样式 | object | '' |  |
-| offset | 设置状态点的位置偏移，格式为 [x, y] | [number\|string, number\|string] | - |  |
+| offset | 设置状态点的位置偏移，格式为 [x, y] | [number \| string, number \| string] | - |  |
 | overflowCount | 展示封顶的数字值 | number | 99 |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showZero | 当数值为 0 时，是否展示 Badge | boolean | false |  |
-| status | 设置 Badge 为状态点 | Enum{ 'success', 'processing, 'default', 'error', 'warning' } | '' |  |
+| size | 在设置了 `count` 的前提下有效，设置小圆点的大小 | `'default'` \| `'small'` | `'default'` |  |
+| status | 设置 Badge 为状态点 | Enum{ 'success', 'processing', 'default', 'error', 'warning' } | '' |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; indicator?: CSSProperties }` | - | 4.3.0 |
 | text | 在设置了 `status` 的前提下有效，设置状态点的文本 | string | '' |  |
 | title | 设置鼠标放在状态点上时显示的文字 | string | `count` |  |
 

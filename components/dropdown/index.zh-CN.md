@@ -18,21 +18,26 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5qm4S4Zgh2QAAA
 
 ## API
 
-属性如下
+### Dropdown
 
-| 参数 | 说明 | 类型 | 默认值 |  |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | align | 该值将合并到 placement 的配置中，设置参考 [dom-align](https://github.com/yiminghe/dom-align) | Object | - |  |
 | arrow | 下拉框箭头是否显示 | boolean \| { pointAtCenter: boolean } | false | 3.3.0 |
-| destroyPopupOnHide | 关闭后是否销毁 Dropdown | boolean | false | 3.0 |
+| destroyOnHidden | 关闭后是否销毁 Dropdown（替代 `destroyPopupOnHide`） | boolean | false | 4.3.0 |
+| ~~destroyPopupOnHide~~ | 关闭后是否销毁 Dropdown（已废弃，请使用 `destroyOnHidden`） | boolean | false | 3.0 |
 | disabled | 菜单是否禁用 | boolean | - |  |
+| ~~dropdownRender~~ | 自定义下拉框内容（已废弃，请使用 `popupRender`） | `(menus: VNode) => VNode` | - |  |
 | getPopupContainer | 菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位。 | Function(triggerNode) | `() => document.body` |  |
+| menu | 菜单配置项 | [MenuProps](/components/menu-cn/#api) | - | 4.3.0 |
+| open(v-model) | 菜单是否显示 | boolean | - |  |
 | overlay(v-slot) | 菜单 | [Menu](/components/menu-cn) | - |  |
 | overlayClassName | 下拉根元素的类名称 | string | - |  |
 | overlayStyle | 下拉根元素的样式 | object | - |  |
 | placement | 菜单弹出位置 | `bottomLeft` \| `bottom` \| `bottomRight` \| `topLeft` \| `top` \| `topRight` | `bottomLeft` |  |
-| trigger | 触发下拉的行为, 移动端不支持 hover | Array&lt;`click`\|`hover`\|`contextmenu`> | `['hover']` |  |
-| open(v-model) | 菜单是否显示 | boolean | - |  |
+| popupRender | 自定义下拉框内容（替代 `dropdownRender`） | `(menus: VNode) => VNode` | - | 4.3.0 |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| trigger | 触发下拉的行为, 移动端不支持 hover | Array&lt;`click` \| `hover` \| `contextmenu`> | `['hover']` |  |
 
 `overlay` 菜单使用 [Menu](/components/menu-cn/)，还包括菜单项 `Menu.Item`，分割线 `Menu.Divider`。
 
@@ -44,25 +49,26 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5qm4S4Zgh2QAAA
 
 | 事件名称 | 说明 | 回调参数 | 版本 |
 | --- | --- | --- | --- |
-| openChange | 菜单显示状态改变时调用，参数为 visible。点击菜单按钮导致的消失不会触发 | function(open) | 4.0 |
+| openChange | 菜单显示状态改变时调用，参数为 open。点击菜单按钮导致的消失不会触发 | function(open) | 4.0 |
 
 ### Dropdown.Button
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| buttonsRender | 自定义左右两个按钮 | `(buttons: VNode[]) => VNode[]` | - | 4.3.0 |
 | disabled | 菜单是否禁用 | boolean | - |  |
 | icon | 右侧的 icon | VNode \| slot | - | 1.5.0 |
 | loading | 设置按钮载入状态 | boolean \| { delay: number } | false | 3.0 |
+| open(v-model) | 菜单是否显示 | boolean | - |  |
 | overlay(v-slot) | 菜单 | [Menu](/components/menu-cn/) | - |  |
 | placement | 菜单弹出位置 | `bottomLeft` \| `bottom` \| `bottomRight` \| `topLeft` \| `top` \| `topRight` | `bottomLeft` |  |
 | size | 按钮大小，和 [Button](/components/button-cn/) 一致 | string | 'default' |  |
-| trigger | 触发下拉的行为 | Array&lt;`click`\|`hover`\|`contextmenu`> | `['hover']` |  |
+| trigger | 触发下拉的行为 | Array&lt;`click` \| `hover` \| `contextmenu`> | `['hover']` |  |
 | type | 按钮类型，和 [Button](/components/button-cn/) 一致 | string | 'default' |  |
-| open(v-model) | 菜单是否显示 | boolean | - |  |
 
 ### Dropdown.Button 事件
 
 | 事件名称 | 说明 | 回调参数 | 版本 |
 | --- | --- | --- | --- |
-| click | 点击左侧按钮的回调，和 [Button](/components/button-cn/) 一致 | Function |
-| openChange | 菜单显示状态改变时调用，参数为 visible。点击菜单按钮导致的消失不会触发 | function(open) | 4.0 |
+| click | 点击左侧按钮的回调，和 [Button](/components/button-cn/) 一致 | Function |  |
+| openChange | 菜单显示状态改变时调用，参数为 open。点击菜单按钮导致的消失不会触发 | function(open) | 4.0 |

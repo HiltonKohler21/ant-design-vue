@@ -23,6 +23,8 @@ Properties that shared by all types.
 | --- | --- | --- | --- | --- |
 | format | The template function of the content | function(percent, successPercent) | (percent) => percent + `%` |  |
 | percent | To set the completion percentage | number | 0 |  |
+| rootClassName | Root class name | string | - | 4.3.0 |
+| rounding | Whether the progress bar caps are rounded (`true` is equivalent to `strokeLinecap="round"`) | boolean | - | 4.3.0 |
 | showInfo | Whether to display the progress value and the status icon | boolean | true |  |
 | status | To set the status of the Progress, options: `success` `exception` `normal` `active`(line only) | string | - |  |
 | strokeColor | The color of progress bar | string | - |  |
@@ -37,6 +39,7 @@ Properties that shared by all types.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| percentPosition | The position of progress info | `{ align?: 'start' \| 'center' \| 'end'; type?: 'inner' \| 'outer' }` \| `'inner'` \| `'outer'` | `{ align: 'end', type: 'outer' }` | 4.3.0 |
 | steps | The total step count | number | - | - |
 | strokeColor | The color of progress bar, render `linear-gradient` when passing an object, could accept `string[]` when has `steps`. | string \| string[] \| { from: string; to: string; direction: string } | - | - |
 
@@ -49,8 +52,8 @@ Properties that shared by all types.
 
 ### `type="dashboard"`
 
-| Property | Description | Type | Default |
-| --- | --- | --- | --- |
-| gapDegree | The gap degree of half circle, 0 ~ 295 | number | 75 |
-| gapPosition | The gap position, options: `top` `bottom` `left` `right` | string | `bottom` |
-| strokeWidth | To set the width of the dashboard progress, unit: percentage of the canvas width | number | 6 |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| gapDegree | The gap degree of half circle, 0 ~ 295 | number | 75 | - |
+| gapPosition | The gap position | `top` \| `bottom` \| `left` \| `right` | `bottom` | - |
+| strokeWidth | To set the width of the dashboard progress, unit: percentage of the canvas width | number | 6 | - |

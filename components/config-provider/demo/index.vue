@@ -4,6 +4,7 @@
     <Size />
     <Direction />
     <Theme />
+    <ComponentConfig />
   </demo-sort>
 </template>
 
@@ -12,6 +13,7 @@ import Locale from './locale.vue';
 import Size from './size.vue';
 import Direction from './direction.vue';
 import Theme from './theme.vue';
+import ComponentConfig from './component-config.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -23,6 +25,7 @@ export default defineComponent({
     Size,
     Theme,
     Direction,
+    ComponentConfig,
   },
 });
 </script>

@@ -19,12 +19,21 @@ A carousel component. Scales with its container.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| adaptiveHeight | Adjust the slide's height automatically | boolean | `false` |  |
+| arrows | Whether to show the arrow buttons | boolean | `false` |  |
 | autoplay | Whether to scroll automatically | boolean | `false` |  |
+| autoplaySpeed | Delay between each auto scroll (in milliseconds) | number | `3000` |  |
 | dotPosition | The position of the dots, which can be one of `top` `bottom` `left` `right` | string | `bottom` | 1.5.0 |
 | dots | Whether to show the dots at the bottom of the gallery | boolean | `true` |  |
 | dotsClass | Class name of the dots | string | `slick-dots` |  |
+| draggable | Enable scrollable via dragging on desktop | boolean | `false` |  |
 | easing | Transition interpolation function name | string | `linear` |  |
 | effect | Transition effect | `scrollx` \| `fade` | `scrollx` |  |
+| fade | Use fade transition | boolean | `false` |  |
+| infinite | Infinitely wrap around contents | boolean | `true` |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| speed | Animation speed in milliseconds | number | `500` |  |
+| waitForAnimate | Whether to wait for the animation when switching | boolean | `false` | 4.3.0 |
 | afterChange | Callback function called after the current index changes | function(current) | - |  |
 | beforeChange | Callback function called before the current index changes | function(from, to) | - |  |
 

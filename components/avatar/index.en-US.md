@@ -20,6 +20,7 @@ Avatars can be used to represent people or objects. It supports images, `Icon`s,
 | gap | Letter type unit distance between left and right sides | number | 4 | 2.2.0 |
 | icon | the `Icon` type for an icon avatar, see `Icon` Component | VNode \| slot | - |  |
 | loadError | handler when img load error, return false to prevent default fallback behavior | () => boolean | - |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
 | shape | the shape of avatar | `circle` \| `square` | `circle` |  |
 | size | The size of the avatar | number \| `large` \| `small` \| `default` \| { xs: number, sm: number, ...} | `default` | 2.2.0 |
 | src | the address of the image for an image avatar | string | - |  |
@@ -29,9 +30,11 @@ Avatars can be used to represent people or objects. It supports images, `Icon`s,
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| maxCount | Max avatars to show | number | - |  |
-| maxPopoverPlacement | The placement of excess avatar Popover | `top` \| `bottom` | `top` |  |
-| maxPopoverTrigger | Set the trigger of excess avatar Popover | `hover` \| `focus` \| `click` | `hover` | 3.0 |
-| maxStyle | The style of excess avatar style | CSSProperties | - |  |
+| max | Set maximum display related configurations (also accepts a legacy `number`) | `number` \| `{ count?: number; style?: CSSProperties; popover?: PopoverProps }` | - | 4.3.0 |
+| ~~maxCount~~ | Max avatars to show (deprecated, please use `max` instead) | number | - |  |
+| ~~maxPopoverPlacement~~ | The placement of excess avatar Popover (deprecated, please use `max.popover.placement` instead) | `top` \| `bottom` | `top` |  |
+| ~~maxPopoverTrigger~~ | Set the trigger of excess avatar Popover (deprecated, please use `max.popover.trigger` instead) | `hover` \| `focus` \| `click` | `hover` | 3.0 |
+| ~~maxStyle~~ | The style of excess avatar (deprecated, please use `max.style` instead) | CSSProperties | - |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
 | size | The size of the avatar | number \| `large` \| `small` \| `default` \| { xs: number, sm: number, ...} | `default` |  |
 | shape | The shape of the avatar | `circle` \| `square` | `circle` | 4.0 |

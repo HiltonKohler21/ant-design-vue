@@ -4,6 +4,7 @@ type: Data Entry
 title: ColorPicker
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*PpY4RYNM8UcAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EHL-QYJofZsAAAAAAAAAAAAADrJ8AQ/original
+tag: 4.3.0
 ---
 
 Provide color selection input, supporting solid colors, gradients, preset palettes, alpha channels, and multiple color formats.
@@ -29,9 +30,11 @@ Provide color selection input, supporting solid colors, gradients, preset palett
 | disabledAlpha | Disable alpha channel adjustment | boolean | false | 4.3.0 |
 | disabledFormat | Disable format switching | boolean | false | 4.3.0 |
 | format | Color format (controlled) | `'hex' \| 'rgb' \| 'hsb'` | - | 4.3.0 |
+| formatter | Custom formatter for output color string | `(color: string) => string` | - | 4.3.0 |
 | mode | Color mode: single or gradient | `'single' \| 'gradient' \| ('single' \| 'gradient')[]` | `'single'` | 4.3.0 |
 | panelRender | Customize panel content layout | `(panel: VNode) => VNode` | - | 4.3.0 |
 | placement | The position of the popup | `top` \| `left` \| `right` \| `bottom` \| `topLeft` \| `topRight` \| `bottomLeft` \| `bottomRight` \| `leftTop` \| `leftBottom` \| `rightTop` \| `rightBottom` | `bottomLeft` | 4.3.0 |
+| prefix | Trigger prefix content | VNode | - | 4.3.0 |
 | presets | Preset color options | `{ label: string; colors: string[] }[]` | - | 4.3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | showText | Show color text or provide a custom render function | boolean \| `(color: AggregationColor) => VNode \| string` | false | 4.3.0 |

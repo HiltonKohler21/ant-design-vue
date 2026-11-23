@@ -28,8 +28,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*LT2jR41Uj2EAAA
 | disabled | 禁用文本 | boolean | false |  |
 | editable | 是否可编辑，为对象时可对编辑进行控制 | boolean \| [editable](#editable) | false | [editable](#editable) |
 | ellipsis | 自动溢出省略 | boolean | false |  |
+| italic | 是否斜体 | boolean | false |  |
 | keyboard | 添加键盘样式 | boolean | false |  |
 | mark | 添加标记样式 | boolean | false |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | strong | 是否加粗 | boolean | false |  |
 | type | 文本类型 | `secondary` \| `success` \| `warning` \| `danger` | - |  |
 | underline | 添加下划线样式 | boolean | false |  |
@@ -45,8 +47,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*LT2jR41Uj2EAAA
 | disabled | 禁用文本 | boolean | false |  |
 | editable | 是否可编辑，为对象时可对编辑进行控制 | boolean \| [editable](#editable) | false | [editable](#editable) |
 | ellipsis | 自动溢出省略，为对象时可设置省略行数、是否可展开、添加后缀等 | boolean \| [ellipsis](#ellipsis) | false | [ellipsis](#ellipsis) |
+| italic | 是否斜体 | boolean | false |  |
 | level | 重要程度，相当于 `h1`、`h2`、`h3`、`h4`、`h5` | number: 1, 2, 3, 4, 5 | 1 |  |
 | mark | 添加标记样式 | boolean | false |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | type | 文本类型 | `secondary` \| `success` \| `warning` \| `danger` | - |  |
 | underline | 添加下划线样式 | boolean | false |  |
 
@@ -61,7 +65,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*LT2jR41Uj2EAAA
 | disabled | 禁用文本 | boolean | false |  |
 | editable | 是否可编辑，为对象时可对编辑进行控制 | boolean \| [editable](#editable) | false | [editable](#editable) |
 | ellipsis | 自动溢出省略，为对象时可设置省略行数、是否可展开、添加后缀等 | boolean \| [ellipsis](#ellipsis) | false | [ellipsis](#ellipsis) |
+| italic | 是否斜体 | boolean | false |  |
 | mark | 添加标记样式 | boolean | false |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | strong | 是否加粗 | boolean | false |  |
 | type | 文本类型 | `secondary` \| `success` \| `warning` \| `danger` | - |  |
 | underline | 添加下划线样式 | boolean | false |  |

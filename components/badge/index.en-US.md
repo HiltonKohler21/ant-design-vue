@@ -20,18 +20,22 @@ Small numerical value or status descriptor for UI elements.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the component | `{ root?: string; indicator?: string }` | - | 4.3.0 |
 | color | Customize Badge dot color | string | - | 1.5.0 |
-| count | Number to show; shows `${overflowCount}+` when greater, hidden when 0 | number \| string \| slot |  |  |
+| count | Number to show; shows `${overflowCount}+` when greater, hidden when 0 | number \| string \| slot | - |  |
 | dot | Show a red dot instead of a number | boolean | false |  |
 | numberStyle | Style of the count | object | '' |  |
-| offset | Offset of the badge, `[x, y]` | [number\|string, number\|string] | - |  |
+| offset | Offset of the badge, `[x, y]` | [number \| string, number \| string] | - |  |
 | overflowCount | Max count to show | number | 99 |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
 | showZero | Whether to show badge when count is 0 | boolean | false |  |
+| size | If `count` is set, `size` sets the size of badge | `'default'` \| `'small'` | `'default'` |  |
 | status | Set Badge as a status dot | Enum{ 'success', 'processing', 'default', 'error', 'warning' } | '' |  |
+| styles | Customize inline style for each semantic structure inside the component | `{ root?: CSSProperties; indicator?: CSSProperties }` | - | 4.3.0 |
 | text | Text beside the status dot (requires `status`) | string | '' |  |
 | title | Tooltip text of the status dot | string | `count` |  |
 
-### Badge.Ribbon
+### Badge.Ribbon (2.0.1+)
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |

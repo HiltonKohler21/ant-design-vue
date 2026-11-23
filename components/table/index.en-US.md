@@ -83,6 +83,7 @@ Specify `dataSource` of Table as an array of data.
 | defaultExpandAllRows | Expand all rows initially | boolean | `false` |  |
 | defaultExpandedRowKeys | Initial expanded row keys | string\[] | - |  |
 | emptyText | Customize the display content when empty data | v-slot:emptyText | - | 3.0 |
+| expandedRowClassName | Expanded row's className | Function(record, index, indent): string | - | 4.3.0 |
 | expandedRowKeys(v-model) | Current expanded row keys | string\[] | - |  |
 | expandedRowRender | Expanded container render for each row | Function({record, index, indent, expanded}):VNode\|v-slot | - |  |
 | expandFixed | Set column to be fixed: `true`(same as left) `'left'` `'right'` | boolean \| string | false | 3.0 |
@@ -96,6 +97,7 @@ Specify `dataSource` of Table as an array of data.
 | loading | Loading status of table | boolean\|[object](/components/spin) | `false` |  |
 | locale | i18n text including filter, sort, empty text, etc | object | filterConfirm: 'Ok' <br /> filterReset: 'Reset' <br /> emptyText: 'No Data' |  |
 | pagination | Config of pagination. You can ref table pagination [config](#pagination) or full [`pagination`](/components/pagination/) document, hide it by setting it to `false` | object \| `false` |  |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | rowClassName | Row's className | Function(record, index):string | - |  |
 | rowExpandable | Enable row can be expandable | (record) => boolean | - |  |
 | rowKey | Row's unique key, could be a string or function that returns a string | string\|Function(record, index):string | `key` |  |
@@ -110,16 +112,17 @@ Specify `dataSource` of Table as an array of data.
 | summary | Summary content | v-slot:summary | - | 3.0 |
 | tableLayout | [table-layout](https://developer.mozilla.org/en-US/docs/Web/CSS/table-layout) attribute of table element | - \| 'auto' \| 'fixed' | -<hr />`fixed` when header/columns are fixed, or using `column.ellipsis` | 1.5.0 |
 | title | Table title renderer | Function(currentPageData)\| v-slot:title="currentPageData" |  |  |
-| transformCellText | The data can be changed again before rendering, generally used for the default configuration of empty data. You can configured globally through [ConfigProvider](/components/config-provider-cn/) | Function({ text, column, record, index }) => any, The `text` here is the data processed by other defined cell api, and it may be of type VNode \| string \| number | - | 1.5.4 ｜ |
+| transformCellText | The data can be changed again before rendering, generally used for the default configuration of empty data. You can configured globally through [ConfigProvider](/components/config-provider/) | Function({ text, column, record, index }) => any, The `text` here is the data processed by other defined cell api, and it may be of type VNode \| string \| number | - | 1.5.4 |
+| virtual | Support virtual list | boolean | `false` | 4.3.0 |
 
 ### Events
 
-| Events Name | Description | Arguments |  |
-| --- | --- | --- | --- |
-| change | Callback executed when pagination, filters or sorter is changed | Function(pagination, filters, sorter, { action, currentDataSource }) |  |
-| expand | Callback executed when the row expand icon is clicked | Function(expanded, record) |  |
-| expandedRowsChange | Callback executed when the expanded rows change | Function(expandedRows) |  |
-| resizeColumn | Triggered when the column is dragged | Function(width, column) |  |
+| Events Name | Description | Arguments |
+| --- | --- | --- |
+| change | Callback executed when pagination, filters or sorter is changed | Function(pagination, filters, sorter, { action, currentDataSource }) |
+| expand | Callback executed when the row expand icon is clicked | Function(expanded, record) |
+| expandedRowsChange | Callback executed when the expanded rows change | Function(expandedRows) |
+| resizeColumn | Triggered when the column is dragged | Function(width, column) |
 
 #### customRow usage
 
@@ -161,15 +164,16 @@ One of the Table `columns` prop for describing the table's columns, Column has t
 | defaultFilteredValue | Default filtered values | string\[] | - | 1.5.0 |
 | filterResetToDefaultFilteredValue | click the reset button, whether to restore the default filter | boolean | false | 3.3.0 |
 | defaultSortOrder | Default order of sorted values: `'ascend'` `'descend'` `null` | string | - |  |
-| ellipsis | ellipsize cell content, not working with sorter and filters for now.<br />tableLayout would be `fixed` when `ellipsis` is true. | boolean | false | 1.5.0 |
-| ellipsis | The ellipsis cell content, not working with sorter and filters for now.<br />tableLayout would be `fixed` when `ellipsis` is `true` or `{ showTitle?: boolean }` | boolean \| {showTitle?: boolean } | false | 3.0 |
+| ellipsis | The ellipsis cell content, not working with sorter and filters for now.<br />tableLayout would be `fixed` when `ellipsis` is `true` or `{ showTitle?: boolean }` | boolean \| { showTitle?: boolean } | false | 3.0 |
 | filterDropdown | Customized filter overlay | VNode \| (props: FilterDropdownProps) => VNode | - |  |
 | filterDropdownOpen | Whether `filterDropdown` is open | boolean | - | 4.0 |
+| filterDropdownProps | Customized filter overlay props (passed to Dropdown) | [DropdownProps](/components/dropdown/#api) | - | 4.3.0 |
 | filtered | Whether the `dataSource` is filtered | boolean | `false` |  |
 | filteredValue | Controlled filtered value, filter icon will highlight | string\[] | - |  |
 | filterIcon | Customized filter icon | ({filtered: boolean, column: Column}) | `false` |  |
 | filterMode | To specify the filter interface | 'menu' \| 'tree' | 'menu' | 3.0 |
 | filterMultiple | Whether multiple filters can be selected | boolean | `true` |  |
+| filterOnClose | Whether to trigger filter when closing filter dropdown | boolean | `true` | 4.3.0 |
 | filters | Filter menu config | object\[] | - |  |
 | filterSearch | Whether to be searchable for filter menu | boolean \| function(input, filter):boolean | false | boolean: 3.0 function: 3.3.0 |
 | fixed | Set column to be fixed: `true`(same as left) `'left'` `'right'` | boolean\|string | `false` |  |
@@ -179,13 +183,15 @@ One of the Table `columns` prop for describing the table's columns, Column has t
 | resizable | Whether the width can be adjusted by dragging, at this time width must be number type | boolean | - | 3.0 |
 | responsive | The list of breakpoints at which to display this column. Always visible if not set. | [Breakpoint](#breakpoint)\[] | - | 3.0 |
 | rowScope | Set scope attribute for all cells in this column | `row` \| `rowgroup` | - | 4.0 |
+| showSorterTooltip | If header show next sorter direction tooltip, override `showSorterTooltip` in table | boolean \| [Tooltip props](/components/tooltip/#api) | `true` |  |
 | sortDirections | supported sort way, could be `'ascend'`, `'descend'` | Array | `['ascend', 'descend']` | 1.5.0 |
 | sorter | Sort function for local sort, see [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)'s compareFunction. If you need sort buttons only, set to `true` | Function\|boolean | - |  |
+| sortIcon | Customize sort icon | (props: { sortOrder: SortOrder \| null }) => VueNode | - | 4.3.0 |
 | sortOrder | Order of sorted values: `'ascend'` `'descend'` `null` | string | - |  |
 | title | Title of this column | string | - |  |
 | width | Width of this column | string\|number | - |  |
 | onFilter | Callback executed when the confirm filter button is clicked, Use as a `filter` event when using template or jsx | Function | - |  |
-| onFilterDropdownOpenChange | Callback executed when `filterDropdownOpen` is changed, Use as a `filterDropdownOpen` event when using template or jsx | function(open) {} | - | 4.0 |
+| onFilterDropdownOpenChange | Callback executed when `filterDropdownOpen` is changed, Use as a `filterDropdownOpenChange` event when using template or jsx | function(open) {} | - | 4.0 |
 
 #### Breakpoint
 

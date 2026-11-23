@@ -5,6 +5,7 @@ title: ColorPicker
 subtitle: 颜色选择器
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*PpY4RYNM8UcAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EHL-QYJofZsAAAAAAAAAAAAADrJ8AQ/original
+tag: 4.3.0
 ---
 
 提供颜色选择功能的输入组件，支持纯色、渐变色、预设色板、透明度调节及多种颜色格式输入。
@@ -30,9 +31,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*EHL-QYJofZsAAA
 | disabledAlpha | 是否禁用透明度选择 | boolean | false | 4.3.0 |
 | disabledFormat | 是否禁用颜色格式切换 | boolean | false | 4.3.0 |
 | format | 颜色格式（受控） | `'hex' \| 'rgb' \| 'hsb'` | - | 4.3.0 |
+| formatter | 自定义输出颜色字符串的格式化函数 | `(color: string) => string` | - | 4.3.0 |
 | mode | 配置单色还是渐变色模式 | `'single' \| 'gradient' \| ('single' \| 'gradient')[]` | `'single'` | 4.3.0 |
 | panelRender | 自定义渲染面板内容 | `(panel: VNode) => VNode` | - | 4.3.0 |
 | placement | 浮层弹出位置 | `top` \| `left` \| `right` \| `bottom` \| `topLeft` \| `topRight` \| `bottomLeft` \| `bottomRight` \| `leftTop` \| `leftBottom` \| `rightTop` \| `rightBottom` | `bottomLeft` | 4.3.0 |
+| prefix | 触发器前缀内容 | VNode | - | 4.3.0 |
 | presets | 预设颜色快捷选项 | `{ label: string; colors: string[] }[]` | - | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showText | 是否在触发器上显示颜色文本，或传入自定义渲染函数 | boolean \| `(color: AggregationColor) => VNode \| string` | false | 4.3.0 |

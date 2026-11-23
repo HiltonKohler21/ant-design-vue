@@ -9,6 +9,7 @@
     <Download />
     <ErrorLevel />
     <Popover />
+    <CustomStatusRender />
   </demo-sort>
 </template>
 
@@ -25,6 +26,7 @@ import Download from './download.vue';
 import ErrorLevel from './errorLevel.vue';
 import Popover from './popover.vue';
 import CustomType from './customType.vue';
+import CustomStatusRender from './custom-status-render.vue';
 
 export default defineComponent({
   components: {
@@ -37,6 +39,7 @@ export default defineComponent({
     ErrorLevel,
     Popover,
     CustomType,
+    CustomStatusRender,
   },
   category: 'Components',
   subtitle: '二维码',

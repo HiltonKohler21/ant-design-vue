@@ -8,6 +8,8 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tBzwQ7raKX8AAA
 
 Simple List.
 
+> **Tip:** For long lists, virtual scrolling, grouped sticky headers, or lightweight list rendering, we recommend using the new [Listy](/components/listy/) component (`4.3.0+`). `List` is transitioning into maintenance mode.
+
 ## When To Use
 
 A list can be used to display content related to a single subject. The content can consist of multiple elements of varying type and size.
@@ -16,21 +18,23 @@ A list can be used to display content related to a single subject. The content c
 
 ### List
 
-| Property | Description | Type | Default | Version |  |
-| --- | --- | --- | --- | --- | --- |
-| bordered | Toggles rendering of the border around the list | boolean | false |  |  |
-| dataSource | dataSource array for list | any\[] | - | 3.20.1 |  |
-| footer | List footer renderer | string\|slot | - |  |  |
-| grid | The grid type of list. You can set grid to something like {gutter: 16, column: 4} | object | - |  |  |
-| header | List header renderer | string\|slot | - |  |  |
-| itemLayout | The layout of list, default is `horizontal`, If a vertical list is desired, set the itemLayout property to `vertical` | string | - |  |  |
-| loading | Shows a loading indicator while the contents of the list are being fetched | boolean\|[object](https://www.antdv.com/components/spin/#api) | false |  |  |
-| loadMore | Shows a load more content | string\|slot | - |  |  |
-| locale | i18n text including empty text | object | emptyText: 'No Data' <br> |  |  |
-| pagination | Pagination [config](https://www.antdv.com/components/pagination/#api), hide it by setting it to false | boolean \| object | false |  |  |
-| renderItem | Custom item renderer, #renderItem="{item, index}" | ({item, index}) => vNode |  | - |  |
-| rowKey | Item's unique key, could be a string or function that returns a string | string\|Function(record):string | `key` |  |  |
-| split | Toggles rendering of the split under the list item | boolean | true |  |  |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| bordered | Toggles rendering of the border around the list | boolean | `false` |  |
+| dataSource | DataSource array for list | any\[] | - | 1.5.0 |
+| footer | List footer renderer | string \| slot | - |  |
+| grid | The grid type of list. You can set grid to something like `{ gutter: 16, column: 4 }` | object | - |  |
+| header | List header renderer | string \| slot | - |  |
+| itemLayout | The layout of list, default is `horizontal`. If a vertical list is desired, set the itemLayout property to `vertical` | `horizontal` \| `vertical` | `horizontal` |  |
+| loading | Shows a loading indicator while the contents of the list are being fetched | boolean \| [SpinProps](/components/spin/#api) | `false` |  |
+| loadMore | Shows a load more content | string \| slot | - |  |
+| locale | i18n text including empty text | object | `emptyText: 'No Data'` |  |
+| pagination | Pagination [config](/components/pagination/#api), hide it by setting it to false | boolean \| object | `false` |  |
+| renderItem | Custom item renderer, `#renderItem="{ item, index }"` | ({ item, index }) => VueNode | - |  |
+| rootClassName | Root element class name | string | - | 4.3.0 |
+| rowKey | Item's unique key, could be a string or function that returns a key | string \| number \| (item: any) => Key | - |  |
+| size | Size of list | `default` \| `large` \| `small` | `default` |  |
+| split | Toggles rendering of the split under the list item | boolean | `true` |  |
 
 ### pagination
 
@@ -38,17 +42,16 @@ Properties for pagination.
 
 | Property | Description                          | Type                        | Default  |
 | -------- | ------------------------------------ | --------------------------- | -------- |
-| position | specify the position of `Pagination` | 'top' \| 'bottom' \| 'both' | 'bottom' |
+| position | Specify the position of `Pagination` | `top` \| `bottom` \| `both` | `bottom` |
 
-More about pagination, please check [`Pagination`](https://www.antdv.com/components/pagination/#api).
+More about pagination, please check [`Pagination`](/components/pagination/#api).
 
 ### List grid props
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| column | column of grid | number oneOf [ 1, 2, 3, 4, 6, 8, 12, 24] | - |  |
-| gutter | spacing between grid | number | 0 |  |
-| size | Size of list | `default` \| `middle` \| `small` | `default` |  |
+| column | Column of grid | number oneOf [ 1, 2, 3, 4, 6, 8, 12, 24] | - |  |
+| gutter | Spacing between grid | number | 0 |  |
 | xxxl | `≥2000px` column of grid | number | - | 3.0 |
 | xs | `<576px` column of grid | number | - |  |
 | sm | `≥576px` column of grid | number | - |  |
@@ -61,13 +64,15 @@ More about pagination, please check [`Pagination`](https://www.antdv.com/compone
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| actions | The actions content of list item. If `itemLayout` is `vertical`, shows the content on bottom, otherwise shows content on the far right. | vNode[] \|slot | - |  |
-| extra | The extra content of list item. If `itemLayout` is `vertical`, shows the content on right, otherwise shows content on the far right. | string\|slot | - |  |
+| actions | The actions content of list item. If `itemLayout` is `vertical`, shows the content on bottom, otherwise shows content on the far right | VueNode[] \| slot | - |  |
+| classNames | Semantic DOM class names for list item | { actions?: string; extra?: string } | - | 4.3.0 |
+| extra | The extra content of list item. If `itemLayout` is `vertical`, shows the content on right, otherwise shows content on the far right | string \| slot | - |  |
+| styles | Semantic DOM inline styles for list item | { actions?: CSSProperties; extra?: CSSProperties } | - | 4.3.0 |
 
 ### List.Item.Meta
 
-| Property    | Description                  | Type         | Default |
-| ----------- | ---------------------------- | ------------ | ------- |
-| avatar      | The avatar of list item      | slot         | -       |
-| description | The description of list item | string\|slot | -       |
-| title       | The title of list item       | string\|slot | -       |
+| Property    | Description                  | Type           | Default |
+| ----------- | ---------------------------- | -------------- | ------- |
+| avatar      | The avatar of list item      | slot           | -       |
+| description | The description of list item | string \| slot | -       |
+| title       | The title of list item       | string \| slot | -       |

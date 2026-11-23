@@ -76,11 +76,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HdS6Q5vUCDcAAA
 
 布局容器。
 
-| 参数     | 说明                                                               | 类型    | 默认值 |
-| -------- | ------------------------------------------------------------------ | ------- | ------ |
-| class    | 容器 class                                                         | string  | -      |
-| hasSider | 表示子元素里有 Sider，一般不用指定。可用于服务端渲染时避免样式闪动 | boolean | -      |
-| style    | 指定样式                                                           | object  | -      |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| class | 容器 class | string | - |  |
+| hasSider | 表示子元素里有 Sider，一般不用指定。可用于服务端渲染时避免样式闪动 | boolean | - |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| style | 指定样式 | object | - |  |
 
 ### Layout.Sider
 
@@ -95,10 +96,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HdS6Q5vUCDcAAA
 | collapsible | 是否可收起 | boolean | false |  |
 | defaultCollapsed | 是否默认收起 | boolean | false |  |
 | reverseArrow | 翻转折叠提示箭头的方向，当 Sider 在右边时可以使用 | boolean | false |  |
-| style | 指定样式 | object\|string | - |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| style | 指定样式 | object \| string | - |  |
 | theme | 主题颜色 | `light` \| `dark` | `dark` |  |
-| trigger | 自定义 trigger，设置为 null 时隐藏 trigger | string\|slot | - |  |
-| width | 宽度 | number\|string | 200 |  |
+| trigger | 自定义 trigger，设置为 null 时隐藏 trigger | string \| slot | - |  |
+| width | 宽度 | number \| string | 200 |  |
 | zeroWidthTriggerStyle | 指定当 `collapsedWidth` 为 0 时出现的特殊 trigger 的样式 | object | - | 1.5.0 |
 
 ### 事件

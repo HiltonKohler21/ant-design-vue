@@ -28,14 +28,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*yv12S4sSRAEAAA
 | filterOption | 接收 `inputValue` `option` 两个参数，当 `option` 符合筛选条件时，应返回 `true`，反之则返回 `false`。 | (inputValue, option): boolean |  |  |
 | footer | 可以设置为一个 作用域插槽 | slot="footer" slot-scope="props" |  |  |
 | listStyle | 两个穿梭框的自定义样式 | CSSProperties |  |  |
-| locale | 各种语言 | object | `{ itemUnit: '项', itemsUnit: '项', notFoundContent: '列表为空', searchPlaceholder: '请输入搜索内容' }` |  |
+| locale | 各种语言，支持 `deselectAll`（4.3.0） | object | `{ itemUnit: '项', itemsUnit: '项', notFoundContent: '列表为空', searchPlaceholder: '请输入搜索内容' }` |  |
 | oneWay | 展示为单向样式 | boolean | false | 3.0.0 |
 | operations | 操作文案集合，顺序从上至下 | string\[] | \['>', '&lt;'] |  |
 | operationStyle | 操作栏的自定义样式 | CSSProperties | - | 3.0.0 |
-| pagination | 使用分页样式，自定义渲染列表下无效 | boolean \| { pageSize: number, simple: boolean, showSizeChanger?: boolean, showLessItems?: boolean } | flase | 3.0.0 |
+| pagination | 使用分页样式，自定义渲染列表下无效 | boolean \| { pageSize: number, simple: boolean, showSizeChanger?: boolean, showLessItems?: boolean } | false | 3.0.0 |
 | render | 每行数据渲染函数，该函数的入参为 `dataSource` 中的项，返回值为 element。或者返回一个普通对象，其中 `label` 字段为 element，`value` 字段为 title | Function(record)\| slot |  |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | selectAllLabels | 自定义顶部多选框标题的集合 | VueNode \| ((info: { selectedCount: number; totalCount: number }) => VueNode); | - | 3.0.0 |
 | selectedKeys(v-model) | 设置哪些项应该被选中 | string\[] | \[] |  |
+| selectionsIcon | 自定义下拉菜单图标 | VueNode | - | 4.3.0 |
 | showSearch | 是否显示搜索框 | boolean | false |  |
 | showSelectAll | 是否展示全选勾选框 | boolean | true |  |
 | status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
@@ -66,14 +68,14 @@ Transfer 支持接收 `children` 自定义渲染列表，并返回以下参数�
 }
 ```
 
-| 参数          | 说明           | 类型                                 | 版本 |
-| ------------- | -------------- | ------------------------------------ | ---- |
-| direction     | 渲染列表的方向 | 'left' \| 'right'                    |      |
-| disabled      | 是否禁用列表   | boolean                              |      |
-| filteredItems | 过滤后的数据   | TransferItem\[]                      |      |
-| itemSelect    | 勾选条目       | (key: string, selected: boolean)     |      |
-| itemSelectAll | 勾选一组条目   | (keys: string\[], selected: boolean) |      |
-| selectedKeys  | 选中的条目     | string\[]                            |      |
+| 参数            | 说明           | 类型                                 | 版本 |
+| --------------- | -------------- | ------------------------------------ | ---- |
+| direction       | 渲染列表的方向 | 'left' \| 'right'                    |      |
+| disabled        | 是否禁用列表   | boolean                              |      |
+| filteredItems   | 过滤后的数据   | TransferItem\[]                      |      |
+| onItemSelect    | 勾选条目       | (key: string, selected: boolean)     |      |
+| onItemSelectAll | 勾选一组条目   | (keys: string\[], selected: boolean) |      |
+| selectedKeys    | 选中的条目     | string\[]                            |      |
 
 #### 参考示例
 

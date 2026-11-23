@@ -5,7 +5,6 @@ type: 数据展示
 title: QRCode
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*cJopQrf0ncwAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*M4PBTZ_n9OgAAAAAAAAAAAAADrJ8AQ/original
-tag: New
 ---
 
 ## 何时使用
@@ -14,7 +13,7 @@ tag: New
 
 ## API
 
-| 参数 | 说明 | 类型 | 默认值 | version |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | value | 扫描后的地址 | string | - |  |
 | type | 渲染类型 | `'canvas'` \| `'svg'` | `canvas` |  |
@@ -25,7 +24,9 @@ tag: New
 | bgColor | 二维码背景颜色 | string | `transparent` |  |
 | bordered | 是否有边框 | boolean | `true` |  |
 | errorLevel | 二维码纠错等级 | `'L'` \| `'M'` \| `'Q'` \| `'H'` | `'M'` |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 | status | 二维码状态 | `active` \| `expired` \| `loading` \| `scanned` | `active` | scanned: 4.0.9 |
+| statusRender | 自定义状态渲染器，支持函数 prop 或 `#statusRender` 插槽 | `(info: { status: 'expired' \| 'loading' \| 'scanned'; locale: Locale['QRCode']; onRefresh?: (e?: MouseEvent) => void }) => VueNode` \| slot | - | 4.3.0 |
 
 ### 事件
 

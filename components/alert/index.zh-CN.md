@@ -18,17 +18,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*-U3XQqYN7VsAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| action | 自定义操作项 | slot | - | 4.0.0 |
+| action | 自定义操作项 | VueNode \| slot | - | 4.0.0（prop: 4.3.0） |
 | afterClose | 关闭动画结束后触发的回调函数 | () => void | - |  |
-| banner | 是否用作顶部公告 | boolean | false |  |
-| closable | 默认不显示关闭按钮 | boolean | 无 |  |
-| closeIcon | 自定义关闭 Icon | slot | `<CloseOutlined />` | 3.0 |
-| closeText | 自定义关闭按钮 | string\|slot | 无 |  |
-| description | 警告提示的辅助性文字介绍 | string\|slot | 无 |  |
-| icon | 自定义图标，`showIcon` 为 `true` 时有效 | vnode\|slot | - |  |
-| message | 警告提示内容 | string\|slot | 无 |  |
-| showIcon | 是否显示辅助图标 | boolean | false,`banner` 模式下默认值为 true |  |
-| type | 指定警告提示的样式，有四种选择 `success`、`info`、`warning`、`error` | string | `info`,`banner` 模式下默认值为 `warning` |  |
+| banner | 是否用作顶部公告 | boolean | `false` |  |
+| closable | 默认不显示关闭按钮 | boolean | - |  |
+| closeIcon | 自定义关闭 Icon | VueNode \| slot | `<CloseOutlined />` | 3.0 |
+| closeText | 自定义关闭按钮 | string \| slot | - |  |
+| description | 警告提示的辅助性文字介绍 | string \| slot | - |  |
+| icon | 自定义图标，`showIcon` 为 `true` 时有效 | VueNode \| slot | - |  |
+| message | 警告提示内容 | string \| slot | - |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| showIcon | 是否显示辅助图标 | boolean | `false`，`banner` 模式下默认值为 `true` |  |
+| type | 指定警告提示的样式，有四种选择 `success`、`info`、`warning`、`error` | `success` \| `info` \| `warning` \| `error` | `info`，`banner` 模式下默认值为 `warning` |  |
 
 ### 事件
 

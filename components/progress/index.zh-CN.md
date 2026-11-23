@@ -24,6 +24,8 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HJH8Tb1lcYAAAA
 | --- | --- | --- | --- | --- |
 | format | 内容的模板函数 | function(percent, successPercent) | (percent) => percent + `%` |  |
 | percent | 百分比 | number | 0 |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| rounding | 进度条端点是否为圆角（`true` 等价于 `strokeLinecap="round"`） | boolean | - | 4.3.0 |
 | showInfo | 是否显示进度数值或状态图标 | boolean | true |  |
 | status | 状态，可选：`success` `exception` `normal` `active`(仅限 line) | string | - |  |
 | strokeColor | 进度条的色彩 | string | - |  |
@@ -38,6 +40,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HJH8Tb1lcYAAAA
 
 | 属性 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| percentPosition | 进度数值位置 | `{ align?: 'start' \| 'center' \| 'end'; type?: 'inner' \| 'outer' }` \| `'inner'` \| `'outer'` | `{ align: 'end', type: 'outer' }` | 4.3.0 |
 | steps | 进度条总共步数 | number | - | - |
 | strokeColor | 进度条的色彩，传入 object 时为渐变。当有 `steps` 时支持传入一个数组。 | string \| string[] \| { from: string; to: string; direction: string } | - | - |
 

@@ -17,8 +17,11 @@ A divider line separates different content.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| dashed | whether line is dashed | boolean | false |  |
-| orientation | position of title inside divider | `left` \| `right` \| `center` | `center` |  |
+| dashed | Whether line is dashed (prefer `variant="dashed"`) | boolean | `false` |  |
+| orientation | Position of title inside divider | `left` \| `right` \| `center` \| `start` \| `end` | `center` | `start` \| `end`: 4.3.0 |
 | orientationMargin | The margin-left/right between the title and its closest border, while the `orientation` must be `left` or `right` | string \| number | - | 3.0 |
-| plain | Divider text show as plain style | boolean | true | 2.2.0 |
-| type | direction type of divider | `horizontal` \| `vertical` | `horizontal` |  |
+| plain | Divider text show as plain style | boolean | `false` | 2.2.0 |
+| rootClassName | Root element class name | string | - | 4.3.0 |
+| size | The size of divider spacing, only valid for horizontal divider | `small` \| `middle` \| `medium` \| `large` | `large` | 4.3.0 |
+| type | Direction type of divider | `horizontal` \| `vertical` | `horizontal` |  |
+| variant | Whether line is dashed, dotted or solid | `solid` \| `dashed` \| `dotted` | `solid` | 4.3.0 |

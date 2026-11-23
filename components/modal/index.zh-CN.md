@@ -20,26 +20,32 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*fBrgSJBmavgAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | afterClose | Modal 完全关闭后的回调 | function | - |  |
-| bodyStyle | Modal body 样式 | object | {} |  |
+| afterOpenChange | 打开和关闭 Modal 时动画结束后的回调 | (open: boolean) => void | - | 4.3.0 |
+| bodyStyle | Modal body 样式（已废弃，请使用 `styles.body` 替代） | object | {} |  |
 | cancelButtonProps | cancel 按钮 props | [ButtonProps](/components/button/#api) | - |  |
 | cancelText | 取消按钮文字 | string\| slot | 取消 |  |
 | centered | 垂直居中展示 Modal | boolean | `false` |  |
+| classNames | 用于自定义 Modal 组件内部各语义化结构的 class | `{ mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string }` | - | 4.3.0 |
 | closable | 是否显示右上角的关闭按钮 | boolean | true |  |
 | closeIcon | 自定义关闭图标 | VNode \| slot | - |  |
-| confirmLoading | 确定按钮 loading | boolean | - |  |
-| destroyOnClose | 关闭时销毁 Modal 里的子元素 | boolean | false |  |
+| confirmLoading | 确定按钮 loading | boolean | false |  |
+| destroyOnClose | 关闭时销毁 Modal 里的子元素（已废弃，请使用 `destroyOnHidden` 替代） | boolean | false |  |
+| destroyOnHidden | 关闭时销毁 Modal 里的子元素 | boolean | false | 4.3.0 |
 | footer | 底部内容，当不需要默认底部按钮时，可以设为 `:footer="null"` | string\|slot | 确定取消按钮 |  |
 | forceRender | 强制渲染 Modal | boolean | false |  |
 | getContainer | 指定 Modal 挂载的 HTML 节点 | (instance): HTMLElement | () => document.body |  |
 | keyboard | 是否支持键盘 esc 关闭 | boolean | true |  |
 | mask | 是否展示遮罩 | boolean | true |  |
 | maskClosable | 点击蒙层是否允许关闭 | boolean | true |  |
-| maskStyle | 遮罩样式 | object | {} |  |
+| maskStyle | 遮罩样式（已废弃，请使用 `styles.mask` 替代） | object | {} |  |
+| modalRender | 自定义渲染对话框 | (arg: { originVNode: VueNode }) => VueNode \| slot | - |  |
 | okButtonProps | ok 按钮 props | [ButtonProps](/components/button/#api) | - |  |
 | okText | 确认按钮文字 | string\|slot | 确定 |  |
 | okType | 确认按钮类型 | string | primary |  |
+| open(v-model) | 对话框是否可见 | boolean | false |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| styles | 用于自定义 Modal 组件内部各语义化结构的行内 style | `{ mask?: CSSProperties; wrapper?: CSSProperties; content?: CSSProperties; header?: CSSProperties; body?: CSSProperties; footer?: CSSProperties }` | - | 4.3.0 |
 | title | 标题 | string\|slot | - |  |
-| open(v-model) | 对话框是否可见 | boolean | - |  |
 | width | 宽度 | string\|number | 520 |  |
 | wrapClassName | 对话框外层容器的类名 | string | - |  |
 | zIndex | 设置 Modal 的 `z-index` | number | 1000 |  |
@@ -53,7 +59,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*fBrgSJBmavgAAA
 
 #### 注意
 
-> `<Modal />` 默认关闭后状态不会自动清空, 如果希望每次打开都是新内容，请设置 `destroyOnClose`。
+> `<Modal />` 默认关闭后状态不会自动清空, 如果希望每次打开都是新内容，请设置 `destroyOnHidden`。
 
 ### Modal.method()
 

@@ -6,7 +6,6 @@ title: Watermark
 cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*wr1ISY50SyYAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*duAQQbjHlHQAAAAAAAAAAAAADrJ8AQ/original
-tag: New
 ---
 
 给页面的某个区域加上水印。
@@ -24,6 +23,7 @@ tag: New
 | --- | --- | --- | --- | --- |
 | width | 水印的宽度，`content` 的默认值为自身的宽度 | number | 120 |  |
 | height | 水印的高度，`content` 的默认值为自身的高度 | number | 64 |  |
+| inherit | 是否将水印透传到弹出层组件（如 Modal、Drawer 等） | boolean | true | 4.3.0 |
 | rotate | 水印绘制时，旋转的角度，单位 `°` | number | -22 |  |
 | zIndex | 追加的水印元素的 z-index | number | 9 |  |
 | image | 图片源，建议导出 2 倍或 3 倍图，优先级高 | string | - |  |
@@ -31,6 +31,7 @@ tag: New
 | font | 文字样式 | [Font](#font) | [Font](#font) |  |
 | gap | 水印之间的间距 | \[number, number\] | \[100, 100\] |  |
 | offset | 水印距离容器左上角的偏移量，默认为 `gap/2` | \[number, number\] | \[gap\[0\]/2, gap\[1\]/2\] |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 
 ### Font
 

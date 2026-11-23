@@ -32,17 +32,20 @@ The properties of config are as follows:
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| actions | Customized action buttons (recommended, replaces `btn`) | VNode \| () => VNode | - | 4.3.0 |
 | bottom | Distance from the bottom of the viewport, when `placement` is `bottomRight` or `bottomLeft` (unit: pixels). | string | `24px` |  |
-| btn | Customized close button | VNode \| () => VNode | - |  |
+| btn | Customized close button (Deprecated, please use `actions` instead) | VNode \| () => VNode | - |  |
 | class | Customized CSS class | string | - |  |
 | closeIcon | custom close icon | VNode \| () => VNode | - |  |
 | description | The content of notification box (required) | string\| VNode \| () => VNode | - |  |
-| duration | Time in seconds before Notification is closed. When set to 0 or null, it will never be closed automatically | number | 4.5 |  |
+| duration | Time in seconds before Notification is closed. When set to 0 or null, it will never be closed automatically | number \| null | 4.5 |  |
 | getContainer | Return the mount node for Notification | () => HTMLNode | () => document.body |  |
 | icon | Customized icon | VNode \| () => VNode | - |  |
 | key | The unique identifier of the Notification | string | - |  |
 | message | The title of notification box (required) | string\| VNode \| () => VNode | - |  |
+| pauseOnHover | Keep the timer running or not on hover | boolean | true | 4.3.0 |
 | placement | Position of Notification, can be one of `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` | `top` `bottom` 3.3.0 |
+| showProgress | Show progress bar for auto-closing notification | boolean | false | 4.3.0 |
 | style | Customized inline style | Object \| string | - |  |
 | top | Distance from the top of the viewport, when `placement` is `topRight` or `topLeft` (unit: pixels). | string | `24px` |  |
 | onClick | Specify a function that will be called when the notification is clicked | Function | - |  |
@@ -72,8 +75,10 @@ notification.config({
 | duration | Time in seconds before Notification is closed. When set to 0 or null, it will never be closed automatically | number | 4.5 |  |
 | getContainer | Return the mount node for Notification | () => HTMLNode | () => document.body |  |
 | maxCount | Max Notification show, drop oldest if exceed limit | number | - | 3.0 |
-| placement | Position of Notification, can be one of `topLeft` `topRight` `bottomLeft` `bottomRight` | string | `topRight` |  |
-| rtl | Whether to enable RTL mode | boolean | false |  |
+| pauseOnHover | Keep the timer running or not on hover | boolean | true | 4.3.0 |
+| placement | Position of Notification, can be one of `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` |  |
+| rtl | Whether to enable RTL mode | boolean | false | 3.0 |
+| showProgress | Show progress bar for auto-closing notification | boolean | false | 4.3.0 |
 | top | Distance from the top of the viewport, when `placement` is `topRight` or `topLeft` (unit: pixels). | string | `24px` |  |
 
 ## FAQ

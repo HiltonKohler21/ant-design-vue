@@ -81,37 +81,43 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3OpRQKcygo8AAA
 | --- | --- | --- | --- | --- |
 | allowClear | 是否显示清除按钮 | boolean | true |  |
 | autofocus | 自动获取焦点 | boolean | false |  |
-| bordered | 是否有边框 | boolean | true |  |
+| ~~bordered~~ | 是否有边框（已废弃，请使用 `variant`） | boolean | true |  |
+| clearIcon | 自定义清空图标 | VNode \| slot | `<CloseCircleFilled />` | 4.3.0 |
 | dateRender | 自定义日期单元格的内容 | v-slot:dateRender="{current, today}" | - |  |
+| defaultOpen | 初始是否展开弹出日历 | boolean | - |  |
 | disabled | 禁用 | boolean | false |  |
 | disabledDate | 不可选择的日期 | (currentDate: dayjs) => boolean | - |  |
 | format | 设置日期格式，为数组时支持多格式匹配，展示以第一个为准。配置参考 [dayjs](https://day.js.org/docs/zh-CN/display/format)，支持[自定义格式](#components-date-picker-demo-format) | [formatType](#formattype) | `YYYY-MM-DD` |  |
-| popupClassName | 额外的弹出日历 className | string | - |  |
 | getPopupContainer | 定义浮层的容器，默认为 body 上新建 div | function(trigger) | - |  |
+| id | 输入框 `id` | string | - |  |
 | inputReadOnly | 设置输入框为只读（避免在移动设备上打开虚拟键盘） | boolean | false |  |
 | locale | 国际化配置 | object | [默认配置](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) | - |
 | mode | 日期面板的状态 | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |
 | nextIcon | 自定义下一个图标 | slot | - | 3.0 |
 | open | 控制弹层是否展开 | boolean | - |  |
+| panelRender | 自定义渲染面板 | `(panelNode: VNode) => VNode` | - |  |
 | picker | 设置选择器类型 | `date` \| `week` \| `month` \| `quarter` \| `year` | `date` | `quarter` |
 | placeholder | 输入框提示文字 | string \| \[string, string] | - |  |
 | placement | 选择框弹出的位置 | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
+| popupClassName | 额外的弹出日历 className | string | - |  |
 | popupStyle | 额外的弹出日历样式 | CSSProperties | {} |  |
-| prevIcon | 自定义上一个图标 | slot | - | 3.0 |
 | presets | 预设时间范围快捷选择 | { label: slot, value: [dayjs](https://day.js.org/) }[] | - | 4.0 |
+| prevIcon | 自定义上一个图标 | slot | - | 3.0 |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 | size | 输入框大小，`large` 高度为 40px，`small` 为 24px，默认是 32px | `large` \| `middle` \| `small` | - |  |
-| status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
+| status | 设置校验状态 | `'error'` \| `'warning'` | - | 3.3.0 |
 | suffixIcon | 自定义的选择框后缀图标 | v-slot:suffixIcon | - |  |
 | superNextIcon | 自定义 `<<` 切换图标 | slot | - | 3.0 |
 | superPrevIcon | 自定义 `>>` 切换图标 | slot | - | 3.0 |
 | valueFormat | 可选，绑定值的格式，对 value、defaultValue、defaultPickerValue 起作用。不指定则绑定值为 dayjs 对象 | string，[具体格式](https://day.js.org/docs/zh-CN/display/format) | - |  |
+| variant | 形态变体 | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 
 ### 共有的事件
 
-| 事件名称    | 说明                     | 回调参数              |     |
-| ----------- | ------------------------ | --------------------- | --- |
-| openChange  | 弹出日历和关闭日历的回调 | function(status)      |     |
-| panelChange | 日期面板变化时的回调     | function(value, mode) | -   |
+| 事件名称    | 说明                     | 回调参数              | 版本 |
+| ----------- | ------------------------ | --------------------- | ---- |
+| openChange  | 弹出日历和关闭日历的回调 | function(status)      |      |
+| panelChange | 日期面板变化时的回调     | function(value, mode) |      |
 
 ### 共同的方法
 
@@ -125,6 +131,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3OpRQKcygo8AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | defaultPickerValue | 默认面板日期 | [dayjs](https://day.js.org/) | - |  |
+| defaultValue | 默认日期 | [dayjs](https://day.js.org/) | - |  |
 | disabledTime | 不可选择的时间 | function(date) | - |  |
 | format | 展示的日期格式，配置参考 [dayjs](https://day.js.org/docs/zh-CN/display/format) | [formatType](#formattype) | `YYYY-MM-DD` |  |
 | renderExtraFooter | 在面板中添加额外的页脚 | v-slot:renderExtraFooter="mode" | - |  |
@@ -173,6 +180,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3OpRQKcygo8AAA
 | allowEmpty | 允许起始项部分为空 | \[boolean, boolean] | \[false, false] |  |
 | dateRender | 自定义日期单元格的内容。 | v-slot:dateRender="{current: dayjs, today: dayjs, info: { range: `start` \| `end` }}" | - |  |
 | defaultPickerValue | 默认面板日期 | [dayjs](https://day.js.org/)\[] | - |  |
+| defaultValue | 默认日期 | [dayjs](https://day.js.org/)\[] | - |  |
 | disabled | 禁用起始项 | \[boolean, boolean] | - |  |
 | disabledTime | 不可选择的时间 | function(date: dayjs, partial: `start` \| `end`) | - |  |
 | format | 展示的日期格式 | [formatType](#formattype) | `YYYY-MM-DD HH:mm:ss` |  |

@@ -30,26 +30,31 @@ customize the progress dot by setting a scoped slot
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| dateCellRender | Customize the display of the date cell by setting a scoped slot, the returned content will be appended to the cell | v-slot:dateCellRender="{current: dayjs}" | - |  |
-| dateFullCellRender | Customize the display of the date cell by setting a scoped slot, the returned content will override the cell | v-slot:dateFullCellRender="{current: dayjs}" | - |  |
+| cellRender | Customize the display of the cell; the returned content will be appended to the cell (replaces `dateCellRender` / `monthCellRender`) | `(current: dayjs, info: CellRenderInfo) => VNode` \| `v-slot:cellRender="{ current, info }"` | - | 4.3.0 |
+| ~~dateCellRender~~ | Customize the display of the date cell by setting a scoped slot, the returned content will be appended to the cell (deprecated, please use `cellRender` instead) | v-slot:dateCellRender="{current: dayjs}" | - |  |
+| ~~dateFullCellRender~~ | Customize the display of the date cell by setting a scoped slot, the returned content will override the cell (deprecated, please use `fullCellRender` instead) | v-slot:dateFullCellRender="{current: dayjs}" | - |  |
+| defaultValue | The date selected by default | [dayjs](https://day.js.org/) | - |  |
 | disabledDate | Function that specifies the dates that cannot be selected | (currentDate: dayjs) => boolean | - |  |
+| fullCellRender | Customize the display of the cell; the returned content will override the cell (replaces `dateFullCellRender` / `monthFullCellRender`) | `(current: dayjs, info: CellRenderInfo) => VNode` \| `v-slot:fullCellRender="{ current, info }"` | - | 4.3.0 |
 | fullscreen | Whether to display in full-screen | boolean | `true` |  |
-| headerRender | render custom header in panel | v-slot:headerRender="{value: dayjs, type: string, onChange: f(), onTypeChange: f()}" | - | 1.5.0 |
+| headerRender | Render custom header in panel | v-slot:headerRender="{value: dayjs, type: string, onChange: f(), onTypeChange: f()}" | - | 1.5.0 |
 | locale | The calendar's locale | object | [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
 | mode | The display mode of the calendar | `month` \| `year` | `month` |  |
-| monthCellRender | Customize the display of the month cell by setting a scoped slot, the returned content will be appended to the cell | v-slot:monthCellRender="{current: dayjs}" | - |  |
-| monthFullCellRender | Customize the display of the month cell by setting a scoped slot, the returned content will override the cell | v-slot:monthFullCellRender="{current: dayjs}" | - |  |
-| validRange | to set valid range | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
+| ~~monthCellRender~~ | Customize the display of the month cell by setting a scoped slot, the returned content will be appended to the cell (deprecated, please use `cellRender` instead) | v-slot:monthCellRender="{current: dayjs}" | - |  |
+| ~~monthFullCellRender~~ | Customize the display of the month cell by setting a scoped slot, the returned content will override the cell (deprecated, please use `fullCellRender` instead) | v-slot:monthFullCellRender="{current: dayjs}" | - |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| showWeek | Whether to display week number | boolean | false | 4.3.0 |
+| validRange | To set valid range | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
 | value(v-model) | The current selected date | [dayjs](https://day.js.org/) | current date |  |
-| valueFormat | optional, format of binding value. If not specified, the binding value will be a Date object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
+| valueFormat | Optional, format of binding value. If not specified, the binding value will be a dayjs object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
 
 ### events
 
-| Events Name | Description | Arguments | Version |  |
-| --- | --- | --- | --- | --- |
-| change | Callback for when value change | function(date: dayjs \| string） | - |  |
-| panelChange | Callback for when panel changes | function(date: dayjs \| string, mode: string) | - |  |
-| select | Callback for when a date is selected, include source info | function(date: dayjs \| string,info:{ source: 'year' \| 'month' \| 'date' \| 'customize' }) | - |  |
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| change | Callback for when value change | function(date: dayjs \| string) |  |
+| panelChange | Callback for when panel changes | function(date: dayjs \| string, mode: string) |  |
+| select | Callback for when a date is selected, include source info | function(date: dayjs \| string, info: { source: 'year' \| 'month' \| 'date' \| 'customize' }) |  |
 
 ### How to get date from panel click?
 

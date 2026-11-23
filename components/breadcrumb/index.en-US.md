@@ -16,25 +16,27 @@ A breadcrumb displays the current location within a hierarchy. It allows going b
 
 ## API
 
-| Property | Description | Type | Optional | Default | Version |
-| --- | --- | --- | --- | --- | --- |
-| itemRender | Custom item renderer, #itemRender="{route, params, routes, paths}" | ({route, params, routes, paths}) => vNode |  | - |  |
-| params | Routing parameters | object |  | - |  |
-| routes | The routing stack information of router | [routes\[\]](#routes) |  | - |  |
-| separator | Custom separator | string\|slot |  | `/` |  |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| itemRender | Custom item renderer, #itemRender="{route, params, routes, paths}" | ({route, params, routes, paths}) => vNode | - |  |
+| params | Routing parameters | object | - |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| routes | The routing stack information of router | [routes\[\]](#routes) | - |  |
+| separator | Custom separator | string \| slot | `/` |  |
 
 ### Breadcrumb.Item
 
-| Property | Description         | Type                                   | Default | Version |
-| -------- | ------------------- | -------------------------------------- | ------- | ------- |
-| href     | Target of hyperlink | string                                 | -       |         |
-| overlay  | The dropdown menu   | [Menu](/components/menu) \| () => Menu | -       |         |
+| Property      | Description         | Type                                   | Default | Version |
+| ------------- | ------------------- | -------------------------------------- | ------- | ------- |
+| dropdownProps | The dropdown props  | [Dropdown](/components/dropdown/#api)  | -       | 4.3.0   |
+| href          | Target of hyperlink | string                                 | -       | 1.5.0   |
+| overlay       | The dropdown menu   | [Menu](/components/menu) \| () => Menu | -       | 1.5.0   |
 
 #### Events
 
-| Events Name | Description                   | Arguments            | Version |       |
-| ----------- | ----------------------------- | -------------------- | ------- | ----- |
-| click       | handler to handle click event | (e:MouseEvent)=>void | -       | 1.5.0 |
+| Events Name | Description                   | Arguments               | Version |
+| ----------- | ----------------------------- | ----------------------- | ------- |
+| click       | Handler to handle click event | (e: MouseEvent) => void | 1.5.0   |
 
 ### Breadcrumb.Separator `1.5.0`
 

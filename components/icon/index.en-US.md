@@ -81,7 +81,7 @@ All the icons will render to `<svg>`. You can still set `style` and `class` for 
 When using the two-tone icons, you can use the static methods `getTwoToneColor()` and `setTwoToneColor(colorString)` to spicify the primary color.
 
 ```jsx
-import { getTwoToneColor, setTwoToneColor } from '@ant-design/icons';
+import { getTwoToneColor, setTwoToneColor } from '@ant-design/icons-vue';
 
 setTwoToneColor('#eb2f96');
 getTwoToneColor(); // #eb2f96

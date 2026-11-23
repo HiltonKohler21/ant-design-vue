@@ -21,14 +21,17 @@ Set components spacing.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | align | Align items | `start` \| `end` \|`center` \|`baseline` | - | 1.6.5 |
+| classNames | Semantic DOM class | `{ item?: string }` | - | 4.3.0 |
 | direction | The space direction | `vertical` \| `horizontal` | `horizontal` | 1.6.5 |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | size | The space size | `small` \| `middle` \| `large` \| `number` | `small` | 1.6.5 |
 | split | Set split | VueNode \| v-slot | - | 2.2.0 |
+| styles | Semantic DOM style | `{ item?: CSSProperties }` | - | 4.3.0 |
 | wrap | Auto wrap line, when `horizontal` effective | boolean | false | 2.2.0 |
 
 ### Space.Compact
 
-Use Space.Compact when child form components are compactly connected and the border is collapsed. The supported components are：
+Use Space.Compact when child form components are compactly connected and the border is collapsed. The supported components are:
 
 - Button
 - AutoComplete
@@ -41,6 +44,7 @@ Use Space.Compact when child form components are compactly connected and the bor
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| block | Option to fit width to its parent\'s width | boolean | false | 4.0.0 |
+| align | Align items | `start` \| `end` \| `center` \| `baseline` | - | 4.3.0 |
+| block | Option to fit width to its parent's width | boolean | false | 4.0.0 |
 | direction | Set direction of layout | `vertical` \| `horizontal` | `horizontal` | 4.0.0 |
 | size | Set child component size | `large` \| `middle` \| `small` | `middle` | 4.0.0 |

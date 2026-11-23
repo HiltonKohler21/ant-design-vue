@@ -13,6 +13,8 @@
     <CardTop />
     <CustomAddTrigger />
     <CustomTabBar />
+    <Items />
+    <CustomIndicator />
   </demo-sort>
 </template>
 
@@ -30,6 +32,8 @@ import Size from './size.vue';
 import Slide from './slide.vue';
 import CustomTabBar from './custom-tab-bar.vue';
 import Centered from './centered.vue';
+import Items from './items.vue';
+import CustomIndicator from './custom-indicator.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -55,6 +59,8 @@ export default defineComponent({
     Size,
     Slide,
     CustomTabBar,
+    Items,
+    CustomIndicator,
   },
 });
 </script>

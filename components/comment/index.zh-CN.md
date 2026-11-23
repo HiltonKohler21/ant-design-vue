@@ -15,10 +15,10 @@ coverDark: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%
 
 ## API
 
-| Property | Description                                            | Type         | Default |
-| -------- | ------------------------------------------------------ | ------------ | ------- |
-| actions  | 在评论内容下面呈现的操作项列表                         | Array\|slot  | -       |
-| author   | 要显示为注释作者的元素                                 | string\|slot | -       |
-| avatar   | 要显示为评论头像的元素 - 通常是 antd `Avatar` 或者 src | string\|slot | -       |
-| content  | 评论的主要内容                                         | string\|slot | -       |
-| datetime | 展示时间描述                                           | string\|slot | -       |
+| 参数     | 说明                                                   | 类型           | 默认值 |
+| -------- | ------------------------------------------------------ | -------------- | ------ |
+| actions  | 在评论内容下面呈现的操作项列表                         | Array \| slot  | -      |
+| author   | 要显示为注释作者的元素                                 | string \| slot | -      |
+| avatar   | 要显示为评论头像的元素 - 通常是 antd `Avatar` 或者 src | string \| slot | -      |
+| content  | 评论的主要内容                                         | string \| slot | -      |
+| datetime | 展示时间描述                                           | string \| slot | -      |

@@ -21,18 +21,20 @@ Switching Selector.
 | checked(v-model) | determine whether the `Switch` is checked | checkedValue \| unCheckedValue | false |  |
 | checkedChildren | content to be shown when the state is checked | string\|slot |  |  |
 | checkedValue | value for checked state | boolean \| string \| number | true | 2.2.1 |
+| defaultValue | Default checked value (uncontrolled) | boolean \| string \| number | - | 4.3.0 |
 | disabled | Disable switch | boolean | false |  |
 | loading | loading state of switch | boolean | false |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | size | the size of the `Switch`, options: `default` `small` | string | default |  |
-| unCheckedChildren | content to be shown when the state is unchecked | string\|slot |  |  |
+| unCheckedChildren | content to be shown when the state is unchecked | string \| slot |  |  |
 | unCheckedValue | value for unchecked state | boolean \| string \| number | false | 2.2.1 |
 
 ### Events
 
-| Events Name | Description | Arguments |  |
-| --- | --- | --- | --- |
-| change | trigger when the checked state is changing | Function(checked: boolean \| string \| number, event: Event) |  |
-| click | trigger when clicked | Function(checked: boolean \| string \| number, event: Event) |  |
+| Events Name | Description | Arguments |
+| --- | --- | --- |
+| change | trigger when the checked state is changing | Function(checked: boolean \| string \| number, event: Event) |
+| click | trigger when clicked | Function(checked: boolean \| string \| number, event: Event) |
 
 ## Methods
 

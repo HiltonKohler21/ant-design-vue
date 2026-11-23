@@ -11,9 +11,11 @@ Previewable image.
 ## When To Use
 
 - When you need to display pictures.
-- Display when loading a large image or fault tolerant handling when loading fail.
+- Display when loading a large image or fault tolerant handling when loading fails.
 
 ## API
+
+### Image
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
@@ -21,27 +23,53 @@ Previewable image.
 | fallback | Load failure fault-tolerant src | string | - | 2.0.0 |
 | height | Image height | string \| number | - | 2.0.0 |
 | placeholder | Load placeholder, use default placeholder when set `true` | boolean \| slot | - | 2.0.0 |
-| preview | preview config, disabled when `false` | boolean \| [previewType](#previewtype) | true | 2.0.0 |
+| preview | Preview config, disabled when `false` | boolean \| [previewType](#previewtype) | `true` | 2.0.0 |
+| previewMask | Custom mask | false \| function \| slot | - | 3.2.0 |
+| rootClassName | Root element class name | string | - | 4.3.0 |
 | src | Image path | string | - | 2.0.0 |
-| previewMask | custom mask | false \| function \| slot | - | 3.2.0 |
 | width | Image width | string \| number | - | 2.0.0 |
+| wrapperClassName | Class name of image wrapper element | string | - | 4.3.0 |
+| wrapperStyle | Inline style of image wrapper element | CSSProperties | - | 4.3.0 |
 
-### events
+### Events
 
 | Events Name | Description          | Arguments              | Version |
 | ----------- | -------------------- | ---------------------- | ------- |
 | error       | Load failed callback | (event: Event) => void | 3.2.0   |
+
+### Image.PreviewGroup
+
+Wrap multiple `<a-image>` components to enable grouped gallery preview with left/right navigation.
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| fallback | Load failure fault-tolerant src (configurable via `ConfigProvider.image.fallback` or inner `Image`) | string | - | 4.3.0 |
+| icons | Custom preview operation icons | { rotateLeft?: VueNode; rotateRight?: VueNode; zoomIn?: VueNode; zoomOut?: VueNode; close?: VueNode \| boolean; left?: VueNode; right?: VueNode; flipX?: VueNode; flipY?: VueNode } | - | 4.3.0 |
+| preview | Preview config, disabled when `false` | boolean \| [PreviewGroupPreview](#previewtype) | `true` | 2.0.0 |
 
 ### previewType
 
 ```ts
 {
   visible?: boolean;
-  onVisibleChange?: (visible, prevVisible) => void;
-  getContainer?: string | HTMLElement | (() => HTMLElement);
+  onVisibleChange?: (visible: boolean, prevVisible: boolean) => void;
+  getContainer?: string | HTMLElement | (() => HTMLElement) | false;
   src?: string;
   maskClassName?: string;
-  current?: number;
+  rootClassName?: string;
+  closeIcon?: VueNode | boolean;
+  icons?: {
+    rotateLeft?: VueNode;
+    rotateRight?: VueNode;
+    zoomIn?: VueNode;
+    zoomOut?: VueNode;
+    close?: VueNode | boolean;
+    left?: VueNode;
+    right?: VueNode;
+    flipX?: VueNode;
+    flipY?: VueNode;
+  };
+  current?: number; // Current preview image index in PreviewGroup
 }
 ```
 

@@ -26,22 +26,23 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Vn4XSqJFAxcAAA
 
 ### Menu
 
-| 参数 | 说明 | 类型 | 默认值 |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| forceSubMenuRender | 在子菜单展示之前就渲染进 DOM | boolean | false |
-| inlineCollapsed | inline 时菜单是否收起状态 | boolean | - |
-| inlineIndent | inline 模式的菜单缩进宽度 | number | 24 |
-| items | 菜单内容 | [ItemType\[\]](#itemtype) | - |  |
-| mode | 菜单类型，现在支持垂直、水平、和内嵌模式三种 | `vertical` \| `horizontal` \| `inline` | `vertical` |
-| multiple | 是否允许多选 | boolean | false |
-| openKeys(v-model) | 当前展开的 SubMenu 菜单项 key 数组 | (string \| number)[] |  |
-| overflowedIndicator | 用于自定义 Menu 水平空间不足时的省略收缩的图标 | slot | `<EllipsisOutlined />` |
-| selectable | 是否允许选中 | boolean | true |
-| selectedKeys(v-model) | 当前选中的菜单项 key 数组 | (string \| number)[] |  |
-| subMenuCloseDelay | 用户鼠标离开子菜单后关闭延时，单位：秒 | number | 0.1 |
-| subMenuOpenDelay | 用户鼠标进入子菜单后开启延时，单位：秒 | number | 0 |
-| theme | 主题颜色 | `light` \| `dark` | `light` |
-| triggerSubMenuAction | 修改 Menu 子菜单的触发方式 | `click` \| `hover` | `hover` |
+| forceSubMenuRender | 在子菜单展示之前就渲染进 DOM | boolean | false |  |
+| inlineCollapsed | inline 时菜单是否收起状态 | boolean | - |  |
+| inlineIndent | inline 模式的菜单缩进宽度 | number | 24 |  |
+| items | 菜单内容 | [ItemType\[\]](#itemtype) | - | 4.0 |
+| mode | 菜单类型，现在支持垂直、水平、和内嵌模式三种 | `vertical` \| `horizontal` \| `inline` | `vertical` |  |
+| multiple | 是否允许多选 | boolean | false |  |
+| openKeys(v-model) | 当前展开的 SubMenu 菜单项 key 数组 | (string \| number)[] | - |  |
+| overflowedIndicator | 用于自定义 Menu 水平空间不足时的省略收缩的图标 | slot | `<EllipsisOutlined />` |  |
+| selectable | 是否允许选中 | boolean | true |  |
+| selectedKeys(v-model) | 当前选中的菜单项 key 数组 | (string \| number)[] | - |  |
+| style | 根节点样式 | CSSProperties | - |  |
+| subMenuCloseDelay | 用户鼠标离开子菜单后关闭延时，单位：秒 | number | 0.1 |  |
+| subMenuOpenDelay | 用户鼠标进入子菜单后开启延时，单位：秒 | number | 0 |  |
+| theme | 主题颜色 | `light` \| `dark` | `light` |  |
+| triggerSubMenuAction | 修改 Menu 子菜单的触发方式 | `click` \| `hover` | `hover` |  |
 
 ### Menu 事件
 
@@ -65,7 +66,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Vn4XSqJFAxcAAA
 
 > type ItemType = [MenuItemType](#menuitemtype) | [SubMenuType](#submenutype) | [MenuItemGroupType](#menuitemgrouptype) | [MenuDividerType](#menudividertype);
 
-### MenuItemType
+#### MenuItemType
 
 | 参数     | 说明                     | 类型                                   | 默认值 | 版本 |
 | -------- | ------------------------ | -------------------------------------- | ------ | ---- |
@@ -145,9 +146,10 @@ Menu.SubMenu 的子元素必须是 `MenuItem` 或者 `SubMenu`.
 
 ### Menu.ItemGroup
 
-| 参数  | 说明     | 类型         | 默认值 |
-| ----- | -------- | ------------ | ------ |
-| title | 分组标题 | string\|slot |        |
+| 参数     | 说明         | 类型         | 默认值 |
+| -------- | ------------ | ------------ | ------ |
+| children | 分组的菜单项 | MenuItem\[]  |        |
+| title    | 分组标题     | string\|slot |        |
 
 Menu.ItemGroup 的子元素必须是 `MenuItem`.
 

@@ -24,7 +24,11 @@ Almost anything can be represented in a tree structure. Examples include directo
 | checkable | Adds a `Checkbox` before the treeNodes | boolean | false |  |
 | checkedKeys(v-model) | (Controlled) Specifies the keys of the checked treeNodes (PS: When this specifies the key of a treeNode which is also a parent treeNode, all the children treeNodes of will be checked; and vice versa, when it specifies the key of a treeNode which is a child treeNode, its parent treeNode will also be checked. When `checkable` and `checkStrictly` is true, its object has `checked` and `halfChecked` property. Regardless of whether the child or parent treeNode is checked, they won't impact each other. | string\[] \| number\[] \| {checked: string\[] \| number\[], halfChecked: string\[] \| number\[]} | \[] |  |
 | checkStrictly | Check treeNode precisely; parent treeNode and children treeNodes are not associated | boolean | false |  |
+| defaultCheckedKeys | Specifies the keys of the default checked treeNodes | string\[] \| number\[] | \[] |  |
 | defaultExpandAll | Whether to expand all treeNodes by default | boolean | false |  |
+| defaultExpandedKeys | Specify the keys of the default expanded treeNodes | string\[] \| number\[] | \[] |  |
+| defaultExpandParent | If auto expand parent treeNodes when init | boolean | true |  |
+| defaultSelectedKeys | Specifies the keys of the default selected treeNodes | string\[] \| number\[] | \[] |  |
 | disabled | whether disabled the tree | bool | false |  |
 | draggable | Specifies whether this Tree is draggable (IE > 8) | boolean | false |  |
 | expandedKeys(v-model) | (Controlled) Specifies the keys of the expanded treeNodes | string\[] \| number\[] | \[] |  |
@@ -34,11 +38,13 @@ Almost anything can be represented in a tree structure. Examples include directo
 | loadData | Load data asynchronously | function(node) | - |  |
 | loadedKeys | (Controlled) Set loaded tree nodes. Need work with `loadData` | string\[] \| number\[] | \[] |  |
 | multiple | Allows selecting multiple treeNodes | boolean | false |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | selectable | whether can be selected | boolean | true |  |
 | selectedKeys(v-model) | (Controlled) Specifies the keys of the selected treeNodes | string\[] \| number\[] | - |  |
 | showIcon | Shows the icon before a TreeNode's title. There is no default style; you must set a custom style for it if set to `true` | boolean | false |  |
 | showLine | Shows a connecting line | boolean \| {showLeafIcon: boolean}(3.0+) | false |  |
 | switcherIcon | customize collapse/expand icon of tree node | v-slot:switcherIcon="{active, checked, expanded, loading, selected, halfChecked, title, key, children, dataRef, data, defaultIcon, switcherCls}" | - |  |
+| switcherLoadingIcon | Customize loading icon of tree node | VNode \| v-slot:switcherLoadingIcon | - | 4.3.0 |
 | title | custom title | slot |  | 2.0.0 |
 | treeData | treeNode of tree, please use `treeNodes` before v1.1.4 | [TreeNode\[\]](#treenode) | - |  |
 | virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |

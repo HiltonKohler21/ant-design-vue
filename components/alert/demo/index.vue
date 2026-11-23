@@ -10,6 +10,8 @@
     <custom-icon />
     <smooth-closed />
     <action />
+    <loop-banner />
+    <custom-title-alignment />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -23,6 +25,8 @@ import Action from './action.vue';
 import Style from './style.vue';
 import SmoothClosed from './smooth-closed.vue';
 import CustomIcon from './custom-icon.vue';
+import LoopBanner from './loop-banner.vue';
+import CustomTitleAlignment from './custom-title-alignment.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -40,6 +44,8 @@ export default defineComponent({
     SmoothClosed,
     CustomIcon,
     Action,
+    LoopBanner,
+    CustomTitleAlignment,
   },
   setup() {
     return {};

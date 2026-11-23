@@ -25,23 +25,23 @@ More layouts with navigation: [Layout](/components/layout).
 
 ### Menu
 
-| Param | Description | Type | Default value |
+| Param | Description | Type | Default value | Version |
 | --- | --- | --- | --- | --- |
-| forceSubMenuRender | render submenu into DOM before it shows | boolean | false |
-| inlineCollapsed | specifies the collapsed status when menu is inline mode | boolean | - |
-| inlineIndent | indent px of inline menu item on each level | number | 24 |
-| items | Menu item content | [ItemType\[\]](#itemtype) | - | 4.20.0 |
-| mode | type of the menu; `vertical`, `horizontal`, and `inline` modes are supported | `vertical` \| `horizontal` \| `inline` | `vertical` |
-| multiple | Allow selection of multiple items | boolean | false |
-| openKeys(v-model) | array with the keys of currently opened sub menus | (string \| number)[] |  |
-| overflowedIndicator | Customized the ellipsis icon when menu is collapsed horizontally | slot | `<EllipsisOutlined />` |
-| selectable | allow selecting menu items | boolean | true |
-| selectedKeys(v-model) | array with the keys of currently selected menu items | (string \| number)[] |  |
-| style | style of the root node | object |  |
-| subMenuCloseDelay | delay time to hide submenu when mouse leave, unit: second | number | 0.1 |
-| subMenuOpenDelay | delay time to show submenu when mouse enter, unit: second | number | 0 |
-| theme | color theme of the menu | `light` \| `dark` | `light` |
-| triggerSubMenuAction | method of trigger submenu | `click` \| `hover` | `hover` |
+| forceSubMenuRender | render submenu into DOM before it shows | boolean | false |  |
+| inlineCollapsed | specifies the collapsed status when menu is inline mode | boolean | - |  |
+| inlineIndent | indent px of inline menu item on each level | number | 24 |  |
+| items | Menu item content | [ItemType\[\]](#itemtype) | - | 4.0 |
+| mode | type of the menu; `vertical`, `horizontal`, and `inline` modes are supported | `vertical` \| `horizontal` \| `inline` | `vertical` |  |
+| multiple | Allow selection of multiple items | boolean | false |  |
+| openKeys(v-model) | array with the keys of currently opened sub menus | (string \| number)[] | - |  |
+| overflowedIndicator | Customized the ellipsis icon when menu is collapsed horizontally | slot | `<EllipsisOutlined />` |  |
+| selectable | allow selecting menu items | boolean | true |  |
+| selectedKeys(v-model) | array with the keys of currently selected menu items | (string \| number)[] | - |  |
+| style | style of the root node | CSSProperties | - |  |
+| subMenuCloseDelay | delay time to hide submenu when mouse leave, unit: second | number | 0.1 |  |
+| subMenuOpenDelay | delay time to show submenu when mouse enter, unit: second | number | 0 |  |
+| theme | color theme of the menu | `light` \| `dark` | `light` |  |
+| triggerSubMenuAction | method of trigger submenu | `click` \| `hover` | `hover` |  |
 
 ### Menu Events
 
@@ -54,11 +54,12 @@ More layouts with navigation: [Layout](/components/layout).
 
 ### Menu.Item
 
-| Param    | Description                          | Type             | Default value |
-| -------- | ------------------------------------ | ---------------- | ------------- |
-| disabled | whether menu item is disabled or not | boolean          | false         |
-| key      | unique id of the menu item           | string \| number |               |
-| title    | set display title for collapsed item | string \| slot   |               |
+| Param    | Description                          | Type             | Default value | Version |
+| -------- | ------------------------------------ | ---------------- | ------------- | ------- |
+| disabled | whether menu item is disabled or not | boolean          | false         |         |
+| icon     | The icon of the menu item            | slot             |               | 2.8.0   |
+| key      | unique id of the menu item           | string \| number |               |         |
+| title    | set display title for collapsed item | string \| slot   |               |         |
 
 ### ItemType
 
@@ -87,7 +88,7 @@ More layouts with navigation: [Layout](/components/layout).
 | label | Menu label | VueNode | - |  |
 | popupClassName | Sub-menu class name, not working when `mode="inline"` | string | - |  |
 | popupOffset | Sub-menu offset, not working when `mode="inline"` | \[number, number] | - |  |
-| theme | Color theme of the SubMenu (inherits from Menu by default) |  | `light` \| `dark` | - |  |
+| theme | Color theme of the SubMenu (inherits from Menu by default) | `light` \| `dark` | - |  |
 | onTitleClick | Callback executed when the sub-menu title is clicked | function({ key, domEvent }) | - |  |
 
 #### MenuItemGroupType
@@ -126,7 +127,8 @@ const dividerItem = {
 | Param | Description | Type | Default value | Version |
 | --- | --- | --- | --- | --- |
 | disabled | whether sub menu is disabled or not | boolean | false |  |
-| expandIcon | Customized expandIcon | slot | arrow icon | ｜ |
+| expandIcon | Customized expandIcon | slot | arrow icon |  |
+| icon | Icon of sub menu | slot |  | 2.8.0 |
 | key | Unique ID of the sub menu, required | string \| number |  |  |
 | popupClassName | Sub-menu class name | string |  | 1.5.0 |
 | popupOffset | Sub-menu offset, not working when `mode="inline"` | \[number, number] | - |  |

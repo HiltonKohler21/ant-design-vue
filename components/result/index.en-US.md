@@ -15,10 +15,11 @@ Use when important operations need to inform the user to process the results and
 
 ## API
 
-| Property | Description | Type | Default |  |  |  |  |  |  |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| extra | operating area | slot | - |  |  |  |  |  |  |
-| icon | custom back icon | slot | - |  |  |  |  |  |  |
-| status | result status,decide icons and colors | `success` \| `error` \| `info` \| `warning` \| `404` \| `403` \| `500` | 'info' |
-| subTitle | subTitle string | string \| VNode \| slot | - |  |  |  |  |  |  |
-| title | title string | string \| VNode \| slot | - |  |  |  |  |  |  |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| extra | operating area | slot | - |  |
+| icon | custom icon | slot | - |  |
+| rootClassName | Root class name | string | - | 4.3.0 |
+| status | result status, decide icons and colors | `success` \| `error` \| `info` \| `warning` \| `404` \| `403` \| `500` | `'info'` |  |
+| subTitle | subTitle string | string \| VNode \| slot | - |  |
+| title | title string | string \| VNode \| slot | - |  |

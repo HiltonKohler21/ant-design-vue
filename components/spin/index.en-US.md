@@ -17,7 +17,10 @@ When part of the page is waiting for asynchronous data or during a rendering pro
 | Property | Description | Type | Default Value | Version |
 | --- | --- | --- | --- | --- |
 | delay | specifies a delay in milliseconds for loading state (prevent flush) | number (milliseconds) | - |  |
-| indicator | vue node of the spinning indicator | vNode \|slot | - |  |
+| fullscreen | Display a backdrop with the `Spin` component | boolean | false | 4.3.0 |
+| indicator | vue node of the spinning indicator | vNode \| slot | - |  |
+| percent | Progress percentage (mutually exclusive with `indicator`) | number | - | 4.3.0 |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
 | size | size of Spin, options: `small`, `default` and `large` | string | `default` |  |
 | spinning | whether Spin is visible | boolean | true |  |
 | tip | customize description content when Spin has children | string \| slot | - | slot 3.0 |

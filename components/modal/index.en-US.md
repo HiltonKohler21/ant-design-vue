@@ -17,25 +17,32 @@ When requiring users to interact with the application, but without jumping to a 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | afterClose | Specify a function that will be called when modal is closed completely. | function | - |  |
-| bodyStyle | Body style for modal body element. Such as height, padding etc. | object | {} |  |
+| afterOpenChange | Callback when the animation ends when Modal is turned on and off | (open: boolean) => void | - | 4.3.0 |
+| bodyStyle | Body style for modal body element. Such as height, padding etc. (Deprecated, please use `styles.body` instead) | object | {} |  |
 | cancelButtonProps | The cancel button props | [ButtonProps](/components/button/#api) | - |  |
 | cancelText | Text of the Cancel button | string\|slot | `Cancel` |  |
 | centered | Centered Modal | boolean | `false` |  |
+| classNames | Semantic DOM class names | `{ mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string }` | - | 4.3.0 |
 | closable | Whether a close (x) button is visible on top right of the modal dialog or not | boolean | true |  |
 | closeIcon | custom close icon | VNode \| slot | - |  |
 | confirmLoading | Whether to apply loading visual effect for OK button or not | boolean | false |  |
-| destroyOnClose | Whether to unmount child components on onClose | boolean | false |  |
+| destroyOnClose | Whether to unmount child components on close (Deprecated, please use `destroyOnHidden` instead) | boolean | false |  |
+| destroyOnHidden | Whether to unmount child components when hidden | boolean | false | 4.3.0 |
 | footer | Footer content, set as `:footer="null"` when you don't need default buttons | string\|slot | OK and Cancel buttons |  |
 | forceRender | Force render Modal | boolean | false |  |
 | getContainer | Return the mount node for Modal | (instance): HTMLElement | () => document.body |  |
+| keyboard | Whether support press esc to close | boolean | true |  |
 | mask | Whether show mask or not. | boolean | true |  |
 | maskClosable | Whether to close the modal dialog when the mask (area outside the modal) is clicked | boolean | true |  |
-| maskStyle | Style for modal's mask element. | object | {} |  |
+| maskStyle | Style for modal's mask element. (Deprecated, please use `styles.mask` instead) | object | {} |  |
+| modalRender | Custom modal content render | (arg: { originVNode: VueNode }) => VueNode \| slot | - |  |
 | okButtonProps | The ok button props | [ButtonProps](/components/button/#api) | - |  |
 | okText | Text of the OK button | string\|slot | `OK` |  |
 | okType | Button `type` of the OK button | string | `primary` |  |
-| title | The modal dialog's title | string\|slot | - |  |
 | open(v-model) | Whether the modal dialog is visible or not | boolean | false |  |
+| rootClassName | Root class name | string | - | 4.3.0 |
+| styles | Semantic DOM inline styles | `{ mask?: CSSProperties; wrapper?: CSSProperties; content?: CSSProperties; header?: CSSProperties; body?: CSSProperties; footer?: CSSProperties }` | - | 4.3.0 |
+| title | The modal dialog's title | string\|slot | - |  |
 | width | Width of the modal dialog | string\|number | 520 |  |
 | wrapClassName | The class name of the container of the modal dialog | string | - |  |
 | zIndex | The `z-index` of the Modal | number | 1000 |  |
@@ -49,7 +56,7 @@ When requiring users to interact with the application, but without jumping to a 
 
 #### Note
 
-> The state of Modal will be preserved at it's component lifecycle by default, if you wish to open it with a brand new state everytime, set `destroyOnClose` on it.
+> The state of Modal will be preserved at it's component lifecycle by default, if you wish to open it with a brand new state everytime, set `destroyOnHidden` on it.
 
 ### Modal.method()
 

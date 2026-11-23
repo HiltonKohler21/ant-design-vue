@@ -1,23 +1,27 @@
 <template>
   <demo-sort>
     <basic />
-    <disabled />
-    <ghost />
+    <color-variant />
     <icon />
+    <icon-position />
+    <size />
+    <disabled />
     <loading />
     <multiple />
-    <size />
-    <block />
+    <ghost />
     <danger />
+    <block />
     <button-group />
   </demo-sort>
 </template>
 <script lang="ts">
 import ButtonGroup from './button-group.vue';
 import Basic from './basic.vue';
+import ColorVariant from './color-variant.vue';
 import Disabled from './disabled.vue';
 import Ghost from './ghost.vue';
 import Icon from './icon.vue';
+import IconPosition from './icon-position.vue';
 import Loading from './loading.vue';
 import Multiple from './multiple.vue';
 import Size from './size.vue';
@@ -33,9 +37,11 @@ export default defineComponent({
   components: {
     ButtonGroup,
     Basic,
+    ColorVariant,
     Disabled,
     Ghost,
     Icon,
+    IconPosition,
     Loading,
     Multiple,
     Size,

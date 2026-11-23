@@ -80,30 +80,36 @@ The following APIs are shared by DatePicker, RangePicker.
 | --- | --- | --- | --- | --- |
 | allowClear | Whether to show clear button | boolean | true |  |
 | autofocus | If get focus when component mounted | boolean | false |  |
-| bordered | Whether has border style | boolean | true |  |
+| ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true |  |
+| clearIcon | Custom clear icon | VNode \| slot | `<CloseCircleFilled />` | 4.3.0 |
 | dateRender | Custom rendering function for date cells | v-slot:dateRender="{current, today}" | - |  |
+| defaultOpen | Initial open state of picker | boolean | - |  |
 | disabled | Determine whether the DatePicker is disabled | boolean | false |  |
 | disabledDate | Specify the date that cannot be selected | (currentDate: dayjs) => boolean | - |  |
 | format | To set the date format, refer to [dayjs](https://day.js.org/). When an array is provided, all values are used for parsing and first value is used for formatting, support [Custom Format](#components-date-picker-demo-format) | [formatType](#formattype) | `YYYY-MM-DD` |  |
-| popupClassName | To customize the className of the popup calendar | string | - |  |
 | getPopupContainer | To set the container of the floating layer, while the default is to create a `div` element in `body` | function(trigger) | - |  |
+| id | Input `id` attribute | string | - |  |
 | inputReadOnly | Set the `readonly` attribute of the input tag (avoids virtual keyboard on touch devices) | boolean | false |  |
 | locale | Localization configuration | object | [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
 | mode | The picker panel mode | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |
 | nextIcon | The custom next icon | slot | - | 3.0 |
 | open | The open state of picker | boolean | - |  |
+| panelRender | Customize panel render | `(panelNode: VNode) => VNode` | - |  |
 | picker | Set picker type | `date` \| `week` \| `month` \| `quarter` \| `year` | `date` | `quarter` |
 | placeholder | The placeholder of date input | string \| \[string,string] | - |  |
 | placement | The position where the selection box pops up | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
+| popupClassName | To customize the className of the popup calendar | string | - |  |
 | popupStyle | To customize the style of the popup calendar | CSSProperties | {} |  |
 | presets | The preset ranges for quick selection | { label: slot, value: [dayjs](https://day.js.org/) }[] | - | 4.0 |
 | prevIcon | The custom prev icon | slot | - | 3.0 |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
 | size | To determine the size of the input box, the height of `large` and `small`, are 40px and 24px respectively, while default size is 32px | `large` \| `middle` \| `small` | - |  |
-| status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
+| status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
 | suffixIcon | The custom suffix icon | v-slot:suffixIcon | - |  |
 | superNextIcon | The custom super next icon | slot | - | 3.0 |
 | superPrevIcon | The custom super prev icon | slot | - | 3.0 |
-| valueFormat | optional, format of binding value. If not specified, the binding value will be a Date object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
+| valueFormat | Optional, format of binding value. If not specified, the binding value will be a dayjs object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
+| variant | Variants of selector | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 
 ### Common Events
 
@@ -124,6 +130,7 @@ The following APIs are shared by DatePicker, RangePicker.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | defaultPickerValue | To set default picker date | [dayjs](https://day.js.org/) | - |  |
+| defaultValue | To set default date | [dayjs](https://day.js.org/) | - |  |
 | disabledTime | To specify the time that cannot be selected | function(date) | - |  |
 | format | To set the date format, refer to [dayjs](https://day.js.org/) | [formatType](#formattype) | `YYYY-MM-DD` |  |
 | renderExtraFooter | Render extra footer in panel | v-slot:renderExtraFooter="mode" | - |  |
@@ -172,6 +179,7 @@ The following APIs are shared by DatePicker, RangePicker.
 | allowEmpty | Allow start or end input leave empty | \[boolean, boolean] | \[false, false] |  |
 | dateRender | Customize date cell. | v-slot:dateRender="{current: dayjs, today: dayjs, info: { range: `start` \| `end` }}" | - |  |
 | defaultPickerValue | To set default picker date | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
+| defaultValue | To set default date | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
 | disabled | If disable start or end | \[boolean, boolean] | - |  |
 | disabledTime | To specify the time that cannot be selected | function(date: dayjs, partial: `start` \| `end`) | - |  |
 | format | To set the date format, refer to [dayjs](https://day.js.org/) | [formatType](#formattype) | `YYYY-MM-DD HH:mm:ss` |  |
@@ -185,11 +193,11 @@ The following APIs are shared by DatePicker, RangePicker.
 
 ### RangePicker Events
 
-| Events Name | Description | Arguments | Version |  |
-| --- | --- | --- | --- | --- |
-| calendarChange | Callback function, can be executed when the start time or the end time of the range is changing. | function(dates: \[dayjs, dayjs], dateStrings: \[string, string], info: { range:`start`\|`end` }) | - |  |
-| change | a callback function, can be executed when the selected time is changing | function(dates: \[dayjs, dayjs] \| \[string, string], dateStrings: \[string, string]) |  |  |
-| ok | callback when click ok button | function(dates: \[dayjs, dayjs] \| \[string, string]) |  |  |
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| calendarChange | Callback function, can be executed when the start time or the end time of the range is changing. | function(dates: \[dayjs, dayjs], dateStrings: \[string, string], info: { range:`start` \| `end` }) |  |
+| change | a callback function, can be executed when the selected time is changing | function(dates: \[dayjs, dayjs] \| \[string, string], dateStrings: \[string, string]) |  |
+| ok | callback when click ok button | function(dates: \[dayjs, dayjs] \| \[string, string]) |  |
 
 #### formatType
 

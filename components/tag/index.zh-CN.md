@@ -18,15 +18,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*JPNAQYrVkYkAAA
 
 ### Tag
 
-| 参数      | 说明             | 类型          | 默认值 | 版本  |
-| --------- | ---------------- | ------------- | ------ | ----- |
-| closable  | 标签是否可以关闭 | boolean       | false  |       |
-| closeIcon | 自定义关闭按钮   | VNode \| slot | -      | 2.0.0 |
-| color     | 标签色           | string        | -      |       |
-| icon      | 设置图标         | VNode \| slot | -      | 2.0.0 |
-| bordered  | 是否有边框       | boolean       | `true` | 4.x   |
+| 参数          | 说明             | 类型          | 默认值 | 版本  |
+| ------------- | ---------------- | ------------- | ------ | ----- |
+| bordered      | 是否有边框       | boolean       | `true` | 4.x   |
+| closable      | 标签是否可以关闭 | boolean       | false  |       |
+| closeIcon     | 自定义关闭按钮   | VNode \| slot | -      | 2.0.0 |
+| color         | 标签色           | string        | -      |       |
+| icon          | 设置图标         | VNode \| slot | -      | 2.0.0 |
+| rootClassName | 根节点 className | string        | -      | 4.3.0 |
 
-### 事件
+### Tag 事件
 
 | 事件名称 | 说明         | 回调参数    |
 | -------- | ------------ | ----------- |
@@ -38,7 +39,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*JPNAQYrVkYkAAA
 | ---------------- | ------------------ | ------- | ------ |
 | checked(v-model) | 设置标签的选中状态 | boolean | false  |
 
-### 事件
+### Tag.CheckableTag 事件
 
 | 事件名称 | 说明                 | 回调参数          |
 | -------- | -------------------- | ----------------- |

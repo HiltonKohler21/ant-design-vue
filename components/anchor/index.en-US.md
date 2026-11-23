@@ -25,7 +25,8 @@ For displaying anchor hyperlinks on page and jumping between them.
 | getCurrentAnchor | Customize the anchor highlight | (activeLink: string) => string | - | activeLink(3.3) |
 | offsetBottom | Pixels to offset from bottom when calculating position of scroll | number | - |  |
 | offsetTop | Pixels to offset from top when calculating position of scroll | number | 0 |  |
-| showInkInFixed | Whether show ink-square when `：affix="false"` | boolean | false |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| showInkInFixed | Whether show ink-square when `:affix="false"` | boolean | false |  |
 | targetOffset | Anchor scroll offset, default as `offsetTop`, [example](#components-anchor-demo-targetoffset) | number | `offsetTop` | 1.5.0 |
 | wrapperClass | The class name of the container | string | - |  |
 | wrapperStyle | The style of the container | object | - |  |
@@ -45,15 +46,16 @@ For displaying anchor hyperlinks on page and jumping between them.
 
 ### Events
 
-| Events Name | Description | Arguments | Version |  |
-| --- | --- | --- | --- | --- |
-| change | Listening for anchor link change | (currentActiveLink: string) => void |  | 1.5.0 |
-| click | set the handler to handle `click` event | Function(e: MouseEvent, link: Object) |  |  |
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| change | Listening for anchor link change | (currentActiveLink: string) => void | 1.5.0 |
+| click | set the handler to handle `click` event | Function(e: MouseEvent, link: Object) |  |
 
 ### Link Props
 
-| Property | Description                               | Type         | Default | Version |
-| -------- | ----------------------------------------- | ------------ | ------- | ------- |
-| href     | target of hyperlink                       | string       |         |         |
-| target   | Specifies where to display the linked URL | string       |         | 1.5.0   |
-| title    | content of hyperlink                      | string\|slot |         |         |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| href | target of hyperlink | string | - |  |
+| replace | Replace item href in browser history instead of pushing it | boolean | false | 4.3.0 |
+| target | Specifies where to display the linked URL | string | - | 1.5.0 |
+| title | content of hyperlink | string \| slot | - |  |

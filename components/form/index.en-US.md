@@ -32,30 +32,36 @@ A form consists of one or more form fields whose type includes input, textarea, 
 
 | Property | Description | Type | Default Value | Version |
 | --- | --- | --- | --- | --- |
-| colon | change default props colon value of Form.Item (only effective when prop layout is horizontal) | boolean | true |  |
+| colon | Change default props colon value of Form.Item (only effective when prop layout is horizontal) | boolean | true |  |
 | disabled | Set form component disable, only available for antdv components | boolean | false | 4.0 |
-| hideRequiredMark | Hide required mark of all form items | Boolean | false |  |
-| labelAlign | text align of label of all items | 'left' \| 'right' | 'right' |  |
-| labelCol | The layout of label. You can set `span` `offset` to something like `{span: 3, offset: 12}` or `sm: {span: 3, offset: 12}` same as with `<Col>` | [object](/components/grid/#col) |  |  |
-| labelWrap | whether label can be wrap | boolean | false | 3.0 |
-| layout | Define form layout | 'horizontal'\|'vertical'\|'inline' | 'horizontal' |  |
-| model | data of form component | object |  |  |
+| feedbackIcons | Can be passed custom icons while `Form.Item` element has `hasFeedback` | `({ status, errors, warnings }) => Partial<Record<ValidateStatus, Component>>` | - | 4.3.0 |
+| ~~hideRequiredMark~~ | Hide required mark of all form items (deprecated, please use `requiredMark` instead) | boolean | false |  |
+| labelAlign | Text align of label of all items | `'left'` \| `'right'` | `'right'` |  |
+| labelCol | The layout of label. You can set `span` `offset` to something like `{span: 3, offset: 12}` or `sm: {span: 3, offset: 12}` same as with `<Col>` | [object](/components/grid/#col) | - |  |
+| labelWrap | Whether label can be wrap | boolean | false | 3.0 |
+| layout | Define form layout | `'horizontal'` \| `'vertical'` \| `'inline'` | `'horizontal'` |  |
+| model | Data of form component | object | - |  |
 | name | Form name. Will be the prefix of Field `id` | string | - | 2.0.0 |
-| noStyle | No style for `true`, used as a pure field control | boolean | false | 3.0 |
-| rules | validation rules of form | object |  |  |
+| requiredMark | Required mark style. Can use required mark or optional mark | boolean \| `'optional'` | true |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| rules | Validation rules of form | object | - |  |
 | scrollToFirstError | Auto scroll to first failed field when submit | boolean \| [options](https://github.com/stipsan/scroll-into-view-if-needed/#options) | false | 2.0.0 |
-| validateOnRuleChange | whether to trigger validation when the `rules` prop is changed | boolean | true |  |
+| size | Set field component size (antdv components only) | `'small'` \| `'middle'` \| `'large'` | - |  |
+| validateMessages | Validation prompt template | ValidateMessages | - |  |
+| validateOnRuleChange | Whether to trigger validation when the `rules` prop is changed | boolean | true |  |
 | validateTrigger | Config field validate trigger | string \| string\[] | `change` | 2.0.0 |
-| wrapperCol | The layout for input controls, same as `labelCol` | [object](/components/grid/#col) |  |  |
+| wrapperCol | The layout for input controls, same as `labelCol` | [object](/components/grid/#col) | - |  |
 
 ### Events
 
-| Events Name | Description | Arguments | Version |  |
-| --- | --- | --- | --- | --- |
-| finish | Trigger after submitting the form and verifying data successfully | function(values) | - | 2.0.0 |
-| finishFailed | Trigger after submitting the form and verifying data failed | function({ values, errorFields, outOfDate }) | - | 2.0.0 |
-| submit | Defines a function will be called if form data validation is successful. | Function(e:Event) |  |  |
-| validate | triggers after a form item is validated | Function(name, status, errorMsgs) |  |  |
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| fieldsChange | Trigger when field updated | function(changedFields, allFields) |  |
+| finish | Trigger after submitting the form and verifying data successfully | function(values) | 2.0.0 |
+| finishFailed | Trigger after submitting the form and verifying data failed | function({ values, errorFields, outOfDate }) | 2.0.0 |
+| submit | Defines a function will be called if form data validation is successful. | Function(e: Event) |  |
+| validate | Triggers after a form item is validated | Function(name, status, errorMsgs) |  |
+| valuesChange | Trigger when value updated | function(changedValues, allValues) |  |
 
 ### Methods
 
@@ -77,21 +83,24 @@ A form consists of one or more form fields whose type includes input, textarea, 
 | --- | --- | --- | --- | --- |
 | autoLink | Whether to automatically associate form fields. In most cases, you can use automatic association. If the conditions for automatic association are not met, you can manually associate them. See the notes below. | boolean | true |  |
 | colon | Used with `label`, whether to display `:` after label text. | boolean | true |  |
-| extra | The extra prompt message. It is similar to help. Usage example: to display error message and prompt message at the same time. | string\|slot |  |  |
+| extra | The extra prompt message. It is similar to help. Usage example: to display error message and prompt message at the same time. | string \| slot | - |  |
 | hasFeedback | Used with `validateStatus`, this option specifies the validation status icon. Recommended to be used only with `Input`. | boolean | false |  |
-| help | The prompt message. If not provided, the prompt message will be generated by the validation rule. | string\|slot |  |  |
-| htmlFor | Set sub label `htmlFor`. | string |  |  |
-| label | Label text | string\|slot |  |  |
-| labelAlign | text align of label | 'left' \| 'right' | 'right' |  |
-| labelCol | The layout of label. You can set `span` `offset` to something like `{span: 3, offset: 12}` or `sm: {span: 3, offset: 12}` same as with `<Col>` | [object](/components/grid/#col) |  |  |
-| name | a key of `model`. In the use of validate and resetFields method, the attribute is required | [NamePath](#namepath) |  | 2.0.0 |
+| help | The prompt message. If not provided, the prompt message will be generated by the validation rule. | string \| slot | - |  |
+| hidden | Whether to hide Form.Item (still collect and validate value) | boolean | false |  |
+| htmlFor | Set sub label `htmlFor`. | string | - |  |
+| label | Label text | string \| slot | - |  |
+| labelAlign | Text align of label | `'left'` \| `'right'` | `'right'` |  |
+| labelCol | The layout of label. You can set `span` `offset` to something like `{span: 3, offset: 12}` or `sm: {span: 3, offset: 12}` same as with `<Col>` | [object](/components/grid/#col) | - |  |
+| messageVariables | The default validate field info | `Record<string, string>` | - |  |
+| name | A key of `model`. In the use of validate and resetFields method, the attribute is required | [NamePath](#namepath) | - | 2.0.0 |
+| noStyle | No style for `true`, used as a pure field control | boolean | false | 3.0 |
 | required | Whether provided or not, it will be generated by the validation rule. | boolean | false |  |
-| rules | validation rules of form | object \| array |  |  |
-| tooltip | Config tooltip info | string \| slot |  | 4.0.4 |
+| rules | Validation rules of form | object \| array | - |  |
+| tooltip | Config tooltip info | string \| slot | - | 4.0.4 |
 | validateFirst | Whether stop validate on first rule of error for this field. | boolean | false |  |
-| validateStatus | The validation status. If not provided, it will be generated by validation rule. options: 'success' 'warning' 'error' 'validating' | string |  |  |
+| validateStatus | The validation status. If not provided, it will be generated by validation rule. options: `'success'` `'warning'` `'error'` `'validating'` | string | - |  |
 | validateTrigger | When to validate the value of children node | string \| string\[] | `change` |  |
-| wrapperCol | The layout for input controls, same as `labelCol` | [object](/components/grid/#col) |  |  |
+| wrapperCol | The layout for input controls, same as `labelCol` | [object](/components/grid/#col) | - |  |
 
 ### Note
 

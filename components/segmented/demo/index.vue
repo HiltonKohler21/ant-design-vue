@@ -6,6 +6,8 @@
     <custom />
     <dynamic />
     <size />
+    <vertical />
+    <shape />
   </demo-sort>
 </template>
 
@@ -19,9 +21,11 @@ import Disabled from './disabled.vue';
 import Custom from './custom.vue';
 import Dynamic from './dynamic.vue';
 import Size from './size.vue';
+import Vertical from './vertical.vue';
+import Shape from './shape.vue';
 
 export default defineComponent({
-  components: { Size, Dynamic, Custom, Disabled, Block, Basic },
+  components: { Size, Dynamic, Custom, Disabled, Block, Basic, Vertical, Shape },
   category: 'Components',
   subtitle: '分段控制器',
   type: 'Data Display',

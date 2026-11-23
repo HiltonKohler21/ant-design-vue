@@ -22,6 +22,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*1hDmQJIDFJQAAA
 | bordered | 是否有边框 | boolean | true |  |
 | clearIcon | 自定义的清除图标 | v-slot:clearIcon | - |  |
 | clearText | 清除按钮的提示文案 | string | clear |  |
+| defaultValue | 默认时间 | [dayjs](https://day.js.org/) \| string | - |  |
 | disabled | 禁用全部操作 | boolean | false |  |
 | disabledTime | 不可选择的时间 | [DisabledTime](#disabledtime) | - | 3.3.0 |
 | format | 展示的时间格式 | string | `HH:mm:ss` |  |
@@ -36,13 +37,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*1hDmQJIDFJQAAA
 | popupClassName | 弹出层类名 | string | - |  |
 | popupStyle | 弹出层样式对象 | object | - |  |
 | renderExtraFooter | 选择框底部显示自定义的内容 | v-slot:renderExtraFooter | - |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | secondStep | 秒选项间隔 | number | 1 |  |
 | showNow | 面板是否显示“此刻”按钮 | boolean | - |  |
-| status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
+| size | 输入框大小，`large` 高度为 40px，`small` 为 24px，默认是 32px | `large` \| `middle` \| `small` | - |  |
+| status | 设置校验状态 | `'error'` \| `'warning'` | - | 3.3.0 |
 | suffixIcon | 自定义的选择框后缀图标 | v-slot:suffixIcon | - |  |
 | use12Hours | 使用 12 小时制，为 true 时 `format` 默认为 `h:mm:ss a` | boolean | false |  |
 | value(v-model) | 当前时间 | [dayjs](https://day.js.org/) | - |  |
 | valueFormat | 可选，绑定值的格式，对 value、defaultValue 起作用。不指定则绑定值为 dayjs 对象 | string，[具体格式](https://day.js.org/docs/zh-CN/display/format) | - |  |
+| variant | 形态变体 | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 
 #### DisabledTime
 
@@ -75,7 +79,13 @@ type DisabledTime = (now: Dayjs) => {
 | 参数         | 说明                 | 类型                                    | 默认值 | 版本  |
 | ------------ | -------------------- | --------------------------------------- | ------ | ----- |
 | order        | 始末时间是否自动排序 | boolean                                 | true   |       |
-| disabledTime | 不可选择的时间       | [RangeDisabledTime](#pangedisabledtime) | -      | 3.3.0 |
+| disabledTime | 不可选择的时间       | [RangeDisabledTime](#rangedisabledtime) | -      | 3.3.0 |
+
+#### TimeRangePicker 事件
+
+| 事件名称 | 说明 | 回调参数 |
+| --- | --- | --- |
+| calendarChange | 待选时间发生变化的回调 | function(dates: \[dayjs, dayjs], dateStrings: \[string, string], info: { range: `start` \| `end` }) |
 
 #### RangeDisabledTime
 

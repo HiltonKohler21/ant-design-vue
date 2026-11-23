@@ -20,16 +20,19 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HrFtQ6jJJFQAAA
 | cancelButton | 完全自定义取消按钮 | slot | - | 3.0 |
 | cancelButtonProps | cancel 按钮 props | [ButtonProps](/components/button/#api) | - |  |
 | cancelText | 取消按钮文字 | string\|slot | 取消 |  |
+| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; body?: string }` | - | 4.3.0 |
 | disabled | 点击 Popconfirm 子元素是否弹出气泡确认框 | boolean | false |  |
-| icon | 自定义弹出气泡 Icon 图标 | vNode | &lt;Icon type="exclamation-circle" /> |  |
+| icon | 自定义弹出气泡 Icon 图标 | vNode\|slot | &lt;ExclamationCircleFilled /> |  |
 | okButton | 完全自定义确认按钮 | slot | - | 3.0 |
 | okButtonProps | ok 按钮 props | [ButtonProps](/components/button/#api) | - |  |
 | okText | 确认按钮文字 | string\|slot | 确定 |  |
 | okType | 确认按钮类型 | string | primary |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showCancel | 是否显示取消按钮 | boolean | true | 3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; body?: CSSProperties }` | - | 4.3.0 |
 | title | 确认框的描述 | string\|slot | - |  |
 | description | 确认内容的详细描述 | string\|slot | - | 4.0 |
-| open (v-model) | 是否显示 | boolean | - | 4.0 |
+| open (v-model) | 是否显示 | boolean | false | 4.0 |
 
 ### 事件
 
@@ -38,6 +41,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HrFtQ6jJJFQAAA
 | cancel     | 点击取消的回调 | function(e)    |      |
 | confirm    | 点击确认的回调 | function(e)    |      |
 | openChange | 显示隐藏的回调 | function(open) | 4.0  |
+| popupClick | 弹出框点击事件 | function(e)    |      |
 
 更多属性请参考 [Tooltip](/components/tooltip-cn/#api)。
 

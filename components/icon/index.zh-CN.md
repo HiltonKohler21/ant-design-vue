@@ -13,10 +13,6 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*xEDOTJx2DEkAAA
 npm install --save @ant-design/icons-vue
 ```
 
-## 设计师专属
-
-安装 [Kitchen Sketch 插件 💎](https://kitchen.alipay.com)，就可以一键拖拽使用 Ant Design 和 Iconfont 的海量图标，还可以关联自有项目。
-
 ## API
 
 ### 通用图标
@@ -232,7 +228,7 @@ export default defineConfig({
 
 `Icon` 中的 `component` 组件的接受的属性如下：
 
-| 字段   | 说明                    | 类型             | 只读值         |
+| 参数   | 说明                    | 类型             | 默认值         |
 | ------ | ----------------------- | ---------------- | -------------- |
 | class  | 计算后的 `svg` 类名     | string           | -              |
 | fill   | `svg` 元素填充的颜色    | string           | 'currentColor' |

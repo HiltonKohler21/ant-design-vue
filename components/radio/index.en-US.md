@@ -20,8 +20,9 @@ Radio.
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
 | autofocus | get focus when component mounted | boolean | false |
-| checked(v-model) | Specifies whether the radio is selected. | boolean | - |
+| checked(v-model) | Specifies whether the radio is selected. | boolean | false |
 | disabled | Disable radio | boolean | false |
+| id | The `id` property of Radio | string | - |
 | value | According to value for comparison, to determine whether the selected | any | - |
 
 ### RadioGroup
@@ -31,7 +32,9 @@ Radio group can wrap a group of `Radio`。
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | buttonStyle | style type of radio button | `outline` \| `solid` | `outline` |  |
+| defaultValue | Default selected value | any | - | 4.3.0 |
 | disabled | Disable all radio buttons | boolean | false |  |
+| id | The `id` property of RadioGroup | string | - |  |
 | name | The `name` property of all `input[type="radio"]` children | string | - |  |
 | options | set children optional | string\[] \| number\[] \| Array&lt;{ label: string value: string disabled?: boolean }> | - |  |
 | optionType | Set Radio optionType | `default` \| `button` | `default` | 3.0.0 |

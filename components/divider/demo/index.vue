@@ -2,6 +2,9 @@
   <demo-sort>
     <horizontal />
     <with-text />
+    <plain />
+    <variant />
+    <size />
     <vertical />
     <customize-style />
   </demo-sort>
@@ -10,6 +13,9 @@
 <script lang="ts">
 import Horizontal from './horizontal.vue';
 import WithText from './with-text.vue';
+import Plain from './plain.vue';
+import Variant from './variant.vue';
+import Size from './size.vue';
 import Vertical from './vertical.vue';
 import CustomizeStyle from './customize-style.vue';
 
@@ -23,6 +29,9 @@ export default defineComponent({
   components: {
     Horizontal,
     WithText,
+    Plain,
+    Variant,
+    Size,
     Vertical,
     CustomizeStyle,
   },

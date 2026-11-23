@@ -16,11 +16,13 @@
     <borderlessVue />
     <statusVue />
     <variant />
+    <otp />
   </demo-sort>
 </template>
 
 <script>
 import Variant from './variant.vue';
+import Otp from './otp.vue';
 import Basic from './basic.vue';
 import AutosizeTextarea from './autosize-textarea.vue';
 import Presuffix from './presuffix.vue';
@@ -45,6 +47,7 @@ export default defineComponent({
   US,
   components: {
     Variant,
+    Otp,
     statusVue,
     Basic,
     AutosizeTextarea,

@@ -21,18 +21,19 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5-ArSLl5UBsAAA
 <a-cascader :options="options" v-model:value="value" />
 ```
 
-| 参数 | 说明 | 类型 | 默认值 | Version |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | allowClear | 是否支持清除 | boolean | true |  |
 | autofocus | 自动获取焦点 | boolean | false |  |
-| bordered | 是否有边框 | boolean | true | 3.2 |
+| ~~bordered~~ | 是否有边框（已废弃，请使用 `variant`） | boolean | true | 3.2 |
+| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; popup?: { root?: string } }` | - | 4.3.0 |
 | clearIcon | 自定义的选择框清空图标 | slot | - | 3.2 |
 | changeOnSelect | （单选时生效）当此项为 true 时，点选每级菜单选项值都会发生变化，具体见上面的演示 | boolean | false |  |
 | defaultValue | 默认的选中项 | string\[] \| number\[] | \[] |  |
 | disabled | 禁用 | boolean | false |  |
 | displayRender | 选择后展示的渲染函数,可使用 #displayRender="{labels, selectedOptions}" | `({labels, selectedOptions}) => VNode` | `labels => labels.join(' / ')` |  |
-| popupClassName | 自定义浮层类名 | string | - | 4.0 |
-| dropdownStyle | 自定义浮层样式 | CSSProperties | {} | 3.0 |
+| ~~dropdownRender~~ | 自定义下拉框内容（已废弃，请使用 `popupRender`） | `({ menuNode, props }) => VNode` \| slot | - |  |
+| ~~dropdownStyle~~ | 自定义浮层样式（已废弃，请使用 `styles.popup.root`） | CSSProperties | {} | 3.0 |
 | expandIcon | 自定义次级菜单展开图标 | slot | - | 3.0 |
 | expandTrigger | 次级菜单的展开方式 | `click` \| `hover` | 'click' |  |
 | fieldNames | 自定义 options 中 `label` `value` `children` 的字段 | object | `{ label: 'label', value: 'value', children: 'children' }` |  |
@@ -46,15 +47,20 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5-ArSLl5UBsAAA
 | options | 可选项数据源 | [Option](#option)\[] | - |  |
 | placeholder | 输入框占位文本 | string | '请选择' |  |
 | placement | 浮层预设位置 | `bottomLeft` \| `bottomRight` \| `topLeft` \| `topRight` | `bottomLeft` | 3.0 |
-| showCheckedStrategy | 定义选中项回填的方式。`Cascader.SHOW_CHILD`: 只显示选中的子节点。`Cascader.SHOW_PARENT`: 只显示父节点（当父节点下所有子节点都选中时）。 | `Cascader.SHOW_PARENT` \| `Cascader.SHOW_CHILD` | `Cascader.SHOW_PARENT` | 3.3.0 |
+| ~~popupClassName~~ | 自定义浮层类名（已废弃，请使用 `classNames.popup.root`） | string | - | 4.0 |
+| popupRender | 自定义下拉框内容，直接接收菜单节点 `menuNode`（支持 prop 与 `#popupRender` 插槽，替代 `dropdownRender`） | `(menuNode: VNode) => VNode` \| slot | - | 4.3.0 |
 | removeIcon | 自定义的多选框清除图标 | slot | - | 3.2 |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 | searchValue | 设置搜索的值，需要与 `showSearch` 配合使用 | string | - | 3.0 |
+| showCheckedStrategy | 定义选中项回填的方式。`Cascader.SHOW_CHILD`: 只显示选中的子节点。`Cascader.SHOW_PARENT`: 只显示父节点（当父节点下所有子节点都选中时）。 | `Cascader.SHOW_PARENT` \| `Cascader.SHOW_CHILD` | `Cascader.SHOW_PARENT` | 3.3.0 |
 | showSearch | 在选择框中显示搜索框 | boolean \| [object](#showsearch) | false |  |
-| status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
 | size | 输入框大小 | `large` \| `default` \| `small` | `default` |  |
+| status | 设置校验状态 | `'error'` \| `'warning'` | - | 3.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; popup?: { root?: CSSProperties } }` | - | 4.3.0 |
 | suffixIcon | 自定义的选择框后缀图标 | string \| VNode \| slot | - |  |
 | tagRender | 自定义 tag 内容，多选时生效 | slot | - | 3.0 |
 | value(v-model) | 指定选中项 | string\[] \| number\[] | - |  |
+| variant | 形态变体 | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 
 ### showSearch
 
@@ -70,11 +76,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*5-ArSLl5UBsAAA
 
 ### 事件
 
-| 事件名称              | 说明                   | 回调参数                           | 版本 |     |
-| --------------------- | ---------------------- | ---------------------------------- | ---- | --- |
-| change                | 选择完成后的回调       | `(value, selectedOptions) => void` | -    |     |
-| dropdownVisibleChange | 显示/隐藏浮层的回调    | `(value) => void`                  | -    | 3.0 |
-| search                | 监听搜索，返回输入的值 | `(value) => void`                  | -    | 3.0 |
+| 事件名称 | 说明 | 回调参数 | 版本 |
+| --- | --- | --- | --- |
+| change | 选择完成后的回调 | `(value, selectedOptions) => void` |  |
+| ~~dropdownVisibleChange~~ | 显示/隐藏浮层的回调（已废弃，请使用 `openChange`） | `(value) => void` | 3.0 |
+| openChange | 显示/隐藏浮层的回调 | `(open: boolean) => void` | 4.3.0 |
+| search | 监听搜索，返回输入的值 | `(value) => void` | 3.0 |
 
 ### Option
 

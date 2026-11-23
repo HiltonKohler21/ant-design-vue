@@ -17,13 +17,14 @@ Tag for categorizing or markup.
 
 ### Tag
 
-| Property  | Description                   | Type          | Default | Version |
-| --------- | ----------------------------- | ------------- | ------- | ------- |
-| closable  | Whether the Tag can be closed | boolean       | `false` |         |
-| closeIcon | Custom close icon             | VNode \| slot | -       | 2.0.0   |
-| color     | Color of the Tag              | string        | -       |         |
-| icon      | Set the icon of tag           | VNode \| slot | -       | 2.0.0   |
-| bordered  | Whether has border style      | boolean       | `true`  | 4.x     |
+| Property      | Description                        | Type          | Default | Version |
+| ------------- | ---------------------------------- | ------------- | ------- | ------- |
+| bordered      | Whether has border style           | boolean       | `true`  | 4.x     |
+| closable      | Whether the Tag can be closed      | boolean       | `false` |         |
+| closeIcon     | Custom close icon                  | VNode \| slot | -       | 2.0.0   |
+| color         | Color of the Tag                   | string        | -       |         |
+| icon          | Set the icon of tag                | VNode \| slot | -       | 2.0.0   |
+| rootClassName | The class name of the root element | string        | -       | 4.3.0   |
 
 ### Tag Events
 

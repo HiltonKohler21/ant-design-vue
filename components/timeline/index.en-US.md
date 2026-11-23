@@ -31,9 +31,10 @@ Timeline
 | Property | Description | Type | Default |
 | --- | --- | --- | --- |
 | mode | By sending `alternate` the timeline will distribute the nodes to the left and right. | `left` \| `alternate` \| `right` | `left` |
-| pending | Set the last ghost node's existence or its content | boolean\|string\|slot | `false` |
-| pendingDot | Set the dot of the last ghost node when pending is true | string\|slot | `<LoadingOutlined />` |
+| pending | Set the last ghost node's existence or its content | boolean \| string \| slot | `false` |
+| pendingDot | Set the dot of the last ghost node when pending is true | string \| slot | `<LoadingOutlined />` |
 | reverse | reverse nodes or not | boolean | false |
+| rootClassName | The class name of the root element | string | - |
 
 ### Timeline.Item
 

@@ -9,6 +9,7 @@
     <Vertical />
     <ShowTooltip />
     <Reverse />
+    <HandleRender />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -21,6 +22,7 @@ import Mark from './mark.vue';
 import Vertical from './vertical.vue';
 import ShowTooltip from './show-tooltip.vue';
 import Reverse from './reverse.vue';
+import HandleRender from './handle-render.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -38,6 +40,7 @@ export default defineComponent({
     Vertical,
     ShowTooltip,
     Reverse,
+    HandleRender,
   },
   setup() {
     return {};

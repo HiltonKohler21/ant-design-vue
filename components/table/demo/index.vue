@@ -32,12 +32,14 @@
     <TemplateCom />
     <big-data />
     <order-column />
+    <virtual-list />
   </demo-sort>
 </template>
 
 <script lang="ts">
 import OrderColumn from './order-column.vue';
 import BigData from './big-data.vue';
+import VirtualList from './virtual-list.vue';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Ajax from './ajax.vue';
 import Basic from './basic.vue';
@@ -79,6 +81,7 @@ export default defineComponent({
   components: {
     OrderColumn,
     BigData,
+    VirtualList,
     filterInTreeVue,
     filterSearchVue,
     Basic,

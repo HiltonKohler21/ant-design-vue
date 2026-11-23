@@ -10,10 +10,6 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 
 展示行列数据。
 
-## 设计师专属
-
-安装 [Kitchen Sketch 插件 💎](https://kitchen.alipay.com/)，两步就可以自动生成 Ant Design 表格组件。
-
 ## 何时使用
 
 - 当有大量结构化的数据需要展现时；
@@ -88,6 +84,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | defaultExpandAllRows | 初始时，是否展开所有行 | boolean | false |  |
 | defaultExpandedRowKeys | 默认展开的行 | string\[] | - |  |
 | emptyText | 自定义空数据时的显示内容 | v-slot:emptyText | - | 3.0 |
+| expandedRowClassName | 展开行的 className | Function(record, index, indent): string | - | 4.3.0 |
 | expandedRowKeys(v-model) | 展开的行，控制属性 | string\[] | - |  |
 | expandedRowRender | 额外的展开行 | Function(record, index, indent, expanded):VNode \| v-slot:expandedRowRender="{record, index, indent, expanded}" | - |  |
 | expandFixed | 控制展开图标是否固定，可选 true `left` `right` | boolean \| string | false | 3.0 |
@@ -101,6 +98,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | loading | 页面是否加载中 | boolean\|[object](/components/spin-cn) | false |  |
 | locale | 默认文案设置，目前包括排序、过滤、空数据文案 | object | filterConfirm: `确定` <br> filterReset: `重置` <br> emptyText: `暂无数据` |  |
 | pagination | 分页器，参考[配置项](#pagination)或 [pagination](/components/pagination-cn/)文档，设为 false 时不展示和进行分页 | object \| `false` |  |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
 | rowClassName | 表格行的类名 | Function(record, index):string | - |  |
 | rowExpandable | 设置是否允许行展开 | (record) => boolean | - | 3.0 |
 | rowKey | 表格行 key 的取值，可以是字符串或一个函数 | string\|Function(record):string | 'key' |  |
@@ -116,6 +114,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | tableLayout | 表格元素的 [table-layout](https://developer.mozilla.org/zh-CN/docs/Web/CSS/table-layout) 属性，设为 `fixed` 表示内容不会影响列的布局 | - \| 'auto' \| 'fixed' | 无<hr />固定表头/列或使用了 `column.ellipsis` 时，默认值为 `fixed` | 1.5.0 |
 | title | 表格标题 | Function(currentPageData)\|v-slot:title="currentPageData" |  |  |
 | transformCellText | 数据渲染前可以再次改变，一般用于空数据的默认配置，可以通过 [ConfigProvider](/components/config-provider-cn/) 全局统一配置 | Function({ text, column, record, index }) => any，此处的 text 是经过其它定义单元格 api 处理后的数据，有可能是 VNode \| string \| number 类型 | - | 1.5.4 |
+| virtual | 支持虚拟列表 | boolean | false | 4.3.0 |
 
 ### 事件
 
@@ -169,11 +168,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | ellipsis | 超过宽度将自动省略，暂不支持和排序筛选一起使用。<br />设置为 `true` 或 `{ showTitle?: boolean }` 时，表格布局将变成 `tableLayout="fixed"`。 | boolean \| { showTitle?: boolean } | false | 3.0 |
 | filterDropdown | 可以自定义筛选菜单，此函数只负责渲染图层，需要自行编写各种交互 | VNode \| (props: FilterDropdownProps) => VNode | - |  |
 | filterDropdownOpen | 用于控制自定义筛选菜单是否可见 | boolean | - |  |
+| filterDropdownProps | 自定义筛选菜单配置（透传给 Dropdown） | [DropdownProps](/components/dropdown-cn/#api) | - | 4.3.0 |
 | filtered | 标识数据是否经过过滤，筛选图标会高亮 | boolean | false |  |
 | filteredValue | 筛选的受控属性，外界可用此控制列的筛选状态，值为已筛选的 value 数组 | string\[] | - |  |
 | filterIcon | 自定义 filter 图标。 | VNode \| ({filtered: boolean, column: Column}) => vNode | false |  |
 | filterMode | 指定筛选菜单的用户界面 | 'menu' \| 'tree' | 'menu' | 3.0 |
 | filterMultiple | 是否多选 | boolean | true |  |
+| filterOnClose | 是否在关闭筛选菜单时触发筛选 | boolean | true | 4.3.0 |
 | filters | 表头的筛选菜单项 | object\[] | - |  |
 | filterSearch | 筛选菜单项是否可搜索 | boolean \| function(input, filter):boolean | false | boolean:3.0 function:3.3.0 |
 | fixed | 列是否固定，可选 `true`(等效于 left) `'left'` `'right'` | boolean\|string | false |  |
@@ -186,6 +187,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | showSorterTooltip | 表头显示下一次排序的 tooltip 提示, 覆盖 table 中 `showSorterTooltip` | boolean \| [Tooltip props](/components/tooltip/#api) | true |  |
 | sortDirections | 支持的排序方式，取值为 `'ascend'` `'descend'` | Array | `['ascend', 'descend']` | 1.5.0 |
 | sorter | 排序函数，本地排序使用一个函数(参考 [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) 的 compareFunction)，需要服务端排序可设为 true | Function\|boolean | - |  |
+| sortIcon | 自定义排序图标 | (props: { sortOrder: SortOrder \| null }) => VueNode | - | 4.3.0 |
 | sortOrder | 排序的受控属性，外界可用此控制列的排序，可设置为 `'ascend'` `'descend'` `null` | string | - |  |
 | title | 列头显示文字 | string | - |  |
 | width | 列宽度 | string\|number | - |  |

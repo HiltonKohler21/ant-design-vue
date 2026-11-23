@@ -17,19 +17,20 @@ Alert component for feedback.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| action | The action of Alert | slot | - | 4.0.0 |
+| action | The action of Alert | VueNode \| slot | - | 4.0.0 (prop: 4.3.0) |
 | afterClose | Called when close animation is finished | () => void | - |  |
-| banner | Whether to show as banner | boolean | false |  |
-| closable | Whether Alert can be closed | boolean |  |  |
-| closeIcon | Custom close icon | slot | `<CloseOutlined />` | 3.0 |
-| closeText | Close text to show | string\|slot | - |  |
-| description | Additional content of Alert | string\|slot | - |  |
-| icon | Custom icon, effective when `showIcon` is `true` | vnode \| slot | - |  |
-| message | Content of Alert | string\|slot | - |  |
-| showIcon | Whether to show icon | boolean | false,in `banner` mode default is true |  |
-| type | Type of Alert styles, options: `success`, `info`, `warning`, `error` | string | `info`,in `banner` mode default is `warning` |  |
+| banner | Whether to show as banner | boolean | `false` |  |
+| closable | Whether Alert can be closed | boolean | - |  |
+| closeIcon | Custom close icon | VueNode \| slot | `<CloseOutlined />` | 3.0 |
+| closeText | Close text to show | string \| slot | - |  |
+| description | Additional content of Alert | string \| slot | - |  |
+| icon | Custom icon, effective when `showIcon` is `true` | VueNode \| slot | - |  |
+| message | Content of Alert | string \| slot | - |  |
+| rootClassName | Root element class name | string | - | 4.3.0 |
+| showIcon | Whether to show icon | boolean | `false`, in `banner` mode default is `true` |  |
+| type | Type of Alert styles, options: `success`, `info`, `warning`, `error` | `success` \| `info` \| `warning` \| `error` | `info`, in `banner` mode default is `warning` |  |
 
-### events
+### Events
 
 | Events Name | Description                   | Arguments               | Version |
 | ----------- | ----------------------------- | ----------------------- | ------- |

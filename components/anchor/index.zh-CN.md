@@ -24,8 +24,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*JGb3RIzyOCkAAA
 | bounds | 锚点区域边界 | number | 5(px) |  |
 | getContainer | 指定滚动的容器 | () => HTMLElement | () => window |  |
 | getCurrentAnchor | 自定义高亮的锚点 | (activeLink: string) => string | - | activeLink(3.3) |
-| offsetBottom | 距离窗口底部达到指定偏移量后触发 | number |  |  |
-| offsetTop | 距离窗口顶部达到指定偏移量后触发 | number |  |  |
+| offsetBottom | 距离窗口底部达到指定偏移量后触发 | number | - |  |
+| offsetTop | 距离窗口顶部达到指定偏移量后触发 | number | - |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showInkInFixed | `:affix="false"` 时是否显示小方块 | boolean | false |  |
 | targetOffset | 锚点滚动偏移量，默认与 offsetTop 相同，[例子](#components-anchor-demo-targetoffset) | number | `offsetTop` | 1.5.0 |
 | wrapperClass | 容器的类名 | string | - |  |
@@ -46,15 +47,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*JGb3RIzyOCkAAA
 
 ### 事件
 
-| 事件名称 | 说明                   | 回调参数                              | 版本 |       |
-| -------- | ---------------------- | ------------------------------------- | ---- | ----- |
-| change   | 监听锚点链接改变       | (currentActiveLink: string) => void   |      | 1.5.0 |
-| click    | `click` 事件的 handler | Function(e: MouseEvent, link: Object) |      |       |
+| 事件名称 | 说明                   | 回调参数                              | 版本  |
+| -------- | ---------------------- | ------------------------------------- | ----- |
+| change   | 监听锚点链接改变       | (currentActiveLink: string) => void   | 1.5.0 |
+| click    | `click` 事件的 handler | Function(e: MouseEvent, link: Object) |       |
 
 ### Link Props
 
-| 成员   | 说明                             | 类型         | 默认值 | 版本  |
-| ------ | -------------------------------- | ------------ | ------ | ----- |
-| href   | 锚点链接                         | string       |        |       |
-| target | 该属性指定在何处显示链接的资源。 | string       |        | 1.5.0 |
-| title  | 文字内容                         | string\|slot |        |       |
+| 成员    | 说明                                         | 类型           | 默认值 | 版本  |
+| ------- | -------------------------------------------- | -------------- | ------ | ----- |
+| href    | 锚点链接                                     | string         | -      |       |
+| replace | 替换浏览器历史记录中的项目 href 而不是推送它 | boolean        | false  | 4.3.0 |
+| target  | 该属性指定在何处显示链接的资源。             | string         | -      | 1.5.0 |
+| title   | 文字内容                                     | string \| slot | -      |       |

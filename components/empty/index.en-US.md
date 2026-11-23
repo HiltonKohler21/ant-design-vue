@@ -24,9 +24,12 @@ Empty state placeholder.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the component | `{ root?: string; image?: string; description?: string; footer?: string }` | - | 4.3.0 |
 | description | Customize description | string \| v-slot | - |  |
-| image | Customize image. Will tread as image url when string provided | string \| v-slot | false |  |
-| imageStyle | style of image | CSSProperties | - |  |
+| image | Customize image. Will treat as image url when string provided | string \| v-slot | `Empty.PRESENTED_IMAGE_DEFAULT` |  |
+| ~~imageStyle~~ | Style of image (deprecated, please use `styles.image` instead) | CSSProperties | - |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component | `{ root?: CSSProperties; image?: CSSProperties; description?: CSSProperties; footer?: CSSProperties }` | - | 4.3.0 |
 
 ## Built-in images
 

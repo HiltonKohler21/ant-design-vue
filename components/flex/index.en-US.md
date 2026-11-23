@@ -5,7 +5,6 @@ title: Flex
 cols: 1
 cover: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*SMzgSJZE_AwAAAAAAAAAAAAADrJ8AQ/original
 coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*8yArQ43EGccAAAAAAAAAAAAADrJ8AQ/original
-tag: New
 ---
 
 ## When To Use
@@ -22,7 +21,7 @@ tag: New
 
 > This component is available since `ant-design-vue@4.0.7`. The default behavior of Flex in horizontal mode is to align upward, In vertical mode, aligns the stretch, You can adjust this via properties.
 
-| Property | Description | type | Default | Version |
+| Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | vertical | Is direction of the flex vertical, use `flex-direction: column` | boolean | `false` |  |
 | wrap | Set whether the element is displayed in a single line or in multiple lines | reference [flex-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap) | nowrap |  |
@@ -30,4 +29,5 @@ tag: New
 | align | Sets the alignment of elements in the direction of the cross axis | reference [align-items](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items) | normal |  |
 | flex | flex CSS shorthand properties | reference [flex](https://developer.mozilla.org/en-US/docs/Web/CSS/flex) | normal |  |
 | gap | Sets the gap between grids | `small` \| `middle` \| `large` \| string \| number | - |  |
-| component | custom element type | Component | `div` |  |
+| component | Custom element type | Component | `div` |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
