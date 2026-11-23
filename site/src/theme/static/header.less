@@ -1,24 +1,18 @@
 #header {
   // ===================== Home Page =====================
   &.home-header {
-    position: absolute;
+    position: sticky;
     top: 0;
-    right: 0;
-    left: 0;
-    max-width: 1280px;
-    margin-right: auto;
-    margin-left: auto;
-    background: transparent;
+    z-index: 1000;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: none;
 
     #logo {
-      padding-right: 16px;
-      padding-left: 40px;
-
-      html.rtl & {
-        padding-right: 40px;
-        padding-left: 16px;
-      }
+      padding-inline-start: 40px;
+      padding-inline-end: 16px;
     }
 
     .ant-menu {
@@ -27,21 +21,15 @@
   }
 }
 
-@media (max-width: var(--screen-sm-min)) {
+html[data-doc-theme='dark'] #header.home-header {
+  background: rgba(20, 20, 20, 0.82);
+}
+
+@media (max-width: 767.99px) {
   #header.home-header {
-    .ant-row {
-      .ant-col {
-        margin: 0 auto;
-
-        a {
-          padding-right: 0;
-          padding-left: 0;
-        }
-
-        &:last-child {
-          display: none;
-        }
-      }
+    #logo {
+      padding-inline-start: 16px;
+      padding-inline-end: 12px;
     }
   }
 }

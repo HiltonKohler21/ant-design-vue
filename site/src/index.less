@@ -1,20 +1,9 @@
 @import './theme/static/index.less';
 
 .drawer > * {
-  -webkit-transition: opacity 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    -webkit-box-shadow 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-  transition: opacity 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    -webkit-box-shadow 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
   transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
     opacity 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
     box-shadow 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-  transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    opacity 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    box-shadow 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-    -webkit-box-shadow 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
 }
 
 .drawer .drawer-mask {
@@ -25,13 +14,12 @@
   position: absolute;
   top: 0;
   left: 0;
-  -webkit-transition: opacity 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), height 0s ease 0.3s;
   transition: opacity 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86), height 0s ease 0.3s;
 }
 
 .drawer-content-wrapper {
   position: absolute;
-  background: #fff;
+  background: var(--component-background);
 }
 
 .drawer-content {
@@ -42,27 +30,29 @@
 
 .drawer-handle {
   position: fixed;
-  top: 100px;
-  width: 41px;
+  top: 88px;
+  inset-inline-start: 0;
+  width: 40px;
   height: 40px;
   cursor: pointer;
   z-index: 100;
   text-align: center;
   line-height: 40px;
   font-size: 16px;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
   justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
   align-items: center;
-  background: #fff;
-  -webkit-box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  border-radius: 0 4px 4px 0;
+  color: var(--site-text-color);
+  background: var(--color-bg-elevated, var(--component-background));
+  border: 1px solid var(--site-border-color-split);
+  border-inline-start: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.12);
+  border-radius: 0 6px 6px 0;
+
+  html.rtl & {
+    border-radius: 6px 0 0 6px;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.12);
+  }
 }
 
 .drawer-left,
@@ -82,6 +72,8 @@
   top: 0;
   left: 0;
 }
+
 .drawer-left .ant-drawer-body {
   padding: 0;
+  background: var(--component-background);
 }

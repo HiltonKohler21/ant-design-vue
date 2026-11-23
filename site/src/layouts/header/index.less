@@ -1,78 +1,82 @@
 @import './SearchBox.less';
 
 #header {
-  position: relative;
-  z-index: 10;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
   max-width: 100%;
-  background: var(--component-background);
-  box-shadow: var(--box-shadow);
+  height: var(--header-height);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--site-border-color-split);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+
+  .header-row {
+    align-items: center;
+  }
+
+  .header-logo-col {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-search-divider {
+    width: 1px;
+    height: 22px;
+    background: var(--site-border-color-split);
+    flex: none;
+    margin-inline-end: 16px;
+  }
+
+  .header-search-wrap {
+    display: flex;
+    align-items: center;
+    margin-inline-end: auto;
+  }
 
   .menu-row {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    padding-inline-end: 32px;
     margin: 0;
+    min-width: 0;
 
-    > * {
+    > #nav {
       flex: none;
-      margin: 0 16px 0 0;
-
-      &:last-child {
-        margin-right: 40px;
-      }
-    }
-  }
-
-  // Adjust github button style
-
-  .ant-row-rtl {
-    .menu-row {
-      > * {
-        &:last-child {
-          margin-right: 16px;
-          margin-left: 40px;
-        }
-      }
+      margin-inline-end: 16px;
     }
   }
 
   // Buttons
   .header-button {
-    color: var(--text-color);
+    color: var(--site-text-color);
+  }
+}
+
+html[data-doc-theme='dark'] #header {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+@media only screen and (max-width: 992px) {
+  #header .menu-row {
+    padding-inline-end: 16px;
   }
 }
 
 @media only screen and (max-width: 767.99px) {
   #header {
-    text-align: center;
-  }
-}
+    .menu-row {
+      justify-content: flex-end;
+      padding-inline-end: 48px;
+    }
 
-// Popover menu is only used for mobile
-.popover-menu {
-  width: 300px;
-
-  .ant-popover-inner-content {
-    padding: 0;
-
-    #nav {
-      .ant-menu-item,
-      .ant-menu-submenu {
-        text-align: left;
-      }
-
-      .ant-menu-item-group-title {
-        padding-left: 24px;
-      }
-
-      .ant-menu-item-group-list {
-        padding: 0 16px;
-      }
-
-      .ant-menu-item,
-      a {
-        color: #333;
-      }
+    .header-search-wrap {
+      margin-inline-end: 0;
     }
   }
 }

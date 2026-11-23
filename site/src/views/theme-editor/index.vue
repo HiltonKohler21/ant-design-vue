@@ -1,47 +1,47 @@
 <template>
   <Header />
   <div class="theme-editor">
-    <a-config-provider :theme="{ inherit: false }">
-      <div class="theme-editor-header">
-        <a-typography-title :level="5" :style="{ margin: 0 }">
-          {{ locale.title }}
-        </a-typography-title>
+    <div class="theme-editor-header">
+      <a-typography-title :level="5" class="theme-editor-header-title">
+        {{ locale.title }}
+      </a-typography-title>
 
-        <div>
-          <a-modal
-            v-model:open="editModelOpen"
-            :title="locale.editModelTitle"
-            :width="600"
-            :ok-text="locale.save"
-            @ok="editSave"
-            @cancel="editModelClose"
-          >
-            <Suspense>
-              <template #fallback>
-                <div :style="{ textAlign: 'center', width: '100%', padding: '24px 0' }">
-                  <a-spin :tip="locale.initialEditor" />
-                </div>
-              </template>
-              <template #default>
-                <JSONEditor
-                  :content="themeConfigContent"
-                  :on-change="handleEditConfigChange"
-                  :main-menu-bar="false"
-                />
-              </template>
-            </Suspense>
-          </a-modal>
-          <a-button class="theme-editor-header-actions" @click="handleExport">
-            {{ locale.export }}
-          </a-button>
-          <a-button class="theme-editor-header-actions" @click="handleEditConfig">
-            {{ locale.edit }}
-          </a-button>
-          <a-button type="primary" class="theme-editor-header-actions" @click="handleSave">
-            {{ locale.save }}
-          </a-button>
-        </div>
+      <div class="theme-editor-header-toolbar">
+        <a-modal
+          v-model:open="editModelOpen"
+          :title="locale.editModelTitle"
+          :width="600"
+          :ok-text="locale.save"
+          @ok="editSave"
+          @cancel="editModelClose"
+        >
+          <Suspense>
+            <template #fallback>
+              <div :style="{ textAlign: 'center', width: '100%', padding: '24px 0' }">
+                <a-spin :tip="locale.initialEditor" />
+              </div>
+            </template>
+            <template #default>
+              <JSONEditor
+                :content="themeConfigContent"
+                :on-change="handleEditConfigChange"
+                :main-menu-bar="false"
+              />
+            </template>
+          </Suspense>
+        </a-modal>
+        <a-button class="theme-editor-header-actions" @click="handleExport">
+          {{ locale.export }}
+        </a-button>
+        <a-button class="theme-editor-header-actions" @click="handleEditConfig">
+          {{ locale.edit }}
+        </a-button>
+        <a-button type="primary" class="theme-editor-header-actions" @click="handleSave">
+          {{ locale.save }}
+        </a-button>
       </div>
+    </div>
+    <a-config-provider :theme="{ inherit: false }">
       <ThemeEditor
         :theme="{ name: 'Custom Theme', key: 'test', config: theme }"
         :style="{ height: 'calc(100vh - 64px - 56px)' }"
@@ -218,19 +218,36 @@ export default defineComponent({
 
 <style lang="less">
 .theme-editor {
+  background: var(--component-background);
+  color: var(--site-text-color);
+
   &-header {
     display: flex;
-    height: 56px;
+    min-height: 56px;
     align-items: center;
-    padding: 0 24px;
+    padding: 8px 24px;
+    gap: 12px;
+    flex-wrap: wrap;
     justify-content: space-between;
-    border-bottom: 1px solid #f0f0f0;
+    background: var(--component-background);
+    color: var(--site-text-color);
+    border-bottom: 1px solid var(--site-border-color-split);
     box-sizing: border-box;
+
+    &-title {
+      margin: 0 !important;
+      color: var(--site-text-color) !important;
+    }
+
+    &-toolbar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     &-actions {
-      margin-right: 8px;
-      &:last-child {
-        margin-right: 0;
-      }
+      margin: 0;
     }
   }
 }

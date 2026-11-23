@@ -3,8 +3,10 @@ import type { ComputedRef } from 'vue';
 import { computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { GLOBAL_CONFIG } from '../SymbolKey';
-const typeOrder: any = {
+
+const typeOrder: Record<string, { order: number; zh?: string; en: string }> = {
   组件总览: { order: -1, en: 'Overview' },
+  docs: { order: 0, zh: '研发文档', en: 'Documentation' },
   通用: { order: 0, en: 'General' },
   布局: { order: 1, en: 'Layout' },
   导航: { order: 2, en: 'Navigation' },
@@ -15,6 +17,12 @@ const typeOrder: any = {
   废弃: { order: 7, en: 'Deprecated' },
   'AI & Agent': { order: 8, en: 'AI & Agent' },
 };
+
+const normalizeType = (type?: string) => {
+  if (type === '其它') return '其他';
+  return type;
+};
+
 const useMenus = (): {
   menus: ComputedRef<any[]>;
   dataSource: ComputedRef<any[]>;
@@ -25,12 +33,13 @@ const useMenus = (): {
   const router = useRouter();
   const routes = router.getRoutes();
   const globalConfig = inject<any>(GLOBAL_CONFIG);
-  const menus = computed(() => {
+
+  const rawMenus = computed(() => {
     const path = route.path;
     const category = path.split('/')[1];
     const pattern = /^\/iframe/;
     const isZhCN = globalConfig.isZhCN.value;
-    const ms = routes
+    return routes
       .filter(r => {
         const inCategory =
           r.meta &&
@@ -47,41 +56,59 @@ const useMenus = (): {
           return inCategory;
         }
       })
-      .map(r => ({ ...r.meta, path: r.path.split(':lang')[0].replace('-cn', '') }));
-    // if (category === 'docs') {
-    //   ms.push({
-    //     enTitle: 'Change Log',
-    //     title: '更新日志',
-    //     category: 'docs',
-    //     target: '_blank',
-    //     path: globalConfig.isZhCN.value
-    //       ? 'https://github.com/vueComponent/ant-design-vue/blob/main/CHANGELOG.zh-CN.md'
-    //       : 'https://github.com/vueComponent/ant-design-vue/blob/main/CHANGELOG.en-US.md',
-    //   } as any);
-    // }
-    return ms;
-  });
-  const activeMenuItem = computed(() => {
-    return route.path.split('-cn')[0];
-  });
-  const currentMenuIndex = computed(() => {
-    return menus.value.findIndex(m => m.path === activeMenuItem.value);
-  });
-  const dataSource = computed(() => {
-    const group = groupBy(menus.value, (m: any) => m.type || m.category);
-    const keys: string[] = Object.keys(group);
-    const newMenus = keys
-      .map(key => {
+      .map(r => {
+        const meta: any = { ...r.meta };
+        if (meta.type) {
+          meta.type = normalizeType(meta.type);
+        }
         return {
-          title: key,
-          order: typeOrder[key] && typeOrder[key].order,
-          enTitle: typeOrder[key] && typeOrder[key].en,
-          children: sortBy(group[key], 'title'),
+          ...meta,
+          path: r.path.split(':lang')[0].replace(/-cn\/?$/, ''),
+        };
+      });
+  });
+
+  const activeMenuItem = computed(() => {
+    return route.path.replace(/-cn\/?$/, '').replace(/\/$/, '') || '/';
+  });
+
+  const dataSource = computed(() => {
+    const group = groupBy(rawMenus.value, (m: any) => normalizeType(m.type) || m.category);
+    const keys: string[] = Object.keys(group);
+    if (keys.length === 1) {
+      return rawMenus.value;
+    }
+    return keys
+      .map(key => {
+        const meta = typeOrder[key];
+        const isDocsGroup = key === 'docs' || key === 'AI & Agent';
+        return {
+          title: meta?.zh || key,
+          order: meta ? meta.order : 99,
+          enTitle: meta ? meta.en : key,
+          children: isDocsGroup ? group[key] : sortBy(group[key], 'title'),
         };
       })
       .sort((a, b) => a.order - b.order);
-    return keys.length === 1 ? menus.value : newMenus;
   });
+
+  // Flatten grouped dataSource so PrevAndNext follows the exact visual sidebar order
+  const menus = computed(() => {
+    const flattened: any[] = [];
+    for (const item of dataSource.value) {
+      if (Array.isArray(item.children)) {
+        flattened.push(...item.children);
+      } else {
+        flattened.push(item);
+      }
+    }
+    return flattened;
+  });
+
+  const currentMenuIndex = computed(() => {
+    return menus.value.findIndex(m => m.path === activeMenuItem.value);
+  });
+
   return { menus, dataSource, activeMenuItem, currentMenuIndex };
 };
 

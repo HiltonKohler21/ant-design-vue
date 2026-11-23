@@ -1,16 +1,95 @@
+/**
+ * Prism.js Dark Theme for Ant Design Vue Docs
+ */
+
 html[data-doc-theme='dark'] {
   pre code {
-    background: #262626;
-    border-color: #262626;
+    color: rgba(255, 255, 255, 0.85);
+    background: #1f1f1f;
+    border-color: rgba(255, 255, 255, 0.08);
   }
 
   code[class*='language-'],
   pre[class*='language-'] {
-    color: black;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   :not(pre) > code[class*='language-'],
   pre[class*='language-'] {
-    background: #262626;
+    background: #1f1f1f;
+  }
+
+  pre[class*='language-']::selection,
+  pre[class*='language-'] ::selection,
+  code[class*='language-']::selection,
+  code[class*='language-'] ::selection {
+    background: #264f78;
+  }
+
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #8b949e;
+  }
+
+  .token.punctuation {
+    color: #c9d1d9;
+  }
+
+  .token.property,
+  .token.boolean,
+  .token.number,
+  .token.constant,
+  .token.symbol {
+    color: #79c0ff;
+  }
+
+  .token.tag {
+    color: #7ee787;
+  }
+
+  .token.deleted {
+    color: #ffa198;
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.builtin {
+    color: #d2a8ff;
+  }
+
+  .token.string,
+  .token.char,
+  .token.attr-value {
+    color: #a5d6ff;
+  }
+
+  .token.inserted {
+    color: #7ee787;
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string {
+    color: #79c0ff;
+  }
+
+  .token.atrule,
+  .token.keyword {
+    color: #ff7b72;
+  }
+
+  .token.function,
+  .token.class-name {
+    color: #d2a8ff;
+  }
+
+  .token.regex,
+  .token.important,
+  .token.variable {
+    color: #ffa657;
   }
 }

@@ -1,48 +1,114 @@
 /**
  * 解析 playwright：优先项目依赖，其次 npx 缓存（`npx playwright install` 后可用）
  */
-const loadChromium = async () => {
-  try {
-    return (await import('playwright')).chromium;
-  } catch {
-    const { execSync } = await import('node:child_process');
-    const os = await import('node:os');
-    const path = await import('node:path');
-    const base = path.join(os.homedir(), '.npm', '_npx');
-    const candidates = [];
+const loadChromiumCandidates = async () => {
+  const fsMod = await import('node:fs');
+  const osMod = await import('node:os');
+  const pathMod = await import('node:path');
+  const { pathToFileURL } = await import('node:url');
+
+  const hasBundledBrowser = mod => {
     try {
-      const dirs = execSync(`ls -d ${base}/*/node_modules/playwright 2>/dev/null || true`, {
-        encoding: 'utf8',
-      })
-        .split('\n')
-        .filter(Boolean);
-      dirs.forEach(d => candidates.push(path.join(d, 'index.mjs')));
+      const exe = mod?.chromium?.executablePath?.();
+      if (!exe) return false;
+      if (fsMod.existsSync(exe)) return true;
+      const revMatch = exe.match(/chromium(?:_headless_shell)?-(\d+)/);
+      if (revMatch) {
+        const rev = revMatch[1];
+        const cacheRoot = exe.slice(0, exe.indexOf(revMatch[0]));
+        return (
+          fsMod.existsSync(pathMod.join(cacheRoot, `chromium_headless_shell-${rev}`)) ||
+          fsMod.existsSync(pathMod.join(cacheRoot, `chromium-${rev}`))
+        );
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  const preferred = [];
+  const fallbacks = [];
+  const addMod = mod => {
+    if (!mod?.chromium) return;
+    if (hasBundledBrowser(mod)) preferred.push(mod.chromium);
+    else fallbacks.push(mod.chromium);
+  };
+
+  try {
+    addMod(await import('playwright'));
+  } catch {
+    /* try npx cache */
+  }
+
+  const npxBases = [
+    pathMod.join(osMod.homedir(), '.npm', '_npx'),
+    process.env.LOCALAPPDATA
+      ? pathMod.join(process.env.LOCALAPPDATA, 'npm-cache', '_npx')
+      : pathMod.join(osMod.homedir(), 'AppData', 'Local', 'npm-cache', '_npx'),
+  ];
+  const seen = new Set();
+  for (const base of npxBases) {
+    if (!fsMod.existsSync(base)) continue;
+    try {
+      for (const entry of fsMod.readdirSync(base, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        const pwEntry = pathMod.join(base, entry.name, 'node_modules', 'playwright', 'index.mjs');
+        if (fsMod.existsSync(pwEntry) && !seen.has(pwEntry)) {
+          seen.add(pwEntry);
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            addMod(await import(pathToFileURL(pwEntry).href));
+          } catch {
+            /* try next */
+          }
+        }
+      }
     } catch {
       /* ignore */
     }
-    for (const c of candidates) {
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        return (await import(c)).chromium;
-      } catch {
-        /* try next */
-      }
-    }
+  }
+
+  const all = [...preferred, ...fallbacks];
+  if (!all.length) {
     console.error(
       '未找到 playwright，请先执行：npm i -D playwright && npx playwright install chromium',
     );
     process.exit(2);
   }
+  return all;
 };
 
-const chromium = await loadChromium();
+const launchChromium = async () => {
+  const candidates = await loadChromiumCandidates();
+  let lastErr;
+  for (const chromium of candidates) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      return await chromium.launch();
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  for (const channel of ['chrome', 'msedge']) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      return await candidates[0].launch({ channel });
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+};
 /**
  * 站点巡检 v2：页面加载 + 交互点击 + 文档页覆盖
  *
- * 用法：node .cache/site-audit2.mjs [--only=x,y] [--limit=n] [--no-interact]
+ * 用法：node scripts/site-audit/page-audit.mjs [--only=x,y] [--limit=n] [--no-interact]
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 const BASE = process.env.SITE_BASE || 'http://127.0.0.1:5173';
 const demoRoutes = fs.readFileSync('site/src/router/demoRoutes.js', 'utf8');
@@ -88,10 +154,10 @@ let targets = [
 if (only) targets = targets.filter(t => only.split(',').includes(t.name));
 if (limit) targets = targets.slice(0, limit);
 
-const outDir = '/tmp/site-shots';
+const outDir = path.join(os.tmpdir(), 'site-shots');
 fs.mkdirSync(outDir, { recursive: true });
 
-const browser = await chromium.launch();
+const browser = await launchChromium();
 const results = [];
 
 for (const target of targets) {
@@ -194,14 +260,18 @@ for (const target of targets) {
         title: document.title,
         chars: text.length,
         demos,
-        nanStyles: [...document.querySelectorAll('[style]')].filter(el =>
-          /(?:NaN|: undefined)/.test(el.getAttribute('style') || ''),
-        ).length,
+        nanStyles: [...document.querySelectorAll('[style]')].filter(el => {
+          const cleaned = (el.getAttribute('style') || '').replace(
+            /url\((?:'[^']*'|"[^"]*"|[^)]*)\)/gi,
+            '',
+          );
+          return /(?:\bNaN(?:px|em|rem|vh|vw|deg|ms|s)?\b|\bNaN%|: undefined)/.test(cleaned);
+        }).length,
         nanCss: (
           [...document.querySelectorAll('style')]
-            .map(s => s.innerHTML)
+            .map(s => s.innerHTML.replace(/url\((?:'[^']*'|"[^"]*"|[^)]*)\)/gi, ''))
             .join('')
-            .match(/NaN/g) || []
+            .match(/\bNaN(?:px|em|rem|vh|vw|deg|ms|s)?\b|\bNaN%/g) || []
         ).length,
         emptyRoot: (document.getElementById('app')?.innerHTML || '').length < 200,
       };
@@ -223,7 +293,7 @@ for (const target of targets) {
   }
 
   await page
-    .screenshot({ path: `${outDir}/${target.name.replace(/\//g, '_')}.png` })
+    .screenshot({ path: path.join(outDir, `${target.name.replace(/\//g, '_')}.png`) })
     .catch(() => {});
 
   const bad =
@@ -265,5 +335,6 @@ for (const r of bad) {
   r.consoleErrors.slice(0, 2).forEach(e => console.log('   console: ' + e));
 }
 if (!bad.length) console.log('✅ 全部通过');
-fs.writeFileSync('/tmp/site-audit2.json', JSON.stringify(results, null, 2));
+const reportPath = path.join(os.tmpdir(), 'site-audit2.json');
+fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
 process.exit(bad.length ? 1 : 0);

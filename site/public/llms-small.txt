@@ -1,0 +1,81 @@
+# Ant Design Vue (Compact Index for AI Agents)
+
+> Ant Design Vue 4.x is the enterprise Vue 3 UI library with Composition API, `<script setup>`, TypeScript, and CSS-in-JS.
+
+## Essential AI Coding Rules
+1. **Script Setup**: Always `<script setup lang="ts">`.
+2. **Imports**: Components from `'ant-design-vue'`; icons ONLY from `'@ant-design/icons-vue'`.
+3. **No CSS Imports**: Styles are auto-injected via CSS-in-JS. Do NOT import `antd.css`.
+4. **Form Inputs**: Use `v-model:value` (never `v-model`).
+5. **Modals / Drawers**: Use `v-model:open` (never `v-model:visible`).
+6. **Feedback & Context**: Wrap with `<a-app>` and use `const { message, modal, notification } = App.useApp()`.
+7. **Theming**: `<a-config-provider :theme="{ token: { colorPrimary: '#1677ff' } }">`. Access tokens via `theme.useToken()`.
+
+## Canonical Vue 3 Template
+```vue
+<template>
+  <a-config-provider :theme="{ token: { colorPrimary: '#1677ff', borderRadius: 6 } }">
+    <a-app>
+      <div class="page-container">
+        <a-space direction="vertical" :size="16" style="width: 100%">
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="isOpen = true">
+            New Item
+          </a-button>
+
+          <a-table :columns="columns" :data-source="dataSource" row-key="id" />
+
+          <a-modal v-model:open="isOpen" title="Create" @ok="handleSave">
+            <a-form layout="vertical">
+              <a-form-item label="Name" required>
+                <a-input v-model:value="formData.name" placeholder="Enter name" />
+              </a-form-item>
+            </a-form>
+          </a-modal>
+        </a-space>
+      </div>
+    </a-app>
+  </a-config-provider>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, h } from 'vue';
+import { Button as AButton, Table as ATable, Modal as AModal, Form as AForm, FormItem as AFormItem, Input as AInput, Space as ASpace, ConfigProvider as AConfigProvider, App as AApp, App } from 'ant-design-vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import type { TableColumnsType } from 'ant-design-vue';
+
+const { message } = App.useApp();
+const isOpen = ref(false);
+const formData = reactive({ name: '' });
+
+const columns: TableColumnsType = [
+  { title: 'ID', dataIndex: 'id', key: 'id' },
+  { title: 'Name', dataIndex: 'name', key: 'name' },
+];
+
+const dataSource = ref([{ id: 1, name: 'Sample' }]);
+
+const handleSave = () => {
+  if (!formData.name) {
+    message.warning('Name is required');
+    return;
+  }
+  dataSource.value.push({ id: Date.now(), name: formData.name });
+  formData.name = '';
+  isOpen.value = false;
+  message.success('Item created!');
+};
+</script>
+```
+
+## Component Reference by Category
+- **General**: Button, Icon, Typography
+- **Layout**: Divider, Flex, Grid (Row, Col), Layout, Space, Splitter
+- **Navigation**: Anchor, Breadcrumb, Dropdown, Menu, PageHeader, Pagination, Steps
+- **Data Entry**: AutoComplete, Cascader, Checkbox, ColorPicker, DatePicker, Form, Input, InputNumber, Mentions, Radio, Rate, Select, Slider, Switch, TimePicker, Transfer, TreeSelect, Upload
+- **Data Display**: Avatar, Badge, Calendar, Card, Carousel, Collapse, Comment, Descriptions, Empty, Image, List, Popover, QRCode, Segmented, Statistic, Table, Tabs, Tag, Timeline, Tooltip, Tour, Tree
+- **Feedback**: Alert, Drawer, Message, Modal, Notification, Popconfirm, Progress, Result, Skeleton, Spin, Watermark
+- **Other**: App, BackTop, ConfigProvider, FloatButton
+
+Full documentation: https://antdv.com/llms.txt
+Agent guide: https://antdv.com/docs/vue/for-agents
+MCP server: https://antdv.com/docs/vue/mcp

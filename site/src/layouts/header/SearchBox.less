@@ -4,19 +4,14 @@
   flex: none;
   align-items: center;
   height: 32px;
-  width: 220px;
-  margin: 0 16px 0 0 !important;
+  width: 240px;
   padding: 0 10px 0 12px;
   border-radius: 100px;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--color-fill-alter, rgba(0, 0, 0, 0.02));
   border: 1px solid var(--site-border-color-split);
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
   box-sizing: border-box;
-
-  .ant-row-rtl & {
-    margin: 0 0 0 16px !important;
-    padding: 0 12px 0 10px;
-  }
+  cursor: pointer;
 
   &:hover {
     border-color: var(--primary-color);
@@ -24,24 +19,20 @@
 
   &.focused {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
-    background: var(--body-background);
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.12);
+    background: var(--component-background);
   }
 
   .search-icon {
     font-size: 14px;
     color: var(--site-text-color-secondary);
-    margin-right: 8px;
+    margin-inline-end: 8px;
     flex: none;
-
-    .ant-row-rtl & {
-      margin-right: 0;
-      margin-left: 8px;
-    }
   }
 
   input {
     flex: 1;
+    min-width: 0;
     width: 100%;
     height: 100%;
     padding: 0;
@@ -51,10 +42,15 @@
     outline: none;
     box-shadow: none;
     color: var(--site-text-color);
+    cursor: pointer;
 
     &::placeholder {
       color: var(--site-text-color-secondary);
-      opacity: 0.65;
+      opacity: 0.7;
+    }
+
+    &::-webkit-search-cancel-button {
+      display: none;
     }
   }
 
@@ -63,12 +59,14 @@
     font-size: 11px;
     font-family: inherit;
     line-height: 16px;
-    padding: 1px 5px;
+    padding: 1px 6px;
+    margin-inline-start: 6px;
     color: var(--site-text-color-secondary);
-    background: rgba(0, 0, 0, 0.04);
+    background: var(--site-hover-bg, rgba(0, 0, 0, 0.04));
     border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--site-border-color-split);
     user-select: none;
+    white-space: nowrap;
   }
 
   &.narrow-mode {
@@ -87,17 +85,17 @@
   }
 }
 
-:global([data-theme='dark']) {
+html[data-doc-theme='dark'] {
   #search-box {
     background: rgba(255, 255, 255, 0.04);
 
     &.focused {
-      background: var(--body-background);
+      background: var(--component-background);
     }
 
     .search-kbd {
       background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.14);
     }
   }
 }

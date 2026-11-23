@@ -69,7 +69,7 @@ const IconDisplay = defineComponent({
     return (
       <div>
         <h3 style="margin: 1.6em 0 .6em;">{this.$t('app.docs.components.icon.pick-theme')}</h3>
-        <a-affix offset-top={32} onChange={this.handleAffixChange}>
+        <a-affix offset-top={72} onChange={this.handleAffixChange}>
           <div class={this.searchBarAffixed ? 'icons-affix icons-affixed' : 'icons-affix'}>
             <a-radio-group value={this.theme} onChange={this.handleChangeTheme}>
               <a-radio-button value={ThemeType.Outlined}>

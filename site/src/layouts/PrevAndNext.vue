@@ -1,5 +1,5 @@
 <template>
-  <section class="prev-next-nav">
+  <section v-if="prev || next" class="prev-next-nav">
     <router-link
       v-if="prev"
       key="prev"
@@ -21,7 +21,9 @@
           ></path>
         </svg>
       </span>
-      <span v-if="isZhCN" class="chinese">{{ prev.subtitle || prev.title }}</span>
+      <span v-if="isZhCN" class="chinese">
+        {{ prev.subtitle ? `${prev.title} ${prev.subtitle}` : prev.title }}
+      </span>
       <span v-else>{{ prev.enTitle || prev.title }}</span>
     </router-link>
     <router-link
@@ -30,7 +32,9 @@
       class="next-page"
       :to="getLocalizedPathname(next.path, isZhCN)"
     >
-      <span v-if="isZhCN" class="chinese">{{ next.subtitle || next.title }}</span>
+      <span v-if="isZhCN" class="chinese">
+        {{ next.subtitle ? `${next.title} ${next.subtitle}` : next.title }}
+      </span>
       <span v-else>{{ next.enTitle || next.title }}</span>
       <span role="img" aria-label="right" class="anticon anticon-right footer-nav-icon-after">
         <svg
@@ -53,14 +57,21 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 import { getLocalizedPathname } from '../utils/util';
+
 export default defineComponent({
   name: 'PrevAndNext',
   props: ['menus', 'isZhCN', 'currentMenuIndex'],
   setup(props) {
+    const prev = computed(() =>
+      props.currentMenuIndex > 0 ? props.menus?.[props.currentMenuIndex - 1] : null,
+    );
+    const next = computed(() =>
+      props.currentMenuIndex >= 0 ? props.menus?.[props.currentMenuIndex + 1] : null,
+    );
     return {
       getLocalizedPathname,
-      prev: computed(() => props.menus[props.currentMenuIndex - 1]),
-      next: computed(() => props.menus[props.currentMenuIndex + 1]),
+      prev,
+      next,
     };
   },
 });

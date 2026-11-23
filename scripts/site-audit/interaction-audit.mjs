@@ -1,48 +1,112 @@
 /**
  * 解析 playwright：优先项目依赖，其次 npx 缓存（`npx playwright install` 后可用）
  */
-const loadChromium = async () => {
-  try {
-    return (await import('playwright')).chromium;
-  } catch {
-    const { execSync } = await import('node:child_process');
-    const os = await import('node:os');
-    const path = await import('node:path');
-    const base = path.join(os.homedir(), '.npm', '_npx');
-    const candidates = [];
+const loadChromiumCandidates = async () => {
+  const fsMod = await import('node:fs');
+  const osMod = await import('node:os');
+  const pathMod = await import('node:path');
+  const { pathToFileURL } = await import('node:url');
+
+  const hasBundledBrowser = mod => {
     try {
-      const dirs = execSync(`ls -d ${base}/*/node_modules/playwright 2>/dev/null || true`, {
-        encoding: 'utf8',
-      })
-        .split('\n')
-        .filter(Boolean);
-      dirs.forEach(d => candidates.push(path.join(d, 'index.mjs')));
+      const exe = mod?.chromium?.executablePath?.();
+      if (!exe) return false;
+      if (fsMod.existsSync(exe)) return true;
+      const revMatch = exe.match(/chromium(?:_headless_shell)?-(\d+)/);
+      if (revMatch) {
+        const rev = revMatch[1];
+        const cacheRoot = exe.slice(0, exe.indexOf(revMatch[0]));
+        return (
+          fsMod.existsSync(pathMod.join(cacheRoot, `chromium_headless_shell-${rev}`)) ||
+          fsMod.existsSync(pathMod.join(cacheRoot, `chromium-${rev}`))
+        );
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  const preferred = [];
+  const fallbacks = [];
+  const addMod = mod => {
+    if (!mod?.chromium) return;
+    if (hasBundledBrowser(mod)) preferred.push(mod.chromium);
+    else fallbacks.push(mod.chromium);
+  };
+
+  try {
+    addMod(await import('playwright'));
+  } catch {
+    /* try npx cache */
+  }
+
+  const npxBases = [
+    pathMod.join(osMod.homedir(), '.npm', '_npx'),
+    process.env.LOCALAPPDATA
+      ? pathMod.join(process.env.LOCALAPPDATA, 'npm-cache', '_npx')
+      : pathMod.join(osMod.homedir(), 'AppData', 'Local', 'npm-cache', '_npx'),
+  ];
+  const seen = new Set();
+  for (const base of npxBases) {
+    if (!fsMod.existsSync(base)) continue;
+    try {
+      for (const entry of fsMod.readdirSync(base, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        const pwEntry = pathMod.join(base, entry.name, 'node_modules', 'playwright', 'index.mjs');
+        if (fsMod.existsSync(pwEntry) && !seen.has(pwEntry)) {
+          seen.add(pwEntry);
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            addMod(await import(pathToFileURL(pwEntry).href));
+          } catch {
+            /* try next */
+          }
+        }
+      }
     } catch {
       /* ignore */
     }
-    for (const c of candidates) {
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        return (await import(c)).chromium;
-      } catch {
-        /* try next */
-      }
-    }
+  }
+
+  const all = [...preferred, ...fallbacks];
+  if (!all.length) {
     console.error(
       '未找到 playwright，请先执行：npm i -D playwright && npx playwright install chromium',
     );
     process.exit(2);
   }
+  return all;
 };
 
-const chromium = await loadChromium();
+const launchChromium = async () => {
+  const candidates = await loadChromiumCandidates();
+  let lastErr;
+  for (const chromium of candidates) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      return await chromium.launch();
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  for (const channel of ['chrome', 'msedge']) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      return await candidates[0].launch({ channel });
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+};
 /** 站点全局交互巡检：主题切换 / 搜索 / 侧边栏导航 / demo 内按钮全量点击 */
 
 const BASE = process.env.SITE_BASE || 'http://127.0.0.1:5173';
 const ENV_NOISE = /docsearch|Network Error|ERR_|Failed to load resource|403 \(\)/i;
 const issues = [];
 
-const browser = await chromium.launch();
+const browser = await launchChromium();
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
 const errors = [];

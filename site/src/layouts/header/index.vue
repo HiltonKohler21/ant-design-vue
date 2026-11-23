@@ -1,19 +1,23 @@
 <template>
   <header id="header" :class="headerClassName">
-    <a-row :style="{ flexFlow: 'nowrap', height: 64, position: 'relative' }">
-      <a-col v-bind="colProps[0]">
+    <a-row class="header-row" :style="{ flexFlow: 'nowrap', height: '64px', position: 'relative' }">
+      <a-col v-bind="colProps[0]" class="header-logo-col">
         <Logo />
       </a-col>
       <a-col v-bind="colProps[1]" class="menu-row">
-        <SearchBox
-          key="search"
-          :is-zh-c-n="isZhCN"
-          :responsive="responsive"
-          @triggerFocus="onTriggerSearching"
-        />
+        <span v-if="!isMobile" class="header-search-divider" aria-hidden="true" />
+        <div class="header-search-wrap">
+          <SearchBox
+            key="search"
+            :is-zh-c-n="isZhCN"
+            :responsive="responsive"
+            @triggerFocus="onTriggerSearching"
+          />
+        </div>
         <Menu v-if="!isMobile" />
       </a-col>
       <a-popover
+        v-if="isMobile"
         v-model:open="menuOpen"
         overlay-class-name="popover-menu"
         placement="bottomRight"
@@ -32,140 +36,83 @@
 import type { GlobalConfig } from '../../type';
 import { GLOBAL_CONFIG } from '../../SymbolKey';
 import { getLocalizedPathname } from '../../utils/util';
-import { computed, defineComponent, inject, onMounted, ref, watch } from 'vue';
+import { computed, defineComponent, inject, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Logo from './Logo.vue';
 import Menu from './Menu.vue';
 import { UnorderedListOutlined } from '@ant-design/icons-vue';
 import SearchBox from './SearchBox.vue';
+
 export default defineComponent({
+  name: 'SiteHeader',
   components: {
     Logo,
     Menu,
     UnorderedListOutlined,
     SearchBox,
-    // CloseOutlined,
   },
   setup() {
     const route = useRoute();
-    const cancelButtonProps: any = {
-      style: { display: 'none' },
-    };
     const globalConfig = inject<GlobalConfig>(GLOBAL_CONFIG);
+
     const isHome = computed(() => {
-      return ['', 'index', 'index-cn'].includes(route.path);
+      return ['/', '/index', '/index-cn'].includes(route.path);
     });
 
     const menuOpen = ref(false);
-    const colProps = isHome.value
-      ? [{ flex: 'none' }, { flex: 'auto' }]
-      : [
-          {
-            xxxl: 4,
-            xxl: 4,
-            xl: 5,
-            lg: 6,
-            md: 6,
-            sm: 24,
-            xs: 24,
-          },
-          {
-            xxxl: 20,
-            xxl: 20,
-            xl: 19,
-            lg: 18,
-            md: 18,
-            sm: 0,
-            xs: 0,
-          },
-        ];
+    watch(
+      () => route.path,
+      () => {
+        menuOpen.value = false;
+      },
+    );
+
+    const colProps = computed(() =>
+      isHome.value
+        ? [{ flex: 'none' }, { flex: 'auto' }]
+        : [
+            {
+              xxxl: 4,
+              xxl: 4,
+              xl: 5,
+              lg: 6,
+              md: 6,
+              sm: 18,
+              xs: 18,
+            },
+            {
+              xxxl: 20,
+              xxl: 20,
+              xl: 19,
+              lg: 18,
+              md: 18,
+              sm: 6,
+              xs: 6,
+            },
+          ],
+    );
+
+    const headerClassName = computed(() => ({
+      clearfix: true,
+      'home-header': isHome.value,
+    }));
+
     const searching = ref(false);
     const onTriggerSearching = (value: boolean) => {
       searching.value = value;
     };
-    const initDocSearch = () => {
-      if (typeof window.docsearch !== 'function') {
-        return;
-      }
-      window.docsearch({
-        apiKey: '92003c1d1d07beef165b08446f4224a3',
-        indexName: 'antdv',
-        inputSelector: '#search-box input',
-        algoliaOptions: { facetFilters: [`tags:${globalConfig.isZhCN.value ? 'cn' : 'en'}`] },
-        transformData(hits: any[]) {
-          hits.forEach(hit => {
-            hit.url = hit.url.replace('www.antdv.com', window.location.host);
-            hit.url = hit.url.replace('https:', window.location.protocol);
-          });
-          return hits;
-        },
-        debug: false, // Set debug to true if you want to inspect the dropdown
-      });
-    };
-    onMounted(() => {
-      setTimeout(() => {
-        initDocSearch();
-      });
-    });
-    const visibleAdblockBanner = ref(false);
-    watch(globalConfig?.blocked, val => {
-      visibleAdblockBanner.value = val;
-    });
-    // const alertKey = 'ant-design-vue-4-alert';
-    const visibleAlertBanner = ref(false);
-    // watch(visibleAlertBanner, () => {
-    //   if (!visibleAlertBanner.value) {
-    //     localStorage.setItem(alertKey, version);
-    //   }
-    // });
+
     return {
       isZhCN: globalConfig.isZhCN,
       isMobile: globalConfig.isMobile,
       responsive: globalConfig.responsive,
       getLocalizedPathname,
-      visibleAdblockBanner,
-      headerClassName: {
-        clearfix: true,
-        'home-header': isHome.value,
-      },
+      headerClassName,
       colProps,
       menuOpen,
       onTriggerSearching,
-      visibleAlertBanner,
-      cancelButtonProps,
     };
   },
 });
 </script>
 <style lang="less" src="./index.less"></style>
-<style scope>
-.adblock-banner,
-.alert-banner {
-  position: relative;
-  z-index: 100;
-  padding: 16px;
-  line-height: 28px;
-  color: #8590a6;
-  text-align: center;
-  background-color: #141414;
-}
-.alert-banner {
-  color: #fff;
-  padding: 5px;
-}
-.alert-banner a {
-  color: #fff;
-  text-decoration: underline;
-}
-.alert-banner .close-icon {
-  top: 12px;
-}
-.close-icon {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-}
-.alert-list-item {
-  padding: 8px 0;
-}
-</style>

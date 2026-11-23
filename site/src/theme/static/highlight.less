@@ -1,53 +1,38 @@
 /**
-* prism.js default theme for JavaScript, CSS and HTML
-* Based on dabblet (http://dabblet.com)
-* @author Lea Verou
-*/
+ * Prism.js Light Theme for Ant Design Vue Docs
+ */
 
 pre code {
   display: block;
-  padding: 16px 32px;
+  padding: 16px 24px;
   color: var(--site-text-color);
-  font-size: var(--font-size-base);
-  font-family: 'Lucida Console', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  line-height: 2;
+  font-size: var(--font-size-max);
+  font-family: var(--code-family);
+  line-height: 1.8;
   white-space: pre;
-  background: white;
-  border: 1px solid #e9e9e9;
+  background: var(--site-markdown-code-bg);
+  border: 1px solid var(--site-border-color-split);
   border-radius: var(--border-radius-base);
 }
 
 code[class*='language-'],
 pre[class*='language-'] {
-  color: black;
-  font-family: 'Lucida Console', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-  line-height: 1.5;
+  color: var(--site-text-color);
+  font-family: var(--code-family);
+  line-height: 1.65;
   direction: ltr;
   white-space: pre;
   text-align: left;
   word-wrap: normal;
   word-break: normal;
   word-spacing: normal;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
-  -webkit-hyphens: none;
-  -moz-hyphens: none;
-  -ms-hyphens: none;
+  tab-size: 2;
   hyphens: none;
   background: none;
 }
 
 code[class*='css'] {
   direction: ltr;
-}
-
-pre[class*='language-']::-moz-selection,
-pre[class*='language-'] ::-moz-selection,
-code[class*='language-']::-moz-selection,
-code[class*='language-'] ::-moz-selection {
-  text-shadow: none;
-  background: #b3d4fc;
 }
 
 pre[class*='language-']::selection,
@@ -68,31 +53,32 @@ code[class*='language-'] ::selection {
 /* Code blocks */
 pre[class*='language-'] {
   margin: 16px 0;
-  padding: 12px 20px;
+  padding: 14px 20px;
   overflow: auto;
+  border-radius: var(--border-radius-base);
 }
 
 :not(pre) > code[class*='language-'],
 pre[class*='language-'] {
-  background: #f5f5f5;
+  background: var(--site-markdown-code-bg);
 }
 
 /* Inline code */
 :not(pre) > code[class*='language-'] {
-  padding: 0.1em;
+  padding: 0.15em 0.4em;
   white-space: normal;
-  border-radius: 0.3em;
+  border-radius: 4px;
 }
 
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: slategray;
+  color: #6a737d;
 }
 
 .token.punctuation {
-  color: #999;
+  color: #777;
 }
 
 .namespace {
@@ -106,7 +92,7 @@ pre[class*='language-'] {
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #f81d22;
+  color: #d73a49;
 }
 
 .token.selector,
@@ -129,23 +115,25 @@ pre[class*='language-'] {
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  color: #008dff;
+  color: #0070f3;
 }
 
-.token.function {
-  color: #f81d22;
+.token.function,
+.token.class-name {
+  color: #6f42c1;
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  color: #e90;
+  color: #e36209;
 }
 
 .token.important,
 .token.bold {
   font-weight: bold;
 }
+
 .token.italic {
   font-style: italic;
 }

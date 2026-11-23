@@ -8,6 +8,21 @@ import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
   // ...otherRoutes,
   {
+    path: '/',
+    name: 'home',
+    component: () => import('../views/Home.vue'),
+  },
+  {
+    path: '/index',
+    name: 'home-en',
+    component: () => import('../views/Home.vue'),
+  },
+  {
+    path: '/index-cn',
+    name: 'home-cn',
+    component: () => import('../views/Home.vue'),
+  },
+  {
     path: '/components',
     component: Layout,
     children: [
@@ -285,7 +300,10 @@ const routes = [
   { path: '/sponsor', redirect: '/docs/vue/introduce' },
   { path: '/sponsor-cn', redirect: '/docs/vue/introduce-cn' },
   { path: '/debugger', component: () => import('../../debugger') },
-  { path: '/:lang(.*)', redirect: '/components/overview' },
+  {
+    path: '/:lang(.*)',
+    redirect: to => (/-cn\/?$/.test(to.path) ? '/index-cn' : '/'),
+  },
 ];
 
 export default createRouter({
@@ -296,5 +314,6 @@ export default createRouter({
     if (to.hash) {
       return { el: to.hash, top: 80, behavior: 'auto' };
     }
+    return { top: 0 };
   },
 });

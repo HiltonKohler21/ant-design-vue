@@ -1,13 +1,5 @@
 <template>
   <Header />
-  <div v-if="headers.length" class="toc-affix" :style="y > 102 ? 'position:fixed; top: 16px;' : ''">
-    <a-anchor style="width: 160px" :items="headers">
-      <template #customTitle="item">
-        <LinkOutlined v-if="item.target" />
-        {{ item.title }}
-      </template>
-    </a-anchor>
-  </div>
   <div class="main-wrapper">
     <a-row>
       <template v-if="isMobile">
@@ -15,79 +7,74 @@
           key="mobile-menu"
           v-model:open="visible"
           :closable="false"
-          placement="left"
+          :placement="direction === 'rtl' ? 'right' : 'left'"
           class="drawer drawer-left"
           wrapper-class-name="drawer-wrapper"
-          width="60%"
+          width="260"
         >
           <Menu :menus="dataSource" :active-menu-item="activeMenuItem" :is-zh-c-n="isZhCN" />
         </a-drawer>
-        <div class="drawer-handle" @click="handleClickShowButton">
+        <div
+          class="drawer-handle"
+          role="button"
+          tabindex="0"
+          :aria-label="isZhCN ? '切换菜单' : 'Toggle menu'"
+          @click="handleClickShowButton"
+        >
           <close-outlined v-if="visible" :style="iconStyle" />
           <MenuOutlined v-else :style="iconStyle" />
         </div>
       </template>
       <template v-else>
         <a-col :xxxl="4" :xxl="4" :xl="5" :lg="6" :md="6" :sm="24" :xs="24" class="main-menu">
-          <a-affix>
-            <section class="main-menu-inner">
-              <Menu :menus="dataSource" :active-menu-item="activeMenuItem" :is-zh-c-n="isZhCN" />
-            </section>
-          </a-affix>
+          <section class="main-menu-inner">
+            <Menu :menus="dataSource" :active-menu-item="activeMenuItem" :is-zh-c-n="isZhCN" />
+          </section>
         </a-col>
       </template>
-      <a-col :xxxl="20" :xxl="20" :xl="19" :lg="18" :md="18" :sm="24" :xs="24">
-        <section :class="mainContainerClass">
-          <Demo v-if="isDemo" :page-data="pageData" :is-zh-c-n="isZhCN">
-            <component :is="matchCom" />
-          </Demo>
-          <router-view v-else />
-        </section>
-        <a-float-button-group trigger="click">
-          <template #icon>
-            <ThemeIcon />
-          </template>
-          <a-float-button
-            :tooltip="$t('app.floatButton.theme-editor')"
-            @click="$router.push(isZhCN ? '/theme-editor-cn' : '/theme-editor')"
-          >
-            <template #icon>
-              <ThemeEditorIcon />
-            </template>
-          </a-float-button>
-          <a-float-button
-            :tooltip="$t('app.floatButton.dark-theme')"
-            :type="themeMode.theme.value === 'dark' ? 'primary' : 'default'"
-            @click="themeMode.changeTheme(themeMode.theme.value === 'dark' ? 'light' : 'dark')"
-          >
-            <template #icon>
-              <DarkIcon />
-            </template>
-          </a-float-button>
-          <a-float-button
-            :tooltip="$t('app.floatButton.compact-theme')"
-            :type="themeMode.compactTheme.value === 'compact' ? 'primary' : 'default'"
-            @click="
-              themeMode.changeCompactTheme(
-                themeMode.compactTheme.value === 'compact' ? '' : 'compact',
-              )
-            "
-          >
-            <template #icon>
-              <CompactIcon />
-            </template>
-          </a-float-button>
-        </a-float-button-group>
-        <a-back-top :style="{ right: '24px', bottom: '96px' }" />
-        <PrevAndNext :menus="menus" :current-menu-index="currentMenuIndex" :is-zh-c-n="isZhCN" />
-        <Footer />
+      <a-col
+        :xxxl="20"
+        :xxl="20"
+        :xl="19"
+        :lg="18"
+        :md="18"
+        :sm="24"
+        :xs="24"
+        class="main-content-col"
+      >
+        <div class="content-layout">
+          <div class="content-body">
+            <section :class="mainContainerClass">
+              <Demo v-if="isDemo" :page-data="pageData" :is-zh-c-n="isZhCN">
+                <component :is="matchCom" />
+              </Demo>
+              <router-view v-else />
+            </section>
+            <PrevAndNext
+              :menus="menus"
+              :current-menu-index="currentMenuIndex"
+              :is-zh-c-n="isZhCN"
+            />
+          </div>
+          <aside v-if="headers.length" class="toc-affix">
+            <a-anchor
+              :affix="false"
+              :show-ink-in-fixed="true"
+              :offset-top="80"
+              :target-offset="80"
+              :items="headers"
+            />
+          </aside>
+        </div>
       </a-col>
     </a-row>
   </div>
+  <a-back-top :visibility-height="300" :style="{ insetInlineEnd: '24px', bottom: '32px' }" />
+  <Footer :is-c-n="isZhCN" />
 </template>
 <script lang="ts">
 import { GLOBAL_CONFIG } from '../SymbolKey';
-import { defineComponent, inject, computed, ref, provide, watch } from 'vue';
+import { computed, defineComponent, inject, provide, ref, unref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './header/index.vue';
 import Footer from './Footer.vue';
@@ -95,12 +82,7 @@ import Menu from './Menu.vue';
 import PrevAndNext from './PrevAndNext.vue';
 import Demo from './Demo.vue';
 import useMenus from '../hooks/useMenus';
-import { CloseOutlined, MenuOutlined, LinkOutlined } from '@ant-design/icons-vue';
-import ThemeIcon from './icons/ThemeIcon.vue';
-import ThemeEditorIcon from './icons/ThemeEditorIcon';
-import DarkIcon from './icons/Dark';
-import CompactIcon from './icons/Compact';
-import { useWindowScroll } from '@vueuse/core';
+import { CloseOutlined, MenuOutlined } from '@ant-design/icons-vue';
 import type { GlobalConfig } from '../type';
 
 const rControl = /[\u0000-\u001f]/g;
@@ -116,41 +98,44 @@ export default defineComponent({
     PrevAndNext,
     CloseOutlined,
     MenuOutlined,
-    ThemeIcon,
-    ThemeEditorIcon,
-    DarkIcon,
-    CompactIcon,
-    LinkOutlined,
   },
   setup() {
     const route = useRoute();
     const globalConfig = inject<GlobalConfig>(GLOBAL_CONFIG);
-    const { y } = useWindowScroll();
 
     const visible = ref(false);
     const { menus, activeMenuItem, currentMenuIndex, dataSource } = useMenus();
 
     const demos = ref<any[]>([]);
+    const hasDesignTokens = ref(false);
 
     provide('addDemosInfo', (info: any) => {
-      if (!demos.value.find(d => d.href === info.href)) {
+      if (!info || !info.href) return;
+      const idx = demos.value.findIndex(d => d.href === info.href);
+      if (idx === -1) {
         demos.value.push(info);
+      } else {
+        demos.value[idx] = info;
       }
     });
 
-    const themeMode = inject('themeMode', {
-      theme: ref('light'),
-      compactTheme: ref('light'),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      changeTheme: (_key: any) => void 0,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      changeCompactTheme: (_key: any) => void 0,
+    provide('setHasDesignTokens', (val: boolean) => {
+      hasDesignTokens.value = !!val;
+    });
+
+    const baseRoutePath = computed(() => route.path.replace(/-cn\/?$/, '').replace(/\/$/, ''));
+
+    // Only reset demos/design-tokens when navigating to a different base route
+    // so switching zh-CN <-> en-US on the same page preserves the TOC.
+    watch(baseRoutePath, () => {
+      demos.value = [];
+      hasDesignTokens.value = false;
     });
 
     watch(
       () => route.path,
       () => {
-        demos.value.length = 0;
+        visible.value = false;
       },
     );
 
@@ -166,58 +151,76 @@ export default defineComponent({
     const isZhCN = globalConfig.isZhCN;
     const pageData = computed(() =>
       isDemo.value
-        ? matchCom.value[isZhCN.value ? 'CN' : 'US']?.pageData
+        ? matchCom.value?.[isZhCN.value ? 'CN' : 'US']?.pageData
         : (matchCom.value as any)?.pageData,
     );
+
     const slugifyTitle = (str: string) => {
-      return (
-        str
-          // Remove control characters
-          .replace(rControl, '')
-          // Replace special characters
-          .replace(rSpecial, '-')
-          // Remove continuos separators
-          .replace(/\-{2,}/g, '-')
-          // Remove prefixing and trailing separtors
-          .replace(/^\-+|\-+$/g, '')
-          // ensure it doesn't start with a number (#121)
-          .replace(/^(\d)/, '_$1')
-      );
+      return str
+        .replace(rControl, '')
+        .replace(rSpecial, '-')
+        .replace(/\-{2,}/g, '-')
+        .replace(/^\-+|\-+$/g, '')
+        .replace(/^(\d)/, '_$1');
     };
+
     const headers = computed(() => {
-      let tempHeaders = (pageData.value?.headers || []).filter((h: Header) => h.level === 2);
       if (isDemo.value) {
-        tempHeaders = [...demos.value];
-        if (
-          matchCom.value['CN']?.pageData.description ||
-          matchCom.value['US']?.pageData.description
-        ) {
-          tempHeaders.push(
-            {
-              title: '代码演示',
-              enTitle: 'Examples',
-              href: '#components-affix-demo',
-            },
-            {
-              title: 'API',
-              href: '#api',
-            },
-          );
+        const demoItems = demos.value
+          .map((demo, idx) => {
+            const rawTitle = unref(demo.title);
+            const rawEnTitle = unref(demo.enTitle);
+            const titleText = String(
+              (isZhCN.value ? rawTitle : rawEnTitle || rawTitle) || '',
+            ).trim();
+            const href = String(demo.href || '').toLocaleLowerCase();
+            if (!href) return null;
+            return {
+              key: href || `demo-${idx}`,
+              href,
+              title: titleText || href.replace(/^#/, ''),
+            };
+          })
+          .filter(Boolean) as Array<{ key: string; href: string; title: string }>;
+
+        const items: Array<{ key: string; href: string; title: string; children?: any[] }> = [
+          {
+            key: '#examples',
+            href: '#examples',
+            title: isZhCN.value ? '代码演示' : 'Examples',
+            ...(demoItems.length ? { children: demoItems } : {}),
+          },
+          {
+            key: '#api',
+            href: '#api',
+            title: 'API',
+          },
+        ];
+
+        if (hasDesignTokens.value) {
+          items.push({
+            key: '#design-tokens',
+            href: '#design-tokens',
+            title: isZhCN.value ? '主题变量' : 'Design Token',
+          });
         }
+
+        return items;
       }
-      if (tempHeaders.length) {
-        tempHeaders.push({
-          title: isZhCN.value ? '设计规范' : 'Design Spec',
-          href: '#design-tokens',
-          target: '_blank',
-        });
-      }
-      return tempHeaders.map(header => ({
-        ...header,
-        key: header.title,
-        title: isZhCN.value ? header.title : header.enTitle || header.title,
-        href: (header.href || `#${slugifyTitle(header.title)}`).toLocaleLowerCase(),
-      }));
+
+      const docHeaders = (pageData.value?.headers || []).filter((h: any) => h.level === 2);
+      return docHeaders.map((header: any, idx: number) => {
+        const rawTitle = String(unref(header.title) || '');
+        const rawEnTitle = header.enTitle ? String(unref(header.enTitle)) : '';
+        const title = isZhCN.value ? rawTitle : rawEnTitle || rawTitle;
+        const slug = header.slug || slugifyTitle(rawTitle);
+        const href = (header.href || `#${slug}`).toLocaleLowerCase();
+        return {
+          key: `${href}-${idx}`,
+          title,
+          href,
+        };
+      });
     });
 
     const mainContainerClass = computed(() => {
@@ -226,13 +229,15 @@ export default defineComponent({
         'main-container-component': isDemo.value,
       };
     });
+
     const handleClickShowButton = () => {
       visible.value = !visible.value;
     };
+
     return {
-      themeMode,
       visible,
       isMobile: globalConfig.isMobile,
+      direction: globalConfig.direction,
       isZhCN,
       mainContainerClass,
       menus,
@@ -245,28 +250,40 @@ export default defineComponent({
       dataSource,
       handleClickShowButton,
       iconStyle: {
-        fontSize: '20px',
+        fontSize: '18px',
       },
-      y,
     };
   },
 });
 </script>
 <style lang="less" scoped>
-.toc-affix {
-  background-color: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(10px);
+.toc-affix :deep(.ant-anchor-wrapper) {
+  background: transparent;
+  padding-inline-start: 4px;
+  overflow: visible;
 }
 
 .toc-affix :deep(.ant-anchor) {
+  width: 168px;
   font-size: 12px;
-  max-width: 110px;
 
-  .ant-anchor-ink::before {
-    display: none;
+  .ant-anchor-link {
+    padding-block: 4px;
+    padding-inline: 14px 0;
   }
-  .ant-anchor-ink-ball {
-    display: none;
+
+  .ant-anchor-link-title {
+    color: var(--site-text-color-secondary);
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+
+  .ant-anchor-link-title-active {
+    color: var(--primary-color);
+    font-weight: 500;
   }
 }
 </style>

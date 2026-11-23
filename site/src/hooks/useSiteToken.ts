@@ -4,6 +4,7 @@ import { theme } from '../../../components';
 import { useConfigContextInject } from '../../../components/config-provider/context';
 
 const { useToken } = theme;
+const SITE_TOKEN_STYLE_ID = 'antdv-site-token-style';
 
 const useSiteToken = () => {
   const result = useToken();
@@ -35,59 +36,79 @@ const useSiteToken = () => {
       codeFamily: `'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace`,
     },
   }));
-  let styleDom: HTMLStyleElement | null = null;
+
   watch(
     mergedToken,
     () => {
-      styleDom = styleDom || document.createElement('style');
+      if (typeof document === 'undefined') return;
+      let styleDom = document.getElementById(SITE_TOKEN_STYLE_ID) as HTMLStyleElement | null;
+      if (!styleDom) {
+        styleDom = document.createElement('style');
+        styleDom.id = SITE_TOKEN_STYLE_ID;
+        document.body.appendChild(styleDom);
+      }
       const tokenValue = mergedToken.value.token;
       const demoGridColor = raw.value.colorPrimary;
+      const headerGlassBg = new TinyColor(tokenValue.colorBgContainer).setAlpha(0.85).toRgbString();
       styleDom.innerHTML = `
       :root {
         --header-height: ${tokenValue.headerHeight}px;
         --menu-item-border: ${tokenValue.menuItemBorder}px;
 
         --primary-color: ${tokenValue.colorPrimary};
+        --primary-color-bg: ${tokenValue.colorPrimaryBg};
+        --primary-color-border: ${tokenValue.colorPrimaryBorder};
         --component-background: ${tokenValue.colorBgContainer};
         --body-background: ${tokenValue.colorBgContainer};
+        --site-header-bg: ${headerGlassBg};
+        --site-footer-bg: ${tokenValue.colorBgLayout};
+        --site-hover-bg: ${tokenValue.colorFillTertiary};
+        --color-fill-alter: ${tokenValue.colorFillAlter};
+        --color-fill-tertiary: ${tokenValue.colorFillTertiary};
+        --color-bg-layout: ${tokenValue.colorBgLayout};
+        --color-bg-elevated: ${tokenValue.colorBgElevated};
+        --site-markdown-code-bg: ${tokenValue.siteMarkdownCodeBg};
         --site-text-color: ${tokenValue.colorText};
         --demo-grid-color: ${demoGridColor};
-        --demo-grid-color-65: ${new TinyColor(demoGridColor).setAlpha(0.75).toHex8String()};
+        --demo-grid-color-60: ${new TinyColor(demoGridColor).setAlpha(0.6).toHex8String()};
+        --demo-grid-color-65: ${new TinyColor(demoGridColor).setAlpha(0.65).toHex8String()};
         --demo-grid-color-75: ${new TinyColor(demoGridColor).setAlpha(0.75).toHex8String()};
         --site-text-color-secondary: ${tokenValue.colorTextSecondary};
         --site-border-color-split: ${tokenValue.colorSplit};
-        --border-radius-base: ${tokenValue.borderRadius};
+        --border-radius-base: ${tokenValue.borderRadius}px;
         --font-size-base: ${tokenValue.fontSize}px;
         --font-size-max: ${Math.max(tokenValue.fontSize - 1, 12)}px;
         --font-family: ${tokenValue.fontFamily};
         --code-family: ${tokenValue.codeFamily};
+        --margin-far-xs: ${tokenValue.marginFarXS}px;
 
         --border-color-base: ${tokenValue.colorBorder};
         --purple-3: ${tokenValue['purple-3']};
         --purple-6: ${tokenValue['purple-6']};
         --text-color: ${tokenValue.colorText};
-        --search-icon-color: #ced4d9;
+        --search-icon-color: ${tokenValue.colorTextPlaceholder};
         --ease-in-out-circ: ${tokenValue.motionEaseInOutCirc};
         --shadow-2: ${tokenValue.boxShadowSecondary};
         --link-color: ${tokenValue.colorLink};
         --error-color: ${tokenValue.colorError};
         --white: ${tokenValue.colorWhite};
         --green-6: ${tokenValue['green-6']};
-        --gray-8: ${tokenValue['gray-8'] ?? raw.value.colorTextSecondary};
+        --gray-8: ${tokenValue.colorText};
+        --magenta-6: ${tokenValue['magenta-6']};
         --magenta-7: ${tokenValue['magenta-7']};
         --line-height-base: ${tokenValue.lineHeight};
         --screen-md-min: ${tokenValue.screenMDMin}px;
         --screen-sm-min: ${tokenValue.screenSMMin}px;
         --screen-lg: ${tokenValue.screenLG}px;
         --mobile-max-width: ${tokenValue.mobileMaxWidth}px;
-        --box-shadow-base: ${tokenValue.boxShadow}
+        --box-shadow-base: ${tokenValue.boxShadow};
         --animation-duration-base: ${tokenValue.motionDurationSlow};
         --ease-in-out: ${tokenValue.motionEaseInOut};
         --shadow-1-down: ${tokenValue.boxShadowCard};
         --box-shadow: ${tokenValue.boxShadow};
       }
     `;
-      if (styleDom && !document.body.contains(styleDom)) {
+      if (!document.body.contains(styleDom)) {
         document.body.appendChild(styleDom);
       }
     },

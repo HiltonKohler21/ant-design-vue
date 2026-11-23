@@ -2,7 +2,12 @@
   <template v-if="inIframe">
     <div :id="sectionId"><slot /></div>
   </template>
-  <section v-else :id="sectionId" class="code-box">
+  <section
+    v-else
+    v-show="!isDebug || showDebugDemos"
+    :id="sectionId"
+    :class="['code-box', { expand: codeExpand, 'code-box-debug': isDebug }]"
+  >
     <section class="code-box-demo">
       <template v-if="iframeDemo[iframeDemoKey]">
         <div class="browser-mockup with-url">
@@ -16,47 +21,132 @@
     <section class="code-box-meta markdown">
       <div class="code-box-title">
         <a :href="`#${sectionId}`">{{ title }}</a>
+        <a-tooltip v-if="isDebug" :title="$t('app.demo.debug')">
+          <span class="code-box-debug-tag">Debug</span>
+        </a-tooltip>
+        <a-tooltip v-if="editGithubUrl" :title="$t('app.content.edit-demo')">
+          <a
+            class="edit-button"
+            :href="editGithubUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="$t('app.content.edit-demo')"
+          >
+            <EditOutlined />
+          </a>
+        </a-tooltip>
       </div>
       <div class="code-box-description" v-html="docHtml"></div>
       <div class="code-box-actions">
         <a-tooltip :title="$t('app.demo.codesandbox')">
-          <CodeSandboxOutlined
-            class="code-box-code-copy code-box-code-action"
-            @click="handleCodeSandbox"
-          />
-        </a-tooltip>
-        <a-tooltip :title="$t(`app.demo.type.${type === 'JS' ? 'js' : 'ts'}`)">
           <span
-            class="code-expand-icon code-box-code-action"
-            style="width: auto"
-            @click="handleChangeType"
+            class="code-box-code-action"
+            tabindex="0"
+            :aria-label="$t('app.demo.codesandbox')"
+            @click="handleCodeSandbox"
+            @keydown.enter="handleCodeSandbox"
+            @keydown.space.prevent="handleCodeSandbox"
           >
-            {{ type }}
+            <CodeSandboxOutlined />
+          </span>
+        </a-tooltip>
+        <a-tooltip :title="$t('app.demo.stackblitz')">
+          <span
+            class="code-box-code-action"
+            tabindex="0"
+            :aria-label="$t('app.demo.stackblitz')"
+            @click="handleStackBlitz"
+            @keydown.enter="handleStackBlitz"
+            @keydown.space.prevent="handleStackBlitz"
+          >
+            <ThunderboltOutlined />
           </span>
         </a-tooltip>
         <a-tooltip
-          v-if="!blocked"
           :title="$t(`app.demo.${copied ? 'copied' : 'copy'}`)"
           :open="copyTooltipVisible"
           @openChange="onCopyTooltipVisibleChange"
         >
-          <component
-            :is="copied && copyTooltipVisible ? 'CheckOutlined' : 'SnippetsOutlined'"
-            key="copy"
-            v-clipboard:copy="type === 'TS' ? sourceCode : jsSourceCode"
-            v-clipboard:success="handleCodeCopied"
-            class="code-box-code-copy code-box-code-action"
-          />
+          <span
+            class="code-box-code-action code-box-code-copy"
+            :class="{ 'code-box-code-copied': copied }"
+            tabindex="0"
+            :aria-label="$t('app.demo.copy')"
+            @click="handleCopyCode"
+            @keydown.enter="handleCopyCode"
+            @keydown.space.prevent="handleCopyCode"
+          >
+            <CheckOutlined v-if="copied" class="anticon-check" />
+            <CopyOutlined v-else />
+          </span>
         </a-tooltip>
-        <a-tooltip v-else :title="$t('app.demo.copy')">
-          <SnippetsOutlined class="code-box-code-copy code-box-code-action" @click="warning" />
+        <a-tooltip :title="$t(`app.demo.type.${type === 'JS' ? 'js' : 'ts'}`)">
+          <span class="code-box-type-switch">
+            <span
+              class="code-box-type-item"
+              :class="{ active: type === 'TS' }"
+              tabindex="0"
+              @click="handleChangeType('TS')"
+              @keydown.enter="handleChangeType('TS')"
+              @keydown.space.prevent="handleChangeType('TS')"
+            >
+              TS
+            </span>
+            <span
+              class="code-box-type-item"
+              :class="{ active: type === 'JS' }"
+              tabindex="0"
+              @click="handleChangeType('JS')"
+              @keydown.enter="handleChangeType('JS')"
+              @keydown.space.prevent="handleChangeType('JS')"
+            >
+              JS
+            </span>
+          </span>
         </a-tooltip>
         <a-tooltip :title="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)">
-          <CodeOutlined
-            class="code-box-code-action"
-            :style="{ fontSize: '15px' }"
+          <span
+            class="code-box-code-action code-box-expand-btn"
+            :class="{ 'code-box-expand-btn-active': codeExpand }"
+            tabindex="0"
+            :aria-expanded="codeExpand"
+            :aria-label="$t(`app.demo.code.${codeExpand ? 'hide' : 'show'}`)"
             @click="handleCodeExpand"
-          />
+            @keydown.enter="handleCodeExpand"
+            @keydown.space.prevent="handleCodeExpand"
+          >
+            <svg
+              v-if="codeExpand"
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="8 6 2 12 8 18" />
+              <polyline points="16 6 22 12 16 18" />
+              <line x1="14" y1="4" x2="10" y2="20" />
+            </svg>
+            <svg
+              v-else
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="8 6 2 12 8 18" />
+              <polyline points="16 6 22 12 16 18" />
+            </svg>
+          </span>
         </a-tooltip>
       </div>
     </section>
@@ -66,12 +156,31 @@
         <slot v-else name="jsVersionHtml" />
       </div>
       <div class="code-box-actions code-box-actions-bottom">
-        <a-tooltip :title="$t(`app.demo.code.hide`)">
-          <CodeOutlined
-            class="code-box-code-action"
-            :style="{ fontSize: '15px' }"
+        <a-tooltip :title="$t('app.demo.code.hide')">
+          <span
+            class="code-box-code-action code-box-expand-btn code-box-expand-btn-active"
+            tabindex="0"
+            :aria-label="$t('app.demo.code.hide')"
             @click="handleCodeExpand($event, sectionId)"
-          />
+            @keydown.enter="handleCodeExpand($event, sectionId)"
+            @keydown.space.prevent="handleCodeExpand($event, sectionId)"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="8 6 2 12 8 18" />
+              <polyline points="16 6 22 12 16 18" />
+              <line x1="14" y1="4" x2="10" y2="20" />
+            </svg>
+          </span>
         </a-tooltip>
       </div>
     </section>
@@ -79,36 +188,145 @@
 </template>
 
 <script lang="ts">
+import type { Ref } from 'vue';
 import type { GlobalConfig } from '../type';
 import { GLOBAL_CONFIG } from '../SymbolKey';
-import { computed, defineComponent, inject, onMounted, ref, watch } from 'vue';
-import { CheckOutlined, SnippetsOutlined, CodeSandboxOutlined, CodeOutlined } from '@ant-design/icons-vue';
+import { computed, defineComponent, inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import {
+  CheckOutlined,
+  CodeSandboxOutlined,
+  CopyOutlined,
+  EditOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons-vue';
 import { getCodeSandboxParams } from '../utils/generateOnlineDemo';
 import packageInfo from '../../../package.json';
+
+const ZH_HEADING_RE = /<h2 id="zh-cn">[\s\S]*?<\/h2>/i;
+const EN_HEADING_RE = /<h2 id="en-us">[\s\S]*?<\/h2>/i;
+
+function decodeBase64(str?: string): string {
+  if (!str || typeof str !== 'string') return '';
+  try {
+    const binary = window.atob(str);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    if (typeof TextDecoder !== 'undefined') {
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+    return decodeURIComponent(
+      Array.from(bytes, b => `%${b.toString(16).padStart(2, '0')}`).join(''),
+    );
+  } catch {
+    return '';
+  }
+}
+
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (!text) return false;
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // fallback below
+  }
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+function submitPostForm(action: string, fields: Record<string, string>) {
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = action;
+  form.target = '_blank';
+  form.style.display = 'none';
+  Object.entries(fields).forEach(([name, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+
+function extractDeps(code: string): Record<string, string> {
+  const knownDeps: Record<string, string> = {
+    ...(packageInfo.dependencies || {}),
+    ...(packageInfo.devDependencies || {}),
+  };
+  const deps: Record<string, string> = {
+    vue: packageInfo.peerDependencies?.vue || '^3.3.0',
+    'ant-design-vue': packageInfo.version,
+    '@ant-design/icons-vue': knownDeps['@ant-design/icons-vue'] || '^7.0.0',
+  };
+  const matches = code.match(/from\s+['"]([^'".][^'"]*)['"]/g) || [];
+  matches.forEach(m => {
+    const pkgMatch = m.match(/['"]([^'"]+)['"]/);
+    if (!pkgMatch) return;
+    const raw = pkgMatch[1];
+    const pkgName = raw.startsWith('@') ? raw.split('/').slice(0, 2).join('/') : raw.split('/')[0];
+    if (pkgName && !deps[pkgName]) {
+      deps[pkgName] = knownDeps[pkgName] || 'latest';
+    }
+  });
+  return deps;
+}
 
 export default defineComponent({
   name: 'DemoBox',
   components: {
     CheckOutlined,
-    SnippetsOutlined,
     CodeSandboxOutlined,
-    CodeOutlined,
+    CopyOutlined,
+    EditOutlined,
+    ThunderboltOutlined,
   },
   props: {
     jsfiddle: Object,
   },
   setup(props) {
     const codeExpand = ref(false);
-    const type = ref('TS');
+    const type = ref<'TS' | 'JS'>('TS');
     const copyTooltipVisible = ref(false);
     const copied = ref(false);
     const codeRef = ref<HTMLDivElement>();
+    let copyTimer: ReturnType<typeof setTimeout> | null = null;
+
     const sectionId = computed(() => {
       const relativePath = props.jsfiddle?.relativePath || '';
       return `${relativePath.split('/').join('-').replace('.vue', '')}`.toLocaleLowerCase();
     });
+
+    const isDebug = computed(() => Boolean(props.jsfiddle?.debug));
     const inIframe = inject('inIframe', false);
-    const isAllExpanded = inject<any>('isAllExpanded', ref(false));
+    const isAllExpanded = inject<Ref<boolean>>('isAllExpanded', ref(false));
+    const showDebugDemos = inject<Ref<boolean>>('showDebugDemos', ref(true));
+    const registerDebugDemo = inject<(id: string) => void>('registerDebugDemo', () => {});
+    const themeMode = inject<{ theme: Ref<string> }>('themeMode', { theme: ref('light') });
+    const theme = computed(() => themeMode.theme.value);
+    const iframeDemo = inject<Record<string, string>>('iframeDemo', {});
+    const addDemosInfo = inject<(info: any) => void>('addDemosInfo', () => {});
+    const globalConfig = inject<GlobalConfig>(GLOBAL_CONFIG);
+
     watch(
       () => isAllExpanded?.value,
       val => {
@@ -117,106 +335,183 @@ export default defineComponent({
         }
       },
     );
-    const iframeHeight = computed(() => props.jsfiddle?.iframe);
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const addDemosInfo: any = inject('addDemosInfo', () => {});
 
-    const globalConfig = inject<GlobalConfig>(GLOBAL_CONFIG);
-    const title = computed(
-      () =>
-        props.jsfiddle &&
-        props.jsfiddle.title &&
-        props.jsfiddle?.title[globalConfig.isZhCN.value ? 'zh-CN' : 'en-US'],
+    const iframeHeight = computed(() => props.jsfiddle?.iframe);
+    const zhTitle = computed(() => props.jsfiddle?.title?.['zh-CN'] || '');
+    const enTitle = computed(() => props.jsfiddle?.title?.['en-US'] || '');
+    const title = computed(() =>
+      globalConfig.isZhCN.value ? zhTitle.value || enTitle.value : enTitle.value || zhTitle.value,
     );
-    const warning = () => {
-      // Modal.warning({
-      //   content: globalConfig.isZhCN
-      //     ? '我们检测到你可能使用了 AdBlock 或 Adblock Plus，它会影响到复制、展开代码等功能。 你可以将 Ant Design Vue 加入白名单，以便我们更好地提供服务。'
-      //     : 'We have detected that you may have used AdBlock or Adblock Plus, which will affect functions such as copying and expanding code. You can add Ant Design Vue to the whitelist so that we can provide better services.',
-      // });
-    };
-    const iframeDemoKey = computed(() => {
-      return (
-        props.jsfiddle &&
-        props.jsfiddle.title &&
-        props.jsfiddle?.title['en-US'] &&
-        String(props.jsfiddle?.title['en-US']).split(' ').join('-').toLowerCase()
-      );
+
+    const editGithubUrl = computed(() => {
+      const relativePath = props.jsfiddle?.relativePath || '';
+      return relativePath
+        ? `https://github.com/vueComponent/ant-design-vue/edit/main/${relativePath}`
+        : '';
     });
+
+    const iframeDemoKey = computed(() => {
+      const en = enTitle.value;
+      return en ? String(en).split(' ').join('-').toLowerCase() : '';
+    });
+
+    const sourceCode = computed(() => decodeBase64(props.jsfiddle?.sourceCode));
+    const jsSourceCode = computed(() => decodeBase64(props.jsfiddle?.jsSourceCode));
+    const activeCode = computed(() =>
+      type.value === 'TS' ? sourceCode.value : jsSourceCode.value || sourceCode.value,
+    );
+
+    const docHtml = computed(() => {
+      const rawDoc = props.jsfiddle?.docHtml;
+      if (!rawDoc) return '';
+      const stripped = rawDoc.replace(ZH_HEADING_RE, '');
+      const parts = stripped.split(EN_HEADING_RE);
+      return (parts[globalConfig.isZhCN.value ? 0 : 1] || '').trim();
+    });
+
     const onCopyTooltipVisibleChange = (visible: boolean) => {
+      copyTooltipVisible.value = visible;
       if (visible) {
-        copyTooltipVisible.value = visible;
         copied.value = false;
-      } else {
-        copyTooltipVisible.value = visible;
       }
     };
-    const docHtml = computed(() =>
-      props.jsfiddle && props.jsfiddle.docHtml
-        ? (
-            props.jsfiddle.docHtml.replace(
-              `<h2 id="zh-cn">zh-CN <a class="header-anchor" href="#zh-cn">
-          <span aria-hidden="true" class="anchor">#</span>
-        </a></h2>`,
-              '',
-            ).split(`<h2 id="en-us">en-US <a class="header-anchor" href="#en-us">
-          <span aria-hidden="true" class="anchor">#</span>
-        </a></h2>`)[globalConfig.isZhCN.value ? 0 : 1] || ''
-          ).trim()
-        : '',
-    );
-    const handleCodeExpand = (_, sectionId?) => {
-      if (globalConfig.blocked.value) {
-        warning();
-        return;
+
+    const handleCopyCode = async () => {
+      const ok = await copyToClipboard(activeCode.value);
+      if (ok) {
+        copied.value = true;
+        copyTooltipVisible.value = true;
+        if (copyTimer) clearTimeout(copyTimer);
+        copyTimer = setTimeout(() => {
+          copied.value = false;
+        }, 2000);
       }
-      if (sectionId) {
-        const element = document.getElementById(sectionId);
+    };
+
+    const handleCodeExpand = (_event?: Event, targetId?: string) => {
+      if (targetId) {
+        const element = document.getElementById(targetId);
         if (element) {
-          element.scrollIntoView();
+          const rect = element.getBoundingClientRect();
+          if (rect.top < 80) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         }
       }
       codeExpand.value = !codeExpand.value;
     };
-    const handleCodeCopied = () => {
-      copied.value = true;
-    };
-    const handleChangeType = () => {
-      if (globalConfig.blocked.value) {
-        warning();
-        return;
+
+    const handleChangeType = (nextType?: 'TS' | 'JS') => {
+      const target = nextType || (type.value === 'TS' ? 'JS' : 'TS');
+      type.value = target;
+      if (!codeExpand.value) {
+        codeExpand.value = true;
       }
-      type.value = type.value === 'TS' ? 'JS' : 'TS';
     };
+
     const handleCodeSandbox = () => {
-      const code = codeRef.value.innerText;
+      const code = activeCode.value;
+      if (!code) return;
       const params = getCodeSandboxParams(code, {
         title: `${title.value} - ant-design-vue@${packageInfo.version}`,
       });
-      const div = document.createElement('div');
-      div.style.display = 'none';
-      div.innerHTML = `<form action="https://codesandbox.io/api/v1/sandboxes/define" method="POST" target="_blank">
-        <input type="hidden" name="parameters" value="${params}" />
-        <input type="submit" value="Open in sandbox" />
-      </form>`;
-      document.body.appendChild(div);
-      (div.firstElementChild as HTMLFormElement).submit();
-      document.body.removeChild(div);
+      submitPostForm('https://codesandbox.io/api/v1/sandboxes/define', {
+        parameters: params,
+      });
     };
-    const highlightClass = computed(() => {
-      return {
-        'highlight-wrapper': true,
-        'highlight-wrapper-expand': codeExpand.value,
-      };
-    });
-    const iframeDemo = inject('iframeDemo', {});
+
+    const handleStackBlitz = () => {
+      const code = activeCode.value;
+      if (!code) return;
+      const demoTitle = `${title.value} - ant-design-vue@${packageInfo.version}`;
+      const pkgJson = JSON.stringify(
+        {
+          name: 'ant-design-vue-demo',
+          private: true,
+          version: '0.0.0',
+          type: 'module',
+          scripts: {
+            dev: 'vite',
+            build: 'vite build',
+          },
+          dependencies: extractDeps(code),
+          devDependencies: {
+            '@vitejs/plugin-vue': '^4.2.3',
+            typescript: '^5.0.4',
+            vite: '^4.3.9',
+          },
+        },
+        null,
+        2,
+      );
+      const scriptClose = '</' + 'script>';
+      const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${demoTitle}</title>
+  </head>
+  <body style="padding: 24px">
+    <div id="app"></div>
+    <script type="module" src="/src/main.js">${scriptClose}
+  </body>
+</html>
+`;
+      const viteConfig = `import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+
+export default defineConfig({
+  plugins: [vue()],
+});
+`;
+      const mainJs = `import { createApp } from 'vue';
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css';
+import App from './App.vue';
+
+createApp(App).use(Antd).mount('#app');
+`;
+      const appVue = `<template>
+  <Demo />
+</template>
+<script setup>
+import Demo from './Demo.vue';
+${scriptClose}
+`;
+      submitPostForm('https://stackblitz.com/run?file=src%2FDemo.vue', {
+        'project[title]': demoTitle,
+        'project[description]': 'Ant Design Vue live demo',
+        'project[template]': 'node',
+        'project[files][package.json]': pkgJson,
+        'project[files][index.html]': indexHtml,
+        'project[files][vite.config.js]': viteConfig,
+        'project[files][src/main.js]': mainJs,
+        'project[files][src/App.vue]': appVue,
+        'project[files][src/Demo.vue]': code,
+      });
+    };
+
+    const highlightClass = computed(() => ({
+      'highlight-wrapper': true,
+      'highlight-wrapper-expand': codeExpand.value,
+    }));
+
     onMounted(() => {
+      if (isDebug.value) {
+        registerDebugDemo(sectionId.value);
+      }
       addDemosInfo({
         href: `#${sectionId.value}`,
         title,
+        enTitle,
       });
     });
-    const theme = computed(() => inject('themeMode', { theme: ref('light') }).theme.value);
+
+    onBeforeUnmount(() => {
+      if (copyTimer) clearTimeout(copyTimer);
+    });
+
     return {
       docHtml,
       iframeDemo,
@@ -225,23 +520,25 @@ export default defineComponent({
       inIframe,
       theme,
       type,
-      warning,
-      blocked: globalConfig.blocked,
       isZhCN: globalConfig.isZhCN,
+      isDebug,
+      showDebugDemos,
       sectionId,
       title,
+      editGithubUrl,
       codeExpand,
       copyTooltipVisible,
       copied,
       onCopyTooltipVisibleChange,
+      handleCopyCode,
       handleCodeExpand,
-      handleCodeCopied,
       handleChangeType,
       highlightClass,
-      sourceCode: decodeURIComponent(escape(window.atob(props.jsfiddle?.sourceCode))),
-      jsSourceCode: decodeURIComponent(escape(window.atob(props.jsfiddle?.jsSourceCode))),
+      sourceCode,
+      jsSourceCode,
       codeRef,
       handleCodeSandbox,
+      handleStackBlitz,
     };
   },
 });

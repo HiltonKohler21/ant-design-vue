@@ -5,9 +5,9 @@
 
 .browser-mockup {
   position: relative;
-  border-top: 2em solid rgba(230, 230, 230, 0.7);
-  border-radius: 3px 3px 0 0;
-  box-shadow: 0 0.1em 0.5em 0 rgba(0, 0, 0, 0.28);
+  border-top: 2em solid var(--color-fill-tertiary, rgba(0, 0, 0, 0.06));
+  border-radius: var(--border-radius-base) var(--border-radius-base) 0 0;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
 }
 
 .browser-mockup::before {
@@ -31,7 +31,7 @@
   width: 20%;
   height: 0;
   border-right: 0.8em solid transparent;
-  border-bottom: 2em solid white;
+  border-bottom: 2em solid var(--component-background);
   border-left: 0.8em solid transparent;
   content: '';
 }
@@ -43,11 +43,16 @@
   display: block;
   width: ~'calc(100% - 6em)';
   height: 1.2em;
-  background-color: white;
+  background-color: var(--component-background);
   border-radius: 2px;
   content: '';
 }
 
 .browser-mockup > * {
   display: block;
+}
+
+html[data-doc-theme='dark'] .browser-mockup {
+  border-top-color: #262626;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }

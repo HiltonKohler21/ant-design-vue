@@ -1,0 +1,144 @@
+# Ant Design Vue
+
+> Ant Design Vue (ant-design-vue) is an enterprise-class UI component library for Vue 3, implementing the Ant Design system with Vue 3 Composition API, Single File Components (`<script setup>`), TypeScript, and CSS-in-JS dynamic theming.
+
+Ant Design Vue 4.x is built from the ground up for Vue 3. It replaces Less-based compilation with `@ant-design/cssinjs` dynamic runtime styling, offers complete TypeScript definitions, and supports modern frontend tooling (Vite, Rsbuild, Webpack).
+
+## Critical Guidelines for LLMs & AI Coding Agents
+
+When generating Vue 3 code using `ant-design-vue`, agents MUST follow these principles to avoid hallucinations:
+
+1. **Vue 3 SFC `<script setup lang="ts">`**: Always use `<script setup lang="ts">` and Composition API (`ref`, `reactive`, `computed`, `watch`).
+2. **Component Imports**: Import components directly from `'ant-design-vue'`:
+   ```ts
+   import { Button, Table, Form, Input, Modal, message } from 'ant-design-vue';
+   ```
+   Or use registered template tags `<a-button>`, `<a-table>`, `<a-form>`, etc.
+3. **Icon Imports**: Icons MUST be imported from `'@ant-design/icons-vue'`. NEVER import icons from `'ant-design-vue'` or `'@ant-design/icons'`.
+   ```ts
+   import { SearchOutlined, UserOutlined, DownOutlined } from '@ant-design/icons-vue';
+   ```
+4. **Zero CSS Imports (CSS-in-JS)**: Ant Design Vue 4.x generates styles on demand in JavaScript. DO NOT import CSS or Less files like `import 'ant-design-vue/dist/antd.css'` or `import 'ant-design-vue/es/style/css'`.
+5. **Form Data Binding (`v-model:value`)**: Form controls bind to values via `v-model:value`, NOT `v-model`.
+   ```vue
+   <a-input v-model:value="formState.username" />
+   <a-select v-model:value="formState.role" :options="roleOptions" />
+   ```
+6. **Dialog & Drawer Visibility (`v-model:open`)**: Modals and Drawers control visibility with `v-model:open`, NOT `v-model:visible` (which is deprecated in v4).
+   ```vue
+   <a-modal v-model:open="isModalOpen" title="Details">...</a-modal>
+   <a-drawer v-model:open="isDrawerOpen" title="Menu">...</a-drawer>
+   ```
+7. **Context & Feedback (`<a-app>`)**: Wrap applications with `<a-app>` so that modal, message, and notification hooks have access to Vue reactive contexts and theme tokens:
+   ```vue
+   <template>
+     <a-app>
+       <MyView />
+     </a-app>
+   </template>
+   <script setup lang="ts">
+   import { App } from 'ant-design-vue';
+   const { message, modal, notification } = App.useApp();
+   </script>
+   ```
+8. **Theme Customization & Design Tokens**: Use `<a-config-provider>` and `theme.useToken()`:
+   ```vue
+   <a-config-provider :theme="{ token: { colorPrimary: '#1677ff', borderRadius: 6 } }">
+     <router-view />
+   </a-config-provider>
+   ```
+
+## Documentation & Guides
+- [Quick Start](https://antdv.com/docs/vue/getting-started): Installation, Vite/Rsbuild integration, and baseline configuration.
+- [For AI Agents](https://antdv.com/docs/vue/for-agents): Authoritative instructions, rulesets, and prompts for Cursor, Claude Code, Copilot, and Antigravity.
+- [MCP Server](https://antdv.com/docs/vue/mcp): Model Context Protocol setup and tool reference.
+- [Design Specification](https://antdv.com/design.md): Design values, token hierarchy, and UI guidelines.
+- [Customize Theme](https://antdv.com/docs/vue/customize-theme): Design tokens, algorithms, and dynamic switching.
+- [SSR & Static Style Extraction](https://antdv.com/docs/vue/ssr-extract-ssr): Server-side rendering support with Nuxt 3 and Node.
+
+## Component Index
+
+### General
+- [Button](https://antdv.com/components/button): Trigger actions with primary, default, dashed, link, and text variants.
+- [Icon](https://antdv.com/components/icon): Semantic vector icons loaded from `@ant-design/icons-vue`.
+- [Typography](https://antdv.com/components/typography): Headings, paragraphs, text with copy, edit, and ellipsis support.
+
+### Layout
+- [Divider](https://antdv.com/components/divider): Horizontal or vertical content separators.
+- [Flex](https://antdv.com/components/flex): CSS Flexbox layout component with gap, align, and justify helpers.
+- [Grid](https://antdv.com/components/grid): 24-column grid system (`a-row` and `a-col`) with responsive breakpoints.
+- [Layout](https://antdv.com/components/layout): Page structural layout (`a-layout`, `a-layout-header`, `a-layout-sider`, `a-layout-content`, `a-layout-footer`).
+- [Space](https://antdv.com/components/space): Uniform spacing between inline and block elements.
+- [Splitter](https://antdv.com/components/splitter): Draggable and collapsible pane splitters.
+
+### Navigation
+- [Anchor](https://antdv.com/components/anchor): Hyperlink scrolling navigation for in-page sections.
+- [Breadcrumb](https://antdv.com/components/breadcrumb): Hierarchical page location indicator.
+- [Dropdown](https://antdv.com/components/dropdown): Contextual drop-down menu lists.
+- [Menu](https://antdv.com/components/menu): Navigation menu with inline, vertical, and horizontal layouts.
+- [PageHeader](https://antdv.com/components/page-header): Top-level page header with back button, breadcrumbs, tags, and actions.
+- [Pagination](https://antdv.com/components/pagination): Page navigation for large datasets.
+- [Steps](https://antdv.com/components/steps): Linear process step-by-step navigation.
+
+### Data Entry
+- [AutoComplete](https://antdv.com/components/auto-complete): Text input with query-based autocompletion options.
+- [Cascader](https://antdv.com/components/cascader): Multi-level hierarchical dropdown selection.
+- [Checkbox](https://antdv.com/components/checkbox): Multi-selection checkboxes and checkbox groups.
+- [ColorPicker](https://antdv.com/components/color-picker): Visual color picker supporting HEX, RGB, and HSB modes.
+- [DatePicker](https://antdv.com/components/date-picker): Single date, week, month, quarter, year, and range picker.
+- [Form](https://antdv.com/components/form): Form validation, layout, and reactive state management (`v-model:value`).
+- [Input](https://antdv.com/components/input): Text input, password input, search input, and textareas.
+- [InputNumber](https://antdv.com/components/input-number): Controlled numerical input with increment/decrement steppers.
+- [Mentions](https://antdv.com/components/mentions): Text input with `@mention` trigger support.
+- [Radio](https://antdv.com/components/radio): Single-selection radio inputs and radio button groups.
+- [Rate](https://antdv.com/components/rate): Star rating component for scoring and feedback.
+- [Select](https://antdv.com/components/select): Single, multiple, and tags dropdown selection with search and async loading.
+- [Slider](https://antdv.com/components/slider): Single value or range slider with marks and tooltip indicators.
+- [Switch](https://antdv.com/components/switch): Two-state toggle switch for boolean settings.
+- [TimePicker](https://antdv.com/components/time-picker): Time selection popup for hours, minutes, and seconds.
+- [Transfer](https://antdv.com/components/transfer): Double-column transfer control for moving items between lists.
+- [TreeSelect](https://antdv.com/components/tree-select): Hierarchical tree structure dropdown selector.
+- [Upload](https://antdv.com/components/upload): File and image drag-and-drop or button uploader.
+
+### Data Display
+- [Avatar](https://antdv.com/components/avatar): Profile picture or initials display with shape and size options.
+- [Badge](https://antdv.com/components/badge): Numerical badges and status dots on icons and cards.
+- [Calendar](https://antdv.com/components/calendar): Full-sized or card-sized month and year calendar.
+- [Card](https://antdv.com/components/card): Container for grouped information with headers, actions, and tabs.
+- [Carousel](https://antdv.com/components/carousel): Slideshow / carousel for images or interactive cards.
+- [Collapse](https://antdv.com/components/collapse): Accordion collapsible panels for dense content.
+- [Comment](https://antdv.com/components/comment): Discussion comment box with author, avatar, datetime, and reply actions.
+- [Descriptions](https://antdv.com/components/descriptions): Label-value list format for entity summaries.
+- [Empty](https://antdv.com/components/empty): Empty state placeholder when data is absent.
+- [Image](https://antdv.com/components/image): Image viewer with preview, rotation, and zoom capabilities.
+- [List](https://antdv.com/components/list): Simple or complex list presentation with pagination and actions.
+- [Popover](https://antdv.com/components/popover): Card-like floating panel triggered by click or hover.
+- [QRCode](https://antdv.com/components/qrcode): Canvas or SVG based QR code generator with status handling.
+- [Segmented](https://antdv.com/components/segmented): Linear segmented control for mutually exclusive view options.
+- [Statistic](https://antdv.com/components/statistic): Formatted numerical indicators, countdowns, and KPI metrics.
+- [Table](https://antdv.com/components/table): Feature-rich data table with sorting, filtering, selection, fixed headers, and pagination.
+- [Tabs](https://antdv.com/components/tabs): Tabbed navigation for switching between concurrent views.
+- [Tag](https://antdv.com/components/tag): Colored badges and closable keyword tags.
+- [Timeline](https://antdv.com/components/timeline): Vertical chronological event flow.
+- [Tooltip](https://antdv.com/components/tooltip): Contextual text hint shown on hover or focus.
+- [Tour](https://antdv.com/components/tour): Step-by-step guided walkthrough for new users and feature announcements.
+- [Tree](https://antdv.com/components/tree): Collapsible hierarchical tree view with checkboxes and drag-and-drop.
+
+### Feedback
+- [Alert](https://antdv.com/components/alert): Contextual message banners (success, info, warning, error).
+- [Drawer](https://antdv.com/components/drawer): Slide-out overlay panel (`v-model:open`).
+- [Message](https://antdv.com/components/message): Global transient toast notification (`App.useApp()`).
+- [Modal](https://antdv.com/components/modal): Modal dialog popup (`v-model:open` or `App.useApp()`).
+- [Notification](https://antdv.com/components/notification): Corner notification card for system messages (`App.useApp()`).
+- [Popconfirm](https://antdv.com/components/popconfirm): Lightweight confirmation balloon before destructive actions.
+- [Progress](https://antdv.com/components/progress): Circular and linear progress indicators.
+- [Result](https://antdv.com/components/result): Success, error, 404, 403, and 500 status screens.
+- [Skeleton](https://antdv.com/components/skeleton): Animated loading placeholder outlines.
+- [Spin](https://antdv.com/components/spin): Loading indicator for async states.
+- [Watermark](https://antdv.com/components/watermark): Security watermark overlay for pages or containers.
+
+### Other
+- [App](https://antdv.com/components/app): App-level context wrapper providing theme tokens and feedback hooks.
+- [BackTop](https://antdv.com/components/back-top): Quick scroll-to-top button.
+- [ConfigProvider](https://antdv.com/components/config-provider): Global provider for themes, locales, prefixCls, and direction.
+- [FloatButton](https://antdv.com/components/float-button): Floating action button and speed dial groups.
