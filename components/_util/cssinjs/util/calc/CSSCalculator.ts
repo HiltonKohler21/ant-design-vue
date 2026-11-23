@@ -15,7 +15,7 @@ function unit(value: number | string) {
  * 从而支持 `var(--ant-xxx)` 参与运算（CSS 里变量不能直接参与算术）。
  */
 export default class CSSCalculator extends AbstractCalculator {
-  result: string = '';
+  result = '';
 
   unitlessCssVar: Set<string>;
 
@@ -27,7 +27,12 @@ export default class CSSCalculator extends AbstractCalculator {
     this.unitlessCssVar = unitlessCssVar;
 
     if (num instanceof CSSCalculator) {
-      this.result = `(${num.result})`;
+      if (typeof num.lowPriority !== 'undefined') {
+        this.result = `(${num.result})`;
+        this.lowPriority = false;
+      } else {
+        this.result = num.result;
+      }
     } else if (typeof num === 'number') {
       this.result = unit(num) as string;
     } else if (typeof num === 'string') {
@@ -56,8 +61,14 @@ export default class CSSCalculator extends AbstractCalculator {
   }
 
   mul(num: number | string | AbstractCalculator): this {
+    if (this.lowPriority) {
+      this.result = `(${this.result})`;
+    }
     if (num instanceof CSSCalculator) {
-      this.result = `${this.result} * ${num.getResult(true)}`;
+      const rhsVars = num.result.match(/--[a-zA-Z0-9-]+/g);
+      const rhsIsScalar = !rhsVars || rhsVars.every(cssVar => this.unitlessCssVar.has(cssVar));
+      const rhs = rhsIsScalar ? num.getResult(true).replace(regexp, '') : num.getResult(true);
+      this.result = `${this.result} * ${rhs}`;
     } else if (typeof num === 'number' || typeof num === 'string') {
       this.result = `${this.result} * ${num}`;
     }
@@ -66,8 +77,12 @@ export default class CSSCalculator extends AbstractCalculator {
   }
 
   div(num: number | string | AbstractCalculator): this {
+    if (this.lowPriority) {
+      this.result = `(${this.result})`;
+    }
     if (num instanceof CSSCalculator) {
-      this.result = `${this.result} / ${num.getResult(true)}`;
+      const rhs = num.getResult(true).replace(regexp, '');
+      this.result = `${this.result} / ${rhs}`;
     } else if (typeof num === 'number' || typeof num === 'string') {
       this.result = `${this.result} / ${num}`;
     }
@@ -81,16 +96,23 @@ export default class CSSCalculator extends AbstractCalculator {
 
   equal(options?: { unit?: boolean }): string {
     const { unit: cssUnit } = options || {};
-    let mergedUnit: boolean = true;
+    let mergedUnit = true;
     if (typeof cssUnit === 'boolean') {
       mergedUnit = cssUnit;
-    } else if (Array.from(this.unitlessCssVar).some(cssVar => this.result.includes(cssVar))) {
-      mergedUnit = false;
+    } else {
+      const cssVars = this.result.match(/--[a-zA-Z0-9-]+/g);
+      if (
+        cssVars &&
+        cssVars.length > 0 &&
+        cssVars.every(cssVar => this.unitlessCssVar.has(cssVar))
+      ) {
+        mergedUnit = false;
+      }
     }
-    this.result = this.result.replace(regexp, mergedUnit ? 'px' : '');
+    const result = this.result.replace(regexp, mergedUnit ? 'px' : '');
     if (typeof this.lowPriority !== 'undefined') {
-      return `calc(${this.result})`;
+      return `calc(${result})`;
     }
-    return this.result;
+    return result;
   }
 }

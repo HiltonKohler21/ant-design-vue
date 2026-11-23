@@ -789,4 +789,400 @@ describe('cssVar 非法 CSS 检测（逐组件）', () => {
     expect(css).not.toContain('NaN');
     wrapper.unmount();
   });
+
+  it('CSSCalculator vs NumCalculator 数学等价与运算符优先级契约', () => {
+    const unitlessVars = new Set([
+      '--ant-line-height',
+      '--ant-line-height-lg',
+      '--ant-z-index-popup',
+      '--ant-z-index-popup-base',
+    ]);
+    const cssCalc = genCalc('css', unitlessVars);
+    const numCalc = genCalc('number', unitlessVars);
+
+    const tokenMap = {
+      railSize: { varName: '--ant-slider-rail-size', value: 4 },
+      handleSize: { varName: '--ant-slider-handle-size', value: 10 },
+      handleSizeHover: { varName: '--ant-slider-handle-size-hover', value: 12 },
+      handleLineWidth: { varName: '--ant-slider-handle-line-width', value: 2 },
+      handleLineWidthHover: { varName: '--ant-slider-handle-line-width-hover', value: 4 },
+      dotSize: { varName: '--ant-slider-dot-size', value: 8 },
+      pinSize: { varName: '--ant-switch-handle-size', value: 18 },
+      loadingIconSize: { varName: '--ant-switch-loading-icon-size', value: 9 },
+      spinDotSize: { varName: '--ant-spin-dot-size', value: 20 },
+      fontSize: { varName: '--ant-font-size', value: 14 },
+      lineHeight: { varName: '--ant-line-height', value: 1.5, unitless: true },
+      lineHeightLG: { varName: '--ant-line-height-lg', value: 1.5, unitless: true },
+      lineWidth: { varName: '--ant-line-width', value: 1 },
+      timelineDotSize: { varName: '--ant-timeline-dot-size', value: 10 },
+      tailWidth: { varName: '--ant-timeline-tail-width', value: 2 },
+      modalHeaderCloseSize: { varName: '--ant-modal-header-close-size', value: 56 },
+      modalCloseBtnSize: { varName: '--ant-modal-close-btn-size', value: 22 },
+      floatPadding: { varName: '--ant-float-padding', value: 4 },
+      badgeOffset: { varName: '--ant-badge-offset', value: 6 },
+      paddingHorizontal: { varName: '--ant-table-padding-horizontal', value: 16 },
+      stepsIconSize: { varName: '--ant-steps-icon-size', value: 32 },
+      stepsProgressSize: { varName: '--ant-steps-progress-size', value: 40 },
+      zIndexPopup: { varName: '--ant-z-index-popup', value: 1050, unitless: true },
+    };
+
+    const varValues = Object.fromEntries(
+      Object.values(tokenMap).map(({ varName, value, unitless }) => [
+        varName,
+        unitless ? String(value) : `${value}px`,
+      ]),
+    );
+
+    const cssTokens = Object.fromEntries(
+      Object.entries(tokenMap).map(([k, { varName }]) => [k, `var(${varName})`]),
+    );
+    const numTokens = Object.fromEntries(
+      Object.entries(tokenMap).map(([k, { value }]) => [k, value]),
+    );
+
+    // 严格按 CSS Values 规则解析并求值 calc()（校验优先级、括号与单位合法性）
+    const evalCssValue = raw => {
+      const substituted = raw.replace(/var\((--[a-z0-9-]+)\)/gi, (_, name) => {
+        if (!(name in varValues)) throw new Error(`Unknown CSS var: ${name}`);
+        return varValues[name];
+      });
+      if (!substituted.startsWith('calc(')) {
+        return substituted;
+      }
+      const evalCalcInner = expr => {
+        const tokens = [];
+        let i = 0;
+        while (i < expr.length) {
+          const ch = expr[i];
+          if (/\s/.test(ch)) {
+            i += 1;
+            continue;
+          }
+          if (expr.slice(i, i + 5) === 'calc(') {
+            tokens.push({ type: 'LPAREN' });
+            i += 5;
+            continue;
+          }
+          if (ch === '(') {
+            tokens.push({ type: 'LPAREN' });
+            i += 1;
+            continue;
+          }
+          if (ch === ')') {
+            tokens.push({ type: 'RPAREN' });
+            i += 1;
+            continue;
+          }
+          if (ch === '*' || ch === '/') {
+            tokens.push({ type: 'OP', val: ch });
+            i += 1;
+            continue;
+          }
+          if (ch === '+' || ch === '-') {
+            const prev = tokens[tokens.length - 1];
+            const isUnary = !prev || prev.type === 'LPAREN' || prev.type === 'OP';
+            if (!isUnary) {
+              if (!/\s/.test(expr[i - 1] || '') || !/\s/.test(expr[i + 1] || '')) {
+                throw new Error(`Missing whitespace around '${ch}' in calc(${expr})`);
+              }
+              tokens.push({ type: 'OP', val: ch });
+              i += 1;
+              continue;
+            }
+          }
+          const m = expr.slice(i).match(/^([+-]?(?:\d+\.?\d*|\.\d+))(px)?/i);
+          if (m && m[0].length > 0) {
+            tokens.push({ type: 'NUM', val: parseFloat(m[1]), unit: (m[2] || '').toLowerCase() });
+            i += m[0].length;
+            continue;
+          }
+          throw new Error(`Unexpected token near "${expr.slice(i)}" in calc(${expr})`);
+        }
+        let pos = 0;
+        const peek = () => tokens[pos];
+        const next = () => tokens[pos++];
+        const parsePrimary = () => {
+          const t = peek();
+          if (!t) throw new Error(`Unexpected EOF in calc(${expr})`);
+          if (t.type === 'LPAREN') {
+            next();
+            const val = parseAddSub();
+            if (!peek() || peek().type !== 'RPAREN')
+              throw new Error(`Missing ')' in calc(${expr})`);
+            next();
+            return val;
+          }
+          if (t.type === 'NUM') {
+            next();
+            return { val: t.val, unit: t.unit };
+          }
+          throw new Error(`Unexpected token in calc(${expr})`);
+        };
+        const parseMulDiv = () => {
+          let left = parsePrimary();
+          while (peek() && peek().type === 'OP' && (peek().val === '*' || peek().val === '/')) {
+            const op = next().val;
+            const right = parsePrimary();
+            if (op === '*') {
+              if (left.unit && right.unit) {
+                throw new Error(`Invalid length * length in calc(${expr})`);
+              }
+              left = { val: left.val * right.val, unit: left.unit || right.unit };
+            } else {
+              if (right.unit) {
+                throw new Error(`Invalid division by length in calc(${expr})`);
+              }
+              left = { val: left.val / right.val, unit: left.unit };
+            }
+          }
+          return left;
+        };
+        const parseAddSub = () => {
+          let left = parseMulDiv();
+          while (peek() && peek().type === 'OP' && (peek().val === '+' || peek().val === '-')) {
+            const op = next().val;
+            const right = parseMulDiv();
+            if (left.unit !== right.unit) {
+              throw new Error(
+                `Incompatible units (${left.unit} vs ${right.unit}) in calc(${expr})`,
+              );
+            }
+            left = {
+              val: op === '+' ? left.val + right.val : left.val - right.val,
+              unit: left.unit,
+            };
+          }
+          return left;
+        };
+        const out = parseAddSub();
+        if (pos !== tokens.length) throw new Error(`Trailing tokens in calc(${expr})`);
+        const rounded = Math.round(out.val * 10000) / 10000;
+        return `${rounded}${out.unit}`;
+      };
+      return evalCalcInner(substituted.slice(5, -1));
+    };
+
+    const FORMULAS = [
+      // 基础优先级：(a + b) * c, (a - b) / c, 连续多级混合运算
+      ['(a + b) * 2', (c, t) => c(t.railSize).add(t.dotSize).mul(2).equal()],
+      ['(a - b) * -1', (c, t) => c(t.handleSize).sub(t.railSize).mul(-1).equal()],
+      ['(a + b) / 2', (c, t) => c(t.timelineDotSize).add(t.tailWidth).div(2).equal()],
+      [
+        '((a + b) * 3 + c) / 2',
+        (c, t) => c(t.railSize).add(t.tailWidth).mul(3).add(t.dotSize).div(2).equal(),
+      ],
+      // 右操作数为 Calculator 时的优先级
+      ['a - (b + c)', (c, t) => c(t.stepsIconSize).sub(c(t.handleSize).add(t.dotSize)).equal()],
+      ['a - (b - c)', (c, t) => c(t.stepsIconSize).sub(c(t.handleSize).sub(t.railSize)).equal()],
+      ['a - (b * 2)', (c, t) => c(t.stepsIconSize).sub(c(t.lineWidth).mul(2)).equal()],
+      ['a + (b - c)', (c, t) => c(t.stepsIconSize).add(c(t.handleSize).sub(t.railSize)).equal()],
+      ['a / (2 * 2)', (c, t) => c(t.stepsIconSize).div(c(2).mul(2)).equal()],
+      ['a / (4 / 2)', (c, t) => c(t.stepsIconSize).div(c(4).div(2)).equal()],
+      ['a * (1 + 2)', (c, t) => c(t.railSize).mul(c(1).add(2)).equal()],
+      // 嵌套 calc(calc(...)) 构造
+      ['calc(calc(a))', (c, t) => c(c(t.handleSize)).equal()],
+      ['calc(calc(a).add(b))', (c, t) => c(c(t.handleSize).add(t.railSize)).equal()],
+      ['calc(calc(a).add(b)).mul(2)', (c, t) => c(c(t.handleSize).add(t.railSize)).mul(2).equal()],
+      // 混合无单位变量 + 长度变量 + 字面量（+2 必须带 px）
+      ['fontSize * lineHeight + 2', (c, t) => c(t.fontSize).mul(t.lineHeight).add(2).equal()],
+      // 纯无单位变量运算
+      ['zIndexPopup + 1 (unit:false)', (c, t) => c(t.zIndexPopup).add(1).equal({ unit: false })],
+      [
+        'lineHeightLG - 0.0002 (unit:false)',
+        (c, t) => c(t.lineHeightLG).sub(0.0002).equal({ unit: false }),
+      ],
+      // 各组件真实样式公式
+      ['Slider handle inset', (c, t) => c(t.railSize).mul(3).sub(t.handleSize).div(2).equal()],
+      ['Slider dot inset', (c, t) => c(t.railSize).sub(t.dotSize).div(2).equal()],
+      [
+        'Slider hover handle ::after',
+        (c, t) => c(t.handleSize).sub(t.handleSizeHover).div(2).equal(),
+      ],
+      [
+        'Slider hover handle ::before',
+        (c, t) =>
+          c(t.handleSizeHover).sub(t.handleSize).div(2).add(t.handleLineWidthHover).mul(-1).equal(),
+      ],
+      ['Switch loading icon top', (c, t) => c(t.pinSize).sub(t.loadingIconSize).div(2).equal()],
+      ['Spin text paddingTop', (c, t) => c(t.spinDotSize).sub(t.fontSize).div(2).add(2).equal()],
+      ['Spin dot marginTop', (c, t) => c(t.spinDotSize).div(2).add(10).mul(-1).equal()],
+      ['Timeline tail offset', (c, t) => c(t.timelineDotSize).sub(t.tailWidth).div(2).equal()],
+      [
+        'Timeline content insetBlockStart',
+        (c, t) =>
+          c(c(t.fontSize).mul(t.lineHeight).equal())
+            .sub(t.fontSize)
+            .add(t.lineWidth)
+            .mul(-1)
+            .equal(),
+      ],
+      [
+        'Modal close offset',
+        (c, t) => c(t.modalHeaderCloseSize).sub(t.modalCloseBtnSize).div(2).equal(),
+      ],
+      ['FloatButton badge offset', (c, t) => c(t.floatPadding).add(t.badgeOffset).mul(-1).equal()],
+      ['Table bordered margin', (c, t) => c(t.paddingHorizontal).add(t.lineWidth).mul(-1).equal()],
+      [
+        'Steps progress offset',
+        (c, t) =>
+          c(t.stepsIconSize)
+            .sub(t.stepsProgressSize)
+            .sub(c(t.lineWidth).mul(2).equal())
+            .div(2)
+            .equal(),
+      ],
+    ];
+
+    for (const [label, fn] of FORMULAS) {
+      const cssExpr = fn(cssCalc, cssTokens);
+      const numExpected = fn(numCalc, numTokens);
+      const cssEvaluated = evalCssValue(cssExpr);
+      expect({ label, value: cssEvaluated, cssExpr }).toEqual({
+        label,
+        value: numExpected,
+        cssExpr,
+      });
+    }
+
+    // 纯 unitlessCssVar 自动推导无单位（不传 options.unit 时）
+    expect(cssCalc(cssTokens.zIndexPopup).add(1).equal()).toBe(
+      'calc(var(--ant-z-index-popup) + 1)',
+    );
+    expect(evalCssValue(cssCalc(cssTokens.zIndexPopup).add(1).equal())).toBe('1051');
+  });
+
+  it('Slider / Switch / Spin / Timeline / Modal / Table / Form 实测 CSS calc() 与色值回归守卫', async () => {
+    document.head.innerHTML = '';
+    document.body.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: { theme: { cssVar: true } },
+      slots: {
+        default: () => (
+          <div>
+            <Slider defaultValue={30} />
+            <Slider disabled defaultValue={30} />
+            <Switch loading />
+            <Spin tip="Loading" />
+            <Timeline items={[{ content: 'x' }]} />
+            <Modal open={false} title="m">
+              body
+            </Modal>
+            <Table
+              bordered
+              columns={[{ title: 'A', dataIndex: 'a' }]}
+              dataSource={[{ key: 1, a: 1 }]}
+            />
+            <Form>
+              <Form.Item label="l">
+                <span>field</span>
+              </Form.Item>
+            </Form>
+          </div>
+        ),
+      },
+      attachTo: 'body',
+    });
+    await nextTick();
+    await new Promise(r => setTimeout(r, 100));
+
+    const css = collectCss();
+    const vars = {};
+    const rules = [];
+    const reRule = /([^{}@]+)\{([^{}]*)\}/g;
+    let rm = reRule.exec(css);
+    while (rm) {
+      const sel = rm[1].trim();
+      const decls = {};
+      rm[2].split(';').forEach(d => {
+        const idx = d.indexOf(':');
+        if (idx > 0) {
+          const k = d.slice(0, idx).trim().toLowerCase();
+          const v = d.slice(idx + 1).trim();
+          decls[k] = v;
+          if (k.startsWith('--ant-')) vars[k] = v;
+        }
+      });
+      rules.push({ sel, decls });
+      rm = reRule.exec(css);
+    }
+
+    const resolveProp = (selectorSubstr, prop) => {
+      const matched = rules.filter(r =>
+        r.sel
+          .split(',')
+          .map(s => s.trim())
+          .some(s => s.endsWith(selectorSubstr)),
+      );
+      expect(matched.length).toBeGreaterThan(0);
+      const merged = Object.assign({}, ...matched.map(r => r.decls));
+      let val = merged[prop];
+      expect(val).toBeDefined();
+      for (let d = 0; d < 8 && val.includes('var('); d += 1) {
+        val = val.replace(/var\((--[a-z0-9-]+)\)/gi, (m, n) => (n in vars ? vars[n] : m));
+      }
+      if (val.startsWith('calc(')) {
+        const js = val.replace(/calc\(/g, '(').replace(/px/g, '');
+        // eslint-disable-next-line no-new-func
+        const num = Function(`"use strict"; return (${js});`)();
+        return `${Math.round(num * 1000) / 1000}px`;
+      }
+      return val;
+    };
+
+    // Slider: handle inset-block-start = (4*3 - 10)/2 = 1px（旧 bug 为 7px）
+    expect(resolveProp('.ant-slider-horizontal .ant-slider-handle', 'inset-block-start')).toBe(
+      '1px',
+    );
+    expect(resolveProp('.ant-slider-vertical .ant-slider-handle', 'inset-inline-start')).toBe(
+      '1px',
+    );
+    // Slider: dot = (4 - 8)/2 = -2px（旧 bug 为 0px）
+    expect(resolveProp('.ant-slider-horizontal .ant-slider-dot', 'inset-block-start')).toBe('-2px');
+    expect(resolveProp('.ant-slider-vertical .ant-slider-dot', 'inset-inline-start')).toBe('-2px');
+    // Slider: hover handle ::after = (10 - 12)/2 = -1px（旧 bug 为 4px）
+    expect(resolveProp('.ant-slider-handle:hover::after', 'inset-block-start')).toBe('-1px');
+    // Slider: hover handle ::before = -((12 - 10)/2 + 4) = -5px（旧 bug 为 -3px）
+    expect(resolveProp('.ant-slider-handle:hover::before', 'inset-block-start')).toBe('-5px');
+    // Slider: disabled handle ::after 不得退化为纯黑 #000000（旧 bug onBackground(var(--ant-color-bg-container))）
+    const disabledHandleShadow = resolveProp(
+      '.ant-slider.ant-slider-disabled .ant-slider-handle::after',
+      'box-shadow',
+    );
+    expect(disabledHandleShadow.toLowerCase()).not.toContain('#000000');
+    expect(disabledHandleShadow.toLowerCase()).toContain('#bfbfbf');
+
+    // Timeline: tail = (10 - 2)/2 = 4px（旧 bug 为 9px）
+    expect(resolveProp('.ant-timeline .ant-timeline-item-tail', 'inset-inline-start')).toBe('4px');
+    expect(
+      resolveProp('.ant-timeline-horizontal .ant-timeline-item-tail', 'inset-block-start'),
+    ).toBe('4px');
+
+    // Switch: loading icon top = (18 - 14)/2 = 2px（旧 bug 为 11px）
+    expect(resolveProp('.ant-switch-loading-icon.anticon', 'top')).toBe('2px');
+
+    // Spin: show-text dot margin-top = -(20/2 + 10) = -20px（旧 bug 为 0px）；text padding-top = (20-14)/2+2 = 5px（旧 bug 为 15px）
+    expect(
+      resolveProp(
+        '.ant-spin-nested-loading >div>.ant-spin.ant-spin-show-text .ant-spin-dot',
+        'margin-top',
+      ),
+    ).toBe('-20px');
+    expect(
+      resolveProp('.ant-spin-nested-loading >div>.ant-spin .ant-spin-text', 'padding-top'),
+    ).toBe('5px');
+
+    // Modal: close button offset = (modalHeaderCloseSize - modalCloseBtnSize) / 2 = (56 - 22)/2 = 17px（旧 bug 为 45px）
+    expect(resolveProp('.ant-modal .ant-modal-close', 'top')).toBe('17px');
+    expect(resolveProp('.ant-modal .ant-modal-close', 'inset-inline-end')).toBe('17px');
+
+    // Form: label-wrap line-height 不得含非法 calc(var(--ant-line-height) - 0.25em)
+    expect(css).not.toContain('- 0.25em');
+
+    // Table: 表头图标色不得因 opacityLoading=var() 乘法产生 NaN 而退化为 alpha=1
+    const tableFilterColor = resolveProp('.ant-table-filter-trigger', 'color');
+    expect(tableFilterColor).not.toBe('rgb(0, 0, 0)');
+    expect(tableFilterColor).toMatch(/rgba\(0,\s*0,\s*0,\s*0\.29/);
+
+    wrapper.unmount();
+  });
 });

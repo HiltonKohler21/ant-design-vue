@@ -23,9 +23,9 @@ export interface ComponentToken {
 }
 
 interface SliderToken extends FullToken<'Slider'> {
-  marginFull: number;
-  marginPart: number;
-  marginPartWithMark: number;
+  marginFull: number | string;
+  marginPart: number | string;
+  marginPartWithMark: number | string;
 }
 
 // =============================== Base ===============================
@@ -100,13 +100,10 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           position: 'absolute',
           insetInlineStart: token.calc(token.handleLineWidth).mul(-1).equal(),
           insetBlockStart: token.calc(token.handleLineWidth).mul(-1).equal(),
-          width: token
-            .calc(token.handleSize)
-            .add(token.calc(token.handleLineWidth).mul(2).equal())
-            .equal(),
+          width: token.calc(token.handleSize).add(token.calc(token.handleLineWidth).mul(2)).equal(),
           height: token
             .calc(token.handleSize)
-            .add(token.calc(token.handleLineWidth).mul(2).equal())
+            .add(token.calc(token.handleLineWidth).mul(2))
             .equal(),
           backgroundColor: 'transparent',
         },
@@ -134,34 +131,26 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         '&:hover, &:active, &:focus': {
           '&::before': {
             insetInlineStart: token
-              .calc(
-                token
-                  .calc(token.handleSizeHover)
-                  .sub(token.handleSize)
-                  .equal(),
-              )
+              .calc(token.handleSizeHover)
+              .sub(token.handleSize)
               .div(2)
               .add(token.handleLineWidthHover)
               .mul(-1)
               .equal(),
             insetBlockStart: token
-              .calc(
-                token
-                  .calc(token.handleSizeHover)
-                  .sub(token.handleSize)
-                  .equal(),
-              )
+              .calc(token.handleSizeHover)
+              .sub(token.handleSize)
               .div(2)
               .add(token.handleLineWidthHover)
               .mul(-1)
               .equal(),
             width: token
               .calc(token.handleSizeHover)
-              .add(token.calc(token.handleLineWidthHover).mul(2).equal())
+              .add(token.calc(token.handleLineWidthHover).mul(2))
               .equal(),
             height: token
               .calc(token.handleSizeHover)
-              .add(token.calc(token.handleLineWidthHover).mul(2).equal())
+              .add(token.calc(token.handleLineWidthHover).mul(2))
               .equal(),
           },
 
@@ -174,11 +163,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
               .sub(token.handleSizeHover)
               .div(2)
               .equal(),
-            insetBlockStart: token
-              .calc(token.handleSize)
-              .sub(token.handleSizeHover)
-              .div(2)
-              .equal(),
+            insetBlockStart: token.calc(token.handleSize).sub(token.handleSizeHover).div(2).equal(),
           },
         },
       },
@@ -249,8 +234,10 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           cursor: 'not-allowed',
           width: token.handleSize,
           height: token.handleSize,
-          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${new TinyColor((token as any)._realToken?.colorTextDisabled ?? token.colorTextDisabled)
-            .onBackground(token.colorBgContainer)
+          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${new TinyColor(
+            (token as any)._realToken?.colorTextDisabled ?? token.colorTextDisabled,
+          )
+            .onBackground((token as any)._realToken?.colorBgContainer ?? token.colorBgContainer)
             .toHexString()}`,
           insetInlineStart: 0,
           insetBlockStart: 0,
@@ -269,7 +256,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
 
 // ============================ Horizontal ============================
 const genDirectionStyle = (token: SliderToken, horizontal: boolean): CSSObject => {
-  const { componentCls, railSize, handleSize, dotSize } = token;
+  const { componentCls, railSize, handleSize, dotSize, marginFull } = token;
 
   const railPadding: keyof CSSProperties = horizontal ? 'paddingBlock' : 'paddingInline';
   const full: keyof CSSProperties = horizontal ? 'width' : 'height';
@@ -291,18 +278,19 @@ const genDirectionStyle = (token: SliderToken, horizontal: boolean): CSSObject =
     },
 
     [`${componentCls}-handle`]: {
-      [handlePos]: token
-        .calc(token.calc(railSize).mul(3).equal())
-        .sub(handleSize)
-        .div(2)
-        .equal(),
+      [handlePos]: token.calc(railSize).mul(3).sub(handleSize).div(2).equal(),
     },
 
     [`${componentCls}-mark`]: {
       // Reset all
       insetInlineStart: 0,
       top: 0,
-      [markInset]: handleSize,
+      // https://github.com/ant-design/ant-design/issues/43731
+      [markInset]: token
+        .calc(railSize)
+        .mul(3)
+        .add(horizontal ? 0 : marginFull)
+        .equal(),
       [full]: '100%',
     },
 
@@ -352,12 +340,10 @@ const genVerticalStyle: GenerateStyle<SliderToken> = token => {
 export default genComponentStyleHook(
   'Slider',
   token => {
-    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-    const rawToken: any = (token as any)._realToken ?? token;
     const sliderToken = mergeToken<SliderToken>(token, {
-      marginPart: (rawToken.controlHeight - rawToken.controlSize) / 2,
-      marginFull: rawToken.controlSize / 2,
-      marginPartWithMark: rawToken.controlHeightLG - rawToken.controlSize,
+      marginPart: token.calc(token.controlHeight).sub(token.controlSize).div(2).equal(),
+      marginFull: token.calc(token.controlSize).div(2).equal(),
+      marginPartWithMark: token.calc(token.controlHeightLG).sub(token.controlSize).equal(),
     });
     return [
       genBaseStyle(sliderToken),

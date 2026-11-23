@@ -422,7 +422,6 @@ export default genComponentStyleHook(
     const {
       colorTextHeading,
       colorSplit,
-      opacityLoading,
       colorBgContainer,
       headerBg,
       headerColor,
@@ -484,11 +483,11 @@ export default genComponentStyleHook(
       tableHeaderSortHoverBg: headerSortHoverBg,
       tableHeaderIconColor: baseColorAction
         .clone()
-        .setAlpha(baseColorAction.getAlpha() * opacityLoading)
+        .setAlpha(baseColorAction.getAlpha() * rawToken.opacityLoading)
         .toRgbString(),
       tableHeaderIconColorHover: baseColorActionHover
         .clone()
-        .setAlpha(baseColorActionHover.getAlpha() * opacityLoading)
+        .setAlpha(baseColorActionHover.getAlpha() * rawToken.opacityLoading)
         .toRgbString(),
       tableBodySortBg: bodySortBg,
       tableFixedHeaderSortActiveBg: fixedHeaderSortActiveBg,
