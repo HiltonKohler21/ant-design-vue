@@ -8,8 +8,8 @@
         <p class="home-section-subtitle">
           {{
             isZhCN
-              ? 'Ant Design Vue 开放更多样式算法，内置 CSS Variables 零开销切换，让你更容易定制品牌主题'
-              : 'Ant Design Vue opens more style algorithms with native CSS Variables, making brand theming effortless'
+              ? 'Ant Design Vue 4.3.0 默认开启 CSS Variables，结合多套样式算法与零开销切换，让你更轻松地定制品牌主题'
+              : 'Ant Design Vue 4.3.0 enables CSS Variables by default with rich style algorithms, making brand theming effortless'
           }}
         </p>
       </div>

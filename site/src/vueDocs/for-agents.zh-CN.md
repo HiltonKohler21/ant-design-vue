@@ -10,7 +10,7 @@
 
 1. **混淆 Vue 2 与 Vue 3**：生成基于 Options API 的 `this.$message` 或早已废弃的 `v-decorator`。
 2. **混淆 React AntD 与 Vue AntD**：写出 JSX 格式、将 `@change="val => ..."` 误写为 React 的 `onChange={(e) => ...}`，或混淆插槽语法。
-3. **多余的样式文件引入**：尝试通过 `import 'ant-design-vue/dist/antd.css'` 引入样式。在 Ant Design Vue 4.x 中，已全面采用 CSS-in-JS 动态样式引擎，**无需引入任何 CSS 文件**。
+3. **多余的样式文件引入**：尝试通过 `import 'ant-design-vue/dist/antd.css'` 引入样式。在 Ant Design Vue 4.x（4.3.0 起默认开启原生 CSS Variables）中，采用 CSS-in-JS 动态样式引擎，**无需引入 `antd.css`**（仅在使用 `theme: { zeroRuntime: true }` 时才引入预提取静态 CSS）。
 4. **错误的图标引入路径**：从 `ant-design-vue` 或 `@ant-design/icons` 导入图标。正确包名为 `@ant-design/icons-vue`。
 5. **浮层控制属性过时**：使用旧版的 `v-model:visible`，而在 v4 中已统一规范为 `v-model:open`。
 6. **丢失全局上下文**：直接调用静态 `message.info()`，导致在暗色模式或自定义主题下无法响应 Token 变化。
@@ -24,7 +24,7 @@
 在生成任何组件代码前，请严格参考下述对照表：
 
 | 废弃 / 幻觉写法 | Ant Design Vue 4.x 现代正确写法 | 原因与规范 |
-| :--- | :--- | :--- |
+| :-- | :-- | :-- |
 | `import 'ant-design-vue/dist/antd.css'` | **无需引入任何 CSS** | 4.x 采用 `@ant-design/cssinjs` 运行时动态注入 |
 | `import { SmileOutlined } from 'ant-design-vue'` | `import { SmileOutlined } from '@ant-design/icons-vue'` | 图标统一独立分发于 `@ant-design/icons-vue` |
 | `<a-modal v-model:visible="open">` | `<a-modal v-model:open="open">` | 4.x 中 `visible` 已废弃，统一使用 `open` |
@@ -40,17 +40,22 @@
 ## 3. Ant Design Vue 4.x 的八大黄金准则
 
 ### 准则 1：必须使用 `<script setup lang="ts">`
+
 所有单文件组件（SFC）必须统一采用 `<script setup lang="ts">` 及 Vue 3 组合式 API（`ref`, `reactive`, `computed`, `watch`, `h` 等）。
 
 ### 准则 2：准确的组件与图标导入
+
 组件从 `'ant-design-vue'` 导入，图标从 `'@ant-design/icons-vue'` 导入：
+
 ```ts
 import { Button, Table, Modal, Form, Input, Space, theme, App } from 'ant-design-vue';
 import { PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 ```
 
 ### 准则 3：表单输入必须使用 `v-model:value`
+
 所有数据录入组件（Input, Select, DatePicker, Switch 等）均使用 `v-model:value` 绑定：
+
 ```vue
 <a-form layout="vertical" :model="formState">
   <a-form-item label="用户名" name="username" :rules="[{ required: true, message: '请输入用户名' }]">
@@ -63,7 +68,9 @@ import { PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-de
 ```
 
 ### 准则 4：浮层与弹窗可见性必须使用 `v-model:open`
+
 对于 `Modal`、`Drawer`、`Tooltip`、`Popover`、`Dropdown` 等浮层组件，统一使用 `v-model:open`：
+
 ```vue
 <a-modal v-model:open="isModalOpen" title="编辑信息" @ok="handleOk">
   <p>弹窗内容...</p>
@@ -71,7 +78,9 @@ import { PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-de
 ```
 
 ### 准则 5：顶层包裹 `<a-app>` 并使用 `App.useApp()`
+
 在根组件或路由布局层外层包裹 `<a-app>`。在子组件中通过 `App.useApp()` 获取上下文感知的交互方法：
+
 ```vue
 <template>
   <a-config-provider :theme="{ token: { colorPrimary: '#1677ff' } }">
@@ -83,6 +92,7 @@ import { PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-de
 ```
 
 在子组件中使用：
+
 ```ts
 import { App } from 'ant-design-vue';
 
@@ -100,7 +110,9 @@ const handleDelete = () => {
 ```
 
 ### 准则 6：表格列规范与强类型定义
+
 表格列必须使用 `TableColumnsType` 进行类型约束：
+
 ```ts
 import type { TableColumnsType } from 'ant-design-vue';
 
@@ -119,6 +131,7 @@ const columns: TableColumnsType<UserItem> = [
 ```
 
 通过 `#bodyCell` 插槽自定义单元格渲染：
+
 ```vue
 <a-table :columns="columns" :data-source="userList" row-key="id">
   <template #bodyCell="{ column, record }">
@@ -130,7 +143,9 @@ const columns: TableColumnsType<UserItem> = [
 ```
 
 ### 准则 7：使用 `theme.useToken()` 消费设计变量
+
 若需要编写具有主题自适应能力的自定义样式，使用 `theme.useToken()` 获取当前 Token：
+
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
@@ -148,7 +163,9 @@ const customStyle = computed(() => ({
 ```
 
 ### 准则 8：使用 Day.js 处理日期
+
 Ant Design Vue 4.x 原生内置 Day.js：
+
 ```ts
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -163,7 +180,7 @@ const selectedDate = ref<Dayjs>(dayjs());
 
 ```markdown
 ---
-description: Ant Design Vue 4.x \u4e0e Vue 3 规范提示词
+description: Ant Design Vue 4.x 与 Vue 3 规范提示词
 globs: **/*.{vue,ts,tsx}
 ---
 
@@ -199,6 +216,7 @@ globs: **/*.{vue,ts,tsx}
 
 ```markdown
 编写 Vue 代码时请注意：
+
 - 严格使用 Vue 3 `<script setup lang="ts">`。
 - 使用 `ant-design-vue` 组件与 `@ant-design/icons-vue` 图标。
 - 表单数据绑定使用 `v-model:value`。
@@ -225,9 +243,7 @@ globs: **/*.{vue,ts,tsx}
             style="width: 220px"
             @search="handleSearch"
           />
-          <a-button type="primary" :icon="h(PlusOutlined)" @click="openModal()">
-            新建用户
-          </a-button>
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="openModal()">新建用户</a-button>
         </a-space>
       </template>
 
@@ -247,18 +263,14 @@ globs: **/*.{vue,ts,tsx}
           </template>
           <template v-else-if="column.key === 'actions'">
             <a-space>
-              <a-button type="link" size="small" @click="openModal(record)">
-                编辑
-              </a-button>
+              <a-button type="link" size="small" @click="openModal(record)">编辑</a-button>
               <a-popconfirm
                 title="确定要删除该用户吗？"
                 ok-text="确定"
                 cancel-text="取消"
                 @confirm="handleDelete(record.id)"
               >
-                <a-button type="link" danger size="small">
-                  删除
-                </a-button>
+                <a-button type="link" danger size="small">删除</a-button>
               </a-popconfirm>
             </a-space>
           </template>
@@ -272,11 +284,7 @@ globs: **/*.{vue,ts,tsx}
         @ok="handleSave"
         @cancel="closeModal"
       >
-        <a-form
-          ref="formRef"
-          :model="formState"
-          layout="vertical"
-        >
+        <a-form ref="formRef" :model="formState" layout="vertical">
           <a-form-item
             label="用户名"
             name="name"
@@ -289,7 +297,7 @@ globs: **/*.{vue,ts,tsx}
             name="email"
             :rules="[
               { required: true, message: '请输入电子邮箱' },
-              { type: 'email', message: '请输入正确的邮箱格式' }
+              { type: 'email', message: '请输入正确的邮箱格式' },
             ]"
           >
             <a-input v-model:value="formState.email" placeholder="user@example.com" />
@@ -356,9 +364,7 @@ const searchKeyword = ref('');
 
 const filteredUsers = computed(() => {
   if (!searchKeyword.value) return users.value;
-  return users.value.filter(u =>
-    u.name.toLowerCase().includes(searchKeyword.value.toLowerCase()),
-  );
+  return users.value.filter(u => u.name.toLowerCase().includes(searchKeyword.value.toLowerCase()));
 });
 
 const handleSearch = () => {

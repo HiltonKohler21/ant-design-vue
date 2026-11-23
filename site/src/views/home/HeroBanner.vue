@@ -13,7 +13,7 @@
         class="home-hero-badge"
       >
         <span class="home-hero-badge-dot" />
-        <span>Ant Design Vue 4.x · CSS Variables</span>
+        <span>Ant Design Vue {{ antdVersion }} · CSS Variables</span>
         <RightOutlined class="home-hero-badge-arrow" />
       </router-link>
 
@@ -126,14 +126,20 @@ const highlights = computed(() => [
   {
     key: 'components',
     icon: AppstoreOutlined,
-    zh: '75+ 企业级组件',
-    en: '75+ Enterprise Components',
+    zh: '75 个企业级组件',
+    en: '75 Enterprise Components',
   },
   {
     key: 'cssvar',
     icon: BgColorsOutlined,
-    zh: '原生 CSS Variables',
-    en: 'Native CSS Variables',
+    zh: '默认 CSS Variables · 零运行时',
+    en: 'CSS Variables & Zero-Runtime',
+  },
+  {
+    key: 'new',
+    icon: ThunderboltOutlined,
+    zh: 'BorderBeam · Splitter · Masonry',
+    en: 'BorderBeam · Splitter · Masonry',
   },
   {
     key: 'ts',
@@ -146,12 +152,6 @@ const highlights = computed(() => [
     icon: RobotOutlined,
     zh: 'AI & MCP 友好',
     en: 'AI & MCP Ready',
-  },
-  {
-    key: 'perf',
-    icon: ThunderboltOutlined,
-    zh: '按需零开销切换',
-    en: 'Zero-Overhead Theming',
   },
 ]);
 </script>

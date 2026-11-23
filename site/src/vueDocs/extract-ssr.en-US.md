@@ -44,3 +44,13 @@ const css = extractStyle(node => (
   </>
 ));
 ```
+
+## Zero-Runtime Static CSS (4.3.0+)
+
+Starting from `4.3.0`, you can pre-extract the complete static stylesheet with the built-in command:
+
+```bash
+npm run static-style-extract
+```
+
+This generates `dist/static-style/antdv.css`. Import that stylesheet in your app entry and pass `:theme="{ zeroRuntime: true }"` to `ConfigProvider` to skip runtime `<style>` injection entirely.

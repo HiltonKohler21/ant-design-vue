@@ -12,12 +12,12 @@
 
 ## 4.3.0
 
-`2026-11-21`
+`2026-11-23`
 
 `引入 antd v6 的性能层：CSS 变量与零运行时`
 
 - 🌟 新增 Masonry 瀑布流布局组件（`columns`/`gutter` 支持响应式断点、`itemRender`、`onLayoutChange`，按最短列自动分配）。
-- 🌟 新增 BorderBeam 边框光束组件（`color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`，沿边框循环流动的渐变光束）。
+- 🌟 新增 BorderBeam 边框光束组件（对齐 antd v6 `offset-path` 圆角光束动效，支持 `color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`）。
 - 🌟 新增 Listy 列表组件（行 hover、语义化 `classNames`/`styles`，支持 `height`+`itemHeight` 的虚拟滚动与 `scrollTo`）。
 - 🌟 新增 CSS 变量模式并**默认开启**（对齐 antd v6），样式只生成一次，多主题场景下组件样式只生成一份（14 组件实测：3 套主题 CSS 体积 -50.5%，多主题增量 hash +312129 B vs cssVar +41299 B（降低 86.8%）；单主题为 +21.5%（换取主题可切换性））。若需保持旧行为，传 `theme: { cssVar: false }` 即可回到 hash 模式。
 - 🐞 修复 CSS 变量模式下主题定制静默失效的问题（`theme.token`、`theme.algorithm` 与运行时切换主题均不生效）：变量声明块原先前插到 `<head>`，导致外层默认 `:root` 在层叠中胜出；改为按注册顺序追加后恢复。
@@ -25,10 +25,13 @@
 - 🌟 新增 `npm run static-style-extract` 静态样式提取命令，产出 `dist/static-style/antdv.css`。
 - 🛠 样式层全量改为 `calc()` 表达尺寸派生，新增 `unit()` 工具处理「数值补 px / 变量原样返回」，修复开启变量后出现的 `NaN`、`undefined` 与非法 `var()px` 值。
 - 🛠 组件尺寸派生区分「真实数值」与「CSS 变量」两种上下文（内部 `_realToken`），保证取整、比例、颜色混合等计算在变量模式下依然正确。
+- 🐞 修复 18 个浮层组件（Drawer、Message、Notification、Modal、Popover、Dropdown、Select、Tooltip、Image 等）在 CSS 变量模式下 `z-index` 被错误补全 `px` 单位导致弹层被顶栏遮挡的问题。
+- 🐞 修复 Splitter 面板空白、拖拽调整与折叠计算以及快速点击残留遮罩问题；修复 ColorPicker 单色/渐变切换、透明度拖拽、`allowClear` 与 `onChangeComplete` 触发问题；修复 `FloatButton.BackTop` 注册冲突与定位问题。
 - 🐞 修复 Table 表头背景在变量模式下变为纯黑的问题（`TinyColor` 无法解析 `var()` 字符串）。
 - 🐞 修复 Select 状态样式引用了未定义变量导致边框宽度失效的问题。
 - 🐞 修复开启 CSS 变量后，依赖真实色值/数值的运行时逻辑出现退化：Empty 暗色判断失效并误加透明度、Empty/Table/Menu 暗色/DatePicker/Slider/Tour/Image 部分配色变纯黑、QRCode 尺寸与前景色、Steps 尺寸、Watermark Canvas 字号与颜色。
 - 🐞 修复 Layout、Upload、Carousel、BackTop、Anchor、Form、InputNumber、Popconfirm、Tour、DatePicker、Menu（暗色）、Tree、Cascader、Transfer、Dropdown、Table、Image 在 CSS 变量模式下产生 `NaN` / `var() 拼数字` 等非法 CSS 的问题（尺寸派生统一改用 calc 链或真实数值 token）。
+- 📖 官网文档站全面升级至 ant.design 风格布局：全新首页实时嵌套 `ConfigProvider` 主题预览与组件展示、命令面板全局搜索（`Ctrl/⌘ + K`）、组件级 Design Token 文档表、For AI Agents / MCP / `DESIGN.md` / `llms.txt` 规范，以及基于 esbuild 的开发环境极速预打包。
 
 ## 4.2.7
 

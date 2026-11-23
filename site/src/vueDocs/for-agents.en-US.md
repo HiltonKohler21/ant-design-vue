@@ -10,7 +10,7 @@ Large Language Models (LLMs) are often trained on large volumes of legacy code a
 
 1. **Confusing Vue 2 with Vue 3**: Generating Options API code, `this.$message`, or `v-decorator` (deprecated since v2).
 2. **Confusing Ant Design React with Ant Design Vue**: Writing JSX instead of SFC templates, using React prop naming (`onChange={(e) => ...}`) instead of Vue events (`@change="val => ..."`), or using `visible` instead of `open`.
-3. **Redundant CSS Imports**: Attempting to import `ant-design-vue/dist/antd.css` or Less files. In v4.x, Ant Design Vue uses dynamic CSS-in-JS and requires **zero** CSS imports.
+3. **Redundant CSS Imports**: Attempting to import `ant-design-vue/dist/antd.css` or Less files. In v4.x (with native CSS Variables enabled by default in 4.3.0+), Ant Design Vue uses dynamic CSS-in-JS and requires **zero** CSS imports (except optional pre-extracted CSS when enabling `theme: { zeroRuntime: true }`).
 4. **Incorrect Icon Imports**: Importing icons from `ant-design-vue` or `@ant-design/icons` instead of `@ant-design/icons-vue`.
 5. **Static Feedback Context Loss**: Calling `message.info()` without wrapping the application in `<a-app>`, which causes theme tokens and dynamic context to be lost.
 
@@ -23,7 +23,7 @@ This guide provides definitive rules and ready-to-copy agent instructions to gua
 Before writing any component code, reference this anti-pattern guardrails table:
 
 | Deprecated / Hallucinated Pattern | Ant Design Vue 4.x Modern Idiom | Reason |
-| :--- | :--- | :--- |
+| :-- | :-- | :-- |
 | `import 'ant-design-vue/dist/antd.css'` | **Do not import any CSS** | Dynamic CSS-in-JS via `@ant-design/cssinjs` |
 | `import { SmileOutlined } from 'ant-design-vue'` | `import { SmileOutlined } from '@ant-design/icons-vue'` | Icons are distributed in a dedicated package |
 | `<a-modal v-model:visible="open">` | `<a-modal v-model:open="open">` | `visible` was replaced by `open` in v4 |
@@ -39,17 +39,22 @@ Before writing any component code, reference this anti-pattern guardrails table:
 ## 3. The 8 Golden Rules for Ant Design Vue 4.x
 
 ### Rule 1: Always use `<script setup lang="ts">`
+
 Every Single File Component (SFC) must use `<script setup lang="ts">` with Vue 3 Composition API (`ref`, `reactive`, `computed`, `watch`, `h`).
 
 ### Rule 2: Explicit Component & Icon Imports
+
 Import components from `'ant-design-vue'` and icons from `'@ant-design/icons-vue'`:
+
 ```ts
 import { Button, Table, Modal, Form, Input, Space, theme, App } from 'ant-design-vue';
 import { PlusOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
 ```
 
 ### Rule 3: Form Data Binding with `v-model:value`
+
 All data entry components bind values through `v-model:value`:
+
 ```vue
 <a-form layout="vertical" :model="formState">
   <a-form-item label="Username" name="username" :rules="[{ required: true, message: 'Required' }]">
@@ -62,7 +67,9 @@ All data entry components bind values through `v-model:value`:
 ```
 
 ### Rule 4: Overlay Visibility with `v-model:open`
+
 For `Modal`, `Drawer`, `Tooltip`, `Popover`, and `Dropdown`, always use `v-model:open`:
+
 ```vue
 <a-modal v-model:open="isModalOpen" title="Edit Item" @ok="handleOk">
   <p>Modal content</p>
@@ -70,7 +77,9 @@ For `Modal`, `Drawer`, `Tooltip`, `Popover`, and `Dropdown`, always use `v-model
 ```
 
 ### Rule 5: Root Context with `<a-app>` & `App.useApp()`
+
 Always wrap the application top level (or layout root) with `<a-app>`. Inside components, consume feedback services via `App.useApp()`:
+
 ```vue
 <template>
   <a-config-provider :theme="{ token: { colorPrimary: '#1677ff' } }">
@@ -86,6 +95,7 @@ import { ConfigProvider as AConfigProvider, App as AApp } from 'ant-design-vue';
 ```
 
 Within child components:
+
 ```ts
 import { App } from 'ant-design-vue';
 
@@ -103,7 +113,9 @@ const showConfirm = () => {
 ```
 
 ### Rule 6: Type Definitions for Tables
+
 Always type table columns using `TableColumnsType`:
+
 ```ts
 import type { TableColumnsType } from 'ant-design-vue';
 
@@ -122,6 +134,7 @@ const columns: TableColumnsType<UserRecord> = [
 ```
 
 Render custom cell content using `#bodyCell`:
+
 ```vue
 <a-table :columns="columns" :data-source="userList" row-key="id">
   <template #bodyCell="{ column, record }">
@@ -133,7 +146,9 @@ Render custom cell content using `#bodyCell`:
 ```
 
 ### Rule 7: CSS-in-JS Design Tokens
+
 To read or customize theme tokens dynamically, use `theme.useToken()`:
+
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
@@ -151,7 +166,9 @@ const customStyle = computed(() => ({
 ```
 
 ### Rule 8: Date Handling with Day.js
+
 Ant Design Vue 4.x uses Day.js natively for date pickers:
+
 ```ts
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -204,6 +221,7 @@ You are an expert Vue 3 and Ant Design Vue engineer. Follow these strict rules:
 
 ```markdown
 When generating code for Vue files:
+
 - Use Vue 3 `<script setup lang="ts">`.
 - Use components from `ant-design-vue`.
 - Use icons from `@ant-design/icons-vue`.
@@ -231,9 +249,7 @@ Here is a complete, production-ready Vue 3 SFC example demonstrating correct lay
             style="width: 220px"
             @search="handleSearch"
           />
-          <a-button type="primary" :icon="h(PlusOutlined)" @click="openModal()">
-            Add User
-          </a-button>
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="openModal()">Add User</a-button>
         </a-space>
       </template>
 
@@ -253,18 +269,14 @@ Here is a complete, production-ready Vue 3 SFC example demonstrating correct lay
           </template>
           <template v-else-if="column.key === 'actions'">
             <a-space>
-              <a-button type="link" size="small" @click="openModal(record)">
-                Edit
-              </a-button>
+              <a-button type="link" size="small" @click="openModal(record)">Edit</a-button>
               <a-popconfirm
                 title="Are you sure you want to delete this user?"
                 ok-text="Yes"
                 cancel-text="No"
                 @confirm="handleDelete(record.id)"
               >
-                <a-button type="link" danger size="small">
-                  Delete
-                </a-button>
+                <a-button type="link" danger size="small">Delete</a-button>
               </a-popconfirm>
             </a-space>
           </template>
@@ -278,11 +290,7 @@ Here is a complete, production-ready Vue 3 SFC example demonstrating correct lay
         @ok="handleSave"
         @cancel="closeModal"
       >
-        <a-form
-          ref="formRef"
-          :model="formState"
-          layout="vertical"
-        >
+        <a-form ref="formRef" :model="formState" layout="vertical">
           <a-form-item
             label="Name"
             name="name"
@@ -295,7 +303,7 @@ Here is a complete, production-ready Vue 3 SFC example demonstrating correct lay
             name="email"
             :rules="[
               { required: true, message: 'Please input email!' },
-              { type: 'email', message: 'Please enter a valid email!' }
+              { type: 'email', message: 'Please enter a valid email!' },
             ]"
           >
             <a-input v-model:value="formState.email" placeholder="user@example.com" />
@@ -362,9 +370,7 @@ const searchKeyword = ref('');
 
 const filteredUsers = computed(() => {
   if (!searchKeyword.value) return users.value;
-  return users.value.filter(u =>
-    u.name.toLowerCase().includes(searchKeyword.value.toLowerCase()),
-  );
+  return users.value.filter(u => u.name.toLowerCase().includes(searchKeyword.value.toLowerCase()));
 });
 
 const handleSearch = () => {

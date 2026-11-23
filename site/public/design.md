@@ -17,7 +17,7 @@ Ant Design is guided by four core values:
 
 ## 2. Design Token System
 
-Ant Design Vue 4.x adopts a four-tier token architecture powered by CSS-in-JS:
+Ant Design Vue 4.x (with native `--ant-*` CSS Variables enabled by default and optional zero-runtime mode in 4.3.0+) adopts a four-tier token architecture powered by CSS-in-JS:
 
 ```
 Seed Token  --->  Map Token  --->  Alias Token  --->  Component Token

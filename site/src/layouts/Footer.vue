@@ -176,6 +176,8 @@
         Ant Design Vue
       </a>
       <span class="bottom-bar-sep">·</span>
+      <span>v{{ antdVersion }}</span>
+      <span class="bottom-bar-sep">·</span>
       <span>MIT Licensed</span>
     </div>
   </footer>
@@ -183,6 +185,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject } from 'vue';
+import { version as antdVersion } from 'ant-design-vue';
 import {
   BgColorsOutlined,
   BugOutlined,
@@ -225,6 +228,7 @@ export default defineComponent({
     });
 
     return {
+      antdVersion,
       resolvedIsCN,
       getLocalizedPathname,
     };

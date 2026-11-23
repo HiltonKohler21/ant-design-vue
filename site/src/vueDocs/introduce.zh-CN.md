@@ -23,8 +23,9 @@
 ## 特性
 
 - 提炼自企业级中后台产品的交互语言和视觉风格。
-- 开箱即用的高质量 Vue 组件。
-- 共享[Ant Design of React](http://ant-design.gitee.io/docs/spec/introduce-cn)设计工具体系。
+- 75 个开箱即用的高质量 Vue 3 组件，完整 TypeScript 类型支持。
+- 默认开启原生 CSS Variables 与可选零运行时静态样式抽取（4.3.0+）。
+- 共享 [Ant Design of React](https://ant.design/docs/spec/introduce-cn) 设计工具体系。
 
 ## 支持环境
 

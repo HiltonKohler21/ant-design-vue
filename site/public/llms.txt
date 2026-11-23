@@ -1,8 +1,8 @@
 # Ant Design Vue
 
-> Ant Design Vue (ant-design-vue) is an enterprise-class UI component library for Vue 3, implementing the Ant Design system with Vue 3 Composition API, Single File Components (`<script setup>`), TypeScript, and CSS-in-JS dynamic theming.
+> Ant Design Vue (ant-design-vue) is an enterprise-class UI component library for Vue 3 (75 components), implementing the Ant Design system with Vue 3 Composition API, Single File Components (`<script setup>`), TypeScript, and CSS-in-JS dynamic theming with native CSS Variables enabled by default in 4.3.0+.
 
-Ant Design Vue 4.x is built from the ground up for Vue 3. It replaces Less-based compilation with `@ant-design/cssinjs` dynamic runtime styling, offers complete TypeScript definitions, and supports modern frontend tooling (Vite, Rsbuild, Webpack).
+Ant Design Vue 4.3.0 is built from the ground up for Vue 3. It uses CSS-in-JS dynamic styling with native `--ant-*` CSS Variables enabled by default (plus optional `zeroRuntime` static CSS extraction via `npm run static-style-extract`), offers complete TypeScript definitions, and supports modern frontend tooling (Vite, Rsbuild, Webpack).
 
 ## Critical Guidelines for LLMs & AI Coding Agents
 
@@ -68,6 +68,7 @@ When generating Vue 3 code using `ant-design-vue`, agents MUST follow these prin
 - [Flex](https://antdv.com/components/flex): CSS Flexbox layout component with gap, align, and justify helpers.
 - [Grid](https://antdv.com/components/grid): 24-column grid system (`a-row` and `a-col`) with responsive breakpoints.
 - [Layout](https://antdv.com/components/layout): Page structural layout (`a-layout`, `a-layout-header`, `a-layout-sider`, `a-layout-content`, `a-layout-footer`).
+- [Masonry](https://antdv.com/components/masonry): Responsive multi-column waterfall layout with shortest-column packing (new in 4.3.0).
 - [Space](https://antdv.com/components/space): Uniform spacing between inline and block elements.
 - [Splitter](https://antdv.com/components/splitter): Draggable and collapsible pane splitters.
 
@@ -87,7 +88,7 @@ When generating Vue 3 code using `ant-design-vue`, agents MUST follow these prin
 - [ColorPicker](https://antdv.com/components/color-picker): Visual color picker supporting HEX, RGB, and HSB modes.
 - [DatePicker](https://antdv.com/components/date-picker): Single date, week, month, quarter, year, and range picker.
 - [Form](https://antdv.com/components/form): Form validation, layout, and reactive state management (`v-model:value`).
-- [Input](https://antdv.com/components/input): Text input, password input, search input, and textareas.
+- [Input](https://antdv.com/components/input): Text input, password input, search input, OTP input (`a-input-otp`), and textareas.
 - [InputNumber](https://antdv.com/components/input-number): Controlled numerical input with increment/decrement steppers.
 - [Mentions](https://antdv.com/components/mentions): Text input with `@mention` trigger support.
 - [Radio](https://antdv.com/components/radio): Single-selection radio inputs and radio button groups.
@@ -112,6 +113,7 @@ When generating Vue 3 code using `ant-design-vue`, agents MUST follow these prin
 - [Empty](https://antdv.com/components/empty): Empty state placeholder when data is absent.
 - [Image](https://antdv.com/components/image): Image viewer with preview, rotation, and zoom capabilities.
 - [List](https://antdv.com/components/list): Simple or complex list presentation with pagination and actions.
+- [Listy](https://antdv.com/components/listy): Lightweight list container with row hover, semantic classNames/styles, and built-in virtual scrolling (new in 4.3.0).
 - [Popover](https://antdv.com/components/popover): Card-like floating panel triggered by click or hover.
 - [QRCode](https://antdv.com/components/qrcode): Canvas or SVG based QR code generator with status handling.
 - [Segmented](https://antdv.com/components/segmented): Linear segmented control for mutually exclusive view options.
@@ -138,7 +140,9 @@ When generating Vue 3 code using `ant-design-vue`, agents MUST follow these prin
 - [Watermark](https://antdv.com/components/watermark): Security watermark overlay for pages or containers.
 
 ### Other
+- [Affix](https://antdv.com/components/affix): Stick an element to the viewport when scrolling past a threshold.
 - [App](https://antdv.com/components/app): App-level context wrapper providing theme tokens and feedback hooks.
 - [BackTop](https://antdv.com/components/back-top): Quick scroll-to-top button.
-- [ConfigProvider](https://antdv.com/components/config-provider): Global provider for themes, locales, prefixCls, and direction.
+- [BorderBeam](https://antdv.com/components/border-beam): Animated gradient comet beam flowing along a container's rounded border (new in 4.3.0).
+- [ConfigProvider](https://antdv.com/components/config-provider): Global provider for themes, CSS variables, zero-runtime mode, locales, prefixCls, and direction.
 - [FloatButton](https://antdv.com/components/float-button): Floating action button and speed dial groups.

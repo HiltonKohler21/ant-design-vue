@@ -2,16 +2,17 @@
 
 Ant Design Vue 设计规范和技术上支持灵活的样式定制，以满足业务和品牌上多样化的视觉需求，包括但不限于全局样式（主色、圆角、边框）和指定组件的视觉定制。
 
-在 4.0 版本的 Ant Design Vue 中，我们提供了一套全新的定制主题方案。不同于 3.x 版本的 less 和 CSS 变量，有了 CSS-in-JS 的加持后，动态主题的能力也得到了加强，包括但不限于：
+在 4.x 版本的 Ant Design Vue 中，我们提供了一套全新的定制主题方案。不同于 3.x 版本的 less 变量，有了 CSS-in-JS 与原生 CSS Variables（4.3.0 起默认开启）的加持后，动态主题的能力与性能都得到了全面增强，包括但不限于：
 
-1. 支持动态切换主题；
-2. 支持同时存在多个主题；
+1. 支持动态切换主题与原生 `--ant-*` CSS 变量零开销切换；
+2. 支持同时存在多个主题（多主题复用同一份组件样式）；
 3. 支持针对某个/某些组件修改主题变量；
-4. ...
+4. 支持 `zeroRuntime` 零运行时模式配合预提取的静态 CSS；
+5. ...
 
 ## 在 ConfigProvider 中配置主题
 
-在 4.0 版本中我们把影响主题的最小元素称为 **Design Token**。通过修改 Design Token，我们可以呈现出各种各样的主题或者组件。
+在 4.x 版本中我们把影响主题的最小元素称为 **Design Token**。通过修改 Design Token，我们可以呈现出各种各样的主题或者组件。
 
 ### 修改主题变量
 
@@ -37,7 +38,7 @@ Ant Design Vue 设计规范和技术上支持灵活的样式定制，以满足�
 
 ### 使用预设算法
 
-通过修改算法可以快速生成风格迥异的主题，4.0 版本中默认提供三套预设算法，分别是默认算法 `theme.defaultAlgorithm`、暗色算法 `theme.darkAlgorithm` 和紧凑算法 `theme.compactAlgorithm`。你可以通过修改 ConfigProvider 中 `theme` 属性的 `algorithm` 属性来切换算法。
+通过修改算法可以快速生成风格迥异的主题，4.x 版本中默认提供三套预设算法，分别是默认算法 `theme.defaultAlgorithm`、暗色算法 `theme.darkAlgorithm` 和紧凑算法 `theme.compactAlgorithm`。你可以通过修改 ConfigProvider 中 `theme` 属性的 `algorithm` 属性来切换算法。
 
 ```html
 <template>
@@ -216,6 +217,38 @@ const theme = {
 };
 ```
 
+### CSS 变量模式（4.3.0 默认开启）
+
+从 `4.3.0` 开始，`ant-design-vue` 默认开启 CSS 变量模式（`theme.cssVar` 默认为 `true`）。组件样式只生成一份，多主题与动态切换时仅更新 `--ant-*` CSS 变量声明，显著降低样式体积与切换开销：
+
+```html
+<template>
+  <!-- 4.3.0 默认已开启 CSS 变量模式；可自定义变量前缀与隔离 key -->
+  <a-config-provider
+    :theme="{
+      cssVar: { prefix: 'ant', key: 'my-theme' },
+      token: { colorPrimary: '#00b96b' },
+    }"
+  >
+    <a-button type="primary">CSS Variables</a-button>
+  </a-config-provider>
+</template>
+```
+
+如需回退到旧版 hash 模式，可显式传入 `:theme="{ cssVar: false }"`。
+
+### 零运行时模式（4.3.0 新增）
+
+在 `4.3.0` 中，你可以配合预提取的静态样式文件（运行 `npm run static-style-extract` 生成 `dist/static-style/antdv.css`）开启 `zeroRuntime: true`，运行时将不再动态注入 `<style>` 标签：
+
+```html
+<template>
+  <a-config-provider :theme="{ zeroRuntime: true }">
+    <App />
+  </a-config-provider>
+</template>
+```
+
 ### 兼容旧版浏览器
 
 请参考文档 [样式兼容](/docs/vue/compatible-style-cn)。
@@ -230,6 +263,8 @@ const theme = {
 | inherit | 继承上层 ConfigProvider 中配置的主题。 | boolean | true |
 | algorithm | 用于修改 Seed Token 到 Map Token 的算法 | `(token: SeedToken) => MapToken` \| `((token: SeedToken) => MapToken)[]` | `defaultAlgorithm` |
 | components | 用于修改各个组件的 Component Token 以及覆盖该组件消费的 Alias Token | OverrideToken | - |
+| cssVar | 开启 CSS 变量模式（4.3.0 起默认开启），传 `false` 回退至 hash 模式 | `boolean \| { prefix?: string; key?: string }` | `true` |
+| zeroRuntime | 零运行时模式（4.3.0 新增），开启后不再动态注入 `<style>`，需配合预提取静态 CSS 使用 | boolean | `false` |
 
 ### OverrideToken
 

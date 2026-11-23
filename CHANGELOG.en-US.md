@@ -12,12 +12,12 @@
 
 ## 4.3.0
 
-`2026-11-21`
+`2026-11-23`
 
 `Adopt the antd v6 performance layer: CSS variables and zero runtime`
 
 - 🌟 Add `Masonry` layout component (responsive `columns`/`gutter`, `itemRender`, `onLayoutChange`, shortest-column packing).
-- 🌟 Add `BorderBeam` component (animated gradient beam along the border; `color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`).
+- 🌟 Add `BorderBeam` component (aligned with antd v6 `offset-path` rounded comet motion; `color`/`count`/`duration`/`items`/`lineWidth`/`outset`/`size`).
 - 🌟 Add `Listy` list component (row hover, semantic `classNames`/`styles`, virtual scrolling via `height`+`itemHeight`, `scrollTo`).
 - 🌟 Add CSS variable mode and enable it **by default** (aligned with antd v6). Styles are generated once, cutting CSS size by 50.5% with three themes and reducing multi-theme increments from 312129 B to 41299 B (-86.8%); a single theme costs +21.5% in exchange for theme switching. Pass `theme: { cssVar: false }` to keep the previous hashed-mode behavior.
 - 🐞 Fix theme customization being silently ignored in CSS-variable mode (`theme.token`, `theme.algorithm` and runtime theme switching had no effect): variable blocks were prepended to `<head>`, so the outer default `:root` won the cascade. Blocks are now appended in registration order.
@@ -25,10 +25,13 @@
 - 🌟 Add `npm run static-style-extract`, which emits `dist/static-style/antdv.css`.
 - 🛠 Express all dimension derivations with `calc()`, and add a `unit()` helper that appends `px` for numbers and returns strings untouched, fixing `NaN`, `undefined` and invalid `var()px` values.
 - 🛠 Distinguish "plain numbers" from "CSS variables" contexts internally (`_realToken`) so rounding, ratios and color mixing stay correct in variable mode.
+- 🐞 Fix 18 overlay components (`Drawer`, `Message`, `Notification`, `Modal`, `Popover`, `Dropdown`, `Select`, `Tooltip`, `Image`, etc.) emitting invalid `px` suffixes on `z-index` CSS variables that caused popups to render beneath sticky headers.
+- 🐞 Fix `Splitter` blank panels, drag resize/collapse calculations, and stuck overlay mask on quick clicks; fix `ColorPicker` single/gradient mode switching, alpha dragging, `allowClear`, and `onChangeComplete`; fix `FloatButton.BackTop` component registration collision and positioning.
 - 🐞 Fix Table header background turning solid black in variable mode (`TinyColor` cannot parse `var()` strings).
 - 🐞 Fix Select status border width, which referenced an undefined token.
 - 🐞 Fix runtime logic that depends on real color/number values after enabling CSS variables: Empty dark-mode detection (spurious opacity), Empty/Table/dark Menu/DatePicker/Slider/Tour/Image colors turning solid black, QRCode size and foreground color, Steps dimensions, and Watermark canvas font size/color.
 - 🐞 Fix Layout, Upload, Carousel, BackTop, Anchor, Form, InputNumber, Popconfirm, Tour, DatePicker, dark Menu, Tree, Cascader, Transfer, Dropdown, Table and Image emitting invalid `NaN` / concatenated `var()` CSS in CSS-variable mode.
+- 📖 Upgrade the documentation site to an ant.design-inspired layout with a live nested `ConfigProvider` theme playground, component showcase, command-palette search (`Ctrl/⌘ + K`), per-component Design Token tables, For AI Agents / MCP / `DESIGN.md` / `llms.txt` guides, and esbuild dev-mode library pre-bundling.
 
 ## 4.2.7
 

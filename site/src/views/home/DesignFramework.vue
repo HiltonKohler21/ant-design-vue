@@ -125,13 +125,13 @@
             <div class="home-framework-card-content">
               <div class="home-framework-title-row">
                 <h3>{{ isZhCN ? 'CSS Variables 与零运行时' : 'CSS Variables & Zero Runtime' }}</h3>
-                <a-tag color="cyan" :bordered="false">CSS-in-JS</a-tag>
+                <a-tag color="cyan" :bordered="false">4.3.0</a-tag>
               </div>
               <p>
                 {{
                   isZhCN
-                    ? '组件级 Design Token + 原生 --ant-* CSS 变量体系，支持毫秒级暗黑/紧凑主题切换与静态样式抽取。'
-                    : 'Component-level Design Tokens with native --ant-* CSS variables for instant theme switching and static SSR extraction.'
+                    ? '4.3.0 默认开启组件级 Design Token 与原生 --ant-* CSS 变量体系，支持毫秒级主题切换、零运行时模式与静态样式抽取。'
+                    : 'Enabled by default in 4.3.0: component Design Tokens with native --ant-* CSS variables for instant theme switching, zero-runtime mode, and static CSS extraction.'
                 }}
               </p>
               <span class="home-framework-link">

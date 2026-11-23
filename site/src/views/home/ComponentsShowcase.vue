@@ -8,8 +8,8 @@
         <p class="home-section-subtitle">
           {{
             isZhCN
-              ? '覆盖企业级中后台常见交互场景，持续引入 v6 现代组件能力，开箱即用'
-              : 'Covering enterprise UI scenarios with modern v6 components out of the box'
+              ? '覆盖 75 个企业级中后台组件，4.3.0 全新带来 Masonry、BorderBeam、Listy、Splitter 与 ColorPicker 等现代能力'
+              : '75 enterprise-grade components, featuring Masonry, BorderBeam, Listy, Splitter, and ColorPicker in 4.3.0'
           }}
         </p>
       </div>
@@ -26,7 +26,7 @@
                 <span class="home-comp-card-name">Masonry</span>
                 <span v-if="isZhCN" class="home-comp-card-cn">瀑布流</span>
               </div>
-              <a-tag color="blue" :bordered="false" class="home-comp-badge">v6</a-tag>
+              <a-tag color="blue" :bordered="false" class="home-comp-badge">4.3.0</a-tag>
             </router-link>
             <router-link
               :to="getLocalizedPathname('/components/masonry', isZhCN)"
@@ -55,7 +55,7 @@
                 <span class="home-comp-card-name">BorderBeam</span>
                 <span v-if="isZhCN" class="home-comp-card-cn">边框光束</span>
               </div>
-              <a-tag color="purple" :bordered="false" class="home-comp-badge">v6</a-tag>
+              <a-tag color="purple" :bordered="false" class="home-comp-badge">4.3.0</a-tag>
             </router-link>
             <router-link
               :to="getLocalizedPathname('/components/border-beam', isZhCN)"
@@ -129,41 +129,29 @@
           </div>
         </a-col>
 
-        <!-- 5. Tour -->
+        <!-- 5. Listy -->
         <a-col :xs="24" :sm="12" :lg="6">
           <div class="home-comp-card">
             <router-link
-              :to="getLocalizedPathname('/components/tour', isZhCN)"
+              :to="getLocalizedPathname('/components/listy', isZhCN)"
               class="home-comp-card-head"
             >
               <div class="home-comp-card-titles">
-                <span class="home-comp-card-name">Tour</span>
-                <span v-if="isZhCN" class="home-comp-card-cn">漫游式引导</span>
+                <span class="home-comp-card-name">Listy</span>
+                <span v-if="isZhCN" class="home-comp-card-cn">虚拟列表</span>
               </div>
-              <ArrowRightOutlined class="home-comp-arrow" />
+              <a-tag color="geekblue" :bordered="false" class="home-comp-badge">4.3.0</a-tag>
             </router-link>
             <router-link
-              :to="getLocalizedPathname('/components/tour', isZhCN)"
+              :to="getLocalizedPathname('/components/listy', isZhCN)"
               class="home-comp-preview"
             >
-              <div class="mini-tour-card">
-                <div class="mini-tour-head">
-                  <span class="mini-tour-step">1 / 3</span>
-                  <span class="mini-tour-title">{{ isZhCN ? '快速引导' : 'Quick Guide' }}</span>
-                </div>
-                <div class="mini-tour-lines">
-                  <span class="mini-line w-85" />
-                  <span class="mini-line w-60" />
-                </div>
-                <div class="mini-tour-footer">
-                  <span class="mini-tour-dots">
-                    <i class="active" />
-                    <i />
-                    <i />
-                  </span>
-                  <span class="mini-tour-btn">{{ isZhCN ? '下一步' : 'Next' }}</span>
-                </div>
-              </div>
+              <a-listy
+                :data="listyItems"
+                item-key="key"
+                :item-render="renderListyItem"
+                class="mini-listy"
+              />
             </router-link>
           </div>
         </a-col>
@@ -278,7 +266,7 @@
       <div class="home-components-footer">
         <router-link :to="getLocalizedPathname('/components/overview', isZhCN)">
           <a-button size="large" shape="round">
-            {{ isZhCN ? '查看全部 75+ 组件' : 'Explore All 75+ Components' }}
+            {{ isZhCN ? '查看全部 75 个组件' : 'Explore All 75 Components' }}
             <ArrowRightOutlined />
           </a-button>
         </router-link>
@@ -288,7 +276,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { h, ref } from 'vue';
 import { ArrowRightOutlined, ThunderboltOutlined } from '@ant-design/icons-vue';
 import { getLocalizedPathname } from '../../utils/util';
 
@@ -306,4 +294,16 @@ const masonryItems = [
   { key: '5', height: 26, bg: 'var(--ant-color-primary-border, rgba(22, 119, 255, 0.35))' },
   { key: '6', height: 36, bg: 'var(--ant-color-primary-bg, rgba(22, 119, 255, 0.16))' },
 ];
+
+const listyItems = [
+  { key: '1', label: 'CSS Variables', badge: '4.3.0' },
+  { key: '2', label: 'Zero Runtime', badge: 'SSR' },
+  { key: '3', label: 'Virtual Scroll', badge: 'Fast' },
+];
+
+const renderListyItem = (item: { key: string; label: string; badge: string }) =>
+  h('div', { class: 'mini-listy-row' }, [
+    h('span', { class: 'mini-listy-label' }, item.label),
+    h('span', { class: 'mini-listy-tag' }, item.badge),
+  ]);
 </script>

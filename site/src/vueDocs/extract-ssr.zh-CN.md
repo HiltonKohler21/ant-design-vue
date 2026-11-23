@@ -44,3 +44,13 @@ const css = extractStyle(node => (
   </>
 ));
 ```
+
+## 零运行时静态样式（4.3.0+）
+
+从 `4.3.0` 开始，可直接使用内置脚本预提取完整的静态样式文件：
+
+```bash
+npm run static-style-extract
+```
+
+脚本会在 `dist/static-style/antdv.css` 产出完整静态 CSS；随后在应用入口引入该 CSS，并在 `ConfigProvider` 中配置 `:theme="{ zeroRuntime: true }"`，即可在运行时彻底跳过 `<style>` 注入。

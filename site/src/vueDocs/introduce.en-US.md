@@ -23,7 +23,8 @@ Following the Ant Design specification, we developed a Vue UI library `antd` tha
 ## Features
 
 - An enterprise-class UI design language for web applications.
-- A set of high-quality Vue components out of the box.
+- 75 high-quality Vue 3 components out of the box with complete TypeScript definitions.
+- Native CSS Variables enabled by default and optional zero-runtime static CSS extraction (4.3.0+).
 - Shared [Ant Design of React](https://ant.design/docs/spec/introduce) design resources.
 
 ## Environment Support
