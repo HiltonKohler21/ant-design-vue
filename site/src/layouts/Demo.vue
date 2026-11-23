@@ -122,12 +122,13 @@
     </section>
     <slot />
     <section v-if="api" class="markdown api-container" v-html="api"></section>
-    <section v-if="$slots['semantic-dom']" id="semantic-dom" class="markdown semantic-dom-section">
-      <h2>
+    <section v-if="hasSemanticDom" class="markdown semantic-dom-section">
+      <h2 id="semantic-dom">
         <span>{{ isZhCN ? '语义化 DOM' : 'Semantic DOM' }}</span>
         <a href="#semantic-dom" class="anchor">#</a>
       </h2>
-      <slot name="semantic-dom" />
+      <slot v-if="$slots['semantic-dom']" name="semantic-dom" />
+      <SemanticPreview v-else :component="semanticCompName" :is-zh-c-n="isZhCN" />
     </section>
     <section v-if="hasDesignTokens" id="design-tokens" class="markdown design-tokens-section">
       <h2>
@@ -163,8 +164,12 @@ import {
 import tokenData from 'ant-design-vue/es/version/token.json';
 import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
 import Contributor from '../components/Contributors/index.vue';
+import { resolveSemanticComponentName } from '../components/SemanticPreview/semanticsData';
 
 const ComponentTokenTable = defineAsyncComponent(() => import('../components/ComponentTokenTable'));
+const SemanticPreview = defineAsyncComponent(
+  () => import('../components/SemanticPreview/index.vue'),
+);
 
 const API_HEADING_RE = /<h2 id="api">[\s\S]*?<\/h2>/i;
 
@@ -240,6 +245,7 @@ export default defineComponent({
   components: {
     Contributor,
     ComponentTokenTable,
+    SemanticPreview,
     BugOutlined,
     CheckOutlined,
     CodeOutlined,
@@ -249,7 +255,7 @@ export default defineComponent({
     GithubOutlined,
   },
   props: ['pageData', 'isZhCN'],
-  setup(props) {
+  setup(props, { slots }) {
     const route = useRoute();
     const isAllExpanded = ref(false);
     const showDebugDemos = ref(true);
@@ -341,6 +347,13 @@ export default defineComponent({
       }
     };
 
+    const semanticCompName = computed(() =>
+      resolveSemanticComponentName(String(docTitle.value || ''), componentSlug.value),
+    );
+    const hasSemanticDom = computed(
+      () => Boolean(semanticCompName.value) || Boolean(slots['semantic-dom']),
+    );
+
     const tokenCompName = computed(() => resolveTokenCompName(String(docTitle.value || '')));
     const hasDesignTokens = computed(() => {
       const name = tokenCompName.value;
@@ -362,6 +375,7 @@ export default defineComponent({
     });
 
     const setHasDesignTokens = inject<(val: boolean) => void>('setHasDesignTokens', () => {});
+    const setHasSemanticDom = inject<(val: boolean) => void>('setHasSemanticDom', () => {});
     watch(
       [hasDesignTokens, tokenCompName, () => route.path],
       () => {
@@ -369,10 +383,18 @@ export default defineComponent({
       },
       { immediate: true, flush: 'post' },
     );
+    watch(
+      [hasSemanticDom, semanticCompName, () => route.path],
+      () => {
+        setHasSemanticDom(hasSemanticDom.value);
+      },
+      { immediate: true, flush: 'post' },
+    );
 
     onBeforeUnmount(() => {
       if (copyTimer) clearTimeout(copyTimer);
       setHasDesignTokens(false);
+      setHasSemanticDom(false);
     });
 
     return {
@@ -394,6 +416,8 @@ export default defineComponent({
       docsGithubUrl,
       importCopied,
       handleCopyImport,
+      semanticCompName,
+      hasSemanticDom,
       tokenCompName,
       hasDesignTokens,
       getTagColor,

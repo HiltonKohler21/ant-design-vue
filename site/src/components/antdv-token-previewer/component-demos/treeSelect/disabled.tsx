@@ -2,7 +2,27 @@ import { defineComponent, ref } from 'vue';
 import { TreeSelect } from 'ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
-const { TreeNode } = TreeSelect;
+const treeData = [
+  {
+    value: 'parent 1',
+    title: 'parent 1',
+    children: [
+      {
+        value: 'parent 1-0',
+        title: 'parent 1-0',
+        children: [
+          { value: 'leaf1', title: 'leaf1' },
+          { value: 'leaf2', title: 'leaf2' },
+        ],
+      },
+      {
+        value: 'parent 1-1',
+        title: 'parent 1-1',
+        children: [{ value: 'leaf3', title: 'leaf3' }],
+      },
+    ],
+  },
+];
 
 const Demo = defineComponent({
   setup() {
@@ -21,18 +41,9 @@ const Demo = defineComponent({
           placeholder="Please select"
           allowClear
           treeDefaultExpandAll
+          treeData={treeData}
           onChange={onChange}
-        >
-          <TreeNode value="parent 1" title="parent 1">
-            <TreeNode value="parent 1-0" title="parent 1-0">
-              <TreeNode value="leaf1" title="leaf1" />
-              <TreeNode value="leaf2" title="leaf2" />
-            </TreeNode>
-            <TreeNode value="parent 1-1" title="parent 1-1">
-              <TreeNode value="leaf3" title={'leaf3'} />
-            </TreeNode>
-          </TreeNode>
-        </TreeSelect>
+        />
       );
     };
   },

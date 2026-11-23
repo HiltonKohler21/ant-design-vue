@@ -135,6 +135,7 @@ export default defineComponent({
     const mainContainerRef = ref<HTMLElement | null>(null);
     const demos = ref<any[]>([]);
     const hasDesignTokens = ref(false);
+    const hasSemanticDom = ref(false);
     const domApiSections = ref<TocItem[]>([]);
     const domSemanticItem = ref<TocItem | null>(null);
 
@@ -152,6 +153,10 @@ export default defineComponent({
       hasDesignTokens.value = !!val;
     });
 
+    provide('setHasSemanticDom', (val: boolean) => {
+      hasSemanticDom.value = !!val;
+    });
+
     const baseRoutePath = computed(() => route.path.replace(/-cn\/?$/, '').replace(/\/$/, ''));
 
     // Only reset demos/design-tokens when navigating to a different base route
@@ -159,6 +164,7 @@ export default defineComponent({
     watch(baseRoutePath, () => {
       demos.value = [];
       hasDesignTokens.value = false;
+      hasSemanticDom.value = false;
       domApiSections.value = [];
       domSemanticItem.value = null;
     });
@@ -369,10 +375,14 @@ export default defineComponent({
         }
 
         if (
-          domSemanticItem.value &&
+          (hasSemanticDom.value || domSemanticItem.value) &&
           !items.some(item => item.href.toLowerCase() === '#semantic-dom')
         ) {
-          items.push(domSemanticItem.value);
+          items.push({
+            key: '#semantic-dom',
+            href: '#semantic-dom',
+            title: isZhCN.value ? '语义化 DOM' : 'Semantic DOM',
+          });
         }
 
         if (hasDesignTokens.value) {

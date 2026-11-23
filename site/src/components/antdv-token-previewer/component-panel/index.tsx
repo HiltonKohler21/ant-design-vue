@@ -102,12 +102,13 @@ const useStyle = makeStyle('ComponentPanel', token => ({
 
 export const antdComponents = {
   General: ['Button', 'Icon', 'Typography'],
-  Layout: ['Divider', 'Grid', 'Space'],
+  Layout: ['Divider', 'Flex', 'Grid', 'Masonry', 'Space', 'Splitter'],
   Navigation: ['Breadcrumb', 'Dropdown', 'Menu', 'Pagination', 'Steps'],
   'Data Entry': [
     'AutoComplete',
     'Cascader',
     'Checkbox',
+    'ColorPicker',
     'DatePicker',
     'Form',
     'Input',
@@ -134,7 +135,9 @@ export const antdComponents = {
     'Empty',
     'Image',
     'List',
+    'Listy',
     'Popover',
+    'QRCode',
     'Segmented',
     'Statistic',
     'Table',
@@ -142,6 +145,7 @@ export const antdComponents = {
     'Tag',
     'Timeline',
     'Tooltip',
+    'Tour',
     'Tree',
   ],
   Feedback: [
@@ -156,7 +160,7 @@ export const antdComponents = {
     'Skeleton',
     'Spin',
   ],
-  Other: ['Anchor'],
+  Other: ['Affix', 'Anchor', 'BackTop', 'BorderBeam', 'FloatButton', 'Watermark'],
 };
 
 export type ComponentPanelProps = {

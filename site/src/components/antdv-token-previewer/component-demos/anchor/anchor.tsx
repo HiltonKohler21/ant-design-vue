@@ -1,18 +1,24 @@
 import { Anchor } from 'ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
-const { Link } = Anchor;
+const items = [
+  { key: 'basic', href: '#', title: 'Basic demo' },
+  { key: 'static', href: '#components-anchor-demo-static', title: 'Static demo' },
+  {
+    key: 'api',
+    href: '#api',
+    title: 'API',
+    children: [
+      { key: 'anchor-props', href: '#Anchor-Props', title: 'Anchor Props' },
+      { key: 'link-props', href: '#Link-Props', title: 'Link Props' },
+    ],
+  },
+];
+
 const Demo = () => {
   return (
     <div style={{ padding: '12px' }}>
-      <Anchor>
-        <Link href="#" title="Basic demo" />
-        <Link href="#components-anchor-demo-static" title="Static demo" />
-        <Link href="#api" title="API">
-          <Link href="#Anchor-Props" title="Anchor Props" />
-          <Link href="#Link-Props" title="Link Props" />
-        </Link>
-      </Anchor>
+      <Anchor items={items} />
     </div>
   );
 };

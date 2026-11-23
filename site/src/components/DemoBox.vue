@@ -199,7 +199,7 @@ import {
   EditOutlined,
   ThunderboltOutlined,
 } from '@ant-design/icons-vue';
-import { getCodeSandboxParams } from '../utils/generateOnlineDemo';
+import { getCodeSandboxParams, getStackBlitzParams } from '../utils/generateOnlineDemo';
 import packageInfo from '../../../package.json';
 
 const ZH_HEADING_RE = /<h2 id="zh-cn">[\s\S]*?<\/h2>/i;
@@ -266,29 +266,6 @@ function submitPostForm(action: string, fields: Record<string, string>) {
   document.body.appendChild(form);
   form.submit();
   document.body.removeChild(form);
-}
-
-function extractDeps(code: string): Record<string, string> {
-  const knownDeps: Record<string, string> = {
-    ...(packageInfo.dependencies || {}),
-    ...(packageInfo.devDependencies || {}),
-  };
-  const deps: Record<string, string> = {
-    vue: packageInfo.peerDependencies?.vue || '^3.3.0',
-    'ant-design-vue': packageInfo.version,
-    '@ant-design/icons-vue': knownDeps['@ant-design/icons-vue'] || '^7.0.0',
-  };
-  const matches = code.match(/from\s+['"]([^'".][^'"]*)['"]/g) || [];
-  matches.forEach(m => {
-    const pkgMatch = m.match(/['"]([^'"]+)['"]/);
-    if (!pkgMatch) return;
-    const raw = pkgMatch[1];
-    const pkgName = raw.startsWith('@') ? raw.split('/').slice(0, 2).join('/') : raw.split('/')[0];
-    if (pkgName && !deps[pkgName]) {
-      deps[pkgName] = knownDeps[pkgName] || 'latest';
-    }
-  });
-  return deps;
 }
 
 export default defineComponent({
@@ -423,73 +400,10 @@ export default defineComponent({
     const handleStackBlitz = () => {
       const code = activeCode.value;
       if (!code) return;
-      const demoTitle = `${title.value} - ant-design-vue@${packageInfo.version}`;
-      const pkgJson = JSON.stringify(
-        {
-          name: 'ant-design-vue-demo',
-          private: true,
-          version: '0.0.0',
-          type: 'module',
-          scripts: {
-            dev: 'vite',
-            build: 'vite build',
-          },
-          dependencies: extractDeps(code),
-          devDependencies: {
-            '@vitejs/plugin-vue': '^4.2.3',
-            typescript: '^5.0.4',
-            vite: '^4.3.9',
-          },
-        },
-        null,
-        2,
-      );
-      const scriptClose = '</' + 'script>';
-      const indexHtml = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${demoTitle}</title>
-  </head>
-  <body style="padding: 24px">
-    <div id="app"></div>
-    <script type="module" src="/src/main.js">${scriptClose}
-  </body>
-</html>
-`;
-      const viteConfig = `import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-
-export default defineConfig({
-  plugins: [vue()],
-});
-`;
-      const mainJs = `import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
-import App from './App.vue';
-
-createApp(App).use(Antd).mount('#app');
-`;
-      const appVue = `<template>
-  <Demo />
-</template>
-<script setup>
-import Demo from './Demo.vue';
-${scriptClose}
-`;
-      submitPostForm('https://stackblitz.com/run?file=src%2FDemo.vue', {
-        'project[title]': demoTitle,
-        'project[description]': 'Ant Design Vue live demo',
-        'project[template]': 'node',
-        'project[files][package.json]': pkgJson,
-        'project[files][index.html]': indexHtml,
-        'project[files][vite.config.js]': viteConfig,
-        'project[files][src/main.js]': mainJs,
-        'project[files][src/App.vue]': appVue,
-        'project[files][src/Demo.vue]': code,
+      const fields = getStackBlitzParams(code, {
+        title: `${title.value} - ant-design-vue@${packageInfo.version}`,
       });
+      submitPostForm('https://stackblitz.com/run?file=src%2Fdemo.vue', fields);
     };
 
     const highlightClass = computed(() => ({

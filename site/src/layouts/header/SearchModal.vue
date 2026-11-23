@@ -3,7 +3,7 @@
     :open="open"
     :footer="null"
     :closable="false"
-    :width="580"
+    :width="620"
     :mask-closable="true"
     :destroy-on-close="false"
     wrap-class-name="site-search-modal-wrap"
@@ -22,7 +22,9 @@
           autocomplete="off"
           spellcheck="false"
           :placeholder="
-            isZhCN ? '搜索组件、文档或设计规范...' : 'Search components, docs, or guidelines...'
+            isZhCN
+              ? '搜索组件、子组件、文档或 Design Token...'
+              : 'Search components, subcomponents, docs, or Design Tokens...'
           "
           @keydown="handleInputKeydown"
         />
@@ -44,15 +46,17 @@
             <div class="site-search-group-title">{{ group.label }}</div>
             <div
               v-for="item in group.items"
-              :key="item.path + ':' + group.key"
+              :key="item.id + ':' + group.key"
               :data-search-idx="item._flatIdx"
               class="site-search-item"
               :class="{ active: activeIndex === item._flatIdx }"
               @mouseenter="activeIndex = item._flatIdx"
               @click="selectItem(item)"
             >
-              <span class="site-search-item-icon">
+              <span class="site-search-item-icon" :class="`kind-${item.kind}`">
                 <AppstoreOutlined v-if="item.kind === 'component'" />
+                <BranchesOutlined v-else-if="item.kind === 'subcomponent'" />
+                <ControlOutlined v-else-if="item.kind === 'token'" />
                 <BgColorsOutlined v-else-if="item.kind === 'tool'" />
                 <FileTextOutlined v-else />
               </span>
@@ -76,7 +80,11 @@
                   </template>
                 </span>
               </span>
-              <span v-if="getDisplayBadge(item)" class="site-search-item-badge">
+              <span
+                v-if="getDisplayBadge(item)"
+                class="site-search-item-badge"
+                :class="`badge-${item.kind}`"
+              >
                 {{ getDisplayBadge(item) }}
               </span>
               <EnterOutlined class="site-search-item-enter" />
@@ -117,8 +125,12 @@
                 ? `共 ${flatResults.length} 项`
                 : `${flatResults.length} results`
               : isZhCN
-              ? `${allEntries.length} 篇组件与文档`
-              : `${allEntries.length} pages indexed`
+              ? `${baseEntries.length} 篇页面${
+                  tokenEntries.length ? ` · ${tokenEntries.length} 个 Token` : ''
+                }`
+              : `${baseEntries.length} pages${
+                  tokenEntries.length ? ` · ${tokenEntries.length} tokens` : ''
+                }`
           }}
         </span>
       </div>
@@ -132,20 +144,27 @@ import { useRouter } from 'vue-router';
 import {
   AppstoreOutlined,
   BgColorsOutlined,
+  BranchesOutlined,
   CloseCircleFilled,
+  ControlOutlined,
   EnterOutlined,
   FileTextOutlined,
   SearchOutlined,
 } from '@ant-design/icons-vue';
 import { getLocalizedPathname } from '../../utils/util';
 
+type SearchKind = 'component' | 'subcomponent' | 'doc' | 'tool' | 'token';
+
 interface SearchEntry {
+  id: string;
   path: string;
-  kind: 'component' | 'doc' | 'tool';
+  hash?: string;
+  kind: SearchKind;
   title: string;
   zhTitle: string;
   enTitle: string;
   subtitle?: string;
+  subtitleEn?: string;
   groupZh: string;
   groupEn: string;
   tag?: string;
@@ -168,23 +187,249 @@ const GROUP_EN_MAP: Record<string, string> = {
   主题工具: 'Theme',
 };
 
-const QUICK_ACCESS_PATHS = [
+const QUICK_ACCESS_IDS = [
   '/components/overview',
+  '/docs/vue/migration-v43',
+  '/docs/vue/common-props',
   '/components/button',
   '/components/table',
   '/components/form',
   '/components/modal',
   '/components/select',
-  '/components/date-picker',
   '/docs/vue/customize-theme',
-  '/docs/vue/for-agents',
   '/theme-editor',
 ];
 
+const DOC_EXTRA_KEYWORDS: Record<string, { zh: string; en: string; keywords: string }> = {
+  '/docs/vue/migration-v43': {
+    zh: '4.2.6 升级至 4.3.0 完整迁移指南（cssVar、语义化 DOM、新组件）',
+    en: '4.2.6 to 4.3.0 migration guide (cssVar, Semantic DOM, new components)',
+    keywords: '4.3.0 4.2.6 migration upgrade 迁移 升级 cssvar realtoken zeroruntime',
+  },
+  '/docs/vue/use-with-vite': {
+    zh: '在 Vite 中按需加载、配置主题与 TypeScript',
+    en: 'Tree-shaking, theme config and TypeScript setup with Vite',
+    keywords: 'vite unplugin-vue-components auto-import 按需引入 构建',
+  },
+  '/docs/vue/common-props': {
+    zh: '通用语义化 classNames / styles、函数式配置与 ConfigProvider',
+    en: 'Semantic classNames / styles, functional config & ConfigProvider',
+    keywords: 'common props classNames styles semantic dom 语义化 通用属性',
+  },
+  '/docs/vue/customize-theme': {
+    zh: 'Design Token 定制、CSS 变量模式、暗黑与紧凑算法',
+    en: 'Design Token customization, CSS Variables, dark & compact algorithms',
+    keywords: 'theme token cssvar dark compact seed map alias 定制主题 变量',
+  },
+};
+
+interface SubcomponentSeed {
+  title: string;
+  path: string;
+  hash: string;
+  descZh: string;
+  descEn: string;
+  keywords: string;
+}
+
+const SUBCOMPONENT_SEEDS: SubcomponentSeed[] = [
+  {
+    title: 'Alert.ErrorBoundary',
+    path: '/components/alert',
+    hash: '#alert-errorboundary',
+    descZh: '错误边界包裹组件，自动捕获子组件渲染异常',
+    descEn: 'Error boundary wrapper that catches child component render errors',
+    keywords: 'alert error boundary errorboundary 错误边界 异常捕获 4.3.0',
+  },
+  {
+    title: 'Tag.CheckableTagGroup',
+    path: '/components/tag',
+    hash: '#tag-checkabletaggroup',
+    descZh: '可单选或多选的标签组子组件',
+    descEn: 'Single or multiple selectable tag group subcomponent',
+    keywords: 'tag checkable tag group checkabletaggroup 可选标签组 4.3.0',
+  },
+  {
+    title: 'Image.PreviewGroup',
+    path: '/components/image',
+    hash: '#image-previewgroup',
+    descZh: '多图组合预览，支持 items 配置式数据源',
+    descEn: 'Multi-image preview group with declarative items support',
+    keywords: 'image preview group previewgroup items 多图预览 画廊 4.3.0',
+  },
+  {
+    title: 'Input.OTP',
+    path: '/components/input',
+    hash: '#input-otp',
+    descZh: '一次性验证码分段输入框',
+    descEn: 'One-time password segmented input subcomponent',
+    keywords: 'input otp verification code 验证码 一次性密码 4.3.0',
+  },
+  {
+    title: 'Cascader.Panel',
+    path: '/components/cascader',
+    hash: '#cascader-panel',
+    descZh: '独立内联级联选择面板（无浮层包裹）',
+    descEn: 'Standalone inline Cascader selection panel without dropdown overlay',
+    keywords: 'cascader panel cascaderpanel 级联面板 内联 4.3.0',
+  },
+  {
+    title: 'Statistic.Timer',
+    path: '/components/statistic',
+    hash: '#api',
+    descZh: '支持倒计时（countdown）与正计时（countup）的计时器组件',
+    descEn: 'Timer subcomponent supporting both countdown and countup modes',
+    keywords: 'statistic timer countdown countup 计时器 倒计时 正计时 4.3.0',
+  },
+  {
+    title: 'Space.Addon',
+    path: '/components/space',
+    hash: '#api',
+    descZh: '配合 Space.Compact 使用的统一风格前后置附加框',
+    descEn: 'Compact-styled addon container used alongside Space.Compact',
+    keywords: 'space addon compact spaceaddon 前置 后置 附加项 4.3.0',
+  },
+  {
+    title: 'Tooltip.UniqueProvider',
+    path: '/components/tooltip',
+    hash: '#api',
+    descZh: '在多个相邻 Tooltip 之间共享弹层并平滑过渡',
+    descEn: 'Shared smooth transition provider across sibling Tooltips',
+    keywords: 'tooltip unique provider uniqueprovider 平滑过渡 共享提示 4.3.0',
+  },
+];
+
+const TOKEN_COMPONENT_SLUG_MAP: Record<string, string> = {
+  AutoComplete: 'auto-complete',
+  BackTop: 'back-top',
+  BorderBeam: 'border-beam',
+  ColorPicker: 'color-picker',
+  DatePicker: 'date-picker',
+  FloatButton: 'float-button',
+  FloatButtonGroup: 'float-button',
+  InputNumber: 'input-number',
+  PageHeader: 'page-header',
+  QRCode: 'qrcode',
+  RangePicker: 'date-picker',
+  TextArea: 'input',
+  TimePicker: 'time-picker',
+  TreeSelect: 'tree-select',
+};
+
+function componentNameToSlug(compName: string): string {
+  if (TOKEN_COMPONENT_SLUG_MAP[compName]) {
+    return TOKEN_COMPONENT_SLUG_MAP[compName];
+  }
+  return compName.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
 const RECENT_STORAGE_KEY = 'antdv-site-recent-searches';
 const MAX_RECENT = 5;
+const MAX_TOKEN_RESULTS = 12;
 
-function readRecentPaths(): string[] {
+// Module-level cache for lazily loaded Design Token entries
+let cachedTokenEntries: SearchEntry[] | null = null;
+let tokenLoadPromise: Promise<SearchEntry[]> | null = null;
+
+function buildTokenEntries(rawMeta: Record<string, any>): SearchEntry[] {
+  const entries: SearchEntry[] = [];
+  const globalMeta: Record<string, any> = rawMeta?.global || {};
+  const componentsMeta: Record<string, Record<string, any>> = rawMeta?.components || {};
+
+  Object.entries(globalMeta).forEach(([tokenName, meta]) => {
+    if (!meta || tokenName.startsWith('_')) return;
+    const descZh = String(meta.desc || meta.name || '').trim();
+    const descEn = String(meta.descEn || meta.nameEn || '').trim();
+    const source = String(meta.source || 'alias').toLowerCase();
+    const hash = source === 'seed' ? '#seedtoken' : source === 'map' ? '#maptoken' : '#aliastoken';
+    const path = '/docs/vue/customize-theme';
+    const id = `token:global:${tokenName}`;
+    const searchText = [tokenName, descZh, descEn, source, meta.type || '', 'design token global']
+      .join(' ')
+      .toLowerCase();
+
+    entries.push({
+      id,
+      path,
+      hash,
+      kind: 'token',
+      title: tokenName,
+      zhTitle: tokenName,
+      enTitle: tokenName,
+      subtitle: descZh || `${source} token`,
+      subtitleEn: descEn || `${source} token`,
+      groupZh: 'Design Token',
+      groupEn: 'Design Token',
+      slug: tokenName,
+      searchText,
+    });
+  });
+
+  Object.entries(componentsMeta).forEach(([compName, tokenMap]) => {
+    if (!tokenMap || typeof tokenMap !== 'object') return;
+    const slug = componentNameToSlug(compName);
+    const path = `/components/${slug}`;
+
+    Object.entries(tokenMap).forEach(([tokenName, meta]) => {
+      if (!meta || tokenName.startsWith('_')) return;
+      const fullName = `${compName}.${tokenName}`;
+      const descZh = String(meta.desc || meta.name || '').trim();
+      const descEn = String(meta.descEn || meta.nameEn || '').trim();
+      const id = `token:comp:${fullName}`;
+      const searchText = [
+        fullName,
+        tokenName,
+        compName,
+        slug,
+        descZh,
+        descEn,
+        meta.type || '',
+        'design token component',
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      entries.push({
+        id,
+        path,
+        hash: '#design-tokens',
+        kind: 'token',
+        title: fullName,
+        zhTitle: fullName,
+        enTitle: fullName,
+        subtitle: descZh || `${compName} 组件变量`,
+        subtitleEn: descEn || `${compName} component token`,
+        groupZh: 'Design Token',
+        groupEn: 'Design Token',
+        slug: tokenName,
+        searchText,
+      });
+    });
+  });
+
+  return entries;
+}
+
+function loadDesignTokenEntries(): Promise<SearchEntry[]> {
+  if (cachedTokenEntries) {
+    return Promise.resolve(cachedTokenEntries);
+  }
+  if (!tokenLoadPromise) {
+    tokenLoadPromise = import('ant-design-vue/es/version/token-meta.json')
+      .then(mod => {
+        const raw = (mod as any)?.default || mod || {};
+        cachedTokenEntries = buildTokenEntries(raw);
+        return cachedTokenEntries;
+      })
+      .catch(() => {
+        tokenLoadPromise = null;
+        return [];
+      });
+  }
+  return tokenLoadPromise;
+}
+
+function readRecentIds(): string[] {
   if (typeof localStorage === 'undefined') return [];
   try {
     const raw = localStorage.getItem(RECENT_STORAGE_KEY);
@@ -197,10 +442,10 @@ function readRecentPaths(): string[] {
   }
 }
 
-function saveRecentPath(path: string) {
+function saveRecentId(id: string) {
   if (typeof localStorage === 'undefined') return;
-  const current = readRecentPaths().filter(p => p !== path);
-  current.unshift(path);
+  const current = readRecentIds().filter(p => p !== id);
+  current.unshift(id);
   try {
     localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(current.slice(0, MAX_RECENT)));
   } catch {
@@ -213,7 +458,9 @@ export default defineComponent({
   components: {
     AppstoreOutlined,
     BgColorsOutlined,
+    BranchesOutlined,
     CloseCircleFilled,
+    ControlOutlined,
     EnterOutlined,
     FileTextOutlined,
     SearchOutlined,
@@ -235,28 +482,32 @@ export default defineComponent({
     const listRef = ref<HTMLDivElement | null>(null);
     const query = ref('');
     const activeIndex = ref(0);
-    const recentPaths = ref<string[]>(readRecentPaths());
+    const recentIds = ref<string[]>(readRecentIds());
+    const tokenEntries = ref<SearchEntry[]>(cachedTokenEntries || []);
 
-    const allEntries = computed<SearchEntry[]>(() => {
+    const baseEntries = computed<SearchEntry[]>(() => {
       const routes = router.getRoutes();
       const map = new Map<string, SearchEntry>();
 
-      const addEntry = (entry: Omit<SearchEntry, 'searchText'>) => {
+      const addEntry = (entry: Omit<SearchEntry, 'id' | 'searchText'>, extraKeywords = '') => {
+        const id = entry.hash ? `${entry.path}${entry.hash}` : entry.path;
         const cleanSlug = entry.slug.replace(/-/g, '');
         const searchText = [
           entry.title,
           entry.zhTitle,
           entry.enTitle,
           entry.subtitle || '',
+          entry.subtitleEn || '',
           entry.groupZh,
           entry.groupEn,
           entry.slug,
           cleanSlug,
           entry.tag || '',
+          extraKeywords,
         ]
           .join(' ')
           .toLowerCase();
-        map.set(entry.path, { ...entry, searchText });
+        map.set(id, { ...entry, id, searchText });
       };
 
       addEntry({
@@ -266,6 +517,7 @@ export default defineComponent({
         zhTitle: '组件总览',
         enTitle: 'Components Overview',
         subtitle: '全部组件',
+        subtitleEn: 'All Components',
         groupZh: '组件总览',
         groupEn: 'Overview',
         slug: 'overview',
@@ -278,6 +530,7 @@ export default defineComponent({
         zhTitle: '主题编辑器',
         enTitle: 'Theme Editor',
         subtitle: 'Design Token 可视化定制',
+        subtitleEn: 'Visual Design Token Editor',
         groupZh: '主题工具',
         groupEn: 'Theme',
         slug: 'theme-editor',
@@ -320,6 +573,7 @@ export default defineComponent({
           const enTitleVal = String(r.meta.enTitle || titleVal);
           const groupZh = normType || '研发文档';
           const groupEn = GROUP_EN_MAP[groupZh] || groupZh;
+          const docExtra = DOC_EXTRA_KEYWORDS[basePath];
 
           if (existing) {
             if (isCnRoute) {
@@ -331,34 +585,70 @@ export default defineComponent({
               existing.title,
               existing.zhTitle,
               existing.enTitle,
+              existing.subtitle || '',
+              existing.subtitleEn || '',
               existing.groupZh,
               existing.groupEn,
               existing.slug,
               existing.slug.replace(/-/g, ''),
               existing.tag || '',
+              docExtra?.keywords || '',
             ]
               .join(' ')
               .toLowerCase();
           } else {
-            addEntry({
-              path: basePath,
-              kind: 'doc',
-              title: enTitleVal,
-              zhTitle: titleVal,
-              enTitle: enTitleVal,
-              groupZh,
-              groupEn,
-              tag: r.meta.tag ? String(r.meta.tag) : undefined,
-              slug,
-            });
+            addEntry(
+              {
+                path: basePath,
+                kind: 'doc',
+                title: enTitleVal,
+                zhTitle: titleVal,
+                enTitle: enTitleVal,
+                subtitle: docExtra?.zh,
+                subtitleEn: docExtra?.en,
+                groupZh,
+                groupEn,
+                tag: r.meta.tag ? String(r.meta.tag) : undefined,
+                slug,
+              },
+              docExtra?.keywords || '',
+            );
           }
         }
       }
 
+      SUBCOMPONENT_SEEDS.forEach(sub => {
+        const cleanSlug = sub.title.toLowerCase().replace(/\./g, '-');
+        addEntry(
+          {
+            path: sub.path,
+            hash: sub.hash,
+            kind: 'subcomponent',
+            title: sub.title,
+            zhTitle: sub.title,
+            enTitle: sub.title,
+            subtitle: sub.descZh,
+            subtitleEn: sub.descEn,
+            groupZh: '子组件',
+            groupEn: 'Subcomponent',
+            tag: '4.3.0',
+            slug: cleanSlug,
+          },
+          sub.keywords,
+        );
+      });
+
       return Array.from(map.values());
     });
 
-    const scoreEntry = (entry: SearchEntry, q: string): number => {
+    const entryLookupMap = computed(() => {
+      const m = new Map<string, SearchEntry>();
+      baseEntries.value.forEach(e => m.set(e.id, e));
+      tokenEntries.value.forEach(e => m.set(e.id, e));
+      return m;
+    });
+
+    const scoreEntry = (entry: SearchEntry, q: string, tokens: string[]): number => {
       const titleL = entry.title.toLowerCase();
       const zhL = entry.zhTitle.toLowerCase();
       const enL = entry.enTitle.toLowerCase();
@@ -380,7 +670,6 @@ export default defineComponent({
         titleL.startsWith(q) ||
         zhL.startsWith(q) ||
         enL.startsWith(q) ||
-        subL.startsWith(q) ||
         slugL.startsWith(q) ||
         slugCompact.startsWith(q)
       ) {
@@ -395,8 +684,6 @@ export default defineComponent({
       if (entry.searchText.includes(q)) {
         return 15;
       }
-      // Multi-token AND match
-      const tokens = q.split(/\s+/).filter(Boolean);
       if (tokens.length > 1 && tokens.every(t => entry.searchText.includes(t))) {
         return 10;
       }
@@ -413,9 +700,9 @@ export default defineComponent({
       let idx = 0;
 
       if (!trimmed) {
-        const entryByPath = new Map(allEntries.value.map(e => [e.path, e]));
-        const recentItems = recentPaths.value
-          .map(p => entryByPath.get(p))
+        const lookup = entryLookupMap.value;
+        const recentItems = recentIds.value
+          .map(id => lookup.get(id))
           .filter((e): e is SearchEntry => !!e);
         if (recentItems.length) {
           groups.push({
@@ -424,9 +711,9 @@ export default defineComponent({
             items: recentItems.map(item => ({ ...item, _flatIdx: idx++ })),
           });
         }
-        const recentSet = new Set(recentItems.map(i => i.path));
-        const quickItems = QUICK_ACCESS_PATHS.filter(p => !recentSet.has(p))
-          .map(p => entryByPath.get(p))
+        const recentSet = new Set(recentItems.map(i => i.id));
+        const quickItems = QUICK_ACCESS_IDS.filter(id => !recentSet.has(id))
+          .map(id => lookup.get(id))
           .filter((e): e is SearchEntry => !!e);
         if (quickItems.length) {
           groups.push({
@@ -438,19 +725,33 @@ export default defineComponent({
         return groups;
       }
 
-      const scored = allEntries.value
-        .map(entry => ({ entry, score: scoreEntry(entry, trimmed) }))
+      const queryTokens = trimmed.split(/\s+/).filter(Boolean);
+
+      const scoredBase = baseEntries.value
+        .map(entry => ({ entry, score: scoreEntry(entry, trimmed, queryTokens) }))
         .filter(x => x.score > 0)
         .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title));
 
-      const compItems = scored.filter(x => x.entry.kind === 'component').map(x => x.entry);
-      const docItems = scored.filter(x => x.entry.kind !== 'component').map(x => x.entry);
+      const compItems = scoredBase.filter(x => x.entry.kind === 'component').map(x => x.entry);
+      const subCompItems = scoredBase
+        .filter(x => x.entry.kind === 'subcomponent')
+        .map(x => x.entry);
+      const docItems = scoredBase
+        .filter(x => x.entry.kind === 'doc' || x.entry.kind === 'tool')
+        .map(x => x.entry);
 
       if (compItems.length) {
         groups.push({
           key: 'components',
           label: props.isZhCN ? '组件' : 'Components',
           items: compItems.map(item => ({ ...item, _flatIdx: idx++ })),
+        });
+      }
+      if (subCompItems.length) {
+        groups.push({
+          key: 'subcomponents',
+          label: props.isZhCN ? '子组件' : 'Subcomponents',
+          items: subCompItems.map(item => ({ ...item, _flatIdx: idx++ })),
         });
       }
       if (docItems.length) {
@@ -460,6 +761,24 @@ export default defineComponent({
           items: docItems.map(item => ({ ...item, _flatIdx: idx++ })),
         });
       }
+
+      if (trimmed.length >= 2 && tokenEntries.value.length) {
+        const scoredTokens = tokenEntries.value
+          .map(entry => ({ entry, score: scoreEntry(entry, trimmed, queryTokens) }))
+          .filter(x => x.score > 0)
+          .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title))
+          .slice(0, MAX_TOKEN_RESULTS)
+          .map(x => x.entry);
+
+        if (scoredTokens.length) {
+          groups.push({
+            key: 'tokens',
+            label: 'Design Token',
+            items: scoredTokens.map(item => ({ ...item, _flatIdx: idx++ })),
+          });
+        }
+      }
+
       return groups;
     });
 
@@ -479,8 +798,13 @@ export default defineComponent({
       () => props.open,
       val => {
         if (val) {
-          recentPaths.value = readRecentPaths();
+          recentIds.value = readRecentIds();
           activeIndex.value = 0;
+          if (!tokenEntries.value.length) {
+            loadDesignTokenEntries().then(entries => {
+              tokenEntries.value = entries;
+            });
+          }
           nextTick(() => {
             inputRef.value?.focus();
             inputRef.value?.select();
@@ -513,11 +837,15 @@ export default defineComponent({
     };
 
     const selectItem = (item: SearchEntry) => {
-      saveRecentPath(item.path);
-      recentPaths.value = readRecentPaths();
+      saveRecentId(item.id);
+      recentIds.value = readRecentIds();
       closeModal();
       const target = getLocalizedPathname(item.path, props.isZhCN);
-      router.push(target);
+      router.push({
+        path: target.path,
+        query: target.query,
+        hash: item.hash || undefined,
+      });
     };
 
     const handleInputKeydown = (e: KeyboardEvent) => {
@@ -558,7 +886,12 @@ export default defineComponent({
     };
 
     const getDisplaySubtitle = (item: SearchEntry) => {
+      if (item.kind === 'subcomponent' || item.kind === 'token') {
+        return props.isZhCN ? item.subtitle || '' : item.subtitleEn || item.subtitle || '';
+      }
       if (item.kind === 'doc') {
+        const explicit = props.isZhCN ? item.subtitle : item.subtitleEn;
+        if (explicit) return explicit;
         const other = props.isZhCN ? item.enTitle : item.zhTitle;
         return other && other !== getDisplayTitle(item) ? other : '';
       }
@@ -566,12 +899,24 @@ export default defineComponent({
         return props.isZhCN ? item.enTitle : item.zhTitle;
       }
       if (item.kind === 'tool') {
-        return item.subtitle || '';
+        return props.isZhCN ? item.subtitle || '' : item.subtitleEn || item.subtitle || '';
       }
       return '';
     };
 
     const getDisplayBadge = (item: SearchEntry) => {
+      if (item.kind === 'component') {
+        return props.isZhCN ? '组件' : 'Component';
+      }
+      if (item.kind === 'subcomponent') {
+        return props.isZhCN ? '子组件' : 'Subcomponent';
+      }
+      if (item.kind === 'token') {
+        return 'Design Token';
+      }
+      if (item.kind === 'doc') {
+        return props.isZhCN ? '文档' : 'Doc';
+      }
       return props.isZhCN ? item.groupZh : item.groupEn;
     };
 
@@ -594,7 +939,8 @@ export default defineComponent({
       listRef,
       query,
       activeIndex,
-      allEntries,
+      baseEntries,
+      tokenEntries,
       groupedResults,
       flatResults,
       closeModal,
@@ -700,7 +1046,7 @@ export default defineComponent({
 }
 
 .site-search-results {
-  max-height: min(420px, calc(100vh - 240px));
+  max-height: min(440px, calc(100vh - 240px));
   overflow-y: auto;
   padding: 8px;
 }
@@ -747,6 +1093,14 @@ export default defineComponent({
     color: var(--site-text-color-secondary);
     font-size: 14px;
     flex: none;
+
+    &.kind-subcomponent {
+      color: #722ed1;
+    }
+
+    &.kind-token {
+      color: #d46b08;
+    }
   }
 
   .site-search-item-main {
@@ -781,6 +1135,26 @@ export default defineComponent({
     border-radius: 4px;
     color: var(--site-text-color-secondary);
     background: var(--site-hover-bg, rgba(0, 0, 0, 0.04));
+
+    &.badge-component {
+      color: var(--primary-color, #1677ff);
+      background: var(--primary-color-bg, rgba(22, 119, 255, 0.1));
+    }
+
+    &.badge-subcomponent {
+      color: #722ed1;
+      background: rgba(114, 46, 209, 0.1);
+    }
+
+    &.badge-doc {
+      color: #08979c;
+      background: rgba(19, 194, 194, 0.1);
+    }
+
+    &.badge-token {
+      color: #d46b08;
+      background: rgba(250, 140, 22, 0.12);
+    }
   }
 
   .site-search-item-enter {
@@ -788,6 +1162,35 @@ export default defineComponent({
     font-size: 13px;
     opacity: 0;
     transition: opacity 0.15s ease;
+  }
+}
+
+html[data-doc-theme='dark'] .site-search-item {
+  .site-search-item-icon {
+    &.kind-subcomponent {
+      color: #b37feb;
+    }
+
+    &.kind-token {
+      color: #ffa940;
+    }
+  }
+
+  .site-search-item-badge {
+    &.badge-subcomponent {
+      color: #b37feb;
+      background: rgba(179, 127, 235, 0.16);
+    }
+
+    &.badge-doc {
+      color: #36cfc9;
+      background: rgba(54, 207, 201, 0.16);
+    }
+
+    &.badge-token {
+      color: #ffa940;
+      background: rgba(255, 169, 64, 0.16);
+    }
   }
 }
 
