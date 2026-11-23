@@ -32,16 +32,38 @@ const filterData = data => {
     return acc;
   }, []);
 };
+const isLocalHost = () => {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+  const hostname = window.location.hostname;
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1' ||
+    hostname === '0.0.0.0'
+  );
+};
+
 const getContributors = async () => {
+  if (!import.meta.env.PROD || isLocalHost()) {
+    contributors.value = [];
+    return;
+  }
   const path = route.path;
   const parts = path.split('/');
   const name = parts[2];
+  if (!name) {
+    return;
+  }
   const componentName = name.includes('-') ? name.replace('-cn', '') : name;
   const url = `https://api.github.com/repos/${REPO_PATH}/commits?path=/components/${componentName}`;
   try {
     const req = await fetch(url);
     const res = await req.json();
-    filterData(res);
+    if (Array.isArray(res)) {
+      filterData(res);
+    }
   } catch (e) {
     return null;
   }

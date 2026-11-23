@@ -29,7 +29,8 @@ export function createMarkdownToVueRenderFn(
   return async (src: string, file: string): Promise<MarkdownCompileResult> => {
     const relativePath = slash(path.relative(root, file));
 
-    const cached = cache.get(src);
+    const cacheKey = `${file}\0${src}`;
+    const cached = cache.get(cacheKey);
     if (cached) {
       debug(`[cache hit] ${relativePath}`);
       return cached;
@@ -56,16 +57,19 @@ export function createMarkdownToVueRenderFn(
       // TODO use git timestamp?
       lastUpdated: Math.round(fs.statSync(file).mtimeMs),
     };
-    const newContent = data.vueCode
-      ? await genComponentCode(md, data, pageData)
-      : await genDocCode(content, pageData);
+    const isComponentDemo =
+      (file.endsWith('.vue') || relativePath.endsWith('.vue')) && !relativePath.includes('vueDocs');
+    const newContent =
+      data.vueCode && isComponentDemo
+        ? await genComponentCode(md, data, pageData)
+        : await genDocCode(content, pageData);
 
     debug(`[render] ${file} in ${Date.now() - start}ms.`);
     const result = {
       vueSrc: newContent?.trim(),
       pageData,
     };
-    cache.set(src, result);
+    cache.set(cacheKey, result);
     return result;
   };
 }
@@ -85,8 +89,10 @@ ${vueCode?.trim()}
   const style = fetchCode(vueCode, 'style');
   const scriptContent = fetchCode(vueCode, 'scriptContent');
   let jsCode = (await tsToJs(scriptContent))?.trim();
+  const isScriptSetup = /<script\b[^>]*\bsetup\b/i.test(script);
+  const jsScriptOpenTag = isScriptSetup ? '<script setup>' : '<script>';
   jsCode = jsCode
-    ? `<script setup>
+    ? `${jsScriptOpenTag}
 ${jsCode}
 </script>`
     : '';
@@ -130,22 +136,41 @@ ${jsSourceCode}
   return newContent;
 }
 
+const DOC_COMPONENTS = [
+  {
+    name: 'ColorChunk',
+    path: '@/components/ColorChunk',
+    re: /<(?:ColorChunk|color-chunk)(?=[\s/>])/i,
+  },
+  {
+    name: 'TokenTable',
+    path: '@/components/TokenTable',
+    re: /<(?:TokenTable|token-table)(?=[\s/>])/i,
+  },
+  {
+    name: 'ComponentTokenTable',
+    path: '@/components/ComponentTokenTable',
+    re: /<(?:ComponentTokenTable|component-token-table)(?=[\s/>])/i,
+  },
+];
+
 async function genDocCode(content: string, pageData: PageData) {
+  const usedComponents = DOC_COMPONENTS.filter(({ re }) => re.test(pageData.html));
+  const imports = usedComponents
+    .map(({ name, path: compPath }) => `import ${name} from '${compPath}';`)
+    .join('\n');
+  const componentsBlock = usedComponents.length
+    ? `    components: {\n        ${usedComponents
+        .map(({ name }) => name)
+        .join(',\n        ')}\n    },\n`
+    : '';
   return `
 <template><article class="markdown">${pageData.html}</article></template>
 
 <script>
-import ColorChunk from '@/components/ColorChunk';
-import TokenTable from '@/components/TokenTable';
-import ComponentTokenTable from '@/components/ComponentTokenTable';
-
+${imports}
 export default {
-    components: {
-        ColorChunk,
-        TokenTable,
-        ComponentTokenTable
-    },
-    pageData: ${JSON.stringify(pageData)}
+${componentsBlock}    pageData: ${JSON.stringify(pageData)}
 }
 </script>
 ${fetchCode(content, 'style')}

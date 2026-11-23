@@ -15,7 +15,8 @@ export function createVueToMarkdownRenderFn(root: string = process.cwd()): any {
   return (src: string, file: string): MarkdownCompileResult => {
     const relativePath = slash(path.relative(root, file));
 
-    const cached = cache.get(src);
+    const cacheKey = `${file}\0${src}`;
+    const cached = cache.get(cacheKey);
     if (cached) {
       debug(`[cache hit] ${relativePath}`);
       return cached;
@@ -38,7 +39,7 @@ ${style}
       vueSrc: newContent?.trim(),
       ignore: !docs,
     };
-    cache.set(src, result);
+    cache.set(cacheKey, result);
     return result;
   };
 }
