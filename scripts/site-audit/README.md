@@ -25,8 +25,8 @@ npx playwright install chromium
 ## 为什么建议对生产构建巡检
 
 站点在 dev 下把 `ant-design-vue` 别名到仓库源码（`components/`），一个页面要按模块
-逐个请求 ≈1500 个文件；在 WSL 的 `/mnt/d`（9p 文件系统）上实测首屏 ≈13s，
-而生产构建（打包为 chunk）同一个页面 ≈1s。
+逐个请求 ≈1500 个文件；在 WSL 的 `/mnt/d`（9p 文件系统）上实测首屏 **13~50s**（取决于缓存），
+而生产构建（打包为 chunk）同一个页面 **≈1~2s**。
 
 因此：
 
