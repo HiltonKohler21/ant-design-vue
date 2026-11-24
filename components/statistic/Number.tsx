@@ -1,12 +1,24 @@
-import type { FunctionalComponent, VNodeTypes } from 'vue';
+import type { CSSProperties, FunctionalComponent, VNodeTypes } from 'vue';
+import classNames from '../_util/classNames';
 import type { FormatConfig, valueType } from './utils';
 
 interface NumberProps extends FormatConfig {
   value: valueType;
+  className?: string;
+  semanticStyle?: CSSProperties;
 }
 
 const StatisticNumber: FunctionalComponent<NumberProps> = props => {
-  const { value, formatter, precision, decimalSeparator, groupSeparator = '', prefixCls } = props;
+  const {
+    value,
+    formatter,
+    precision,
+    decimalSeparator,
+    groupSeparator = '',
+    prefixCls,
+    className,
+    semanticStyle,
+  } = props;
   let valueNode: VNodeTypes;
 
   if (typeof formatter === 'function') {
@@ -47,7 +59,11 @@ const StatisticNumber: FunctionalComponent<NumberProps> = props => {
     }
   }
 
-  return <span class={`${prefixCls}-content-value`}>{valueNode}</span>;
+  return (
+    <span class={classNames(`${prefixCls}-content-value`, className)} style={semanticStyle}>
+      {valueNode}
+    </span>
+  );
 };
 StatisticNumber.displayName = 'StatisticNumber';
 export default StatisticNumber;

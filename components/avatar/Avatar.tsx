@@ -13,7 +13,7 @@ import eagerComputed from '../_util/eagerComputed';
 import useStyle from './style';
 import { useAvatarInjectContext } from './AvatarContext';
 
-export type AvatarSize = 'large' | 'small' | 'default' | number | ScreenSizeMap;
+export type AvatarSize = 'large' | 'small' | 'default' | 'medium' | number | ScreenSizeMap;
 
 export const avatarProps = () => ({
   rootClassName: String,
@@ -60,7 +60,7 @@ const Avatar = defineComponent({
     const contextAvatar = computed(() => configProvider.avatar?.value);
     const avatarCtx = useAvatarInjectContext();
     const size = computed(() => {
-      return props.size === 'default' ? avatarCtx.size : props.size;
+      return props.size === 'default' || props.size === 'medium' ? avatarCtx.size : props.size;
     });
     const screens = useBreakpoint();
     const responsiveSize = eagerComputed(() => {
@@ -119,14 +119,11 @@ const Avatar = defineComponent({
       },
     );
 
-    watch(
-      () => props.gap,
-      () => {
-        nextTick(() => {
-          setScaleParam();
-        });
-      },
-    );
+    watch([() => props.gap, size], () => {
+      nextTick(() => {
+        setScaleParam();
+      });
+    });
 
     onMounted(() => {
       nextTick(() => {

@@ -28,21 +28,28 @@ Badge normally appears in proximity to notifications or user avatars with eye-ca
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<'root' \| 'indicator', string> \| (info: { props }) => Record<'root' \| 'indicator', string>` | - | 4.3.0 |
 | color | Customize Badge dot color | string | - | 1.5.0 |
-| count | Number to show in badge | number\|string \| slot |  |  |
-| dot | Whether to display a red dot instead of `count` | boolean | `false` |  |
-| offset | set offset of the badge dot, like [x, y] | [number\|string, number\|string] | - |  |
+| count | Number to show; shows `${overflowCount}+` when greater, hidden when 0 | number \| string \| slot | - |  |
+| dot | Show a red dot instead of a number | boolean | false |  |
+| numberStyle | Style of the count | object | '' |  |
+| offset | Offset of the badge, `[x, y]` | [number \| string, number \| string] | - |  |
 | overflowCount | Max count to show | number | 99 |  |
-| showZero | Whether to show badge when `count` is zero | boolean | `false` |  |
-| status | Set Badge as a status dot | `success` \| `processing` \| `default` \| `error` \| `warning` | `''` |  |
-| text | If `status` is set, `text` sets the display text of the status `dot` | string | `''` |  |
-| numberStyle | sets the display style of the status `dot` | object | '' |  |
-| title | Text to show when hovering over the badge | string | `count` |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| showZero | Whether to show badge when count is 0 | boolean | false |  |
+| size | If `count` is set, `size` sets the size of badge | `'default'` \| `'small'` | `'default'` |  |
+| status | Set Badge as a status dot | Enum{ 'success', 'processing', 'default', 'error', 'warning' } | '' |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<'root' \| 'indicator', CSSProperties> \| (info: { props }) => Record<'root' \| 'indicator', CSSProperties>` | - | 4.3.0 |
+| text | Text beside the status dot (requires `status`) | string | '' |  |
+| title | Text to show when hovering over the badge. Set to `null` or `false` to remove the native tooltip | `string \| null \| false` | `count` | 4.3.0 |
 
 ### Badge.Ribbon (2.0.1+)
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| color | Customize Ribbon color | string | - |  |
-| placement | The placement of the Ribbon, `start` and `end` follow text direction (RTL or LTR) | `start` \| `end` | `end` |  |
-| text | Content inside the Ribbon | string \| VNode \| slot | - |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<'root' \| 'content' \| 'indicator', string> \| (info: { props }) => Record<'root' \| 'content' \| 'indicator', string>` | - | 4.3.0 |
+| color | Customize ribbon color | string | - |  |
+| placement | Position of the ribbon, `start` and `end` follow text direction | `start` \| `end` | `end` |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<'root' \| 'content' \| 'indicator', CSSProperties> \| (info: { props }) => Record<'root' \| 'content' \| 'indicator', CSSProperties>` | - | 4.3.0 |
+| text | Content of the ribbon | string \| VNode \| slot | - |  |

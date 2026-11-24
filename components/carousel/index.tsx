@@ -178,6 +178,31 @@ const Carousel = defineComponent({
       const dotDurationStyle = mergedShowDuration.value
         ? ({ [DotDuration]: `${mergedAutoplaySpeed.value}ms` } as CSSProperties)
         : undefined;
+      const mergedSlots = {
+        ...slots,
+        ...(!slots.prevArrow
+          ? {
+              prevArrow: () =>
+                props.prevArrow ?? (
+                  <button
+                    type="button"
+                    aria-label={isRTL.value ? 'Next slide' : 'Previous slide'}
+                  />
+                ),
+            }
+          : {}),
+        ...(!slots.nextArrow
+          ? {
+              nextArrow: () =>
+                props.nextArrow ?? (
+                  <button
+                    type="button"
+                    aria-label={isRTL.value ? 'Previous slide' : 'Next slide'}
+                  />
+                ),
+            }
+          : {}),
+      };
       return wrapSSR(
         <div
           class={className}
@@ -194,7 +219,7 @@ const Carousel = defineComponent({
             draggable={draggable}
             fade={fade}
             vertical={vertical.value}
-            v-slots={slots}
+            v-slots={mergedSlots}
           />
         </div>,
       );

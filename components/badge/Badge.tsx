@@ -47,7 +47,10 @@ const badgeBaseProps = () => ({
   text: PropTypes.any,
   offset: Array as unknown as PropType<[number | string, number | string]>,
   numberStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
-  title: String,
+  title: {
+    type: [String, Boolean] as PropType<string | false | null>,
+    default: undefined,
+  },
 });
 
 type BadgeSemanticProps = Partial<ExtractPropTypes<ReturnType<typeof badgeBaseProps>>> & {
@@ -206,7 +209,9 @@ export default defineComponent({
       // =============================== Render ===============================
       // >>> Title
       const titleNode =
-        title ?? (typeof count === 'string' || typeof count === 'number' ? count : undefined);
+        title === null || title === false
+          ? undefined
+          : title ?? (typeof count === 'string' || typeof count === 'number' ? count : undefined);
 
       // >>> Status Text
       const statusTextNode =

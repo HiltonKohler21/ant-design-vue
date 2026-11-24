@@ -1,5 +1,6 @@
 import devWarning from '../../vc-util/devWarning';
 import type { Ref } from 'vue';
+import { toRaw } from 'vue';
 import type { ContextSlots } from '../context';
 import type { TransformColumns, ColumnsType } from '../interface';
 import { SELECTION_COLUMN } from './useSelection';
@@ -9,7 +10,8 @@ import { customRenderSlot } from '../../_util/vnode';
 function fillSlots<RecordType>(columns: ColumnsType<RecordType>, contextSlots: Ref<ContextSlots>) {
   const $slots = contextSlots.value;
   return columns.map(column => {
-    if (column === SELECTION_COLUMN || column === EXPAND_COLUMN) return column;
+    const rawColumn = toRaw(column);
+    if (rawColumn === SELECTION_COLUMN || rawColumn === EXPAND_COLUMN) return rawColumn;
     const cloneColumn = { ...column };
     const { slots = {} } = cloneColumn;
     cloneColumn.__originColumn__ = column;

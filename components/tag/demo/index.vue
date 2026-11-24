@@ -7,13 +7,15 @@
     <Animation />
     <Icon />
     <Status />
+    <Customize />
     <Draggable />
+    <ComponentToken />
+    <Disabled />
+    <StyleClass />
     <CheckableGroup />
     <Variant />
     <HotTags />
     <BorderLess />
-    <ComponentToken />
-    <StyleClass />
   </demo-sort>
 </template>
 
@@ -27,10 +29,12 @@ import Control from './control.vue';
 import HotTags from './hot-tags.vue';
 import Icon from './icon.vue';
 import Status from './status.vue';
+import Customize from './customize.vue';
 import BorderLess from './border-less.vue';
 import Animation from './animation.vue';
 import Draggable from './draggable.vue';
 import ComponentToken from './component-token.vue';
+import Disabled from './disabled.vue';
 import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -49,10 +53,12 @@ export default defineComponent({
     HotTags,
     Icon,
     Status,
+    Customize,
     BorderLess,
     Animation,
     Draggable,
     ComponentToken,
+    Disabled,
     StyleClass,
   },
 });

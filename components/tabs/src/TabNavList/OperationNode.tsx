@@ -12,11 +12,12 @@ import PropTypes from '../../../_util/vue-types';
 import useState from '../../../_util/hooks/useState';
 import EllipsisOutlined from '@ant-design/icons-vue/EllipsisOutlined';
 import { useProvideOverride } from '../../../menu/src/OverrideContext';
+import { useInjectTabs } from '../TabContext';
 
 export const operationNodeProps = {
   prefixCls: { type: String },
   id: { type: String },
-  tabs: { type: Object as PropType<(Tab & { closeIcon?: () => any })[]> },
+  tabs: { type: Object as PropType<Tab[]> },
   rtl: { type: Boolean },
   tabBarGutter: { type: Number },
   activeKey: { type: [String, Number] },
@@ -133,6 +134,7 @@ export default defineComponent({
         setSelectedKey(null);
       }
     });
+    const { classNames: semanticClassNames, styles: semanticStyles } = useInjectTabs();
     useProvideOverride({});
     return () => {
       const {
@@ -150,7 +152,7 @@ export default defineComponent({
         onTabClick,
         popupClassName,
       } = props;
-      if (!tabs.length) return null;
+      if (!tabs.length && !more?.open && !more?.visible) return null;
       const dropdownPrefix = `${prefixCls}-dropdown`;
 
       const dropdownAriaLabel = locale?.dropdownAriaLabel;
@@ -166,6 +168,7 @@ export default defineComponent({
         onOpenChange: _moreOnOpenChange,
         onVisibleChange: _moreOnVisibleChange,
         getPopupContainer: moreGetPopupContainer,
+        popupRender: morePopupRender,
         ...restMoreProps
       } = more || {};
 
@@ -186,13 +189,19 @@ export default defineComponent({
         moreStyle.order = 1;
       }
 
+      const popupRootClassName = semanticClassNames?.value?.popup?.root;
+      const popupRootStyle = semanticStyles?.value?.popup?.root;
+
       const overlayClassName = classNames(
         {
           [`${dropdownPrefix}-rtl`]: rtl,
         },
         popupClassName,
+        popupRootClassName,
         moreOverlayClassName,
       );
+      const mergedOverlayStyle =
+        popupRootStyle || moreOverlayStyle ? { ...popupRootStyle, ...moreOverlayStyle } : undefined;
       const moreNode = mobile ? null : (
         <Dropdown
           {...restMoreProps}
@@ -202,56 +211,82 @@ export default defineComponent({
           transitionName={morePropTransitionName ?? moreTransitionName}
           onVisibleChange={handleVisibleChange}
           overlayClassName={overlayClassName}
-          overlayStyle={moreOverlayStyle}
+          overlayStyle={mergedOverlayStyle}
           mouseEnterDelay={0.1}
           mouseLeaveDelay={0.1}
           getPopupContainer={moreGetPopupContainer ?? props.getPopupContainer}
           v-slots={{
-            overlay: () => (
-              <Menu
-                onClick={({ key, domEvent }) => {
-                  onTabClick(key, domEvent);
-                  handleVisibleChange(false);
-                }}
-                id={popupId.value}
-                tabindex={-1}
-                role="listbox"
-                aria-activedescendant={selectedItemId.value}
-                selectedKeys={[selectedKey.value]}
-                aria-label={
-                  dropdownAriaLabel !== undefined ? dropdownAriaLabel : 'expanded dropdown'
-                }
-              >
-                {tabs.map(tab => {
-                  const removable = editable && tab.closable !== false && !tab.disabled;
-                  return (
-                    <MenuItem
-                      key={tab.key}
-                      id={`${popupId.value}-${tab.key}`}
-                      role="option"
-                      aria-controls={id && `${id}-panel-${tab.key}`}
-                      disabled={tab.disabled}
-                    >
-                      <span>{typeof tab.tab === 'function' ? tab.tab() : tab.tab}</span>
-                      {removable && (
-                        <button
-                          type="button"
-                          aria-label={props.removeAriaLabel || 'remove'}
-                          tabindex={0}
-                          class={`${dropdownPrefix}-menu-item-remove`}
-                          onClick={e => {
-                            e.stopPropagation();
-                            onRemoveTab(e, tab.key);
-                          }}
-                        >
-                          {tab.closeIcon?.() || editable.removeIcon?.() || '×'}
-                        </button>
-                      )}
-                    </MenuItem>
-                  );
-                })}
-              </Menu>
-            ),
+            overlay: () => {
+              const menuNode = (
+                <Menu
+                  onClick={({ key, domEvent }) => {
+                    onTabClick(key, domEvent);
+                    handleVisibleChange(false);
+                  }}
+                  id={popupId.value}
+                  tabindex={-1}
+                  role="listbox"
+                  aria-activedescendant={selectedItemId.value}
+                  selectedKeys={[selectedKey.value]}
+                  aria-label={
+                    dropdownAriaLabel !== undefined ? dropdownAriaLabel : 'expanded dropdown'
+                  }
+                >
+                  {tabs.map(tab => {
+                    const removable =
+                      editable &&
+                      tab.closable !== false &&
+                      tab.closeIcon !== null &&
+                      tab.closeIcon !== false &&
+                      !tab.disabled;
+                    const resolvedCloseIcon =
+                      typeof tab.closeIcon === 'function'
+                        ? (tab.closeIcon as () => any)()
+                        : tab.closeIcon;
+                    return (
+                      <MenuItem
+                        key={tab.key}
+                        id={`${popupId.value}-${tab.key}`}
+                        role="option"
+                        aria-controls={id && `${id}-panel-${tab.key}`}
+                        disabled={tab.disabled}
+                      >
+                        <span>{typeof tab.tab === 'function' ? tab.tab() : tab.tab}</span>
+                        {removable && (
+                          <button
+                            type="button"
+                            aria-label={props.removeAriaLabel || 'remove'}
+                            tabindex={0}
+                            class={classNames(
+                              `${dropdownPrefix}-menu-item-remove`,
+                              semanticClassNames?.value?.remove,
+                            )}
+                            style={semanticStyles?.value?.remove}
+                            onClick={e => {
+                              e.stopPropagation();
+                              onRemoveTab(e, tab.key);
+                            }}
+                          >
+                            {resolvedCloseIcon ?? editable.removeIcon?.() ?? '×'}
+                          </button>
+                        )}
+                      </MenuItem>
+                    );
+                  })}
+                </Menu>
+              );
+              if (morePopupRender) {
+                const restTabs = tabs.map(tab => ({
+                  ...tab,
+                  label: tab.label ?? (typeof tab.tab === 'function' ? tab.tab() : tab.tab),
+                }));
+                return morePopupRender(menuNode, {
+                  restTabs,
+                  onClose: () => handleVisibleChange(false),
+                });
+              }
+              return menuNode;
+            },
             default: () => (
               <button
                 type="button"

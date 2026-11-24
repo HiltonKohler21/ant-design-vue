@@ -1,8 +1,9 @@
 import Select from '../select';
 import { Group, Button } from '../radio';
 import type { CalendarMode, SelectInfo } from './generateCalendar';
-import type { Ref } from 'vue';
+import type { CSSProperties, Ref } from 'vue';
 import { defineComponent, ref } from 'vue';
+import classNames from '../_util/classNames';
 import type { Locale } from '../vc-picker/interface';
 import type { GenerateConfig } from '../vc-picker/generate';
 import { FormItemInputContext } from '../form/FormItemContext';
@@ -143,6 +144,8 @@ function ModeSwitch<DateType>(props: ModeSwitchProps<DateType>) {
 ModeSwitch.inheritAttrs = false;
 
 export interface CalendarHeaderProps<DateType> {
+  className?: string;
+  style?: CSSProperties;
   prefixCls: string;
   value: DateType;
   validRange?: [DateType, DateType];
@@ -158,7 +161,8 @@ export default defineComponent<CalendarHeaderProps<any>>({
   name: 'CalendarHeader',
   inheritAttrs: false,
   props: [
-    'mode',
+    'className',
+    'style',
     'prefixCls',
     'value',
     'validRange',
@@ -174,7 +178,7 @@ export default defineComponent<CalendarHeaderProps<any>>({
 
     return () => {
       const props = { ..._props, ...attrs };
-      const { prefixCls, fullscreen, mode, onChange, onModeChange } = props;
+      const { prefixCls, fullscreen, mode, onChange, onModeChange, className, style } = props;
       const sharedProps = {
         ...props,
         fullscreen,
@@ -182,7 +186,7 @@ export default defineComponent<CalendarHeaderProps<any>>({
       } as any;
 
       return (
-        <div class={`${prefixCls}-header`} ref={divRef}>
+        <div class={classNames(`${prefixCls}-header`, className)} style={style} ref={divRef}>
           <YearSelect
             {...sharedProps}
             onChange={v => {

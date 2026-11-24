@@ -1,6 +1,7 @@
 import { defineComponent, computed, ref } from 'vue';
 import type { CSSProperties, ExtractPropTypes } from 'vue';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import useStyle from './style';
 import { useLocaleReceiver } from '../locale/LocaleReceiver';
 import { withInstall } from '../_util/type';
@@ -10,10 +11,26 @@ import { ReloadOutlined } from '@ant-design/icons-vue';
 import { useToken } from '../theme/internal';
 import { QRCodeCanvas, QRCodeSVG } from './QRCode';
 import warning from '../_util/warning';
-import type { QRStatus, StatusRenderInfo } from './interface';
+import type {
+  QRCodeClassNamesType,
+  QRCodeSemanticClassNames,
+  QRCodeSemanticName,
+  QRCodeSemanticStyles,
+  QRCodeStylesType,
+  QRStatus,
+  StatusRenderInfo,
+} from './interface';
 import { qrcodeProps } from './interface';
 
-export type { QRStatus, StatusRenderInfo };
+export type {
+  QRStatus,
+  StatusRenderInfo,
+  QRCodeSemanticName,
+  QRCodeSemanticClassNames,
+  QRCodeSemanticStyles,
+  QRCodeClassNamesType,
+  QRCodeStylesType,
+};
 export type QRCodeProps = Partial<ExtractPropTypes<ReturnType<typeof qrcodeProps>>>;
 const QRCode = defineComponent({
   name: 'AQrcode',
@@ -30,7 +47,13 @@ const QRCode = defineComponent({
       );
     }
     const [locale] = useLocaleReceiver('QRCode');
-    const { prefixCls, configProvider } = useConfigInject('qrcode', props);
+    const { prefixCls } = useConfigInject('qrcode', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('qrcode');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     // realToken：未变量化的原始 token。QR 码尺寸/画布颜色参与 JS 计算与 Canvas 绘制，
     // cssVar 模式下 token 值是 var() 字符串，必须使用真实值。
@@ -41,6 +64,32 @@ const QRCode = defineComponent({
         return qrCodeCanvas.value?.toDataURL(type, quality);
       },
     });
+
+    const mergedProps = computed<QRCodeProps>(() => ({
+      ...props,
+      bgColor: props.bgColor ?? 'transparent',
+      type: props.type ?? 'canvas',
+      size: props.size ?? 160,
+      status: props.status ?? 'active',
+      bordered: props.bordered ?? true,
+      errorLevel: props.errorLevel ?? 'M',
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      QRCodeSemanticClassNames,
+      QRCodeSemanticStyles,
+      QRCodeProps
+    >(
+      () => [contextClassNames.value as QRCodeClassNamesType, props.classNames],
+      () => [
+        contextStyles.value as QRCodeStylesType,
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        props.styles,
+        attrs.style ? { root: attrs.style as CSSProperties } : undefined,
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
     const qrCodeProps = computed(() => {
       const {
         value,
@@ -50,21 +99,26 @@ const QRCode = defineComponent({
         color = realToken.value.colorText,
         bgColor = 'transparent',
         errorLevel = 'M',
+        marginSize,
       } = props;
+      const iconWidth = typeof iconSize === 'number' ? iconSize : iconSize?.width ?? 40;
+      const iconHeight = typeof iconSize === 'number' ? iconSize : iconSize?.height ?? 40;
       const imageSettings: QRCodeProps['imageSettings'] = {
         src: icon,
         x: undefined,
         y: undefined,
-        height: iconSize,
-        width: iconSize,
+        height: iconHeight,
+        width: iconWidth,
         excavate: true,
       };
+      const normalizedValue = Array.isArray(value) ? value.join('\n') : value;
       return {
-        value,
+        value: normalizedValue,
         size: size - (Number(realToken.value.paddingSM) + Number(realToken.value.lineWidth)) * 2,
         level: errorLevel,
         bgColor,
         fgColor: color,
+        marginSize,
         imageSettings: icon ? imageSettings : undefined,
       };
     });
@@ -73,7 +127,7 @@ const QRCode = defineComponent({
     };
     return () => {
       const pre = prefixCls.value;
-      const contextQRCode = (configProvider as any).qrcode?.value;
+      const { class: attrClass, style: _attrStyle, ...restAttrs } = attrs;
       const renderStatus = props.statusRender ?? slots.statusRender;
       const statusInfo: StatusRenderInfo | undefined =
         props.status !== 'active'
@@ -84,30 +138,33 @@ const QRCode = defineComponent({
             }
           : undefined;
       const customStatusNode = statusInfo && renderStatus ? renderStatus(statusInfo) : undefined;
+      const rootStyle: CSSProperties = {
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+        backgroundColor: qrCodeProps.value.bgColor,
+        ...mergedStyles.value.root,
+      };
       return wrapSSR(
         <div
-          {...attrs}
-          style={[
-            contextQRCode?.style,
-            attrs.style as CSSProperties,
-            {
-              width: `${props.size}px`,
-              height: `${props.size}px`,
-              backgroundColor: qrCodeProps.value.bgColor,
-            },
-          ]}
+          {...restAttrs}
+          style={rootStyle}
           class={[
             hashId.value,
             pre,
-            contextQRCode?.className,
+            contextClassName.value,
             props.rootClassName,
+            mergedClassNames.value.root,
+            attrClass,
             {
               [`${pre}-borderless`]: !props.bordered,
             },
           ]}
         >
           {props.status !== 'active' && (
-            <div class={`${pre}-mask`}>
+            <div
+              class={[`${pre}-mask`, mergedClassNames.value.cover]}
+              style={mergedStyles.value.cover}
+            >
               {customStatusNode !== undefined && customStatusNode !== null ? (
                 customStatusNode
               ) : (

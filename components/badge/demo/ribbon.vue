@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 10
 title:
   zh-CN: 缎带
   en-US: Ribbon

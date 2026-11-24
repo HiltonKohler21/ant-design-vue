@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 6
-version: 3.0
+version: '3.0'
 title:
   en-US: Filter in Tree
   zh-CN: 树型筛选菜单

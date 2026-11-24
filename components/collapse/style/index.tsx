@@ -73,16 +73,32 @@ export const genBaseStyle: GenerateStyle<CollapseToken> = token => {
       },
 
       '&-small': {
-        [`> ${componentCls}-item > ${componentCls}-header`]: {
-          padding: `${unit(token.paddingXS)} ${unit(token.paddingSM)}`,
-          fontSize: token.fontSize,
+        [`> ${componentCls}-item`]: {
+          [`> ${componentCls}-header`]: {
+            padding: `${unit(token.paddingXS)} ${unit(token.paddingSM)}`,
+            fontSize: token.fontSize,
+          },
+          [`> ${componentCls}-content > ${componentCls}-content-box`]: {
+            padding: token.paddingSM,
+          },
         },
       },
 
       '&-large': {
-        [`> ${componentCls}-item > ${componentCls}-header`]: {
-          padding: `${unit(token.padding)} ${unit(token.paddingLG)}`,
+        [`> ${componentCls}-item`]: {
           fontSize: token.fontSizeLG,
+          lineHeight: token.lineHeightLG,
+          [`> ${componentCls}-header`]: {
+            padding: `${unit(token.padding)} ${unit(token.paddingLG)}`,
+            fontSize: token.fontSizeLG,
+
+            [`> ${componentCls}-expand-icon`]: {
+              height: token.calc(token.fontSizeLG).mul(token.lineHeightLG).equal(),
+            },
+          },
+          [`> ${componentCls}-content > ${componentCls}-content-box`]: {
+            padding: token.paddingLG,
+          },
         },
       },
 
@@ -137,6 +153,12 @@ export const genBaseStyle: GenerateStyle<CollapseToken> = token => {
           // >>>>> Text
           [`${componentCls}-header-text`]: {
             marginInlineEnd: 'auto',
+
+            '> svg': {
+              display: 'inline-block',
+              verticalAlign: 'middle',
+              marginBlockEnd: '0.2em',
+            },
           },
         },
 

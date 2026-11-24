@@ -25,13 +25,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*_9MMRpWoOcYAAA
 | checkable | 节点前添加 Checkbox 复选框 | boolean | false |  |
 | checkedKeys(v-model) | （受控）选中复选框的树节点（注意：父子节点有关联，如果传入父节点 key，则子节点自动选中；相应当子节点 key 都传入，父节点也自动选中。当设置`checkable`和`checkStrictly`，它是一个有`checked`和`halfChecked`属性的对象，并且父子节点的选中与否不再关联 | string\[] \| number\[] \| {checked: string\[] \| number\[], halfChecked: string\[] \| number\[]} | \[] |  |
 | checkStrictly | checkable 状态下节点选择完全受控（父子节点选中状态不再关联） | boolean | false |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: TreeProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | defaultCheckedKeys | 默认选中复选框的树节点 | string\[] \| number\[] | \[] |  |
 | defaultExpandAll | 默认展开所有树节点, 如果是异步数据，需要在数据返回后再实例化，建议用 v-if="data.length"；当有 expandedKeys 时，defaultExpandAll 将失效 | boolean | false |  |
 | defaultExpandedKeys | 默认展开指定的树节点 | string\[] \| number\[] | \[] |  |
 | defaultExpandParent | 默认展开父节点 | boolean | true |  |
 | defaultSelectedKeys | 默认选中的树节点 | string\[] \| number\[] | \[] |  |
-| disabled | 将树禁用 | bool | false |  |
-| draggable | 设置节点可拖拽 | boolean | false |  |
+| disabled | 将树禁用 | boolean | false |  |
+| draggable | 设置节点可拖拽 | boolean \| ((node: DataNode) => boolean) \| { icon?: VueNode \| false, nodeDraggable?: (node: DataNode) => boolean } | false |  |
 | expandedKeys(v-model) | （受控）展开指定的树节点 | string\[] \| number\[] | \[] |  |
 | fieldNames | 替换 treeNode 中 title,key,children 字段为 treeData 中对应的字段 | object | {children:'children', title:'title', key:'key' } | 3.0.0 |
 | filterTreeNode | 按需筛选树节点（高亮），返回 true | function(node) | - |  |
@@ -40,15 +41,20 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*_9MMRpWoOcYAAA
 | loadedKeys | （受控）已经加载的节点，需要配合 `loadData` 使用 | string\[] \| number\[] | \[] |  |
 | multiple | 支持点选多个节点（节点本身） | boolean | false |  |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
+| ~~rootStyle~~ | Tree 最外层样式，请使用 `styles.root` 替代 | CSSProperties | - | 4.3.0 |
 | selectable | 是否可选中 | boolean | true |  |
 | selectedKeys(v-model) | （受控）设置选中的树节点 | string\[] \| number\[] | - |  |
 | showIcon | 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式 | boolean | false |  |
 | showLine | 是否展示连接线 | boolean \| {showLeafIcon: boolean}(3.0+) | false |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: TreeProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | switcherIcon | 自定义树节点的展开/折叠图标 | v-slot:switcherIcon="{active, checked, expanded, loading, selected, halfChecked, title, key, children, dataRef, data, defaultIcon, switcherCls}" | - |  |
 | switcherLoadingIcon | 自定义树节点的加载图标 | VNode \| v-slot:switcherLoadingIcon | - | 4.3.0 |
 | title | 自定义标题 | slot |  | 2.0.0 |
+| titleRender | 自定义渲染节点 | (nodeData: DataNode) => VueNode | - | 4.3.0 |
 | treeData | treeNodes 数据，如果设置则不需要手动构造 TreeNode 节点（key 在整个树范围内唯一） | [TreeNode\[\]](#treenode) | -- |  |
 | virtual | 设置 false 时关闭虚拟滚动 | boolean | true | 3.0 |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `item` \| `itemIcon` \| `itemTitle` \| `itemSwitcher`。
 
 ### 事件
 
@@ -68,9 +74,15 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*_9MMRpWoOcYAAA
 
 ### Tree 方法
 
-| 名称 | 说明 |
-| --- | --- |
-| scrollTo({ key: string \| number; align?: 'top' \| 'bottom' \| 'auto'; offset?: number }) | 虚拟滚动下，滚动到指定 key 条目 |
+| 名称 | 说明 | 版本 |
+| --- | --- | --- |
+| scrollTo({ key: string \| number; align?: 'top' \| 'bottom' \| 'auto'; offset?: number; autoExpand?: boolean }) | 虚拟滚动下，滚动到指定 key 条目。非受控模式下可通过 `autoExpand` 展开目标节点 | autoExpand: 4.3.0 |
+
+### Tree.useTree (`4.3.0`)
+
+`Tree.useTree(treeData, config?: { fieldNames?: FieldNames }) => { getPath: (key) => DataEntity[] }`
+
+提供 Tree 数据工具。`getPath(key)` 返回从根节点到目标节点的实体路径，可用于在受控模式下更新 `expandedKeys`。
 
 ### TreeNode
 

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 8
 title:
   zh-CN: 额外节点
   en-US: Extra node

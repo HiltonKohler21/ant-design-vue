@@ -1,19 +1,43 @@
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 import StatisticNumber from './Number';
 import type { valueType, Formatter } from './utils';
 import Skeleton from '../skeleton/Skeleton';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import useMergeSemantic, {
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 
 // CSSINJS
 import useStyle from './style';
 import { anyType, booleanType, functionType, someType, vNodeType } from '../_util/type';
 import type { CustomSlotsType, VueNode } from '../_util/type';
 
+export type StatisticSemanticName =
+  | 'root'
+  | 'header'
+  | 'title'
+  | 'content'
+  | 'value'
+  | 'prefix'
+  | 'suffix';
+export type StatisticSemanticClassNames = SemanticClassNames<StatisticSemanticName>;
+export type StatisticSemanticStyles = SemanticStyles<StatisticSemanticName>;
+export type StatisticClassNamesType = SemanticClassNamesType<
+  Record<string, any>,
+  StatisticSemanticName
+>;
+export type StatisticStylesType = SemanticStylesType<Record<string, any>, StatisticSemanticName>;
+
 export const statisticProps = () => ({
   rootClassName: String,
   prefixCls: String,
+  classNames: someType<StatisticClassNamesType>([Object, Function]),
+  styles: someType<StatisticStylesType>([Object, Function]),
   decimalSeparator: String,
   groupSeparator: String,
   format: String,
@@ -58,8 +82,32 @@ export default defineComponent({
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
+    const mergedProps = computed<StatisticProps>(() => ({
+      ...props,
+      decimalSeparator: props.decimalSeparator ?? '.',
+      groupSeparator: props.groupSeparator ?? ',',
+      loading: props.loading ?? false,
+      value: props.value ?? 0,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      StatisticSemanticClassNames,
+      StatisticSemanticStyles,
+      StatisticProps
+    >(
+      () => [contextClassNames.value as StatisticClassNamesType, props.classNames],
+      () => [
+        contextStyles.value as StatisticStylesType,
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        props.styles,
+        attrs.style ? { root: attrs.style as CSSProperties } : undefined,
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
     return () => {
       const { value = 0, valueStyle, valueRender } = props;
+      const { class: attrClass, style: _attrStyle, ...restAttrs } = attrs;
       const pre = prefixCls.value;
       const title = props.title ?? slots.title?.();
       const prefix = props.prefix ?? slots.prefix?.();
@@ -70,7 +118,14 @@ export default defineComponent({
       let valueNode: VueNode = (
         <StatisticNumber
           data-for-update={Date.now()}
-          {...{ ...props, prefixCls: pre, value, formatter }}
+          decimalSeparator={props.decimalSeparator}
+          groupSeparator={props.groupSeparator}
+          prefixCls={pre}
+          formatter={formatter}
+          precision={props.precision}
+          value={value}
+          className={mergedClassNames.value.value}
+          semanticStyle={mergedStyles.value.value}
         />
       );
       if (valueRender) {
@@ -78,34 +133,53 @@ export default defineComponent({
       }
       return wrapSSR(
         <div
-          {...attrs}
+          {...restAttrs}
           class={[
             pre,
             { [`${pre}-rtl`]: direction.value === 'rtl' },
             contextClassName.value,
-            contextClassNames.value.root,
+            mergedClassNames.value.root,
             props.rootClassName,
-            attrs.class,
+            attrClass,
             hashId.value,
           ]}
-          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+          style={mergedStyles.value.root}
         >
-          {title && (
+          {title !== undefined && title !== null && title !== false && title !== '' && (
             <div
-              class={[`${pre}-title`, contextClassNames.value.title]}
-              style={contextStyles.value.title}
+              class={[`${pre}-header`, mergedClassNames.value.header]}
+              style={mergedStyles.value.header}
             >
-              {title}
+              <div
+                class={[`${pre}-title`, mergedClassNames.value.title]}
+                style={mergedStyles.value.title}
+              >
+                {title}
+              </div>
             </div>
           )}
           <Skeleton paragraph={false} loading={props.loading}>
             <div
-              style={[contextStyles.value.content, valueStyle]}
-              class={[`${pre}-content`, contextClassNames.value.content]}
+              style={[valueStyle, mergedStyles.value.content]}
+              class={[`${pre}-content`, mergedClassNames.value.content]}
             >
-              {prefix && <span class={`${pre}-content-prefix`}>{prefix}</span>}
+              {prefix !== undefined && prefix !== null && prefix !== false && prefix !== '' && (
+                <span
+                  class={[`${pre}-content-prefix`, mergedClassNames.value.prefix]}
+                  style={mergedStyles.value.prefix}
+                >
+                  {prefix}
+                </span>
+              )}
               {valueNode}
-              {suffix && <span class={`${pre}-content-suffix`}>{suffix}</span>}
+              {suffix !== undefined && suffix !== null && suffix !== false && suffix !== '' && (
+                <span
+                  class={[`${pre}-content-suffix`, mergedClassNames.value.suffix]}
+                  style={mergedStyles.value.suffix}
+                >
+                  {suffix}
+                </span>
+              )}
             </div>
           </Skeleton>
         </div>,

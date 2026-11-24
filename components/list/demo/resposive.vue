@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 7
 title:
   zh-CN: 响应式的栅格列表
   en-US: Responsive grid list

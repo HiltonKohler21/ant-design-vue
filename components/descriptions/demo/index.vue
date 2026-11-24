@@ -2,22 +2,34 @@
   <demo-sort :cols="1">
     <Basic />
     <Border />
+    <Text />
+    <Padding />
     <Size />
     <Responsive />
     <Vertical />
     <VerticalBorder />
+    <StyleDemo />
+    <StyleClass />
+    <JsxDemo />
     <ComponentToken />
+    <Block />
   </demo-sort>
 </template>
 
 <script lang="ts">
 import Basic from './basic.vue';
 import Border from './border.vue';
-import Responsive from './responsive.vue';
+import Text from './text.vue';
+import Padding from './padding.vue';
 import Size from './size.vue';
-import VerticalBorder from './vertical-border.vue';
+import Responsive from './responsive.vue';
 import Vertical from './vertical.vue';
+import VerticalBorder from './vertical-border.vue';
+import StyleDemo from './style.vue';
+import StyleClass from './style-class.vue';
+import JsxDemo from './jsx.vue';
 import ComponentToken from './component-token.vue';
+import Block from './block.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -35,11 +47,17 @@ export default defineComponent({
   components: {
     Basic,
     Border,
+    Text,
+    Padding,
     Size,
     Responsive,
     Vertical,
     VerticalBorder,
+    StyleDemo,
+    StyleClass,
+    JsxDemo,
     ComponentToken,
+    Block,
   },
 });
 </script>

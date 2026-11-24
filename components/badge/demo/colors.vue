@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 9
 title:
   zh-CN: 多彩徽标
   en-US: Colorful Badge

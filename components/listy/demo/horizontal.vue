@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 version: 4.3.0
 title:
   zh-CN: 横向滚动

@@ -24,13 +24,14 @@ Almost anything can be represented in a tree structure. Examples include directo
 | checkable | Adds a `Checkbox` before the treeNodes | boolean | false |  |
 | checkedKeys(v-model) | (Controlled) Specifies the keys of the checked treeNodes (PS: When this specifies the key of a treeNode which is also a parent treeNode, all the children treeNodes of will be checked; and vice versa, when it specifies the key of a treeNode which is a child treeNode, its parent treeNode will also be checked. When `checkable` and `checkStrictly` is true, its object has `checked` and `halfChecked` property. Regardless of whether the child or parent treeNode is checked, they won't impact each other. | string\[] \| number\[] \| {checked: string\[] \| number\[], halfChecked: string\[] \| number\[]} | \[] |  |
 | checkStrictly | Check treeNode precisely; parent treeNode and children treeNodes are not associated | boolean | false |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, string> \| (info: { props: TreeProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | defaultCheckedKeys | Specifies the keys of the default checked treeNodes | string\[] \| number\[] | \[] |  |
 | defaultExpandAll | Whether to expand all treeNodes by default | boolean | false |  |
 | defaultExpandedKeys | Specify the keys of the default expanded treeNodes | string\[] \| number\[] | \[] |  |
 | defaultExpandParent | If auto expand parent treeNodes when init | boolean | true |  |
 | defaultSelectedKeys | Specifies the keys of the default selected treeNodes | string\[] \| number\[] | \[] |  |
-| disabled | whether disabled the tree | bool | false |  |
-| draggable | Specifies whether this Tree is draggable (IE > 8) | boolean | false |  |
+| disabled | whether disabled the tree | boolean | false |  |
+| draggable | Specifies whether this Tree is draggable (IE > 8) | boolean \| ((node: DataNode) => boolean) \| { icon?: VueNode \| false, nodeDraggable?: (node: DataNode) => boolean } | false |  |
 | expandedKeys(v-model) | (Controlled) Specifies the keys of the expanded treeNodes | string\[] \| number\[] | \[] |  |
 | fieldNames | Replace the title,key and children fields in treeNode with the corresponding fields in treeData | object | { children:'children', title:'title', key:'key' } | 3.0.0 |
 | filterTreeNode | Defines a function to filter (highlight) treeNodes. When the function returns `true`, the corresponding treeNode will be highlighted | function(node) | - |  |
@@ -39,15 +40,20 @@ Almost anything can be represented in a tree structure. Examples include directo
 | loadedKeys | (Controlled) Set loaded tree nodes. Need work with `loadData` | string\[] \| number\[] | \[] |  |
 | multiple | Allows selecting multiple treeNodes | boolean | false |  |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
+| ~~rootStyle~~ | Style on the root element, please use `styles.root` instead | CSSProperties | - | 4.3.0 |
 | selectable | whether can be selected | boolean | true |  |
 | selectedKeys(v-model) | (Controlled) Specifies the keys of the selected treeNodes | string\[] \| number\[] | - |  |
 | showIcon | Shows the icon before a TreeNode's title. There is no default style; you must set a custom style for it if set to `true` | boolean | false |  |
 | showLine | Shows a connecting line | boolean \| {showLeafIcon: boolean}(3.0+) | false |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, CSSProperties> \| (info: { props: TreeProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | switcherIcon | customize collapse/expand icon of tree node | v-slot:switcherIcon="{active, checked, expanded, loading, selected, halfChecked, title, key, children, dataRef, data, defaultIcon, switcherCls}" | - |  |
 | switcherLoadingIcon | Customize loading icon of tree node | VNode \| v-slot:switcherLoadingIcon | - | 4.3.0 |
 | title | custom title | slot |  | 2.0.0 |
+| titleRender | Customize tree node title render | (nodeData: DataNode) => VueNode | - | 4.3.0 |
 | treeData | treeNode of tree, please use `treeNodes` before v1.1.4 | [TreeNode\[\]](#treenode) | - |  |
 | virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |
+
+> `SemanticDOM` slots: `root` \| `item` \| `itemIcon` \| `itemTitle` \| `itemSwitcher`.
 
 ### Events
 
@@ -67,9 +73,15 @@ Almost anything can be represented in a tree structure. Examples include directo
 
 ### Tree Methods
 
-| Name | Description |
-| --- | --- |
-| scrollTo({ key: string \| number; align?: 'top' \| 'bottom' \| 'auto'; offset?: number }) | Scroll to key item in virtual scroll |
+| Name | Description | Version |
+| --- | --- | --- |
+| scrollTo({ key: string \| number; align?: 'top' \| 'bottom' \| 'auto'; offset?: number; autoExpand?: boolean }) | Scroll to key item in virtual scroll. `autoExpand` expands the target node in uncontrolled mode | autoExpand: 4.3.0 |
+
+### Tree.useTree (`4.3.0`)
+
+`Tree.useTree(treeData, config?: { fieldNames?: FieldNames }) => { getPath: (key) => DataEntity[] }`
+
+Provides Tree data utilities. `getPath(key)` returns the node entities from the root to the target node, which can be used to update `expandedKeys` in controlled mode.
 
 ### TreeNode
 

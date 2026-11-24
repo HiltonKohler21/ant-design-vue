@@ -355,19 +355,44 @@ const Listy = defineComponent({
       return rootRef.value || null;
     };
 
+    const escapeAttrVal = (val: Key) => String(val).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+    const getOffsetTopRelativeToContainer = (
+      targetEl: HTMLElement,
+      container: HTMLElement,
+    ): number => {
+      let top = 0;
+      let node: HTMLElement | null = targetEl;
+      while (node && node !== container) {
+        top += node.offsetTop;
+        node = node.offsetParent as HTMLElement | null;
+      }
+      if (node === container) {
+        return top;
+      }
+      const targetRect = targetEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      return targetRect.top - containerRect.top + container.scrollTop;
+    };
+
     const scrollNonVirtualToPosition = (
       targetIndex: number,
       align: ScrollAlign = 'auto',
       offset = 0,
       targetEl?: HTMLElement | null,
+      measureHeightEl?: HTMLElement | null,
     ) => {
       const container = rootRef.value;
       if (!container) return;
       const estimatedHeight = computedItemHeight.value;
+      const hasLayout = Boolean(targetEl && targetEl.offsetHeight > 0);
       const itemTop =
-        targetEl && targetEl.offsetHeight > 0 ? targetEl.offsetTop : targetIndex * estimatedHeight;
+        hasLayout && targetEl
+          ? getOffsetTopRelativeToContainer(targetEl, container)
+          : targetIndex * estimatedHeight;
+      const heightEl = measureHeightEl ?? targetEl;
       const itemHeight =
-        targetEl && targetEl.offsetHeight > 0 ? targetEl.offsetHeight : estimatedHeight;
+        heightEl && heightEl.offsetHeight > 0 ? heightEl.offsetHeight : estimatedHeight;
       const itemBottom = itemTop + itemHeight;
       const viewHeight = container.clientHeight || props.height || 0;
       const scrollTop = container.scrollTop;
@@ -444,10 +469,20 @@ const Listy = defineComponent({
             offset: config.offset,
           });
         } else {
-          const el = rootRef.value?.querySelector?.(
-            `.${prefixCls.value}-group-header[data-group-key="${String(config.groupKey)}"]`,
+          const attrVal = escapeAttrVal(config.groupKey);
+          const sectionEl = rootRef.value?.querySelector?.(
+            `.${prefixCls.value}-group-section[data-group-key="${attrVal}"]`,
           ) as HTMLElement | null;
-          scrollNonVirtualToPosition(rowIndex, config.align ?? 'top', config.offset ?? 0, el);
+          const headerEl = rootRef.value?.querySelector?.(
+            `.${prefixCls.value}-group-header[data-group-key="${attrVal}"]`,
+          ) as HTMLElement | null;
+          scrollNonVirtualToPosition(
+            rowIndex,
+            config.align ?? 'top',
+            config.offset ?? 0,
+            sectionEl || headerEl,
+            headerEl || sectionEl,
+          );
         }
         return;
       }
@@ -465,8 +500,9 @@ const Listy = defineComponent({
             offset: config.offset,
           });
         } else {
+          const attrVal = escapeAttrVal(config.key);
           const el = rootRef.value?.querySelector?.(
-            `.${prefixCls.value}-item[data-item-key="${String(config.key)}"]`,
+            `.${prefixCls.value}-item[data-item-key="${attrVal}"]`,
           ) as HTMLElement | null;
           scrollNonVirtualToPosition(rowIndex, config.align ?? 'auto', config.offset ?? 0, el);
         }

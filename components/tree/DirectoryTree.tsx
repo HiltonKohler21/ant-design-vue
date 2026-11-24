@@ -21,7 +21,7 @@ import { filterEmpty } from '../_util/props-util';
 import { someType } from '../_util/type';
 import type { CustomSlotsType } from '../_util/type';
 
-export type ExpandAction = false | 'click' | 'doubleclick' | 'dblclick';
+export type ExpandAction = false | 'click' | 'doubleclick' | 'doubleClick' | 'dblclick';
 
 export const directoryTreeProps = () => ({
   ...treeProps(),
@@ -189,7 +189,11 @@ export default defineComponent({
     const onDoubleClick = (event: MouseEvent, node: EventDataNode) => {
       const { expandAction } = props;
       // Expand the tree
-      if (expandAction === 'dblclick' || expandAction === 'doubleclick') {
+      if (
+        expandAction === 'dblclick' ||
+        expandAction === 'doubleclick' ||
+        expandAction === 'doubleClick'
+      ) {
         onDebounceExpand(event, node);
       }
 
@@ -286,13 +290,15 @@ export default defineComponent({
         },
         attrs.class,
       );
-      const { icon = slots.icon, blockNode = true, ...otherProps } = props;
+      const { icon = slots.icon, blockNode = true, expandAction, ...otherProps } = props;
+      const normalizedExpandAction = expandAction === 'doubleClick' ? 'doubleclick' : expandAction;
       return (
         <Tree
           {...attrs}
           icon={icon || getIcon}
           ref={treeRef}
           blockNode={blockNode}
+          expandAction={normalizedExpandAction}
           {...otherProps}
           prefixCls={prefixCls.value}
           class={connectClassName}

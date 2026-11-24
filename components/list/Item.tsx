@@ -1,6 +1,7 @@
 import PropTypes from '../_util/vue-types';
-import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
 import classNames from '../_util/classNames';
+import { useMergeSemantic } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
 import {
   isStringElement,
   isEmptyElement,
@@ -10,22 +11,35 @@ import {
 import { Col } from '../grid';
 import { cloneElement } from '../_util/vnode';
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
-import { defineComponent, inject, ref } from 'vue';
+import { computed, defineComponent, inject, ref } from 'vue';
 import ItemMeta from './ItemMeta';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { ListContextKey } from './contextKey';
 import type { ListGridType } from '.';
 import type { CustomSlotsType } from '../_util/type';
 
+export type ListItemSemanticName = 'actions' | 'extra';
+export type ListItemSemanticClassNames = SemanticClassNames<ListItemSemanticName>;
+export type ListItemSemanticStyles = SemanticStyles<ListItemSemanticName>;
+export type ListItemClassNamesType =
+  | ListItemSemanticClassNames
+  | ((info: { props: ListItemProps }) => ListItemSemanticClassNames);
+export type ListItemStylesType =
+  | ListItemSemanticStyles
+  | ((info: { props: ListItemProps }) => ListItemSemanticStyles);
+
 export const listItemProps = () => ({
   prefixCls: String,
   extra: PropTypes.any,
   actions: PropTypes.array,
-  /** 语义化 classNames（antd 5.25+）：actions / extra */
-  classNames: { type: Object as PropType<SemanticNames<'actions' | 'extra'>>, default: undefined },
-  /** 语义化 styles（antd 5.25+）：actions / extra */
+  /** 语义化 classNames（支持对象或函数）：actions / extra */
+  classNames: {
+    type: [Object, Function] as PropType<ListItemClassNamesType>,
+    default: undefined,
+  },
+  /** 语义化 styles（支持对象或函数）：actions / extra */
   styles: {
-    type: Object as PropType<SemanticStylesMap<'actions' | 'extra'>>,
+    type: [Object, Function] as PropType<ListItemStylesType>,
     default: undefined,
   },
   grid: Object as PropType<ListGridType>,
@@ -51,16 +65,34 @@ export default defineComponent({
     });
     const { prefixCls, configProvider } = useConfigInject('list', props);
 
-    const moduleClass = (moduleName: 'actions' | 'extra') => {
-      const ctxList = configProvider.list?.value as any;
-      return classNames(ctxList?.item?.classNames?.[moduleName], props.classNames?.[moduleName]);
-    };
+    const mergedPropsForSemantic = computed<ListItemProps>(() => ({
+      ...props,
+      grid: props.grid ?? grid.value,
+    }));
 
-    const moduleStyle = (moduleName: 'actions' | 'extra'): CSSProperties | undefined => {
-      const ctxList = configProvider.list?.value as any;
-      const ctxStyle = ctxList?.item?.styles?.[moduleName];
-      const ownStyle = props.styles?.[moduleName];
-      return ctxStyle || ownStyle ? { ...ctxStyle, ...ownStyle } : undefined;
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      ListItemSemanticClassNames,
+      ListItemSemanticStyles,
+      ListItemProps
+    >(
+      () => [
+        (configProvider.list?.value as any)?.classNames,
+        (configProvider.list?.value as any)?.item?.classNames,
+        props.classNames,
+      ],
+      () => [
+        (configProvider.list?.value as any)?.styles,
+        (configProvider.list?.value as any)?.item?.styles,
+        props.styles,
+      ],
+      () => ({ props: mergedPropsForSemantic.value }),
+    );
+
+    const moduleClass = (moduleName: ListItemSemanticName) => mergedClassNames.value[moduleName];
+
+    const moduleStyle = (moduleName: ListItemSemanticName): CSSProperties | undefined => {
+      const styleObj = mergedStyles.value[moduleName];
+      return styleObj && Object.keys(styleObj).length > 0 ? styleObj : undefined;
     };
 
     const isItemContainsTextNodeAndNotSingular = () => {

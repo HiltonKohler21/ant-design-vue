@@ -12,7 +12,7 @@ describe('QRCode test', () => {
     });
     expect(wrapper.find('.ant-qrcode')).toBeTruthy();
     expect(wrapper.find('canvas')).toBeTruthy();
-    expect(wrapper).toMatchSnapshot();
+    expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('support custom icon', () => {

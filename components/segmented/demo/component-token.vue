@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 15
 debug: true
 title:
   zh-CN: 自定义组件 Token

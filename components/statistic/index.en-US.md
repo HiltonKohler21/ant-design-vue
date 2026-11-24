@@ -17,19 +17,23 @@ Display statistic number.
 
 ### Statistic
 
-| Property         | Description                        | Type                         | Default |
-| ---------------- | ---------------------------------- | ---------------------------- | ------- |
-| decimalSeparator | decimal separator                  | string                       | .       |
-| formatter        | customize value display logic      | v-slot \| ({value}) => VNode | -       |
-| groupSeparator   | group separator                    | string                       | ,       |
-| loading          | Loading status of Statistic        | boolean                      | false   |
-| precision        | precision of input value           | number                       | -       |
-| prefix           | prefix node of value               | string \| v-slot             | -       |
-| rootClassName    | The class name of the root element | string                       | -       |
-| suffix           | suffix node of value               | string \| v-slot             | -       |
-| title            | Display title                      | string \| v-slot             | -       |
-| value            | Display value                      | string \| number             | -       |
-| valueStyle       | Set value css style                | style                        | -       |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the Statistic component. Supports object or function | Record<SemanticDOM, string> \| (info: { props: StatisticProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
+| decimalSeparator | decimal separator | string | . |  |
+| formatter | customize value display logic | v-slot \| ({value}) => VNode | - |  |
+| groupSeparator | group separator | string | , |  |
+| loading | Loading status of Statistic | boolean | false |  |
+| precision | precision of input value | number | - |  |
+| prefix | prefix node of value | string \| v-slot | - |  |
+| rootClassName | The class name of the root element | string | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the Statistic component. Supports object or function | Record<SemanticDOM, CSSProperties> \| (info: { props: StatisticProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
+| suffix | suffix node of value | string \| v-slot | - |  |
+| title | Display title | string \| v-slot | - |  |
+| value | Display value | string \| number | - |  |
+| ~~valueStyle~~ | Set value section style (deprecated, please use `styles.content` instead) | style | - |  |
+
+> Supported `SemanticDOM` slots: `root` \| `header` \| `title` \| `content` \| `value` \| `prefix` \| `suffix`.
 
 ### Statistic.Countdown
 

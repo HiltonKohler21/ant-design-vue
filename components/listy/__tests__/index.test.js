@@ -1,7 +1,19 @@
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
+import Button from '../../button';
+import Flex from '../../flex';
+import InputNumber from '../../input-number';
+import Segmented from '../../segmented';
+import Select from '../../select';
+import Space from '../../space';
+import Typography from '../../typography';
 import Listy from '..';
 import ConfigProvider from '../../config-provider';
+import RowHoverableDebugDemo from '../demo/row-hoverable-debug.vue';
+import DragSortingDemo from '../demo/drag-sorting.vue';
+import ScrollToDemo from '../demo/scroll-to.vue';
+
+const demoPlugins = [Button, Flex, InputNumber, Listy, Segmented, Select, Space, Typography];
 
 describe('Listy', () => {
   it('renders rows with primary items, rowKey, and itemRender', () => {
@@ -281,5 +293,39 @@ describe('Listy', () => {
     expect(root.element.style.padding).toBe('4px');
     expect(wrapper.find('.ant-listy-item').classes()).toContain('fn-item-cls');
     expect(wrapper.find('.ant-listy-group-header').classes()).toContain('fn-header-cls');
+  });
+
+  it('mounts new listy demos and verifies scrollTo ref in scroll-to demo', async () => {
+    const hoverWrapper = mount(RowHoverableDebugDemo, { global: { plugins: demoPlugins } });
+    const hoverLists = hoverWrapper.findAll('.ant-listy');
+    expect(hoverLists).toHaveLength(2);
+    expect(hoverLists[0].classes()).toContain('ant-listy-hoverable');
+    expect(hoverLists[1].classes()).not.toContain('ant-listy-hoverable');
+    hoverWrapper.unmount();
+
+    const dragWrapper = mount(DragSortingDemo, { global: { plugins: demoPlugins } });
+    expect(dragWrapper.findAll('.ant-listy-item').length).toBe(20);
+    dragWrapper.unmount();
+
+    const scrollWrapper = mount(ScrollToDemo, { global: { plugins: demoPlugins } });
+    const listRoot = scrollWrapper.find('.ant-listy').element;
+    const buttons = scrollWrapper.findAll('button');
+    const scrollToItemBtn = buttons.find(b => b.text().includes('Scroll to item'));
+    const scrollToGroupBtn = buttons.find(b => b.text().includes('Scroll to group'));
+    const backToTopBtn = buttons.find(b => b.text().includes('Back to top'));
+
+    expect(scrollToItemBtn).toBeTruthy();
+    expect(scrollToGroupBtn).toBeTruthy();
+    expect(backToTopBtn).toBeTruthy();
+
+    await scrollToItemBtn.trigger('click');
+    expect(listRoot.scrollTop).toBeGreaterThan(0);
+
+    await scrollToGroupBtn.trigger('click');
+    expect(listRoot.scrollTop).toBeGreaterThan(0);
+
+    await backToTopBtn.trigger('click');
+    expect(listRoot.scrollTop).toBe(0);
+    scrollWrapper.unmount();
   });
 });

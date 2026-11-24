@@ -162,27 +162,40 @@ function injectSorter<RecordType>(
       } else if (nextSortOrder === ASCEND) {
         sortTip = triggerAsc;
       }
-      const tooltipProps: TooltipProps =
-        typeof showSorterTooltip === 'object' ? showSorterTooltip : { title: sortTip };
+      const isObjectTooltip = typeof showSorterTooltip === 'object' && showSorterTooltip !== null;
+      const { target: tooltipTarget = 'full-header', ...restTooltipProps } = isObjectTooltip
+        ? (showSorterTooltip as any)
+        : {};
+      const tooltipProps: TooltipProps = {
+        title: sortTip,
+        ...restTooltipProps,
+      };
       newColumn = {
         ...newColumn,
         className: classNames(newColumn.className, { [`${prefixCls}-column-sort`]: sorterOrder }),
         title: (renderProps: ColumnTitleProps<RecordType>) => {
+          const sorterIconElement = (
+            <span
+              class={classNames(`${prefixCls}-column-sorter`, {
+                [`${prefixCls}-column-sorter-full`]: !!(upNode && downNode),
+              })}
+            >
+              {sorterNode}
+            </span>
+          );
           const renderSortTitle = (
             <div class={`${prefixCls}-column-sorters`}>
               <span class={`${prefixCls}-column-title`}>
                 {renderColumnTitle(column.title, renderProps)}
               </span>
-              <span
-                class={classNames(`${prefixCls}-column-sorter`, {
-                  [`${prefixCls}-column-sorter-full`]: !!(upNode && downNode),
-                })}
-              >
-                {sorterNode}
-              </span>
+              {showSorterTooltip && tooltipTarget === 'sorter-icon' ? (
+                <Tooltip {...tooltipProps}>{sorterIconElement}</Tooltip>
+              ) : (
+                sorterIconElement
+              )}
             </div>
           );
-          return showSorterTooltip ? (
+          return showSorterTooltip && tooltipTarget !== 'sorter-icon' ? (
             <Tooltip {...tooltipProps}>{renderSortTitle}</Tooltip>
           ) : (
             renderSortTitle

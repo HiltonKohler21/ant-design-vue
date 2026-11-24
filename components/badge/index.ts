@@ -2,6 +2,12 @@ import type { App, Plugin } from 'vue';
 import Badge from './Badge';
 import Ribbon from './Ribbon';
 export type { BadgeProps, BadgeSemanticName, BadgeClassNamesType, BadgeStylesType } from './Badge';
+export type {
+  RibbonProps,
+  RibbonSemanticName,
+  RibbonClassNamesType,
+  RibbonStylesType,
+} from './Ribbon';
 
 Badge.install = function (app: App) {
   app.component(Badge.name, Badge);

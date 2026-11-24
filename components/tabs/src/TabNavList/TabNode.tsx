@@ -4,6 +4,7 @@ import { defineComponent, computed, ref } from 'vue';
 import type { FocusEventHandler } from '../../../_util/EventInterface';
 import KeyCode from '../../../_util/KeyCode';
 import classNames from '../../../_util/classNames';
+import { useInjectTabs } from '../TabContext';
 
 export interface TabNodeProps {
   id: string;
@@ -26,7 +27,7 @@ export default defineComponent({
   props: {
     id: { type: String as PropType<string> },
     prefixCls: { type: String as PropType<string> },
-    tab: { type: Object as PropType<Tab & { closeIcon?: () => any }> },
+    tab: { type: Object as PropType<Tab> },
     active: { type: Boolean },
     closable: { type: Boolean },
     editable: { type: Object as PropType<EditableConfig> },
@@ -65,31 +66,50 @@ export default defineComponent({
       });
     }
 
+    const { classNames: semanticClassNames, styles: semanticStyles } = useInjectTabs();
+
     const removable = computed(
-      () => props.editable && props.closable !== false && !props.tab?.disabled,
+      () =>
+        props.editable &&
+        props.closable !== false &&
+        props.tab?.closeIcon !== null &&
+        props.tab?.closeIcon !== false &&
+        !props.tab?.disabled,
     );
     return () => {
       const {
         prefixCls,
         id,
         active,
-        tab: { key, tab, disabled, closeIcon },
+        tab: { key, tab, icon, disabled, closeIcon },
         renderWrapper,
         removeAriaLabel,
         editable,
         onFocus,
       } = props;
       const tabPrefix = `${prefixCls}-tab`;
+      const resolvedIcon = typeof icon === 'function' ? (icon as () => any)() : icon;
+      const resolvedTab = typeof tab === 'function' ? (tab as () => any)() : tab;
+      const resolvedCloseIcon =
+        typeof closeIcon === 'function' ? (closeIcon as () => any)() : closeIcon;
+      const itemStyle = semanticStyles?.value?.item;
+      const mergedItemStyle = itemStyle
+        ? ([attrs.style as CSSProperties, itemStyle] as any)
+        : (attrs.style as CSSProperties);
       const node = (
         <div
           key={key}
           ref={domRef}
-          class={classNames(tabPrefix, {
-            [`${tabPrefix}-with-remove`]: removable.value,
-            [`${tabPrefix}-active`]: active,
-            [`${tabPrefix}-disabled`]: disabled,
-          })}
-          style={attrs.style as CSSProperties}
+          class={classNames(
+            tabPrefix,
+            {
+              [`${tabPrefix}-with-remove`]: removable.value,
+              [`${tabPrefix}-active`]: active,
+              [`${tabPrefix}-disabled`]: disabled,
+            },
+            semanticClassNames?.value?.item,
+          )}
+          style={mergedItemStyle}
           onClick={onInternalClick}
         >
           {/* Primary Tab Button */}
@@ -113,7 +133,9 @@ export default defineComponent({
             }}
             onFocus={onFocus}
           >
-            {typeof tab === 'function' ? tab() : tab}
+            {resolvedIcon !== undefined && resolvedIcon !== null
+              ? [<span class={`${tabPrefix}-icon`}>{resolvedIcon}</span>, resolvedTab]
+              : resolvedTab}
           </div>
 
           {/* Remove Button */}
@@ -122,13 +144,14 @@ export default defineComponent({
               type="button"
               aria-label={removeAriaLabel || 'remove'}
               tabindex={0}
-              class={`${tabPrefix}-remove`}
+              class={classNames(`${tabPrefix}-remove`, semanticClassNames?.value?.remove)}
+              style={semanticStyles?.value?.remove}
               onClick={e => {
                 e.stopPropagation();
                 onRemoveTab(e);
               }}
             >
-              {closeIcon?.() || editable.removeIcon?.() || '×'}
+              {resolvedCloseIcon ?? editable.removeIcon?.() ?? '×'}
             </button>
           )}
         </div>

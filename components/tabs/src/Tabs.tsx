@@ -14,6 +14,13 @@ import type {
   Tab,
   GetIndicatorSize,
   IndicatorConfig,
+  TabsSemanticName,
+  TabsSemanticClassNames,
+  TabsSemanticStyles,
+  NormalizedTabsSemanticClassNames,
+  NormalizedTabsSemanticStyles,
+  TabsClassNamesType,
+  TabsStylesType,
 } from './interface';
 import { defineComponent, computed, onMounted, watchEffect } from 'vue';
 import type { CSSProperties, ExtractPropTypes } from 'vue';
@@ -23,7 +30,8 @@ import {
   initDefaultProps,
   isValidElement,
 } from '../../_util/props-util';
-import useConfigInject from '../../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
+import useMergeSemantic from '../../_util/hooks/useMergeSemantic';
 import useState from '../../_util/hooks/useState';
 import isMobile from '../../vc-util/isMobile';
 import useMergedState from '../../_util/hooks/useMergedState';
@@ -49,7 +57,59 @@ import omit from '../../_util/omit';
 import useStyle from '../style';
 export type TabsType = 'line' | 'card' | 'editable-card';
 export type TabsPosition = 'top' | 'right' | 'bottom' | 'left';
-export type { TabPlacement, MoreProps };
+export type {
+  TabPlacement,
+  MoreProps,
+  TabsSemanticName,
+  TabsSemanticClassNames,
+  TabsSemanticStyles,
+  TabsClassNamesType,
+  TabsStylesType,
+};
+
+function normalizePopupClassNames(
+  val: TabsClassNamesType | undefined,
+):
+  | ((info: { props: TabsProps }) => NormalizedTabsSemanticClassNames)
+  | NormalizedTabsSemanticClassNames
+  | undefined {
+  if (!val) return undefined;
+  const normalize = (
+    obj: TabsSemanticClassNames | undefined,
+  ): NormalizedTabsSemanticClassNames | undefined => {
+    if (!obj) return undefined;
+    if (typeof obj.popup === 'string') {
+      return { ...obj, popup: { root: obj.popup } };
+    }
+    return obj as NormalizedTabsSemanticClassNames;
+  };
+  if (typeof val === 'function') {
+    return info => normalize(val(info)) || {};
+  }
+  return normalize(val);
+}
+
+function normalizePopupStyles(
+  val: TabsStylesType | undefined,
+):
+  | ((info: { props: TabsProps }) => NormalizedTabsSemanticStyles)
+  | NormalizedTabsSemanticStyles
+  | undefined {
+  if (!val) return undefined;
+  const normalize = (
+    obj: TabsSemanticStyles | undefined,
+  ): NormalizedTabsSemanticStyles | undefined => {
+    if (!obj) return undefined;
+    if (obj.popup && typeof obj.popup === 'object' && !('root' in obj.popup)) {
+      return { ...obj, popup: { root: obj.popup as CSSProperties } };
+    }
+    return obj as NormalizedTabsSemanticStyles;
+  };
+  if (typeof val === 'function') {
+    return info => normalize(val(info)) || {};
+  }
+  return normalize(val);
+}
 
 // Used for accessibility
 let uuid = 0;
@@ -73,9 +133,13 @@ export const tabsProps = () => {
     tabPlacement: stringType<TabPlacement>(),
     more: objectType<MoreProps>(),
     moreIcon: PropTypes.any,
+    addIcon: PropTypes.any,
+    removeIcon: PropTypes.any,
     destroyInactiveTabPane: booleanType(),
     destroyOnHidden: booleanType(),
     rootClassName: String,
+    classNames: someType<TabsClassNamesType>([Object, Function]),
+    styles: someType<TabsStylesType>([Object, Function]),
     /** 5.23+ 配置式标签页 */
     items: arrayType<any[]>(),
     /** 5.21+ 指示条尺寸（deprecated，映射到 indicator.size） */
@@ -107,17 +171,26 @@ function convertItemsToTabs(items: any[]): Tab[] {
   return items
     .filter(item => item)
     .map(item => {
-      const { key, label, children, closeIcon, ...rest } = item;
+      const { key, label, icon, children, closeIcon, destroyOnHidden, ...rest } = item;
       const node = (
-        <TabPane key={key} {...rest} tab={label}>
+        <TabPane
+          key={key}
+          {...rest}
+          destroyInactiveTabPane={destroyOnHidden ?? rest.destroyInactiveTabPane}
+          tab={label}
+        >
           {children}
         </TabPane>
       );
       return {
         key,
         tab: label,
+        label,
+        icon,
         node,
         closeIcon,
+        destroyOnHidden,
+        destroyInactiveTabPane: destroyOnHidden ?? rest.destroyInactiveTabPane,
         disabled: rest.disabled,
         forceRender: rest.forceRender,
         closable: rest.closable,
@@ -208,6 +281,12 @@ const InternalTabs = defineComponent({
     );
     const { prefixCls, direction, size, rootPrefixCls, getPopupContainer, configProvider } =
       useConfigInject('tabs', props);
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('tabs');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const contextTabs = computed(() => configProvider.tabs?.value as any);
     const rtl = computed(() => direction.value === 'rtl');
@@ -298,9 +377,34 @@ const InternalTabs = defineComponent({
       }
     };
 
+    const mergedProps = computed<TabsProps>(() => ({
+      ...props,
+      size: size.value,
+      tabPlacement: (props.tabPlacement ?? resolvedTabPosition.value) as TabPlacement,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      NormalizedTabsSemanticClassNames,
+      NormalizedTabsSemanticStyles,
+      TabsProps
+    >(
+      () => [
+        normalizePopupClassNames(contextClassNames.value as TabsClassNamesType),
+        normalizePopupClassNames(props.classNames),
+      ],
+      () => [
+        normalizePopupStyles(contextStyles.value as TabsStylesType),
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        normalizePopupStyles(props.styles),
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
     useProvideTabs({
       tabs: computed(() => props.tabs),
       prefixCls,
+      classNames: mergedClassNames,
+      styles: mergedStyles,
     });
 
     const mergedDestroyOnHidden = computed(
@@ -349,8 +453,26 @@ const InternalTabs = defineComponent({
           onEdit: (editType, { key, event }) => {
             props.onEdit?.(editType === 'add' ? event : key!, editType);
           },
-          removeIcon: () => <CloseOutlined />,
-          addIcon: slots.addIcon ? slots.addIcon : () => <PlusOutlined />,
+          removeIcon: () =>
+            props.removeIcon !== undefined ? (
+              props.removeIcon
+            ) : slots.removeIcon ? (
+              slots.removeIcon()
+            ) : ctxTabs?.removeIcon !== undefined ? (
+              ctxTabs.removeIcon
+            ) : (
+              <CloseOutlined />
+            ),
+          addIcon: () =>
+            props.addIcon !== undefined ? (
+              props.addIcon
+            ) : slots.addIcon ? (
+              slots.addIcon()
+            ) : ctxTabs?.addIcon !== undefined ? (
+              ctxTabs.addIcon
+            ) : (
+              <PlusOutlined />
+            ),
           showAdd: hideAdd !== true,
         };
       }
@@ -400,12 +522,20 @@ const InternalTabs = defineComponent({
         );
       }
       const pre = prefixCls.value;
+      const { class: attrClass, style: attrStyle, ...restAttrs } = attrs;
+      const semanticRootStyle = mergedStyles.value.root;
+      const hasSemanticRootStyle = semanticRootStyle && Object.keys(semanticRootStyle).length > 0;
+      const combinedRootStyle = hasSemanticRootStyle
+        ? attrStyle
+          ? [semanticRootStyle, attrStyle]
+          : semanticRootStyle
+        : (attrStyle as any);
 
       return wrapSSR(
         <div
-          {...attrs}
+          {...restAttrs}
           id={id}
-          style={[ctxTabs?.style, attrs.style as any]}
+          style={combinedRootStyle}
           class={classNames(
             pre,
             `${pre}-${mergedTabPosition.value}`,
@@ -420,8 +550,9 @@ const InternalTabs = defineComponent({
               [`${pre}-rtl`]: rtl.value,
               [`${pre}-indicator-size-${legacyIndicatorSize}`]: !!legacyIndicatorSize,
             },
-            ctxTabs?.className,
-            attrs.class,
+            contextClassName.value,
+            mergedClassNames.value.root,
+            attrClass,
             props.rootClassName,
           )}
         >

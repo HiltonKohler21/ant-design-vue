@@ -550,6 +550,9 @@ const genTabStyle: GenerateStyle<TabsToken, CSSObject> = (token: TabsToken) => {
       '&-btn': {
         outline: 'none',
         transition: 'all 0.3s',
+        [`${tabCls}-icon:not(:last-child)`]: {
+          marginInlineEnd: token.marginSM,
+        },
       },
       '&-remove': {
         flex: 'none',
@@ -866,6 +869,10 @@ const genTabsStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
         flex: 'auto',
         minWidth: 0,
         minHeight: 0,
+
+        '&-animated': {
+          overflow: 'hidden',
+        },
       },
 
       [`${componentCls}-tabpane`]: {

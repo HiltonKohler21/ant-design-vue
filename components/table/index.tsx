@@ -1,7 +1,7 @@
 import Table, { tableProps } from './Table';
 import Column from './Column';
 import ColumnGroup from './ColumnGroup';
-import type { TableProps, TablePaginationConfig } from './Table';
+import type { TableProps, TablePaginationConfig, TableRef } from './Table';
 import type { App } from 'vue';
 import { EXPAND_COLUMN, Summary, SummaryCell, SummaryRow } from '../vc-table';
 import {
@@ -12,8 +12,23 @@ import {
 } from './hooks/useSelection';
 
 export type { ColumnProps } from './Column';
-export type { ColumnsType, ColumnType, ColumnGroupType } from './interface';
-export type { TableProps, TablePaginationConfig };
+export type {
+  ColumnsType,
+  ColumnType,
+  ColumnGroupType,
+  ColumnsType as TableColumnsType,
+  ColumnType as TableColumnType,
+  ColumnGroupType as TableColumnGroupType,
+  TableSemanticClassNames,
+  TableSemanticStyles,
+  TableClassNamesType,
+  TableStylesType,
+  TablePaginationPlacement,
+  TablePaginationPosition,
+  ExpandableConfig,
+  TableRowSelection,
+} from './interface';
+export type { TableProps, TablePaginationConfig, TableRef };
 
 const TableSummaryRow = SummaryRow;
 const TableSummaryCell = SummaryCell;

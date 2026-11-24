@@ -266,4 +266,40 @@ describe('Carousel', () => {
     expect(boolAutoplayWrapper.find('.ant-carousel').attributes('style')).toBeUndefined();
     boolAutoplayWrapper.unmount();
   });
+
+  it('renders accessible styled prev/next arrows when arrows=true and supports vertical dotPlacement', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider theme={{ cssVar: true }}>
+            <Carousel arrows infinite={false}>
+              <div>1</div>
+              <div>2</div>
+              <div>3</div>
+            </Carousel>
+          </ConfigProvider>
+        );
+      },
+    });
+    await nextTick();
+    const prevBtn = wrapper.find('button.slick-prev');
+    const nextBtn = wrapper.find('button.slick-next');
+    expect(prevBtn.exists()).toBe(true);
+    expect(nextBtn.exists()).toBe(true);
+    expect(prevBtn.text()).toBe('');
+    expect(nextBtn.text()).toBe('');
+    expect(prevBtn.attributes('aria-label')).toBe('Previous slide');
+    expect(nextBtn.attributes('aria-label')).toBe('Next slide');
+    expect(prevBtn.classes()).toContain('slick-disabled');
+    expect(nextBtn.classes()).not.toContain('slick-disabled');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('.slick-prev');
+    expect(css).toContain(':empty::after');
+    expect(css).not.toContain('NaN');
+    wrapper.unmount();
+  });
 });

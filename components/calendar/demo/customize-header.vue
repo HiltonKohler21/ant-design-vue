@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 7
 title:
   zh-CN: 自定义头部
   en-US: Customize Header

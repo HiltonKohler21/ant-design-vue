@@ -74,8 +74,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | bodyCell | 个性化单元格 | v-slot:bodyCell="{text, record, index, column}" | - | 3.0 |
 | bordered | 是否展示外边框和列边框 | boolean | false |  |
 | childrenColumnName | 指定树形结构的列名 | string | `children` |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
+| column | 统一列配置，仅在单列未声明同名属性时生效 | Partial<[ColumnType](#column)> | - | 4.3.0 |
 | columns | 表格列的配置描述，具体项见[下表](#column) | array | - |  |
-| components | 覆盖默认的 table 元素 | object | - |  |
+| components | 覆盖默认的 table 元素，包括通过 `ExpandIcon` 自定义行展开和全部展开图标 | object | - | `ExpandIcon`: 4.3.0 |
 | customFilterDropdown | 自定义筛选菜单，需要配合 `column.customFilterDropdown` 使用 | v-slot:customFilterDropdown="[FilterDropdownProps](#filterdropdownprops)" | - | 3.0 |
 | customFilterIcon | 自定义筛选图标 | v-slot:customFilterIcon="{filtered, column}" | - | 3.0 |
 | customHeaderRow | 设置头部行属性 | Function(columns, index) | - |  |
@@ -84,11 +86,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | defaultExpandAllRows | 初始时，是否展开所有行 | boolean | false |  |
 | defaultExpandedRowKeys | 默认展开的行 | string\[] | - |  |
 | emptyText | 自定义空数据时的显示内容 | v-slot:emptyText | - | 3.0 |
-| expandedRowClassName | 展开行的 className | Function(record, index, indent): string | - | 4.3.0 |
+| expandable | 配置展开属性，支持统一对象配置 | [expandable](#expandable) | - | 4.3.0 |
+| expandedRowClassName | 展开行的 className | string \| Function(record, index, indent): string | - | 4.3.0 |
 | expandedRowKeys(v-model) | 展开的行，控制属性 | string\[] | - |  |
 | expandedRowRender | 额外的展开行 | Function(record, index, indent, expanded):VNode \| v-slot:expandedRowRender="{record, index, indent, expanded}" | - |  |
-| expandFixed | 控制展开图标是否固定，可选 true `left` `right` | boolean \| string | false | 3.0 |
-| expandColumnTitle | 自定义展开列表头 | v-slot | - | 4.0.0 |
+| expandFixed | 控制展开图标是否固定，可选 true `'start'` `'end'` `'left'` `'right'` | boolean \| string | false | 3.0 |
+| expandColumnTitle | 自定义展开列表头 | VueNode \| ({ expandIcon }) => VueNode \| v-slot | - | 4.0.0, function: 4.3.0 |
 | expandIcon | 自定义展开图标 | Function(props):VNode \| v-slot:expandIcon="props" | - |  |
 | expandRowByClick | 通过点击行来展开子行 | boolean | `false` |  |
 | footer | 表格尾部 | Function(currentPageData)\|v-slot:footer="currentPageData" |  |  |
@@ -99,31 +102,43 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | locale | 默认文案设置，目前包括排序、过滤、空数据文案 | object | filterConfirm: `确定` <br> filterReset: `重置` <br> emptyText: `暂无数据` |  |
 | pagination | 分页器，参考[配置项](#pagination)或 [pagination](/components/pagination-cn/)文档，设为 false 时不展示和进行分页 | object \| `false` |  |  |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
-| rowClassName | 表格行的类名 | Function(record, index):string | - |  |
+| rowClassName | 表格行的类名 | string \| Function(record, index):string | - |  |
 | rowExpandable | 设置是否允许行展开 | (record) => boolean | - | 3.0 |
+| rowHoverable | 表格行是否开启 hover 交互 | boolean | true | 4.3.0 |
 | rowKey | 表格行 key 的取值，可以是字符串或一个函数 | string\|Function(record):string | 'key' |  |
 | rowSelection | 列表项是否可选择，[配置项](#rowselection) | object | null |  |
 | scroll | 表格是否可滚动，也可以指定滚动区域的宽、高，[配置项](#scroll) | object | - |  |
+| showExpandAll | 是否显示当前页可展开行的全部展开控件，仅在使用 `expandedRowRender` 时可用 | boolean | false | 4.3.0 |
 | showExpandColumn | 设置是否展示行展开列 | boolean | true | 3.0 |
 | showHeader | 是否显示表头 | boolean | true |  |
-| showSorterTooltip | 表头是否显示下一次排序的 tooltip 提示。当参数类型为对象时，将被设置为 Tooltip 的属性 | boolean \| [Tooltip props](/components/tooltip/) | true | 3.0 |
-| size | 表格大小 | `large` \| `middle` \| `small` | `large` |  |
+| showSorterTooltip | 表头是否显示下一次排序的 tooltip 提示。当参数类型为对象时，将被设置为 Tooltip 的属性 | boolean \| [Tooltip props](/components/tooltip-cn/#api) & `{ target?: 'full-header' \| 'sorter-icon' }` | true | 3.0, target: 4.3.0 |
+| size | 表格大小 | `large` \| `medium` \| `middle` \| `small` | `large` | `medium`: 4.3.0 |
 | sortDirections | 支持的排序方式，取值为 `ascend` `descend` | Array | \[`ascend`, `descend`] |  |
 | sticky | 设置粘性头部和滚动条 | boolean \| `{offsetHeader?: number, offsetScroll?: number, getContainer?: () => HTMLElement}` | - | 3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | summary | 总结栏 | v-slot:summary | - | 3.0 |
 | tableLayout | 表格元素的 [table-layout](https://developer.mozilla.org/zh-CN/docs/Web/CSS/table-layout) 属性，设为 `fixed` 表示内容不会影响列的布局 | - \| 'auto' \| 'fixed' | 无<hr />固定表头/列或使用了 `column.ellipsis` 时，默认值为 `fixed` | 1.5.0 |
 | title | 表格标题 | Function(currentPageData)\|v-slot:title="currentPageData" |  |  |
 | transformCellText | 数据渲染前可以再次改变，一般用于空数据的默认配置，可以通过 [ConfigProvider](/components/config-provider-cn/) 全局统一配置 | Function({ text, column, record, index }) => any，此处的 text 是经过其它定义单元格 api 处理后的数据，有可能是 VNode \| string \| number 类型 | - | 1.5.4 |
 | virtual | 支持虚拟列表 | boolean | false | 4.3.0 |
 
+### Table ref
+
+| 参数 | 说明 | 类型 | 版本 |
+| --- | --- | --- | --- |
+| nativeElement | 最外层 div 元素 | HTMLDivElement | 4.3.0 |
+| scrollTo | 滚动到目标位置（设置 `key` 时为 Record 对应的 `rowKey`） | `(config: { index?: number, key?: Key, top?: number, offset?: number, align?: 'start' \| 'center' \| 'end' \| 'nearest' }) => void` | 4.3.0 |
+
 ### 事件
 
-| 事件名称 | 说明 | 回调参数 |
-| --- | --- | --- |
-| change | 分页、排序、筛选变化时触发 | Function(pagination, filters, sorter, { action, currentDataSource }) |
-| expand | 点击展开图标时触发 | Function(expanded, record) |
-| expandedRowsChange | 展开的行变化时触发 | Function(expandedRows) |
-| resizeColumn | 拖动列时触发 | Function(width, column) |
+| 事件名称 | 说明 | 回调参数 | 版本 |
+| --- | --- | --- | --- |
+| change | 分页、排序、筛选变化时触发 | Function(pagination, filters, sorter, { action, currentDataSource }) |  |
+| expand | 点击展开图标时触发 | Function(expanded, record) |  |
+| expandAll | 点击全部展开图标时触发 | Function(expanded: boolean) | 4.3.0 |
+| expandedRowsChange | 展开的行变化时触发 | Function(expandedRows) |  |
+| resizeColumn | 拖动列时触发 | Function(width, column) |  |
+| scroll | 表格内容滚动时触发 | Function(event) | 4.3.0 |
 
 #### customRow 用法
 
@@ -156,6 +171,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | align | 设置列的对齐方式 | `left` \| `right` \| `center` | `left` |  |
+| className | 列样式类名 | string | - |  |
 | colSpan | 表头列合并,设置为 0 时，不渲染 | number |  |  |
 | customCell | 设置单元格属性 | Function(record, rowIndex, column) | - | column add from 3.0 |
 | customFilterDropdown | 启用 v-slot:customFilterDropdown，优先级低于 filterDropdown | boolean | false | 3.0 |
@@ -177,7 +193,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | filterOnClose | 是否在关闭筛选菜单时触发筛选 | boolean | true | 4.3.0 |
 | filters | 表头的筛选菜单项 | object\[] | - |  |
 | filterSearch | 筛选菜单项是否可搜索 | boolean \| function(input, filter):boolean | false | boolean:3.0 function:3.3.0 |
-| fixed | 列是否固定，可选 `true`(等效于 left) `'left'` `'right'` | boolean\|string | false |  |
+| fixed | 列是否固定，可选 `true`(等效于 `'start'`/`'left'`) `'start'` `'end'` `'left'` `'right'` | boolean\|string | false | `start`/`end`: 4.3.0 |
 | hidden | 是否隐藏列 | boolean | false | 4.3.0 |
 | key | Vue 需要的 key，如果已经设置了唯一的 `dataIndex`，可以忽略这个属性 | string | - |  |
 | maxWidth | 拖动列最大宽度，会受到表格自动调整分配宽度影响 | number | - | 3.0 |
@@ -185,12 +201,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | resizable | 是否可拖动调整宽度，此时 width 必须是 number 类型 | boolean | - | 3.0 |
 | responsive | 响应式 breakpoint 配置列表。未设置则始终可见。 | [Breakpoint](#breakpoint)\[] | - | 3.0 |
 | rowScope | 设置列范围 | `row` \| `rowgroup` | - | 4.0 |
-| showSorterTooltip | 表头显示下一次排序的 tooltip 提示, 覆盖 table 中 `showSorterTooltip` | boolean \| [Tooltip props](/components/tooltip/#api) | true |  |
+| shouldCellUpdate | 自定义单元格渲染时机 | (record, prevRecord) => boolean | - | 4.3.0 |
+| showSorterTooltip | 表头显示下一次排序的 tooltip 提示, 覆盖 table 中 `showSorterTooltip` | boolean \| [Tooltip props](/components/tooltip-cn/#api) & `{ target?: 'full-header' \| 'sorter-icon' }` | true | target: 4.3.0 |
 | sortDirections | 支持的排序方式，取值为 `'ascend'` `'descend'` | Array | `['ascend', 'descend']` | 1.5.0 |
 | sorter | 排序函数，本地排序使用一个函数(参考 [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) 的 compareFunction)，需要服务端排序可设为 true | Function\|boolean | - |  |
 | sortIcon | 自定义排序图标 | (props: { sortOrder: SortOrder \| null }) => VueNode | - | 4.3.0 |
 | sortOrder | 排序的受控属性，外界可用此控制列的排序，可设置为 `'ascend'` `'descend'` `null` | string | - |  |
-| title | 列头显示文字 | string | - |  |
+| title | 列头显示文字 | string \| VueNode \| ({ sortColumns, filters }) => VueNode | - |  |
 | width | 列宽度 | string\|number | - |  |
 | onFilter | 本地模式下，确定筛选的运行函数, 使用 template 或 jsx 时作为`filter`事件使用 | Function | - |  |
 | onFilterDropdownOpenChange | 自定义筛选菜单可见变化时调用，使用 template 或 jsx 时作为`filterDropdownOpenChange`事件使用 | function(open) {} | - | 4.0 |
@@ -211,11 +228,37 @@ type Breakpoint = 'xxxl' | 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 分页的配置项。
 
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| position | 指定分页显示的位置， 取值为`topLeft` \| `topCenter` \| `topRight` \|`bottomLeft` \| `bottomCenter` \| `bottomRight` | Array | \[`bottomRight`] |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| placement | 指定分页显示的位置，取值为 `topStart` \| `topCenter` \| `topEnd` \| `bottomStart` \| `bottomCenter` \| `bottomEnd` \| `none` | Array | \[`bottomEnd`] | 4.3.0 |
+| ~~position~~ | 指定分页显示的位置，取值为 `topLeft` \| `topCenter` \| `topRight` \| `bottomLeft` \| `bottomCenter` \| `bottomRight` \| `none`，请使用 `placement` 替换 | Array | \[`bottomRight`] |  |
 
-更多配置项，请查看 [`Pagination`](/components/pagination/)。
+更多配置项，请查看 [`Pagination`](/components/pagination-cn/)。
+
+### expandable
+
+展开功能的配置。
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| childrenColumnName | 指定树形结构的列名 | string | `children` |  |
+| columnTitle | 自定义展开列表头 | VueNode \| ({ expandIcon }) => VueNode | - | 4.3.0 |
+| columnWidth | 自定义展开列宽度 | string \| number | - |  |
+| defaultExpandAllRows | 初始时，是否展开所有行 | boolean | false |  |
+| defaultExpandedRowKeys | 默认展开的行 | string\[] | - |  |
+| expandedRowClassName | 展开行的 className | string \| (record, index, indent) => string | - | 4.3.0 |
+| expandedRowKeys | 展开的行，控制属性 | string\[] | - |  |
+| expandedRowRender | 额外的展开行 | Function({ record, index, indent, expanded }): VNode | - |  |
+| expandIcon | 自定义展开图标 | Function(props): VNode | - |  |
+| expandRowByClick | 通过点击行来展开子行 | boolean | false |  |
+| fixed | 控制展开图标是否固定，可选 `true` `'start'` `'end'` `'left'` `'right'` | boolean \| string | false |  |
+| indentSize | 展示树形数据时，每层缩进的宽度，以 px 为单位 | number | 15 |  |
+| rowExpandable | 设置是否允许行展开（`dataSource` 若存在 `children` 字段将不生效） | (record) => boolean | - |  |
+| showExpandAll | 是否显示当前页可展开行的全部展开控件，仅在使用 `expandedRowRender` 时可用 | boolean | false | 4.3.0 |
+| showExpandColumn | 是否显示展开图标列 | boolean | true |  |
+| onExpand | 点击展开图标时触发 | Function(expanded, record) | - |  |
+| onExpandAll | 点击全部展开图标时触发 | (expanded: boolean) => void | - | 4.3.0 |
+| onExpandedRowsChange | 展开的行变化时触发 | Function(expandedRows) | - |  |
 
 ### rowSelection
 
@@ -223,14 +266,19 @@ type Breakpoint = 'xxxl' | 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| align | 设置选择列的对齐方式 | `left` \| `right` \| `center` | `center` | 4.3.0 |
 | checkStrictly | checkable 状态下节点选择完全受控（父子数据选中状态不再关联） | boolean | true | 3.0 |
-| columnTitle | 自定义列表选择框标题 | string\|VNode | - |  |
+| columnTitle | 自定义列表选择框标题 | string \| VueNode \| (originalNode: VueNode) => VueNode | - | function: 4.3.0 |
 | columnWidth | 自定义列表选择框宽度 | string\|number | - |  |
-| fixed | 把选择框列固定在左边 | boolean | - |  |
+| customCell | 设置选择列单元格属性，用法与 Column 的 `customCell` 相同 | Function(record, rowIndex) | - | 4.3.0 |
+| defaultSelectedRowKeys | 默认选中项的 key 数组 | string\[] \| number\[] | \[] |  |
+| fixed | 把选择框列固定在左边 | boolean \| `'start'` \| `'end'` \| `'left'` \| `'right'` | - |  |
 | getCheckboxProps | 选择框的默认属性配置 | Function(record) | - |  |
+| getTitleCheckboxProps | 标题选择框的默认属性配置 | Function() | - | 4.3.0 |
 | hideDefaultSelections | 去掉『全选』『反选』两个默认选项 | boolean | false |  |
 | hideSelectAll | 隐藏全选勾选框与自定义选择项 | boolean | false | 3.0 |
 | preserveSelectedRowKeys | 当数据被删除时仍然保留选项的 `key` | boolean | - | 3.0 |
+| renderCell | 渲染勾选框，用法与 Column 的 `customRender` 相同 | (checked: boolean, record: T, index: number, originNode: VueNode) => VueNode \| RenderedCell | - |  |
 | selectedRowKeys | 指定选中项的 key 数组，需要和 onChange 进行配合 | string\[] | \[] |  |
 | selections | 自定义选择项 [配置项](#selection), 设为 `true` 时使用默认选择项 | object\[] \| boolean | true |  |
 | type | 多选/单选，`checkbox` or `radio` | string | `checkbox` |  |
@@ -281,6 +329,26 @@ interface FilterResetProps {
   closeDropdown?: boolean;
 }
 ```
+
+## Semantic DOM {#semantic-dom}
+
+`classNames` 与 `styles` 支持对象或函数（`(info: { props }) => ...`），可作用于以下语义化结构：
+
+| 语义位            | 说明                                                                  |
+| ----------------- | --------------------------------------------------------------------- |
+| `root`            | 根元素（`.ant-table-wrapper`），包含表格外层容器基础样式              |
+| `section`         | 容器元素（`.ant-table-container`），包含表格主体区域包装容器样式      |
+| `title`           | 标题元素（`.ant-table-title`），包含表格标题的样式和布局              |
+| `content`         | 内容元素（`.ant-table-content`），包含表格内容区域的样式和布局        |
+| `header.wrapper`  | 头部容器元素（`.ant-table-thead`），包含表头的布局和容器样式          |
+| `header.row`      | 头部行元素（`.ant-table-thead > tr`），包含表头行的布局和样式         |
+| `header.cell`     | 头部单元格元素（`.ant-table-thead > tr > th`），包含表头单元格样式    |
+| `body.wrapper`    | 主体容器元素（`.ant-table-tbody`），包含表格主体的布局和容器样式      |
+| `body.row`        | 主体行元素（`.ant-table-tbody > tr.ant-table-row`），包含数据行样式   |
+| `body.cell`       | 主体单元格元素（`.ant-table-tbody > tr > td`），包含数据单元格样式    |
+| `footer`          | 底部元素（`.ant-table-footer`），包含表格底部的背景色、文字颜色等样式 |
+| `pagination.root` | 分页根元素（`.ant-pagination`），包含分页组件的基础样式和布局         |
+| `pagination.item` | 分页单项元素（`.ant-pagination-item`），包含分页项的样式和交互效果    |
 
 ## 注意
 

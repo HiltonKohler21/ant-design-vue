@@ -1,5 +1,5 @@
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
-import { cloneVNode, defineComponent } from 'vue';
+import { cloneVNode, computed, defineComponent } from 'vue';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
 import { filterEmpty } from '../_util/props-util';
@@ -7,12 +7,35 @@ import initDefaultProps from '../_util/props-util/initDefaultProps';
 import TimelineItem from './TimelineItem';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 
-import { tuple, booleanType } from '../_util/type';
+import { tuple, booleanType, someType } from '../_util/type';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import {
+  useProvideTimeline,
+  type TimelineSemanticName,
+  type TimelineSemanticClassNames,
+  type TimelineSemanticStyles,
+  type TimelineClassNamesType,
+  type TimelineStylesType,
+  type TimelineItemSemanticName,
+  type TimelineItemSemanticClassNames,
+  type TimelineItemSemanticStyles,
+} from './context';
 
 // CSSINJS
 import useStyle from './style';
 import type { CustomSlotsType, Key, VueNode } from '../_util/type';
+
+export type {
+  TimelineSemanticName,
+  TimelineSemanticClassNames,
+  TimelineSemanticStyles,
+  TimelineClassNamesType,
+  TimelineStylesType,
+  TimelineItemSemanticName,
+  TimelineItemSemanticClassNames,
+  TimelineItemSemanticStyles,
+};
 
 export type TimelinePosition = 'left' | 'right' | 'start' | 'end' | '';
 export type TimelineMode = 'left' | 'alternate' | 'right' | 'start' | 'end' | '';
@@ -34,6 +57,8 @@ export interface TimelineItemType {
   class?: any;
   className?: string;
   style?: CSSProperties;
+  classNames?: TimelineItemSemanticClassNames;
+  styles?: TimelineItemSemanticStyles;
 }
 
 export const timelineProps = () => ({
@@ -54,6 +79,8 @@ export const timelineProps = () => ({
   titleSpan: {
     type: [String, Number] as PropType<string | number>,
   },
+  classNames: someType<TimelineClassNamesType>([Object, Function]),
+  styles: someType<TimelineStylesType>([Object, Function]),
 });
 
 export type TimelineProps = Partial<ExtractPropTypes<ReturnType<typeof timelineProps>>>;
@@ -91,6 +118,44 @@ export default defineComponent({
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
+    const mergedVariant = computed<TimelineVariant>(
+      () => props.variant ?? timelineConfig.value.variant ?? 'outlined',
+    );
+    const mergedMode = computed<TimelineMode>(() => {
+      if (props.mode === 'left') return 'start';
+      if (props.mode === 'right') return 'end';
+      if (props.mode === 'alternate' || props.mode === 'start' || props.mode === 'end') {
+        return props.mode;
+      }
+      return 'start';
+    });
+
+    const mergedProps = computed<TimelineProps>(() => ({
+      ...props,
+      variant: mergedVariant.value,
+      mode: mergedMode.value,
+      orientation: props.orientation ?? 'vertical',
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      TimelineSemanticClassNames,
+      TimelineSemanticStyles,
+      TimelineProps
+    >(
+      () => [contextClassNames.value as TimelineClassNamesType, props.classNames],
+      () => [
+        contextStyles.value as TimelineStylesType,
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        props.styles,
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
+    useProvideTimeline({
+      classNames: mergedClassNames,
+      styles: mergedStyles,
+    });
+
     const getPositionCls = (ele, idx: number, normalizedMode: string) => {
       const eleProps = ele.props || {};
       const itemPos = normalizePosition(eleProps.placement ?? eleProps.position);
@@ -114,8 +179,6 @@ export default defineComponent({
         orientation = 'vertical',
         titleSpan,
       } = props;
-      const mergedVariant: TimelineVariant =
-        props.variant ?? timelineConfig.value.variant ?? 'outlined';
       const normalizedMode = mode === 'start' ? 'left' : mode === 'end' ? 'right' : mode;
       const pendingNode = typeof pending === 'boolean' ? null : pending;
 
@@ -135,6 +198,8 @@ export default defineComponent({
                 label={mergedLabel}
                 position={mergedPosition}
                 pending={item.loading}
+                classNames={item.classNames}
+                styles={item.styles}
                 class={mergedClass}
                 style={item.style}
               >
@@ -171,6 +236,7 @@ export default defineComponent({
       const hasLabelItem = timeLineItems.some(
         item => !!(item.props?.label || item.props?.title || item.children?.label),
       );
+      const { class: attrClass, style: attrStyle, ...restAttrs } = attrs;
       const classString = classNames(
         prefixCls.value,
         {
@@ -179,13 +245,13 @@ export default defineComponent({
           [`${prefixCls.value}-${normalizedMode}`]: !!normalizedMode && !hasLabelItem,
           [`${prefixCls.value}-label`]: hasLabelItem,
           [`${prefixCls.value}-horizontal`]: orientation === 'horizontal',
-          [`${prefixCls.value}-filled`]: mergedVariant === 'filled',
+          [`${prefixCls.value}-filled`]: mergedVariant.value === 'filled',
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
         contextClassName.value,
-        contextClassNames.value.root,
+        mergedClassNames.value.root,
         props.rootClassName,
-        attrs.class,
+        attrClass,
         hashId.value,
       );
 
@@ -201,17 +267,18 @@ export default defineComponent({
               } as CSSProperties)
           : undefined;
 
+      const semanticRootStyle = mergedStyles.value.root;
+      const hasSemanticRootStyle = semanticRootStyle && Object.keys(semanticRootStyle).length > 0;
+      const styleParts = [
+        hasSemanticRootStyle ? semanticRootStyle : undefined,
+        titleSpanStyle,
+        attrStyle,
+      ].filter(Boolean);
+      const combinedStyle =
+        styleParts.length === 0 ? undefined : styleParts.length === 1 ? styleParts[0] : styleParts;
+
       return wrapSSR(
-        <ul
-          {...attrs}
-          class={classString}
-          style={[
-            contextStyle.value,
-            contextStyles.value.root,
-            titleSpanStyle,
-            attrs.style as CSSProperties,
-          ]}
-        >
+        <ul {...restAttrs} class={classString} style={combinedStyle as any}>
           {items}
         </ul>,
       );

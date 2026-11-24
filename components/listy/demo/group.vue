@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 分组与吸顶
   en-US: Grouping and sticky headers

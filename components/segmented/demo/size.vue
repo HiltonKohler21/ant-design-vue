@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   zh-CN: 三种大小
   en-US: Three sizes of Segmented

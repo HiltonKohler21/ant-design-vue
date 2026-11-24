@@ -432,9 +432,11 @@ export default function useSelection<RecordType>(
       const allDisabledAndChecked = allDisabled && allDisabledData.every(({ checked }) => checked);
       const allDisabledSomeChecked = allDisabled && allDisabledData.some(({ checked }) => checked);
 
+      const titleCheckboxProps = mergedRowSelection.value.getTitleCheckboxProps?.() || {};
       title = !hideSelectAll && (
         <div class={`${prefixCls.value}-selection`}>
           <Checkbox
+            {...titleCheckboxProps}
             checked={
               !allDisabled ? !!flattedDataLength.value && checkedCurrentAll : allDisabledAndChecked
             }
@@ -444,8 +446,11 @@ export default function useSelection<RecordType>(
                 : !allDisabledAndChecked && allDisabledSomeChecked
             }
             onChange={onSelectAllChange}
-            disabled={flattedDataLength.value === 0 || allDisabled}
-            aria-label={customizeSelections ? 'Custom selection' : 'Select all'}
+            disabled={titleCheckboxProps.disabled ?? (flattedDataLength.value === 0 || allDisabled)}
+            aria-label={
+              titleCheckboxProps['aria-label'] ||
+              (customizeSelections ? 'Custom selection' : 'Select all')
+            }
             skipGroup
           />
           {customizeSelections}
@@ -650,13 +655,19 @@ export default function useSelection<RecordType>(
     const nextCol: ColumnType<RecordType> & Record<string, any> =
       cloneColumns[selectionColumnIndex + 1];
 
-    let mergedFixed: FixedType | undefined = fixed;
+    const normalizeFixed = (val: any): FixedType | undefined => {
+      if (val === 'start') return 'left';
+      if (val === 'end') return 'right';
+      return val;
+    };
+
+    let mergedFixed: FixedType | undefined = normalizeFixed(fixed);
 
     if (mergedFixed === undefined) {
       if (nextCol?.fixed !== undefined) {
-        mergedFixed = nextCol.fixed;
+        mergedFixed = normalizeFixed(nextCol.fixed);
       } else if (prevCol?.fixed !== undefined) {
-        mergedFixed = prevCol.fixed;
+        mergedFixed = normalizeFixed(prevCol.fixed);
       }
     }
 
@@ -669,13 +680,21 @@ export default function useSelection<RecordType>(
       prevCol.fixed = mergedFixed;
     }
 
+    const customColumnTitle = mergedRowSelection.value.columnTitle;
+    const resolvedTitle =
+      typeof customColumnTitle === 'function'
+        ? customColumnTitle(title)
+        : customColumnTitle || title;
+
     // Replace with real selection column
     const selectionColumn = {
       fixed: mergedFixed,
       width: selectionColWidth,
+      align: mergedRowSelection.value.align,
       className: `${prefixCls.value}-selection-column`,
-      title: mergedRowSelection.value.columnTitle || title,
+      title: resolvedTitle,
       customRender: renderSelectionCell,
+      customCell: mergedRowSelection.value.customCell || mergedRowSelection.value.onCell,
       [INTERNAL_COL_DEFINE]: {
         class: `${prefixCls.value}-selection-col`,
       },

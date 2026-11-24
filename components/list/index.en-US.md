@@ -42,9 +42,10 @@ A list can be used to display content related to a single subject. The content c
 
 Properties for pagination.
 
-| Property | Description                          | Type                        | Default  |
-| -------- | ------------------------------------ | --------------------------- | -------- |
-| position | Specify the position of `Pagination` | `top` \| `bottom` \| `both` | `bottom` |
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| position | Specify the position of `Pagination` | `top` \| `bottom` \| `both` | `bottom` |  |
+| align | Specify the alignment of `Pagination` | `start` \| `center` \| `end` | `end` | 4.3.0 |
 
 More about pagination, please check [`Pagination`](/components/pagination/#api).
 
@@ -67,9 +68,9 @@ More about pagination, please check [`Pagination`](/components/pagination/#api).
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | actions | The actions content of list item. If `itemLayout` is `vertical`, shows the content on bottom, otherwise shows content on the far right | VueNode[] \| slot | - |  |
-| classNames | Semantic DOM class names for list item | { actions?: string; extra?: string } | - | 4.3.0 |
+| classNames | Semantic DOM class names for list item, supports object or function and merges `ConfigProvider.list` | Record\<`actions` \| `extra`, string\> \| (info: { props: ListItemProps }) => Record\<`actions` \| `extra`, string\> | - | 4.3.0 |
 | extra | The extra content of list item. If `itemLayout` is `vertical`, shows the content on right, otherwise shows content on the far right | string \| slot | - |  |
-| styles | Semantic DOM inline styles for list item | { actions?: CSSProperties; extra?: CSSProperties } | - | 4.3.0 |
+| styles | Semantic DOM inline styles for list item, supports object or function and merges `ConfigProvider.list` | Record\<`actions` \| `extra`, CSSProperties\> \| (info: { props: ListItemProps }) => Record\<`actions` \| `extra`, CSSProperties\> | - | 4.3.0 |
 
 ### List.Item.Meta
 
@@ -78,3 +79,16 @@ More about pagination, please check [`Pagination`](/components/pagination/#api).
 | avatar      | The avatar of list item      | slot           | -       |
 | description | The description of list item | string \| slot | -       |
 | title       | The title of list item       | string \| slot | -       |
+
+## FAQ
+
+### Is there a replacement for the deprecated List component?
+
+Yes — please use [Listy](/components/listy/), available since `4.3.0`. It is the successor to List, with built-in virtual scrolling, sticky group headers, programmatic scrolling, and flexible custom rendering.
+
+### How do I migrate off List?
+
+- **Data and rendering**: `dataSource` maps to `items`, `renderItem` maps to `itemRender` (or the `#item` slot); `rowKey` keeps its meaning. For large datasets, enable `virtual` with `height` for built-in virtual scrolling.
+- **Preset structures inside a row**: `List.Item`, `List.Item.Meta`, `actions`, and `extra` can all be recomposed inside `itemRender` / `#item`.
+- **Structures outside the list**: place `header` and `footer` around Listy directly, wrap with [Spin](/components/spin/) for `loading`, slice your data with [Pagination](/components/pagination/) for `pagination`, and refer to the [Listy infinite loading](/components/listy/) demo for `loadMore`.
+- **Styles**: customize `bordered`, `split`, and `size` via semantic DOM `classNames` / `styles` and Design Tokens; for `grid` card walls, use [Row / Col](/components/grid/) with [Card](/components/card/) directly.

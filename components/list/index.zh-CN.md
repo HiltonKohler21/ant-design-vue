@@ -43,9 +43,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tBzwQ7raKX8AAA
 
 分页的配置项。
 
-| 参数     | 说明               | 类型                        | 默认值   |
-| -------- | ------------------ | --------------------------- | -------- |
-| position | 指定分页显示的位置 | `top` \| `bottom` \| `both` | `bottom` |
+| 参数     | 说明               | 类型                         | 默认值   | 版本  |
+| -------- | ------------------ | ---------------------------- | -------- | ----- |
+| position | 指定分页显示的位置 | `top` \| `bottom` \| `both`  | `bottom` |       |
+| align    | 指定分页对齐的位置 | `start` \| `center` \| `end` | `end`    | 4.3.0 |
 
 更多配置项，请查看 [`Pagination`](/components/pagination-cn/#api)。
 
@@ -68,9 +69,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tBzwQ7raKX8AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | actions | 列表操作组，根据 `itemLayout` 的不同，位置在卡片底部或者最右侧 | VueNode[] \| slot | - |  |
-| classNames | 配置列表项内置模块的 className | { actions?: string; extra?: string } | - | 4.3.0 |
+| classNames | 语义化结构 className，支持对象或函数，并自动合并 `ConfigProvider.list` 配置 | Record\<`actions` \| `extra`, string\> \| (info: { props: ListItemProps }) => Record\<`actions` \| `extra`, string\> | - | 4.3.0 |
 | extra | 额外内容，通常用在 `itemLayout` 为 `vertical` 的情况下展示右侧内容；`horizontal` 展示在列表元素最右侧 | string \| slot | - |  |
-| styles | 配置列表项内置模块的 style | { actions?: CSSProperties; extra?: CSSProperties } | - | 4.3.0 |
+| styles | 语义化结构 style，支持对象或函数，并自动合并 `ConfigProvider.list` 配置 | Record\<`actions` \| `extra`, CSSProperties\> \| (info: { props: ListItemProps }) => Record\<`actions` \| `extra`, CSSProperties\> | - | 4.3.0 |
 
 ### List.Item.Meta
 
@@ -79,3 +80,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*tBzwQ7raKX8AAA
 | avatar      | 列表元素的图标     | slot           | -      |
 | description | 列表元素的描述内容 | string \| slot | -      |
 | title       | 列表元素的标题     | string \| slot | -      |
+
+## FAQ
+
+### List 组件废弃后，有替代方案吗？
+
+有，请使用 `4.3.0` 起提供的 [Listy](/components/listy-cn/) 组件，它是 List 的继任者，内置了虚拟滚动、分组吸顶、程序化滚动等能力，并且支持灵活的自定义渲染方式。
+
+### 如何从 List 迁移？
+
+- **数据与渲染**：`dataSource` 对应 `items`，`renderItem` 对应 `itemRender`（或 `#item` 插槽）；`rowKey` 含义不变。列表数据量较大时配合 `height` 开启 `virtual` 即可实现虚拟滚动。
+- **行内的预设结构**：`List.Item`、`List.Item.Meta`、`actions`、`extra` 等均可在 `itemRender` / `#item` 中自行组合。
+- **列表外的结构**：`header` 与 `footer` 直接写在 Listy 外层，`loading` 用 [Spin](/components/spin-cn/) 包裹，`pagination` 自行切片后传入 `items` 并搭配 [Pagination](/components/pagination-cn/) 使用，`loadMore` 可参考 [Listy 无限加载](/components/listy-cn/) 示例。
+- **样式相关**：`bordered`、`split`、`size` 通过语义化 DOM 的 `classNames`、`styles` 与主题变量调整；`grid` 场景建议直接使用 [Row / Col](/components/grid-cn/) 搭配 [Card](/components/card-cn/) 实现卡片墙布局。

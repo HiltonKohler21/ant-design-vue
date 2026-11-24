@@ -1,6 +1,16 @@
 import type { App, Plugin } from 'vue';
 import Tabs, { TabPane } from './src';
-export type { TabsProps, TabPaneProps, TabPlacement, MoreProps } from './src';
+export type {
+  TabsProps,
+  TabPaneProps,
+  TabPlacement,
+  MoreProps,
+  TabsSemanticName,
+  TabsSemanticClassNames,
+  TabsSemanticStyles,
+  TabsClassNamesType,
+  TabsStylesType,
+} from './src';
 
 Tabs.TabPane = TabPane;
 

@@ -30,7 +30,14 @@ import eagerComputed from '../_util/eagerComputed';
 // CSSINJS
 import useStyle from './style';
 
-export type { ListItemProps } from './Item';
+export type {
+  ListItemProps,
+  ListItemSemanticName,
+  ListItemSemanticClassNames,
+  ListItemSemanticStyles,
+  ListItemClassNamesType,
+  ListItemStylesType,
+} from './Item';
 export type { ListItemMetaProps } from './ItemMeta';
 
 export type ColumnType = 'gutter' | 'column' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
@@ -283,6 +290,7 @@ const List = defineComponent({
       const paginationContent = props.pagination ? (
         <div class={`${prefixCls.value}-pagination`}>
           <Pagination
+            align="end"
             {...paginationProps.value}
             onChange={onPaginationChange}
             onShowSizeChange={onPaginationShowSizeChange}

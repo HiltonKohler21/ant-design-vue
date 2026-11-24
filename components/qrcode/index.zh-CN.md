@@ -15,18 +15,24 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*M4PBTZ_n9OgAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| value | 扫描后的地址 | string | - |  |
+| value | 扫描后的文本 | `string \| string[]` | - | `string[]`: 4.3.0 |
 | type | 渲染类型 | `'canvas'` \| `'svg'` | `canvas` |  |
 | icon | 二维码中图片的地址（目前只支持图片地址） | string | - |  |
 | size | 二维码大小 | number | 160 |  |
-| iconSize | 二维码中图片的大小 | number | 40 |  |
+| iconSize | 二维码中图片的大小 | `number \| { width: number; height: number }` | 40 | object: 4.3.0 |
 | color | 二维码颜色 | string | `#000` |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: QRCodeProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | bgColor | 二维码背景颜色 | string | `transparent` |  |
+| marginSize | 留白（安静区）大小（单位为模块数），`0` 表示无留白 | number | `0` | 4.3.0 |
 | bordered | 是否有边框 | boolean | `true` |  |
 | errorLevel | 二维码纠错等级 | `'L'` \| `'M'` \| `'Q'` \| `'H'` | `'M'` |  |
+| boostLevel | 如果启用，自动提升纠错等级，结果的纠错级别可能会高于指定的纠错级别 | boolean | `true` | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | status | 二维码状态 | `active` \| `expired` \| `loading` \| `scanned` | `active` | scanned: 4.0.9 |
 | statusRender | 自定义状态渲染器，支持函数 prop 或 `#statusRender` 插槽 | `(info: { status: 'expired' \| 'loading' \| 'scanned'; locale: Locale['QRCode']; onRefresh?: (e?: MouseEvent) => void }) => VueNode` \| slot | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: QRCodeProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `cover`。
 
 ### 事件
 

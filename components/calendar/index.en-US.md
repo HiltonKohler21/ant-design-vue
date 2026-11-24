@@ -31,6 +31,7 @@ customize the progress dot by setting a scoped slot
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | cellRender | Customize the display of the cell; the returned content will be appended to the cell (replaces `dateCellRender` / `monthCellRender`) | `(current: dayjs, info: CellRenderInfo) => VNode` \| `v-slot:cellRender="{ current, info }"` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | Record<SemanticDOM, string> \| (info: { props: CalendarProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | ~~dateCellRender~~ | Customize the display of the date cell by setting a scoped slot, the returned content will be appended to the cell (deprecated, please use `cellRender` instead) | v-slot:dateCellRender="{current: dayjs}" | - |  |
 | ~~dateFullCellRender~~ | Customize the display of the date cell by setting a scoped slot, the returned content will override the cell (deprecated, please use `fullCellRender` instead) | v-slot:dateFullCellRender="{current: dayjs}" | - |  |
 | defaultValue | The date selected by default | [dayjs](https://day.js.org/) | - |  |
@@ -44,9 +45,12 @@ customize the progress dot by setting a scoped slot
 | ~~monthFullCellRender~~ | Customize the display of the month cell by setting a scoped slot, the returned content will override the cell (deprecated, please use `fullCellRender` instead) | v-slot:monthFullCellRender="{current: dayjs}" | - |  |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | showWeek | Whether to display week number | boolean | false | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | Record<SemanticDOM, CSSProperties> \| (info: { props: CalendarProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | validRange | To set valid range | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
 | value(v-model) | The current selected date | [dayjs](https://day.js.org/) | current date |  |
 | valueFormat | Optional, format of binding value. If not specified, the binding value will be a dayjs object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
+
+> Supported `SemanticDOM` slots: `root` \| `header` \| `body` \| `content` \| `item` \| `itemContent`.
 
 ### events
 

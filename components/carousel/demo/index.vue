@@ -4,6 +4,7 @@
     <Position />
     <Autoplay />
     <Fade />
+    <Arrows />
     <DotDuration />
     <CustomPaging />
     <CustomArrows />
@@ -15,6 +16,7 @@
 import Basic from './basic.vue';
 import Fade from './fade.vue';
 import Autoplay from './autoplay.vue';
+import Arrows from './arrows.vue';
 import DotDuration from './dot-duration.vue';
 import Position from './position.vue';
 import CustomPaging from './customPaging.vue';
@@ -32,6 +34,7 @@ export default defineComponent({
     Basic,
     Fade,
     Autoplay,
+    Arrows,
     DotDuration,
     Position,
     CustomPaging,

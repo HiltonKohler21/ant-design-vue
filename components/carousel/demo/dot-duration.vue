@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 5
 version: 4.3.0
 title:
   zh-CN: 进度条

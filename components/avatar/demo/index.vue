@@ -5,7 +5,10 @@
     <dynamic />
     <badge />
     <group />
+    <max-count />
+    <toggle-debug />
     <responsive />
+    <fallback />
     <component-token />
   </demo-sort>
 </template>
@@ -16,7 +19,10 @@ import Type from './type.vue';
 import Dynamic from './dynamic.vue';
 import Badge from './badge.vue';
 import Group from './group.vue';
+import MaxCount from './max-count.vue';
+import ToggleDebug from './toggle-debug.vue';
 import Responsive from './responsive.vue';
+import Fallback from './fallback.vue';
 import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -31,7 +37,10 @@ export default defineComponent({
     Dynamic,
     Badge,
     Group,
+    MaxCount,
+    ToggleDebug,
     Responsive,
+    Fallback,
     ComponentToken,
   },
   setup() {

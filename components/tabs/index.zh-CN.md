@@ -27,19 +27,23 @@ Ant Design 依次提供了三级选项卡，分别用于不同的场景。
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | activeKey(v-model) | 当前激活 tab 面板的 key | string \| number | - |  |
+| addIcon | 自定义添加按钮，设置 `type="editable-card"` 时有效 | VueNode | `<PlusOutlined />` | 4.3.0 |
 | animated | 是否使用动画切换 Tabs，在 tabPosition=`"top"` \| `"bottom"` 时有效 | boolean \| { inkBar: boolean, tabPane: boolean } | true, 当 type="card" 时为 false |  |
 | centered | 标签居中展示 | boolean | false | 3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: TabsProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | defaultActiveKey | 初始化选中面板的 key，如果没有设置 `activeKey` | string \| number | 第一个面板的 key | 4.3.0 |
-| destroyInactiveTabPane | 被隐藏时是否销毁 DOM 结构（已废弃，请使用 `destroyOnHidden`） | boolean | false |  |
+| ~~destroyInactiveTabPane~~ | 被隐藏时是否销毁 DOM 结构（已废弃，请使用 `destroyOnHidden`） | boolean | false |  |
 | destroyOnHidden | 被隐藏时是否销毁 DOM 结构 | boolean | false | 4.3.0 |
 | hideAdd | 是否隐藏加号图标，在 `type="editable-card"` 时有效 | boolean | false |  |
 | indicator | 自定义指示条的大小和对齐方式 | `{ size?: number \| ((origin: number) => number); align?: 'start' \| 'center' \| 'end' }` | - | 4.3.0 |
-| indicatorSize | 自定义指示条的长度（已废弃，请使用 `indicator.size`） | `number \| ((origin: number) => number) \| 'small' \| 'large'` | - | 4.3.0 |
+| ~~indicatorSize~~ | 自定义指示条的长度（已废弃，请使用 `indicator.size`） | `number \| ((origin: number) => number) \| 'small' \| 'large'` | - | 4.3.0 |
 | items | 配置选项卡内容 | [TabItemType](#tabitemtype)[] | [] | 4.3.0 |
 | more | 自定义折叠菜单属性 | [MoreProps](#moreprops) | `{ icon: <EllipsisOutlined />, trigger: ['hover'] }` | 4.3.0 |
-| popupClassName | 更多菜单的 className | string | - |  |
+| ~~popupClassName~~ | 更多菜单的 className（已废弃，请使用 `classNames.popup`） | string | - |  |
+| removeIcon | 自定义删除按钮，设置 `type="editable-card"` 时有效 | VueNode | `<CloseOutlined />` | 4.3.0 |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
 | size | 大小，提供 `large` `middle` 和 `small` 三种大小 | string | `middle` |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: TabsProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | tabBarExtraContent | tab bar 上额外的元素（已废弃，请使用 `leftExtra` / `rightExtra` 插槽） | VueNode \| slot | - |  |
 | tabBarGutter | tabs 之间的间隙 | number | - |  |
 | tabBarStyle | tab bar 的样式对象 | CSSProperties | - |  |
@@ -47,11 +51,14 @@ Ant Design 依次提供了三级选项卡，分别用于不同的场景。
 | ~~tabPosition~~ | 页签位置，可选值有 `top` `right` `bottom` `left`（已废弃，请使用 `tabPlacement`） | string | `top` |  |
 | type | 页签的基本样式，可选 `line`、`card` `editable-card` 类型 | string | `line` |  |
 
+> 语义化结构 `SemanticDOM` 支持：`root` \| `header` \| `item` \| `remove` \| `indicator` \| `body` \| `content` \| `popup.root`。
+
 ### MoreProps
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | icon | 自定义折叠图标 | VueNode | `<EllipsisOutlined />` | 4.3.0 |
+| popupRender | 自定义折叠菜单渲染 | `(menu: VueNode, info: { restTabs: Tab[]; onClose: () => void }) => VueNode` | - | 4.3.0 |
 | trigger | 触发下拉的行为 | `Array<'click' \| 'hover' \| 'contextmenu'>` \| `'click' \| 'hover' \| 'contextmenu'` | `['hover']` | 4.3.0 |
 | overlayClassName | 折叠菜单下拉根元素的类名称 | string | - | 4.3.0 |
 | overlayStyle | 折叠菜单下拉根元素的样式 | CSSProperties | - | 4.3.0 |
@@ -62,10 +69,12 @@ Ant Design 依次提供了三级选项卡，分别用于不同的场景。
 | --- | --- | --- | --- | --- |
 | children | 选项卡头显示内容 | VueNode | - | 4.3.0 |
 | closable | 是否显示选项卡的关闭按钮，在 `type="editable-card"` 时有效 | boolean | true | 4.3.0 |
-| closeIcon | 自定义关闭图标，在 `type="editable-card"` 时有效 | VueNode | - | 4.3.0 |
-| destroyInactiveTabPane | 被隐藏时是否销毁 DOM 结构 | boolean | false | 4.3.0 |
+| closeIcon | 自定义关闭图标，在 `type="editable-card"` 时有效（设置为 `null` 或 `false` 时隐藏关闭按钮） | VueNode | - | 4.3.0 |
+| ~~destroyInactiveTabPane~~ | 被隐藏时是否销毁 DOM 结构（已废弃，请使用 `destroyOnHidden`） | boolean | false | 4.3.0 |
+| destroyOnHidden | 被隐藏时是否销毁 DOM 结构 | boolean | false | 4.3.0 |
 | disabled | 禁用某一项 | boolean | false | 4.3.0 |
 | forceRender | 被隐藏时是否渲染 DOM 结构 | boolean | false | 4.3.0 |
+| icon | 选项卡头部图标元素 | VueNode | - | 4.3.0 |
 | key | 对应 `activeKey` | string \| number | - | 4.3.0 |
 | label | 选项卡头显示文字 | VueNode | - | 4.3.0 |
 

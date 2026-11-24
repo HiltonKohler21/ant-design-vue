@@ -65,7 +65,10 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           insetBlockStart: token.dotSize,
           insetInlineStart: token.calc(token.dotSize).sub(token.tailWidth).div(2).equal(),
           height: `calc(100% - ${unit(token.dotSize)})`,
-          borderInlineStart: `${unit(token.tailWidth)} ${token.lineType} ${token.tailColor}`,
+          borderWidth: 0,
+          borderInlineStartWidth: token.tailWidth,
+          borderInlineStartStyle: token.lineType as any,
+          borderInlineStartColor: token.tailColor,
         },
 
         '&-pending': {
@@ -139,11 +142,11 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         },
 
         '&-last': {
-          [`> ${componentCls}-item-tail`]: {
+          [`${componentCls}-item-tail`]: {
             display: 'none',
           },
 
-          [`> ${componentCls}-item-content`]: {
+          [`${componentCls}-item-content`]: {
             minHeight: token.calc(token.controlHeightLG).mul(1.2).equal(),
           },
         },
@@ -272,14 +275,34 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           flexDirection: 'column',
           alignItems: 'flex-start',
 
+          '&-wrapper': {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            width: '100%',
+            minWidth: 0,
+          },
+
+          '&-header': {
+            width: '100%',
+            minWidth: 0,
+          },
+
+          '&-section': {
+            width: '100%',
+            minWidth: 0,
+          },
+
           '&-tail': {
             position: 'absolute',
             insetBlockStart: token.calc(token.dotSize).sub(token.tailWidth).div(2).equal(),
             insetInlineStart: token.dotSize,
             width: `calc(100% - ${unit(token.dotSize)})`,
             height: 0,
-            borderInlineStart: 'none',
-            borderBlockStart: `${unit(token.tailWidth)} ${token.lineType} ${token.tailColor}`,
+            borderWidth: 0,
+            borderBlockStartWidth: token.tailWidth,
+            borderBlockStartStyle: token.lineType as any,
+            borderBlockStartColor: token.tailColor,
           },
 
           '&-head': {
@@ -312,6 +335,7 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
             textAlign: 'start',
             color: token.colorTextDescription,
             minHeight: token.calc(token.fontSize).mul(token.lineHeight).equal(),
+            wordBreak: 'break-word',
           },
 
           '&-content': {
@@ -327,11 +351,11 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
           '&-last': {
             paddingInlineEnd: 0,
 
-            [`> ${componentCls}-item-tail`]: {
+            [`${componentCls}-item-tail`]: {
               display: 'none',
             },
 
-            [`> ${componentCls}-item-content`]: {
+            [`${componentCls}-item-content`]: {
               minHeight: 'auto',
             },
           },
@@ -349,7 +373,9 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
 
         [`&${componentCls}-right`]: {
           [`${componentCls}-item`]: {
-            flexDirection: 'column-reverse',
+            '&-wrapper': {
+              flexDirection: 'column-reverse',
+            },
 
             '&-tail': {
               insetBlockStart: 'auto',
@@ -360,6 +386,17 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
               marginBlockStart: 0,
               marginBlockEnd: token.marginXS,
             },
+          },
+        },
+
+        [`${componentCls}-item-right`]: {
+          [`${componentCls}-item-wrapper`]: {
+            flexDirection: 'column-reverse',
+          },
+
+          [`${componentCls}-item-content`]: {
+            marginBlockStart: 0,
+            marginBlockEnd: token.marginXS,
           },
         },
 

@@ -18,19 +18,23 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*BPWDRbSYxJ4AAA
 
 ### Statistic
 
-| 参数             | 说明             | 类型                         | 默认值 |
-| ---------------- | ---------------- | ---------------------------- | ------ |
-| decimalSeparator | 设置小数点       | string                       | .      |
-| formatter        | 自定义数值展示   | v-slot \| ({value}) => VNode | -      |
-| groupSeparator   | 设置千分位标识符 | string                       | ,      |
-| loading          | 数值是否加载中   | boolean                      | false  |
-| precision        | 数值精度         | number                       | -      |
-| prefix           | 设置数值的前缀   | string \| v-slot             | -      |
-| rootClassName    | 根节点 className | string                       | -      |
-| suffix           | 设置数值的后缀   | string \| v-slot             | -      |
-| title            | 数值的标题       | string \| v-slot             | -      |
-| value            | 数值内容         | string \| number             | -      |
-| valueStyle       | 设置数值的样式   | style                        | -      |
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| classNames | 用于自定义 Statistic 组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: StatisticProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
+| decimalSeparator | 设置小数点 | string | . |  |
+| formatter | 自定义数值展示 | v-slot \| ({value}) => VNode | - |  |
+| groupSeparator | 设置千分位标识符 | string | , |  |
+| loading | 数值是否加载中 | boolean | false |  |
+| precision | 数值精度 | number | - |  |
+| prefix | 设置数值的前缀 | string \| v-slot | - |  |
+| rootClassName | 根节点 className | string | - | 4.3.0 |
+| styles | 用于自定义 Statistic 组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: StatisticProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
+| suffix | 设置数值的后缀 | string \| v-slot | - |  |
+| title | 数值的标题 | string \| v-slot | - |  |
+| value | 数值内容 | string \| number | - |  |
+| ~~valueStyle~~ | 设置数值区域的样式（已废弃，请使用 `styles.content` 替代） | style | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `header` \| `title` \| `content` \| `value` \| `prefix` \| `suffix`。
 
 ### Statistic.Countdown
 

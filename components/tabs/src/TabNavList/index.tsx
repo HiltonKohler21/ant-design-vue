@@ -127,7 +127,12 @@ export default defineComponent({
   }>,
   emits: ['tabClick', 'tabScroll'],
   setup(props, { attrs, slots }) {
-    const { tabs, prefixCls } = useInjectTabs();
+    const {
+      tabs,
+      prefixCls,
+      classNames: semanticClassNames,
+      styles: semanticStyles,
+    } = useInjectTabs();
     const tabsWrapperRef = shallowRef<HTMLDivElement>();
     const tabListRef = shallowRef<HTMLDivElement>();
     const operationsRef = shallowRef<{ $el: HTMLDivElement }>();
@@ -337,6 +342,27 @@ export default defineComponent({
 
       return ([visibleStart.value, visibleEnd.value] = [startIndex, endIndex]);
     });
+    const resolveTabElement = (refValue: any): HTMLElement | null => {
+      if (!refValue) {
+        return null;
+      }
+      const domRefEl = refValue.domRef?.value ?? refValue.domRef;
+      if (domRefEl && typeof domRefEl.getBoundingClientRect === 'function') {
+        return domRefEl;
+      }
+      if (refValue.$el && typeof refValue.$el.getBoundingClientRect === 'function') {
+        return refValue.$el;
+      }
+      if (typeof refValue.getBoundingClientRect === 'function') {
+        return refValue;
+      }
+      const nextEl = refValue.$el?.nextElementSibling;
+      if (nextEl && typeof nextEl.getBoundingClientRect === 'function') {
+        return nextEl;
+      }
+      return null;
+    };
+
     const updateTabSizes = () => {
       setTabSizes(() => {
         const newSizes: TabSizeMap = new Map();
@@ -345,8 +371,7 @@ export default defineComponent({
           return newSizes;
         }
         tabs.value.forEach(({ key }) => {
-          const btnRef = btnRefs.value.get(key);
-          const btnNode = (btnRef as any)?.$el || btnRef;
+          const btnNode = resolveTabElement(btnRefs.value.get(key));
           if (btnNode) {
             const [width, height, left, top] = getTabSize(btnNode, listRect);
             newSizes.set(key, { width, height, left, top });
@@ -548,6 +573,8 @@ export default defineComponent({
           typeof tabBarGutter === 'number' ? `${tabBarGutter}px` : tabBarGutter;
       }
 
+      const renderWrapper = slots.default ? (node: any) => slots.default({ node }) : undefined;
+
       const tabNodes = tabs.value.map((tab, i) => {
         const { key } = tab;
         return (
@@ -561,6 +588,7 @@ export default defineComponent({
             closable={tab.closable}
             editable={editable}
             active={key === activeKey}
+            renderWrapper={renderWrapper}
             removeAriaLabel={locale?.removeAriaLabel}
             ref={setRef(key)}
             onClick={e => {
@@ -582,11 +610,19 @@ export default defineComponent({
           ></TabNode>
         );
       });
+      const headerStyle = semanticStyles?.value?.header;
+      const mergedHeaderStyle = headerStyle
+        ? ([style as CSSProperties, headerStyle] as any)
+        : (style as CSSProperties);
+      const indicatorStyle = semanticStyles?.value?.indicator;
+      const mergedIndicatorStyle = indicatorStyle
+        ? ({ ...inkStyle.value, ...indicatorStyle } as CSSProperties)
+        : inkStyle.value;
       return (
         <div
           role="tablist"
-          class={classNames(`${pre}-nav`, className)}
-          style={style as CSSProperties}
+          class={classNames(`${pre}-nav`, semanticClassNames?.value?.header, className)}
+          style={mergedHeaderStyle}
           onKeydown={() => {
             // No need animation when use keyboard
             doLockAnimation();
@@ -626,10 +662,10 @@ export default defineComponent({
                   />
 
                   <div
-                    class={classNames(`${pre}-ink-bar`, {
+                    class={classNames(`${pre}-ink-bar`, semanticClassNames?.value?.indicator, {
                       [`${pre}-ink-bar-animated`]: animated.inkBar,
                     })}
-                    style={inkStyle.value}
+                    style={mergedIndicatorStyle}
                   />
                 </div>
               </ResizeObserver>

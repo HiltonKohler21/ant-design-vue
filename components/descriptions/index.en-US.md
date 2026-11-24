@@ -20,7 +20,7 @@ Commonly displayed on the details page.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | bordered | Whether to display the border | boolean | false |  |
-| classNames | Customize class for each semantic structure inside the component | `{ root?: string; header?: string; title?: string; extra?: string; label?: string; content?: string }` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | Record<SemanticDOM, string> \| (info: { props: DescriptionsProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | colon | Change default props `colon` value of `Descriptions.Item` | boolean | true |  |
 | column | The number of `DescriptionItems` in a row, could be a number or an object like `{ xs: 8, sm: 16, md: 24}` | number \| object | 3 |  |
 | ~~contentStyle~~ | Customize content style (deprecated, please use `styles.content` instead) | CSSProperties | - | 2.2.0 |
@@ -29,9 +29,11 @@ Commonly displayed on the details page.
 | ~~labelStyle~~ | Customize label style (deprecated, please use `styles.label` instead) | CSSProperties | - | 2.2.0 |
 | layout | Define description layout | `horizontal` \| `vertical` | `horizontal` |  |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
-| size | Set the size of the list. Can be set to `middle`, `small`, or not filled (only takes effect when `bordered={true}`) | `default` \| `middle` \| `small` | `default` |  |
-| styles | Customize inline style for each semantic structure inside the component | `{ root?: CSSProperties; header?: CSSProperties; title?: CSSProperties; extra?: CSSProperties; label?: CSSProperties; content?: CSSProperties }` | - | 4.3.0 |
+| size | Set the size of the list. Can be set to `large`, `medium`, `middle`, `small`, or `default` | `large` \| `medium` \| `default` \| `middle` \| `small` | `default` | `large`/`medium`: 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | Record<SemanticDOM, CSSProperties> \| (info: { props: DescriptionsProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | title | The title of the description list, placed at the top | string \| VNode \| slot | - |  |
+
+> Supported `SemanticDOM` slots: `root` \| `header` \| `title` \| `extra` \| `label` \| `content`.
 
 ### DescriptionsItemType
 

@@ -1,10 +1,12 @@
 <template>
   <demo-sort :cols="1">
     <Basic />
+    <Size />
     <Accordion />
     <Mix />
     <Borderless />
     <Custom />
+    <Icon />
     <Noarrow />
     <Extra />
     <Ghost />
@@ -17,8 +19,10 @@
 <script>
 import Accordion from './accordion.vue';
 import Basic from './basic.vue';
+import Size from './size.vue';
 import Borderless from './borderless.vue';
 import Custom from './custom.vue';
+import Icon from './icon.vue';
 import Mix from './mix.vue';
 import Noarrow from './noarrow.vue';
 import Extra from './extra.vue';
@@ -35,8 +39,10 @@ export default {
   components: {
     Accordion,
     Basic,
+    Size,
     Borderless,
     Custom,
+    Icon,
     Mix,
     Noarrow,
     Extra,

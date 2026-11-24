@@ -21,6 +21,11 @@ export interface ComponentToken {
    */
   itemHoverBg: string;
   /**
+   * @desc 选项激活态背景颜色
+   * @descEN Background color of item when active
+   */
+  itemActiveBg: string;
+  /**
    * @desc 选项选中时背景颜色
    * @descEN Background color of item when selected
    */
@@ -159,6 +164,14 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
           },
         },
 
+        [`&:active:not(${componentCls}-item-selected):not(${componentCls}-item-disabled)`]: {
+          color: token.labelColorHover,
+
+          '&::after': {
+            backgroundColor: token.itemActiveBg,
+          },
+        },
+
         '&-label': {
           minHeight: token
             .calc(token.controlHeight)
@@ -177,6 +190,12 @@ const genSegmentedStyle: GenerateStyle<SegmentedToken> = (token: SegmentedToken)
         // syntactic sugar to add `icon` for Segmented Item
         '&-icon + *': {
           marginInlineStart: token.calc(token.marginSM).div(2).equal(),
+        },
+
+        '&-icon > svg': {
+          display: 'inline-block',
+          verticalAlign: 'middle',
+          marginBlockEnd: '0.2em',
         },
 
         '&-input': {
@@ -294,6 +313,7 @@ export default genComponentStyleHook(
     itemColor: token.colorTextLabel,
     itemHoverColor: token.colorText,
     itemHoverBg: token.colorFillSecondary,
+    itemActiveBg: token.colorFill,
     itemSelectedBg: token.colorBgElevated,
     itemSelectedColor: token.colorText,
   }),

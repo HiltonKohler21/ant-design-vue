@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 9
 title:
   zh-CN: 幽灵折叠面板
   en-US: Ghost Collapse

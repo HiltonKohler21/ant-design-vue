@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 10
 title:
   zh-CN: 可折叠触发区域
   en-US: Collapsible

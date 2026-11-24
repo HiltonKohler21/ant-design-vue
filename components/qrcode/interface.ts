@@ -1,8 +1,21 @@
+import type { PropType } from 'vue';
 import type { VueNode } from '../_util/type';
-import { functionType, objectType, stringType } from '../_util/type';
+import { functionType, objectType, someType, stringType } from '../_util/type';
+import type {
+  SemanticClassNames,
+  SemanticClassNamesType,
+  SemanticStyles,
+  SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 import type { Locale } from '../locale';
 
 export type QRStatus = 'active' | 'expired' | 'loading' | 'scanned';
+
+export type QRCodeSemanticName = 'root' | 'cover';
+export type QRCodeSemanticClassNames = SemanticClassNames<QRCodeSemanticName>;
+export type QRCodeSemanticStyles = SemanticStyles<QRCodeSemanticName>;
+export type QRCodeClassNamesType = SemanticClassNamesType<Record<string, any>, QRCodeSemanticName>;
+export type QRCodeStylesType = SemanticStylesType<Record<string, any>, QRCodeSemanticName>;
 
 export interface StatusRenderInfo {
   status: Exclude<QRStatus, 'active'>;
@@ -21,11 +34,12 @@ export interface ImageSettings {
 export const qrProps = () => {
   return {
     size: { type: Number, default: 160 },
-    value: { type: String, required: true },
+    value: { type: [String, Array] as PropType<string | string[]>, required: true },
     type: stringType<'canvas' | 'svg'>('canvas'),
     color: String,
     bgColor: String,
     includeMargin: Boolean,
+    marginSize: Number,
     imageSettings: objectType<ImageSettings>(),
   };
 };
@@ -34,10 +48,16 @@ export const qrcodeProps = () => {
   return {
     ...qrProps(),
     rootClassName: String,
+    classNames: someType<QRCodeClassNamesType>([Object, Function]),
+    styles: someType<QRCodeStylesType>([Object, Function]),
     errorLevel: stringType<'L' | 'M' | 'Q' | 'H'>('M'),
+    boostLevel: { type: Boolean, default: true },
 
     icon: String,
-    iconSize: { type: Number, default: 40 },
+    iconSize: {
+      type: [Number, Object] as PropType<number | { width: number; height: number }>,
+      default: 40,
+    },
 
     status: stringType<QRStatus>('active'),
     /** 5.20+ 自定义状态渲染 */

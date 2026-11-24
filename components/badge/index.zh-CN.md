@@ -42,12 +42,15 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*v8EQT7KoGbcAAA
 | status | 设置 Badge 为状态点 | Enum{ 'success', 'processing', 'default', 'error', 'warning' } | '' |  |
 | styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<'root' \| 'indicator', CSSProperties> \| (info: { props }) => Record<'root' \| 'indicator', CSSProperties>` | - | 4.3.0 |
 | text | 在设置了 `status` 的前提下有效，设置状态点的文本 | string | '' |  |
-| title | 设置鼠标放在状态点上时显示的文字 | string | `count` |  |
+| title | 设置鼠标放在状态点上时显示的文字。设置为 `null` 或 `false` 时移除原生 tooltip | `string \| null \| false` | `count` | 4.3.0 |
 
 ### Badge.Ribbon (2.0.1+)
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<'root' \| 'content' \| 'indicator', string> \| (info: { props }) => Record<'root' \| 'content' \| 'indicator', string>` | - | 4.3.0 |
 | color | 自定义缎带的颜色 | string | - |  |
 | placement | 缎带的位置，`start` 和 `end` 随文字方向（RTL 或 LTR）变动 | `start` \| `end` | `end` |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<'root' \| 'content' \| 'indicator', CSSProperties> \| (info: { props }) => Record<'root' \| 'content' \| 'indicator', CSSProperties>` | - | 4.3.0 |
 | text | 缎带中填入的内容 | string \| VNode \| slot | - |  |

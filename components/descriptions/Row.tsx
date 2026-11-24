@@ -108,6 +108,7 @@ const Row: FunctionalComponent<RowProps> = props => {
             labelStyle={bordered ? undefined : mergedLabelStyle}
             contentStyle={bordered ? undefined : mergedContentStyle}
             classNames={mergedCellClassNames}
+            styles={itemStyles}
             span={span}
             colon={colon}
             component={component}
@@ -131,6 +132,7 @@ const Row: FunctionalComponent<RowProps> = props => {
             itemStyles?.label,
           )}
           classNames={mergedCellClassNames}
+          styles={itemStyles}
           span={1}
           colon={colon}
           component={component[0]}
@@ -149,6 +151,7 @@ const Row: FunctionalComponent<RowProps> = props => {
             itemStyles?.content,
           )}
           classNames={mergedCellClassNames}
+          styles={itemStyles}
           span={span * 2 - 1}
           component={component[1]}
           itemPrefixCls={itemPrefixCls}

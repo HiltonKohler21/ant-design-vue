@@ -1,17 +1,19 @@
-import { defineComponent, shallowRef, computed } from 'vue';
+import { defineComponent, shallowRef, computed, ref, watch, getCurrentInstance } from 'vue';
 import type { CSSProperties, ExtractPropTypes, FunctionalComponent, PropType } from 'vue';
 import classNames from '../../_util/classNames';
 import { useMergeSemantic } from '../../_util/hooks/useMergeSemantic';
 import type { SemanticClassNames, SemanticStyles } from '../../_util/hooks/useMergeSemantic';
 import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
 import { initDefaultProps } from '../../_util/props-util';
+import Tooltip from '../../tooltip';
+import type { TooltipProps } from '../../tooltip';
 import useStyle from '../style';
 import type { CustomSlotsType, VueNode } from '../../_util/type';
 import { functionType, someType, arrayType, booleanType, stringType } from '../../_util/type';
 import type { ChangeEvent } from '../../_util/EventInterface';
 import MotionThumb from './MotionThumb';
 export type SegmentedValue = string | number;
-export type segmentedSize = 'large' | 'small';
+export type segmentedSize = 'large' | 'middle' | 'medium' | 'small';
 export type SegmentedOrientation = 'horizontal' | 'vertical';
 
 export type SegmentedSemanticName = 'root' | 'icon' | 'label' | 'item';
@@ -34,6 +36,7 @@ export interface SegmentedBaseOption {
   title?: string;
   className?: string;
   icon?: VueNode;
+  tooltip?: string | TooltipProps;
 }
 export interface SegmentedOption extends SegmentedBaseOption {
   label?: VueNode | ((option: SegmentedBaseOption) => VueNode);
@@ -64,6 +67,8 @@ export const segmentedProps = () => {
     /** 方向（antd 6.x 推荐，优先级高于 vertical） */
     orientation: stringType<SegmentedOrientation>(),
     vertical: booleanType(),
+    /** Segmented 下所有 input[type="radio"] 的 name 属性 */
+    name: String,
     /** 语义化 classNames（antd 6.x 支持对象或函数）：root / icon / label / item */
     classNames: {
       type: [Object, Function] as PropType<SegmentedClassNamesType>,
@@ -74,7 +79,8 @@ export const segmentedProps = () => {
       type: [Object, Function] as PropType<SegmentedStylesType>,
       default: undefined,
     },
-    value: { ...someType<SegmentedValue>([String, Number]), required: true },
+    defaultValue: someType<SegmentedValue>([String, Number]),
+    value: someType<SegmentedValue>([String, Number]),
     motionName: String,
     onChange: functionType<(val: SegmentedValue) => void>(),
     'onUpdate:value': functionType<(val: SegmentedValue) => void>(),
@@ -85,6 +91,7 @@ export type SegmentedProps = Partial<ExtractPropTypes<ReturnType<typeof segmente
 const SegmentedOption: FunctionalComponent<
   SegmentedOption & {
     prefixCls: string;
+    name?: string;
     checked: boolean;
     semanticClassNames?: SegmentedSemanticClassNames;
     semanticStyles?: SegmentedSemanticStyles;
@@ -97,8 +104,10 @@ const SegmentedOption: FunctionalComponent<
     payload,
     title,
     prefixCls,
+    name,
     label = slots.label,
     icon,
+    tooltip,
     checked,
     className,
     semanticClassNames,
@@ -121,7 +130,7 @@ const SegmentedOption: FunctionalComponent<
   };
   const resolvedLabel = typeof label === 'function' ? label(optionInfo) : label;
 
-  return (
+  const optionNode = (
     <label
       class={classNames(
         {
@@ -135,6 +144,7 @@ const SegmentedOption: FunctionalComponent<
       <input
         class={`${prefixCls}-item-input`}
         type="radio"
+        name={name}
         disabled={disabled}
         checked={checked}
         onChange={handleChange}
@@ -162,6 +172,13 @@ const SegmentedOption: FunctionalComponent<
       </div>
     </label>
   );
+
+  if (tooltip) {
+    const tooltipProps = typeof tooltip === 'string' ? { title: tooltip } : tooltip;
+    return <Tooltip {...tooltipProps}>{optionNode}</Tooltip>;
+  }
+
+  return optionNode;
 };
 SegmentedOption.inheritAttrs = false;
 
@@ -186,6 +203,29 @@ export default defineComponent({
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const rootRef = shallowRef<HTMLDivElement>();
     const thumbShow = shallowRef(false);
+    const instance = getCurrentInstance();
+    const defaultName = `ant-segmented-${instance?.uid ?? 0}`;
+    const mergedName = computed(() => props.name ?? defaultName);
+
+    const segmentedOptions = computed(() => normalizeOptions(props.options));
+    const innerValue = ref<SegmentedValue | undefined>(
+      props.value !== undefined
+        ? props.value
+        : props.defaultValue !== undefined
+        ? props.defaultValue
+        : segmentedOptions.value[0]?.value,
+    );
+    watch(
+      () => props.value,
+      val => {
+        if (val !== undefined) {
+          innerValue.value = val;
+        }
+      },
+    );
+    const mergedValue = computed<SegmentedValue | undefined>(() =>
+      props.value !== undefined ? props.value : innerValue.value,
+    );
 
     const mergedVertical = computed<boolean>(() => {
       if (props.orientation !== undefined) {
@@ -200,6 +240,8 @@ export default defineComponent({
 
     const mergedPropsForSemantic = computed<SegmentedProps>(() => ({
       ...props,
+      value: mergedValue.value,
+      name: mergedName.value,
       size: size.value as segmentedSize,
       shape: props.shape ?? 'default',
       vertical: mergedVertical.value,
@@ -216,16 +258,19 @@ export default defineComponent({
       () => ({ props: mergedPropsForSemantic.value }),
     );
 
-    const segmentedOptions = computed(() => normalizeOptions(props.options));
     const handleChange = (_event: ChangeEvent, val: SegmentedValue) => {
       if (props.disabled) {
         return;
+      }
+      if (props.value === undefined) {
+        innerValue.value = val;
       }
       emit('update:value', val);
       emit('change', val);
     };
     return () => {
       const pre = prefixCls.value;
+      const activeValue = mergedValue.value;
       return wrapSSR(
         <div
           {...attrs}
@@ -253,7 +298,7 @@ export default defineComponent({
             <MotionThumb
               containerRef={rootRef}
               prefixCls={pre}
-              value={props.value}
+              value={activeValue}
               motionName={`${pre}-${props.motionName}`}
               direction={direction.value}
               vertical={mergedVertical.value}
@@ -269,14 +314,15 @@ export default defineComponent({
               <SegmentedOption
                 key={segmentedOption.value}
                 prefixCls={pre}
-                checked={segmentedOption.value === props.value}
+                name={mergedName.value}
+                checked={segmentedOption.value === activeValue}
                 onChange={handleChange}
                 {...segmentedOption}
                 semanticClassNames={mergedClassNames.value}
                 semanticStyles={mergedStyles.value}
                 className={classNames(segmentedOption.className, `${pre}-item`, {
                   [`${pre}-item-selected`]:
-                    segmentedOption.value === props.value && !thumbShow.value,
+                    segmentedOption.value === activeValue && !thumbShow.value,
                 })}
                 disabled={!!props.disabled || !!segmentedOption.disabled}
                 v-slots={slots}

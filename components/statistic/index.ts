@@ -3,7 +3,14 @@ import Statistic from './Statistic';
 import Countdown from './Countdown';
 import Timer from './Timer';
 
-export type { StatisticProps } from './Statistic';
+export type {
+  StatisticProps,
+  StatisticSemanticName,
+  StatisticSemanticClassNames,
+  StatisticSemanticStyles,
+  StatisticClassNamesType,
+  StatisticStylesType,
+} from './Statistic';
 export type { CountdownProps } from './Countdown';
 export type { StatisticTimerProps, TimerType } from './Timer';
 

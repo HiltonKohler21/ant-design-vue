@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 12
 version: 4.3.0
 title:
   zh-CN: 自定义语义结构的样式和类

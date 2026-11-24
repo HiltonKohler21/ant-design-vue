@@ -11,8 +11,12 @@
     <image-render />
     <mask-demo />
     <style-class />
+    <preview-mask />
+    <cover-placement />
     <nested />
+    <preview-group-top-progress />
     <component-token />
+    <preview-img-info />
   </demo-sort>
 </template>
 
@@ -28,8 +32,12 @@ import ToolbarRender from './toolbar-render.vue';
 import ImageRender from './image-render.vue';
 import MaskDemo from './mask.vue';
 import StyleClass from './style-class.vue';
+import PreviewMask from './preview-mask.vue';
+import CoverPlacement from './coverPlacement.vue';
 import Nested from './nested.vue';
+import PreviewGroupTopProgress from './preview-group-top-progress.vue';
 import ComponentToken from './component-token.vue';
+import PreviewImgInfo from './preview-imgInfo.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -49,8 +57,12 @@ export default defineComponent({
     ImageRender,
     MaskDemo,
     StyleClass,
+    PreviewMask,
+    CoverPlacement,
     Nested,
+    PreviewGroupTopProgress,
     ComponentToken,
+    PreviewImgInfo,
   },
 });
 </script>

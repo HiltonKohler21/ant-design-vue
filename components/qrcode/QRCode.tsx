@@ -166,6 +166,7 @@ export const QRCodeCanvas = defineComponent({
           marginSize,
           imageSettings,
         } = props;
+        const normalizedValue = Array.isArray(value) ? value.join('\n') : value;
         if (_canvas.value != null) {
           const canvas = _canvas.value;
 
@@ -174,7 +175,10 @@ export const QRCodeCanvas = defineComponent({
             return;
           }
 
-          let cells = qrcodegen.QrCode.encodeText(value, ERROR_LEVEL_MAP[level]).getModules();
+          let cells = qrcodegen.QrCode.encodeText(
+            normalizedValue,
+            ERROR_LEVEL_MAP[level],
+          ).getModules();
           const margin = getMarginSize(includeMargin, marginSize);
           const numCells = cells.length + margin * 2;
           const calculatedImageSettings = getImageSettings(cells, size, margin, imageSettings);
@@ -297,7 +301,8 @@ export const QRCodeSVG = defineComponent({
         imageSettings,
       } = props;
 
-      cells = qrcodegen.QrCode.encodeText(value, ERROR_LEVEL_MAP[level]).getModules();
+      const normalizedValue = Array.isArray(value) ? value.join('\n') : value;
+      cells = qrcodegen.QrCode.encodeText(normalizedValue, ERROR_LEVEL_MAP[level]).getModules();
 
       margin = getMarginSize(includeMargin, marginSize);
       numCells = cells.length + margin * 2;

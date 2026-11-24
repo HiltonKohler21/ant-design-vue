@@ -1,10 +1,16 @@
-import type { Tab } from './interface';
+import type {
+  Tab,
+  NormalizedTabsSemanticClassNames,
+  NormalizedTabsSemanticStyles,
+} from './interface';
 import type { PropType, InjectionKey, Ref } from 'vue';
 import { provide, inject, defineComponent, toRefs, ref } from 'vue';
 
 export interface TabContextProps {
   tabs: Ref<Tab[]>;
   prefixCls: Ref<string>;
+  classNames?: Ref<NormalizedTabsSemanticClassNames>;
+  styles?: Ref<NormalizedTabsSemanticStyles>;
 }
 
 const TabsContextKey: InjectionKey<TabContextProps> = Symbol('tabsContextKey');
@@ -14,7 +20,12 @@ export const useProvideTabs = (props: TabContextProps) => {
 };
 
 export const useInjectTabs = () => {
-  return inject(TabsContextKey, { tabs: ref([]), prefixCls: ref() });
+  return inject(TabsContextKey, {
+    tabs: ref([]),
+    prefixCls: ref(),
+    classNames: ref<NormalizedTabsSemanticClassNames>({}),
+    styles: ref<NormalizedTabsSemanticStyles>({}),
+  });
 };
 
 const TabsContextProvider = defineComponent({

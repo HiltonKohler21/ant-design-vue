@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 version: 4.3.0
 title:
   zh-CN: 计时器

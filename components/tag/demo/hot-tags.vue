@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 14
 title:
   zh-CN: 热门标签
   en-US: Hot Tags

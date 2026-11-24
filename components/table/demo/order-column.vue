@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 15
-version: 3.0
+version: '3.0'
 title:
   en-US: Order Specific Column
   zh-CN: 特殊列排序

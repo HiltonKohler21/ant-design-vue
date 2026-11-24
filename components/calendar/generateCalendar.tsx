@@ -12,8 +12,14 @@ import enUS from './locale/en_US';
 import CalendarHeader from './Header';
 import type { CustomSlotsType, VueNode } from '../_util/type';
 import type { App, CSSProperties, PropType } from 'vue';
-import { computed, defineComponent, toRef } from 'vue';
+import { computed, defineComponent, onMounted, onUpdated, ref, toRef, watch } from 'vue';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import useMergeSemantic, {
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 import classNames from '../_util/classNames';
 
 // CSSINJS
@@ -51,8 +57,70 @@ export type HeaderRender<DateType> = (config: {
 
 type CustomRenderType<DateType> = (config: { current: DateType }) => VueNode;
 
+export type CalendarSemanticName = 'root' | 'header' | 'body' | 'content' | 'item' | 'itemContent';
+export type CalendarSemanticClassNames = SemanticClassNames<CalendarSemanticName>;
+export type CalendarSemanticStyles = SemanticStyles<CalendarSemanticName>;
+export type CalendarClassNamesType<DateType = any> = SemanticClassNamesType<
+  CalendarProps<DateType>,
+  CalendarSemanticName
+>;
+export type CalendarStylesType<DateType = any> = SemanticStylesType<
+  CalendarProps<DateType>,
+  CalendarSemanticName
+>;
+
+const UNITLESS_CSS_PROPS = new Set([
+  'animationIterationCount',
+  'aspectRatio',
+  'borderImageOutset',
+  'borderImageSlice',
+  'borderImageWidth',
+  'boxFlex',
+  'boxFlexGroup',
+  'boxOrdinalGroup',
+  'columnCount',
+  'columns',
+  'flex',
+  'flexGrow',
+  'flexPositive',
+  'flexShrink',
+  'flexNegative',
+  'flexOrder',
+  'gridArea',
+  'gridRow',
+  'gridRowEnd',
+  'gridRowSpan',
+  'gridRowStart',
+  'gridColumn',
+  'gridColumnEnd',
+  'gridColumnSpan',
+  'gridColumnStart',
+  'fontWeight',
+  'lineClamp',
+  'lineHeight',
+  'opacity',
+  'order',
+  'orphans',
+  'scale',
+  'tabSize',
+  'widows',
+  'zIndex',
+  'zoom',
+  'fillOpacity',
+  'floodOpacity',
+  'stopOpacity',
+  'strokeDasharray',
+  'strokeDashoffset',
+  'strokeMiterlimit',
+  'strokeOpacity',
+  'strokeWidth',
+]);
+
 export interface CalendarProps<DateType> {
   prefixCls?: string;
+  rootClassName?: string;
+  classNames?: CalendarClassNamesType<DateType>;
+  styles?: CalendarStylesType<DateType>;
   locale?: typeof enUS;
   validRange?: [DateType, DateType];
   disabledDate?: (date: DateType) => boolean;
@@ -101,6 +169,14 @@ function generateCalendar<
     props: {
       prefixCls: String,
       rootClassName: String,
+      classNames: {
+        type: [Object, Function] as PropType<Props['classNames']>,
+        default: undefined,
+      },
+      styles: {
+        type: [Object, Function] as PropType<Props['styles']>,
+        default: undefined,
+      },
       locale: { type: Object as PropType<Props['locale']>, default: undefined as Props['locale'] },
       validRange: { type: Array as PropType<DateType[]>, default: undefined },
       disabledDate: { type: Function as PropType<Props['disabledDate']>, default: undefined },
@@ -258,6 +334,118 @@ function generateCalendar<
 
       const [mergedLocale] = useLocaleReceiver('Calendar', defaultLocale) as [typeof defaultLocale];
 
+      // =========== Merged Props for Semantic ===========
+      const mergedProps = computed<CalendarProps<DateType>>(() => ({
+        ...props,
+        mode: mergedMode.value,
+        fullscreen: props.fullscreen ?? true,
+        showWeek: props.showWeek,
+      }));
+
+      const [mergedClassNames, mergedStyles] = useMergeSemantic<
+        CalendarSemanticClassNames,
+        CalendarSemanticStyles,
+        CalendarProps<DateType>
+      >(
+        () => [contextClassNames.value as CalendarClassNamesType<DateType>, props.classNames],
+        () => [
+          contextStyles.value as CalendarStylesType<DateType>,
+          contextStyle.value ? { root: contextStyle.value } : undefined,
+          props.styles,
+          attrs.style ? { root: attrs.style as CSSProperties } : undefined,
+        ],
+        () => ({ props: mergedProps.value }),
+      );
+
+      // Sync panel semantic slots (body / content / item) onto PickerPanel DOM nodes
+      const rootRef = ref<HTMLDivElement | null>(null);
+      const appliedState = new WeakMap<HTMLElement, { classes: string[]; styleKeys: string[] }>();
+      const touchedElements = new Set<HTMLElement>();
+
+      const clearSemanticFromEl = (el: HTMLElement) => {
+        const prev = appliedState.get(el);
+        if (!prev) return;
+        for (const cls of prev.classes) {
+          el.classList.remove(cls);
+        }
+        for (const key of prev.styleKeys) {
+          if (key.startsWith('--')) {
+            el.style.removeProperty(key);
+          } else {
+            (el.style as any)[key] = '';
+          }
+        }
+        appliedState.delete(el);
+      };
+
+      const applySemanticToEl = (el: HTMLElement, cls?: string, styleObj?: CSSProperties) => {
+        clearSemanticFromEl(el);
+        const nextClasses: string[] = [];
+        if (cls) {
+          for (const token of cls.split(/\s+/)) {
+            if (token && !el.classList.contains(token)) {
+              el.classList.add(token);
+              nextClasses.push(token);
+            }
+          }
+        }
+        const nextStyleKeys: string[] = [];
+        if (styleObj && typeof styleObj === 'object') {
+          for (const [key, val] of Object.entries(styleObj)) {
+            if (val === undefined || val === null) continue;
+            if (key.startsWith('--')) {
+              el.style.setProperty(key, String(val));
+            } else {
+              (el.style as any)[key] =
+                typeof val === 'number' && !UNITLESS_CSS_PROPS.has(key) ? `${val}px` : String(val);
+            }
+            nextStyleKeys.push(key);
+          }
+        }
+        if (nextClasses.length || nextStyleKeys.length) {
+          appliedState.set(el, { classes: nextClasses, styleKeys: nextStyleKeys });
+          touchedElements.add(el);
+        }
+      };
+
+      const syncPanelSemantics = () => {
+        const rootEl = rootRef.value;
+        const nextTouched = new Set<HTMLElement>();
+        if (rootEl) {
+          const slotsToSync: Array<[string, string | undefined, CSSProperties | undefined]> = [
+            [`.${prefixCls.value}-body`, mergedClassNames.value.body, mergedStyles.value.body],
+            [
+              `.${prefixCls.value}-content`,
+              mergedClassNames.value.content,
+              mergedStyles.value.content,
+            ],
+            [`.${prefixCls.value}-cell`, mergedClassNames.value.item, mergedStyles.value.item],
+          ];
+          for (const [selector, cls, st] of slotsToSync) {
+            if (!cls && !st) continue;
+            const nodes = rootEl.querySelectorAll<HTMLElement>(selector);
+            nodes.forEach(node => {
+              applySemanticToEl(node, cls, st);
+              nextTouched.add(node);
+            });
+          }
+        }
+        touchedElements.forEach(el => {
+          if (!nextTouched.has(el)) {
+            clearSemanticFromEl(el);
+            touchedElements.delete(el);
+          }
+        });
+      };
+
+      onMounted(syncPanelSemantics);
+      onUpdated(syncPanelSemantics);
+      watch(
+        [mergedClassNames, mergedStyles, mergedMode, mergedValue, prefixCls],
+        syncPanelSemantics,
+        { flush: 'post' },
+      );
+
       return () => {
         const today = generateConfig.getNow();
         const {
@@ -270,6 +458,9 @@ function generateCalendar<
           fullscreen = true,
           validRange,
         } = props;
+        const { class: attrClass, style: _attrStyle, ...restAttrs } = attrs;
+        const mergedItemContentClassName = mergedClassNames.value.itemContent;
+        const mergedItemContentStyle = mergedStyles.value.itemContent;
         // ====================== Render ======================
         const dateRender = ({ current: date }) => {
           const originNode = (
@@ -278,6 +469,7 @@ function generateCalendar<
             </div>
           );
           const info = {
+            prefixCls: prefixCls.value,
             originNode,
             today,
             range: undefined as 'start' | 'end' | undefined,
@@ -305,7 +497,13 @@ function generateCalendar<
               <div class={`${calendarPrefixCls.value}-date-value`}>
                 {String(generateConfig.getDate(date)).padStart(2, '0')}
               </div>
-              <div class={`${calendarPrefixCls.value}-date-content`}>
+              <div
+                class={classNames(
+                  `${calendarPrefixCls.value}-date-content`,
+                  mergedItemContentClassName,
+                )}
+                style={mergedItemContentStyle}
+              >
                 {props.cellRender
                   ? props.cellRender(date, info)
                   : slots?.cellRender
@@ -324,6 +522,7 @@ function generateCalendar<
             </div>
           );
           const info = {
+            prefixCls: prefixCls.value,
             originNode,
             today,
             range: undefined as 'start' | 'end' | undefined,
@@ -353,7 +552,13 @@ function generateCalendar<
               <div class={`${calendarPrefixCls.value}-date-value`}>
                 {months[generateConfig.getMonth(date)]}
               </div>
-              <div class={`${calendarPrefixCls.value}-date-content`}>
+              <div
+                class={classNames(
+                  `${calendarPrefixCls.value}-date-content`,
+                  mergedItemContentClassName,
+                )}
+                style={mergedItemContentStyle}
+              >
                 {props.cellRender
                   ? props.cellRender(date, info)
                   : slots?.cellRender
@@ -365,21 +570,22 @@ function generateCalendar<
         };
         return wrapSSR(
           <div
-            {...attrs}
+            {...restAttrs}
+            ref={rootRef}
             class={classNames(
               calendarPrefixCls.value,
               (props as any).rootClassName,
               contextClassName.value,
-              contextClassNames.value.root,
+              mergedClassNames.value.root,
               {
                 [`${calendarPrefixCls.value}-full`]: fullscreen,
                 [`${calendarPrefixCls.value}-mini`]: !fullscreen,
                 [`${calendarPrefixCls.value}-rtl`]: direction.value === 'rtl',
               },
-              attrs.class,
+              attrClass,
               hashId.value,
             )}
-            style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+            style={mergedStyles.value.root}
           >
             {headerRender ? (
               headerRender({
@@ -392,6 +598,8 @@ function generateCalendar<
               })
             ) : (
               <CalendarHeader
+                className={mergedClassNames.value.header}
+                style={mergedStyles.value.header}
                 prefixCls={calendarPrefixCls.value}
                 value={mergedValue.value}
                 generateConfig={generateConfig}

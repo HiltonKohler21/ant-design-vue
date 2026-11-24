@@ -331,7 +331,7 @@ export default defineComponent<FilterDropdownProps<any>>({
       }
     };
 
-    const { direction } = useConfigInject('', props);
+    const { direction, configProvider } = useConfigInject('', props);
 
     const onCheckAll = (e: CheckboxChangeEvent) => {
       if (e.target.checked) {
@@ -383,6 +383,10 @@ export default defineComponent<FilterDropdownProps<any>>({
         prefixCls,
       } = props;
       if ((column.filters || []).length === 0) {
+        const customFilterEmpty = configProvider.renderEmpty?.('Table.filter');
+        if (customFilterEmpty !== undefined && customFilterEmpty !== null) {
+          return customFilterEmpty;
+        }
         return (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}

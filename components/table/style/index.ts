@@ -396,6 +396,20 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
             },
           },
 
+          [`&${componentCls}-row-selected`]: {
+            '> td': {
+              background: tableSelectedRowBg,
+            },
+
+            '&:hover > td': {
+              background: tableSelectedRowHoverBg,
+            },
+          },
+        },
+      },
+
+      [`${componentCls}:not(${componentCls}-row-hover-disabled)`]: {
+        [`${componentCls}-tbody > tr`]: {
           [`
             &${componentCls}-row:hover > td,
             > td${componentCls}-cell-row-hover

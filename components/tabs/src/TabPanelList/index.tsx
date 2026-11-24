@@ -26,14 +26,33 @@ export default defineComponent({
     destroyInactiveTabPane: { type: Boolean },
   },
   setup(props) {
-    const { tabs, prefixCls } = useInjectTabs();
+    const {
+      tabs,
+      prefixCls,
+      classNames: semanticClassNames,
+      styles: semanticStyles,
+    } = useInjectTabs();
     return () => {
       const { id, activeKey, animated, tabPosition, rtl, destroyInactiveTabPane } = props;
       const tabPaneAnimated = animated.tabPane;
       const pre = prefixCls.value;
       const activeIndex = tabs.value.findIndex(tab => tab.key === activeKey);
+      const animatedStyle =
+        activeIndex && tabPaneAnimated
+          ? { [rtl ? 'marginRight' : 'marginLeft']: `-${activeIndex}00%` }
+          : undefined;
+      const bodyStyle = semanticStyles?.value?.body;
+      const mergedBodyStyle =
+        animatedStyle || bodyStyle ? { ...animatedStyle, ...bodyStyle } : null;
       return (
-        <div class={`${pre}-content-holder`}>
+        <div
+          class={[
+            `${pre}-content-holder`,
+            {
+              [`${pre}-content-holder-animated`]: tabPaneAnimated,
+            },
+          ]}
+        >
           <div
             class={[
               `${pre}-content`,
@@ -41,12 +60,9 @@ export default defineComponent({
               {
                 [`${pre}-content-animated`]: tabPaneAnimated,
               },
+              semanticClassNames?.value?.body,
             ]}
-            style={
-              activeIndex && tabPaneAnimated
-                ? { [rtl ? 'marginRight' : 'marginLeft']: `-${activeIndex}00%` }
-                : null
-            }
+            style={mergedBodyStyle}
           >
             {tabs.value.map(tab => {
               return cloneElement(tab.node, {
@@ -56,7 +72,8 @@ export default defineComponent({
                 id,
                 animated: tabPaneAnimated,
                 active: tab.key === activeKey,
-                destroyInactiveTabPane,
+                destroyInactiveTabPane:
+                  tab.destroyOnHidden ?? tab.destroyInactiveTabPane ?? destroyInactiveTabPane,
               });
             })}
           </div>

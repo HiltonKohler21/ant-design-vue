@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 7
 title:
   zh-CN: 自定义箭头
   en-US: Custom Arrows

@@ -1,6 +1,49 @@
 import type { CSSProperties } from 'vue';
 import type { Key, VueNode } from '../../_util/type';
+import type {
+  SemanticClassNames,
+  SemanticClassNamesType,
+  SemanticStyles,
+  SemanticStylesType,
+} from '../../_util/hooks/useMergeSemantic';
 import type { TabPaneProps } from './TabPanelList/TabPane';
+
+export type TabsSemanticName =
+  | 'root'
+  | 'header'
+  | 'item'
+  | 'remove'
+  | 'indicator'
+  | 'body'
+  | 'content';
+
+export type TabsSemanticClassNames = SemanticClassNames<TabsSemanticName> & {
+  popup?: { root?: string } | string;
+};
+
+export type TabsSemanticStyles = SemanticStyles<TabsSemanticName> & {
+  popup?: { root?: CSSProperties } | CSSProperties;
+};
+
+export type NormalizedTabsSemanticClassNames = SemanticClassNames<TabsSemanticName> & {
+  popup?: { root?: string };
+};
+
+export type NormalizedTabsSemanticStyles = SemanticStyles<TabsSemanticName> & {
+  popup?: { root?: CSSProperties };
+};
+
+export type TabsClassNamesType = SemanticClassNamesType<
+  Record<string, any>,
+  TabsSemanticName,
+  { popup?: { root?: string } | string }
+>;
+
+export type TabsStylesType = SemanticStylesType<
+  Record<string, any>,
+  TabsSemanticName,
+  { popup?: { root?: CSSProperties } | CSSProperties }
+>;
 
 export type TabSizeMap = Map<Key, { width: number; height: number; left: number; top: number }>;
 
@@ -30,12 +73,17 @@ export interface MoreProps {
   /** @deprecated Please use `onOpenChange` instead */
   onVisibleChange?: (open: boolean) => void;
   getPopupContainer?: (triggerNode?: HTMLElement) => HTMLElement;
+  popupRender?: (menu: VueNode, info: { restTabs: Tab[]; onClose: () => void }) => VueNode;
   [key: string]: any;
 }
 
 export interface Tab extends TabPaneProps {
   key: Key;
-  node: VueNode;
+  node: any;
+  label?: VueNode;
+  icon?: VueNode | (() => VueNode);
+  closeIcon?: VueNode | (() => VueNode);
+  destroyOnHidden?: boolean;
 }
 
 export type RenderTabBar = (props: { DefaultTabBar: any; [key: string]: any }) => VueNode;

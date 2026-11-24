@@ -164,6 +164,59 @@ describe('upstream semantic API: Badge / Empty / Space / Tooltip', () => {
     warnSpy.mockRestore();
   });
 
+  it('Badge title=false/null removes native title and Badge.Ribbon supports semantic classNames/styles', () => {
+    const noTitleWrapper = mount(Badge, {
+      props: { count: 5, title: false },
+    });
+    expect(noTitleWrapper.find('sup.ant-scroll-number').attributes('title')).toBeUndefined();
+
+    const ribbonWrapper = mount({
+      render() {
+        return (
+          <ConfigProvider
+            ribbon={{
+              classNames: { root: 'ctx-ribbon-root', content: 'ctx-ribbon-content' },
+              styles: { root: { margin: '4px' } },
+            }}
+          >
+            <Badge.Ribbon
+              text="VIP"
+              rootClassName="ribbon-root-extra"
+              classNames={({ props }) => ({
+                root: `own-ribbon-root-${props.placement}`,
+                indicator: 'own-ribbon-ind',
+                content: 'own-ribbon-content',
+              })}
+              styles={() => ({
+                root: { padding: '2px' },
+                indicator: { letterSpacing: '1px' },
+                content: { fontWeight: '600' },
+              })}
+            >
+              <div>content</div>
+            </Badge.Ribbon>
+          </ConfigProvider>
+        );
+      },
+    });
+
+    const rootEl = ribbonWrapper.find('.ant-ribbon-wrapper');
+    expect(rootEl.classes()).toContain('ctx-ribbon-root');
+    expect(rootEl.classes()).toContain('own-ribbon-root-end');
+    expect(rootEl.classes()).toContain('ribbon-root-extra');
+    expect(rootEl.element.style.margin).toBe('4px');
+    expect(rootEl.element.style.padding).toBe('2px');
+
+    const indEl = ribbonWrapper.find('.ant-ribbon');
+    expect(indEl.classes()).toContain('own-ribbon-ind');
+    expect(indEl.element.style.letterSpacing).toBe('1px');
+
+    const contentEl = ribbonWrapper.find('.ant-ribbon-text');
+    expect(contentEl.classes()).toContain('ctx-ribbon-content');
+    expect(contentEl.classes()).toContain('own-ribbon-content');
+    expect(contentEl.element.style.fontWeight).toBe('600');
+  });
+
   it('Empty 四个语义位', () => {
     const wrapper = mount(Empty, {
       props: {

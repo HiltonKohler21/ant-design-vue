@@ -30,6 +30,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*-p-wQLik200AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | cellRender | 自定义单元格的内容，返回内容会被追加到单元格（替代 `dateCellRender` / `monthCellRender`） | `(current: dayjs, info: CellRenderInfo) => VNode` \| `v-slot:cellRender="{ current, info }"` | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: CalendarProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | ~~dateCellRender~~ | 作用域插槽，用来自定义渲染日期单元格，返回内容会被追加到单元格（已废弃，请使用 `cellRender`） | v-slot:dateCellRender="{current: dayjs}" | - |  |
 | ~~dateFullCellRender~~ | 作用域插槽，自定义渲染日期单元格，返回内容覆盖单元格（已废弃，请使用 `fullCellRender`） | v-slot:dateFullCellRender="{current: dayjs}" | - |  |
 | defaultValue | 默认展示的日期 | [dayjs](https://day.js.org/) | - |  |
@@ -43,9 +44,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*-p-wQLik200AAA
 | ~~monthFullCellRender~~ | 作用域插槽，自定义渲染月单元格，返回内容覆盖单元格（已废弃，请使用 `fullCellRender`） | v-slot:monthFullCellRender="{current: dayjs}" | - |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | showWeek | 是否显示周数 | boolean | false | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: CalendarProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | validRange | 设置可以显示的日期 | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
 | value(v-model) | 展示日期 | [dayjs](https://day.js.org/) | 当前日期 |  |
 | valueFormat | 可选，绑定值的格式，对 value、defaultValue 起作用。不指定则绑定值为 dayjs 对象 | string，[具体格式](https://day.js.org/docs/zh-CN/display/format) | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `header` \| `body` \| `content` \| `item` \| `itemContent`。
 
 ### 事件
 

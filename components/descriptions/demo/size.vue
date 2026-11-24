@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 4
 title:
   zh-CN: 自定义尺寸
   en-US: Custom size

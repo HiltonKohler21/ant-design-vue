@@ -21,7 +21,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*d27AQJrowGAAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | bordered | 是否展示边框 | boolean | false |  |
-| classNames | 用于自定义组件内部各语义化结构的 class | `{ root?: string; header?: string; title?: string; extra?: string; label?: string; content?: string }` | - | 4.3.0 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: DescriptionsProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | colon | 配置 `Descriptions.Item` 的 `colon` 的默认值 | boolean | true |  |
 | column | 一行的 `DescriptionItems` 数量，可以写成像素值或支持响应式的对象写法 `{ xs: 8, sm: 16, md: 24}` | number \| object | 3 |  |
 | ~~contentStyle~~ | 自定义内容样式（已废弃，请使用 `styles.content`） | CSSProperties | - | 2.2.0 |
@@ -30,9 +30,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*d27AQJrowGAAAA
 | ~~labelStyle~~ | 自定义标签样式（已废弃，请使用 `styles.label`） | CSSProperties | - | 2.2.0 |
 | layout | 描述布局 | `horizontal` \| `vertical` | `horizontal` |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
-| size | 设置列表的大小。可以设置为 `middle`、`small`，或不填（只有设置 `bordered={true}` 生效） | `default` \| `middle` \| `small` | `default` |  |
-| styles | 用于自定义组件内部各语义化结构的行内 style | `{ root?: CSSProperties; header?: CSSProperties; title?: CSSProperties; extra?: CSSProperties; label?: CSSProperties; content?: CSSProperties }` | - | 4.3.0 |
+| size | 设置列表的大小。可以设置为 `large`、`medium`、`middle`、`small` 或 `default` | `large` \| `medium` \| `default` \| `middle` \| `small` | `default` | `large`/`medium`: 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: DescriptionsProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | title | 描述列表的标题，显示在最顶部 | string \| VNode \| slot | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `header` \| `title` \| `extra` \| `label` \| `content`。
 
 ### DescriptionsItemType
 

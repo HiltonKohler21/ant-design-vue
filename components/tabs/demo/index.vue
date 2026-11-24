@@ -9,32 +9,42 @@
     <Extra />
     <Size />
     <Position />
+    <PopupRenderSearch />
     <Card />
     <EditableCard />
     <CardTop />
     <CustomAddTrigger />
     <CustomTabBar />
+    <CustomTabBarNode />
     <Items />
+    <StyleClass />
+    <Animated />
+    <Nest />
     <ComponentToken />
   </demo-sort>
 </template>
 
 <script lang="ts">
 import Basic from './basic.vue';
-import CardTop from './card-top.vue';
-import Card from './card.vue';
-import CustomAddTrigger from './custom-add-trigger.vue';
 import Disabled from './disabled.vue';
-import EditableCard from './editable-card.vue';
-import Extra from './extra.vue';
-import Icon from './icon.vue';
-import Position from './position.vue';
-import Size from './size.vue';
-import Slide from './slide.vue';
-import CustomTabBar from './custom-tab-bar.vue';
 import Centered from './centered.vue';
-import Items from './items.vue';
+import Icon from './icon.vue';
 import CustomIndicator from './custom-indicator.vue';
+import Slide from './slide.vue';
+import Extra from './extra.vue';
+import Size from './size.vue';
+import Position from './position.vue';
+import PopupRenderSearch from './popupRender-Search.vue';
+import Card from './card.vue';
+import EditableCard from './editable-card.vue';
+import CardTop from './card-top.vue';
+import CustomAddTrigger from './custom-add-trigger.vue';
+import CustomTabBar from './custom-tab-bar.vue';
+import CustomTabBarNode from './custom-tab-bar-node.vue';
+import Items from './items.vue';
+import StyleClass from './style-class.vue';
+import Animated from './animated.vue';
+import Nest from './nest.vue';
 import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -48,21 +58,26 @@ export default defineComponent({
   CN,
   US,
   components: {
-    Centered,
     Basic,
+    Disabled,
+    Centered,
+    Icon,
+    CustomIndicator,
+    Slide,
+    Extra,
+    Size,
+    Position,
+    PopupRenderSearch,
     Card,
+    EditableCard,
     CardTop,
     CustomAddTrigger,
-    Disabled,
-    EditableCard,
-    Extra,
-    Icon,
-    Position,
-    Size,
-    Slide,
     CustomTabBar,
+    CustomTabBarNode,
     Items,
-    CustomIndicator,
+    StyleClass,
+    Animated,
+    Nest,
     ComponentToken,
   },
 });

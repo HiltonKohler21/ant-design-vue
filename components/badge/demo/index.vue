@@ -6,11 +6,16 @@
     <Dot />
     <Change />
     <Link />
+    <Offset />
+    <Size />
     <Status />
     <Colors />
     <Ribbon />
     <StyleClass />
+    <RibbonDebug />
+    <Mix />
     <Title />
+    <ColorfulWithCountDebug />
     <ComponentToken />
   </demo-sort>
 </template>
@@ -24,11 +29,16 @@ import Status from './status.vue';
 import Title from './title.vue';
 import Colors from './colors.vue';
 import Link from './link.vue';
+import Offset from './offset.vue';
+import Size from './size.vue';
 import Ribbon from './ribbon.vue';
 import StyleClass from './style-class.vue';
+import RibbonDebug from './ribbon-debug.vue';
+import Mix from './mix.vue';
+import ColorfulWithCountDebug from './colorful-with-count-debug.vue';
 import ComponentToken from './component-token.vue';
 import CN from './../index.zh-CN.md';
-import US from './../index.en_US.md';
+import US from './../index.en-US.md';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -44,8 +54,13 @@ export default defineComponent({
     Title,
     Colors,
     Link,
+    Offset,
+    Size,
     Ribbon,
     StyleClass,
+    RibbonDebug,
+    Mix,
+    ColorfulWithCountDebug,
     ComponentToken,
   },
 });

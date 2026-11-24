@@ -10,6 +10,7 @@
     <Download />
     <ErrorLevel />
     <Popover />
+    <StyleClass />
   </demo-sort>
 </template>
 
@@ -20,26 +21,28 @@ import US from '../index.en-US.md';
 import Base from './base.vue';
 import Icon from './icon.vue';
 import Status from './status.vue';
+import CustomStatusRender from './custom-status-render.vue';
+import CustomType from './customType.vue';
 import CustomSize from './customSize.vue';
 import CustomColor from './customColor.vue';
 import Download from './download.vue';
 import ErrorLevel from './errorLevel.vue';
 import Popover from './popover.vue';
-import CustomType from './customType.vue';
-import CustomStatusRender from './custom-status-render.vue';
+import StyleClass from './style-class.vue';
 
 export default defineComponent({
   components: {
     Base,
     Icon,
     Status,
+    CustomStatusRender,
+    CustomType,
     CustomSize,
     CustomColor,
     Download,
     ErrorLevel,
     Popover,
-    CustomType,
-    CustomStatusRender,
+    StyleClass,
   },
   category: 'Components',
   subtitle: '二维码',

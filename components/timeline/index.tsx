@@ -9,6 +9,14 @@ export type {
   TimelineOrientation,
   TimelineVariant,
   TimelinePosition,
+  TimelineSemanticName,
+  TimelineSemanticClassNames,
+  TimelineSemanticStyles,
+  TimelineClassNamesType,
+  TimelineStylesType,
+  TimelineItemSemanticName,
+  TimelineItemSemanticClassNames,
+  TimelineItemSemanticStyles,
 } from './Timeline';
 export type { TimelineItemProps } from './TimelineItem';
 
