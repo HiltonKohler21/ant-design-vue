@@ -10,6 +10,7 @@
         {
           expand: codeExpand,
           'code-box-debug': isDebug,
+          'code-box-compact': isCompact || Boolean(iframeSrc),
           'code-box-simplify': isSimplify && !iframeSrc,
         },
       ]"
@@ -36,9 +37,6 @@
             <a :href="`#${sectionId}`">{{ title }}</a>
           </a-tooltip>
           <a v-else :href="`#${sectionId}`">{{ title }}</a>
-          <a-tooltip v-if="isDebug" :title="$t('app.demo.debug')">
-            <span class="code-box-debug-tag">Debug</span>
-          </a-tooltip>
           <a-tooltip v-if="editGithubUrl" :title="$t('app.content.edit-demo')">
             <a
               class="edit-button"
@@ -53,6 +51,58 @@
         </div>
         <div class="code-box-description" v-html="docHtml"></div>
         <div class="code-box-actions">
+          <a-dropdown
+            v-if="showDebugDemos && hasDebugDropdownItems"
+            :arrow="{ pointAtCenter: true }"
+          >
+            <a-button
+              color="purple"
+              variant="filled"
+              size="small"
+              class="code-box-debug-action"
+              :aria-label="$t('app.demo.debug.actions')"
+            >
+              <template #icon><BugOutlined /></template>
+            </a-button>
+            <template #overlay>
+              <a-menu class="code-box-debug-menu">
+                <a-menu-item v-if="antdOnlineUrl" key="online">
+                  <template #icon>
+                    <a-tag variant="filled" color="blue">ant.design</a-tag>
+                  </template>
+                  <a
+                    aria-label="Go to online documentation"
+                    :href="antdOnlineUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {{ $t('app.demo.online') }}
+                  </a>
+                </a-menu-item>
+                <a-menu-item v-if="editGithubUrl" key="github">
+                  <template #icon>
+                    <a-tag variant="filled" color="purple">GitHub</a-tag>
+                  </template>
+                  <a
+                    aria-label="Edit this demo on GitHub"
+                    :href="editGithubUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {{ $t('app.content.edit-demo') }}
+                  </a>
+                </a-menu-item>
+                <a-menu-item v-if="sectionId" key="copy-id" @click="handleCopyDemoId">
+                  <template #icon>
+                    <a-tag variant="filled" color="geekblue">#ID</a-tag>
+                  </template>
+                  <span>
+                    {{ demoIdCopied ? $t('app.demo.copied') : $t('app.demo.debug.copyId') }}
+                  </span>
+                </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown>
           <a-tooltip :title="$t('app.demo.codesandbox')">
             <span
               class="code-box-code-action"
@@ -170,33 +220,17 @@
           <slot v-if="type === 'TS'" name="htmlCode" />
           <slot v-else name="jsVersionHtml" />
         </div>
-        <div class="code-box-actions code-box-actions-bottom">
-          <a-tooltip :title="$t('app.demo.code.hide')">
-            <span
-              class="code-box-code-action code-box-expand-btn code-box-expand-btn-active"
-              tabindex="0"
-              :aria-label="$t('app.demo.code.hide')"
-              @click="handleCodeExpand($event, sectionId)"
-              @keydown.enter="handleCodeExpand($event, sectionId)"
-              @keydown.space.prevent="handleCodeExpand($event, sectionId)"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="15"
-                height="15"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="8 6 2 12 8 18" />
-                <polyline points="16 6 22 12 16 18" />
-                <line x1="14" y1="4" x2="10" y2="20" />
-              </svg>
-            </span>
-          </a-tooltip>
+        <div
+          tabindex="0"
+          role="button"
+          class="code-box-hide-btn"
+          :aria-label="$t('app.demo.code.hide')"
+          @click="handleCodeExpand($event, sectionId)"
+          @keydown.enter="handleCodeExpand($event, sectionId)"
+          @keydown.space.prevent="handleCodeExpand($event, sectionId)"
+        >
+          <UpOutlined />
+          <span>{{ $t('app.demo.code.hide.simplify') }}</span>
         </div>
       </section>
     </section>
@@ -218,13 +252,16 @@ import {
   ref,
   watch,
 } from 'vue';
+import { useRoute } from 'vue-router';
 import { BadgeRibbon } from 'ant-design-vue';
 import {
+  BugOutlined,
   CheckOutlined,
   CodeSandboxOutlined,
   CopyOutlined,
   EditOutlined,
   ThunderboltOutlined,
+  UpOutlined,
 } from '@ant-design/icons-vue';
 import { getCodeSandboxParams, getStackBlitzParams } from '../utils/generateOnlineDemo';
 import packageInfo from '../../../package.json';
@@ -325,22 +362,27 @@ export default defineComponent({
   name: 'DemoBox',
   components: {
     VersionRibbonWrapper,
+    BugOutlined,
     CheckOutlined,
     CodeSandboxOutlined,
     CopyOutlined,
     EditOutlined,
     ThunderboltOutlined,
+    UpOutlined,
   },
   props: {
     jsfiddle: Object,
   },
   setup(props) {
+    const route = useRoute();
     const codeExpand = ref(false);
     const type = ref<'TS' | 'JS'>('TS');
     const copyTooltipVisible = ref(false);
     const copied = ref(false);
+    const demoIdCopied = ref(false);
     const codeRef = ref<HTMLDivElement>();
     let copyTimer: ReturnType<typeof setTimeout> | null = null;
+    let demoIdCopyTimer: ReturnType<typeof setTimeout> | null = null;
 
     const sectionId = computed(() => {
       const relativePath = props.jsfiddle?.relativePath || '';
@@ -394,6 +436,29 @@ export default defineComponent({
         ? `https://github.com/vueComponent/ant-design-vue/edit/main/${relativePath}`
         : '';
     });
+
+    const antdOnlineUrl = computed(() => {
+      const relativePath = String(props.jsfiddle?.relativePath || '');
+      const relMatch = relativePath.match(/^components\/([^/]+)\/demo\/(.+?)(?:\.vue)?$/i);
+      let slug = relMatch ? relMatch[1] : '';
+      const routePath = typeof route?.path === 'string' ? route.path : '';
+      if (!slug && routePath) {
+        const pathMatch = routePath.match(/^\/components\/([^/]+?)(?:-cn)?\/?$/i);
+        if (pathMatch) {
+          slug = pathMatch[1];
+        }
+      }
+      if (!slug) return '';
+      const normalizedSlug = slug.toLowerCase();
+      const langSuffix = globalConfig?.isZhCN?.value ? '-cn' : '';
+      const demoName = relMatch ? relMatch[2].replace(/\//g, '-').toLowerCase() : '';
+      const anchor = demoName ? `#${normalizedSlug}-demo-${demoName}` : '';
+      return `https://ant.design/components/${normalizedSlug}${langSuffix}${anchor}`;
+    });
+
+    const hasDebugDropdownItems = computed(() =>
+      Boolean(antdOnlineUrl.value || editGithubUrl.value || sectionId.value),
+    );
 
     const iframeDemoKey = computed(() => {
       const en = enTitle.value;
@@ -459,6 +524,18 @@ export default defineComponent({
         if (copyTimer) clearTimeout(copyTimer);
         copyTimer = setTimeout(() => {
           copied.value = false;
+        }, 2000);
+      }
+    };
+
+    const handleCopyDemoId = async () => {
+      if (!sectionId.value) return;
+      const ok = await copyToClipboard(`#${sectionId.value}`);
+      if (ok) {
+        demoIdCopied.value = true;
+        if (demoIdCopyTimer) clearTimeout(demoIdCopyTimer);
+        demoIdCopyTimer = setTimeout(() => {
+          demoIdCopied.value = false;
         }, 2000);
       }
     };
@@ -538,6 +615,7 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       if (copyTimer) clearTimeout(copyTimer);
+      if (demoIdCopyTimer) clearTimeout(demoIdCopyTimer);
     });
 
     return {
@@ -559,11 +637,15 @@ export default defineComponent({
       sectionId,
       title,
       editGithubUrl,
+      antdOnlineUrl,
+      hasDebugDropdownItems,
       codeExpand,
       copyTooltipVisible,
       copied,
+      demoIdCopied,
       onCopyTooltipVisibleChange,
       handleCopyCode,
+      handleCopyDemoId,
       handleCodeExpand,
       handleChangeType,
       highlightClass,

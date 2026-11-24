@@ -120,10 +120,11 @@
           <a-button
             size="small"
             type="text"
-            class="examples-action-btn"
+            class="examples-action-btn examples-debug-btn"
             :class="{
               'icon-enabled': showDebugDemos,
               'examples-action-btn-active': showDebugDemos,
+              'examples-debug-btn-active': showDebugDemos,
             }"
             :aria-pressed="showDebugDemos"
             :data-has-debug="hasDebugDemos ? 'true' : 'false'"
@@ -605,6 +606,25 @@ export default defineComponent({
     :deep(.anticon) {
       color: var(--ant-color-text-base, var(--site-text-color));
       font-weight: bold;
+    }
+  }
+
+  &.examples-debug-btn-active {
+    color: var(--ant-purple-6, var(--purple-6, #722ed1));
+    background-color: var(--ant-purple-1, var(--purple-1, #f9f0ff));
+
+    :deep(.anticon) {
+      color: var(--ant-purple-6, var(--purple-6, #722ed1));
+      font-weight: bold;
+    }
+
+    &:hover {
+      color: var(--ant-purple-5, var(--purple-5, #9254de));
+      background-color: var(--ant-purple-2, var(--purple-2, #efdbff));
+
+      :deep(.anticon) {
+        color: var(--ant-purple-5, var(--purple-5, #9254de));
+      }
     }
   }
 }

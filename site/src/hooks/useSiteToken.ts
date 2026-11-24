@@ -1,15 +1,35 @@
 import { TinyColor } from '@ctrl/tinycolor';
-import { computed, watch } from 'vue';
+import type { InjectionKey } from 'vue';
+import { computed, inject, watch } from 'vue';
 import { theme } from '../../../components';
 import { useConfigContextInject } from '../../../components/config-provider/context';
 
 const { useToken } = theme;
 const SITE_TOKEN_STYLE_ID = 'antdv-site-token-style';
 
-const useSiteToken = () => {
+/**
+ * Provided as `true` by the root `SiteToken.vue` so nested `useSiteToken()`
+ * callers (e.g. inside `ComponentTokenTable`'s local `<ConfigProvider>`) do
+ * not overwrite `:root` CSS variables, while standalone callers outside
+ * `<SiteToken>` (such as unit tests) still sync `:root` by default.
+ */
+export const SITE_TOKEN_ROOT_MANAGED: InjectionKey<boolean> = Symbol('siteTokenRootManaged');
+
+export interface UseSiteTokenOptions {
+  /**
+   * Explicitly enable or disable syncing `:root` CSS variables.
+   * Defaults to `true` when no ancestor `<SiteToken>` manages `:root`,
+   * and `false` when nested inside `<SiteToken>`.
+   */
+  syncRootStyle?: boolean;
+}
+
+const useSiteToken = (options?: UseSiteTokenOptions) => {
   const result = useToken();
   const { getPrefixCls, iconPrefixCls } = useConfigContextInject();
   const rootPrefixCls = computed(() => getPrefixCls());
+  const isRootManaged = inject(SITE_TOKEN_ROOT_MANAGED, false);
+  const shouldSyncRoot = options?.syncRootStyle ?? !isRootManaged;
   // cssVar 模式下 token 的值是 `var(--ant-*)` 字符串，直接参与 JS 运算会得到 NaN，
   // 拼 `${x}px` 会得到 `var(--x)px`，TinyColor 解析会得到黑色。
   // 站点自身的 CSS 变量都由 JS 拼装，因此统一使用 realToken（原始数值/色值）。
@@ -37,20 +57,23 @@ const useSiteToken = () => {
     },
   }));
 
-  watch(
-    mergedToken,
-    () => {
-      if (typeof document === 'undefined') return;
-      let styleDom = document.getElementById(SITE_TOKEN_STYLE_ID) as HTMLStyleElement | null;
-      if (!styleDom) {
-        styleDom = document.createElement('style');
-        styleDom.id = SITE_TOKEN_STYLE_ID;
-        document.body.appendChild(styleDom);
-      }
-      const tokenValue = mergedToken.value.token;
-      const demoGridColor = raw.value.colorPrimary;
-      const headerGlassBg = new TinyColor(tokenValue.colorBgContainer).setAlpha(0.85).toRgbString();
-      styleDom.innerHTML = `
+  if (shouldSyncRoot) {
+    watch(
+      mergedToken,
+      () => {
+        if (typeof document === 'undefined') return;
+        let styleDom = document.getElementById(SITE_TOKEN_STYLE_ID) as HTMLStyleElement | null;
+        if (!styleDom) {
+          styleDom = document.createElement('style');
+          styleDom.id = SITE_TOKEN_STYLE_ID;
+          document.body.appendChild(styleDom);
+        }
+        const tokenValue = mergedToken.value.token;
+        const demoGridColor = raw.value.colorPrimary;
+        const headerGlassBg = new TinyColor(tokenValue.colorBgContainer)
+          .setAlpha(0.85)
+          .toRgbString();
+        styleDom.innerHTML = `
       :root {
         --header-height: ${tokenValue.headerHeight}px;
         --menu-item-border: ${tokenValue.menuItemBorder}px;
@@ -83,8 +106,13 @@ const useSiteToken = () => {
         --margin-far-xs: ${tokenValue.marginFarXS}px;
 
         --border-color-base: ${tokenValue.colorBorder};
+        --purple-1: ${tokenValue['purple-1']};
+        --purple-2: ${tokenValue['purple-2']};
         --purple-3: ${tokenValue['purple-3']};
+        --purple-5: ${tokenValue['purple-5']};
         --purple-6: ${tokenValue['purple-6']};
+        --warning-color: ${tokenValue.colorWarning};
+        --warning-color-bg: ${tokenValue.colorWarningBg};
         --text-color: ${tokenValue.colorText};
         --search-icon-color: ${tokenValue.colorTextPlaceholder};
         --ease-in-out-circ: ${tokenValue.motionEaseInOutCirc};
@@ -108,12 +136,13 @@ const useSiteToken = () => {
         --box-shadow: ${tokenValue.boxShadow};
       }
     `;
-      if (!document.body.contains(styleDom)) {
-        document.body.appendChild(styleDom);
-      }
-    },
-    { immediate: true },
-  );
+        if (!document.body.contains(styleDom)) {
+          document.body.appendChild(styleDom);
+        }
+      },
+      { immediate: true },
+    );
+  }
 
   return mergedToken;
 };

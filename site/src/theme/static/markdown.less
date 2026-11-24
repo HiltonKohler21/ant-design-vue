@@ -340,6 +340,38 @@
         width: 48%;
       }
     }
+
+    /*
+     * API 表中某些属性用 del / s（Markdown ~~prop~~）标记为已废弃，
+     * 默认隐藏，开启 Debug 模式后以警告色高亮展示（对齐 ant.design）
+     */
+    tbody tr:has(td:first-child > del),
+    tbody tr:has(td:first-child > s) {
+      display: var(--antd-site-api-deprecated-display, none);
+      color: var(--ant-color-warning, var(--warning-color, #faad14)) !important;
+      background-color: var(--ant-color-warning-bg, var(--warning-color-bg, #fffbe6)) !important;
+
+      td:first-child {
+        color: var(--ant-color-warning, var(--warning-color, #faad14));
+      }
+
+      del,
+      s {
+        color: var(--ant-color-warning, var(--warning-color, #faad14));
+      }
+
+      &:hover {
+        background-color: var(
+          --ant-color-warning-bg-hover,
+          var(--ant-color-warning-bg, var(--warning-color-bg, #fffbe6))
+        ) !important;
+
+        del,
+        s {
+          text-decoration: none;
+        }
+      }
+    }
   }
 
   hr {
@@ -356,6 +388,18 @@ html[data-doc-theme='dark'] {
 
       tbody tr:hover {
         background: rgba(255, 255, 255, 0.04);
+      }
+
+      tbody tr:has(td:first-child > del),
+      tbody tr:has(td:first-child > s) {
+        background: var(--ant-color-warning-bg, var(--warning-color-bg, #2b2111)) !important;
+
+        &:hover {
+          background: var(
+            --ant-color-warning-bg-hover,
+            var(--ant-color-warning-bg, var(--warning-color-bg, #443111))
+          ) !important;
+        }
       }
 
       td:nth-child(3) {
