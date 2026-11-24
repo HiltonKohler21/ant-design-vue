@@ -82,4 +82,29 @@ describe('ColorPicker', () => {
       .join('\n');
     expect(css).toContain('ant-color-picker-rtl');
   });
+
+  it('emits overflow-safe trigger styles for narrow containers', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ColorPicker, {
+      props: {
+        value: 'linear-gradient(90deg, rgb(22, 119, 255) 0%, rgb(82, 196, 26) 100%)',
+        mode: ['single', 'gradient'],
+        showText: true,
+        allowClear: true,
+      },
+    });
+    await nextTick();
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toMatch(/\.ant-color-picker\{[^}]*max-width:100%/);
+    expect(css).toMatch(/\.ant-color-picker-trigger[^{]*\{[^}]*max-width:100%/);
+    expect(css).toMatch(/\.ant-color-picker-color-block[^{]*\{[^}]*flex-shrink:0/);
+    expect(css).toMatch(/\.ant-color-picker-trigger-prefix[^{]*\{[^}]*flex-shrink:0/);
+    expect(css).toMatch(/\.ant-color-picker-trigger-clear[^{]*\{[^}]*flex-shrink:0/);
+    expect(css).toMatch(
+      /\.ant-color-picker-trigger-text[^{]*\{[^}]*min-width:0[^}]*overflow:hidden[^}]*text-overflow:ellipsis/,
+    );
+    wrapper.unmount();
+  });
 });

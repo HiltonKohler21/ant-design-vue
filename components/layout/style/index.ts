@@ -1,40 +1,56 @@
+import type { CSSProperties } from 'vue';
 import { unit } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
-import { genComponentStyleHook, mergeToken } from '../../theme/internal';
+import { genComponentStyleHook } from '../../theme/internal';
 import genLayoutLightStyle from './light';
 
 export interface ComponentToken {
+  /** @deprecated Use headerBg instead */
   colorBgHeader: string;
+  /** @deprecated Use bodyBg instead */
   colorBgBody: string;
+  /** @deprecated Use triggerBg instead */
   colorBgTrigger: string;
+
+  bodyBg: string;
+  headerBg: string;
+  headerHeight: number | string;
+  headerPadding: CSSProperties['padding'];
+  headerColor: string;
+  footerPadding: CSSProperties['padding'];
+  footerBg: string;
+  siderBg: string;
+  triggerHeight: number | string;
+  triggerBg: string;
+  triggerColor: string;
+  zeroTriggerWidth: number;
+  zeroTriggerHeight: number;
+  lightSiderBg: string;
+  lightTriggerBg: string;
+  lightTriggerColor: string;
 }
 
-export interface LayoutToken extends FullToken<'Layout'> {
-  // Layout
-  layoutHeaderHeight: number;
-  layoutHeaderPaddingInline: number;
-  layoutHeaderColor: string;
-  layoutFooterPadding: string;
-  layoutTriggerHeight: number;
-  layoutZeroTriggerSize: number;
-}
+export interface LayoutToken extends FullToken<'Layout'> {}
 
 const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
   const {
     antCls, // .ant
     componentCls, // .ant-layout
     colorText,
-    colorTextLightSolid,
-    colorBgHeader,
-    colorBgBody,
-    colorBgTrigger,
-    layoutHeaderHeight,
-    layoutHeaderPaddingInline,
-    layoutHeaderColor,
-    layoutFooterPadding,
-    layoutTriggerHeight,
-    layoutZeroTriggerSize,
+    bodyBg,
+    headerBg,
+    headerHeight,
+    headerPadding,
+    headerColor,
+    footerPadding,
+    footerBg,
+    siderBg,
+    triggerHeight,
+    triggerBg,
+    triggerColor,
+    zeroTriggerWidth,
+    zeroTriggerHeight,
     motionDurationMid,
     motionDurationSlow,
     fontSize,
@@ -50,7 +66,7 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
 
       /* fix firefox can't set height smaller than content on flex item */
       minHeight: 0,
-      background: colorBgBody,
+      background: bodyBg,
 
       '&, *': {
         boxSizing: 'border-box',
@@ -64,35 +80,8 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
         },
       },
 
-      [`${componentCls}-header, &${componentCls}-footer`]: {
+      [`${componentCls}-header, ${componentCls}-footer`]: {
         flex: '0 0 auto',
-      },
-
-      [`${componentCls}-header`]: {
-        height: layoutHeaderHeight,
-        paddingInline: layoutHeaderPaddingInline,
-        color: layoutHeaderColor,
-        lineHeight: `${unit(layoutHeaderHeight)}`,
-        background: colorBgHeader,
-        // Other components/menu/style/index.less line:686
-        // Integration with header element so menu items have the same height
-        [`${antCls}-menu`]: {
-          lineHeight: 'inherit',
-        },
-      },
-
-      [`${componentCls}-footer`]: {
-        padding: layoutFooterPadding,
-        color: colorText,
-        fontSize,
-        background: colorBgBody,
-      },
-
-      [`${componentCls}-content`]: {
-        flex: 'auto',
-
-        // fix firefox can't set height smaller than content on flex item
-        minHeight: 0,
       },
 
       [`${componentCls}-sider`]: {
@@ -100,7 +89,7 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
 
         // fix firefox can't set width smaller than content on flex item
         minWidth: 0,
-        background: colorBgHeader,
+        background: siderBg,
         transition: `all ${motionDurationMid}, background 0s`,
 
         '&-children': {
@@ -117,7 +106,7 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
         },
 
         '&-has-trigger': {
-          paddingBottom: layoutTriggerHeight,
+          paddingBottom: triggerHeight,
         },
 
         '&-right': {
@@ -128,11 +117,11 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
           position: 'fixed',
           bottom: 0,
           zIndex: 1,
-          height: layoutTriggerHeight,
-          color: colorTextLightSolid,
-          lineHeight: `${unit(layoutTriggerHeight)}`,
+          height: triggerHeight,
+          color: triggerColor,
+          lineHeight: unit(triggerHeight),
           textAlign: 'center',
-          background: colorBgTrigger,
+          background: triggerBg,
           cursor: 'pointer',
           transition: `all ${motionDurationMid}`,
         },
@@ -144,17 +133,17 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
 
           '&-trigger': {
             position: 'absolute',
-            top: layoutHeaderHeight,
-            insetInlineEnd: -layoutZeroTriggerSize,
+            top: headerHeight,
+            insetInlineEnd: token.calc(zeroTriggerWidth).mul(-1).equal(),
             zIndex: 1,
-            width: layoutZeroTriggerSize,
-            height: layoutZeroTriggerSize,
-            color: colorTextLightSolid,
+            width: zeroTriggerWidth,
+            height: zeroTriggerHeight,
+            color: triggerColor,
             fontSize: token.fontSizeXL,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: colorBgHeader,
+            background: siderBg,
             borderStartStartRadius: 0,
             borderStartEndRadius: borderRadius,
             borderEndEndRadius: borderRadius,
@@ -177,7 +166,7 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
             },
 
             '&-right': {
-              insetInlineStart: -layoutZeroTriggerSize,
+              insetInlineStart: token.calc(zeroTriggerWidth).mul(-1).equal(),
               borderStartStartRadius: borderRadius,
               borderStartEndRadius: 0,
               borderEndEndRadius: 0,
@@ -193,37 +182,84 @@ const genLayoutStyle: GenerateStyle<LayoutToken, CSSObject> = token => {
         direction: 'rtl',
       },
     },
+
+    // ==================== Header ====================
+    [`${componentCls}-header`]: {
+      height: headerHeight,
+      padding: headerPadding,
+      color: headerColor,
+      lineHeight: unit(headerHeight),
+      background: headerBg,
+      // Other components/menu/style/index.less line:686
+      // Integration with header element so menu items have the same height
+      [`${antCls}-menu`]: {
+        lineHeight: 'inherit',
+      },
+    },
+
+    // ==================== Footer ====================
+    [`${componentCls}-footer`]: {
+      padding: footerPadding,
+      color: colorText,
+      fontSize,
+      background: footerBg,
+    },
+
+    // =================== Content ====================
+    [`${componentCls}-content`]: {
+      flex: 'auto',
+      color: colorText,
+
+      // fix firefox can't set height smaller than content on flex item
+      minHeight: 0,
+    },
   };
 };
 
 // ============================== Export ==============================
 export default genComponentStyleHook(
   'Layout',
+  token => [genLayoutStyle(token)],
   token => {
-    const { colorText, controlHeightSM } = token;
-    // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-    const rawLayoutToken: any = (token as any)._realToken ?? token;
-    const layoutHeaderPaddingInline = rawLayoutToken.controlHeightLG * 1.25;
+    const {
+      colorBgLayout,
+      controlHeight,
+      controlHeightLG,
+      colorText,
+      controlHeightSM,
+      marginXXS,
+      colorTextLightSolid,
+      colorBgContainer,
+      Layout: layoutOverride,
+    } = token;
 
-    const layoutToken = mergeToken<LayoutToken>(token, {
-      // Layout
-      layoutHeaderHeight: rawLayoutToken.controlHeight * 2,
-      layoutHeaderPaddingInline,
-      layoutHeaderColor: colorText,
-      layoutFooterPadding: `${unit(controlHeightSM)} ${unit(layoutHeaderPaddingInline)}`,
-      layoutTriggerHeight: rawLayoutToken.controlHeightLG + rawLayoutToken.marginXXS * 2, // = item height + margin
-      layoutZeroTriggerSize: rawLayoutToken.controlHeightLG,
-    });
-
-    return [genLayoutStyle(layoutToken)];
-  },
-  token => {
-    const { colorBgLayout } = token;
+    const paddingInline = controlHeightLG * 1.25;
+    const colorBgHeader = layoutOverride?.colorBgHeader ?? '#001529';
+    const colorBgBody = layoutOverride?.colorBgBody ?? colorBgLayout;
+    const colorBgTrigger = layoutOverride?.colorBgTrigger ?? '#002140';
 
     return {
-      colorBgHeader: '#001529',
-      colorBgBody: colorBgLayout,
-      colorBgTrigger: '#002140',
+      // Deprecated
+      colorBgHeader,
+      colorBgBody,
+      colorBgTrigger,
+
+      bodyBg: colorBgBody,
+      headerBg: colorBgHeader,
+      headerHeight: controlHeight * 2,
+      headerPadding: `0 ${paddingInline}px`,
+      headerColor: colorText,
+      footerPadding: `${controlHeightSM}px ${paddingInline}px`,
+      footerBg: colorBgBody,
+      siderBg: colorBgHeader,
+      triggerHeight: controlHeightLG + marginXXS * 2,
+      triggerBg: colorBgTrigger,
+      triggerColor: colorTextLightSolid,
+      zeroTriggerWidth: controlHeightLG,
+      zeroTriggerHeight: controlHeightLG,
+      lightSiderBg: colorBgContainer,
+      lightTriggerBg: colorBgContainer,
+      lightTriggerColor: colorText,
     };
   },
 );

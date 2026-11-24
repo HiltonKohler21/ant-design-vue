@@ -43,10 +43,22 @@ function generator({ suffixCls, tagName, name }: GeneratorArgument) {
 
 const Basic = defineComponent({
   compatConfig: { MODE: 3 },
+  inheritAttrs: false,
   props: basicProps(),
-  setup(props, { slots }) {
+  setup(props, { slots, attrs }) {
+    const { prefixCls: layoutPrefixCls } = useConfigInject('layout', {});
+    const [wrapSSR, hashId] = useStyle(layoutPrefixCls);
     return () =>
-      createVNode(props.tagName, { class: [props.prefixCls, props.rootClassName] }, slots);
+      wrapSSR(
+        createVNode(
+          props.tagName,
+          {
+            ...attrs,
+            class: [props.prefixCls, props.rootClassName, hashId.value, attrs.class],
+          },
+          slots,
+        ),
+      );
   },
 });
 

@@ -1,7 +1,8 @@
-import { createApp, ref } from 'vue';
+import { createApp, nextTick, ref } from 'vue';
 import { mount } from '@vue/test-utils';
 import Space, { SpaceAddon } from '..';
 import ConfigProvider from '../../config-provider';
+import * as styleChecker from '../../_util/styleChecker';
 import {
   resolveSemantic,
   mergeClassNames,
@@ -332,5 +333,91 @@ describe('Space', () => {
     sizeRef.value = 'large';
     expect(rCls.value).toEqual({ root: 'base sz-large' });
     expect(rSty.value).toEqual({ root: { display: 'flex', order: 2 } });
+  });
+
+  it('wrap does not apply negative marginBottom when flex gap is supported', async () => {
+    const spy = jest.spyOn(styleChecker, 'detectFlexGapSupported').mockReturnValue(true);
+    try {
+      // 1) Initial mount with wrap=true: once supportFlexGap resolves onMounted, rendered style omits marginBottom
+      const directWrapper = mount({
+        render() {
+          return (
+            <Space wrap size={16}>
+              <span>1</span>
+              <span>2</span>
+            </Space>
+          );
+        },
+      });
+      await nextTick();
+
+      const directRoot = directWrapper.find('.ant-space').element;
+      expect(directRoot.style.flexWrap).toBe('wrap');
+      expect(directRoot.style.columnGap).toBe('16px');
+      expect(directRoot.style.rowGap).toBe('16px');
+
+      const spaceVm = directWrapper.findComponent(Space).vm;
+      const rootVNodeStyle = spaceVm.$.subTree.props.style;
+      expect(rootVNodeStyle.flexWrap).toBe('wrap');
+      expect(rootVNodeStyle.columnGap).toBe('16px');
+      expect(rootVNodeStyle.rowGap).toBe('16px');
+      expect(rootVNodeStyle.marginBottom).toBeUndefined();
+
+      // 2) Enabling wrap after flex-gap detection: DOM style itself never receives negative marginBottom
+      const wrapRef = ref(false);
+      const toggleWrapper = mount({
+        render() {
+          return (
+            <Space wrap={wrapRef.value} size={16}>
+              <span>1</span>
+              <span>2</span>
+            </Space>
+          );
+        },
+      });
+      await nextTick();
+      wrapRef.value = true;
+      await nextTick();
+
+      const toggleRoot = toggleWrapper.find('.ant-space').element;
+      expect(toggleRoot.style.flexWrap).toBe('wrap');
+      expect(toggleRoot.style.columnGap).toBe('16px');
+      expect(toggleRoot.style.rowGap).toBe('16px');
+      expect(toggleRoot.style.marginBottom).toBe('');
+      expect(toggleRoot.getAttribute('style')).not.toContain('margin-bottom');
+
+      const items = toggleWrapper.findAll('.ant-space-item');
+      expect(items[0].element.style.paddingBottom).toBe('');
+      expect(items[1].element.style.paddingBottom).toBe('');
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it('wrap keeps negative marginBottom fallback when flex gap is not supported', async () => {
+    const spy = jest.spyOn(styleChecker, 'detectFlexGapSupported').mockReturnValue(false);
+    try {
+      const wrapper = mount({
+        render() {
+          return (
+            <Space wrap size={16}>
+              <span>1</span>
+              <span>2</span>
+            </Space>
+          );
+        },
+      });
+      await nextTick();
+
+      const root = wrapper.find('.ant-space').element;
+      expect(root.style.flexWrap).toBe('wrap');
+      expect(root.style.marginBottom).toBe('-16px');
+
+      const items = wrapper.findAll('.ant-space-item');
+      expect(items[0].element.style.paddingBottom).toBe('16px');
+      expect(items[1].element.style.paddingBottom).toBe('16px');
+    } finally {
+      spy.mockRestore();
+    }
   });
 });

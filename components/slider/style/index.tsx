@@ -20,6 +20,7 @@ export interface ComponentToken {
   handleLineWidth: number;
   handleLineWidthHover: number;
   dotSize: number;
+  handleColorDisabled?: string;
 }
 
 interface SliderToken extends FullToken<'Slider'> {
@@ -30,8 +31,15 @@ interface SliderToken extends FullToken<'Slider'> {
 
 // =============================== Base ===============================
 const genBaseStyle: GenerateStyle<SliderToken> = token => {
-  const { componentCls, controlSize, dotSize, marginFull, marginPart, colorFillContentHover } =
-    token;
+  const {
+    componentCls,
+    antCls,
+    controlSize,
+    dotSize,
+    marginFull,
+    marginPart,
+    colorFillContentHover,
+  } = token;
 
   return {
     [componentCls]: {
@@ -234,11 +242,7 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
           cursor: 'not-allowed',
           width: token.handleSize,
           height: token.handleSize,
-          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${new TinyColor(
-            (token as any)._realToken?.colorTextDisabled ?? token.colorTextDisabled,
-          )
-            .onBackground((token as any)._realToken?.colorBgContainer ?? token.colorBgContainer)
-            .toHexString()}`,
+          boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${token.handleColorDisabled}`,
           insetInlineStart: 0,
           insetBlockStart: 0,
         },
@@ -249,6 +253,11 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         `]: {
           cursor: `not-allowed !important`,
         },
+      },
+
+      [`&-tooltip${antCls}-tooltip ${antCls}-tooltip-inner`]: {
+        minWidth: token.calc(token.borderRadius).mul(2).add(token.sizePopupArrow).equal(),
+        textAlign: 'center',
       },
     },
   };
@@ -358,6 +367,7 @@ export default genComponentStyleHook(
     const controlSizeHover = token.controlHeightSM / 2;
     const handleLineWidth = token.lineWidth + increaseHandleWidth;
     const handleLineWidthHover = token.lineWidth + increaseHandleWidth * 3;
+    const { colorTextDisabled, colorBgContainer } = token;
     return {
       controlSize,
       railSize: 4,
@@ -366,6 +376,9 @@ export default genComponentStyleHook(
       dotSize: 8,
       handleLineWidth,
       handleLineWidthHover,
+      handleColorDisabled: new TinyColor(colorTextDisabled)
+        .onBackground(colorBgContainer)
+        .toHexString(),
     };
   },
 );

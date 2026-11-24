@@ -49,4 +49,6 @@ export const preserve: Record<string, boolean> = {
   screenXXLMax: true,
   screenXXXL: true,
   screenXXXLMin: true,
+  wireframe: true,
+  motion: true,
 };

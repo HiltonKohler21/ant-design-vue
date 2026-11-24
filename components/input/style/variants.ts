@@ -40,6 +40,23 @@ const genFocusSelector = (token: InputToken, style: CSSObject): CSSObject => ({
   [`&${token.componentCls}-focused`]: style,
 });
 
+const hasRealBgToken = (token: InputToken, key: 'hoverBg' | 'activeBg'): boolean => {
+  const val = token[key];
+  if (!val) {
+    return false;
+  }
+  const rawToken: any = (token as any)._realToken;
+  if (
+    rawToken &&
+    key in rawToken &&
+    typeof val === 'string' &&
+    /^var\(--[a-z0-9-]+-(?:hover|active)-bg\)$/.test(val)
+  ) {
+    return Boolean(rawToken[key]);
+  }
+  return true;
+};
+
 /* ============== Outlined ============== */
 const genBaseOutlinedStyle = (
   token: InputToken,
@@ -56,13 +73,13 @@ const genBaseOutlinedStyle = (
   borderColor: options.borderColor,
   '&:hover': {
     borderColor: options.hoverBorderColor,
-    ...(token.hoverBg ? { backgroundColor: token.hoverBg } : {}),
+    ...(hasRealBgToken(token, 'hoverBg') ? { backgroundColor: token.hoverBg } : {}),
   },
   ...genFocusSelector(token, {
     borderColor: options.activeBorderColor,
     boxShadow: options.activeShadow,
     outline: 0,
-    ...(token.activeBg ? { backgroundColor: token.activeBg } : {}),
+    ...(hasRealBgToken(token, 'activeBg') ? { backgroundColor: token.activeBg } : {}),
   }),
 });
 

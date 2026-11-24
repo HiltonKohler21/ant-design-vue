@@ -224,7 +224,7 @@ const Slider = defineComponent({
           placement={tooltipPlacement.value}
           transitionName={`${rootPrefixCls.value}-zoom-down`}
           key={index}
-          overlayClassName={`${prefixCls.value}-tooltip`}
+          overlayClassName={classNames(`${prefixCls.value}-tooltip`, hashId.value)}
           getPopupContainer={mergedGetPopupContainer}
           {...(mergedAutoAdjustOverflow !== undefined
             ? { autoAdjustOverflow: mergedAutoAdjustOverflow }

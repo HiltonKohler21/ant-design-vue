@@ -1,6 +1,6 @@
 import { flattenChildren } from '../_util/props-util';
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import classNames from '../_util/classNames';
 import { withInstall } from '../_util/type';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
@@ -21,6 +21,10 @@ export type DividerClassNamesType =
 export type DividerStylesType =
   | DividerSemanticStyles
   | ((info: { props: DividerProps }) => DividerSemanticStyles);
+
+export interface DividerRef {
+  nativeElement: HTMLDivElement | null;
+}
 
 const TITLE_PLACEMENT_LIST = ['left', 'right', 'center', 'start', 'end'];
 
@@ -81,7 +85,7 @@ const Divider = defineComponent({
   inheritAttrs: false,
   compatConfig: { MODE: 3 },
   props: dividerProps(),
-  setup(props, { slots, attrs }) {
+  setup(props, { slots, attrs, expose }) {
     const {
       configProvider,
       prefixCls: prefixClsRef,
@@ -90,6 +94,11 @@ const Divider = defineComponent({
     } = useConfigInject('divider', props);
     const dividerConfig = computed(() => (configProvider as any).divider?.value);
     const [wrapSSR, hashId] = useStyle(prefixClsRef);
+    const nativeElementRef = ref<HTMLDivElement | null>(null);
+
+    expose({
+      nativeElement: nativeElementRef,
+    });
 
     const mergedDirection = computed<'horizontal' | 'vertical'>(() => {
       if (props.orientation === 'horizontal' || props.orientation === 'vertical') {
@@ -106,32 +115,38 @@ const Divider = defineComponent({
 
     const isVertical = computed(() => mergedDirection.value === 'vertical');
 
-    const mergedTitlePlacement = computed(() => {
+    const validTitlePlacement = computed(() =>
+      TITLE_PLACEMENT_LIST.includes(props.orientation || ''),
+    );
+
+    const mergedTitlePlacement = computed<'start' | 'end' | 'center'>(() => {
       const placement =
         props.titlePlacement ??
-        (props.orientation && TITLE_PLACEMENT_LIST.includes(props.orientation)
-          ? (props.orientation as DividerTitlePlacement)
-          : 'center');
+        (validTitlePlacement.value ? (props.orientation as DividerTitlePlacement) : 'center');
       if (placement === 'left') {
-        return direction.value === 'rtl' ? 'right' : 'left';
+        return direction.value === 'rtl' ? 'end' : 'start';
       }
       if (placement === 'right') {
-        return direction.value === 'rtl' ? 'left' : 'right';
-      }
-      if (placement === 'start') {
-        return 'left';
-      }
-      if (placement === 'end') {
-        return 'right';
+        return direction.value === 'rtl' ? 'start' : 'end';
       }
       return placement;
     });
 
+    const cssTitlePlacement = computed<'left' | 'right' | 'center'>(() => {
+      if (mergedTitlePlacement.value === 'start') {
+        return 'left';
+      }
+      if (mergedTitlePlacement.value === 'end') {
+        return 'right';
+      }
+      return 'center';
+    });
+
     const hasCustomMarginLeft = computed(
-      () => mergedTitlePlacement.value === 'left' && props.orientationMargin != null,
+      () => mergedTitlePlacement.value === 'start' && props.orientationMargin != null,
     );
     const hasCustomMarginRight = computed(
-      () => mergedTitlePlacement.value === 'right' && props.orientationMargin != null,
+      () => mergedTitlePlacement.value === 'end' && props.orientationMargin != null,
     );
 
     const mergedVariant = computed(
@@ -166,7 +181,8 @@ const Divider = defineComponent({
 
     const innerStyle = computed(() => {
       const marginValue =
-        typeof props.orientationMargin === 'number'
+        typeof props.orientationMargin === 'number' ||
+        (typeof props.orientationMargin === 'string' && /^\d+$/.test(props.orientationMargin))
           ? `${props.orientationMargin}px`
           : props.orientationMargin;
       if (direction.value === 'rtl') {
@@ -182,9 +198,7 @@ const Divider = defineComponent({
     });
 
     const orientationPrefix = computed(() =>
-      mergedTitlePlacement.value.length > 0
-        ? '-' + mergedTitlePlacement.value
-        : mergedTitlePlacement.value,
+      cssTitlePlacement.value.length > 0 ? '-' + cssTitlePlacement.value : cssTitlePlacement.value,
     );
 
     return () => {
@@ -199,7 +213,7 @@ const Divider = defineComponent({
         variant: mergedVariant.value,
         orientation: mergedDirection.value,
         vertical: isVertical.value,
-        titlePlacement: mergedTitlePlacement.value as DividerTitlePlacement,
+        titlePlacement: mergedTitlePlacement.value,
         size: mergedSize.value as DividerProps['size'],
       };
 
@@ -232,6 +246,7 @@ const Divider = defineComponent({
       return wrapSSR(
         <div
           {...attrs}
+          ref={nativeElementRef}
           style={mergedStyle as any}
           class={[
             classString.value,

@@ -584,4 +584,38 @@ describe('Progress', () => {
     expect(items[1].attributes('style')).toContain('opacity: 0.3');
     expect(stepsWrapper.find('.ant-progress-text').classes()).toContain('s-indicator');
   });
+
+  it('emits max-width:100% constraints on line/outer/layout-bottom/inner without breaking circle/dashboard/steps/custom size', () => {
+    document.head.innerHTML = '';
+    const lineCustom = mount(Progress, {
+      props: {
+        percent: 100,
+        percentPosition: { align: 'center', type: 'inner' },
+        size: [400, 20],
+      },
+    });
+    expect(lineCustom.find('.ant-progress-outer').element.style.width).toBe('400px');
+    expect(lineCustom.find('.ant-progress-bg').element.style.height).toBe('20px');
+
+    const circle = mount(Progress, { props: { type: 'circle', percent: 50, size: 120 } });
+    expect(circle.find('.ant-progress-inner').element.style.width).toBe('120px');
+    expect(circle.find('.ant-progress-inner').element.style.height).toBe('120px');
+
+    const dashboard = mount(Progress, { props: { type: 'dashboard', percent: 50, size: 80 } });
+    expect(dashboard.find('.ant-progress-inner').element.style.width).toBe('80px');
+    expect(dashboard.find('.ant-progress-inner').element.style.height).toBe('80px');
+
+    const steps = mount(Progress, { props: { steps: 3, percent: 50, size: [20, 30] } });
+    expect(steps.findAll('.ant-progress-steps-item')).toHaveLength(3);
+    expect(steps.findAll('.ant-progress-steps-item')[0].element.style.width).toBe('20px');
+    expect(steps.findAll('.ant-progress-steps-item')[0].element.style.height).toBe('30px');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toMatch(/\.ant-progress-line\{[^}]*max-width:100%/);
+    expect(css).toMatch(/\.ant-progress-outer\{[^}]*max-width:100%/);
+    expect(css).toMatch(/\.ant-progress-layout-bottom\{[^}]*max-width:100%/);
+    expect(css).toMatch(/\.ant-progress-inner\{[^}]*max-width:100%/);
+  });
 });

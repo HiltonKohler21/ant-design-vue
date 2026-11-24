@@ -173,6 +173,16 @@ export interface ComponentToken {
    */
   stickyScrollBarBg: string;
   /**
+   * @desc 表头图标颜色
+   * @descEN Color of table header icon
+   */
+  headerIconColor?: string;
+  /**
+   * @desc 表头图标悬浮颜色
+   * @descEN Hover color of table header icon
+   */
+  headerIconHoverColor?: string;
+  /**
    * @desc Sticky 模式下滚动条圆角
    * @descEN Border radius of sticky scrollbar
    */
@@ -452,13 +462,12 @@ export default genComponentStyleHook(
       expandIconBg,
       selectionColumnWidth,
       stickyScrollBarBg,
+      headerIconColor,
+      headerIconHoverColor,
     } = token;
 
-    // 颜色运算需要真实色值（cssVar 下 token 值是 var() 字符串，TinyColor 无法解析会得到 #000000）
+    // 尺寸派生需要真实数值（cssVar 下 token 值是 var() 字符串）
     const rawToken: any = (token as any)._realToken ?? token;
-
-    const baseColorAction = new TinyColor(rawToken.colorIcon);
-    const baseColorActionHover = new TinyColor(rawToken.colorIconHover);
 
     const zIndexTableFixed = 2;
 
@@ -481,14 +490,8 @@ export default genComponentStyleHook(
       tableHeaderCellSplitColor: headerSplitColor,
       tableHeaderSortBg: headerSortActiveBg,
       tableHeaderSortHoverBg: headerSortHoverBg,
-      tableHeaderIconColor: baseColorAction
-        .clone()
-        .setAlpha(baseColorAction.getAlpha() * rawToken.opacityLoading)
-        .toRgbString(),
-      tableHeaderIconColorHover: baseColorActionHover
-        .clone()
-        .setAlpha(baseColorActionHover.getAlpha() * rawToken.opacityLoading)
-        .toRgbString(),
+      tableHeaderIconColor: headerIconColor!,
+      tableHeaderIconColorHover: headerIconHoverColor!,
       tableBodySortBg: bodySortBg,
       tableFixedHeaderSortActiveBg: fixedHeaderSortActiveBg,
       tableHeaderFilterActiveBg: headerFilterHoverBg,
@@ -548,12 +551,24 @@ export default genComponentStyleHook(
     const colorFillAlterSolid = new TinyColor(token.colorFillAlter)
       .onBackground(token.colorBgContainer)
       .toHexString();
+    const baseColorAction = new TinyColor(token.colorIcon);
+    const baseColorActionHover = new TinyColor(token.colorIconHover);
+    const headerIconColor = baseColorAction
+      .clone()
+      .setAlpha(baseColorAction.getAlpha() * token.opacityLoading)
+      .toRgbString();
+    const headerIconHoverColor = baseColorActionHover
+      .clone()
+      .setAlpha(baseColorActionHover.getAlpha() * token.opacityLoading)
+      .toRgbString();
 
     return {
       headerBg: colorFillAlterSolid,
       headerColor: token.colorTextHeading,
       headerSortActiveBg: colorFillSecondarySolid,
       headerSortHoverBg: colorFillContentSolid,
+      headerIconColor,
+      headerIconHoverColor,
       bodySortBg: colorFillAlterSolid,
       rowHoverBg: colorFillAlterSolid,
       rowSelectedBg: token.controlItemBgActive,

@@ -71,7 +71,7 @@ export default function useCSSVarRegister(
       // 内部字段（_tokenKey / _hashId 等）不参与变量化，其值可能是 JSON 片段会产生非法 CSS
       if (key.startsWith('_')) {
         mergedToken[key] = value;
-      } else if (c.preserve?.[key]) {
+      } else if (c.preserve?.[key] || (typeof value === 'boolean' && !c.ignore?.[key])) {
         mergedToken[key] = value;
       } else if ((typeof value === 'string' || typeof value === 'number') && !c.ignore?.[key]) {
         const cssVar = token2CSSVar(key, c.prefix || 'ant');

@@ -81,7 +81,7 @@ export const transformToken = <T extends Record<string, any>>(
     // 内部字段（_tokenKey / _hashId 等）不参与变量化，其值可能是 JSON 片段会导致 CSS 非法
     if (key.startsWith('_')) {
       result[key] = value;
-    } else if (preserve?.[key]) {
+    } else if (preserve?.[key] || (typeof value === 'boolean' && !ignore?.[key])) {
       result[key] = value;
     } else if ((typeof value === 'string' || typeof value === 'number') && !ignore?.[key]) {
       const cssVar = token2CSSVar(key, prefix);

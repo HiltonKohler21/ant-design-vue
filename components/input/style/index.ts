@@ -131,10 +131,27 @@ export const genPlaceholderStyle = (color: string): CSSObject => ({
   },
 });
 
+const hasRealBgToken = (token: InputToken, key: 'hoverBg' | 'activeBg'): boolean => {
+  const val = token[key];
+  if (!val) {
+    return false;
+  }
+  const rawToken: any = (token as any)._realToken;
+  if (
+    rawToken &&
+    key in rawToken &&
+    typeof val === 'string' &&
+    /^var\(--[a-z0-9-]+-(?:hover|active)-bg\)$/.test(val)
+  ) {
+    return Boolean(rawToken[key]);
+  }
+  return true;
+};
+
 export const genHoverStyle = (token: InputToken): CSSObject => ({
   borderColor: token.inputBorderHoverColor,
   borderInlineEndWidth: token.lineWidth,
-  ...(token.hoverBg ? { backgroundColor: token.hoverBg } : {}),
+  ...(hasRealBgToken(token, 'hoverBg') ? { backgroundColor: token.hoverBg } : {}),
 });
 
 export const genActiveStyle = (token: InputToken) => ({
@@ -143,7 +160,7 @@ export const genActiveStyle = (token: InputToken) => ({
     token.activeShadow ?? `0 0 0 ${unit(token.controlOutlineWidth)} ${token.controlOutline}`,
   borderInlineEndWidth: token.lineWidth,
   outline: 0,
-  ...(token.activeBg ? { backgroundColor: token.activeBg } : {}),
+  ...(hasRealBgToken(token, 'activeBg') ? { backgroundColor: token.activeBg } : {}),
 });
 
 export const genDisabledStyle = (token: InputToken): CSSObject => ({

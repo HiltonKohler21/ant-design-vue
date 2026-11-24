@@ -161,9 +161,7 @@ const Tag = defineComponent({
         } else {
           const tc = new TinyColor(nextColor);
           if (tc.isValid) {
-            const hsl = tc.toHsl();
-            hsl.l = 0.95;
-            customStyle.backgroundColor = new TinyColor(hsl).toHexString();
+            customStyle.backgroundColor = tc.clone().setAlpha(0.1).toRgbString();
           }
           customStyle.color = nextColor;
           if (mergedVariant === 'outlined') {

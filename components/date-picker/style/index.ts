@@ -27,6 +27,10 @@ export interface ComponentToken {
   presetsWidth: number;
   presetsMaxWidth: number;
   zIndexPopup: number;
+  cellHoverWithRangeBg?: string;
+  cellRangeBorderColor?: string;
+  timeColumnActiveBg?: string;
+  cellWeekSelectedColor?: string;
 }
 
 export type PickerPanelToken = {
@@ -37,6 +41,8 @@ export type PickerPanelToken = {
   pickerPanelCellHeight: number;
   pickerDateHoverRangeBorderColor: string;
   pickerBasicCellHoverWithRangeColor: string;
+  pickerWeekCellSelectedColor: string;
+  pickerTimePanelColumnActiveBg: string;
   pickerPanelWithoutTimeCellHeight: number;
   pickerYearMonthCellWidth: number;
   pickerTimePanelColumnHeight: number;
@@ -737,11 +743,7 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
             background: colorPrimary,
 
             [`&${componentCls}-cell-week`]: {
-              color: new TinyColor(
-                (token as any)._realToken?.colorTextLightSolid ?? colorTextLightSolid,
-              )
-                .setAlpha(0.5)
-                .toHexString(),
+              color: token.pickerWeekCellSelectedColor,
             },
 
             [`&${componentCls}-cell-today ${pickerCellInnerCls}::before`]: {
@@ -830,11 +832,7 @@ export const genPanelStyle = (token: SharedPickerToken): CSSObject => {
           },
 
           '&-active': {
-            background: new TinyColor(
-              (token as any)._realToken?.controlItemBgActive ?? controlItemBgActive,
-            )
-              .setAlpha(0.2)
-              .toHexString(),
+            background: token.pickerTimePanelColumnActiveBg,
           },
 
           '&:hover': {
@@ -1625,7 +1623,9 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
   ];
 };
 
-export const initPickerPanelToken = (token: TokenWithCommonCls<GlobalToken>): PickerPanelToken => {
+export const initPickerPanelToken = (
+  token: TokenWithCommonCls<GlobalToken> & Partial<ComponentToken>,
+): PickerPanelToken => {
   const pickerTimePanelCellHeight = 28;
   // 尺寸派生与颜色运算都需要真实数值/色值（cssVar 下 token 值是 var() 字符串）
   const raw: any = (token as any)._realToken ?? token;
@@ -1637,8 +1637,16 @@ export const initPickerPanelToken = (token: TokenWithCommonCls<GlobalToken>): Pi
     pickerTextHeight: raw.controlHeightLG,
     pickerPanelCellWidth: raw.controlHeightSM * 1.5,
     pickerPanelCellHeight: raw.controlHeightSM,
-    pickerDateHoverRangeBorderColor: new TinyColor(raw.colorPrimary).lighten(20).toHexString(),
-    pickerBasicCellHoverWithRangeColor: new TinyColor(raw.colorPrimary).lighten(35).toHexString(),
+    pickerDateHoverRangeBorderColor:
+      token.cellRangeBorderColor ?? new TinyColor(raw.colorPrimary).lighten(20).toHexString(),
+    pickerBasicCellHoverWithRangeColor:
+      token.cellHoverWithRangeBg ?? new TinyColor(raw.colorPrimary).lighten(35).toHexString(),
+    pickerWeekCellSelectedColor:
+      token.cellWeekSelectedColor ??
+      new TinyColor(raw.colorTextLightSolid).setAlpha(0.5).toRgbString(),
+    pickerTimePanelColumnActiveBg:
+      token.timeColumnActiveBg ??
+      new TinyColor(raw.controlItemBgActive).setAlpha(0.2).toRgbString(),
     pickerPanelWithoutTimeCellHeight: raw.controlHeightLG * 1.65,
     pickerYearMonthCellWidth: raw.controlHeightLG * 1.5,
     pickerTimePanelColumnHeight: pickerTimePanelCellHeight * 8,
@@ -1676,5 +1684,9 @@ export default genComponentStyleHook(
     presetsWidth: 120,
     presetsMaxWidth: 200,
     zIndexPopup: token.zIndexPopupBase + 50,
+    cellHoverWithRangeBg: new TinyColor(token.colorPrimary).lighten(35).toHexString(),
+    cellRangeBorderColor: new TinyColor(token.colorPrimary).lighten(20).toHexString(),
+    timeColumnActiveBg: new TinyColor(token.controlItemBgActive).setAlpha(0.2).toRgbString(),
+    cellWeekSelectedColor: new TinyColor(token.colorTextLightSolid).setAlpha(0.5).toRgbString(),
   }),
 );

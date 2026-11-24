@@ -4,7 +4,7 @@ import type { FullToken, GenerateStyle, UseComponentStyleResult } from '../../th
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { genPresetColor, resetComponent } from '../../style';
 import getArrowStyle, { MAX_VERTICAL_CONTENT_RADIUS } from '../../style/placementArrow';
-import { Ref } from 'vue';
+import type { Ref } from 'vue';
 
 export interface ComponentToken {
   zIndexPopup: number;
@@ -66,6 +66,7 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
           backgroundColor: tooltipBg,
           borderRadius: tooltipBorderRadius,
           boxShadow: boxShadowSecondary,
+          boxSizing: 'border-box',
         },
 
         // Limit left and right placement radius
@@ -109,17 +110,25 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
     },
 
     // Arrow Style
-    getArrowStyle<TooltipToken>(
-      mergeToken<TooltipToken>(token, {
+    (() => {
+      const arrowToken = mergeToken<TooltipToken>(token, {
         borderRadiusOuter: tooltipRadiusOuter,
-      }),
-      {
+      });
+      if ((token as any)._realToken) {
+        const clampedOuter = (rawToken.borderRadiusOuter ?? 0) > 4 ? 4 : rawToken.borderRadiusOuter;
+        Object.defineProperty(arrowToken, '_realToken', {
+          value: { ...(token as any)._realToken, borderRadiusOuter: clampedOuter },
+          enumerable: false,
+          configurable: true,
+        });
+      }
+      return getArrowStyle<TooltipToken>(arrowToken, {
         colorBg: 'var(--antd-arrow-background-color)',
         showArrowCls: '',
         contentRadius: tooltipBorderRadius,
         limitVerticalRadius: true,
-      },
-    ),
+      });
+    })(),
 
     // Pure Render
     {
@@ -162,6 +171,7 @@ export default (prefixCls: Ref<string>, injectStyle: Ref<boolean>): UseComponent
         return [];
       }
 
+      const rawToken: any = (token as any)._realToken ?? token;
       const { borderRadius, colorTextLightSolid, colorBgDefault, borderRadiusOuter } = token;
 
       const TooltipToken = mergeToken<TooltipToken>(token, {
@@ -170,7 +180,7 @@ export default (prefixCls: Ref<string>, injectStyle: Ref<boolean>): UseComponent
         tooltipColor: colorTextLightSolid,
         tooltipBorderRadius: borderRadius,
         tooltipBg: colorBgDefault,
-        tooltipRadiusOuter: borderRadiusOuter > 4 ? 4 : borderRadiusOuter,
+        tooltipRadiusOuter: (rawToken.borderRadiusOuter ?? 0) > 4 ? 4 : borderRadiusOuter,
       });
 
       return [genTooltipStyle(TooltipToken), initZoomMotion(token, 'zoom-big-fast')];

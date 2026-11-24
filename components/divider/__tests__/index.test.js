@@ -193,4 +193,63 @@ describe('Divider', () => {
     expect(css).not.toContain('--ant-divider-orientation-margin:0.1px');
     expect(css).toContain('--ant-divider-vertical-margin-inline:12px');
   });
+
+  it('passes logical titlePlacement ("start" | "end" | "center") to semantic classNames/styles functions and exposes nativeElement', () => {
+    const startWrapper = mount(Divider, {
+      props: {
+        titlePlacement: 'start',
+        classNames: ({ props }) => ({
+          root:
+            props.titlePlacement === 'start'
+              ? 'demo-divider-root--start'
+              : 'demo-divider-root--default',
+        }),
+        styles: ({ props }) => ({
+          root:
+            props.titlePlacement === 'start' ? { borderWidth: '2px', borderStyle: 'dashed' } : {},
+          content: { fontStyle: 'italic' },
+          rail: { opacity: 0.85 },
+        }),
+      },
+      slots: { default: () => 'Start' },
+    });
+
+    expect(startWrapper.classes()).toContain('ant-divider-with-text-left');
+    expect(startWrapper.classes()).toContain('demo-divider-root--start');
+    expect(startWrapper.attributes('style')).toContain('border-width: 2px');
+    expect(startWrapper.attributes('style')).toContain('border-style: dashed');
+    expect(startWrapper.find('.ant-divider-inner-text').attributes('style')).toContain(
+      'font-style: italic',
+    );
+    expect(startWrapper.find('.ant-divider-rail-start').attributes('style')).toContain(
+      'opacity: 0.85',
+    );
+    expect(startWrapper.vm.nativeElement).toBe(startWrapper.element);
+
+    const endWrapper = mount(Divider, {
+      props: {
+        titlePlacement: 'end',
+        classNames: ({ props }) => ({ root: `placement-${props.titlePlacement}` }),
+      },
+      slots: { default: () => 'End' },
+    });
+    expect(endWrapper.classes()).toContain('ant-divider-with-text-right');
+    expect(endWrapper.classes()).toContain('placement-end');
+
+    const leftRtlWrapper = mount(ConfigProvider, {
+      props: { direction: 'rtl' },
+      slots: {
+        default: () => (
+          <Divider
+            titlePlacement="left"
+            classNames={({ props }) => ({ root: `rtl-placement-${props.titlePlacement}` })}
+          >
+            Left in RTL
+          </Divider>
+        ),
+      },
+    });
+    expect(leftRtlWrapper.find('.ant-divider').classes()).toContain('ant-divider-with-text-right');
+    expect(leftRtlWrapper.find('.ant-divider').classes()).toContain('rtl-placement-end');
+  });
 });

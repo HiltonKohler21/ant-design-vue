@@ -18,11 +18,13 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
     [componentCls]: {
       ...resetComponent(token),
       display: 'inline-block',
+      maxWidth: '100%',
 
       // Trigger
       [`${componentCls}-trigger, &-trigger`]: {
         display: 'inline-flex',
         alignItems: 'center',
+        maxWidth: '100%',
         boxSizing: 'border-box',
         borderRadius: token.borderRadiusSM,
         border: `${unit(token.lineWidth)} ${token.lineType} ${token.colorBorder}`,
@@ -48,6 +50,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
         // Color Block
         [`${componentCls}-color-block, ${componentCls}-trigger-color`]: {
           position: 'relative',
+          flexShrink: 0,
           width: token.controlHeightSM,
           height: token.controlHeightSM,
           borderRadius: token.borderRadiusXS,
@@ -77,6 +80,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
 
         // Prefix
         [`${componentCls}-trigger-prefix`]: {
+          flexShrink: 0,
           marginInlineEnd: token.marginXXS,
           display: 'inline-flex',
           alignItems: 'center',
@@ -85,15 +89,19 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
 
         // Text
         [`${componentCls}-trigger-text`]: {
+          minWidth: 0,
           margin: `0 ${unit(token.marginXS)} 0 ${unit(token.marginXS)}`,
           fontSize: token.fontSizeSM,
           color: token.colorText,
-          lineHeight: 1,
+          lineHeight: token.lineHeightSM,
           whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
         },
 
         // Clear button
         [`${componentCls}-trigger-clear`]: {
+          flexShrink: 0,
           marginInlineEnd: token.marginXXS,
           fontSize: token.fontSizeSM,
           color: token.colorTextSecondary,
@@ -124,6 +132,7 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
           },
           [`${componentCls}-trigger-text`]: {
             fontSize: token.fontSizeSM,
+            lineHeight: '16px',
             margin: '0 4px',
           },
         },

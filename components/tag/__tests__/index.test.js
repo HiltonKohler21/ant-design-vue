@@ -301,4 +301,56 @@ describe('Tag', () => {
     expect(css).toContain('--ant-tag-default-color:#222222');
     expect(css).toContain('--ant-tag-solid-text-color:#fefefe');
   });
+
+  it('generates valid CSS selectors for preset solid and inverse tags without invalid :not(...)-inverse', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(ConfigProvider, {
+      props: {
+        theme: {
+          cssVar: true,
+        },
+      },
+      slots: {
+        default: () => (
+          <>
+            <Tag color="blue" variant="solid">
+              Solid Blue
+            </Tag>
+            <Tag color="blue-inverse">Inverse Blue</Tag>
+          </>
+        ),
+      },
+    });
+    await nextTick();
+    const css = collectCss();
+    expect(css).toContain('.ant-tag.ant-tag-blue:not(.ant-tag-disabled).ant-tag-solid');
+    expect(css).toContain('.ant-tag.ant-tag-blue-inverse:not(.ant-tag-disabled)');
+    expect(css).not.toContain(':not(.ant-tag-disabled)-inverse');
+    wrapper.unmount();
+  });
+
+  it('uses alpha-tinted background for custom hex colors with filled and outlined variants', () => {
+    const filled = mount(Tag, {
+      props: { variant: 'filled', color: '#f50' },
+      slots: { default: () => 'Filled Custom' },
+    });
+    expect(filled.element.style.backgroundColor).toBe('rgba(255, 85, 0, 0.1)');
+    expect(filled.element.style.color).toBe('rgb(255, 85, 0)');
+    expect(filled.element.style.backgroundColor).not.toBe('rgb(255, 242, 235)');
+
+    const outlined = mount(Tag, {
+      props: { variant: 'outlined', color: '#f50' },
+      slots: { default: () => 'Outlined Custom' },
+    });
+    expect(outlined.element.style.backgroundColor).toBe('rgba(255, 85, 0, 0.1)');
+    expect(outlined.element.style.color).toBe('rgb(255, 85, 0)');
+    expect(outlined.element.style.borderColor).toBe('#f50');
+    expect(outlined.element.style.backgroundColor).not.toBe('rgb(255, 242, 235)');
+
+    const solid = mount(Tag, {
+      props: { variant: 'solid', color: '#f50' },
+      slots: { default: () => 'Solid Custom' },
+    });
+    expect(solid.element.style.backgroundColor).toBe('rgb(255, 85, 0)');
+  });
 });

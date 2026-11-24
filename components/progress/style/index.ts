@@ -73,6 +73,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
       '&-line': {
         position: 'relative',
         width: '100%',
+        maxWidth: '100%',
         fontSize: token.fontSize,
         marginInlineEnd: token.marginXS,
         marginBottom: token.marginXS,
@@ -81,6 +82,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
       [`${progressCls}-outer`]: {
         display: 'inline-block',
         width: '100%',
+        maxWidth: '100%',
       },
 
       [`&${progressCls}-show-info`]: {
@@ -95,11 +97,13 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
           display: 'inline-flex',
           alignItems: 'center',
           width: '100%',
+          maxWidth: '100%',
           marginInlineEnd: 0,
           paddingInlineEnd: 0,
         },
         [`${progressCls}-inner`]: {
           flex: 1,
+          minWidth: 0,
         },
       },
 
@@ -108,6 +112,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        maxWidth: '100%',
         [`${progressCls}-text`]: {
           width: 'max-content',
           marginInlineStart: 0,
@@ -119,6 +124,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         position: 'relative',
         display: 'inline-block',
         width: '100%',
+        maxWidth: '100%',
         overflow: 'hidden',
         verticalAlign: 'middle',
         backgroundColor: token.progressRemainingColor,

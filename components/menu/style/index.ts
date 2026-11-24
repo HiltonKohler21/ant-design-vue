@@ -57,11 +57,31 @@ export interface ComponentToken {
   colorActiveBarBorderSize: number;
 
   itemMarginInline: number;
+
+  // Popup
+  popupBg: string;
+
+  // Dark
+  darkPopupBg: string;
+  darkItemColor: string;
+  darkDangerItemColor: string;
+  darkItemBg: string;
+  darkSubMenuItemBg: string;
+  darkItemSelectedColor: string;
+  darkItemSelectedBg: string;
+  darkItemHoverBg: string;
+  darkGroupTitleColor: string;
+  darkItemHoverColor: string;
+  darkItemDisabledColor: string;
+  darkDangerItemSelectedBg: string;
+  darkDangerItemHoverColor: string;
+  darkDangerItemSelectedColor: string;
+  darkDangerItemActiveBg: string;
 }
 
 export interface MenuToken extends FullToken<'Menu'> {
   menuItemHeight: number;
-  menuHorizontalHeight: number;
+  menuHorizontalHeight: number | string;
   menuItemPaddingInline: number;
   menuArrowSize: number;
   menuArrowOffset: string;
@@ -355,6 +375,10 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
             boxShadow: 'none',
             transformOrigin: '0 0',
 
+            [`&${componentCls}-submenu`]: {
+              background: 'transparent',
+            },
+
             // https://github.com/ant-design/ant-design/issues/13955
             '&::before': {
               position: 'absolute',
@@ -434,16 +458,32 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
 export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponentStyleResult => {
   const useOriginHook = genComponentStyleHook(
     'Menu',
-    (token, { overrideComponentToken }) => {
+    token => {
       // Dropdown will handle menu style self. We do not need to handle this.
       if (injectStyle?.value === false) {
         return [];
       }
 
-      const { colorBgElevated, colorPrimary, colorError, colorErrorHover, colorTextLightSolid } =
-        token;
-
-      const { controlHeightLG } = token;
+      const {
+        colorBgElevated,
+        controlHeightLG,
+        darkItemColor,
+        darkDangerItemColor,
+        darkItemBg,
+        darkSubMenuItemBg,
+        darkItemSelectedColor,
+        darkItemSelectedBg,
+        darkDangerItemSelectedBg,
+        darkItemHoverBg,
+        darkGroupTitleColor,
+        darkItemHoverColor,
+        darkItemDisabledColor,
+        darkDangerItemHoverColor,
+        darkDangerItemSelectedColor,
+        darkDangerItemActiveBg,
+        popupBg,
+        darkPopupBg,
+      } = token;
 
       // 尺寸/颜色派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
       const rawToken: any = (token as any)._realToken ?? token;
@@ -455,53 +495,44 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
         menuItemHeight: controlHeightLG,
         menuItemPaddingInline: token.margin,
         menuArrowSize,
-        menuHorizontalHeight: rawToken.controlHeightLG * 1.15,
+        menuHorizontalHeight: token.calc(controlHeightLG).mul(1.15).equal(),
         menuArrowOffset: `${menuArrowSize * 0.25}px`,
         menuPanelMaskInset: -7, // Still a hardcode here since it's offset by rc-align
         menuSubMenuBg: colorBgElevated,
+        popupBg,
       });
 
-      const colorTextDark = new TinyColor(rawToken.colorTextLightSolid)
-        .setAlpha(0.65)
-        .toRgbString();
+      const menuDarkToken = mergeToken<MenuToken>(menuToken, {
+        colorItemText: darkItemColor,
+        colorItemTextHover: darkItemHoverColor,
+        colorGroupTitle: darkGroupTitleColor,
+        colorItemTextSelected: darkItemSelectedColor,
+        colorItemBg: darkItemBg,
+        popupBg: darkPopupBg,
+        colorSubItemBg: darkSubMenuItemBg,
+        colorItemBgActive: 'transparent',
+        colorItemBgSelected: darkItemSelectedBg,
+        colorItemBgHover: darkItemHoverBg,
+        colorActiveBarWidth: 0,
+        colorActiveBarHeight: 0,
+        colorActiveBarBorderSize: 0,
 
-      const menuDarkToken = mergeToken<MenuToken>(
-        menuToken,
-        {
-          colorItemText: colorTextDark,
-          colorItemTextHover: colorTextLightSolid,
-          colorGroupTitle: colorTextDark,
-          colorItemTextSelected: colorTextLightSolid,
-          colorItemBg: '#001529',
-          colorSubItemBg: '#000c17',
-          colorItemBgActive: 'transparent',
-          colorItemBgSelected: colorPrimary,
-          colorActiveBarWidth: 0,
-          colorActiveBarHeight: 0,
-          colorActiveBarBorderSize: 0,
+        // Disabled
+        colorItemTextDisabled: darkItemDisabledColor,
 
-          // Disabled
-          colorItemTextDisabled: new TinyColor(rawToken.colorTextLightSolid)
-            .setAlpha(0.25)
-            .toRgbString(),
+        // Danger
+        colorDangerItemText: darkDangerItemColor,
+        colorDangerItemTextHover: darkDangerItemHoverColor,
+        colorDangerItemTextSelected: darkDangerItemSelectedColor,
+        colorDangerItemBgActive: darkDangerItemActiveBg,
+        colorDangerItemBgSelected: darkDangerItemSelectedBg,
 
-          // Danger
-          colorDangerItemText: colorError,
-          colorDangerItemTextHover: colorErrorHover,
-          colorDangerItemTextSelected: colorTextLightSolid,
-          colorDangerItemBgActive: colorError,
-          colorDangerItemBgSelected: colorError,
+        menuSubMenuBg: darkSubMenuItemBg,
 
-          menuSubMenuBg: '#001529',
-
-          // Horizontal
-          colorItemTextSelectedHorizontal: colorTextLightSolid,
-          colorItemBgSelectedHorizontal: colorPrimary,
-        },
-        {
-          ...overrideComponentToken,
-        },
-      );
+        // Horizontal
+        colorItemTextSelectedHorizontal: darkItemSelectedColor,
+        colorItemBgSelectedHorizontal: darkItemSelectedBg,
+      });
 
       return [
         // Basic
@@ -532,11 +563,14 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
       const {
         colorPrimary,
         colorError,
+        colorErrorHover,
         colorTextDisabled,
         colorErrorBg,
         colorText,
         colorTextDescription,
+        colorTextLightSolid,
         colorBgContainer,
+        colorBgElevated,
         colorFillAlter,
         colorFillContent,
         lineWidth,
@@ -544,6 +578,8 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
         controlItemBgActive,
         colorBgTextHover,
       } = token;
+
+      const colorTextDark = new TinyColor(token.colorTextLightSolid).setAlpha(0.65).toRgbString();
 
       return {
         dropdownWidth: 160,
@@ -577,6 +613,28 @@ export default (prefixCls: Ref<string>, injectStyle?: Ref<boolean>): UseComponen
         colorDangerItemBgSelected: colorErrorBg,
 
         itemMarginInline: token.marginXXS,
+
+        // Popup
+        popupBg: colorBgElevated,
+
+        // Dark
+        darkItemDisabledColor: new TinyColor(token.colorTextLightSolid)
+          .setAlpha(0.25)
+          .toRgbString(),
+        darkItemColor: colorTextDark,
+        darkDangerItemColor: colorError,
+        darkItemBg: '#001529',
+        darkPopupBg: '#001529',
+        darkSubMenuItemBg: '#000c17',
+        darkItemSelectedColor: colorTextLightSolid,
+        darkItemSelectedBg: colorPrimary,
+        darkDangerItemSelectedBg: colorError,
+        darkItemHoverBg: 'transparent',
+        darkGroupTitleColor: colorTextDark,
+        darkItemHoverColor: colorTextLightSolid,
+        darkDangerItemHoverColor: colorErrorHover,
+        darkDangerItemSelectedColor: colorTextLightSolid,
+        darkDangerItemActiveBg: colorError,
       };
     },
   );

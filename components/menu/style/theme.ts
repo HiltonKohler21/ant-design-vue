@@ -39,6 +39,8 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
     colorDangerItemBgSelected,
 
     colorItemBgHover,
+    colorItemBgActive,
+    popupBg,
     menuSubMenuBg,
 
     // Horizontal
@@ -47,7 +49,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
   } = token;
 
   return {
-    [`${componentCls}-${themeSuffix}`]: {
+    [`${componentCls}-${themeSuffix}, ${componentCls}-${themeSuffix} > ${componentCls}`]: {
       color: colorItemText,
       background: colorItemBg,
 
@@ -63,6 +65,13 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
       [`${componentCls}-submenu-selected`]: {
         [`> ${componentCls}-submenu-title`]: {
           color: colorItemTextSelected,
+        },
+      },
+
+      [`${componentCls}-item, ${componentCls}-submenu-title`]: {
+        color: colorItemText,
+        [`&:not(${componentCls}-item-disabled):focus-visible`]: {
+          ...accessibilityFocus(token),
         },
       },
 
@@ -85,7 +94,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
           },
 
           '&:active': {
-            backgroundColor: colorItemBgSelected,
+            backgroundColor: colorItemBgActive,
           },
         },
 
@@ -95,7 +104,7 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
           },
 
           '&:active': {
-            backgroundColor: colorItemBgSelected,
+            backgroundColor: colorItemBgActive,
           },
         },
       },
@@ -143,18 +152,12 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
         },
       },
 
-      [`${componentCls}-item, ${componentCls}-submenu-title`]: {
-        [`&:not(${componentCls}-item-disabled):focus-visible`]: {
-          ...accessibilityFocus(token),
-        },
-      },
-
       [`&${componentCls}-submenu > ${componentCls}`]: {
         backgroundColor: menuSubMenuBg,
       },
 
-      [`&${componentCls}-popup > ${componentCls}`]: {
-        backgroundColor: colorItemBg,
+      [`&${componentCls}-submenu-popup > ${componentCls}`]: {
+        backgroundColor: popupBg,
       },
 
       // ====================== Horizontal ======================
@@ -211,14 +214,6 @@ const getThemeStyle = (token: MenuToken, themeSuffix: string): CSSInterpolation 
         [`${componentCls}-sub${componentCls}-inline`]: {
           background: colorSubItemBg,
         },
-
-        // Item
-        [`${componentCls}-item, ${componentCls}-submenu-title`]:
-          colorActiveBarBorderSize && colorActiveBarWidth
-            ? {
-                width: `calc(100% + ${unit(colorActiveBarBorderSize)})`,
-              }
-            : {},
 
         [`${componentCls}-item`]: {
           position: 'relative',

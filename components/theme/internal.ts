@@ -203,6 +203,14 @@ export function useToken(options?: {
   });
 
   const realToken = computed(() => cacheToken.value[0]);
+  // wireframe / motion 等布尔结构 token 直接决定 styleFn 分支输出，需区分样式缓存键与 hashId；
+  // 普通颜色 / 暗色 / 紧凑切换时保持空后缀，维持零增量样式复用。
+  const structuralSuffix = computed(() => {
+    const rt = realToken.value as any;
+    const wf = rt?.wireframe ? '-wf' : '';
+    const mo = rt?.motion === false ? '-nomotion' : '';
+    return `${wf}${mo}`;
+  });
   const cssVarConfig = computed<CssVarResolvedConfig | null>(() => {
     const cssVar = designTokenContext.value.cssVar;
     // 默认开启（对齐 antd v6）；显式 false 时回退到 hash 模式
@@ -212,7 +220,7 @@ export function useToken(options?: {
     const cfg = typeof cssVar === 'object' && cssVar ? cssVar : {};
     return {
       prefix: cfg.prefix || 'ant',
-      key: cfg.key || `css-var-${salt.value}`,
+      key: `${cfg.key || `css-var-${salt.value}`}${structuralSuffix.value}`,
     };
   });
   // cssVar 模式下把 token 值替换成 var(--ant-xxx)，样式因此只生成一次

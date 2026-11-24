@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import { asyncExpect, sleep } from '../../../tests/utils';
 import Menu from '..';
+import ConfigProvider from '../../config-provider';
 import { InboxOutlined, PieChartOutlined } from '@ant-design/icons-vue';
 import mountTest from '../../../tests/shared/mountTest';
 
@@ -521,5 +523,66 @@ describe('Menu', () => {
       const text = $$('.ant-tooltip-inner')[0].textContent;
       expect(text).toBe('bamboo lucky');
     }, 500);
+  });
+
+  it('cssVar mode emits fixed inline width, dark hover/active/popup selectors, collapsed padding, and preserves dark tokens on light override', async () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(
+      {
+        render() {
+          return (
+            <ConfigProvider
+              theme={{
+                cssVar: true,
+                components: {
+                  Menu: {
+                    colorItemBg: '#fafafa',
+                    colorItemText: '#333333',
+                  },
+                },
+              }}
+            >
+              <div>
+                <Menu mode="inline" theme="light" items={[{ key: '1', label: 'A' }]} />
+                <Menu mode="inline" theme="dark" items={[{ key: '2', label: 'B' }]} />
+              </div>
+            </ConfigProvider>
+          );
+        },
+      },
+      { attachTo: 'body' },
+    );
+    await nextTick();
+    await sleep(50);
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+
+    // P0: no calc(100% + activeBarBorderSize) override on light inline menu items
+    expect(css).not.toMatch(/calc\(100%\s*\+\s*var\(--ant-menu-color-active-bar-border-size\)\)/);
+    // Active state uses colorItemBgActive (light) and transparent (dark), not selected bg
+    expect(css).toMatch(
+      /\.ant-menu-light:not\(\.ant-menu-horizontal\)[^}]*:active\{[^}]*background-color:var\(--ant-menu-color-item-bg-active\)/,
+    );
+    expect(css).toMatch(
+      /\.ant-menu-dark:not\(\.ant-menu-horizontal\)[^}]*:active\{[^}]*background-color:transparent/,
+    );
+    // Dark hover uses darkItemHoverBg (transparent), dark submenu bg uses #000c17, dark popup uses #001529
+    expect(css).toContain('--ant-menu-dark-item-hover-bg:transparent');
+    expect(css).toContain('--ant-menu-dark-sub-menu-item-bg:#000c17');
+    expect(css).toContain('--ant-menu-dark-popup-bg:#001529');
+    // Light-only override does not clobber dark item bg
+    expect(css).toContain('--ant-menu-color-item-bg:#fafafa');
+    expect(css).toContain('--ant-menu-dark-item-bg:#001529');
+    // Popup selector uses -submenu-popup, not dead -popup
+    expect(css).toContain('.ant-menu-submenu-popup>.ant-menu');
+    expect(css).not.toContain('.ant-menu-popup>.ant-menu');
+    // Collapsed inline padding centers using fontSizeLG/2 and itemMarginInline
+    expect(css).toContain(
+      'padding-inline:calc(50% - calc(var(--ant-font-size-lg) / 2) - var(--ant-menu-item-margin-inline))',
+    );
+
+    wrapper.unmount();
   });
 });

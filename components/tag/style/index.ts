@@ -19,6 +19,11 @@ export interface ComponentToken {
    */
   defaultColor: string;
   /**
+   * @desc 默认实心标签的背景色
+   * @descEN Default background color for solid tag.
+   */
+  defaultSolidBg?: string;
+  /**
    * @desc 默认实心标签的文本色
    * @descEN Default text color for solid tag.
    */
@@ -95,7 +100,7 @@ const genPresetStyle = (token: TagToken) =>
           borderColor: lightBorderColor,
           color: textColor,
         },
-        [`&${token.componentCls}-solid, &-inverse`]: {
+        [`&${token.componentCls}-solid`]: {
           color: token.colorTextLightSolid,
           backgroundColor: darkColor,
           borderColor: darkColor,
@@ -105,6 +110,12 @@ const genPresetStyle = (token: TagToken) =>
           borderColor: 'transparent',
           color: textColor,
         },
+      },
+    [`${token.componentCls}${token.componentCls}-${colorKey}-inverse:not(${token.componentCls}-disabled)`]:
+      {
+        color: token.colorTextLightSolid,
+        backgroundColor: darkColor,
+        borderColor: darkColor,
       },
   }));
 
@@ -306,13 +317,14 @@ const genBaseStyle = (token: TagToken): CSSObject => {
 export const prepareComponentToken = (token: any): ComponentToken => {
   const isDarkBg = new TinyColor(token.colorBgBase || '#fff').isDark();
   const rawTextBase = token.colorTextBase || (isDarkBg ? '#fff' : '#000');
-  const solidBg =
+  const defaultSolidBg =
     token.colorBgSolid || new TinyColor(rawTextBase).setAlpha(isDarkBg ? 0.95 : 1).toRgbString();
-  const solidTextColor = new TinyColor(solidBg).isLight() ? '#000' : '#fff';
+  const solidTextColor = new TinyColor(defaultSolidBg).isLight() ? '#000' : '#fff';
 
   return {
     defaultBg: compositeOnBackground(token.colorFillTertiary, token.colorBgContainer),
     defaultColor: token.colorText,
+    defaultSolidBg,
     solidTextColor,
   };
 };
@@ -324,11 +336,6 @@ export default genComponentStyleHook(
     // 尺寸派生需要真实数值（cssVar 模式下 token 值是 var() 字符串）
     const rawToken: any = (token as any)._realToken ?? token;
     const tagHeight = Math.round(rawToken.fontSize * rawToken.lineHeight);
-    const isDarkBg = new TinyColor(rawToken.colorBgBase || '#fff').isDark();
-    const rawTextBase = rawToken.colorTextBase || (isDarkBg ? '#fff' : '#000');
-    const tagSolidBg =
-      rawToken.colorBgSolid ||
-      new TinyColor(rawTextBase).setAlpha(isDarkBg ? 0.95 : 1).toRgbString();
 
     const tagFontSize = token.fontSizeSM;
     const tagLineHeight = tagHeight - rawToken.lineWidth * 2;
@@ -339,7 +346,7 @@ export default genComponentStyleHook(
       tagIconSize: rawToken.fontSizeIcon - 2 * rawToken.lineWidth, // Tag icon is much more smaller
       tagPaddingHorizontal: 8, // Fixed padding.
       tagBorderlessBg: token.defaultBg,
-      tagSolidBg,
+      tagSolidBg: token.defaultSolidBg!,
     });
 
     return [
