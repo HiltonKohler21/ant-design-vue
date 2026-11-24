@@ -94,6 +94,7 @@ export default defineComponent({
       } = props;
 
       delete restProps.gapPosition;
+      delete restProps.steps;
 
       return (
         <svg

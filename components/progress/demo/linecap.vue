@@ -8,18 +8,20 @@ title:
 
 ## zh-CN
 
-`strokeLinecap="square|round"` 可以调整进度条边缘的形状。
+通过设定 `strokeLinecap="butt"` 可以将进度条边缘的形状从闭合的圆形的圆弧调整为断口，详见 [stroke-linecap](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linecap)。
 
 ## en-US
 
-By setting `strokeLinecap="square"`, you can change the linecaps from round to square.
+By setting `strokeLinecap="butt"`, you can change the linecaps from `round` to `butt`, see [stroke-linecap](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linecap) for more information.
 
 </docs>
 
 <template>
-  <div>
-    <a-progress stroke-linecap="square" :percent="75" />
-    <a-progress stroke-linecap="square" :percent="75" type="circle" />
-    <a-progress stroke-linecap="square" :percent="75" type="dashboard" />
-  </div>
+  <a-flex vertical gap="small">
+    <a-progress stroke-linecap="butt" :percent="75" />
+    <a-flex wrap="wrap" gap="small">
+      <a-progress stroke-linecap="butt" type="circle" :percent="75" />
+      <a-progress stroke-linecap="butt" type="dashboard" :percent="75" />
+    </a-flex>
+  </a-flex>
 </template>

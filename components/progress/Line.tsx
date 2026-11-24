@@ -160,8 +160,15 @@ export default defineComponent({
       };
     });
 
+    const formatWidth = (width: number | string) => {
+      if (typeof width === 'string') {
+        return width;
+      }
+      return width < 0 ? '100%' : `${width}px`;
+    };
+
     const outerStyle = computed<CSSProperties>(() => ({
-      width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
+      width: formatWidth(sizeRef.value.width),
       height: `${sizeRef.value.height}px`,
       ...semanticStyles.value.body,
     }));
@@ -223,7 +230,7 @@ export default defineComponent({
               style={[
                 attrs.style as CSSProperties,
                 {
-                  width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
+                  width: formatWidth(sizeRef.value.width),
                   ...semanticStyles.value.body,
                 },
               ]}
@@ -243,7 +250,7 @@ export default defineComponent({
             style={[
               attrs.style as CSSProperties,
               {
-                width: sizeRef.value.width < 0 ? '100%' : `${sizeRef.value.width}px`,
+                width: formatWidth(sizeRef.value.width),
                 ...semanticStyles.value.body,
               },
             ]}

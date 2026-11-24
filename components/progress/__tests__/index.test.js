@@ -618,4 +618,145 @@ describe('Progress', () => {
     expect(css).toMatch(/\.ant-progress-layout-bottom\{[^}]*max-width:100%/);
     expect(css).toMatch(/\.ant-progress-inner\{[^}]*max-width:100%/);
   });
+
+  it('supports circle and dashboard steps with number and { count, gap } object', async () => {
+    const dashboardWrapper = mount(Progress, {
+      props: {
+        type: 'dashboard',
+        steps: 8,
+        percent: 50,
+        strokeWidth: 20,
+        railColor: 'rgba(0, 0, 0, 0.06)',
+      },
+    });
+    const dashCircles = dashboardWrapper.findAll('svg.ant-progress-circle circle');
+    expect(dashCircles).toHaveLength(8);
+    expect(dashboardWrapper.findAll('circle.ant-progress-circle-path')).toHaveLength(4);
+    expect(dashboardWrapper.findAll('circle.ant-progress-circle-trail')).toHaveLength(4);
+    expect(dashCircles[0].attributes('r')).toBe('40');
+    expect(dashCircles[0].attributes('stroke-linecap')).toBe('butt');
+    expect(dashCircles[0].attributes('stroke-width')).toBe('20');
+    expect(dashCircles[0].attributes('style')).toContain('rotate(127.5deg)');
+    expect(dashCircles[4].attributes('style')).toContain('rgba(0, 0, 0, 0.06)');
+
+    const circleWrapper = mount(Progress, {
+      props: {
+        type: 'circle',
+        percent: 100,
+        steps: { count: 5, gap: 7 },
+        strokeWidth: 20,
+        classNames: { rail: 'step-rail', track: 'step-track' },
+        styles: { rail: { opacity: '0.35' }, track: { opacity: '0.95' } },
+      },
+    });
+    expect(circleWrapper.findAll('svg.ant-progress-circle circle')).toHaveLength(5);
+    expect(circleWrapper.findAll('circle.ant-progress-circle-path')).toHaveLength(5);
+    expect(circleWrapper.findAll('circle.ant-progress-circle-trail')).toHaveLength(0);
+    expect(circleWrapper.findAll('circle.step-track')).toHaveLength(5);
+
+    await circleWrapper.setProps({
+      percent: 25,
+      steps: { count: 8, gap: 12 },
+    });
+    expect(circleWrapper.findAll('svg.ant-progress-circle circle')).toHaveLength(8);
+    expect(circleWrapper.findAll('circle.ant-progress-circle-path')).toHaveLength(2);
+    expect(circleWrapper.findAll('circle.ant-progress-circle-trail')).toHaveLength(6);
+    expect(circleWrapper.findAll('circle.step-track')).toHaveLength(2);
+    expect(circleWrapper.findAll('circle.step-rail')).toHaveLength(6);
+    expect(circleWrapper.findAll('circle.ant-progress-circle-trail')[0].classes()).not.toContain(
+      'step-track',
+    );
+  });
+
+  it('supports size object, medium preset, and string width tuple without invalid px suffix', () => {
+    const objLine = mount(Progress, {
+      props: { percent: 50, size: { width: 240, height: 16 } },
+    });
+    expect(objLine.find('.ant-progress-outer').element.style.width).toBe('240px');
+    expect(objLine.find('.ant-progress-bg').element.style.height).toBe('16px');
+    expect(objLine.find('.ant-progress').classes().join(' ')).not.toContain('[object');
+
+    const strLine = mount(Progress, {
+      props: { percent: 50, size: ['100%', 20] },
+    });
+    expect(strLine.find('.ant-progress-outer').element.style.width).toBe('100%');
+    expect(strLine.find('.ant-progress-bg').element.style.height).toBe('20px');
+
+    const strInnerLine = mount(Progress, {
+      props: {
+        percent: 50,
+        size: ['50%', 20],
+        percentPosition: { align: 'center', type: 'inner' },
+      },
+    });
+    expect(strInnerLine.find('.ant-progress-outer').element.style.width).toBe('50%');
+    expect(strInnerLine.find('.ant-progress-bg').element.style.height).toBe('20px');
+
+    const mediumLine = mount(Progress, { props: { percent: 50, size: 'medium' } });
+    expect(mediumLine.find('.ant-progress-outer').element.style.width).toBe('100%');
+    expect(mediumLine.find('.ant-progress-bg').element.style.height).toBe('8px');
+
+    const mediumCircle = mount(Progress, {
+      props: { type: 'circle', percent: 50, size: 'medium' },
+    });
+    expect(mediumCircle.find('.ant-progress-inner').element.style.width).toBe('120px');
+    expect(mediumCircle.find('.ant-progress-inner').element.style.height).toBe('120px');
+
+    const objSteps = mount(Progress, {
+      props: { steps: 3, percent: 50, size: { width: 18, height: 12 } },
+    });
+    expect(objSteps.findAll('.ant-progress-steps-item')[0].element.style.width).toBe('18px');
+    expect(objSteps.findAll('.ant-progress-steps-item')[0].element.style.height).toBe('12px');
+  });
+
+  it('supports rounding function on Steps and preserves boolean rounding compatibility', () => {
+    const floorSteps = mount(Progress, {
+      props: { steps: 5, percent: 30, rounding: Math.floor },
+    });
+    expect(floorSteps.findAll('.ant-progress-steps-item-active')).toHaveLength(1);
+
+    const ceilSteps = mount(Progress, {
+      props: { steps: 5, percent: 25, rounding: Math.ceil },
+    });
+    expect(ceilSteps.findAll('.ant-progress-steps-item-active')).toHaveLength(2);
+
+    const defaultSteps = mount(Progress, {
+      props: { steps: 5, percent: 30 },
+    });
+    expect(defaultSteps.findAll('.ant-progress-steps-item-active')).toHaveLength(2);
+
+    const legacyRound = mount(Progress, {
+      props: { percent: 50, strokeLinecap: 'square', rounding: true },
+    });
+    expect(legacyRound.find('.ant-progress-bg').element.style.borderRadius).toBe('');
+  });
+
+  it('keeps inner 100% success/exception text white instead of overridden by status color', () => {
+    document.head.innerHTML = '';
+    const wrapper = mount(Progress, {
+      props: {
+        percent: 100,
+        percentPosition: { align: 'center', type: 'inner' },
+        size: [400, 20],
+      },
+    });
+    expect(wrapper.classes()).toContain('ant-progress-status-success');
+    expect(
+      wrapper.find('.ant-progress-bg-inner .ant-progress-text.ant-progress-text-inner').text(),
+    ).toBe('100%');
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain(
+      '.ant-progress-status-success .ant-progress-text:not(.ant-progress-text-inner)',
+    );
+    expect(css).toContain(
+      '.ant-progress-status-exception .ant-progress-text:not(.ant-progress-text-inner)',
+    );
+    expect(css).toMatch(
+      /\.ant-progress-bg-inner \.ant-progress-text\.ant-progress-text-inner\{[^}]*color:(?:#fff|var\(--ant-color-white\))/,
+    );
+    expect(css).toContain('--ant-progress-circle-icon-font-size:');
+  });
 });

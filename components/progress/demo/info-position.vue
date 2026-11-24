@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 14
 version: 4.3.0
 title:
   zh-CN: 改变进度数值位置
@@ -9,11 +9,11 @@ title:
 
 ## zh-CN
 
-通过 `percentPosition` 控制进度条数值的对齐方式（`align`）和内外位置（`type`）。
+改变进度数值位置，可使用 `percentPosition` 调整，使进度条数值在进度条内部、外部或底部。
 
 ## en-US
 
-Customize the alignment (`align`) and placement (`type`) of the percentage info via `percentPosition`.
+Change the position of the progress value, you can use `percentPosition` to adjust it so that the progress bar value is inside, outside or at the bottom of the progress bar.
 
 </docs>
 

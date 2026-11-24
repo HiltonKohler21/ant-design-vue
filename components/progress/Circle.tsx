@@ -106,28 +106,38 @@ export default defineComponent({
         Boolean(nextTrackStyle);
       if (!hasWork) return;
 
-      const trailEl = root.querySelector<SVGElement>(`.${props.prefixCls}-circle-trail`);
-      if (trailEl) {
+      const allPrevStyleKeys = Array.from(new Set([...prevRailStyleKeys, ...prevTrackStyleKeys]));
+
+      const trailEls = root.querySelectorAll<SVGElement>(`.${props.prefixCls}-circle-trail`);
+      let nextRailKeys: string[] = [];
+      trailEls.forEach(trailEl => {
+        for (const cls of prevTrackClasses) {
+          trailEl.classList.remove(cls);
+        }
         for (const cls of prevRailClasses) {
           trailEl.classList.remove(cls);
         }
         for (const cls of nextRailClasses) {
           trailEl.classList.add(cls);
         }
-        prevRailStyleKeys = applyStylePatch(trailEl, prevRailStyleKeys, nextRailStyle);
-      }
+        nextRailKeys = applyStylePatch(trailEl, allPrevStyleKeys, nextRailStyle);
+      });
       prevRailClasses = nextRailClasses;
+      prevRailStyleKeys = nextRailKeys;
 
       const pathEls = root.querySelectorAll<SVGElement>(`.${props.prefixCls}-circle-path`);
       let nextTrackKeys: string[] = [];
       pathEls.forEach(pathEl => {
+        for (const cls of prevRailClasses) {
+          pathEl.classList.remove(cls);
+        }
         for (const cls of prevTrackClasses) {
           pathEl.classList.remove(cls);
         }
         for (const cls of nextTrackClasses) {
           pathEl.classList.add(cls);
         }
-        nextTrackKeys = applyStylePatch(pathEl, prevTrackStyleKeys, nextTrackStyle);
+        nextTrackKeys = applyStylePatch(pathEl, allPrevStyleKeys, nextTrackStyle);
       });
       prevTrackClasses = nextTrackClasses;
       prevTrackStyleKeys = nextTrackKeys;
@@ -139,7 +149,13 @@ export default defineComponent({
     const originWidth = computed(() => props.width ?? 120);
     const mergedSize = computed(() => props.size ?? [originWidth.value, originWidth.value]);
 
-    const sizeRef = computed(() => getSize(mergedSize.value as ProgressProps['size'], 'circle'));
+    const sizeRef = computed(() => {
+      const { width, height } = getSize(mergedSize.value as ProgressProps['size'], 'circle');
+      return {
+        width: Number(width),
+        height,
+      };
+    });
     const gapDeg = computed(() => {
       // Support gapDeg = 0 when type = 'dashboard'
       if (props.gapDegree || props.gapDegree === 0) {
@@ -194,13 +210,18 @@ export default defineComponent({
       [`${props.prefixCls}-circle-gradient`]: isGradient.value,
     }));
 
+    const hasSteps = computed(() =>
+      Boolean(typeof props.steps === 'object' && props.steps ? props.steps.count : props.steps),
+    );
+
     return () => {
       const circleContent = (
         <VCCircle
-          percent={percent.value}
+          steps={props.steps}
+          percent={hasSteps.value ? percent.value[1] : percent.value}
           strokeWidth={circleWidth.value}
           trailWidth={circleWidth.value}
-          strokeColor={strokeColor.value}
+          strokeColor={hasSteps.value ? strokeColor.value[1] : strokeColor.value}
           strokeLinecap={props.strokeLinecap}
           trailColor={mergedRailColor.value}
           prefixCls={props.prefixCls}

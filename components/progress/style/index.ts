@@ -1,4 +1,4 @@
-import { Keyframes, unit } from '../../_util/cssinjs';
+import { Keyframes } from '../../_util/cssinjs';
 import type { CSSObject } from '../../_util/cssinjs';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
@@ -30,6 +30,11 @@ export interface ComponentToken {
    * @descEN Text size of circular progress bar
    */
   circleTextFontSize: string;
+  /**
+   * @desc 圆形进度条图标大小
+   * @descEN Icon size of circular progress bar
+   */
+  circleIconFontSize: string;
 }
 
 interface ProgressToken extends FullToken<'Progress'> {
@@ -72,24 +77,23 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
 
       '&-line': {
         position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
         width: '100%',
         maxWidth: '100%',
         fontSize: token.fontSize,
-        marginInlineEnd: token.marginXS,
-        marginBottom: token.marginXS,
+        [`&${progressCls}-steps`]: {
+          display: 'inline-block',
+          width: 'auto',
+        },
       },
 
       [`${progressCls}-outer`]: {
-        display: 'inline-block',
+        display: 'flex',
+        alignItems: 'center',
         width: '100%',
         maxWidth: '100%',
-      },
-
-      [`&${progressCls}-show-info`]: {
-        [`${progressCls}-outer`]: {
-          marginInlineEnd: `calc(-2em - ${unit(token.marginXS)})`,
-          paddingInlineEnd: `calc(2em + ${unit(token.paddingXS)})`,
-        },
+        minWidth: 0,
       },
 
       [`&${progressCls}-line-position-outer, &${progressCls}-line-position-inner`]: {
@@ -98,12 +102,10 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
           alignItems: 'center',
           width: '100%',
           maxWidth: '100%',
-          marginInlineEnd: 0,
-          paddingInlineEnd: 0,
-        },
-        [`${progressCls}-inner`]: {
-          flex: 1,
-          minWidth: 0,
+          [`${progressCls}-inner`]: {
+            flex: 1,
+            minWidth: 0,
+          },
         },
       },
 
@@ -112,9 +114,11 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        width: '100%',
         maxWidth: '100%',
         [`${progressCls}-text`]: {
           width: 'max-content',
+          minWidth: 'unset',
           marginInlineStart: 0,
           marginTop: token.marginXXS,
         },
@@ -145,8 +149,10 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
       },
 
       [`${progressCls}-bg-inner`]: {
+        display: 'flex',
+        alignItems: 'center',
         minWidth: 'max-content',
-        [`${progressCls}-text-inner`]: {
+        [`${progressCls}-text${progressCls}-text-inner`]: {
           color: token.colorWhite,
           [`&${progressCls}-text-bright`]: {
             color: 'rgba(0, 0, 0, 0.45)',
@@ -163,7 +169,8 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
 
       [`${progressCls}-text`]: {
         display: 'inline-block',
-        width: '2em',
+        flexShrink: 0,
+        minWidth: '2em',
         marginInlineStart: token.marginXS,
         color: token.progressInfoTextColor,
         lineHeight: 1,
@@ -176,26 +183,31 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         },
         [`&${progressCls}-text-outer`]: {
           width: 'max-content',
+          minWidth: 'unset',
         },
         [`&${progressCls}-text-outer${progressCls}-text-start`]: {
           width: 'max-content',
+          minWidth: 'unset',
           marginInlineStart: 0,
           marginInlineEnd: token.marginXS,
         },
         [`&${progressCls}-text-outer${progressCls}-text-center`]: {
           width: 'max-content',
+          minWidth: 'unset',
           marginInlineStart: 0,
         },
       },
 
       [`${progressCls}-text-inner`]: {
+        boxSizing: 'border-box',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
+        minWidth: 'unset',
         height: '100%',
         marginInlineStart: 0,
-        padding: `0 ${unit(token.paddingXXS)}`,
+        paddingInline: token.paddingXXS,
         [`&${progressCls}-text-start`]: {
           justifyContent: 'start',
         },
@@ -226,7 +238,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         [`${progressCls}-bg`]: {
           backgroundColor: token.colorError,
         },
-        [`${progressCls}-text`]: {
+        [`${progressCls}-text:not(${progressCls}-text-inner)`]: {
           color: token.colorError,
         },
       },
@@ -242,7 +254,7 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
         [`${progressCls}-bg`]: {
           backgroundColor: token.colorSuccess,
         },
-        [`${progressCls}-text`]: {
+        [`${progressCls}-text:not(${progressCls}-text-inner)`]: {
           color: token.colorSuccess,
         },
       },
@@ -258,7 +270,6 @@ const genBaseStyle: GenerateStyle<ProgressToken> = token => {
 
 const genCircleStyle: GenerateStyle<ProgressToken> = token => {
   const { componentCls: progressCls, iconCls: iconPrefixCls } = token;
-  const rawToken: any = (token as any)._realToken ?? token;
 
   return {
     [progressCls]: {
@@ -287,7 +298,7 @@ const genCircleStyle: GenerateStyle<ProgressToken> = token => {
         transform: 'translateY(-50%)',
 
         [iconPrefixCls]: {
-          fontSize: `${rawToken.fontSize / rawToken.fontSizeSM}em`,
+          fontSize: token.circleIconFontSize,
         },
       },
 
@@ -380,5 +391,6 @@ export default genComponentStyleHook(
     remainingColor: token.colorFillSecondary,
     lineBorderRadius: 100, // magic for capsule shape, should be a very large number
     circleTextFontSize: '1em',
+    circleIconFontSize: `${token.fontSize / token.fontSizeSM}em`,
   }),
 );

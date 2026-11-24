@@ -2,13 +2,18 @@ import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent } from 'vue';
 import type { VueNode } from '../_util/type';
 import { someType } from '../_util/type';
-import type { ProgressSemanticClassNames, ProgressSemanticStyles, ProgressSize } from './props';
+import type {
+  ProgressSemanticClassNames,
+  ProgressSemanticStyles,
+  ProgressSize,
+  ProgressSteps,
+} from './props';
 import { progressProps } from './props';
 import { getSize } from './utils';
 
 export const stepsProps = () => ({
   ...progressProps(),
-  steps: Number,
+  steps: someType<ProgressSteps>([Number, Object]),
   strokeColor: someType<string | string[]>(),
   trailColor: String,
   railColor: String,
@@ -32,19 +37,35 @@ export default defineComponent({
         : {},
     );
 
-    const current = computed(() => Math.round(props.steps * ((props.percent || 0) / 100)));
+    const stepCount = computed<number>(() => {
+      const { steps } = props;
+      if (typeof steps === 'number') {
+        return steps;
+      }
+      if (steps && typeof steps === 'object') {
+        return steps.count || 0;
+      }
+      return 0;
+    });
+    const customRounding = computed(() =>
+      typeof props.rounding === 'function' ? props.rounding : Math.round,
+    );
+    const current = computed(() =>
+      customRounding.value(stepCount.value * ((props.percent || 0) / 100)),
+    );
     const mergedSize = computed(
       () => props.size ?? [props.size === 'small' ? 2 : 14, props.strokeWidth || 8],
     );
     const sizeRef = computed(() =>
       getSize(mergedSize.value as ProgressSize, 'step', {
-        steps: props.steps,
+        steps: stepCount.value,
         strokeWidth: props.strokeWidth || 8,
       }),
     );
 
     const styledSteps = computed(() => {
-      const { steps, strokeColor, railColor, trailColor, prefixCls } = props;
+      const { strokeColor, railColor, trailColor, prefixCls } = props;
+      const steps = stepCount.value;
       const mergedRailColor = railColor ?? trailColor;
       const semCls = semanticClassNames.value;
       const semStyle = semanticStyles.value;
@@ -65,7 +86,7 @@ export default defineComponent({
             class={itemSemanticCls ? [cls, itemSemanticCls] : cls}
             style={{
               backgroundColor: isActive ? color : mergedRailColor,
-              width: `${sizeRef.value.width / steps}px`,
+              width: `${Number(sizeRef.value.width) / steps}px`,
               height: `${sizeRef.value.height}px`,
               ...itemSemanticStyle,
             }}

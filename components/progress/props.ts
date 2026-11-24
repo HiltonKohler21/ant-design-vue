@@ -14,8 +14,13 @@ export const progressStatuses = ['normal', 'exception', 'active', 'success'] as 
 export type ProgressStatusesType = (typeof progressStatuses)[number];
 const ProgressType = ['line', 'circle', 'dashboard'] as const;
 export type ProgressType = (typeof ProgressType)[number];
-const ProgressSize = ['default', 'small'] as const;
-export type ProgressSize = (typeof ProgressSize)[number] | number | [number, number];
+const ProgressSize = ['default', 'small', 'medium'] as const;
+export type ProgressSize =
+  | (typeof ProgressSize)[number]
+  | number
+  | [number | string, number]
+  | { width?: number; height?: number };
+export type ProgressSteps = number | { count: number; gap: number };
 export type StringGradients = { [percentage: string]: string };
 type FromToGradients = { from: string; to: string };
 export type ProgressGradient = { direction?: string } & (StringGradients | FromToGradients);
@@ -45,9 +50,9 @@ const progressBaseProps = () => ({
   showInfo: booleanType(),
   strokeWidth: Number,
   strokeLinecap: stringType<'butt' | 'square' | 'round'>(),
-  /** 5.20+ 替代 strokeLinecap，true 等价 'round' */
-  rounding: { type: Boolean, default: undefined },
-  /** 5.20+ 百分比文字位置：inner/outer 或 { align, type } */
+  /** Steps 数值四舍五入函数 `(step: number) => number`，同时兼容 boolean（true 等价 strokeLinecap="round"） */
+  rounding: someType<boolean | ((step: number) => number)>([Boolean, Function]),
+  /** 百分比文字位置：inner/outer 或 { align, type } */
   percentPosition: someType<'inner' | 'outer' | PercentPositionType>([String, Object]),
   strokeColor: anyType<string | string[] | ProgressGradient>(),
   /** @deprecated Please use `railColor` instead */
@@ -60,8 +65,8 @@ const progressBaseProps = () => ({
   /** @deprecated Please use `gapPlacement` instead */
   gapPosition: stringType<GapPosition>(),
   gapPlacement: stringType<GapPlacement>(),
-  size: someType<ProgressSize | number | [number, number]>([String, Number, Array]),
-  steps: Number,
+  size: someType<ProgressSize>([String, Number, Array, Object]),
+  steps: someType<ProgressSteps>([Number, Object]),
   /** @deprecated Use `success` instead */
   successPercent: Number,
   title: String,

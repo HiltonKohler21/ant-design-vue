@@ -21,36 +21,37 @@ Properties that shared by all types.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| classNames | Semantic DOM class names (object or function) | `ProgressClassNamesType` | - | 4.3.0 |
-| format | The template function of the content | function(percent, successPercent) | (percent) => percent + `%` |  |
-| percent | To set the completion percentage | number | 0 |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function. | `Record<SemanticDOM, string> \| ((info: { props }) => Record<SemanticDOM, string>)` | - | 4.3.0 |
+| format | The template function of the content | function(percent, successPercent) | (percent) => percent + `%` | - |
+| percent | To set the completion percentage | number | 0 | - |
 | railColor | The color of unfilled part (takes precedence over `trailColor`) | string | - | 4.3.0 |
 | rootClassName | Root class name | string | - | 4.3.0 |
-| rounding | Whether the progress bar caps are rounded (`true` is equivalent to `strokeLinecap="round"`) | boolean | - | 4.3.0 |
-| showInfo | Whether to display the progress value and the status icon | boolean | true |  |
-| size | Progress size | number \| \[number, number] \| "small" \| "default" | "default" |  |
-| status | To set the status of the Progress, options: `success` `exception` `normal` `active`(line only) | string | - |  |
-| strokeColor | The color of progress bar | string | - |  |
+| showInfo | Whether to display the progress value and the status icon | boolean | true | - |
+| size | Progress size | `number \| [number \| string, number] \| { width?: number; height?: number } \| "small" \| "default" \| "medium"` | `"default"` | Object / `medium`: 4.3.0 |
+| status | To set the status of the Progress, options: `success` `exception` `normal` `active`(line only) | string | - | - |
+| strokeColor | The color of progress bar | string | - | - |
 | strokeLinecap | To set the style of the progress linecap | `round` \| `butt` \| `square`, see [stroke-linecap](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linecap) | `round` | - |
-| styles | Semantic DOM styles (object or function) | `ProgressStylesType` | - | 4.3.0 |
-| success | Configs of successfully progress bar | { percent: number, strokeColor: string } | - |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function. | `Record<SemanticDOM, CSSProperties> \| ((info: { props }) => Record<SemanticDOM, CSSProperties>)` | - | 4.3.0 |
+| success | Configs of successfully progress bar | `{ percent: number; strokeColor?: string }` | - | - |
 | title | html dom title | string | - | 3.0 |
-| trailColor | The color of unfilled part (deprecated, please use `railColor`) | string | - |  |
-| type | To set the type, options: `line` `circle` `dashboard` | string | `line` |  |
+| ~~trailColor~~ | The color of unfilled part. Deprecated, please use `railColor` instead | string | - | - |
+| type | To set the type, options: `line` `circle` `dashboard` | string | `line` | - |
 
 ### `type="line"`
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| percentPosition | The position of progress info | `{ align?: 'start' \| 'center' \| 'end'; type?: 'inner' \| 'outer' }` \| `'inner'` \| `'outer'` | `{ align: 'end', type: 'outer' }` | 4.3.0 |
+| percentPosition | Progress value position, passed in object, `align` indicates the horizontal position of the value, `type` indicates whether the value is inside or outside the progress bar | `{ align?: 'start' \| 'center' \| 'end'; type?: 'inner' \| 'outer' }` \| `'inner'` \| `'outer'` | `{ align: 'end', type: 'outer' }` | 4.3.0 |
+| rounding | The function to round the step value | `(step: number) => number` | `Math.round` | 4.3.0 |
 | steps | The total step count | number | - | - |
-| strokeColor | The color of progress bar, render `linear-gradient` when passing an object, could accept `string[]` when has `steps`. | string \| string[] \| { from: string; to: string; direction: string } | - | - |
+| strokeColor | The color of progress bar, render `linear-gradient` when passing an object, could accept `string[]` when has `steps`. | `string \| string[] \| { from: string; to: string; direction?: string }` | - | - |
 
 ### `type="circle"`
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| strokeColor | The color of circular progress, render `linear-gradient` when passing an object | string \| object | - | - |
+| steps | The total step count. When passing an object, `count` refers to the number of steps, and `gap` refers to the distance between them. When passing a number, the default value for `gap` is 2. | `number \| { count: number; gap: number }` | - | 4.3.0 |
+| strokeColor | The color of circular progress, render gradient when passing an object | `string \| { [percentage: string]: string }` | - | - |
 | strokeWidth | To set the width of the circular progress, unit: percentage of the canvas width | number | 6 | - |
 
 ### `type="dashboard"`
@@ -59,7 +60,8 @@ Properties that shared by all types.
 | --- | --- | --- | --- | --- |
 | gapDegree | The gap degree of half circle, 0 ~ 295 | number | 75 | - |
 | gapPlacement | The gap placement, supports RTL-aware `start` / `end` | `top` \| `bottom` \| `left` \| `right` \| `start` \| `end` | `bottom` | 4.3.0 |
-| gapPosition | The gap position (deprecated, please use `gapPlacement`) | `top` \| `bottom` \| `left` \| `right` | `bottom` | - |
+| ~~gapPosition~~ | The gap position. Deprecated, please use `gapPlacement` instead | `top` \| `bottom` \| `left` \| `right` | `bottom` | - |
+| steps | The total step count. When passing an object, `count` refers to the number of steps, and `gap` refers to the distance between them. When passing a number, the default value for `gap` is 2. | `number \| { count: number; gap: number }` | - | 4.3.0 |
 | strokeWidth | To set the width of the dashboard progress, unit: percentage of the canvas width | number | 6 | - |
 
 ### Semantic DOM

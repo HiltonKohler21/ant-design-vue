@@ -3,6 +3,8 @@ import { withInstall } from '../_util/type';
 
 export type {
   ProgressProps,
+  ProgressSize,
+  ProgressSteps,
   GapPlacement,
   GapPosition,
   ProgressSemanticName,

@@ -14,19 +14,18 @@ title:
 
 Responsive circular progress bar. When `width` is smaller than 20, progress information will be displayed in Tooltip.
 
-
 </docs>
 
 <template>
-  <div>
+  <a-flex align="center" gap="small">
     <a-progress
       type="circle"
-      trail-color="#e6f4ff"
+      rail-color="#e6f4ff"
       :percent="60"
       :stroke-width="20"
-      :size="12"
-      :format="number => `进行中，已完成${number}%`"
+      :size="14"
+      :format="number => `In progress, ${number}% complete`"
     />
-    <span :style="{ marginLeft: 8 }">代码发布</span>
-  </div>
+    <span>Code release</span>
+  </a-flex>
 </template>

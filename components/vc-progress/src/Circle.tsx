@@ -15,6 +15,27 @@ function toArray(value: any) {
   return Array.isArray(value) ? value : [value];
 }
 
+function getBaseRotateDeg(gapDegree: number, gapPosition?: GapPositionType) {
+  if (!gapDegree) {
+    return -90;
+  }
+  const halfGap = gapDegree / 2;
+  switch (gapPosition) {
+    case 'bottom':
+      return 90 + halfGap;
+    case 'left':
+      return 180 + halfGap;
+    case 'right':
+      return halfGap;
+    case 'top':
+    default:
+      return -90 + halfGap;
+  }
+}
+
+const TRANSITION =
+  'stroke-dashoffset .3s ease 0s, stroke-dasharray .3s ease 0s, stroke .3s, stroke-width .06s ease .3s, opacity .3s ease 0s';
+
 function getPathStyles(
   offset: number,
   percent: number,
@@ -79,6 +100,22 @@ export default defineComponent({
     const [setRef, paths] = useRefs();
     useTransitionDuration(paths);
 
+    const stepConfig = computed(() => {
+      const { steps } = props;
+      if (!steps) {
+        return null;
+      }
+      const config = typeof steps === 'object' ? steps : { count: steps, gap: 2 };
+      const count = Number(config.count);
+      if (!Number.isFinite(count) || count <= 0) {
+        return null;
+      }
+      return {
+        count: Math.floor(count),
+        gap: config.gap ?? 2,
+      };
+    });
+
     const getStokeList = () => {
       const { prefixCls, strokeWidth, strokeLinecap, gapDegree, gapPosition } = props;
 
@@ -116,6 +153,62 @@ export default defineComponent({
       });
     };
 
+    const getStepStokeList = (stepCount: number, stepGap: number) => {
+      const { prefixCls, strokeWidth, trailWidth, trailColor, gapDegree, gapPosition } = props;
+      const radius = 50 - strokeWidth / 2;
+      const perimeter = Math.PI * 2 * radius;
+      const realGapDegree = gapDegree && gapDegree > 0 ? gapDegree : 0;
+      const perimeterWithoutGap = perimeter * ((360 - realGapDegree) / 360);
+      const rotateDeg = getBaseRotateDeg(realGapDegree, gapPosition);
+      const rawPercent = Array.isArray(props.percent) ? props.percent[0] ?? 0 : props.percent ?? 0;
+      const current = Math.round(stepCount * (rawPercent / 100));
+      const stepPtg = 100 / stepCount;
+      const strokeDashoffset = Math.min(
+        perimeterWithoutGap * ((100 - stepPtg) / 100) + stepGap,
+        perimeterWithoutGap,
+      );
+
+      return new Array(stepCount).fill(null).map((_, index) => {
+        const isActive = index <= current - 1;
+        const activeColor =
+          strokeColorList.value[index] || strokeColorList.value[strokeColorList.value.length - 1];
+        const color = isActive ? activeColor : trailColor;
+        const isGradientColor =
+          color && Object.prototype.toString.call(color) === '[object Object]';
+        const stroke = isGradientColor
+          ? `url(#${prefixCls}-gradient-${gradientId.value})`
+          : undefined;
+        const angle = rotateDeg + (index * (360 - realGapDegree)) / stepCount;
+        const circleStyle: Record<string, string | number> = {
+          strokeDasharray: `${perimeterWithoutGap}px ${perimeter}`,
+          strokeDashoffset,
+          transform: `rotate(${angle}deg)`,
+          transformOrigin: '50px 50px',
+          transition: TRANSITION,
+          fillOpacity: 0,
+        };
+        if (typeof color === 'string' && color) {
+          circleStyle.stroke = color;
+        }
+        return (
+          <circle
+            key={index}
+            ref={setRef(index)}
+            class={isActive ? `${prefixCls}-circle-path` : `${prefixCls}-circle-trail`}
+            cx={50}
+            cy={50}
+            r={radius}
+            stroke={stroke}
+            stroke-linecap="butt"
+            stroke-width={isActive ? strokeWidth : trailWidth || strokeWidth}
+            opacity={1}
+            fill-opacity="0"
+            style={circleStyle}
+          />
+        );
+      });
+    };
+
     return () => {
       const {
         prefixCls,
@@ -126,6 +219,7 @@ export default defineComponent({
         trailColor,
         strokeLinecap,
         strokeColor,
+        steps,
         ...restProps
       } = props;
       const { pathString, pathStyle } = getPathStyles(
@@ -168,8 +262,14 @@ export default defineComponent({
               </linearGradient>
             </defs>
           )}
-          <path {...pathFirst} />
-          {getStokeList().reverse()}
+          {stepConfig.value ? (
+            getStepStokeList(stepConfig.value.count, stepConfig.value.gap)
+          ) : (
+            <>
+              <path {...pathFirst} />
+              {getStokeList().reverse()}
+            </>
+          )}
         </svg>
       );
     };

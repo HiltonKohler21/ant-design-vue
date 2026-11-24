@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 13
 title:
   zh-CN: 尺寸
   en-US: Progress size
@@ -17,33 +17,27 @@ The size of progress.
 </docs>
 
 <template>
-  <div>
-    <a-space direction="vertical" style="width: 100%">
+  <a-flex vertical gap="middle">
+    <a-flex vertical gap="small" style="width: 300px">
       <a-progress :percent="50" />
       <a-progress :percent="50" size="small" />
       <a-progress :percent="50" :size="[300, 20]" />
-    </a-space>
-    <br />
-    <br />
-    <a-space :size="30" wrap>
+    </a-flex>
+    <a-flex align="center" wrap="wrap" :gap="30">
       <a-progress type="circle" :percent="50" />
       <a-progress type="circle" :percent="50" size="small" />
       <a-progress type="circle" :percent="50" :size="20" />
-    </a-space>
-    <br />
-    <br />
-    <a-space :size="30" wrap>
+    </a-flex>
+    <a-flex align="center" wrap="wrap" :gap="30">
       <a-progress type="dashboard" :percent="50" />
       <a-progress type="dashboard" :percent="50" size="small" />
       <a-progress type="dashboard" :percent="50" :size="20" />
-    </a-space>
-    <br />
-    <br />
-    <a-space :size="30" wrap>
+    </a-flex>
+    <a-flex align="center" wrap="wrap" :gap="30">
       <a-progress :steps="3" :percent="50" />
       <a-progress :steps="3" :percent="50" size="small" />
       <a-progress :steps="3" :percent="50" :size="20" />
       <a-progress :steps="3" :percent="50" :size="[20, 30]" />
-    </a-space>
-  </div>
+    </a-flex>
+  </a-flex>
 </template>

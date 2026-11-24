@@ -8,46 +8,41 @@ title:
 
 ## zh-CN
 
-`linear-gradient` 的封装。推荐只传两种颜色。
+渐变色封装，`circle` 与 `dashboard` 设置渐变时 `strokeLinecap` 会被忽略。
 
 ## en-US
 
-A package of `linear-gradient`. It is recommended to only pass two colors.
+Gradient encapsulation, `circle` and `dashboard` will ignore `strokeLinecap` when setting gradient.
 
 </docs>
 
 <template>
-  <div>
-    <a-progress
-      :stroke-color="{
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      }"
-      :percent="99.9"
-    />
-    <a-progress
-      :stroke-color="{
-        from: '#108ee9',
-        to: '#87d068',
-      }"
-      :percent="99.9"
-      status="active"
-    />
-    <a-progress
-      type="circle"
-      :stroke-color="{
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      }"
-      :percent="90"
-    />
-    <a-progress
-      type="circle"
-      :stroke-color="{
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      }"
-      :percent="100"
-    />
-  </div>
+  <a-flex vertical gap="middle">
+    <a-progress :percent="99.9" :stroke-color="twoColors" />
+    <a-progress :percent="50" status="active" :stroke-color="{ from: '#108ee9', to: '#87d068' }" />
+    <a-flex gap="small" wrap="wrap">
+      <a-progress type="circle" :percent="90" :stroke-color="twoColors" />
+      <a-progress type="circle" :percent="100" :stroke-color="twoColors" />
+      <a-progress type="circle" :percent="93" :stroke-color="conicColors" />
+    </a-flex>
+    <a-flex gap="small" wrap="wrap">
+      <a-progress type="dashboard" :percent="90" :stroke-color="twoColors" />
+      <a-progress type="dashboard" :percent="100" :stroke-color="twoColors" />
+      <a-progress type="dashboard" :percent="93" :stroke-color="conicColors" />
+    </a-flex>
+  </a-flex>
 </template>
+<script lang="ts" setup>
+import type { ProgressProps } from 'ant-design-vue';
+
+const twoColors: ProgressProps['strokeColor'] = {
+  '0%': '#108ee9',
+  '100%': '#87d068',
+};
+
+const conicColors: ProgressProps['strokeColor'] = {
+  '0%': '#87d068',
+  '50%': '#ffe58f',
+  '100%': '#ffccc7',
+};
+</script>

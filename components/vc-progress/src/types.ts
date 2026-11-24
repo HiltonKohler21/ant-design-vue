@@ -6,6 +6,8 @@ export type GapPositionType = 'top' | 'right' | 'bottom' | 'left';
 
 export type StrokeLinecapType = 'round' | 'butt' | 'square';
 
+export type StepsType = number | { count: number; gap: number };
+
 export const propTypes = {
   gapDegree: Number,
   gapPosition: {
@@ -15,6 +17,9 @@ export const propTypes = {
     type: [Array, Number] as PropType<number | number[]>,
   },
   prefixCls: String,
+  steps: {
+    type: [Number, Object] as PropType<StepsType>,
+  },
   strokeColor: {
     type: [Object, String, Array] as PropType<StrokeColorType>,
   },

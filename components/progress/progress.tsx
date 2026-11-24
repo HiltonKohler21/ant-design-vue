@@ -132,16 +132,20 @@ export default defineComponent({
       const isPureLineType = type === 'line' && !steps;
       const pos = normalizedPercentPosition.value;
       const isPercentInner = pos?.type === 'inner';
+      const circleWidth = type === 'circle' ? getSize(size, 'circle').width : 120;
+      const sizeClassKey = typeof size === 'string' || typeof size === 'number' ? size : '';
       return {
         [pre]: true,
-        [`${pre}-inline-circle`]: type === 'circle' && getSize(size, 'circle').width <= 20,
+        [`${pre}-inline-circle`]:
+          type === 'circle' && typeof circleWidth === 'number' && circleWidth <= 20,
         [`${pre}-${(type === 'dashboard' && 'circle') || type}`]: true,
+        [`${pre}-steps`]: !!steps,
         [`${pre}-status-${progressStatus.value}`]: true,
         [`${pre}-show-info`]: showInfo,
         [`${pre}-show-info-inner`]: isPercentInner,
         [`${pre}-line-align-${pos?.align}`]: isPureLineType && !!pos,
         [`${pre}-line-position-${pos?.type}`]: isPureLineType && !!pos,
-        [`${pre}-${size}`]: size,
+        [`${pre}-${sizeClassKey}`]: !!sizeClassKey,
         [`${pre}-rtl`]: direction.value === 'rtl',
         [props.rootClassName as string]: !!props.rootClassName,
         [hashId.value]: true,
@@ -208,7 +212,8 @@ export default defineComponent({
       let progress: VueNode;
       // Render progress shape
       if (type === 'line') {
-        progress = steps ? (
+        const lineStepsCount = typeof steps === 'object' && steps ? steps.count : steps;
+        progress = lineStepsCount ? (
           <Steps
             {...props}
             railColor={mergedRailColor.value}
@@ -216,7 +221,7 @@ export default defineComponent({
             styles={mergedStyles.value}
             strokeColor={strokeColorNotGradient.value}
             prefixCls={prefixCls.value}
-            steps={steps}
+            steps={lineStepsCount}
           >
             {progressInfo}
           </Steps>
@@ -239,6 +244,7 @@ export default defineComponent({
         progress = (
           <Circle
             {...props}
+            steps={steps}
             railColor={mergedRailColor.value}
             classNames={mergedClassNames.value}
             styles={mergedStyles.value}

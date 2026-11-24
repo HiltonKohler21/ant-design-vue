@@ -17,30 +17,34 @@ A dynamic progress bar is better.
 </docs>
 
 <template>
-  <div>
-    <a-progress :percent="defaultPercent" />
-    <a-button-group>
+  <a-flex vertical gap="small">
+    <a-flex vertical gap="small">
+      <a-progress :percent="percent" type="line" />
+      <a-progress :percent="percent" type="circle" />
+    </a-flex>
+    <a-space-compact>
       <a-button @click="decline">
         <template #icon><minus-outlined /></template>
       </a-button>
       <a-button @click="increase">
         <template #icon><plus-outlined /></template>
       </a-button>
-    </a-button-group>
-  </div>
+    </a-space-compact>
+  </a-flex>
 </template>
 <script lang="ts" setup>
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
-const defaultPercent = ref<number>(0);
+
+const percent = ref<number>(0);
 
 const increase = () => {
-  const percent = defaultPercent.value + 10;
-  defaultPercent.value = percent > 100 ? 100 : percent;
+  const newPercent = percent.value + 10;
+  percent.value = newPercent > 100 ? 100 : newPercent;
 };
 
 const decline = () => {
-  const percent = defaultPercent.value - 10;
-  defaultPercent.value = percent < 0 ? 0 : percent;
+  const newPercent = percent.value - 10;
+  percent.value = newPercent < 0 ? 0 : newPercent;
 };
 </script>

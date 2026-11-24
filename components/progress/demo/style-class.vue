@@ -14,10 +14,11 @@ title:
 ## en-US
 
 You can customize the [semantic dom](#semantic-dom) style of Progress by passing objects or functions through `classNames` and `styles`.
+
 </docs>
 
 <template>
-  <a-flex vertical gap="large" class="progress-style-class-demo">
+  <a-flex vertical gap="large">
     <a-progress :class-names="classNames" :styles="stylesFn" :percent="10" />
     <a-progress :class-names="classNames" :styles="stylesFn" :percent="20" />
     <a-progress :class-names="classNames" :styles="stylesFn" :percent="40" />

@@ -43,6 +43,11 @@ export function getStrokeColor({
   return [successColor || presetPrimaryColors.green, strokeColor || null!];
 }
 
+const isPlainSizeObject = (
+  size: ProgressProps['size'],
+): size is { width?: number; height?: number } =>
+  typeof size === 'object' && size !== null && !Array.isArray(size);
+
 export const getSize = (
   size: ProgressProps['size'],
   type: ProgressProps['type'] | 'step',
@@ -50,8 +55,8 @@ export const getSize = (
     steps?: number;
     strokeWidth?: number;
   },
-): { width: number; height: number } => {
-  let width = -1;
+): { width: number | string; height: number } => {
+  let width: number | string = -1;
   let height = -1;
   if (type === 'step') {
     const steps = extra!.steps!;
@@ -62,9 +67,11 @@ export const getSize = (
     } else if (typeof size === 'number') {
       [width, height] = [size, size];
     } else {
-      [width = 14, height = 8] = size;
+      const [w = 14, h = 8] = Array.isArray(size) ? size : [size.width, size.height];
+      width = typeof w === 'number' ? w : 14;
+      height = h;
     }
-    width *= steps;
+    width = (width as number) * steps;
   } else if (type === 'line') {
     const strokeWidth = extra?.strokeWidth;
     if (typeof size === 'string' || typeof size === 'undefined') {
@@ -72,14 +79,16 @@ export const getSize = (
     } else if (typeof size === 'number') {
       [width, height] = [size, size];
     } else {
-      [width = -1, height = 8] = size;
+      const [w = -1, h = 8] = Array.isArray(size) ? size : [size.width, size.height];
+      width = w;
+      height = h;
     }
   } else if (type === 'circle' || type === 'dashboard') {
     if (typeof size === 'string' || typeof size === 'undefined') {
       [width, height] = size === 'small' ? [60, 60] : [120, 120];
     } else if (typeof size === 'number') {
       [width, height] = [size, size];
-    } else {
+    } else if (Array.isArray(size)) {
       if (process.env.NODE_ENV !== 'production') {
         devWarning(
           false,
@@ -88,8 +97,21 @@ export const getSize = (
         );
       }
 
-      width = size[0] ?? size[1] ?? 120;
-      height = size[0] ?? size[1] ?? 120;
+      const fallback = typeof size[0] === 'number' ? size[0] : size[1] ?? 120;
+      width = fallback;
+      height = fallback;
+    } else if (isPlainSizeObject(size)) {
+      if (process.env.NODE_ENV !== 'production') {
+        devWarning(
+          false,
+          'Progress',
+          'Type "circle" and "dashboard" do not accept object as `size`, please use number or preset size instead.',
+        );
+      }
+
+      const fallback = size.width ?? size.height ?? 120;
+      width = fallback;
+      height = fallback;
     }
   }
   return { width, height };
