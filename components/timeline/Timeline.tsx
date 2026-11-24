@@ -156,19 +156,52 @@ export default defineComponent({
       styles: mergedStyles,
     });
 
-    const getPositionCls = (ele, idx: number, normalizedMode: string) => {
+    const getItemPlacement = (
+      ele: any,
+      idx: number,
+      currentMode: TimelineMode,
+    ): 'start' | 'end' => {
       const eleProps = ele.props || {};
       const itemPos = normalizePosition(eleProps.placement ?? eleProps.position);
-      if (normalizedMode === 'alternate') {
-        if (itemPos === 'right') return `${prefixCls.value}-item-right`;
-        if (itemPos === 'left') return `${prefixCls.value}-item-left`;
-        return idx % 2 === 0 ? `${prefixCls.value}-item-left` : `${prefixCls.value}-item-right`;
+      if (itemPos === 'right') return 'end';
+      if (itemPos === 'left') return 'start';
+      if (currentMode === 'alternate') {
+        return idx % 2 === 0 ? 'start' : 'end';
       }
-      if (normalizedMode === 'left') return `${prefixCls.value}-item-left`;
-      if (normalizedMode === 'right') return `${prefixCls.value}-item-right`;
-      if (itemPos === 'right') return `${prefixCls.value}-item-right`;
-      return '';
+      return currentMode === 'end' ? 'end' : 'start';
     };
+
+    const getPositionCls = (
+      ele: any,
+      idx: number,
+      normalizedMode: string,
+      itemPlacement: 'start' | 'end',
+    ) => {
+      const eleProps = ele.props || {};
+      const itemPos = normalizePosition(eleProps.placement ?? eleProps.position);
+      const placementCls = `${prefixCls.value}-item-placement-${itemPlacement}`;
+      let legacyCls = '';
+      if (normalizedMode === 'alternate') {
+        if (itemPos === 'right') legacyCls = `${prefixCls.value}-item-right`;
+        else if (itemPos === 'left') legacyCls = `${prefixCls.value}-item-left`;
+        else
+          legacyCls =
+            idx % 2 === 0 ? `${prefixCls.value}-item-left` : `${prefixCls.value}-item-right`;
+      } else if (normalizedMode === 'left') {
+        legacyCls = `${prefixCls.value}-item-left`;
+      } else if (normalizedMode === 'right') {
+        legacyCls = `${prefixCls.value}-item-right`;
+      } else if (itemPos === 'right') {
+        legacyCls = `${prefixCls.value}-item-right`;
+      }
+      return classNames(placementCls, legacyCls);
+    };
+
+    const isPendingItem = (ele: any) =>
+      ele?.props?.pending === '' ||
+      Boolean(ele?.props?.pending) ||
+      ele?.props?.loading === '' ||
+      Boolean(ele?.props?.loading);
 
     return () => {
       const {
@@ -223,19 +256,33 @@ export default defineComponent({
 
       const itemsCount = timeLineItems.length;
       const lastCls = `${prefixCls.value}-item-last`;
+      const railDottedCls = `${prefixCls.value}-item-rail-dotted`;
       const items = timeLineItems.map((ele, idx) => {
-        const pendingClass = idx === itemsCount - 2 ? lastCls : '';
-        const readyClass = idx === itemsCount - 1 ? lastCls : '';
+        const isLast = idx === itemsCount - 1;
+        const isRailDotted =
+          !isLast &&
+          (reverse ? isPendingItem(timeLineItems[idx]) : isPendingItem(timeLineItems[idx + 1]));
+        const itemPlacement = getItemPlacement(ele, idx, mergedMode.value);
         return cloneVNode(ele, {
           class: classNames([
-            !reverse && !!pending ? pendingClass : readyClass,
-            getPositionCls(ele, idx, normalizedMode),
+            isLast ? lastCls : '',
+            isRailDotted ? railDottedCls : '',
+            getPositionCls(ele, idx, normalizedMode, itemPlacement),
           ]),
         });
       });
       const hasLabelItem = timeLineItems.some(
-        item => !!(item.props?.label || item.props?.title || item.children?.label),
+        item =>
+          (item.props?.label !== undefined &&
+            item.props?.label !== null &&
+            item.props?.label !== '') ||
+          (item.props?.title !== undefined &&
+            item.props?.title !== null &&
+            item.props?.title !== '') ||
+          Boolean((item.children as any)?.label),
       );
+      const layoutAlternate =
+        mergedMode.value === 'alternate' || (orientation !== 'horizontal' && hasLabelItem);
       const { class: attrClass, style: attrStyle, ...restAttrs } = attrs;
       const classString = classNames(
         prefixCls.value,
@@ -244,8 +291,11 @@ export default defineComponent({
           [`${prefixCls.value}-reverse`]: !!reverse,
           [`${prefixCls.value}-${normalizedMode}`]: !!normalizedMode && !hasLabelItem,
           [`${prefixCls.value}-label`]: hasLabelItem,
+          [`${prefixCls.value}-layout-alternate`]: layoutAlternate,
           [`${prefixCls.value}-horizontal`]: orientation === 'horizontal',
+          [`${prefixCls.value}-vertical`]: orientation !== 'horizontal',
           [`${prefixCls.value}-filled`]: mergedVariant.value === 'filled',
+          [`${prefixCls.value}-outlined`]: mergedVariant.value === 'outlined',
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
         contextClassName.value,
@@ -278,9 +328,9 @@ export default defineComponent({
         styleParts.length === 0 ? undefined : styleParts.length === 1 ? styleParts[0] : styleParts;
 
       return wrapSSR(
-        <ul {...restAttrs} class={classString} style={combinedStyle as any}>
+        <ol {...restAttrs} class={classString} style={combinedStyle as any}>
           {items}
-        </ul>,
+        </ol>,
       );
     };
   },

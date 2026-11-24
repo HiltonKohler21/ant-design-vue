@@ -2,6 +2,8 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import TimeLine from '..';
 import Radio from '../../radio';
+import Flex from '../../flex';
+import Divider from '../../divider';
 import ConfigProvider from '../../config-provider';
 import mountTest from '../../../tests/shared/mountTest';
 import VariantDemo from '../demo/variant.vue';
@@ -191,10 +193,113 @@ describe('Timeline', () => {
     variantWrapper.unmount();
 
     const horizontalWrapper = mount(HorizontalDemo, {
-      global: { plugins: [TimeLine] },
+      global: { plugins: [TimeLine, Flex, Divider] },
     });
-    expect(horizontalWrapper.find('.ant-timeline-horizontal').exists()).toBe(true);
-    expect(horizontalWrapper.findAll('.ant-timeline-item')).toHaveLength(4);
+    const horizontalTimelines = horizontalWrapper.findAll('.ant-timeline-horizontal');
+    expect(horizontalTimelines).toHaveLength(3);
+    expect(horizontalTimelines[0].classes()).not.toContain('ant-timeline-layout-alternate');
+    expect(horizontalTimelines[1].classes()).not.toContain('ant-timeline-layout-alternate');
+    expect(horizontalTimelines[1].findAll('.ant-timeline-item-placement-end')).toHaveLength(4);
+    expect(horizontalTimelines[2].classes()).toContain('ant-timeline-layout-alternate');
+    expect(horizontalWrapper.findAll('.ant-timeline-item')).toHaveLength(12);
     horizontalWrapper.unmount();
+  });
+
+  it('keeps horizontal same-side layout non-alternate even when items have titles', () => {
+    const wrapper = mount(TimeLine, {
+      props: {
+        orientation: 'horizontal',
+        items: [
+          { title: '2015-09-01', content: 'Create a services site' },
+          { title: '2015-09-01 09:12:11', content: 'Solve initial network problems' },
+          { content: 'Technical testing' },
+        ],
+      },
+    });
+    const root = wrapper.find('.ant-timeline');
+    expect(root.classes()).toContain('ant-timeline-horizontal');
+    expect(root.classes()).not.toContain('ant-timeline-layout-alternate');
+    const items = wrapper.findAll('.ant-timeline-item');
+    expect(items).toHaveLength(3);
+    // Icon precedes section, rail is sibling of wrapper
+    items.forEach(item => {
+      const wrapperChildren = item.find('.ant-timeline-item-wrapper').element.children;
+      expect(wrapperChildren[0].classList.contains('ant-timeline-item-icon')).toBe(true);
+      expect(wrapperChildren[1].classList.contains('ant-timeline-item-section')).toBe(true);
+      expect(item.element.children[1].classList.contains('ant-timeline-item-rail')).toBe(true);
+    });
+    wrapper.unmount();
+  });
+
+  it('applies placement-end and layout-alternate cleanly for vertical right/end/label/alternate modes', () => {
+    const rightWrapper = mount(TimeLine, {
+      props: {
+        mode: 'right',
+        items: [{ content: 'A' }, { content: 'B' }, { content: 'C' }],
+      },
+    });
+    expect(rightWrapper.find('.ant-timeline').classes()).not.toContain(
+      'ant-timeline-layout-alternate',
+    );
+    expect(rightWrapper.findAll('.ant-timeline-item-placement-end')).toHaveLength(3);
+    expect(rightWrapper.findAll('.ant-timeline-item-rail')).toHaveLength(3);
+    rightWrapper.unmount();
+
+    const labelWrapper = mount(TimeLine, {
+      props: {
+        mode: 'start',
+        items: [{ title: 'T1', content: 'C1' }, { content: 'C2' }],
+      },
+    });
+    expect(labelWrapper.find('.ant-timeline').classes()).toContain('ant-timeline-layout-alternate');
+    // Both items render .ant-timeline-item-header so flexbox columns stay aligned even without title
+    expect(labelWrapper.findAll('.ant-timeline-item-header')).toHaveLength(2);
+    expect(labelWrapper.findAll('.ant-timeline-item-title')).toHaveLength(1);
+    labelWrapper.unmount();
+  });
+
+  it('marks dotted rail on item connecting to pending/loading node in normal and reverse order', () => {
+    const normalWrapper = mount(TimeLine, {
+      props: {
+        items: [
+          { content: 'Step 1' },
+          { content: 'Step 2' },
+          { loading: true, content: 'Recording...' },
+        ],
+      },
+    });
+    const normalItems = normalWrapper.findAll('.ant-timeline-item');
+    expect(normalItems[0].classes()).not.toContain('ant-timeline-item-rail-dotted');
+    expect(normalItems[1].classes()).toContain('ant-timeline-item-rail-dotted');
+    expect(normalItems[2].classes()).toContain('ant-timeline-item-last');
+    normalWrapper.unmount();
+
+    const reverseWrapper = mount(TimeLine, {
+      props: {
+        reverse: true,
+        items: [
+          { content: 'Step 1' },
+          { content: 'Step 2' },
+          { loading: true, content: 'Recording...' },
+        ],
+      },
+    });
+    const revItems = reverseWrapper.findAll('.ant-timeline-item');
+    expect(revItems[0].classes()).toContain('ant-timeline-item-rail-dotted');
+    expect(revItems[1].classes()).not.toContain('ant-timeline-item-rail-dotted');
+    expect(revItems[2].classes()).toContain('ant-timeline-item-last');
+    reverseWrapper.unmount();
+  });
+
+  it('treats non-preset color names containing preset substrings as custom colors', () => {
+    const wrapper = mount(TimeLine, {
+      props: {
+        items: [{ color: 'lightblue', content: 'Custom' }],
+      },
+    });
+    const head = wrapper.find('.ant-timeline-item-head');
+    expect(head.classes()).not.toContain('ant-timeline-item-head-lightblue');
+    expect(head.attributes('style')).toContain('border-color: lightblue');
+    wrapper.unmount();
   });
 });

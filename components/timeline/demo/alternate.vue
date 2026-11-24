@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 交替展现
   en-US: Alternate

@@ -1,6 +1,7 @@
 import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { computed, defineComponent } from 'vue';
 import classNames from '../_util/classNames';
+import { filterEmpty } from '../_util/props-util';
 import PropTypes from '../_util/vue-types';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
 
@@ -62,7 +63,7 @@ export default defineComponent({
     }));
 
     const customColor = computed(() =>
-      /blue|red|green|gray/.test(props.color || '') ? undefined : props.color || 'blue',
+      /^(blue|red|green|gray)$/.test(props.color || 'blue') ? undefined : props.color || 'blue',
     );
     const dotClassName = computed(() => ({
       [`${prefixCls.value}-item-head`]: true,
@@ -70,8 +71,18 @@ export default defineComponent({
     }));
     return () => {
       const pre = prefixCls.value;
-      const label = props.title ?? props.label ?? slots.label?.();
-      const dot = props.icon ?? props.dot ?? slots.dot?.();
+      const rawLabel = props.title ?? props.label ?? slots.label?.();
+      const label = Array.isArray(rawLabel) ? filterEmpty(rawLabel) : rawLabel;
+      const hasLabel = Array.isArray(label)
+        ? label.length > 0
+        : label !== undefined && label !== null && label !== false && label !== '';
+
+      const rawDot = props.icon ?? props.dot ?? slots.dot?.();
+      const dot = Array.isArray(rawDot) ? filterEmpty(rawDot) : rawDot;
+      const hasDot = Array.isArray(dot)
+        ? dot.length > 0
+        : dot !== undefined && dot !== null && dot !== false && dot !== '';
+
       const content = props.content ?? slots.default?.();
 
       const tCls = timelineClassNames.value;
@@ -114,7 +125,7 @@ export default defineComponent({
       const mergedIconClass = classNames(
         dotClassName.value,
         `${pre}-item-icon`,
-        !!dot && `${pre}-item-head-custom`,
+        hasDot && `${pre}-item-head-custom`,
         tCls.itemIcon,
         iCls?.icon,
       );
@@ -132,23 +143,23 @@ export default defineComponent({
       return (
         <li {...restAttrs} class={mergedRootClass} style={mergedRootStyle}>
           <div class={mergedWrapperClass} style={mergedWrapperStyle}>
-            {label && (
-              <div class={mergedHeaderClass} style={mergedHeaderStyle}>
-                <div class={mergedTitleClass} style={mergedTitleStyle}>
-                  {label}
-                </div>
-              </div>
-            )}
-            <div class={mergedRailClass} style={mergedRailStyle} />
             <div class={mergedIconClass} style={mergedIconStyle}>
-              {dot}
+              {hasDot ? dot : null}
             </div>
             <div class={mergedSectionClass} style={mergedSectionStyle}>
+              <div class={mergedHeaderClass} style={mergedHeaderStyle}>
+                {hasLabel && (
+                  <div class={mergedTitleClass} style={mergedTitleStyle}>
+                    {label}
+                  </div>
+                )}
+              </div>
               <div class={mergedContentClass} style={mergedContentStyle}>
                 {content}
               </div>
             </div>
           </div>
+          <div class={mergedRailClass} style={mergedRailStyle} />
         </li>
       );
     };

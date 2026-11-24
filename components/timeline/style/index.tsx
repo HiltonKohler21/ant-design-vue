@@ -45,50 +45,59 @@ interface TimelineToken extends FullToken<'Timeline'>, ComponentToken {
 
 const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
   const { componentCls } = token;
+  const itemCls = `${componentCls}-item`;
+  const fontHeight = token.calc(token.fontSize).mul(token.lineHeight).equal();
+  const tailOffset = token.calc(token.dotSize).sub(token.tailWidth).div(2).equal();
 
   return {
     [componentCls]: {
       ...resetComponent(token),
+      '--ant-timeline-font-height': unit(fontHeight),
+      '--ant-timeline-heading-height': `max(${unit(
+        token.dotSize,
+      )}, var(--ant-timeline-font-height))`,
+      '--ant-timeline-dot-offset': `calc((var(--ant-timeline-heading-height) - ${unit(
+        token.dotSize,
+      )}) / 2)`,
+      '--ant-timeline-text-offset': `calc((var(--ant-timeline-heading-height) - var(--ant-timeline-font-height)) / 2)`,
+      '--ant-timeline-head-span': '12',
+      '--ant-timeline-head-span-ptg': 'calc(var(--ant-timeline-head-span) / 24 * 100%)',
+      '--ant-timeline-alternate-gap': `calc(${unit(token.margin)} * 2 + ${unit(token.dotSize)})`,
       margin: 0,
       padding: 0,
       listStyle: 'none',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'stretch',
 
-      [`${componentCls}-item`]: {
+      [itemCls]: {
         position: 'relative',
+        boxSizing: 'border-box',
         margin: 0,
-        paddingBottom: token.itemPaddingBottom,
+        padding: 0,
         fontSize: token.fontSize,
+        lineHeight: token.lineHeight,
         listStyle: 'none',
 
-        '&-tail': {
-          position: 'absolute',
-          insetBlockStart: token.dotSize,
-          insetInlineStart: token.calc(token.dotSize).sub(token.tailWidth).div(2).equal(),
-          height: `calc(100% - ${unit(token.dotSize)})`,
-          borderWidth: 0,
-          borderInlineStartWidth: token.tailWidth,
-          borderInlineStartStyle: token.lineType as any,
-          borderInlineStartColor: token.tailColor,
-        },
-
-        '&-pending': {
-          [`${componentCls}-item-head`]: {
-            fontSize: token.fontSizeSM,
-            backgroundColor: 'transparent',
-          },
-
-          [`${componentCls}-item-tail`]: {
-            display: 'none',
-          },
+        '&-wrapper': {
+          display: 'flex',
+          flexWrap: 'nowrap',
+          alignItems: 'flex-start',
         },
 
         '&-head': {
-          position: 'absolute',
+          position: 'relative',
+          flex: 'none',
+          boxSizing: 'border-box',
           width: token.dotSize,
           height: token.dotSize,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           backgroundColor: token.dotBg,
           border: `${unit(token.dotBorderWidth)} ${token.lineType} transparent`,
           borderRadius: '50%',
+          zIndex: 1,
 
           '&-blue': {
             color: token.colorPrimary,
@@ -112,350 +121,319 @@ const genTimelineStyle: GenerateStyle<TimelineToken, CSSObject> = token => {
         },
 
         '&-head-custom': {
-          position: 'absolute',
-          insetBlockStart: token.calc(token.dotSize).div(2).equal(),
-          insetInlineStart: token.calc(token.dotSize).div(2).equal(),
-          width: 'auto',
-          height: 'auto',
-          marginBlockStart: 0,
-          paddingBlock: token.timeLineItemCustomHeadPaddingVertical,
-          lineHeight: 1,
-          textAlign: 'center',
+          backgroundColor: 'transparent',
           border: 0,
           borderRadius: 0,
-          transform: `translate(-50%, -50%)`,
+          fontSize: token.fontSize,
+          lineHeight: 1,
+          textAlign: 'center',
+
+          '& > *': {
+            backgroundColor: token.colorBgContainer,
+            borderRadius: '50%',
+          },
         },
 
-        '&-content': {
-          position: 'relative',
-          insetBlockStart: token
-            .calc(token.calc(token.fontSize).mul(token.lineHeight).equal())
-            .sub(token.fontSize)
-            .add(token.lineWidth)
-            .mul(-1)
-            .equal(),
-          marginInlineStart: token.calc(token.margin).add(token.dotSize).equal(),
-          marginInlineEnd: 0,
-          marginBlockStart: 0,
-          marginBlockEnd: 0,
+        '&-pending': {
+          [`${itemCls}-head`]: {
+            fontSize: token.fontSizeSM,
+            backgroundColor: 'transparent',
+          },
+        },
+
+        '&-section': {
+          flex: 1,
+          minWidth: 0,
+        },
+
+        '&-header': {
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+        },
+
+        '&-title': {
+          fontSize: token.fontSize,
+          lineHeight: token.lineHeight,
+          color: token.colorText,
           wordBreak: 'break-word',
         },
 
-        '&-last': {
-          [`${componentCls}-item-tail`]: {
-            display: 'none',
-          },
+        '&-content': {
+          fontSize: token.fontSize,
+          lineHeight: token.lineHeight,
+          color: token.colorText,
+          wordBreak: 'break-word',
+          minWidth: 0,
+        },
 
-          [`${componentCls}-item-content`]: {
-            minHeight: token.calc(token.controlHeightLG).mul(1.2).equal(),
+        '&-tail': {
+          position: 'absolute',
+          insetInlineStart: tailOffset,
+          boxSizing: 'border-box',
+          borderWidth: 0,
+          borderStyle: token.lineType as any,
+          borderColor: token.tailColor,
+        },
+
+        '&-rail-dotted': {
+          [`> ${itemCls}-tail`]: {
+            borderStyle: 'dotted',
+          },
+        },
+
+        '&:last-child': {
+          [`> ${itemCls}-tail`]: {
+            display: 'none',
           },
         },
       },
 
       // ====================== Filled Variant =======================
       [`&${componentCls}-filled`]: {
-        [`${componentCls}-item-head:not(${componentCls}-item-head-custom)`]: {
+        [`${itemCls}-head:not(${itemCls}-head-custom)`]: {
           backgroundColor: 'currentColor',
+          borderColor: 'transparent',
         },
       },
 
       // ====================== Vertical Modes =======================
       [`&:not(${componentCls}-horizontal)`]: {
-        [`&${componentCls}-alternate,
-          &${componentCls}-right,
-          &${componentCls}-label`]: {
-          [`${componentCls}-item`]: {
-            '&-tail, &-head, &-head-custom': {
-              insetInlineStart: 'var(--ant-timeline-head-span-ptg, 50%)',
+        [`> ${itemCls}`]: {
+          paddingBottom: token.itemPaddingBottom,
+
+          '&:last-child': {
+            paddingBottom: 0,
+          },
+
+          [`> ${itemCls}-wrapper`]: {
+            columnGap: token.margin,
+          },
+
+          [`${itemCls}-head`]: {
+            marginBlockStart: 'var(--ant-timeline-dot-offset)',
+          },
+
+          [`${itemCls}-section`]: {
+            marginBlockStart: 'var(--ant-timeline-text-offset)',
+          },
+
+          [`> ${itemCls}-tail`]: {
+            insetBlockStart: `calc(${unit(token.dotSize)} + var(--ant-timeline-dot-offset))`,
+            insetBlockEnd: 'calc(var(--ant-timeline-dot-offset) * -1)',
+            borderInlineStartWidth: token.tailWidth,
+          },
+        },
+
+        // Vertical Same-Side End (mode="end" / "right")
+        [`&:not(${componentCls}-layout-alternate)`]: {
+          [`> ${itemCls}-placement-end`]: {
+            textAlign: 'end',
+
+            [`${itemCls}-head`]: {
+              order: 1,
             },
 
-            '&-head': {
-              marginInlineStart: token.calc(token.marginXXS).mul(-1).equal(),
+            [`> ${itemCls}-tail`]: {
+              insetInlineStart: 'auto',
+              insetInlineEnd: tailOffset,
+            },
+          },
+        },
 
-              '&-custom': {
-                marginInlineStart: token.calc(token.tailWidth).div(2).equal(),
-              },
+        // Vertical Alternate & Label/Title
+        [`&${componentCls}-layout-alternate`]: {
+          [`> ${itemCls}`]: {
+            [`> ${itemCls}-wrapper`]: {
+              columnGap: 0,
             },
 
-            '&-left': {
-              [`${componentCls}-item-content`]: {
-                insetInlineStart: `calc(var(--ant-timeline-head-span-ptg, 50%) - ${unit(
-                  token.marginXXS,
-                )})`,
-                width: `calc(100% - var(--ant-timeline-head-span-ptg, 50%) - ${unit(
-                  token.marginSM,
-                )})`,
+            [`${itemCls}-head`]: {
+              position: 'absolute',
+              insetBlockStart: 0,
+              insetInlineStart: 'var(--ant-timeline-head-span-ptg)',
+              marginInlineStart: token.calc(token.dotSize).div(2).mul(-1).equal(),
+            },
+
+            [`> ${itemCls}-tail`]: {
+              insetInlineStart: 'var(--ant-timeline-head-span-ptg)',
+              marginInlineStart: token.calc(token.tailWidth).div(2).mul(-1).equal(),
+            },
+
+            [`${itemCls}-section`]: {
+              display: 'flex',
+              flexWrap: 'nowrap',
+              alignItems: 'flex-start',
+              gap: 'var(--ant-timeline-alternate-gap)',
+              width: '100%',
+            },
+
+            [`${itemCls}-header`]: {
+              textAlign: 'end',
+              flexDirection: 'column',
+              alignItems: 'stretch',
+              flex: '1 1 calc(var(--ant-timeline-head-span-ptg) - var(--ant-timeline-alternate-gap) / 2)',
+              minWidth: 0,
+            },
+
+            [`${itemCls}-content`]: {
+              textAlign: 'start',
+              flex: '1 1 calc(100% - var(--ant-timeline-head-span-ptg) - var(--ant-timeline-alternate-gap) / 2)',
+              minWidth: 0,
+            },
+
+            [`&${itemCls}-placement-end`]: {
+              [`${itemCls}-header`]: {
                 textAlign: 'start',
+                order: 1,
               },
-            },
 
-            '&-right': {
-              [`${componentCls}-item-content`]: {
-                width: `calc(100% - var(--ant-timeline-head-span-ptg, 50%) - ${unit(
-                  token.marginSM,
-                )})`,
-                margin: 0,
+              [`${itemCls}-content`]: {
                 textAlign: 'end',
               },
-            },
-          },
-        },
 
-        [`&${componentCls}-right`]: {
-          [`${componentCls}-item-right`]: {
-            [`${componentCls}-item-tail,
-              ${componentCls}-item-head,
-              ${componentCls}-item-head-custom`]: {
-              insetInlineStart: `calc(100% - ${unit(
-                token.calc(token.dotSize).add(token.tailWidth).div(2).equal(),
-              )})`,
-            },
-
-            [`${componentCls}-item-content`]: {
-              width: `calc(100% - ${unit(token.calc(token.dotSize).add(token.marginXS).equal())})`,
-            },
-          },
-        },
-
-        [`&${componentCls}-label`]: {
-          [`${componentCls}-item:not(${componentCls}-item-right)`]: {
-            [`${componentCls}-item-content`]: {
-              insetInlineStart: `calc(var(--ant-timeline-head-span-ptg, 50%) - ${unit(
-                token.marginXXS,
-              )})`,
-              width: `calc(100% - var(--ant-timeline-head-span-ptg, 50%) - ${unit(
-                token.marginSM,
-              )})`,
-              textAlign: 'start',
-            },
-          },
-
-          [`${componentCls}-item-label`]: {
-            position: 'absolute',
-            insetBlockStart: token
-              .calc(token.calc(token.fontSize).mul(token.lineHeight).equal())
-              .sub(token.fontSize)
-              .add(token.tailWidth)
-              .mul(-1)
-              .equal(),
-            width: `calc(var(--ant-timeline-head-span-ptg, 50%) - ${unit(token.marginSM)})`,
-            textAlign: 'end',
-          },
-
-          [`${componentCls}-item-right`]: {
-            [`${componentCls}-item-tail,
-              ${componentCls}-item-head,
-              ${componentCls}-item-head-custom`]: {
-              insetInlineStart: 'calc(100% - var(--ant-timeline-head-span-ptg, 50%))',
-            },
-
-            [`${componentCls}-item-label`]: {
-              insetInlineStart: `calc(100% - var(--ant-timeline-head-span-ptg, 50%) + ${unit(
-                token.marginSM,
-              )})`,
-              width: `calc(var(--ant-timeline-head-span-ptg, 50%) - ${unit(token.marginSM)})`,
-              textAlign: 'start',
+              [`${itemCls}-head, > ${itemCls}-tail`]: {
+                insetInlineStart: 'calc(100% - var(--ant-timeline-head-span-ptg))',
+              },
             },
           },
         },
       },
 
-      // ====================== Horizontal =======================
+      // ====================== Horizontal Modes =======================
       [`&${componentCls}-horizontal`]: {
-        display: 'flex',
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'stretch',
 
-        [`${componentCls}-item`]: {
-          flex: 1,
+        [`${itemCls}-tail`]: {
+          insetBlockStart: tailOffset,
+          insetInlineStart: `calc(50% + ${unit(token.dotSize)} / 2)`,
+          width: `calc(100% - ${unit(token.dotSize)})`,
+          height: 0,
+          borderBlockStartWidth: token.tailWidth,
+        },
+
+        [`> ${itemCls}`]: {
+          flex: '1 1 0%',
           minWidth: 0,
           paddingBottom: 0,
-          paddingInlineEnd: token.padding,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'flex-start',
 
-          '&-wrapper': {
+          [`> ${itemCls}-wrapper`]: {
+            flex: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'flex-start',
+            alignItems: 'center',
+            rowGap: token.paddingXS,
             width: '100%',
             minWidth: 0,
           },
 
-          '&-header': {
-            width: '100%',
-            minWidth: 0,
-          },
-
-          '&-section': {
-            width: '100%',
-            minWidth: 0,
-          },
-
-          '&-tail': {
-            position: 'absolute',
-            insetBlockStart: token.calc(token.dotSize).sub(token.tailWidth).div(2).equal(),
-            insetInlineStart: token.dotSize,
-            width: `calc(100% - ${unit(token.dotSize)})`,
-            height: 0,
-            borderWidth: 0,
-            borderBlockStartWidth: token.tailWidth,
-            borderBlockStartStyle: token.lineType as any,
-            borderBlockStartColor: token.tailColor,
-          },
-
-          '&-head': {
-            position: 'relative',
-            insetBlockStart: 'auto',
-            insetInlineStart: 'auto',
-            marginInlineStart: 0,
-            flexShrink: 0,
-            zIndex: 1,
-          },
-
-          '&-head-custom': {
-            position: 'relative',
-            insetBlockStart: 'auto',
-            insetInlineStart: 'auto',
-            marginInlineStart: 0,
-            paddingBlock: 0,
-            paddingInline: token.timeLineItemCustomHeadPaddingVertical,
-            transform: 'none',
-            flexShrink: 0,
-            zIndex: 1,
-          },
-
-          '&-label': {
-            position: 'relative',
-            insetBlockStart: 'auto',
-            insetInlineStart: 'auto',
-            width: 'auto',
-            marginBlockEnd: token.marginXS,
-            textAlign: 'start',
-            color: token.colorTextDescription,
-            minHeight: token.calc(token.fontSize).mul(token.lineHeight).equal(),
-            wordBreak: 'break-word',
-          },
-
-          '&-content': {
-            position: 'relative',
-            insetBlockStart: 'auto',
-            insetInlineStart: 'auto',
-            width: 'auto',
-            marginInlineStart: 0,
-            marginBlockStart: token.marginXS,
-            textAlign: 'start',
-          },
-
-          '&-last': {
-            paddingInlineEnd: 0,
-
-            [`${componentCls}-item-tail`]: {
-              display: 'none',
-            },
-
-            [`${componentCls}-item-content`]: {
-              minHeight: 'auto',
-            },
-          },
-        },
-
-        [`&${componentCls}-label`]: {
-          [`${componentCls}-item-tail`]: {
-            insetBlockStart: token
-              .calc(token.calc(token.fontSize).mul(token.lineHeight).equal())
-              .add(token.marginXS)
-              .add(token.calc(token.dotSize).sub(token.tailWidth).div(2).equal())
-              .equal(),
-          },
-        },
-
-        [`&${componentCls}-right`]: {
-          [`${componentCls}-item`]: {
-            '&-wrapper': {
-              flexDirection: 'column-reverse',
-            },
-
-            '&-tail': {
-              insetBlockStart: 'auto',
-              insetBlockEnd: token.calc(token.dotSize).sub(token.tailWidth).div(2).equal(),
-            },
-
-            '&-content': {
-              marginBlockStart: 0,
-              marginBlockEnd: token.marginXS,
-            },
-          },
-        },
-
-        [`${componentCls}-item-right`]: {
-          [`${componentCls}-item-wrapper`]: {
-            flexDirection: 'column-reverse',
-          },
-
-          [`${componentCls}-item-content`]: {
+          [`${itemCls}-head`]: {
             marginBlockStart: 0,
-            marginBlockEnd: token.marginXS,
+          },
+
+          [`${itemCls}-section`]: {
+            flex: 'none',
+            alignSelf: 'stretch',
+            paddingInline: token.paddingXXS,
+            textAlign: 'center',
+          },
+
+          [`${itemCls}-header`]: {
+            alignItems: 'center',
+            textAlign: 'center',
+          },
+
+          [`${itemCls}-title, ${itemCls}-content`]: {
+            textAlign: 'center',
+            maxWidth: '100%',
           },
         },
 
-        [`&${componentCls}-pending ${componentCls}-item-last ${componentCls}-item-tail`]: {
-          display: 'block',
-          height: 0,
-          width: `calc(100% - ${unit(token.dotSize)})`,
-          borderInlineStart: 'none',
-          borderBlockStart: `${unit(token.tailWidth)} dotted ${token.tailColor}`,
+        // Horizontal Same-Side End (mode="end" / "right")
+        [`&:not(${componentCls}-layout-alternate)`]: {
+          [`> ${itemCls}-placement-end`]: {
+            justifyContent: 'flex-end',
+
+            [`> ${itemCls}-wrapper`]: {
+              flex: 'auto',
+              flexDirection: 'column-reverse',
+              justifyContent: 'flex-start',
+            },
+
+            [`> ${itemCls}-tail`]: {
+              insetBlockStart: 'auto',
+              insetBlockEnd: tailOffset,
+            },
+          },
         },
 
-        [`&${componentCls}-reverse ${componentCls}-item-pending ${componentCls}-item-tail`]: {
-          insetBlockStart: token.calc(token.dotSize).sub(token.tailWidth).div(2).equal(),
-          display: 'block',
-          height: 0,
-          width: `calc(100% - ${unit(token.dotSize)})`,
-          borderInlineStart: 'none',
-          borderBlockStart: `${unit(token.tailWidth)} dotted ${token.tailColor}`,
-        },
-      },
+        // Horizontal Alternate (mode="alternate")
+        [`&${componentCls}-layout-alternate`]: {
+          [`> ${itemCls}`]: {
+            [`> ${itemCls}-wrapper`]: {
+              position: 'relative',
+              rowGap: 0,
+            },
 
-      [`&${componentCls}-pending
-        ${componentCls}-item-last
-        ${componentCls}-item-tail`]: {
-        display: 'block',
-        height: `calc(100% - ${unit(token.margin)})`,
-        borderInlineStart: `${unit(token.tailWidth)} dotted ${token.tailColor}`,
-      },
+            [`${itemCls}-head`]: {
+              position: 'absolute',
+              top: '50%',
+              insetInlineStart: '50%',
+              marginInlineStart: token.calc(token.dotSize).div(2).mul(-1).equal(),
+              transform: 'translateY(-50%)',
+              marginBlockStart: 0,
+            },
 
-      [`&${componentCls}-reverse
-        ${componentCls}-item-last
-        ${componentCls}-item-tail`]: {
-        display: 'none',
-      },
+            [`> ${itemCls}-tail`]: {
+              insetBlockStart: '50%',
+              transform: 'translateY(-50%)',
+              margin: 0,
+            },
 
-      [`&${componentCls}-reverse ${componentCls}-item-pending`]: {
-        [`${componentCls}-item-tail`]: {
-          insetBlockStart: token.margin,
-          display: 'block',
-          height: `calc(100% - ${unit(token.margin)})`,
-          borderInlineStart: `${unit(token.tailWidth)} dotted ${token.tailColor}`,
-        },
+            [`${itemCls}-section`]: {
+              flex: '1 1 auto',
+              display: 'grid',
+              gridTemplateRows:
+                'minmax(var(--ant-timeline-font-height), 1fr) minmax(var(--ant-timeline-font-height), 1fr)',
+              rowGap: `calc(${unit(token.dotSize)} + ${unit(token.paddingXS)} * 2)`,
+              width: '100%',
+            },
 
-        [`${componentCls}-item-content`]: {
-          minHeight: token.calc(token.controlHeightLG).mul(1.2).equal(),
+            [`${itemCls}-header`]: {
+              gridRow: 1,
+              alignSelf: 'end',
+              justifySelf: 'center',
+              width: '100%',
+            },
+
+            [`${itemCls}-content`]: {
+              gridRow: 2,
+              alignSelf: 'start',
+              justifySelf: 'center',
+              width: '100%',
+            },
+
+            [`&${itemCls}-placement-end`]: {
+              [`${itemCls}-content`]: {
+                gridRow: 1,
+                alignSelf: 'end',
+              },
+
+              [`${itemCls}-header`]: {
+                gridRow: 2,
+                alignSelf: 'start',
+              },
+            },
+          },
         },
       },
 
       // ====================== RTL =======================
       '&-rtl': {
         direction: 'rtl',
-
-        [`${componentCls}-item-head-custom`]: {
-          transform: `translate(50%, -50%)`,
-        },
-
-        [`&${componentCls}-horizontal ${componentCls}-item-head-custom`]: {
-          transform: 'none',
-        },
       },
     },
   };

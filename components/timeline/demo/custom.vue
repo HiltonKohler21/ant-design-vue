@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 7
 title:
   zh-CN: 自定义时间轴点
   en-US: Custom
