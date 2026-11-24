@@ -8,6 +8,7 @@
     <readonly />
     <placement />
     <statusVue />
+    <component-token />
   </demo-sort>
 </template>
 <script>
@@ -19,6 +20,7 @@ import Readonly from './readonly.vue';
 import Placement from './placement.vue';
 import statusVue from './status.vue';
 import Variant from './variant.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -35,6 +37,7 @@ export default defineComponent({
     Placement,
     FormMentions,
     Variant,
+    ComponentToken,
   },
 });
 </script>

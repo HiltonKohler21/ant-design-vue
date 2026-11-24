@@ -7,6 +7,7 @@
     <customize-highlight />
     <target-offset />
     <on-change />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -18,6 +19,7 @@ import CustomizeHighlight from './customizeHighlight.vue';
 import TargetOffset from './targetOffset.vue';
 import OnChange from './onChange.vue';
 import Horizontal from './horizontal.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -33,6 +35,7 @@ export default defineComponent({
     TargetOffset,
     Horizontal,
     OnChange,
+    ComponentToken,
   },
   setup() {
     return {};

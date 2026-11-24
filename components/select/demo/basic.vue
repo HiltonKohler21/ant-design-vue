@@ -18,7 +18,7 @@ Basic Usage
 
 <template>
   <h2>use a-select-option</h2>
-  <a-space>
+  <a-space wrap>
     <a-select
       ref="select"
       v-model:value="value1"
@@ -39,7 +39,7 @@ Basic Usage
     </a-select>
   </a-space>
   <h2 style="margin-top: 10px">use options (recommend)</h2>
-  <a-space>
+  <a-space wrap>
     <a-select
       ref="select"
       v-model:value="value1"

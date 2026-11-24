@@ -7,6 +7,7 @@
     <DotDuration />
     <CustomPaging />
     <CustomArrows />
+    <ComponentToken />
   </demo-sort>
 </template>
 
@@ -18,6 +19,7 @@ import DotDuration from './dot-duration.vue';
 import Position from './position.vue';
 import CustomPaging from './customPaging.vue';
 import CustomArrows from './customArrows.vue';
+import ComponentToken from './component-token.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -34,6 +36,7 @@ export default defineComponent({
     Position,
     CustomPaging,
     CustomArrows,
+    ComponentToken,
   },
 });
 </script>

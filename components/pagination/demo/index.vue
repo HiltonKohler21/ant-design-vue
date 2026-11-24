@@ -9,6 +9,7 @@
     <Total />
     <ItemRender />
     <CustomChanger />
+    <ComponentToken />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -21,6 +22,7 @@ import Simple from './simple.vue';
 import ItemRender from './itemRender.vue';
 import Mini from './mini.vue';
 import Total from './total.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -38,6 +40,7 @@ export default defineComponent({
     Mini,
     Total,
     ItemRender,
+    ComponentToken,
   },
   setup() {
     return {};

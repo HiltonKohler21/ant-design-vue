@@ -6,6 +6,7 @@
     <overlay />
     <separator-indepent />
     <router />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -19,6 +20,7 @@ import Router from './router.vue';
 import Separator from './separator.vue';
 import SeparatorIndepent from './separator-indepent.vue';
 import WithIcon from './withIcon.vue';
+import ComponentToken from './component-token.vue';
 
 export default defineComponent({
   CN,
@@ -30,6 +32,7 @@ export default defineComponent({
     Separator,
     SeparatorIndepent,
     WithIcon,
+    ComponentToken,
   },
 });
 </script>

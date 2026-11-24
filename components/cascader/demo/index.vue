@@ -13,8 +13,10 @@
     <fields-name />
     <suffix />
     <variantVue />
+    <style-class />
     <panelVue />
     <tagRender />
+    <component-token />
   </demo-sort>
 </template>
 <script>
@@ -33,6 +35,8 @@ import multipleVue from './multiple.vue';
 import tagRender from './tagRender.vue';
 import panelVue from './panel.vue';
 import variantVue from './variant.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -56,6 +60,8 @@ export default defineComponent({
     tagRender,
     panelVue,
     variantVue,
+    StyleClass,
+    ComponentToken,
   },
 });
 </script>

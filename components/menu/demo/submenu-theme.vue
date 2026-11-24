@@ -22,7 +22,7 @@ You can config SubMenu theme with `theme` prop to enable different theme color e
       :checked="theme === 'dark'"
       checked-children="dark"
       un-checked-children="light"
-      @Change="changeTheme"
+      @change="changeTheme"
     />
     <br />
     <br />
@@ -33,6 +33,7 @@ You can config SubMenu theme with `theme` prop to enable different theme color e
       mode="vertical"
       theme="dark"
       :items="items"
+      :get-popup-container="getPopupContainer"
       @click="handleClick"
     />
   </div>
@@ -81,4 +82,6 @@ function handleClick(info: any) {
 function changeTheme(checked: boolean) {
   theme.value = checked ? 'dark' : 'light';
 }
+
+const getPopupContainer = (node: HTMLElement) => node.parentNode as HTMLElement;
 </script>

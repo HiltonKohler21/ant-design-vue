@@ -9,6 +9,7 @@
     <responsive />
     <Fixed />
     <FixedSider />
+    <ComponentToken />
   </demo-sort>
 </template>
 
@@ -22,6 +23,7 @@ import Top from './top.vue';
 import FixedSider from './fixed-sider.vue';
 import Fixed from './fixed.vue';
 import Side from './side.vue';
+import ComponentToken from './component-token.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -40,6 +42,7 @@ export default defineComponent({
     FixedSider,
     Fixed,
     Side,
+    ComponentToken,
   },
   setup() {
     return {};

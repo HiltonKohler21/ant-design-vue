@@ -9,7 +9,9 @@
     <table-transfer />
     <tree-transfer />
     <statusVue />
+    <style-class />
     <custom-select-all-labels></custom-select-all-labels>
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -23,6 +25,8 @@ import TableTransfer from './table-transfer.vue';
 import TreeTransfer from './tree-transfer.vue';
 import Pagination from './pagination.vue';
 import statusVue from './status.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -41,6 +45,8 @@ export default defineComponent({
     Pagination,
     TableTransfer,
     TreeTransfer,
+    StyleClass,
+    ComponentToken,
   },
   setup() {
     return {};

@@ -56,7 +56,7 @@ import type { CSSProperties } from 'vue';
 const headerStyle: CSSProperties = {
   textAlign: 'center',
   color: '#fff',
-  height: 64,
+  height: '64px',
   paddingInline: '48px',
   lineHeight: '64px',
   backgroundColor: '#1677ff',
@@ -64,7 +64,7 @@ const headerStyle: CSSProperties = {
 
 const contentStyle: CSSProperties = {
   textAlign: 'center',
-  minHeight: 120,
+  minHeight: '120px',
   lineHeight: '120px',
   color: '#fff',
   backgroundColor: '#0958d9',
@@ -75,7 +75,7 @@ const siderStyle: CSSProperties = {
   lineHeight: '120px',
   color: '#fff',
   backgroundColor: '#1677ff',
-  width: 200,
+  width: '200px',
 };
 
 const footerStyle: CSSProperties = {

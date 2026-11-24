@@ -8,6 +8,7 @@
     <server-error />
     <error />
     <custom-icon />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -19,6 +20,7 @@ import FindLess from './404.vue';
 import ServerError from './500.vue';
 import Error from './error.vue';
 import CustomIcon from './customIcon.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -34,6 +36,7 @@ export default defineComponent({
     ServerError,
     Error,
     CustomIcon,
+    ComponentToken,
   },
   setup() {
     return {};

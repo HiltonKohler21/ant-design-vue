@@ -14,6 +14,8 @@
     <action />
     <custom-title-alignment />
     <close-text />
+    <component-token />
+    <style-class />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -31,6 +33,8 @@ import ErrorBoundary from './error-boundary.vue';
 import CustomIcon from './custom-icon.vue';
 import LoopBanner from './loop-banner.vue';
 import CustomTitleAlignment from './custom-title-alignment.vue';
+import ComponentToken from './component-token.vue';
+import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -52,6 +56,8 @@ export default defineComponent({
     Action,
     LoopBanner,
     CustomTitleAlignment,
+    ComponentToken,
+    StyleClass,
   },
   setup() {
     return {};

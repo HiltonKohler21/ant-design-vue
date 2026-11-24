@@ -12,6 +12,8 @@
     <Variant />
     <HotTags />
     <BorderLess />
+    <ComponentToken />
+    <StyleClass />
   </demo-sort>
 </template>
 
@@ -28,6 +30,8 @@ import Status from './status.vue';
 import BorderLess from './border-less.vue';
 import Animation from './animation.vue';
 import Draggable from './draggable.vue';
+import ComponentToken from './component-token.vue';
+import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -48,6 +52,8 @@ export default defineComponent({
     BorderLess,
     Animation,
     Draggable,
+    ComponentToken,
+    StyleClass,
   },
 });
 </script>

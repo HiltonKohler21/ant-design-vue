@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 6
+version: 5.18.0
 title:
   zh-CN: 进度
   en-US: Progress

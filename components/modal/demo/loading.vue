@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 3
+version: 5.18.0
 title:
   zh-CN: 加载中
   en-US: Loading

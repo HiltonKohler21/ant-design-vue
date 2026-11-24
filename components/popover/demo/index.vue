@@ -6,6 +6,8 @@
     <arrow-center />
     <control />
     <hover-with-click />
+    <style-class />
+    <component-token />
   </demo-sort>
 </template>
 <script>
@@ -15,6 +17,8 @@ import Control from './control.vue';
 import Placement from './placement.vue';
 import TriggerType from './triggerType.vue';
 import HoverWithClick from './hover-with-click.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -29,6 +33,8 @@ export default defineComponent({
     Control,
     ArrowCenter,
     HoverWithClick,
+    StyleClass,
+    ComponentToken,
   },
 });
 </script>

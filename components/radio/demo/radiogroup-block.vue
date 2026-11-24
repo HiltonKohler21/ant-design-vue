@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 4
+version: 5.21.0
 title:
   zh-CN: Block 单选组合
   en-US: Block Radio.Group

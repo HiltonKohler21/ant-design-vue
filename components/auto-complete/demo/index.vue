@@ -8,6 +8,7 @@
     <uncertain-category />
     <statusVue />
     <allow-clear />
+    <style-class />
     <border-less />
   </demo-sort>
 </template>
@@ -22,6 +23,7 @@ import UncertainCategory from './uncertain-category.vue';
 import statusVue from './status.vue';
 import BorderLess from './border-less.vue';
 import AllowClear from './allow-clear.vue';
+import StyleClass from './style-class.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -40,6 +42,7 @@ export default defineComponent({
     UncertainCategory,
     BorderLess,
     AllowClear,
+    StyleClass,
   },
   setup() {
     return {};

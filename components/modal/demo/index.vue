@@ -16,6 +16,7 @@
     <confirm-router />
     <confirm-promise />
     <fullscreen />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -35,6 +36,7 @@ import ButtonProps from './button-props.vue';
 import modalRenderVue from './modal-render.vue';
 import HookModal from './hook-modal.vue';
 import Loading from './loading.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -58,6 +60,7 @@ export default defineComponent({
     modalRenderVue,
     HookModal,
     Loading,
+    ComponentToken,
   },
   setup() {
     return {};

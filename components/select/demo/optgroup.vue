@@ -17,7 +17,7 @@ Using `OptGroup` or `options.options` to group the options.
 </docs>
 
 <template>
-  <a-space>
+  <a-space wrap>
     <a-select v-model:value="value" style="width: 200px" @change="handleChange">
       <a-select-opt-group>
         <template #label>

@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 5
+version: 5.23.0
 title:
   zh-CN: 延迟渲染模式
   en-US: Lazy

@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 3
+version: 5.20.0
 title:
   zh-CN: 自定义状态渲染器
   en-US: Custom Status Render

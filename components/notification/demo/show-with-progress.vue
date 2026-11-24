@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 8
+version: 5.18.0
 title:
   zh-CN: 显示进度条
   en-US: Show with progress

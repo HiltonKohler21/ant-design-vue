@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 7
+version: 5.10.0
 title:
   zh-CN: 堆叠
   en-US: Stack

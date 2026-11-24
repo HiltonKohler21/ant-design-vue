@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 7
+version: 6.7.0
 title:
   zh-CN: 前后缀
   en-US: Prefix and Suffix

@@ -11,6 +11,8 @@
     <CompactButtonVertical />
     <Customize />
     <Addon />
+    <StyleClass />
+    <ComponentToken />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -24,6 +26,8 @@ import Compact from './compact.vue';
 import CompactButtons from './compact-buttons.vue';
 import CompactButtonVertical from './compact-button-vertical.vue';
 import Addon from './addon.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -43,6 +47,8 @@ export default defineComponent({
     CompactButtons,
     CompactButtonVertical,
     Addon,
+    StyleClass,
+    ComponentToken,
     Size,
   },
   setup() {

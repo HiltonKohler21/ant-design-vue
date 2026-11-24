@@ -10,6 +10,7 @@
     <ShowTooltip />
     <Reverse />
     <HandleRender />
+    <ComponentToken />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -23,6 +24,7 @@ import Vertical from './vertical.vue';
 import ShowTooltip from './show-tooltip.vue';
 import Reverse from './reverse.vue';
 import HandleRender from './handle-render.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -41,6 +43,7 @@ export default defineComponent({
     ShowTooltip,
     Reverse,
     HandleRender,
+    ComponentToken,
   },
   setup() {
     return {};

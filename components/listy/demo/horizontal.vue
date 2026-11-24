@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 2
+version: 6.7.0
 title:
   zh-CN: 横向滚动
   en-US: Horizontal scrolling

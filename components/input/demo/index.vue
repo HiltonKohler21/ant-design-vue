@@ -15,8 +15,10 @@
     <allow-clear />
     <show-count />
     <statusVue />
+    <style-class />
     <group />
     <borderlessVue />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -38,6 +40,8 @@ import Addon from './addon.vue';
 import Tooltip from './tooltip.vue';
 import borderlessVue from './borderless.vue';
 import statusVue from './status.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -49,6 +53,8 @@ export default defineComponent({
     Variant,
     Otp,
     statusVue,
+    StyleClass,
+    ComponentToken,
     Basic,
     AutosizeTextarea,
     Presuffix,

@@ -6,6 +6,7 @@
     <vertical />
     <grid />
     <resposive />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -15,6 +16,7 @@ import Loadmore from './loadmore.vue';
 import Vertical from './vertical.vue';
 import Grid from './grid.vue';
 import Resposive from './resposive.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -28,6 +30,7 @@ export default defineComponent({
     Vertical,
     Grid,
     Resposive,
+    ComponentToken,
   },
   setup() {
     return {};

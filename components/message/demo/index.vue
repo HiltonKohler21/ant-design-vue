@@ -8,6 +8,7 @@
     <update />
     <info />
     <customStyleVue />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -18,6 +19,7 @@ import Loading from './loading.vue';
 import Thenable from './thenable.vue';
 import Update from './update.vue';
 import customStyleVue from './custom-style.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -33,6 +35,7 @@ export default defineComponent({
     Thenable,
     Update,
     customStyleVue,
+    ComponentToken,
     Hook,
   },
   setup() {

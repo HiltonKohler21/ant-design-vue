@@ -27,7 +27,7 @@ Generally, the mainnav is placed at the top of the page, and includes the logo, 
         v-model:selectedKeys="selectedKeys"
         theme="dark"
         mode="horizontal"
-        :style="{ lineHeight: '64px', flex: 1, minWidth: 0 }"
+        :style="{ flex: 1, minWidth: 0 }"
       >
         <a-menu-item key="1">nav 1</a-menu-item>
         <a-menu-item key="2">nav 2</a-menu-item>

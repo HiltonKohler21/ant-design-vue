@@ -14,6 +14,7 @@
     <steps />
     <Size />
     <info-position />
+    <style-class />
     <circle-dynamic />
   </demo-sort>
 </template>
@@ -32,6 +33,7 @@ import GradientLine from './gradient-line.vue';
 import Steps from './steps.vue';
 import CircleMicro from './circle-micro.vue';
 import InfoPosition from './info-position.vue';
+import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -56,6 +58,7 @@ export default defineComponent({
     CircleMicro,
     Size,
     InfoPosition,
+    StyleClass,
   },
   setup() {
     return {};

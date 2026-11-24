@@ -15,6 +15,7 @@
     <CustomAddTrigger />
     <CustomTabBar />
     <Items />
+    <ComponentToken />
   </demo-sort>
 </template>
 
@@ -34,6 +35,7 @@ import CustomTabBar from './custom-tab-bar.vue';
 import Centered from './centered.vue';
 import Items from './items.vue';
 import CustomIndicator from './custom-indicator.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -61,6 +63,7 @@ export default defineComponent({
     CustomTabBar,
     Items,
     CustomIndicator,
+    ComponentToken,
   },
 });
 </script>

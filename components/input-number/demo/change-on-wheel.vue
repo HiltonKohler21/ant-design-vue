@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 7
+version: 5.14.0
 title:
   zh-CN: 鼠标滚轮
   en-US: Wheel

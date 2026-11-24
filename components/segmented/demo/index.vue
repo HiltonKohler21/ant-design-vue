@@ -8,6 +8,8 @@
     <custom />
     <dynamic />
     <size />
+    <style-class />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -23,9 +25,22 @@ import Dynamic from './dynamic.vue';
 import Size from './size.vue';
 import Vertical from './vertical.vue';
 import Shape from './shape.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 
 export default defineComponent({
-  components: { Size, Dynamic, Custom, Disabled, Block, Basic, Vertical, Shape },
+  components: {
+    Size,
+    Dynamic,
+    Custom,
+    Disabled,
+    Block,
+    Basic,
+    Vertical,
+    Shape,
+    StyleClass,
+    ComponentToken,
+  },
   category: 'Components',
   subtitle: '分段控制器',
   type: 'Data Display',

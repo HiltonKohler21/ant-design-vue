@@ -22,6 +22,7 @@
     <Suffix />
     <Bordered />
     <text-demo />
+    <ComponentToken />
   </demo-sort>
 </template>
 <script>
@@ -47,6 +48,7 @@ import NeedConfirm from './need-confirm.vue';
 import RangePicker from './range-picker.vue';
 import placementVue from './placement.vue';
 import statusVue from './status.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -77,6 +79,7 @@ export default defineComponent({
     Multiple,
     NeedConfirm,
     RangePicker,
+    ComponentToken,
   },
 });
 </script>

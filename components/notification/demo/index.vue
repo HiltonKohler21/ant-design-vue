@@ -11,6 +11,7 @@
     <show-with-progress />
     <basic />
     <custom-style />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -25,6 +26,7 @@ import Placement from './placement.vue';
 import Update from './update.vue';
 import ShowWithProgress from './show-with-progress.vue';
 import Stack from './stack.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -44,6 +46,7 @@ export default defineComponent({
     Hook,
     ShowWithProgress,
     Stack,
+    ComponentToken,
   },
   setup() {
     return {};

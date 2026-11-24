@@ -6,6 +6,7 @@
     <collapsible />
     <multiple />
     <lazy />
+    <style-class />
     <reset />
     <nested />
   </demo-sort>
@@ -22,6 +23,7 @@ import Collapsible from './collapsible.vue';
 import Nested from './nested.vue';
 import Control from './control.vue';
 import Lazy from './lazy.vue';
+import StyleClass from './style-class.vue';
 import Reset from './reset.vue';
 
 export default defineComponent({
@@ -35,6 +37,7 @@ export default defineComponent({
     Nested,
     Control,
     Lazy,
+    StyleClass,
     Reset,
   },
   setup() {

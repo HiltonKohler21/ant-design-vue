@@ -7,6 +7,7 @@
     <auto-adjust-overflow />
     <color />
     <arrow-point-at-center />
+    <style-class />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -17,6 +18,7 @@ import AutoAdjustOverflow from './auto-adjust-overflow.vue';
 import Color from './color.vue';
 import Arrow from './arrow.vue';
 import SmoothTransition from './smooth-transition.vue';
+import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -31,6 +33,7 @@ export default defineComponent({
     Color,
     Arrow,
     SmoothTransition,
+    StyleClass,
   },
   setup() {
     return {};

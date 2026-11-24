@@ -26,6 +26,7 @@
     <UseFormNested />
     <UseFormTrigger />
     <UseFormMerge />
+    <ComponentToken />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -57,6 +58,7 @@ import CustomizedFormControls from './customized-form-controls.vue';
 import timeRelatedControlsVue from './time-related-controls.vue';
 import validateOtherVue from './validate-other.vue';
 import validateStaticVue from './validate-static.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 
@@ -90,6 +92,7 @@ export default defineComponent({
     formInModalVue,
     inlineLoginVue,
     normalLoginVue,
+    ComponentToken,
   },
 });
 </script>

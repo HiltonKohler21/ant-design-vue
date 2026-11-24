@@ -10,6 +10,7 @@
     <user-profile />
     <multi-level-drawer />
     <size />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -23,6 +24,7 @@ import RenderInCurrent from './render-in-current.vue';
 import Size from './size.vue';
 import Loading from './loading.vue';
 import Resizable from './resizable.vue';
+import ComponentToken from './component-token.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -42,6 +44,7 @@ export default defineComponent({
     Size,
     Loading,
     Resizable,
+    ComponentToken,
   },
   setup() {
     return {};

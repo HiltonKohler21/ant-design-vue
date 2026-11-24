@@ -9,7 +9,9 @@
     <Status />
     <Colors />
     <Ribbon />
+    <StyleClass />
     <Title />
+    <ComponentToken />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -23,6 +25,8 @@ import Title from './title.vue';
 import Colors from './colors.vue';
 import Link from './link.vue';
 import Ribbon from './ribbon.vue';
+import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 import CN from './../index.zh-CN.md';
 import US from './../index.en_US.md';
 import { defineComponent } from 'vue';
@@ -41,6 +45,8 @@ export default defineComponent({
     Colors,
     Link,
     Ribbon,
+    StyleClass,
+    ComponentToken,
   },
 });
 </script>

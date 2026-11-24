@@ -17,7 +17,11 @@ Disabled part of dates and time by `disabledDate` and `disabledTime` respectivel
 </docs>
 
 <template>
-  <a-space direction="vertical">
+  <a-space
+    direction="vertical"
+    style="max-width: 100%"
+    :styles="{ item: { minWidth: 0, maxWidth: '100%' } }"
+  >
     <a-date-picker
       v-model:value="value1"
       format="YYYY-MM-DD HH:mm:ss"
@@ -29,7 +33,7 @@ Disabled part of dates and time by `disabledDate` and `disabledTime` respectivel
     <a-range-picker v-model:value="value3" :disabled-date="disabledDate" />
     <a-range-picker
       v-model:value="value4"
-      style="width: 400px"
+      style="max-width: 100%"
       :disabled-date="disabledDate"
       :disabled-time="disabledRangeTime"
       :show-time="{

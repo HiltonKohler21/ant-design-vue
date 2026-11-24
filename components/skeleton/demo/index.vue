@@ -6,6 +6,7 @@
     <elementVue />
     <children />
     <list />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -15,6 +16,7 @@ import Active from './active.vue';
 import Children from './children.vue';
 import List from './list.vue';
 import elementVue from './element.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -29,6 +31,7 @@ export default defineComponent({
     List,
     Children,
     elementVue,
+    ComponentToken,
   },
   setup() {
     return {};

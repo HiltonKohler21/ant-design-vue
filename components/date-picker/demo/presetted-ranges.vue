@@ -17,11 +17,16 @@ We can set presetted ranges to RangePicker to improve user experience.
 </docs>
 
 <template>
-  <a-space direction="vertical" :size="12">
+  <a-space
+    direction="vertical"
+    :size="12"
+    style="max-width: 100%"
+    :styles="{ item: { minWidth: 0, maxWidth: '100%' } }"
+  >
     <a-date-picker :presets="presets" @change="onChange" />
     <a-range-picker :presets="rangePresets" @change="onRangeChange" />
     <a-range-picker
-      style="width: 400px"
+      style="max-width: 100%"
       show-time
       format="YYYY/MM/DD HH:mm:ss"
       :presets="rangePresets"

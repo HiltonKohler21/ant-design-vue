@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 1
+version: 6.0.0
 title:
   zh-CN: 尺寸
   en-US: Sizes

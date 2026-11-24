@@ -9,6 +9,7 @@
     <right />
     <label-demo />
     <color />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -21,6 +22,7 @@ import Alternate from './alternate.vue';
 import Right from './right.vue';
 import VariantDemo from './variant.vue';
 import HorizontalDemo from './horizontal.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -37,6 +39,7 @@ export default defineComponent({
     Right,
     VariantDemo,
     HorizontalDemo,
+    ComponentToken,
   },
   setup() {
     return {};

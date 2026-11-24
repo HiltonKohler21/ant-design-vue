@@ -14,6 +14,8 @@
     <Inline />
     <SmallSize />
     <VerticalSmall />
+    <ComponentToken />
+    <StyleClass />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -31,6 +33,8 @@ import Progress from './progress.vue';
 import LabelPlacement from './label-placement.vue';
 import Inline from './inline.vue';
 import Nav from './nav.vue';
+import ComponentToken from './component-token.vue';
+import StyleClass from './style-class.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -53,6 +57,8 @@ export default defineComponent({
     Progress,
     LabelPlacement,
     Inline,
+    ComponentToken,
+    StyleClass,
   },
   setup() {
     return {};

@@ -4,6 +4,7 @@
     <color />
     <multiple />
     <custom />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -15,6 +16,7 @@ import Basic from './basic.vue';
 import Color from './color.vue';
 import Multiple from './multiple.vue';
 import Custom from './custom.vue';
+import ComponentToken from './component-token.vue';
 
 export default defineComponent({
   CN,
@@ -24,6 +26,7 @@ export default defineComponent({
     Color,
     Multiple,
     Custom,
+    ComponentToken,
   },
 });
 </script>

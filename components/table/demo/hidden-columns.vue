@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 21
+version: 5.13.0
 title:
   zh-CN: 隐藏列
   en-US: Hidden Columns

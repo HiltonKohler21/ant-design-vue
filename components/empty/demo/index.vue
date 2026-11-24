@@ -4,6 +4,7 @@
     <simple />
     <customize />
     <config-provider />
+    <style-class />
     <description />
   </demo-sort>
 </template>
@@ -12,6 +13,7 @@ import Basic from './basic.vue';
 import Simple from './simple.vue';
 import Customize from './customize.vue';
 import ConfigProvider from './config-provider.vue';
+import StyleClass from './style-class.vue';
 import Description from './description.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -24,6 +26,7 @@ export default defineComponent({
     Simple,
     Customize,
     ConfigProvider,
+    StyleClass,
     Description,
   },
   setup() {

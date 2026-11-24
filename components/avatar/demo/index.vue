@@ -6,6 +6,7 @@
     <badge />
     <group />
     <responsive />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -16,6 +17,7 @@ import Dynamic from './dynamic.vue';
 import Badge from './badge.vue';
 import Group from './group.vue';
 import Responsive from './responsive.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -30,6 +32,7 @@ export default defineComponent({
     Badge,
     Group,
     Responsive,
+    ComponentToken,
   },
   setup() {
     return {};

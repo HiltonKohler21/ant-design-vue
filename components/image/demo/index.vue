@@ -10,7 +10,9 @@
     <toolbar-render />
     <image-render />
     <mask-demo />
+    <style-class />
     <nested />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -25,7 +27,9 @@ import previewGroupVisibleVue from './preview-group-visible.vue';
 import ToolbarRender from './toolbar-render.vue';
 import ImageRender from './image-render.vue';
 import MaskDemo from './mask.vue';
+import StyleClass from './style-class.vue';
 import Nested from './nested.vue';
+import ComponentToken from './component-token.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -44,7 +48,9 @@ export default defineComponent({
     ToolbarRender,
     ImageRender,
     MaskDemo,
+    StyleClass,
     Nested,
+    ComponentToken,
   },
 });
 </script>

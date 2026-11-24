@@ -8,6 +8,7 @@
     <theme />
     <submenu-theme />
     <switch-mode />
+    <component-token />
   </demo-sort>
 </template>
 
@@ -23,6 +24,7 @@ import SwitchMode from './switch-mode.vue';
 import Theme from './theme.vue';
 import Vertical from './vertical.vue';
 import SubmenuTheme from './submenu-theme.vue';
+import ComponentToken from './component-token.vue';
 
 export default defineComponent({
   CN,
@@ -36,6 +38,7 @@ export default defineComponent({
     Theme,
     Vertical,
     SubmenuTheme,
+    ComponentToken,
   },
 });
 </script>
