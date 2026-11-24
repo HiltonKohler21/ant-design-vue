@@ -479,8 +479,11 @@ export default defineComponent({
 }
 
 .component-meta {
+  max-width: 100%;
   margin: 0 0 20px;
   padding: 12px 16px;
+  overflow-x: auto;
+  box-sizing: border-box;
   background: var(--color-fill-alter, var(--site-markdown-code-bg));
   border: 1px solid var(--site-border-color-split);
   border-radius: var(--border-radius-base, 8px);

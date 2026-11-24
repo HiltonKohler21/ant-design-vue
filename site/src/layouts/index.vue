@@ -75,11 +75,11 @@
             </a-anchor>
           </aside>
         </div>
+        <Footer :is-c-n="isZhCN" />
       </a-col>
     </a-row>
   </div>
   <a-back-top :visibility-height="300" :style="{ insetInlineEnd: '24px', bottom: '32px' }" />
-  <Footer :is-c-n="isZhCN" />
 </template>
 <script lang="ts">
 import { GLOBAL_CONFIG } from '../SymbolKey';

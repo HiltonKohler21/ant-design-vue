@@ -2,7 +2,10 @@
   clear: both;
   position: relative;
   z-index: 8;
+  flex-shrink: 0;
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: clip;
   font-size: 14px;
   background-color: var(--site-footer-bg, #f5f5f5);
   color: var(--site-text-color-secondary);
@@ -14,6 +17,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 56px 40px 44px;
+    box-sizing: border-box;
   }
 
   .footer-center {
@@ -100,8 +104,24 @@ html[data-doc-theme='dark'] #footer {
   background-color: #0f0f0f;
 }
 
+.main-content-col #footer {
+  .footer-wrap {
+    padding-block: 48px 40px;
+    padding-inline: 56px 48px;
+  }
+}
+
+@media only screen and (max-width: 1199.99px) {
+  .main-content-col #footer {
+    .footer-wrap {
+      padding: 44px 36px 36px;
+    }
+  }
+}
+
 @media only screen and (max-width: 767.99px) {
-  #footer {
+  #footer,
+  .main-content-col #footer {
     .footer-wrap {
       padding: 40px 24px 32px;
     }
