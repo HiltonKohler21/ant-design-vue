@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 3
-version: 5.20.0
+version: 4.3.0
 title:
   zh-CN: 渐变色
   en-US: Linear Gradient

@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 2
-version: 6.0.0
+version: 4.3.0
 title:
   zh-CN: 可调整大小
   en-US: Resizable

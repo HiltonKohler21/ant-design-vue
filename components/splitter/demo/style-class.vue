@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 5.5
-version: 6.0.0
+version: 4.3.0
 title:
   zh-CN: 自定义语义结构的样式和类
   en-US: Custom Semantic DOM Styling

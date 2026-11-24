@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 1
-version: 5.21.0
+version: 4.3.0
 title:
   zh-CN: 垂直方向
   en-US: Vertical Direction

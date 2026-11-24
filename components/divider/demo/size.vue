@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 2
-version: 5.25.0
+version: 4.3.0
 title:
   zh-CN: 设置分割线的间距大小
   en-US: Set the spacing size of the divider

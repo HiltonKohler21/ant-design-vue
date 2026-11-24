@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 6
-version: 6.3.0
+version: 4.3.0
 title:
   zh-CN: 双击重置
   en-US: Double-clicked reset

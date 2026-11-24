@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 13
-version: 5.18.0
+version: 4.3.0
 title:
   zh-CN: 改变进度数值位置
   en-US: Change progress value position

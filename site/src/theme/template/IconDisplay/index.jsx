@@ -18,7 +18,7 @@ const IGNORE_ICONS = new Set([
   'CopyrightCircle', // same as Copyright
   'DollarCircle', // same as Dollar
 ]);
-const NEW_ICON_VERSION = '6.5.0';
+const NEW_ICON_VERSION = '4.3.0';
 const NEW_ICON_NAMES = [];
 
 const allIcons = markRaw(AntdIcons);

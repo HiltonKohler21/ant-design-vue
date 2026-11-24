@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 4
-version: 5.24.0
+version: 4.3.0
 title:
   zh-CN: 进度条
   en-US: Progress of dots

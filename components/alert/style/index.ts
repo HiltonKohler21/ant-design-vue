@@ -9,7 +9,7 @@ export interface ComponentToken {
   /**
    * @desc 容器圆角
    * @descEN Border radius of the container
-   * @since 6.7.0
+   * @since 4.3.0
    */
   containerBorderRadius: CSSProperties['borderRadius'];
   /**

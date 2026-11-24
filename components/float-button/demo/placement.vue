@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 7
-version: 5.21.0
+version: 4.3.0
 title:
   zh-CN: 弹出方向
   en-US: Placement

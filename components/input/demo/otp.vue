@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 8
-version: 5.16.0
+version: 4.3.0
 title:
   zh-CN: 一次性密码框
   en-US: OTP
