@@ -493,7 +493,9 @@ export default defineComponent({
 
       domApiSections.value = sections;
 
-      const semanticEl = container.querySelector('#semantic-dom');
+      const semanticEl =
+        container.querySelector('.semantic-dom-section #semantic-dom') ||
+        container.querySelector('#semantic-dom');
       if (semanticEl && !seen.has('#semantic-dom')) {
         const headingEl =
           semanticEl.tagName === 'SECTION' ? semanticEl.querySelector('h2, h3') : semanticEl;

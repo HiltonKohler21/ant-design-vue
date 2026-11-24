@@ -324,16 +324,6 @@ export default defineComponent({
     const docSubtitle = computed(() => frontmatter.value.subtitle || route.meta?.subtitle || '');
     const docHtml = computed(() => props?.pageData?.html || '');
 
-    const htmlParts = computed(() => docHtml.value.split(API_HEADING_RE));
-    const description = computed(() => htmlParts.value[0] || '');
-    const api = computed(() => {
-      const apiBody = htmlParts.value[1];
-      if (!apiBody || !apiBody.trim()) {
-        return '';
-      }
-      return `<h2 id="api"><span>API</span><a href="#api" class="anchor">#</a></h2>\n${apiBody}`;
-    });
-
     const componentSlug = computed(() => {
       const rel = props?.pageData?.relativePath || '';
       const relMatch = rel.match(/^components\/([^/]+)\//);
@@ -342,6 +332,28 @@ export default defineComponent({
         .replace(/^\/components\//, '')
         .replace(/-cn\/?$/, '')
         .replace(/\/$/, '');
+    });
+
+    const semanticCompName = computed(() =>
+      resolveSemanticComponentName(String(docTitle.value || ''), componentSlug.value),
+    );
+    const hasSemanticDom = computed(
+      () => Boolean(semanticCompName.value) || Boolean(slots['semantic-dom']),
+    );
+
+    const htmlParts = computed(() => docHtml.value.split(API_HEADING_RE));
+    const description = computed(() => htmlParts.value[0] || '');
+    const api = computed(() => {
+      const apiBody = htmlParts.value[1];
+      if (!apiBody || !apiBody.trim()) {
+        return '';
+      }
+      const normalizedBody = hasSemanticDom.value
+        ? apiBody
+            .replace(/id="semantic-dom"/gi, 'id="semantic-dom-api"')
+            .replace(/href="#semantic-dom"/gi, 'href="#semantic-dom-api"')
+        : apiBody;
+      return `<h2 id="api"><span>API</span><a href="#api" class="anchor">#</a></h2>\n${normalizedBody}`;
     });
 
     const importStatement = computed(() => {
@@ -375,13 +387,6 @@ export default defineComponent({
         }, 2000);
       }
     };
-
-    const semanticCompName = computed(() =>
-      resolveSemanticComponentName(String(docTitle.value || ''), componentSlug.value),
-    );
-    const hasSemanticDom = computed(
-      () => Boolean(semanticCompName.value) || Boolean(slots['semantic-dom']),
-    );
 
     const tokenCompName = computed(() => resolveTokenCompName(String(docTitle.value || '')));
     const hasDesignTokens = computed(() => {

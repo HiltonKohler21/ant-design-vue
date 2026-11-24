@@ -329,7 +329,7 @@ interface FilterResetProps {
 }
 ```
 
-## Semantic DOM {#semantic-dom}
+## Semantic DOM
 
 `classNames` and `styles` accept either an object or a function (`(info: { props }) => ...`) targeting the following semantic slots:
 

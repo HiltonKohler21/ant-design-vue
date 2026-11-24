@@ -71,15 +71,22 @@ Debug usage
         <a-input-search style="width: 100px" />
       </a-flex>
       <a-divider plain>https://github.com/ant-design/ant-design/issues/51380</a-divider>
-      <a-flex
-        gap="small"
-        style="transform: scale(3); transform-origin: left top; margin-bottom: 100px"
-      >
-        <a-button :icon="h(MinusSquareOutlined)" />
-        <a-button :icon="h(Icon12Size)" />
-        <a-button :icon="h(Icon16Size)" />
-        <a-button :icon="h(IconIrregularSize)" />
-      </a-flex>
+      <div style="overflow: hidden; max-width: 100%">
+        <a-flex
+          gap="small"
+          style="
+            width: fit-content;
+            transform: scale(1.8);
+            transform-origin: left top;
+            margin-bottom: 44px;
+          "
+        >
+          <a-button :icon="h(MinusSquareOutlined)" />
+          <a-button :icon="h(Icon12Size)" />
+          <a-button :icon="h(Icon16Size)" />
+          <a-button :icon="h(IconIrregularSize)" />
+        </a-flex>
+      </div>
     </a-flex>
   </a-config-provider>
 

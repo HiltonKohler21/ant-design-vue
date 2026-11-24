@@ -69,6 +69,7 @@
             <div class="semantic-slot-head">
               <code class="semantic-slot-key">{{ item.name }}</code>
               <span v-if="item.isPopup" class="semantic-slot-tag">popup</span>
+              <span v-if="item.version" class="semantic-slot-tag">{{ item.version }}</span>
               <a-tooltip
                 :title="
                   copiedKey === item.name
@@ -183,24 +184,28 @@ function buildNestedSemanticObject(
   kind: 'classNames' | 'styles',
 ): string {
   const topLines: string[] = [];
-  const popupLines: string[] = [];
+  const nestedGroups = new Map<string, string[]>();
 
-  slots.slice(0, 4).forEach(slot => {
+  slots.slice(0, 5).forEach(slot => {
     const val =
       kind === 'classNames'
         ? `'custom-${slot.name.replace(/\./g, '-')}'`
         : `{ /* ${slot.name} styles */ }`;
-    if (slot.name.startsWith('popup.')) {
-      const subKey = slot.name.slice('popup.'.length);
-      popupLines.push(`    ${subKey}: ${val},`);
+    const dotIndex = slot.name.indexOf('.');
+    if (dotIndex > 0) {
+      const parentKey = slot.name.slice(0, dotIndex);
+      const childKey = slot.name.slice(dotIndex + 1);
+      const group = nestedGroups.get(parentKey) || [];
+      group.push(`    ${childKey}: ${val},`);
+      nestedGroups.set(parentKey, group);
     } else {
       topLines.push(`  ${slot.name}: ${val},`);
     }
   });
 
-  if (popupLines.length) {
-    topLines.push(`  popup: {\n${popupLines.join('\n')}\n  },`);
-  }
+  nestedGroups.forEach((lines, parentKey) => {
+    topLines.push(`  ${parentKey}: {\n${lines.join('\n')}\n  },`);
+  });
 
   return `{\n${topLines.join('\n')}\n}`;
 }
@@ -271,7 +276,14 @@ export default defineComponent({
         return;
       }
 
-      const targetEl = stageEl.querySelector(slot.selector) as HTMLElement | null;
+      const matchedNodes = Array.from(stageEl.querySelectorAll(slot.selector)) as HTMLElement[];
+      const targetEl =
+        matchedNodes.find(node => {
+          const box = node.getBoundingClientRect();
+          return box.width > 0 || box.height > 0;
+        }) ||
+        matchedNodes[0] ||
+        null;
       if (!targetEl) {
         highlightRect.visible = false;
         return;
@@ -302,7 +314,7 @@ export default defineComponent({
           measureActiveSlot();
         });
       });
-      if (activeSlot.value?.isPopup) {
+      if (activeSlot.value?.isPopup || activeSemantic.value === 'textarea') {
         popupMeasureTimer = setTimeout(() => {
           measureActiveSlot();
         }, 120);

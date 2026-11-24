@@ -330,7 +330,7 @@ interface FilterResetProps {
 }
 ```
 
-## Semantic DOM {#semantic-dom}
+## Semantic DOM
 
 `classNames` 与 `styles` 支持对象或函数（`(info: { props }) => ...`），可作用于以下语义化结构：
 
