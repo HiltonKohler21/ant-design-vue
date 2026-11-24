@@ -40,6 +40,7 @@ Nesting can achieve more complex layouts.
 import type { CSSProperties } from 'vue';
 const cardStyle: CSSProperties = {
   width: '620px',
+  maxWidth: '100%',
 };
 const imgStyle: CSSProperties = {
   display: 'block',

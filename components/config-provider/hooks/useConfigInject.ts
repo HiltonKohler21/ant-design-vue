@@ -1,5 +1,5 @@
 import { computed, h, inject } from 'vue';
-import type { SizeType } from '../context';
+import type { SizeType, WaveConfig } from '../context';
 import { defaultConfigProvider, configProviderKey } from '../context';
 import { useInjectDisabled } from '../DisabledContext';
 import { DefaultRenderEmpty } from '../renderEmpty';
@@ -59,9 +59,7 @@ export default (name: string, props: Record<any, any>) => {
   );
   const disabled = computed<boolean>(() => props.disabled ?? disabledContext.value);
   const csp = computed(() => props.csp ?? configProvider.csp);
-  const wave = computed<{
-    disabled?: boolean;
-  }>(() => props.wave ?? configProvider.wave?.value);
+  const wave = computed<WaveConfig>(() => props.wave ?? configProvider.wave?.value);
 
   return {
     configProvider,

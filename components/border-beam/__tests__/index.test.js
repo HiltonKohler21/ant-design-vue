@@ -163,4 +163,30 @@ describe('BorderBeam', () => {
 
     errorSpy.mockRestore();
   });
+
+  it('supports outset=0 for clipped non-uniform radius containers and count=3 evenly distributed phases', async () => {
+    const wrapper = mount(BorderBeam, {
+      props: { count: 3, duration: 6, outset: 0, lineWidth: 2, size: 56 },
+      slots: {
+        default: () => (
+          <div
+            class="radius-host"
+            style="position: relative; border-radius: 20px 20px 0 0; overflow: hidden"
+          >
+            stream
+          </div>
+        ),
+      },
+    });
+    await nextTick();
+    await nextTick();
+
+    const beams = wrapper.find('.radius-host').findAll('.ant-border-beam');
+    expect(beams).toHaveLength(3);
+    expect(beams[0].attributes('style')).toContain('--ant-border-beam-inset-offset: 0px');
+    expect(beams[0].attributes('style')).toContain('--ant-border-beam-line-width: 2px');
+    expect(beams[0].attributes('style')).toContain('--ant-border-beam-size: 56px');
+    expect(beams[1].attributes('style')).toContain('--ant-border-beam-delay: -2s');
+    expect(beams[2].attributes('style')).toContain('--ant-border-beam-delay: -4s');
+  });
 });

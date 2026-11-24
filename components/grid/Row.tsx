@@ -19,26 +19,26 @@ const RowJustify = [
   'space-evenly',
 ] as const;
 
-type Responsive = 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
+type Responsive = 'xxxl' | 'xxl' | 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 type ResponsiveLike<T> = {
   [key in Responsive]?: T;
 };
 
-type Gap = number | undefined;
-export type Gutter = number | undefined | Partial<Record<Breakpoint, number>>;
+type Gap = number | string | undefined;
+export type Gutter = number | string | undefined | Partial<Record<Breakpoint, number | string>>;
 
 type ResponsiveAligns = ResponsiveLike<(typeof RowAligns)[number]>;
 type ResponsiveJustify = ResponsiveLike<(typeof RowJustify)[number]>;
 
 export interface rowContextState {
-  gutter?: [number, number];
+  gutter?: [Gap, Gap];
 }
 
 export const rowProps = () => ({
   align: someType<(typeof RowAligns)[number] | ResponsiveAligns>([String, Object]),
   justify: someType<(typeof RowJustify)[number] | ResponsiveJustify>([String, Object]),
   prefixCls: String,
-  gutter: someType<Gutter | [Gutter, Gutter]>([Number, Array, Object], 0),
+  gutter: someType<Gutter | [Gutter, Gutter]>([Number, String, Array, Object], 0),
   wrap: { type: Boolean, default: undefined },
 });
 
@@ -64,6 +64,7 @@ const ARow = defineComponent({
       lg: true,
       xl: true,
       xxl: true,
+      xxxl: true,
     });
 
     const curScreens = ref<ScreenMap>({
@@ -73,6 +74,7 @@ const ARow = defineComponent({
       lg: false,
       xl: false,
       xxl: false,
+      xxxl: false,
     });
 
     const mergePropsByScreen = (oriProp: 'align' | 'justify') => {
@@ -129,7 +131,7 @@ const ARow = defineComponent({
           for (let i = 0; i < responsiveArray.length; i++) {
             const breakpoint: Breakpoint = responsiveArray[i];
             if (screens.value[breakpoint] && g[breakpoint] !== undefined) {
-              results[index] = g[breakpoint] as number;
+              results[index] = g[breakpoint];
               break;
             }
           }
@@ -164,8 +166,22 @@ const ARow = defineComponent({
       const gt = gutter.value;
       // Add gutter related style
       const style: CSSProperties = {};
-      const horizontalGutter = gt[0] != null && gt[0] > 0 ? `${gt[0] / -2}px` : undefined;
-      const verticalGutter = gt[1] != null && gt[1] > 0 ? `${gt[1] / -2}px` : undefined;
+      const horizontalGutter =
+        gt[0] != null
+          ? typeof gt[0] === 'number'
+            ? gt[0] > 0
+              ? `${gt[0] / -2}px`
+              : undefined
+            : `calc(${gt[0]} / -2)`
+          : undefined;
+      const verticalGutter =
+        gt[1] != null
+          ? typeof gt[1] === 'number'
+            ? gt[1] > 0
+              ? `${gt[1] / -2}px`
+              : undefined
+            : `calc(${gt[1]} / -2)`
+          : undefined;
 
       if (horizontalGutter) {
         style.marginLeft = horizontalGutter;
@@ -174,7 +190,11 @@ const ARow = defineComponent({
 
       if (supportFlexGap.value) {
         // Set gap direct if flex gap support
-        style.rowGap = `${gt[1]}px`;
+        if (gt[1] !== undefined) {
+          style.rowGap = typeof gt[1] === 'number' ? `${gt[1]}px` : gt[1];
+        } else {
+          style.rowGap = `${gt[1]}px`;
+        }
       } else if (verticalGutter) {
         style.marginTop = verticalGutter;
         style.marginBottom = verticalGutter;

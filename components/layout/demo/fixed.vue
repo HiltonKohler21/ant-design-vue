@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   zh-CN: 固定头部
   en-US: Fixed Header
@@ -16,7 +16,7 @@ Fixed Header is generally used to fix the top navigation to facilitate page swit
 
 </docs>
 <template>
-  <a-layout style="border-radius: 8px; overflow: hidden">
+  <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
     <a-layout-header
       :style="{
         position: 'sticky',

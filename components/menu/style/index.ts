@@ -321,6 +321,27 @@ const getBaseStyle: GenerateStyle<MenuToken> = token => {
 
         [`${componentCls}-title-content`]: {
           transition: `color ${motionDurationSlow}`,
+
+          '&-with-extra': {
+            display: 'inline-flex',
+            alignItems: 'center',
+            width: '100%',
+            minWidth: 0,
+          },
+
+          [`${componentCls}-item-label`]: {
+            flex: 'auto',
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          },
+
+          [`${componentCls}-item-extra`]: {
+            flex: 'none',
+            marginInlineStart: 'auto',
+            paddingInlineStart: padding,
+          },
         },
 
         [`${componentCls}-item a`]: {

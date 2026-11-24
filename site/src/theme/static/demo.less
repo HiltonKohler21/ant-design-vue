@@ -492,9 +492,15 @@
   height: 320px;
   position: relative;
   overflow: hidden;
+  isolation: isolate;
+  transform: translateZ(0);
+}
 
-  .ant-float-btn,
-  .ant-float-btn-group {
-    position: absolute;
-  }
+#components-float-button-demo-placement .code-box-demo {
+  height: auto;
+}
+
+#components-float-button-demo-render-panel .code-box-demo {
+  height: auto;
+  overflow: visible;
 }

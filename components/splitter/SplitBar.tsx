@@ -248,6 +248,20 @@ export default defineComponent({
       const startCustomize = props.collapsibleIcon?.start !== undefined;
       const endCustomize = props.collapsibleIcon?.end !== undefined;
 
+      const renderIconNode = (node: VueNode) =>
+        typeof node === 'function' ? (node as any)() : node;
+      const renderedDraggerIcon = hasDraggerIcon ? renderIconNode(props.draggerIcon) : null;
+      const renderedStartIcon = startCustomize ? (
+        renderIconNode(props.collapsibleIcon!.start)
+      ) : (
+        <StartIconComp />
+      );
+      const renderedEndIcon = endCustomize ? (
+        renderIconNode(props.collapsibleIcon!.end)
+      ) : (
+        <EndIconComp />
+      );
+
       const normalizedDraggerClass =
         typeof props.draggerClassName === 'string'
           ? { default: props.draggerClassName }
@@ -302,7 +316,7 @@ export default defineComponent({
             onDblclick={() => props.onDraggerDoubleClick?.(props.index!)}
           >
             {hasDraggerIcon ? (
-              <div class={`${barCls}-dragger-icon`}>{props.draggerIcon}</div>
+              <div class={`${barCls}-dragger-icon`}>{renderedDraggerIcon}</div>
             ) : null}
           </div>
           {props.startCollapsible && (
@@ -322,7 +336,7 @@ export default defineComponent({
               onKeydown={(e: KeyboardEvent) => onCollapseKeyDown(e, 'start')}
             >
               <span class={classNames(`${barCls}-collapse-icon`, `${barCls}-collapse-start`)}>
-                {startCustomize ? props.collapsibleIcon!.start : <StartIconComp />}
+                {renderedStartIcon}
               </span>
             </div>
           )}
@@ -343,7 +357,7 @@ export default defineComponent({
               onKeydown={(e: KeyboardEvent) => onCollapseKeyDown(e, 'end')}
             >
               <span class={classNames(`${barCls}-collapse-icon`, `${barCls}-collapse-end`)}>
-                {endCustomize ? props.collapsibleIcon!.end : <EndIconComp />}
+                {renderedEndIcon}
               </span>
             </div>
           )}

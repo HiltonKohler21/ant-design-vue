@@ -16,7 +16,14 @@ import isNumeric from '../_util/isNumeric';
 import BarsOutlined from '@ant-design/icons-vue/BarsOutlined';
 import RightOutlined from '@ant-design/icons-vue/RightOutlined';
 import LeftOutlined from '@ant-design/icons-vue/LeftOutlined';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 import { SiderCollapsedKey, SiderHookProviderKey } from './injectionKey';
 
 const dimensionMaxMap = {
@@ -30,6 +37,15 @@ const dimensionMaxMap = {
 };
 
 export type CollapseType = 'clickTrigger' | 'responsive';
+
+export type SiderSemanticName = 'root' | 'body';
+export type SiderSemanticClassNames = SemanticClassNames<SiderSemanticName>;
+export type SiderSemanticStyles = SemanticStyles<SiderSemanticName>;
+export type SiderClassNamesType<P = Record<string, any>> = SemanticClassNamesType<
+  P,
+  SiderSemanticName
+>;
+export type SiderStylesType<P = Record<string, any>> = SemanticStylesType<P, SiderSemanticName>;
 
 export const siderProps = () => ({
   rootClassName: String,
@@ -47,6 +63,14 @@ export const siderProps = () => ({
   collapsedWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   breakpoint: PropTypes.oneOf(tuple('xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl')),
   theme: PropTypes.oneOf(tuple('light', 'dark')).def('dark'),
+  classNames: {
+    type: [Object, Function] as PropType<SiderClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<SiderStylesType>,
+    default: undefined,
+  },
   onBreakpoint: Function as PropType<(broken: boolean) => void>,
   onCollapse: Function as PropType<(collapsed: boolean, type: CollapseType) => void>,
 });
@@ -79,12 +103,28 @@ export default defineComponent({
   }),
   emits: ['breakpoint', 'update:collapsed', 'collapse'],
   setup(props, { emit, attrs, slots }) {
-    const { prefixCls } = useConfigInject('layout-sider', props);
+    const { prefixCls, direction } = useConfigInject('layout-sider', props);
+    const { classNames: contextClassNames, styles: contextStyles } = useComponentConfig('layout');
     const siderHook = inject(SiderHookProviderKey, undefined);
     const collapsed = shallowRef(
       !!(props.collapsed !== undefined ? props.collapsed : props.defaultCollapsed),
     );
     const below = shallowRef(false);
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      SiderSemanticClassNames,
+      SiderSemanticStyles,
+      SiderProps
+    >(
+      () => [contextClassNames.value as SiderClassNamesType<SiderProps>, props.classNames],
+      () => [contextStyles.value as SiderStylesType<SiderProps>, props.styles],
+      () => ({
+        props: {
+          ...props,
+          collapsed: collapsed.value,
+        },
+      }),
+    );
 
     watch(
       () => props.collapsed,
@@ -189,9 +229,10 @@ export default defineComponent({
             {trigger || <BarsOutlined />}
           </span>
         ) : null;
+      const reverseIcon = (direction.value === 'rtl') === !reverseArrow;
       const iconObj = {
-        expanded: reverseArrow ? <RightOutlined /> : <LeftOutlined />,
-        collapsed: reverseArrow ? <LeftOutlined /> : <RightOutlined />,
+        expanded: reverseIcon ? <RightOutlined /> : <LeftOutlined />,
+        collapsed: reverseIcon ? <LeftOutlined /> : <RightOutlined />,
       };
       const status = collapsed.value ? 'collapsed' : 'expanded';
       const defaultTrigger = iconObj[status];
@@ -204,6 +245,7 @@ export default defineComponent({
             )
           : null;
       const divStyle = [
+        mergedStyles.value.root,
         attrs.style as CSSProperties,
         {
           flex: `0 0 ${siderWidth}`,
@@ -211,7 +253,7 @@ export default defineComponent({
           minWidth: siderWidth, // https://github.com/ant-design/ant-design/issues/6349
           width: siderWidth,
         },
-      ];
+      ].filter(Boolean);
       const siderCls = classNames(
         props.rootClassName,
         pre,
@@ -222,11 +264,17 @@ export default defineComponent({
           [`${pre}-below`]: !!below.value,
           [`${pre}-zero-width`]: parseFloat(siderWidth) === 0,
         },
+        mergedClassNames.value.root,
         attrs.class,
       );
       return (
         <aside {...attrs} class={siderCls} style={divStyle}>
-          <div class={`${pre}-children`}>{slots.default?.()}</div>
+          <div
+            class={classNames(`${pre}-children`, mergedClassNames.value.body)}
+            style={mergedStyles.value.body}
+          >
+            {slots.default?.()}
+          </div>
           {collapsible || (below.value && zeroWidthTrigger) ? triggerDom : null}
         </aside>
       );

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 3
 title:
   zh-CN: 缩起内嵌菜单
   en-US: Collapsed inline menu

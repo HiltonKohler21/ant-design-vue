@@ -1,14 +1,38 @@
-import type { CSSProperties, ExtractPropTypes, HTMLAttributes } from 'vue';
+import type { CSSProperties, ExtractPropTypes, HTMLAttributes, PropType } from 'vue';
 import { computed, createVNode, defineComponent, provide, ref } from 'vue';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 import { SiderHookProviderKey } from './injectionKey';
 import useStyle from './style';
+
+export type LayoutSemanticName = 'root';
+export type LayoutSemanticClassNames = SemanticClassNames<LayoutSemanticName>;
+export type LayoutSemanticStyles = SemanticStyles<LayoutSemanticName>;
+export type LayoutClassNamesType<P = Record<string, any>> = SemanticClassNamesType<
+  P,
+  LayoutSemanticName
+>;
+export type LayoutStylesType<P = Record<string, any>> = SemanticStylesType<P, LayoutSemanticName>;
 
 export const basicProps = () => ({
   prefixCls: String,
   rootClassName: String,
   hasSider: { type: Boolean, default: undefined },
   tagName: String,
+  classNames: {
+    type: [Object, Function] as PropType<LayoutClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<LayoutStylesType>,
+    default: undefined,
+  },
 });
 
 export type BasicProps = Partial<ExtractPropTypes<ReturnType<typeof basicProps>>> & HTMLAttributes;
@@ -48,13 +72,31 @@ const Basic = defineComponent({
   setup(props, { slots, attrs }) {
     const { prefixCls: layoutPrefixCls } = useConfigInject('layout', {});
     const [wrapSSR, hashId] = useStyle(layoutPrefixCls);
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      LayoutSemanticClassNames,
+      LayoutSemanticStyles,
+      BasicProps
+    >(
+      () => [props.classNames],
+      () => [props.styles],
+      () => ({ props }),
+    );
     return () =>
       wrapSSR(
         createVNode(
           props.tagName,
           {
             ...attrs,
-            class: [props.prefixCls, props.rootClassName, hashId.value, attrs.class],
+            class: [
+              props.prefixCls,
+              props.rootClassName,
+              mergedClassNames.value.root,
+              hashId.value,
+              attrs.class,
+            ],
+            style: mergedStyles.value.root
+              ? [mergedStyles.value.root, attrs.style as CSSProperties]
+              : attrs.style,
           },
           slots,
         ),
@@ -68,7 +110,12 @@ const BasicLayout = defineComponent({
   props: basicProps(),
   setup(props, { slots, attrs }) {
     const { prefixCls, direction } = useConfigInject('', props);
-    const { className: contextClassName, style: contextStyle } = useComponentConfig('layout');
+    const {
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('layout');
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const siders = ref<string[]>([]);
     const siderHookProvider = {
@@ -81,13 +128,29 @@ const BasicLayout = defineComponent({
     };
 
     provide(SiderHookProviderKey, siderHookProvider);
+    const mergedHasSider = computed(() =>
+      typeof props.hasSider === 'boolean' ? props.hasSider : siders.value.length > 0,
+    );
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      LayoutSemanticClassNames,
+      LayoutSemanticStyles,
+      BasicProps
+    >(
+      () => [contextClassNames.value as LayoutClassNamesType<BasicProps>, props.classNames],
+      () => [contextStyles.value as LayoutStylesType<BasicProps>, props.styles],
+      () => ({
+        props: {
+          ...props,
+          hasSider: mergedHasSider.value,
+        },
+      }),
+    );
     const divCls = computed(() => {
-      const { prefixCls, hasSider } = props;
+      const { prefixCls } = props;
       return {
         [hashId.value]: true,
         [`${prefixCls}`]: true,
-        [`${prefixCls}-has-sider`]:
-          typeof hasSider === 'boolean' ? hasSider : siders.value.length > 0,
+        [`${prefixCls}-has-sider`]: mergedHasSider.value,
         [`${prefixCls}-rtl`]: direction.value === 'rtl',
       };
     });
@@ -98,8 +161,14 @@ const BasicLayout = defineComponent({
           tagName,
           {
             ...attrs,
-            class: [divCls.value, contextClassName.value, props.rootClassName, attrs.class],
-            style: [contextStyle.value, attrs.style as CSSProperties],
+            class: [
+              divCls.value,
+              contextClassName.value,
+              props.rootClassName,
+              mergedClassNames.value.root,
+              attrs.class,
+            ],
+            style: [contextStyle.value, mergedStyles.value.root, attrs.style as CSSProperties],
           },
           slots,
         ),

@@ -16,14 +16,14 @@ Classic page layouts.
 
 </docs>
 <template>
-  <a-space direction="vertical" :style="{ width: '100%' }" :size="[0, 32]">
-    <a-layout style="border-radius: 8px; overflow: hidden">
+  <a-space direction="vertical" :style="{ width: '100%', maxWidth: '100%' }" :size="[0, 32]">
+    <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
       <a-layout-header :style="headerStyle">Header</a-layout-header>
       <a-layout-content :style="contentStyle">Content</a-layout-content>
       <a-layout-footer :style="footerStyle">Footer</a-layout-footer>
     </a-layout>
 
-    <a-layout style="border-radius: 8px; overflow: hidden">
+    <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
       <a-layout-header :style="headerStyle">Header</a-layout-header>
       <a-layout has-sider>
         <a-layout-sider :style="siderStyle">Sider</a-layout-sider>
@@ -32,7 +32,7 @@ Classic page layouts.
       <a-layout-footer :style="footerStyle">Footer</a-layout-footer>
     </a-layout>
 
-    <a-layout style="border-radius: 8px; overflow: hidden">
+    <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
       <a-layout-header :style="headerStyle">Header</a-layout-header>
       <a-layout has-sider>
         <a-layout-content :style="contentStyle">Content</a-layout-content>
@@ -41,7 +41,7 @@ Classic page layouts.
       <a-layout-footer :style="footerStyle">Footer</a-layout-footer>
     </a-layout>
 
-    <a-layout has-sider style="border-radius: 8px; overflow: hidden">
+    <a-layout has-sider style="border-radius: 8px; overflow: hidden; max-width: 100%">
       <a-layout-sider :style="siderStyle">Sider</a-layout-sider>
       <a-layout>
         <a-layout-header :style="headerStyle">Header</a-layout-header>

@@ -2,7 +2,7 @@ import { computed, inject, provide } from 'vue';
 import type { Ref, InjectionKey, ComputedRef } from 'vue';
 
 export interface RowContext {
-  gutter: ComputedRef<[number, number]>;
+  gutter: ComputedRef<[number | string | undefined, number | string | undefined]>;
   wrap: ComputedRef<boolean>;
   supportFlexGap: Ref<boolean>;
 }

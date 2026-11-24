@@ -25,18 +25,20 @@ const AFlex = defineComponent({
       }
       return Boolean(props.vertical ?? ctxFlex?.value?.vertical);
     });
+    const mergedGap = computed(() => (props.gap === 'medium' ? 'middle' : props.gap));
     const mergedCls = computed(() => [
       prefixCls.value,
       hashId.value,
       createFlexClassNames(prefixCls.value, { ...props, vertical: mergedVertical.value }),
       {
         [`${prefixCls.value}-rtl`]: ctxDirection.value === 'rtl',
-        [`${prefixCls.value}-gap-${props.gap}`]: isPresetSize(props.gap),
+        [`${prefixCls.value}-gap-${mergedGap.value}`]: isPresetSize(mergedGap.value),
         [`${prefixCls.value}-vertical`]: mergedVertical.value,
       },
     ]);
     return () => {
-      const { flex, gap, component: Component = 'div', ...othersProps } = props;
+      const { flex, component: Component = 'div', ...othersProps } = props;
+      const gap = mergedGap.value;
 
       const mergedStyle: CSSProperties = {};
 
@@ -53,7 +55,7 @@ const AFlex = defineComponent({
         <Component
           class={[contextClassName.value, attrs.class, props.rootClassName, mergedCls.value]}
           style={[contextStyle.value, attrs.style as CSSProperties, mergedStyle]}
-          {...omit(othersProps, ['justify', 'wrap', 'align', 'vertical', 'orientation'])}
+          {...omit(othersProps, ['justify', 'wrap', 'align', 'vertical', 'orientation', 'gap'])}
         >
           {slots.default?.()}
         </Component>,

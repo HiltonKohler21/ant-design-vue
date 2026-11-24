@@ -1,4 +1,17 @@
-import type { MenuProps } from './src/Menu';
+import type {
+  MenuProps,
+  MenuSemanticName,
+  MenuSemanticClassNames,
+  MenuSemanticStyles,
+  SubMenuSemanticName,
+  SubMenuSemanticClassNames,
+  SubMenuSemanticStyles,
+  MenuPopupSemanticName,
+  MenuPopupSemanticClassNames,
+  MenuPopupSemanticStyles,
+  MenuClassNamesType,
+  MenuStylesType,
+} from './src/Menu';
 import Menu from './src/Menu';
 import type { MenuItemProps } from './src/MenuItem';
 import MenuItem from './src/MenuItem';
@@ -27,6 +40,17 @@ Menu.SubMenu = SubMenu;
 Menu.ItemGroup = ItemGroup;
 export type {
   MenuProps,
+  MenuSemanticName,
+  MenuSemanticClassNames,
+  MenuSemanticStyles,
+  SubMenuSemanticName,
+  SubMenuSemanticClassNames,
+  SubMenuSemanticStyles,
+  MenuPopupSemanticName,
+  MenuPopupSemanticClassNames,
+  MenuPopupSemanticStyles,
+  MenuClassNamesType,
+  MenuStylesType,
   SubMenuProps,
   MenuItemProps,
   MenuItemGroupProps,

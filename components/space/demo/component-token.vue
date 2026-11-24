@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 15
 debug: true
 title:
   zh-CN: 自定义主题

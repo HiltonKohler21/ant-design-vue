@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 5
 title:
   zh-CN: 只展开当前父级菜单
   en-US: Open current submenu only

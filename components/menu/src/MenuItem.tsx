@@ -1,5 +1,6 @@
 import { flattenChildren, isValidElement } from '../../_util/props-util';
 import PropTypes from '../../_util/vue-types';
+import cx from '../../_util/classNames';
 import type { ExtractPropTypes, PropType } from 'vue';
 import {
   computed,
@@ -30,6 +31,7 @@ export const menuItemProps = () => ({
   danger: Boolean,
   title: { type: [String, Boolean], default: undefined },
   icon: PropTypes.any,
+  extra: PropTypes.any,
   onMouseenter: Function as PropType<MouseEventHandler>,
   onMouseleave: Function as PropType<MouseEventHandler>,
   onClick: Function as PropType<MouseEventHandler>,
@@ -49,6 +51,7 @@ export default defineComponent({
   slots: Object as CustomSlotsType<{
     icon?: any;
     title?: any;
+    extra?: any;
     default?: any;
   }>,
 
@@ -77,6 +80,11 @@ export default defineComponent({
       selectedKeys,
       registerMenuInfo,
       unRegisterMenuInfo,
+      classNames: semanticClassNames,
+      styles: semanticStyles,
+      tooltip,
+      disableMenuItemTitleTooltip,
+      _internalRenderMenuItem,
     } = useInjectMenu();
     const firstLevel = useInjectFirstLevel();
     const isActive = shallowRef(false);
@@ -177,8 +185,31 @@ export default defineComponent({
       emit('focus', e);
     };
 
-    const renderItemChildren = (icon: any, children: any) => {
-      const wrapNode = <span class={`${prefixCls.value}-title-content`}>{children}</span>;
+    const renderItemChildren = (icon: any, children: any, extra: any) => {
+      const itemContentClass = firstLevel
+        ? semanticClassNames?.value?.itemContent
+        : semanticClassNames?.value?.subMenu?.itemContent;
+      const itemContentStyle = firstLevel
+        ? semanticStyles?.value?.itemContent
+        : semanticStyles?.value?.subMenu?.itemContent;
+      const hasExtra = extra !== undefined && extra !== null && extra !== false;
+      const wrapNode = (
+        <span
+          class={cx(`${prefixCls.value}-title-content`, itemContentClass, {
+            [`${prefixCls.value}-title-content-with-extra`]: hasExtra,
+          })}
+          style={itemContentStyle}
+        >
+          {hasExtra ? (
+            <>
+              <span class={`${prefixCls.value}-item-label`}>{children}</span>
+              <span class={`${prefixCls.value}-item-extra`}>{extra}</span>
+            </>
+          ) : (
+            children
+          )}
+        </span>
+      );
       // inline-collapsed.md demo 依赖 span 来隐藏文字,有 icon 属性，则内部包裹一个 span
       // ref: https://github.com/ant-design/ant-design/pull/23456
       if (!icon || (isValidElement(children) && children.type === 'span')) {
@@ -197,6 +228,7 @@ export default defineComponent({
     return () => {
       if (isMeasure) return null;
       const title = props.title ?? slots.title?.();
+      const extra = props.extra ?? slots.extra?.();
       const children = flattenChildren(slots.default?.());
       const childrenLength = children.length;
       let tooltipTitle: any = title;
@@ -205,8 +237,13 @@ export default defineComponent({
       } else if (title === false) {
         tooltipTitle = '';
       }
+      const tooltipVal = tooltip?.value;
+      const tooltipConfig = tooltipVal && typeof tooltipVal === 'object' ? tooltipVal : undefined;
+      const mergedTooltipTitle =
+        tooltipConfig && tooltipConfig.title !== undefined ? tooltipConfig.title : tooltipTitle;
       const tooltipProps: any = {
-        title: tooltipTitle,
+        ...(tooltipConfig || {}),
+        title: mergedTooltipTitle,
       };
 
       if (!siderCollapsed.value && !inlineCollapsed.value) {
@@ -224,46 +261,85 @@ export default defineComponent({
       }
 
       const icon = props.icon ?? slots.icon?.(props);
+      const itemSemanticClass = firstLevel
+        ? semanticClassNames?.value?.item
+        : semanticClassNames?.value?.subMenu?.item;
+      const itemSemanticStyle = firstLevel
+        ? semanticStyles?.value?.item
+        : semanticStyles?.value?.subMenu?.item;
+      const itemIconClass = firstLevel
+        ? semanticClassNames?.value?.itemIcon
+        : semanticClassNames?.value?.subMenu?.itemIcon;
+      const itemIconStyle = firstLevel
+        ? semanticStyles?.value?.itemIcon
+        : semanticStyles?.value?.subMenu?.itemIcon;
+      const { class: attrClass, style: attrStyle, ...restAttrs } = attrs;
+      const resolvedIcon = typeof icon === 'function' ? icon(props.originItemValue) : icon;
+
+      let itemNode: any = (
+        <Overflow.Item
+          component="li"
+          {...restAttrs}
+          id={props.id}
+          style={{
+            ...directionStyle.value,
+            ...(itemSemanticStyle || {}),
+            ...((attrStyle as any) || {}),
+          }}
+          class={[
+            classNames.value,
+            itemSemanticClass,
+            attrClass,
+            {
+              [`${prefixCls.value}-item-only-child`]:
+                (icon ? childrenLength + 1 : childrenLength) === 1,
+            },
+          ]}
+          role={props.role || 'menuitem'}
+          tabindex={props.disabled ? null : -1}
+          data-menu-id={key}
+          aria-disabled={props.disabled}
+          {...optionRoleProps}
+          onMouseenter={onMouseEnter}
+          onMouseleave={onMouseLeave}
+          onClick={onInternalClick}
+          onKeydown={onInternalKeyDown}
+          onFocus={onInternalFocus}
+          title={typeof title === 'string' ? title : undefined}
+        >
+          {cloneElement(
+            resolvedIcon,
+            {
+              class: cx(`${prefixCls.value}-item-icon`, itemIconClass),
+              ...(itemIconStyle ? { style: itemIconStyle } : {}),
+            },
+            false,
+          )}
+          {renderItemChildren(icon, children, extra)}
+        </Overflow.Item>
+      );
+
+      if (_internalRenderMenuItem?.value) {
+        itemNode = _internalRenderMenuItem.value(itemNode, { ...props, ...attrs });
+      }
+
+      if (disableMenuItemTitleTooltip?.value || tooltipVal === false) {
+        return itemNode;
+      }
+
+      const mergedPlacement = tooltipConfig?.placement || (rtl.value ? 'left' : 'right');
+      const mergedOverlayClassName = cx(
+        `${prefixCls.value}-inline-collapsed-tooltip`,
+        tooltipConfig?.overlayClassName,
+      );
+
       return (
         <Tooltip
           {...tooltipProps}
-          placement={rtl.value ? 'left' : 'right'}
-          overlayClassName={`${prefixCls.value}-inline-collapsed-tooltip`}
+          placement={mergedPlacement}
+          overlayClassName={mergedOverlayClassName}
         >
-          <Overflow.Item
-            component="li"
-            {...attrs}
-            id={props.id}
-            style={{ ...((attrs.style as any) || {}), ...directionStyle.value }}
-            class={[
-              classNames.value,
-              {
-                [`${attrs.class}`]: !!attrs.class,
-                [`${prefixCls.value}-item-only-child`]:
-                  (icon ? childrenLength + 1 : childrenLength) === 1,
-              },
-            ]}
-            role={props.role || 'menuitem'}
-            tabindex={props.disabled ? null : -1}
-            data-menu-id={key}
-            aria-disabled={props.disabled}
-            {...optionRoleProps}
-            onMouseenter={onMouseEnter}
-            onMouseleave={onMouseLeave}
-            onClick={onInternalClick}
-            onKeydown={onInternalKeyDown}
-            onFocus={onInternalFocus}
-            title={typeof title === 'string' ? title : undefined}
-          >
-            {cloneElement(
-              typeof icon === 'function' ? icon(props.originItemValue) : icon,
-              {
-                class: `${prefixCls.value}-item-icon`,
-              },
-              false,
-            )}
-            {renderItemChildren(icon, children)}
-          </Overflow.Item>
+          {itemNode}
         </Tooltip>
       );
     };

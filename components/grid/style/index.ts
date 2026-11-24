@@ -135,6 +135,12 @@ const genLoopGridColumnsStyle = (token: GridColToken, sizeCls: string): CSSObjec
     }
   }
 
+  if (sizeCls) {
+    gridColumnsStyle[`${componentCls}${sizeCls}-flex`] = {
+      flex: `var(--${componentCls.slice(1)}${sizeCls}-flex)`,
+    };
+  }
+
   return gridColumnsStyle;
 };
 
@@ -165,6 +171,7 @@ export const useColStyle = genComponentStyleHook('Grid', token => {
     '-lg': gridToken.screenLGMin,
     '-xl': gridToken.screenXLMin,
     '-xxl': gridToken.screenXXLMin,
+    '-xxxl': gridToken.screenXXXLMin,
   };
 
   return [

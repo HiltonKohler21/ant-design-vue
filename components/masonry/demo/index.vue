@@ -5,6 +5,7 @@
     <image-demo />
     <dynamic />
     <style-class />
+    <fresh />
   </demo-sort>
 </template>
 
@@ -17,6 +18,7 @@ import Responsive from './responsive.vue';
 import Dynamic from './dynamic.vue';
 import ImageDemo from './image.vue';
 import StyleClass from './style-class.vue';
+import Fresh from './fresh.vue';
 
 export default defineComponent({
   CN,
@@ -27,6 +29,7 @@ export default defineComponent({
     Dynamic,
     ImageDemo,
     StyleClass,
+    Fresh,
   },
 });
 </script>

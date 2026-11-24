@@ -34,8 +34,10 @@ export const alignItemsValues = [
 
 const genClsWrap = (prefixCls: string, props: FlexProps) => {
   const wrapCls: Record<PropertyKey, boolean> = {};
+  const mergedWrap =
+    typeof props.wrap === 'boolean' ? (props.wrap ? 'wrap' : 'nowrap') : props.wrap;
   flexWrapValues.forEach(cssKey => {
-    wrapCls[`${prefixCls}-wrap-${cssKey}`] = props.wrap === cssKey;
+    wrapCls[`${prefixCls}-wrap-${cssKey}`] = mergedWrap === cssKey;
   });
   return wrapCls;
 };

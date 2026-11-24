@@ -1,6 +1,7 @@
 <docs>
 ---
-order: 4
+order: 6
+version: 4.3.0
 title:
   zh-CN: 组件默认配置
   en-US: Component Config

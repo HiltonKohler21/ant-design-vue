@@ -25,6 +25,7 @@ import {
   defaultIconPrefixCls,
 } from './context';
 import { useComponentConfig } from './hooks/useComponentConfig';
+import useConfig from './hooks/useConfig';
 import { useProviderSize } from './SizeContext';
 import { useProviderDisabled } from './DisabledContext';
 import { createTheme } from '../_util/cssinjs';
@@ -42,7 +43,7 @@ export type {
   WarningConfig,
 } from './context';
 export { Variants, useInjectWarningContext } from './context';
-export { useComponentConfig };
+export { useComponentConfig, useConfig };
 export const defaultPrefixCls = 'ant';
 export { defaultIconPrefixCls };
 function getGlobalPrefixCls() {
@@ -511,6 +512,7 @@ const ConfigProvider = defineComponent({
 });
 
 ConfigProvider.config = setGlobalConfig;
+ConfigProvider.useConfig = useConfig;
 
 ConfigProvider.install = function (app: App) {
   app.component(ConfigProvider.name, ConfigProvider);
@@ -519,4 +521,5 @@ ConfigProvider.install = function (app: App) {
 export default ConfigProvider as typeof ConfigProvider &
   Plugin & {
     readonly config: typeof setGlobalConfig;
+    readonly useConfig: typeof useConfig;
   };

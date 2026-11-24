@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 6
 title:
   zh-CN: 分隔符
   en-US: Configuring the Separator

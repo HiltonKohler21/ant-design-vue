@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 6
 title:
   zh-CN: 垂直菜单
   en-US: Vertical menu

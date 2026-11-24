@@ -13,18 +13,31 @@ import scrollIntoView from 'scroll-into-view-if-needed';
 import classNames from '../_util/classNames';
 import addEventListener from '../vc-util/Dom/addEventListener';
 import Affix from '../affix';
+import type { AffixProps } from '../affix';
 import scrollTo from '../_util/scrollTo';
 import getScroll from '../_util/getScroll';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import useMergeSemantic, {
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 import useProvideAnchor from './context';
 import useStyle from './style';
 import type { AnchorLinkItemProps } from './AnchorLink';
 import AnchorLink from './AnchorLink';
 import PropTypes from '../_util/vue-types';
 import devWarning from '../vc-util/devWarning';
-import { arrayType } from '../_util/type';
+import { arrayType, someType } from '../_util/type';
 
 export type AnchorDirection = 'vertical' | 'horizontal';
+
+export type AnchorSemanticName = 'root' | 'item' | 'itemTitle' | 'indicator';
+export type AnchorSemanticClassNames = SemanticClassNames<AnchorSemanticName>;
+export type AnchorSemanticStyles = SemanticStyles<AnchorSemanticName>;
+export type AnchorClassNamesType = SemanticClassNamesType<Record<string, any>, AnchorSemanticName>;
+export type AnchorStylesType = SemanticStylesType<Record<string, any>, AnchorSemanticName>;
 
 function getDefaultContainer() {
   return window;
@@ -62,7 +75,12 @@ export const anchorProps = () => ({
   prefixCls: String,
   offsetTop: Number,
   bounds: Number,
-  affix: { type: Boolean, default: true },
+  affix: {
+    type: [Boolean, Object] as PropType<
+      boolean | Omit<AffixProps, 'offsetTop' | 'target' | 'children'>
+    >,
+    default: true,
+  },
   showInkInFixed: { type: Boolean, default: false },
   getContainer: Function as PropType<() => AnchorContainer>,
   wrapperClass: String,
@@ -71,6 +89,9 @@ export const anchorProps = () => ({
   targetOffset: Number,
   items: arrayType<AnchorLinkItemProps[]>(),
   direction: PropTypes.oneOf(['vertical', 'horizontal'] as AnchorDirection[]).def('vertical'),
+  replace: { type: Boolean, default: undefined },
+  classNames: someType<AnchorClassNamesType>([Object, Function]),
+  styles: someType<AnchorStylesType>([Object, Function]),
   onChange: Function as PropType<(currentActiveLink: string) => void>,
   onClick: Function as PropType<(e: MouseEvent, link: { title: any; href: string }) => void>,
 });
@@ -117,6 +138,7 @@ export default defineComponent({
 
     const spanLinkNode = ref<HTMLSpanElement>(null);
     const anchorRef = ref();
+    const linkTargetOffsetMap: Record<string, number> = {};
     const state = reactive<AnchorState>({
       links: [],
       scrollContainer: null,
@@ -128,6 +150,28 @@ export default defineComponent({
       const { getContainer } = props;
       return getContainer || getTargetContainer?.value || getDefaultContainer;
     });
+
+    const mergedProps = computed<AnchorProps>(() => ({
+      ...props,
+      direction: anchorDirection.value,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      AnchorSemanticClassNames,
+      AnchorSemanticStyles,
+      AnchorProps
+    >(
+      () => [contextClassNames.value as AnchorClassNamesType, props.classNames],
+      () => [
+        contextStyles.value as AnchorStylesType,
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        props.styles,
+        props.wrapperStyle ? { root: props.wrapperStyle } : undefined,
+        attrs.style ? { root: attrs.style as CSSProperties } : undefined,
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
     // func...
     const getCurrentAnchor = (offsetTop = 0, bounds = 5) => {
       const linkSections: Array<Section> = [];
@@ -142,8 +186,9 @@ export default defineComponent({
         }
         const target = document.getElementById(sharpLinkMatch[1]);
         if (target) {
+          const linkOffsetTop = linkTargetOffsetMap[link] ?? offsetTop;
           const top = getOffsetTop(target, container);
-          if (top < offsetTop + bounds) {
+          if (top <= linkOffsetTop + bounds) {
             linkSections.push({
               link,
               top,
@@ -166,7 +211,7 @@ export default defineComponent({
       activeLink.value = typeof getCurrentAnchor === 'function' ? getCurrentAnchor(link) : link;
       emit('change', link);
     };
-    const handleScrollTo = (link: string) => {
+    const handleScrollTo = (link: string, targetOffsetParams?: number) => {
       const { offsetTop, targetOffset } = props;
 
       setCurrentActiveLink(link);
@@ -186,7 +231,8 @@ export default defineComponent({
       const scrollTop = getScroll(container, true);
       const eleOffsetTop = getOffsetTop(targetElement, container);
       let y = scrollTop + eleOffsetTop;
-      y -= targetOffset !== undefined ? targetOffset : offsetTop || 0;
+      const finalTargetOffset = targetOffsetParams ?? targetOffset ?? offsetTop ?? 0;
+      y -= finalTargetOffset;
       state.animating = true;
 
       scrollTo(y, {
@@ -212,7 +258,7 @@ export default defineComponent({
     };
 
     const updateInk = () => {
-      const linkNode = anchorRef.value.querySelector(`.${prefixCls.value}-link-title-active`);
+      const linkNode = anchorRef.value?.querySelector(`.${prefixCls.value}-link-title-active`);
       if (linkNode && spanLinkNode.value) {
         const horizontalAnchor = anchorDirection.value === 'horizontal';
         spanLinkNode.value.style.top = horizontalAnchor
@@ -231,9 +277,14 @@ export default defineComponent({
     };
 
     useProvideAnchor({
-      registerLink: (link: string) => {
+      registerLink: (link: string, newTargetOffset?: number) => {
         if (!state.links.includes(link)) {
           state.links.push(link);
+        }
+        if (newTargetOffset !== undefined) {
+          linkTargetOffsetMap[link] = newTargetOffset;
+        } else {
+          delete linkTargetOffsetMap[link];
         }
       },
       unregisterLink: (link: string) => {
@@ -241,6 +292,7 @@ export default defineComponent({
         if (index !== -1) {
           state.links.splice(index, 1);
         }
+        delete linkTargetOffsetMap[link];
       },
       activeLink,
       scrollTo: handleScrollTo,
@@ -248,6 +300,8 @@ export default defineComponent({
         emit('click', e, info);
       },
       direction: anchorDirection,
+      classNames: mergedClassNames,
+      styles: mergedStyles,
     });
 
     onMounted(() => {
@@ -279,12 +333,24 @@ export default defineComponent({
     const createNestedLink = (options?: AnchorLinkItemProps[]) =>
       Array.isArray(options)
         ? options.map(option => {
-            const { children, key, href, target, class: cls, style, title } = option;
+            const {
+              children,
+              key,
+              href,
+              target,
+              class: cls,
+              style,
+              title,
+              replace,
+              targetOffset,
+            } = option;
             return (
               <AnchorLink
                 key={key}
                 href={href}
                 target={target}
+                replace={replace ?? props.replace}
+                targetOffset={targetOffset}
                 class={cls}
                 style={style}
                 title={title}
@@ -302,7 +368,8 @@ export default defineComponent({
     return () => {
       const { offsetTop, affix, showInkInFixed } = props;
       const pre = prefixCls.value;
-      const inkClass = classNames(`${pre}-ink`, {
+      const { class: attrClass, style: _attrStyle, ...restAttrs } = attrs;
+      const inkClass = classNames(`${pre}-ink`, mergedClassNames.value.indicator, {
         [`${pre}-ink-visible`]: activeLink.value,
       });
 
@@ -310,7 +377,8 @@ export default defineComponent({
         hashId.value,
         props.wrapperClass,
         contextClassName.value,
-        contextClassNames.value.root,
+        mergedClassNames.value.root,
+        attrClass as any,
         `${pre}-wrapper`,
         {
           [`${pre}-wrapper-horizontal`]: anchorDirection.value === 'horizontal',
@@ -322,11 +390,9 @@ export default defineComponent({
         [`${pre}-fixed`]: !affix && !showInkInFixed,
       });
 
-      const wrapperStyle = {
+      const wrapperStyle: CSSProperties = {
         maxHeight: offsetTop ? `calc(100vh - ${offsetTop}px)` : '100vh',
-        ...contextStyle.value,
-        ...contextStyles.value.root,
-        ...props.wrapperStyle,
+        ...mergedStyles.value.root,
       };
       const anchorContent = (
         <div
@@ -335,18 +401,21 @@ export default defineComponent({
           ref={anchorRef}
         >
           <div class={anchorClass}>
-            <span class={inkClass} ref={spanLinkNode} />
+            <span class={inkClass} style={mergedStyles.value.indicator} ref={spanLinkNode} />
             {Array.isArray(props.items) ? createNestedLink(props.items) : slots.default?.()}
           </div>
         </div>
       );
+
+      const affixProps = typeof affix === 'object' && affix !== null ? affix : {};
 
       return wrapSSR(
         !affix ? (
           anchorContent
         ) : (
           <Affix
-            {...attrs}
+            {...restAttrs}
+            {...affixProps}
             offsetTop={offsetTop}
             rootClassName={props.rootClassName}
             target={getContainer.value}

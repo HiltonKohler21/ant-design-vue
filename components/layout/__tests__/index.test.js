@@ -183,4 +183,83 @@ describe('Layout', () => {
 
     wrapper.unmount();
   });
+
+  it('supports static and functional semantic classNames/styles on Layout and Layout.Sider merged with ConfigProvider.layout', async () => {
+    const collapsed = ref(false);
+    const wrapper = mount({
+      setup() {
+        return () => (
+          <ConfigProvider
+            layout={{
+              className: 'ctx-layout',
+              style: { minHeight: '200px' },
+              classNames: ({ props }) => ({
+                root: props.hasSider ? 'ctx-has-sider' : 'ctx-semantic-root',
+                body: 'ctx-sider-body',
+              }),
+              styles: {
+                root: { padding: '4px' },
+                body: { backgroundColor: 'rgb(1, 2, 3)' },
+              },
+            }}
+          >
+            <Layout
+              classNames={({ props }) => ({
+                root: props.hasSider ? 'prop-layout-has-sider' : 'prop-layout-no-sider',
+              })}
+              styles={{ root: { borderWidth: '1px' } }}
+            >
+              <Sider
+                collapsible
+                collapsed={collapsed.value}
+                classNames={({ props }) => ({
+                  root: props.collapsed ? 'sider-root-collapsed' : 'sider-root-expanded',
+                  body: props.collapsed ? 'sider-body-collapsed' : 'sider-body-expanded',
+                })}
+                styles={({ props }) => ({
+                  root: { opacity: props.collapsed ? '0.8' : '1' },
+                  body: { padding: '8px' },
+                })}
+              >
+                Sider Content
+              </Sider>
+              <Content classNames={{ root: 'content-root' }} styles={{ root: { margin: '2px' } }}>
+                Main
+              </Content>
+            </Layout>
+          </ConfigProvider>
+        );
+      },
+    });
+    await nextTick();
+
+    const layoutEl = wrapper.find('.ant-layout');
+    expect(layoutEl.classes()).toContain('ctx-layout');
+    expect(layoutEl.classes()).toContain('ctx-has-sider');
+    expect(layoutEl.classes()).toContain('prop-layout-has-sider');
+    expect(layoutEl.attributes('style')).toContain('min-height: 200px');
+    expect(layoutEl.attributes('style')).toContain('padding: 4px');
+    expect(layoutEl.attributes('style')).toContain('border-width: 1px');
+
+    const siderEl = wrapper.find('.ant-layout-sider');
+    const siderBodyEl = wrapper.find('.ant-layout-sider-children');
+    expect(siderEl.classes()).toContain('ctx-semantic-root');
+    expect(siderEl.classes()).toContain('sider-root-expanded');
+    expect(siderEl.attributes('style')).toContain('padding: 4px');
+    expect(siderEl.attributes('style')).toContain('opacity: 1');
+    expect(siderBodyEl.classes()).toContain('ctx-sider-body');
+    expect(siderBodyEl.classes()).toContain('sider-body-expanded');
+    expect(siderBodyEl.attributes('style')).toContain('background-color: rgb(1, 2, 3)');
+    expect(siderBodyEl.attributes('style')).toContain('padding: 8px');
+
+    const contentEl = wrapper.find('.ant-layout-content');
+    expect(contentEl.classes()).toContain('content-root');
+    expect(contentEl.attributes('style')).toContain('margin: 2px');
+
+    collapsed.value = true;
+    await nextTick();
+    expect(siderEl.classes()).toContain('sider-root-collapsed');
+    expect(siderBodyEl.classes()).toContain('sider-body-collapsed');
+    expect(siderEl.attributes('style')).toContain('opacity: 0.8');
+  });
 });

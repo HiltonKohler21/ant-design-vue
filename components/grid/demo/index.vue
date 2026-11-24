@@ -9,6 +9,7 @@
     <flex-order />
     <flex-stretch />
     <responsive />
+    <responsive-flex />
     <ResponsiveMore />
     <playfround />
     <UseBreakpoint />
@@ -23,6 +24,7 @@ import FlexStretch from './flex-stretch.vue';
 import Flex from './flex.vue';
 import Gutter from './gutter.vue';
 import Offset from './offset.vue';
+import ResponsiveFlex from './responsive-flex.vue';
 import ResponsiveMore from './responsive-more.vue';
 import Responsive from './responsive.vue';
 import Sort from './sort.vue';
@@ -42,6 +44,7 @@ export default defineComponent({
     Flex,
     Gutter,
     Offset,
+    ResponsiveFlex,
     ResponsiveMore,
     Responsive,
     Sort,

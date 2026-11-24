@@ -66,7 +66,7 @@ ConfigProvider 使用 Vue 3 的 [provide / inject](https://cn.vuejs.org/guide/co
 | variant | 设置输入类组件（Input / Select / DatePicker 等）的默认形态变体 | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | virtual | 设置 `false` 时关闭虚拟滚动 | boolean | - | 3.0 |
 | warning | 设置警告配置，`strict` 为 `false` 时会将废弃相关信息聚合处理 | { strict?: boolean } | - | 4.3.0 |
-| wave | 设置水波纹特效 | { disabled?: boolean } | - | 4.0.7 |
+| wave | 设置水波纹特效 | [WaveConfig](#waveconfig) | - | 4.0.7 |
 
 ### ThemeConfig
 
@@ -87,13 +87,25 @@ ConfigProvider 使用 Vue 3 的 [provide / inject](https://cn.vuejs.org/guide/co
 设置 `Modal`、`Message`、`Notification` 静态方法的全局配置（支持响应式 `ref`）：
 
 ```ts
-import { ref } from 'vue';
-import { ConfigProvider } from 'ant-design-vue';
+import { h, ref } from 'vue';
+import { App, ConfigProvider, StyleProvider } from 'ant-design-vue';
 
 ConfigProvider.config({
   prefixCls: 'ant',
   iconPrefixCls: 'anticon',
-  holderRender: children => children,
+  // 4.3.0+
+  holderRender: children =>
+    h(StyleProvider, { hashPriority: 'high' }, () =>
+      h(
+        ConfigProvider,
+        {
+          prefixCls: 'ant',
+          iconPrefixCls: 'anticon',
+          theme: { token: { colorPrimary: '#1677ff' } },
+        },
+        () => h(App, null, () => children),
+      ),
+    ),
 });
 
 // 也支持响应式数据，直接修改 prefixCls.value 即可生效
@@ -102,6 +114,31 @@ ConfigProvider.config({
   prefixCls,
 });
 ```
+
+### ConfigProvider.useConfig() `4.3.0+`
+
+获取父级 `Provider` 的值，如 `DisabledContext`、`SizeContext`（在 Vue 3 中返回响应式 `Ref`）。
+
+```ts
+import { ConfigProvider } from 'ant-design-vue';
+
+const {
+  componentDisabled, // 4.3.0+
+  componentSize, // 4.3.0+
+} = ConfigProvider.useConfig();
+```
+
+| 返回值 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| componentDisabled | antd 组件禁用状态 | `Ref<boolean \| undefined>` | - | 4.3.0 |
+| componentSize | antd 组件大小状态 | `Ref<'small' \| 'middle' \| 'large' \| undefined>` | - | 4.3.0 |
+
+### WaveConfig
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| disabled | 是否禁用水波纹效果 | boolean | `false` | 4.0.7 |
+| showEffect | 自定义水波纹效果 | (node: HTMLElement, info: { className, token, component, event, hashId }) => void | - | 4.3.0 |
 
 ### 组件配置
 
@@ -209,3 +246,9 @@ const getPopupContainer = (node?: HTMLElement) => {
 #### 为什么 `message.info`、`notification.open` 或 `Modal.confirm` 等静态方法内的 VueNode 无法继承 ConfigProvider 的属性（如 `prefixCls` 和 `theme`）？
 
 静态方法会脱离主应用组件树独立挂载。建议使用 [App](/components/app-cn/) 组件的 `App.useApp()`，或通过 `ConfigProvider.config({ holderRender })` 包装静态方法渲染容器。
+
+#### `prefixCls` 优先级（前者被后者覆盖）
+
+1. `ConfigProvider.config({ prefixCls: 'prefix-1' })`
+2. `ConfigProvider.config({ holderRender: children => h(ConfigProvider, { prefixCls: 'prefix-2' }, () => children) })`
+3. `message.config({ prefixCls: 'prefix-3' })`

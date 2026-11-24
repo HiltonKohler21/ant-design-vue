@@ -1,4 +1,5 @@
 import type { CustomSlotsType, Key } from '../../_util/type';
+import { someType } from '../../_util/type';
 import type { CSSProperties, ExtractPropTypes, PropType, VNode } from 'vue';
 import {
   shallowRef,
@@ -13,6 +14,8 @@ import {
   unref,
 } from 'vue';
 import shallowEqual from '../../_util/shallowequal';
+import classNames from '../../_util/classNames';
+import { mergeClassNames, mergeStyles, resolveSemantic } from '../../_util/hooks/useMergeSemantic';
 import type { StoreMenuInfo } from './hooks/useMenuContext';
 import useProvideMenu, { MenuContextProvider, useProvideFirstLevel } from './hooks/useMenuContext';
 import useConfigInject, { useComponentConfig } from '../../config-provider/hooks/useConfigInject';
@@ -43,16 +46,127 @@ import type { ItemType } from './hooks/useItems';
 import useItems from './hooks/useItems';
 import useStyle from '../style';
 import { useInjectOverride } from './OverrideContext';
+import PropTypes from '../../_util/vue-types';
+import type { TooltipProps } from '../../tooltip';
+
+export type MenuSemanticName = 'root' | 'itemTitle' | 'list' | 'item' | 'itemIcon' | 'itemContent';
+
+export type MenuSemanticClassNames = {
+  root?: string;
+  itemTitle?: string;
+  list?: string;
+  item?: string;
+  itemIcon?: string;
+  itemContent?: string;
+};
+
+export type MenuSemanticStyles = {
+  root?: CSSProperties;
+  itemTitle?: CSSProperties;
+  list?: CSSProperties;
+  item?: CSSProperties;
+  itemIcon?: CSSProperties;
+  itemContent?: CSSProperties;
+};
+
+export type SubMenuSemanticName = 'item' | 'itemTitle' | 'list' | 'itemContent' | 'itemIcon';
+
+export type SubMenuSemanticClassNames = {
+  item?: string;
+  itemTitle?: string;
+  list?: string;
+  itemContent?: string;
+  itemIcon?: string;
+};
+
+export type SubMenuSemanticStyles = {
+  item?: CSSProperties;
+  itemTitle?: CSSProperties;
+  list?: CSSProperties;
+  itemContent?: CSSProperties;
+  itemIcon?: CSSProperties;
+};
+
+export type MenuPopupSemanticName = 'root';
+
+export type MenuPopupSemanticClassNames = {
+  root?: string;
+};
+
+export type MenuPopupSemanticStyles = {
+  root?: CSSProperties;
+};
+
+export type MenuClassNamesSchemaType = MenuSemanticClassNames & {
+  popup?: MenuPopupSemanticClassNames | string;
+  subMenu?: SubMenuSemanticClassNames;
+};
+
+export type MenuStylesSchemaType = MenuSemanticStyles & {
+  popup?: MenuPopupSemanticStyles | CSSProperties;
+  subMenu?: SubMenuSemanticStyles;
+};
+
+export type ResolvedMenuClassNames = MenuSemanticClassNames & {
+  popup?: MenuPopupSemanticClassNames;
+  subMenu?: SubMenuSemanticClassNames;
+};
+
+export type ResolvedMenuStyles = MenuSemanticStyles & {
+  popup?: MenuPopupSemanticStyles;
+  subMenu?: SubMenuSemanticStyles;
+};
+
+export type MenuClassNamesType =
+  | MenuClassNamesSchemaType
+  | ((info: { props: MenuProps }) => MenuClassNamesSchemaType);
+
+export type MenuStylesType =
+  | MenuStylesSchemaType
+  | ((info: { props: MenuProps }) => MenuStylesSchemaType);
+
+function normalizeMenuClassNames(
+  raw?: MenuClassNamesSchemaType,
+): ResolvedMenuClassNames | undefined {
+  if (!raw || typeof raw !== 'object') {
+    return undefined;
+  }
+  const next: ResolvedMenuClassNames = { ...raw } as ResolvedMenuClassNames;
+  if (typeof raw.popup === 'string') {
+    next.popup = { root: raw.popup };
+  }
+  if (typeof (raw as any).subMenu === 'string') {
+    next.subMenu = { item: (raw as any).subMenu };
+  }
+  return next;
+}
+
+function normalizeMenuStyles(raw?: MenuStylesSchemaType): ResolvedMenuStyles | undefined {
+  if (!raw || typeof raw !== 'object') {
+    return undefined;
+  }
+  const next: ResolvedMenuStyles = { ...raw } as ResolvedMenuStyles;
+  if (raw.popup && typeof raw.popup === 'object') {
+    const popupObj = raw.popup as Record<string, any>;
+    if (!('root' in popupObj) || typeof popupObj.root !== 'object' || popupObj.root === null) {
+      next.popup = { root: raw.popup as CSSProperties };
+    }
+  }
+  return next;
+}
 
 export const menuProps = () => ({
   id: String,
   prefixCls: String,
+  rootClassName: String,
   // donot use items, now only support inner use
   items: Array as PropType<ItemType[]>,
   disabled: Boolean,
   inlineCollapsed: Boolean,
   disabledOverflow: Boolean,
   forceSubMenuRender: Boolean,
+  defaultOpenKeys: Array as PropType<Key[]>,
+  defaultSelectedKeys: Array as PropType<Key[]>,
   openKeys: Array as PropType<Key[]>,
   selectedKeys: Array as PropType<Key[]>,
   activeKey: String, // 内部组件使用
@@ -73,6 +187,19 @@ export const menuProps = () => ({
   triggerSubMenuAction: { type: String as PropType<TriggerSubMenuAction>, default: 'hover' },
 
   getPopupContainer: Function as PropType<(node: HTMLElement) => HTMLElement>,
+
+  overflowedIndicator: PropTypes.any,
+  tooltip: someType<false | TooltipProps>([Boolean, Object]),
+  popupRender: Function as PropType<(node: any, info: { item: any; keys: Key[] }) => any>,
+  classNames: someType<MenuClassNamesType>([Object, Function]),
+  styles: someType<MenuStylesType>([Object, Function]),
+  _internalDisableMenuItemTitleTooltip: { type: Boolean, default: undefined },
+  _internalRenderMenuItem: Function as PropType<
+    (originNode: any, menuItemProps: any, stateProps?: any) => any
+  >,
+  _internalRenderSubMenuItem: Function as PropType<
+    (originNode: any, subMenuItemProps: any, stateProps?: any) => any
+  >,
 
   expandIcon: Function as PropType<(p?: { isOpen: boolean; [key: string]: any }) => any>,
   onOpenChange: Function as PropType<(keys: Key[]) => void>,
@@ -152,7 +279,9 @@ export default defineComponent({
     });
 
     const activeKeys = ref([]);
-    const mergedSelectedKeys = ref([]);
+    const mergedSelectedKeys = ref<Key[]>(
+      props.selectedKeys?.slice() ?? props.defaultSelectedKeys?.slice() ?? [],
+    );
     const keyMapStore = ref<Record<Key, StoreMenuInfo>>({});
     watch(
       store,
@@ -251,7 +380,9 @@ export default defineComponent({
       }
     };
 
-    const mergedOpenKeys = ref([]);
+    const mergedOpenKeys = ref<Key[]>(
+      props.openKeys?.slice() ?? props.defaultOpenKeys?.slice() ?? [],
+    );
 
     watch(
       () => props.openKeys,
@@ -294,7 +425,7 @@ export default defineComponent({
 
     const isInlineMode = computed(() => mergedMode.value === 'inline');
 
-    const triggerOpenKeys = (keys: string[]) => {
+    const triggerOpenKeys = (keys: Key[]) => {
       mergedOpenKeys.value = keys;
       emit('update:openKeys', keys);
       emit('openChange', keys);
@@ -423,6 +554,34 @@ export default defineComponent({
           }
         : null,
     );
+    const mergedProps = computed<MenuProps>(() => ({
+      ...props,
+      mode: mergedMode.value,
+      inlineCollapsed: mergedInlineCollapsed.value,
+      selectable: props.selectable,
+      theme: props.theme,
+    }));
+
+    const mergedClassNames = computed<ResolvedMenuClassNames>(() => {
+      const info = { props: mergedProps.value };
+      return mergeClassNames<ResolvedMenuClassNames>(
+        normalizeMenuClassNames(
+          resolveSemantic(contextClassNames.value as MenuClassNamesType, info),
+        ),
+        normalizeMenuClassNames(resolveSemantic(props.classNames, info)),
+      );
+    });
+
+    const mergedStyles = computed<ResolvedMenuStyles>(() => {
+      const info = { props: mergedProps.value };
+      return mergeStyles<ResolvedMenuStyles>(
+        normalizeMenuStyles(resolveSemantic(contextStyles.value as MenuStylesType, info)),
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        normalizeMenuStyles(resolveSemantic(props.styles, info)),
+        attrs.style ? { root: attrs.style as CSSProperties } : undefined,
+      );
+    });
+
     useProvideMenu({
       prefixCls,
       activeKeys,
@@ -451,7 +610,14 @@ export default defineComponent({
       selectedSubMenuKeys,
       expandIcon,
       forceSubMenuRender: computed(() => props.forceSubMenuRender),
-      rootClassName: hashId,
+      rootClassName: computed(() => classNames(hashId.value, props.rootClassName)),
+      classNames: mergedClassNames,
+      styles: mergedStyles,
+      tooltip: computed(() => props.tooltip),
+      disableMenuItemTitleTooltip: computed(() => props._internalDisableMenuItemTitleTooltip),
+      popupRender: computed(() => props.popupRender),
+      _internalRenderMenuItem: computed(() => props._internalRenderMenuItem),
+      _internalRenderSubMenuItem: computed(() => props._internalRenderSubMenuItem),
     });
 
     const getChildrenList = () => itemsNodes.value || flattenChildren(slots.default?.());
@@ -475,11 +641,18 @@ export default defineComponent({
               ></MenuContextProvider>
             ));
       };
-      const overflowedIndicator = slots.overflowedIndicator?.() || <EllipsisOutlined />;
+      const overflowedIndicator = props.overflowedIndicator ?? slots.overflowedIndicator?.() ?? (
+        <EllipsisOutlined />
+      );
+      const { class: attrClass, style: _attrStyle, ...restAttrs } = attrs;
+      const rootStyle =
+        mergedStyles.value.root && Object.keys(mergedStyles.value.root).length > 0
+          ? mergedStyles.value.root
+          : undefined;
 
       return wrapSSR(
         <Overflow
-          {...attrs}
+          {...restAttrs}
           onMousedown={props.onMousedown}
           prefixCls={`${prefixCls.value}-overflow`}
           component="ul"
@@ -487,11 +660,12 @@ export default defineComponent({
           class={[
             className.value,
             contextClassName.value,
-            contextClassNames.value.root,
-            attrs.class,
+            mergedClassNames.value.root,
+            props.rootClassName,
+            attrClass,
             hashId.value,
           ]}
-          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+          style={rootStyle}
           role="menu"
           id={props.id}
           data={getWrapperList(childList)}

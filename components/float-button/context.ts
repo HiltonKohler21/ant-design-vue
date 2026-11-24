@@ -1,10 +1,16 @@
 import type { Ref, InjectionKey } from 'vue';
 import { inject, provide, ref } from 'vue';
 
-import type { FloatButtonShape } from './interface';
+import type {
+  FloatButtonSemanticClassNames,
+  FloatButtonSemanticStyles,
+  FloatButtonShape,
+} from './interface';
 
-interface FloatButtonGroupContext {
-  shape: Ref<FloatButtonShape>;
+export interface FloatButtonGroupContext {
+  shape: Ref<FloatButtonShape | undefined>;
+  classNames?: Ref<FloatButtonSemanticClassNames | undefined>;
+  styles?: Ref<FloatButtonSemanticStyles | undefined>;
 }
 const contextKey: InjectionKey<FloatButtonGroupContext> = Symbol('floatButtonGroupContext');
 

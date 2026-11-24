@@ -1,5 +1,5 @@
 import Trigger from '../../vc-trigger';
-import type { PropType } from 'vue';
+import type { CSSProperties, PropType } from 'vue';
 import { computed, defineComponent, onBeforeUnmount, shallowRef, watch } from 'vue';
 import type { MenuMode } from './interface';
 import { useInjectForceRender, useInjectMenu } from './hooks/useMenuContext';
@@ -25,6 +25,7 @@ export default defineComponent({
     visible: Boolean,
     // popup: React.ReactNode;
     popupClassName: String,
+    popupStyle: Object as PropType<CSSProperties>,
     popupOffset: Array as PropType<number[]>,
     disabled: Boolean,
     onVisibleChange: Function as PropType<(visible: boolean) => void>,
@@ -81,7 +82,7 @@ export default defineComponent({
       return res ? getTransitionProps(res.name, { css: true }) : undefined;
     });
     return () => {
-      const { prefixCls, popupClassName, mode, popupOffset, disabled } = props;
+      const { prefixCls, popupClassName, popupStyle, mode, popupOffset, disabled } = props;
       return (
         <Trigger
           prefixCls={prefixCls}
@@ -93,6 +94,7 @@ export default defineComponent({
             popupClassName,
             rootClassName.value,
           )}
+          popupStyle={popupStyle}
           stretch={mode === 'horizontal' ? 'minWidth' : null}
           getPopupContainer={getPopupContainer.value}
           builtinPlacements={placement.value}

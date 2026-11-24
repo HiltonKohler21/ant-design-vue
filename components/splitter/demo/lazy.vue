@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 7
 version: 4.3.0
 title:
   zh-CN: 延迟渲染模式

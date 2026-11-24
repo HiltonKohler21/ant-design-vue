@@ -2,7 +2,8 @@
   <demo-sort>
     <basic />
     <on-change />
-    <traget />
+    <target />
+    <debug />
   </demo-sort>
 </template>
 
@@ -12,7 +13,8 @@ import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import Basic from './basic.vue';
 import OnChange from './on-change.vue';
-import Traget from './target.vue';
+import Target from './target.vue';
+import Debug from './debug.vue';
 
 export default defineComponent({
   CN,
@@ -20,7 +22,8 @@ export default defineComponent({
   components: {
     Basic,
     OnChange,
-    Traget,
+    Target,
+    Debug,
   },
 });
 </script>

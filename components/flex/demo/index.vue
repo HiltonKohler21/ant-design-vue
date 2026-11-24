@@ -5,12 +5,14 @@
     <Gap />
     <Wrap />
     <Combination />
+    <Debug />
   </demo-sort>
 </template>
 <script lang="ts">
 import Align from './align.vue';
 import Basic from './basic.vue';
 import Combination from './combination.vue';
+import Debug from './debug.vue';
 import Gap from './gap.vue';
 import Wrap from './wrap.vue';
 import CN from '../index.zh-CN.md';
@@ -23,6 +25,7 @@ export default defineComponent({
     Align,
     Basic,
     Combination,
+    Debug,
     Gap,
     Wrap,
   },

@@ -211,4 +211,116 @@ describe('Steps', () => {
     expect(itemDesc.attributes('style')).toContain('opacity: 0.8');
     expect(itemDesc.attributes('style')).toContain('color: rgb(1, 2, 3)');
   });
+
+  it('supports type="panel" with PanelArrow, variant="outlined", and cssVar: true', async () => {
+    document.head.innerHTML = '';
+    const onChange = jest.fn();
+    const wrapper = mount(ConfigProvider, {
+      props: { theme: { cssVar: true } },
+      slots: {
+        default: () => (
+          <Steps
+            responsive={false}
+            type="panel"
+            orientation="vertical"
+            variant="outlined"
+            size="small"
+            current={0}
+            onChange={onChange}
+            items={[
+              { title: 'Step 1', subTitle: '00:00', content: 'Desc 1' },
+              { title: 'Step 2', content: 'Desc 2', status: 'error' },
+              { title: 'Step 3', content: 'Desc 3' },
+            ]}
+          />
+        ),
+      },
+    });
+    await nextTick();
+
+    const root = wrapper.find('.ant-steps');
+    expect(root.classes()).toContain('ant-steps-panel');
+    expect(root.classes()).toContain('ant-steps-horizontal');
+    expect(root.classes()).toContain('ant-steps-outlined');
+    expect(root.classes()).toContain('ant-steps-small');
+    expect(wrapper.findAll('.ant-steps-panel-arrow')).toHaveLength(3);
+
+    const css = Array.from(document.querySelectorAll('style'))
+      .map(s => s.innerHTML)
+      .join('\n');
+    expect(css).toContain('ant-steps-panel');
+    expect(css).not.toContain('NaN');
+    expect(css).not.toContain('undefined');
+  });
+
+  it('supports maxCount collapsing hidden steps into disabled ellipsis steps and mapping onChange', async () => {
+    const onChange = jest.fn();
+    const items = Array.from({ length: 7 }, (_, i) => ({
+      title: `Step ${i + 1}`,
+      status: i === 1 ? 'error' : undefined,
+    }));
+    const wrapper = mount(Steps, {
+      props: {
+        responsive: false,
+        current: 3,
+        maxCount: 5,
+        items,
+        onChange,
+      },
+    });
+    await nextTick();
+
+    expect(wrapper.find('.ant-steps').classes()).toContain('ant-steps-max-count');
+    const ellipsisItems = wrapper.findAll('.ant-steps-item-ellipsis');
+    expect(ellipsisItems.length).toBeGreaterThanOrEqual(1);
+    expect(ellipsisItems[0].classes()).toContain('ant-steps-item-disabled');
+    expect(ellipsisItems[0].classes()).toContain('ant-steps-item-error');
+
+    // Last visible item should correspond to Step 7 (originIndex = 6)
+    const allItems = wrapper.findAll('.ant-steps-item');
+    const lastItem = allItems[allItems.length - 1];
+    expect(lastItem.text()).toContain('Step 7');
+    expect(lastItem.find('.ant-steps-icon').text()).toBe('7');
+
+    await lastItem.find('.ant-steps-item-container').trigger('click');
+    expect(onChange).toHaveBeenCalledWith(6);
+  });
+
+  it('supports type="dot", type="inline" with offset, size="medium", and iconRender', () => {
+    const dotWrapper = mount(Steps, {
+      props: {
+        responsive: false,
+        type: 'dot',
+        size: 'medium',
+        items: [{ title: 'A' }, { title: 'B' }],
+      },
+    });
+    expect(dotWrapper.find('.ant-steps').classes()).toContain('ant-steps-dot');
+    expect(dotWrapper.find('.ant-steps').classes()).not.toContain('ant-steps-medium');
+
+    const inlineWrapper = mount(Steps, {
+      props: {
+        responsive: false,
+        type: 'inline',
+        offset: 2,
+        items: [{ title: 'S3' }, { title: 'S4' }, { title: 'S5' }],
+      },
+    });
+    expect(inlineWrapper.find('.ant-steps').attributes('style')).toContain(
+      '--ant-steps-items-offset: 2',
+    );
+
+    const iconWrapper = mount(Steps, {
+      props: {
+        responsive: false,
+        current: 1,
+        items: [{ title: 'A' }, { title: 'B' }],
+        iconRender: (node, info) => (
+          <span class={`custom-render-${info.index}-${info.active}`}>{node}</span>
+        ),
+      },
+    });
+    expect(iconWrapper.find('.custom-render-0-false').exists()).toBe(true);
+    expect(iconWrapper.find('.custom-render-1-true').exists()).toBe(true);
+  });
 });

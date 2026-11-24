@@ -25,7 +25,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*37T2R6O9oi0AAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| align | 对齐方式 | `start` \| `end` \| `center` \| `baseline` \| `stretch` | - | 1.6.5 |
+| align | 对齐方式 | `start` \| `end` \| `center` \| `baseline` \| `stretch` | - | 1.6.5 \| stretch: 4.3.0 |
 | classNames | 语义化结构 class，支持静态对象或函数 | `{ root?: string; item?: string; separator?: string }` \| `(info: { props: SpaceProps }) => ...` | - | 4.3.0 |
 | direction | （已废弃，请使用 `orientation`）间距方向 | `vertical` \| `horizontal` | `horizontal` | 1.6.5 |
 | orientation | 间距方向，优先级高于 `vertical` 与 `direction` | `vertical` \| `horizontal` | `horizontal` | 4.3.0 |
@@ -75,3 +75,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*37T2R6O9oi0AAA
 | size | 尺寸（未设置时自动继承 `Space.Compact` 尺寸） | `large` \| `middle` \| `small` | - | 4.3.0 |
 | status | 校验状态 | `error` \| `warning` | - | 4.3.0 |
 | variant | 形态变体 | `outlined` \| `filled` \| `borderless` \| `underlined` | `outlined` | 4.3.0 |
+
+### Semantic DOM
+
+`classNames` 与 `styles` 支持以下语义化节点（均支持静态对象或 `(info: { props }) => ...` 函数形式）：
+
+- `root`：根容器节点
+- `item`：子元素包裹节点
+- `separator`：分隔符节点

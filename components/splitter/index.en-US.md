@@ -21,15 +21,18 @@ A panel layout that freely splits the specified area.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | classNames | Semantic DOM class names (object or function) | `SplitterClassNamesType` | - | 4.3.0 |
-| collapsibleIcon | Customize collapsible icons | `{ start?: VueNode; end?: VueNode }` | - | 4.3.0 |
+| collapsible | `motion` to enable collapse animation, `icon` to customize collapse icons | `{ motion?: boolean; icon?: { start?: VueNode; end?: VueNode } }` | - | 4.3.0 |
+| ~~collapsibleIcon~~ | (Deprecated, use `collapsible.icon`) Customize collapsible icons | `{ start?: VueNode; end?: VueNode }` | - | 4.3.0 |
+| destroyOnHidden | Destroy panel content when collapsed (size is 0). Applies to all panels, can be overridden per panel | boolean | false | 4.3.0 |
 | draggerClassName | Customize dragger class name | `string \| { default?: string; active?: string }` | - | 4.3.0 |
-| draggerIcon | Customize dragger icon | `VueNode` | - | 4.3.0 |
+| draggerIcon | Customize dragger icon, pass `null` to hide default icon | `VueNode` | - | 4.3.0 |
 | draggerStyle | Customize dragger style | `CSSProperties \| { default?: CSSProperties; active?: CSSProperties }` | - | 4.3.0 |
-| layout | The layout direction (deprecated, please use `orientation`) | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
+| ~~layout~~ | The layout direction (deprecated, please use `orientation`) | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | lazy | Update panel sizes during dragging, set `true` to only update after drag ends | boolean | false | 4.3.0 |
-| orientation | The layout direction, takes precedence over `layout` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
+| orientation | The layout direction, takes precedence over `vertical` and `layout` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
 | styles | Semantic DOM styles (object or function) | `SplitterStylesType` | - | 4.3.0 |
+| vertical | Vertical layout; when set together with `orientation`, `orientation` takes priority | boolean | false | 4.3.0 |
 | onCollapse | Callback when a panel collapses | (collapsed: boolean[], sizes: number[]) => void | - | 4.3.0 |
 | onDraggerDoubleClick | Callback when double-clicking a dragger (also emits `draggerDoubleClick`) | (index: number) => void | - | 4.3.0 |
 | onResize | Callback when panel size changes | (sizes: number[]) => void | - | 4.3.0 |

@@ -47,3 +47,10 @@ A masonry layout that distributes variable-height items into multiple columns (a
 | Property      | Description      | Type                     | Version |
 | ------------- | ---------------- | ------------------------ | ------- |
 | nativeElement | Root DOM element | `HTMLDivElement \| null` | 4.3.0   |
+
+### Semantic DOM
+
+`classNames` and `styles` support the following semantic slots (static object or `(info: { props }) => ...` function):
+
+- `root`: Root masonry container element
+- `item`: Individual masonry item wrapper element

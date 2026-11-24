@@ -21,8 +21,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*oC92TK44Ex8AAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| component | 设置渲染元素，为 `false` 则不创建 DOM 节点 | string \| Component \| false | `div` | 4.3.0 |
 | message | App 内 Message 的全局配置 | [MessageConfig](/components/message-cn/#messageconfig) | - | 4.x |
 | notification | App 内 Notification 的全局配置 | [NotificationConfig](/components/notification-cn/#notificationconfig) | - | 4.x |
+| prefixCls | 自定义类名前缀 | string | `ant-app` | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 
 ## 如何使用
@@ -129,3 +131,9 @@ export const useGlobalStore = defineStore('global', () => {
   };
 </script>
 ```
+
+## FAQ
+
+### CSS Var 在 `<a-app :component="false">` 内不起作用
+
+自 `4.3.0` 起默认使用 CSS 变量模式。`App` 需要一个有效的 HTML 元素来承载根节点的类名和默认重置样式。将 `component` 设置为 `false` 时，`App` 仅提供上下文而不渲染根 DOM 节点，因此不会应用 `class`、`rootClassName` 和 `style` 属性，并在开发环境下触发警告。如需消费这些样式，请保留默认的 `div` 或指定其他有效元素。

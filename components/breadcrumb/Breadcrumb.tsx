@@ -1,5 +1,5 @@
 import type { CSSProperties, PropType, ExtractPropTypes } from 'vue';
-import { cloneVNode, defineComponent } from 'vue';
+import { cloneVNode, computed, defineComponent } from 'vue';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
 import { flattenChildren, getPropsSlot } from '../_util/props-util';
@@ -7,12 +7,29 @@ import warning from '../_util/warning';
 import type { BreadcrumbItemProps, BreadcrumbMenuProps } from './BreadcrumbItem';
 import BreadcrumbItem from './BreadcrumbItem';
 import BreadcrumbSeparator from './BreadcrumbSeparator';
+import { useProvideBreadcrumb } from './BreadcrumbContext';
 import type { DropdownProps } from '../dropdown/dropdown';
 import Menu from '../menu';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import useMergeSemantic, {
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 import useStyle from './style';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import type { CustomSlotsType, Key, VueNode } from '../_util/type';
+import { someType } from '../_util/type';
+
+export type BreadcrumbSemanticName = 'root' | 'item' | 'separator';
+export type BreadcrumbSemanticClassNames = SemanticClassNames<BreadcrumbSemanticName>;
+export type BreadcrumbSemanticStyles = SemanticStyles<BreadcrumbSemanticName>;
+export type BreadcrumbClassNamesType = SemanticClassNamesType<
+  Record<string, any>,
+  BreadcrumbSemanticName
+>;
+export type BreadcrumbStylesType = SemanticStylesType<Record<string, any>, BreadcrumbSemanticName>;
 
 export interface Route {
   path: string;
@@ -60,6 +77,8 @@ export const breadcrumbProps = () => ({
   params: PropTypes.any,
   separator: PropTypes.any,
   dropdownIcon: PropTypes.any,
+  classNames: someType<BreadcrumbClassNamesType>([Object, Function]),
+  styles: someType<BreadcrumbStylesType>([Object, Function]),
   itemRender: {
     type: Function as PropType<
       (opt: { route: any; params: any; routes: any[]; paths: string[] }) => VueNode
@@ -79,7 +98,7 @@ function getBreadcrumbName(route: Route, params: unknown) {
   }
   const name = route.breadcrumbName.replace(
     new RegExp(`:(${paramsKeys})`, 'g'),
-    (replacement, key) => params[key] || replacement,
+    (replacement, key) => (params[key] !== undefined ? String(params[key]) : replacement),
   );
   return name;
 }
@@ -94,9 +113,8 @@ function getItemTitle(item: ItemType, params: Record<string, any>) {
     if (!paramsKeys) {
       return rawTitle;
     }
-    return rawTitle.replace(
-      new RegExp(`:(${paramsKeys})`, 'g'),
-      (replacement, key) => params[key] || replacement,
+    return rawTitle.replace(new RegExp(`:(${paramsKeys})`, 'g'), (replacement, key) =>
+      params[key] !== undefined ? String(params[key]) : replacement,
     );
   }
   return rawTitle;
@@ -135,6 +153,36 @@ export default defineComponent({
       styles: contextStyles,
     } = useComponentConfig('breadcrumb');
     const [wrapSSR, hashId] = useStyle(prefixCls);
+
+    const mergedSeparator = computed(
+      () => getPropsSlot(slots, props, 'separator') ?? breadcrumbConfig.value.separator ?? '/',
+    );
+
+    const mergedProps = computed<BreadcrumbProps>(() => ({
+      ...props,
+      separator: mergedSeparator.value,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      BreadcrumbSemanticClassNames,
+      BreadcrumbSemanticStyles,
+      BreadcrumbProps
+    >(
+      () => [contextClassNames.value as BreadcrumbClassNamesType, props.classNames],
+      () => [
+        contextStyles.value as BreadcrumbStylesType,
+        contextStyle.value ? { root: contextStyle.value } : undefined,
+        props.styles,
+        attrs.style ? { root: attrs.style as CSSProperties } : undefined,
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
+    useProvideBreadcrumb({
+      classNames: mergedClassNames,
+      styles: mergedStyles,
+    });
+
     const getPath = (path: string, params: unknown) => {
       path = (path || '').replace(/^\//, '');
       Object.keys(params || {}).forEach(key => {
@@ -317,8 +365,7 @@ export default defineComponent({
       const { items, routes, params = {} } = props;
 
       const children = flattenChildren(getPropsSlot(slots, props));
-      const separator =
-        getPropsSlot(slots, props, 'separator') ?? breadcrumbConfig.value.separator ?? '/';
+      const separator = mergedSeparator.value;
       const dropdownIcon =
         getPropsSlot(slots, props, 'dropdownIcon') ?? breadcrumbConfig.value.dropdownIcon;
 
@@ -361,24 +408,26 @@ export default defineComponent({
         });
       }
 
+      const { class: attrClass, style: _attrStyle, ...restAttrs } = attrs;
       const breadcrumbClassName = classNames(
         prefixCls.value,
         contextClassName.value,
-        contextClassNames.value.root,
+        mergedClassNames.value.root,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
         },
-        attrs.class as any,
+        attrClass as any,
         props.rootClassName,
         hashId.value,
       );
 
+      const rootStyle =
+        mergedStyles.value.root && Object.keys(mergedStyles.value.root).length > 0
+          ? mergedStyles.value.root
+          : undefined;
+
       return wrapSSR(
-        <nav
-          {...attrs}
-          class={breadcrumbClassName}
-          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
-        >
+        <nav {...restAttrs} class={breadcrumbClassName} style={rootStyle}>
           <ol>{crumbs}</ol>
         </nav>,
       );

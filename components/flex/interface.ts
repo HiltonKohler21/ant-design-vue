@@ -10,11 +10,11 @@ export const flexProps = () => ({
   /** flex 主轴方向（antd 6.x 推荐，优先级高于 vertical） */
   orientation: stringType<FlexOrientation>(),
   vertical: booleanType(),
-  wrap: stringType<CSSProperties['flex-wrap']>(),
+  wrap: someType<boolean | CSSProperties['flex-wrap']>([Boolean, String]),
   justify: stringType<CSSProperties['justify-content']>(),
   align: stringType<CSSProperties['align-items']>(),
   flex: someType<CSSProperties['flex']>([Number, String]),
-  gap: someType<CSSProperties['gap'] | SizeType>([Number, String]),
+  gap: someType<CSSProperties['gap'] | SizeType | 'medium'>([Number, String]),
   component: anyType(),
 });
 

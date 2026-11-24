@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 10
 title:
   zh-CN: 上一步和下一步
   en-US: Prev and next

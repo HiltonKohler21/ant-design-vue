@@ -287,6 +287,10 @@ const floatButtonGroupStyle: GenerateStyle<FloatButtonToken, CSSObject> = token 
       [`&${groupPrefixCls}-rtl`]: {
         direction: 'rtl',
       },
+      [`&${componentCls}-pure`]: {
+        position: 'relative',
+        inset: 'auto',
+      },
       [componentCls]: {
         position: 'static',
         flexShrink: 0,
@@ -515,12 +519,13 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
       backgroundColor: token.floatButtonBackgroundColor,
       transition: `background-color ${token.motionDurationMid}`,
       [`${componentCls}-body`]: {
-        backgroundColor: token.floatButtonBackgroundColor,
+        backgroundColor: 'transparent',
         transition: `background-color ${token.motionDurationMid}`,
         '&:hover': {
           backgroundColor: token.colorFillContent,
         },
         [`${componentCls}-content`]: {
+          color: token.colorText,
           [`${componentCls}-icon`]: {
             color: token.colorText,
           },
@@ -528,7 +533,7 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
             display: 'flex',
             alignItems: 'center',
             lineHeight: `${unit(token.fontSizeLG)}`,
-            color: token.colorText,
+            color: 'inherit',
             fontSize: token.fontSizeSM,
           },
         },
@@ -537,12 +542,13 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
     [`${componentCls}-primary`]: {
       backgroundColor: token.colorPrimary,
       [`${componentCls}-body`]: {
-        backgroundColor: token.colorPrimary,
+        backgroundColor: 'transparent',
         transition: `background-color ${token.motionDurationMid}`,
         '&:hover': {
           backgroundColor: token.colorPrimaryHover,
         },
         [`${componentCls}-content`]: {
+          color: token.colorTextLightSolid,
           [`${componentCls}-icon`]: {
             color: token.colorTextLightSolid,
           },
@@ -550,11 +556,39 @@ const sharedFloatButtonStyle: GenerateStyle<FloatButtonToken, CSSObject> = token
             display: 'flex',
             alignItems: 'center',
             lineHeight: `${unit(token.fontSizeLG)}`,
-            color: token.colorTextLightSolid,
+            color: 'inherit',
             fontSize: token.fontSizeSM,
           },
         },
       },
+    },
+    [`${componentCls}-progress`]: {
+      border: `${unit(token.lineWidthBold)} solid transparent`,
+      backgroundImage: [
+        `linear-gradient(${token.floatButtonBackgroundColor}, ${token.floatButtonBackgroundColor})`,
+        `conic-gradient(${token.colorPrimary} var(--${token.antCls.replace(
+          /^\./,
+          '',
+        )}-float-btn-progress, 0turn), ${token.colorBorderSecondary} 0)`,
+      ].join(', '),
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box',
+      [`${componentCls}-body ${componentCls}-content`]: {
+        minHeight: '100%',
+      },
+      [`&${componentCls}-primary`]: {
+        backgroundImage: [
+          `linear-gradient(${token.colorPrimary}, ${token.colorPrimary})`,
+          `conic-gradient(${token.colorTextLightSolid} var(--${token.antCls.replace(
+            /^\./,
+            '',
+          )}-float-btn-progress, 0turn), ${token.colorPrimaryBorder} 0)`,
+        ].join(', '),
+      },
+    },
+    [`${componentCls}:disabled`]: {
+      cursor: 'not-allowed',
+      opacity: 0.65,
     },
   };
 };

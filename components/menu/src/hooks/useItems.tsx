@@ -18,6 +18,7 @@ export interface MenuItemType extends VcMenuItemType {
   danger?: boolean;
   icon?: VNode | ((item: MenuItemType) => VNode);
   title?: string;
+  extra?: any;
 }
 
 export interface SubMenuType extends Omit<VcSubMenuType, 'children'> {

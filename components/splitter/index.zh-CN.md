@@ -22,15 +22,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*y92yRYhObU8AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | classNames | 语义化结构 class，支持对象或函数 | `SplitterClassNamesType` | - | 4.3.0 |
-| collapsibleIcon | 自定义折叠图标 | `{ start?: VueNode; end?: VueNode }` | - | 4.3.0 |
+| collapsible | `motion` 是否开启折叠动画，`icon` 自定义折叠图标 | `{ motion?: boolean; icon?: { start?: VueNode; end?: VueNode } }` | - | 4.3.0 |
+| ~~collapsibleIcon~~ | （已废弃，请使用 `collapsible.icon`）自定义折叠图标 | `{ start?: VueNode; end?: VueNode }` | - | 4.3.0 |
+| destroyOnHidden | 折叠时（size 为 0）销毁面板内容，应用于所有面板，可在单个面板上覆盖 | boolean | false | 4.3.0 |
 | draggerClassName | 自定义拖拽条类名 | `string \| { default?: string; active?: string }` | - | 4.3.0 |
-| draggerIcon | 自定义拖拽图标 | `VueNode` | - | 4.3.0 |
+| draggerIcon | 自定义拖拽图标，传 `null` 隐藏默认图标 | `VueNode` | - | 4.3.0 |
 | draggerStyle | 自定义拖拽条样式 | `CSSProperties \| { default?: CSSProperties; active?: CSSProperties }` | - | 4.3.0 |
-| layout | 布局方向（已废弃，请使用 `orientation`） | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
+| ~~layout~~ | 布局方向（已废弃，请使用 `orientation`） | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | lazy | 拖拽时实时更新面板尺寸，设为 `true` 时拖拽结束后才更新 | boolean | false | 4.3.0 |
-| orientation | 布局方向，优先级高于 `layout` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
+| orientation | 布局方向，优先级高于 `vertical` 与 `layout` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
 | styles | 语义化结构 style，支持对象或函数 | `SplitterStylesType` | - | 4.3.0 |
+| vertical | 排列方向，与 `orientation` 同时存在时以 `orientation` 优先 | boolean | false | 4.3.0 |
 | onCollapse | 面板折叠时回调 | (collapsed: boolean[], sizes: number[]) => void | - | 4.3.0 |
 | onDraggerDoubleClick | 双击拖拽条时回调（也可使用 `@dragger-double-click`） | (index: number) => void | - | 4.3.0 |
 | onResize | 面板尺寸变化回调 | (sizes: number[]) => void | - | 4.3.0 |

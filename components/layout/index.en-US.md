@@ -78,9 +78,11 @@ The wrapper.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | class | Container className | string | - |  |
+| classNames | Customize class for each semantic structure inside Layout, supports object or function | Record\<[SemanticDOM](#semantic-dom), string> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), string> | - | 4.3.0 |
 | hasSider | Whether contain Sider in children, don't have to assign it normally. Useful in ssr avoid style flickering | boolean | - |  |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | style | To customize the styles | object \| string | - |  |
+| styles | Customize inline style for each semantic structure inside Layout, supports object or function | Record\<[SemanticDOM](#semantic-dom), CSSProperties> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), CSSProperties> | - | 4.3.0 |
 
 ### Layout.Sider
 
@@ -88,8 +90,9 @@ The sidebar.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| breakpoint | [breakpoints](/components/grid#api) of the responsive layout | `xs` \| `sm` \| `md` \| `lg` \| `xl` \| `xxl` | - |  |
+| breakpoint | [breakpoints](/components/grid#api) of the responsive layout | `xs` \| `sm` \| `md` \| `lg` \| `xl` \| `xxl` \| `xxxl` | - | xxxl: 4.3.0 |
 | class | Container className | string | - |  |
+| classNames | Customize class for each semantic structure inside the Sider component, supports object or function | Record\<[SemanticDOM](#semantic-dom), string> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), string> | - | 4.3.0 |
 | collapsed(v-model) | To set the current status | boolean | - |  |
 | collapsedWidth | Width of the collapsed sidebar, by setting to `0` a special trigger will appear | number | 80 |  |
 | collapsible | Whether can be collapsed | boolean | false |  |
@@ -97,6 +100,7 @@ The sidebar.
 | reverseArrow | Reverse direction of arrow, for a sider that expands from the right | boolean | false |  |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | style | To customize the styles | object \| string | - |  |
+| styles | Customize inline style for each semantic structure inside the Sider component, supports object or function | Record\<[SemanticDOM](#semantic-dom), CSSProperties> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), CSSProperties> | - | 4.3.0 |
 | theme | Color theme of the sidebar | `light` \| `dark` | `dark` |  |
 | trigger | Specify the customized trigger, set to null to hide the trigger | string \| slot | - |  |
 | width | Width of the sidebar | number \| string | 200 |  |
@@ -108,6 +112,13 @@ The sidebar.
 | --- | --- | --- |
 | breakpoint | The callback function, executed when [breakpoints](/components/grid#api) changed | (broken) => {} |
 | collapse | The callback function, executed by clicking the trigger or activating the responsive layout | (collapsed, type) => {} |
+
+### Semantic DOM
+
+`classNames` and `styles` on `Layout` and `Layout.Sider` support static objects or `(info: { props }) => ...` functions (merged with `ConfigProvider.layout`):
+
+- `root`: Root element with Layout / Sider layout, theme, width and collapsed state styles
+- `body` (`Layout.Sider`): Body element that wraps Sider children layout and display styles
 
 #### breakpoint width
 

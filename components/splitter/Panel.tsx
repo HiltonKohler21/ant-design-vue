@@ -26,16 +26,21 @@ export const InternalPanel = defineComponent({
       type: Boolean,
       default: false,
     },
+    supportMotion: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { slots, attrs }) {
     return () => {
-      const { prefixCls, size, destroyOnHidden } = props;
+      const { prefixCls, size, destroyOnHidden, supportMotion } = props;
       const { class: className, style } = attrs;
       const isCollapsed = size === 0 || (typeof size === 'string' && Number.parseFloat(size) === 0);
       const panelClassName = classNames(
         `${prefixCls}-panel`,
         {
           [`${prefixCls}-panel-hidden`]: isCollapsed,
+          [`${prefixCls}-panel-transition`]: supportMotion,
         },
         className,
       );

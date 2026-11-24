@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 2
+order: 8
 title:
   zh-CN: 子菜单主题
   en-US: Sub-menu theme

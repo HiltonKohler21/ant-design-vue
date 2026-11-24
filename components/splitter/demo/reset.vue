@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 10
 version: 4.3.0
 title:
   zh-CN: 双击重置

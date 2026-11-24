@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 11
 title:
   zh-CN: 栅格配置器
   en-US: Playground

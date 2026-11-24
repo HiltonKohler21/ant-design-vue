@@ -2,6 +2,7 @@ import { getPropsSlot } from '../../_util/props-util';
 import type { ExtractPropTypes } from 'vue';
 import { computed, defineComponent } from 'vue';
 import PropTypes from '../../_util/vue-types';
+import classNames from '../../_util/classNames';
 import { useInjectMenu } from './hooks/useMenuContext';
 import { useMeasure } from './hooks/useKeyPath';
 import type { ItemType } from './interface';
@@ -26,7 +27,7 @@ export default defineComponent({
     default?: any;
   }>,
   setup(props, { slots, attrs }) {
-    const { prefixCls } = useInjectMenu();
+    const { prefixCls, classNames: semanticClassNames, styles: semanticStyles } = useInjectMenu();
     const groupPrefixCls = computed(() => `${prefixCls.value}-item-group`);
     const isMeasure = useMeasure();
     return () => {
@@ -35,11 +36,20 @@ export default defineComponent({
         <li {...attrs} onClick={e => e.stopPropagation()} class={groupPrefixCls.value}>
           <div
             title={typeof props.title === 'string' ? props.title : undefined}
-            class={`${groupPrefixCls.value}-title`}
+            class={classNames(
+              `${groupPrefixCls.value}-title`,
+              semanticClassNames?.value?.itemTitle,
+            )}
+            style={semanticStyles?.value?.itemTitle}
           >
             {getPropsSlot(slots, props, 'title')}
           </div>
-          <ul class={`${groupPrefixCls.value}-list`}>{slots.default?.()}</ul>
+          <ul
+            class={classNames(`${groupPrefixCls.value}-list`, semanticClassNames?.value?.list)}
+            style={semanticStyles?.value?.list}
+          >
+            {slots.default?.()}
+          </ul>
         </li>
       );
     };

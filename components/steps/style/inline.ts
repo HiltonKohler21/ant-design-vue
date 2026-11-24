@@ -17,8 +17,17 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
       width: 'auto',
       display: 'inline-flex',
 
+      '&::before': {
+        content: '""',
+        flex: 'var(--ant-steps-items-offset, 0)',
+      },
+
       [`${componentCls}-item`]: {
-        flex: 'none',
+        flex: 1,
+
+        '&:last-child': {
+          flex: 1,
+        },
 
         '&-container': {
           padding: `${unit(containerPaddingTop)} ${unit(token.paddingXXS)} 0`,
@@ -63,14 +72,19 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
 
         '&-tail': {
           marginInlineStart: 0,
-          top: token.calc(containerPaddingTop).add(token.calc(token.inlineDotSize).div(2).equal()).equal(),
+          top: token
+            .calc(containerPaddingTop)
+            .add(token.calc(token.inlineDotSize).div(2).equal())
+            .equal(),
+          height: token.lineWidth,
+          background: inlineTailColor,
           transform: `translateY(-50%)`,
           '&:after': {
             width: '100%',
             height: token.lineWidth,
             borderRadius: 0,
             marginInlineStart: 0,
-            background: inlineTailColor,
+            background: 'inherit',
           },
         },
 
@@ -91,8 +105,11 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           ...titleStyle,
         },
         '&-finish': {
-          [`${componentCls}-item-tail::after`]: {
+          [`${componentCls}-item-tail`]: {
             backgroundColor: inlineTailColor,
+          },
+          [`${componentCls}-item-tail::after`]: {
+            backgroundColor: 'inherit',
           },
           [`${componentCls}-item-icon ${componentCls}-icon ${componentCls}-icon-dot`]: {
             backgroundColor: inlineTailColor,
@@ -105,7 +122,9 @@ const genStepsInlineStyle: GenerateStyle<StepsToken, CSSObject> = token => {
           [`${componentCls}-item-icon`]: {
             width: inlineDotSize,
             height: inlineDotSize,
-            marginInlineStart: `calc(50% - ${unit(token.calc(token.inlineDotSize).div(2).equal())})`,
+            marginInlineStart: `calc(50% - ${unit(
+              token.calc(token.inlineDotSize).div(2).equal(),
+            )})`,
             top: 0,
           },
           ...titleStyle,

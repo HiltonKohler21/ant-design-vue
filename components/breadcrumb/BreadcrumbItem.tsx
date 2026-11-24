@@ -1,6 +1,7 @@
 import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { defineComponent } from 'vue';
 import PropTypes from '../_util/vue-types';
+import classNames from '../_util/classNames';
 import { getPropsSlot } from '../_util/props-util';
 import type { DropdownProps } from '../dropdown/dropdown';
 import Dropdown from '../dropdown/dropdown';
@@ -8,6 +9,7 @@ import type { MenuProps } from '../menu';
 import Menu from '../menu';
 import DownOutlined from '@ant-design/icons-vue/DownOutlined';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import { useInjectBreadcrumb } from './BreadcrumbContext';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import { eventType, objectType } from '../_util/type';
 import type { CustomSlotsType, Key, VueNode } from '../_util/type';
@@ -53,6 +55,7 @@ export default defineComponent({
   }>,
   setup(props, { slots, attrs, emit }) {
     const { prefixCls } = useConfigInject('breadcrumb', props);
+    const { classNames: semanticClassNames, styles: semanticStyles } = useInjectBreadcrumb();
     /**
      * if menu or overlay is present
      * Wrap a Dropdown
@@ -137,10 +140,24 @@ export default defineComponent({
       // wrap to dropDown
       link = renderBreadcrumbNode(link, prefixCls.value);
       if (children !== undefined && children !== null) {
+        const itemClass = classNames(cls as any, semanticClassNames.value.item) || undefined;
+        const itemStyle =
+          semanticStyles.value.item || style
+            ? [semanticStyles.value.item, style as CSSProperties]
+            : undefined;
+        const separatorClass = classNames(
+          `${prefixCls.value}-separator`,
+          semanticClassNames.value.separator,
+        );
+        const separatorStyle = semanticStyles.value.separator;
         return (
-          <li class={cls} style={style as CSSProperties}>
+          <li class={itemClass} style={itemStyle}>
             {link}
-            {separator && <span class={`${prefixCls.value}-separator`}>{separator}</span>}
+            {separator && (
+              <span class={separatorClass} style={separatorStyle}>
+                {separator}
+              </span>
+            )}
           </li>
         );
       }

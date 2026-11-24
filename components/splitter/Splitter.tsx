@@ -99,7 +99,7 @@ const Splitter = defineComponent({
   inheritAttrs: false,
   props: splitterProps(),
   emits: ['resizeStart', 'resize', 'resizeEnd', 'collapse', 'draggerDoubleClick'],
-  setup(props, { slots, attrs, emit }) {
+  setup(props, { slots, attrs, emit, expose }) {
     const { configProvider, prefixCls, direction } = useConfigInject('splitter', props);
     const splitterConfig = computed(() => (configProvider as any).splitter?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -144,6 +144,9 @@ const Splitter = defineComponent({
 
     // ====================== Container =======================
     const rootRef = ref<HTMLElement | null>(null);
+    expose({
+      nativeElement: rootRef,
+    });
     const containerSize = ref<number>();
     const onContainerResize = (size: { offsetWidth: number; offsetHeight: number }) => {
       const { offsetWidth, offsetHeight } = size;
@@ -247,7 +250,7 @@ const Splitter = defineComponent({
       const rawChildren = flattenChildren(slots.default?.() || []);
       const items = parseItems(rawChildren);
 
-      if (initialDefaultSizes === null) {
+      if (initialDefaultSizes === null || initialDefaultSizes.length !== items.length) {
         initialDefaultSizes = items.map(item => item.defaultSize);
       }
       const effectiveInnerSizes = innerSizes.value ?? initialDefaultSizes;
@@ -297,6 +300,7 @@ const Splitter = defineComponent({
                   class={classNames(mergedClassNames.value.panel, item.className, item.class)}
                   style={mergedPanelStyle}
                   size={panelSizes[idx]}
+                  supportMotion={!!(props.collapsible?.motion && movingIndex.value === undefined)}
                   destroyOnHidden={item.destroyOnHidden ?? props.destroyOnHidden}
                   v-slots={{
                     default: () => renderPanelChildren(item.children),

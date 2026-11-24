@@ -1,5 +1,5 @@
 import PropTypes from '../../_util/vue-types';
-import type { PropType, ExtractPropTypes } from 'vue';
+import type { CSSProperties, PropType, ExtractPropTypes } from 'vue';
 import {
   computed,
   defineComponent,
@@ -10,13 +10,14 @@ import {
 } from 'vue';
 import useProvideKeyPath, { useInjectKeyPath, useMeasure } from './hooks/useKeyPath';
 import {
+  useInjectFirstLevel,
   useInjectMenu,
   useProvideFirstLevel,
   MenuContextProvider,
   useProvideForceRender,
   useInjectForceRender,
 } from './hooks/useMenuContext';
-import { getPropsSlot, isValidElement } from '../../_util/props-util';
+import { flattenChildren, getPropsSlot, isValidElement } from '../../_util/props-util';
 import classNames from '../../_util/classNames';
 import useDirectionStyle from './hooks/useDirectionStyle';
 import PopupTrigger from './PopupTrigger';
@@ -39,7 +40,9 @@ export const subMenuProps = () => ({
   disabled: Boolean,
   level: Number,
   popupClassName: String,
+  popupStyle: Object as PropType<CSSProperties>,
   popupOffset: Array as unknown as PropType<[number, number]>,
+  popupRender: Function as PropType<(node: any, info: { item: any; keys: Key[] }) => any>,
   internalPopupClose: Boolean,
   eventKey: String,
   expandIcon: Function as PropType<(p?: { isOpen: boolean; [key: string]: any }) => any>,
@@ -66,6 +69,7 @@ export default defineComponent({
     default?: any;
   }>,
   setup(props, { slots, attrs, emit }) {
+    const firstLevel = useInjectFirstLevel();
     useProvideFirstLevel(false);
     const isMeasure = useMeasure();
     const instance = getCurrentInstance();
@@ -116,6 +120,10 @@ export default defineComponent({
       selectedSubMenuKeys,
       expandIcon: menuExpandIcon,
       theme,
+      classNames: semanticClassNames,
+      styles: semanticStyles,
+      popupRender: contextPopupRender,
+      _internalRenderSubMenuItem,
     } = useInjectMenu();
 
     const hasKey = vnodeKey !== undefined && vnodeKey !== null;
@@ -213,8 +221,19 @@ export default defineComponent({
         prefixCls.value,
         `${prefixCls.value}-${props.theme || theme.value}`,
         props.popupClassName,
+        semanticClassNames?.value?.popup?.root,
       ),
     );
+    const mergedPopupStyle = computed<CSSProperties | undefined>(() => {
+      const semanticPopupStyle = semanticStyles?.value?.popup?.root;
+      if (!props.popupStyle && !semanticPopupStyle) {
+        return undefined;
+      }
+      return {
+        ...(props.popupStyle || {}),
+        ...(semanticPopupStyle || {}),
+      };
+    });
     const renderTitle = (title: any, icon: any) => {
       if (!icon) {
         return inlineCollapsed.value &&
@@ -229,12 +248,19 @@ export default defineComponent({
       // inline-collapsed.md demo 依赖 span 来隐藏文字,有 icon 属性，则内部包裹一个 span
       // ref: https://github.com/ant-design/ant-design/pull/23456
       const titleIsSpan = isValidElement(title) && title.type === 'span';
+      const subMenuIconClass = firstLevel
+        ? semanticClassNames?.value?.itemIcon
+        : semanticClassNames?.value?.subMenu?.itemIcon ?? semanticClassNames?.value?.itemIcon;
+      const subMenuIconStyle = firstLevel
+        ? semanticStyles?.value?.itemIcon
+        : semanticStyles?.value?.subMenu?.itemIcon ?? semanticStyles?.value?.itemIcon;
       return (
         <>
           {cloneElement(
             typeof icon === 'function' ? icon(props.originItemValue) : icon,
             {
-              class: `${prefixCls.value}-item-icon`,
+              class: classNames(`${prefixCls.value}-item-icon`, subMenuIconClass),
+              ...(subMenuIconStyle ? { style: subMenuIconStyle } : {}),
             },
             false,
           )}
@@ -257,14 +283,20 @@ export default defineComponent({
       const subMenuPrefixClsValue = subMenuPrefixCls.value;
       const icon = props.icon ?? slots.icon?.(props);
       const expandIcon = props.expandIcon || slots.expandIcon || menuExpandIcon.value;
-      const title = renderTitle(getPropsSlot(slots, props, 'title'), icon);
+      const rawTitle = getPropsSlot(slots, props, 'title');
+      const title = renderTitle(rawTitle, icon);
+      const subTitleSemanticClass = semanticClassNames?.value?.subMenu?.itemTitle;
+      const subTitleSemanticStyle = semanticStyles?.value?.subMenu?.itemTitle;
       return (
         <div
-          style={directionStyle.value}
-          class={`${subMenuPrefixClsValue}-title`}
+          style={{
+            ...directionStyle.value,
+            ...(subTitleSemanticStyle || {}),
+          }}
+          class={classNames(`${subMenuPrefixClsValue}-title`, subTitleSemanticClass)}
           tabindex={mergedDisabled.value ? null : -1}
           ref={elementRef}
-          title={typeof title === 'string' ? title : null}
+          title={typeof rawTitle === 'string' ? rawTitle : null}
           data-menu-id={key}
           aria-expanded={open.value}
           aria-haspopup
@@ -295,25 +327,40 @@ export default defineComponent({
       let titleNode = () => null;
       if (!overflowDisabled.value && mode.value !== 'inline') {
         const popupOffset = mode.value === 'horizontal' ? [0, 8] : [10, 0];
+        const mergedPopupRender = props.popupRender || contextPopupRender?.value;
         titleNode = () => (
           <PopupTrigger
             mode={triggerModeRef.value}
             prefixCls={subMenuPrefixClsValue}
             visible={!props.internalPopupClose && open.value}
             popupClassName={popupClassName.value}
+            popupStyle={mergedPopupStyle.value}
             popupOffset={props.popupOffset || popupOffset}
             disabled={mergedDisabled.value}
             onVisibleChange={onPopupVisibleChange}
             v-slots={{
-              popup: () => (
-                <MenuContextProvider mode={subMenuTriggerModeRef.value}>
-                  <SubMenuList
-                    id={popupId}
-                    ref={popupRef}
-                    v-slots={{ default: slots.default }}
-                  ></SubMenuList>
-                </MenuContextProvider>
-              ),
+              popup: () => {
+                const subMenuListNode = (
+                  <MenuContextProvider mode={subMenuTriggerModeRef.value}>
+                    <SubMenuList
+                      id={popupId}
+                      ref={popupRef}
+                      v-slots={{ default: slots.default }}
+                    ></SubMenuList>
+                  </MenuContextProvider>
+                );
+                if (mergedPopupRender) {
+                  return mergedPopupRender(subMenuListNode, {
+                    item: {
+                      ...props,
+                      title: getPropsSlot(slots, props, 'title'),
+                      children: flattenChildren(slots.default?.()),
+                    },
+                    keys: keysPath.value,
+                  });
+                }
+                return subMenuListNode;
+              },
             }}
           >
             {baseTitleNode()}
@@ -324,48 +371,50 @@ export default defineComponent({
         // https://github.com/vueComponent/ant-design-vue/issues/4325
         titleNode = () => <PopupTrigger v-slots={{ default: baseTitleNode }}></PopupTrigger>;
       }
-      return (
-        <MenuContextProvider mode={renderMode.value}>
-          <Overflow.Item
-            component="li"
-            {...attrs}
-            role="none"
-            class={classNames(
-              subMenuPrefixClsValue,
-              `${subMenuPrefixClsValue}-${mode.value}`,
-              attrs.class,
-              {
-                [`${subMenuPrefixClsValue}-open`]: open.value,
-                [`${subMenuPrefixClsValue}-active`]: isActive.value,
-                [`${subMenuPrefixClsValue}-selected`]: childrenSelected.value,
-                [`${subMenuPrefixClsValue}-disabled`]: mergedDisabled.value,
-              },
-            )}
-            onMouseenter={onMouseEnter}
-            onMouseleave={onMouseLeave}
-            data-submenu-id={key}
-            v-slots={{
-              default: () => {
-                return (
-                  <>
-                    {titleNode()}
+      let subMenuNode: any = (
+        <Overflow.Item
+          component="li"
+          {...attrs}
+          role="none"
+          class={classNames(
+            subMenuPrefixClsValue,
+            `${subMenuPrefixClsValue}-${mode.value}`,
+            attrs.class,
+            {
+              [`${subMenuPrefixClsValue}-open`]: open.value,
+              [`${subMenuPrefixClsValue}-active`]: isActive.value,
+              [`${subMenuPrefixClsValue}-selected`]: childrenSelected.value,
+              [`${subMenuPrefixClsValue}-disabled`]: mergedDisabled.value,
+            },
+          )}
+          onMouseenter={onMouseEnter}
+          onMouseleave={onMouseLeave}
+          data-submenu-id={key}
+          v-slots={{
+            default: () => {
+              return (
+                <>
+                  {titleNode()}
 
-                    {/* Inline mode */}
-                    {!overflowDisabled.value && (
-                      <InlineSubMenuList
-                        id={popupId}
-                        open={open.value}
-                        keyPath={keysPath.value}
-                        v-slots={{ default: slots.default }}
-                      ></InlineSubMenuList>
-                    )}
-                  </>
-                );
-              },
-            }}
-          ></Overflow.Item>
-        </MenuContextProvider>
+                  {/* Inline mode */}
+                  {!overflowDisabled.value && (
+                    <InlineSubMenuList
+                      id={popupId}
+                      open={open.value}
+                      keyPath={keysPath.value}
+                      v-slots={{ default: slots.default }}
+                    ></InlineSubMenuList>
+                  )}
+                </>
+              );
+            },
+          }}
+        ></Overflow.Item>
       );
+      if (_internalRenderSubMenuItem?.value) {
+        subMenuNode = _internalRenderSubMenuItem.value(subMenuNode, { ...props, ...attrs });
+      }
+      return <MenuContextProvider mode={renderMode.value}>{subMenuNode}</MenuContextProvider>;
     };
   },
 });

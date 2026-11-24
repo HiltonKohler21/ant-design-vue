@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
   zh-CN: 内嵌菜单
   en-US: Inline menu

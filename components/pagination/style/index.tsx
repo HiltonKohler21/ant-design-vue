@@ -577,12 +577,102 @@ const genPaginationItemStyle: GenerateStyle<PaginationToken, CSSObject> = token 
   };
 };
 
+const genPaginationInputVariantStyle: GenerateStyle<PaginationToken, CSSObject> = token => {
+  const { componentCls } = token;
+  const inputSelector = `${componentCls}-options-quick-jumper input, ${componentCls}-simple-pager input`;
+
+  return {
+    [`&${componentCls}-filled`]: {
+      [inputSelector]: {
+        background: token.colorFillTertiary,
+        borderColor: 'transparent',
+
+        '&:hover': {
+          background: token.colorFillSecondary,
+        },
+
+        '&:focus': {
+          borderColor: token.colorPrimary,
+          outline: 0,
+          backgroundColor: token.colorBgContainer,
+        },
+
+        '&[disabled]': {
+          color: token.colorTextDisabled,
+          backgroundColor: token.colorBgContainerDisabled,
+          borderColor: token.colorBorder,
+          cursor: 'not-allowed',
+        },
+      },
+    },
+
+    [`&${componentCls}-borderless`]: {
+      [inputSelector]: {
+        background: 'transparent',
+        border: 'none',
+
+        '&:focus': {
+          outline: 'none',
+          boxShadow: 'none',
+        },
+
+        '&[disabled]': {
+          color: token.colorTextDisabled,
+          cursor: 'not-allowed',
+        },
+      },
+    },
+
+    [`&${componentCls}-underlined`]: {
+      [inputSelector]: {
+        background: token.colorBgContainer,
+        borderWidth: `${unit(token.lineWidth)} 0`,
+        borderStyle: `${token.lineType} none`,
+        borderColor: `transparent transparent ${token.colorBorder} transparent`,
+        borderRadius: 0,
+
+        '&:hover': {
+          borderColor: `transparent transparent ${token.colorPrimaryHover} transparent`,
+        },
+
+        '&:focus': {
+          borderColor: `transparent transparent ${token.colorPrimary} transparent`,
+          outline: 0,
+          boxShadow: 'none',
+        },
+
+        '&[disabled]': {
+          color: token.colorTextDisabled,
+          boxShadow: 'none',
+          cursor: 'not-allowed',
+        },
+      },
+    },
+  };
+};
+
 const genPaginationStyle: GenerateStyle<PaginationToken, CSSObject> = token => {
   const { componentCls } = token;
 
   return {
     [componentCls]: {
       ...resetComponent(token),
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      rowGap: token.marginXXS,
+
+      '&-start': {
+        justifyContent: 'flex-start',
+      },
+
+      '&-center': {
+        justifyContent: 'center',
+      },
+
+      '&-end': {
+        justifyContent: 'flex-end',
+      },
 
       'ul, ol': {
         margin: 0,
@@ -615,6 +705,9 @@ const genPaginationStyle: GenerateStyle<PaginationToken, CSSObject> = token => {
 
       // simple style
       ...genPaginationSimpleStyle(token),
+
+      // input variant style
+      ...genPaginationInputVariantStyle(token),
 
       // mini style
       ...genPaginationMiniStyle(token),

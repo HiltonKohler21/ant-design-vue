@@ -273,6 +273,9 @@ const genSplitterStyle: GenerateStyle<SplitterToken, CSSObject> = token => {
         [`&:has(${componentCls}:only-child)`]: {
           overflow: 'hidden',
         },
+        '&-transition': {
+          transition: `flex-basis ${token.motionDurationSlow} ${token.motionEaseInOut}`,
+        },
       },
     },
   };

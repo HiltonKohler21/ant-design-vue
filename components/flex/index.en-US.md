@@ -25,7 +25,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*8yArQ43EGccAAA
 | --- | --- | --- | --- | --- |
 | orientation | Direction of the flex (takes priority over `vertical` when set) | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | vertical | Is direction of the flex vertical, use `flex-direction: column` | boolean | `false` |  |
-| wrap | Set whether the element is displayed in a single line or in multiple lines | reference [flex-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap) | nowrap |  |
+| wrap | Set whether the element is displayed in a single line or in multiple lines | reference [flex-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap) \| boolean | nowrap | boolean: 4.3.0 |
 | justify | Sets the alignment of elements in the direction of the main axis | reference [justify-content](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content) | normal |  |
 | align | Sets the alignment of elements in the direction of the cross axis | reference [align-items](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items) | normal |  |
 | flex | flex CSS shorthand properties | reference [flex](https://developer.mozilla.org/en-US/docs/Web/CSS/flex) | normal |  |

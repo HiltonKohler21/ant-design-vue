@@ -2,8 +2,22 @@ import type { App } from 'vue';
 import Layout, { Header, Footer, Content } from './layout';
 import Sider from './Sider';
 
-export type { BasicProps as LayoutProps } from './layout';
-export type { SiderProps } from './Sider';
+export type {
+  BasicProps as LayoutProps,
+  LayoutSemanticName,
+  LayoutSemanticClassNames,
+  LayoutSemanticStyles,
+  LayoutClassNamesType,
+  LayoutStylesType,
+} from './layout';
+export type {
+  SiderProps,
+  SiderSemanticName,
+  SiderSemanticClassNames,
+  SiderSemanticStyles,
+  SiderClassNamesType,
+  SiderStylesType,
+} from './Sider';
 
 /* istanbul ignore next */
 export const LayoutHeader = Header;

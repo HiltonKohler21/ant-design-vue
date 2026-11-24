@@ -1,7 +1,9 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { defineComponent } from 'vue';
+import classNames from '../_util/classNames';
 import { flattenChildren } from '../_util/props-util';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
+import { useInjectBreadcrumb } from './BreadcrumbContext';
 
 export const breadcrumbSeparatorProps = () => ({
   prefixCls: String,
@@ -18,12 +20,22 @@ export default defineComponent({
   props: breadcrumbSeparatorProps(),
   setup(props, { slots, attrs }) {
     const { prefixCls } = useConfigInject('breadcrumb', props);
+    const { classNames: semanticClassNames, styles: semanticStyles } = useInjectBreadcrumb();
 
     return () => {
-      const { separator, class: className, ...restAttrs } = attrs;
+      const { separator, class: className, style, ...restAttrs } = attrs;
       const children = flattenChildren(slots.default?.());
+      const mergedCls = classNames(
+        `${prefixCls.value}-separator`,
+        semanticClassNames.value.separator,
+        className as any,
+      );
+      const mergedStyle =
+        semanticStyles.value.separator || style
+          ? [semanticStyles.value.separator, style as CSSProperties]
+          : undefined;
       return (
-        <span class={[`${prefixCls.value}-separator`, className]} {...restAttrs}>
+        <span class={mergedCls} style={mergedStyle} {...restAttrs}>
           {children.length > 0 ? children : '/'}
         </span>
       );

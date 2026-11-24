@@ -22,7 +22,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*03dxS64LxeQAAA
 | offsetBottom | 距离窗口底部达到指定偏移量后触发 | number | - |  |
 | offsetTop | 距离窗口顶部达到指定偏移量后触发 | number | 0 |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
-| target | 设置 `Affix` 需要监听其滚动事件的元素，值为一个返回对应 DOM 元素的函数 | () => HTMLElement | () => window |  |
+| target | 设置 `Affix` 需要监听其滚动事件的元素，值为一个返回对应 DOM 元素的函数 | () => Window \| HTMLElement \| null | () => window |  |
 
 ### 事件
 

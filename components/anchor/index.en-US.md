@@ -19,20 +19,25 @@ For displaying anchor hyperlinks on page and jumping between them.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| affix | Fixed mode of Anchor | boolean | true |  |
+| affix | Fixed mode of Anchor | boolean \| Omit<AffixProps, 'offsetTop' \| 'target' \| 'children'> | true | object: 4.3.0 |
 | bounds | Bounding distance of anchor area | number | 5(px) |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, string> \| (info: { props: AnchorProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
+| customTitle | Custom option title by slot | v-slot="AnchorItem" | - | 4.0 |
+| direction | Set Anchor direction | `vertical` \| `horizontal` | `vertical` | 4.0 |
 | getContainer | Scrolling container | () => HTMLElement | () => window |  |
 | getCurrentAnchor | Customize the anchor highlight | (activeLink: string) => string | - | activeLink(3.3) |
+| items | Data configuration option content, support nesting through children | { key, href, title, target, children, replace, targetOffset }\[] [see](#anchoritem) | - | 4.0 |
 | offsetBottom | Pixels to offset from bottom when calculating position of scroll | number | - |  |
 | offsetTop | Pixels to offset from top when calculating position of scroll | number | 0 |  |
+| replace | Replace items' href in browser history instead of pushing it | boolean | false | 4.3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | showInkInFixed | Whether show ink-square when `:affix="false"` | boolean | false |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, CSSProperties> \| (info: { props: AnchorProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | targetOffset | Anchor scroll offset, default as `offsetTop`, [example](#components-anchor-demo-targetoffset) | number | `offsetTop` | 1.5.0 |
 | wrapperClass | The class name of the container | string | - |  |
 | wrapperStyle | The style of the container | object | - |  |
-| items | Data configuration option content, support nesting through children | { key, href, title, target, children }\[] [see](#anchoritem) | - | 4.0 |
-| direction | Set Anchor direction | `vertical` \| `horizontal` | `vertical` | 4.0 |
-| customTitle | custom option title by slot | v-slot="AnchorItem" | - | 4.0 |
+
+> `SemanticDOM` slots: `root` \| `item` \| `itemTitle` \| `indicator`.
 
 ### AnchorItem
 
@@ -43,6 +48,8 @@ For displaying anchor hyperlinks on page and jumping between them.
 | target | Specifies where to display the linked URL | string |  |  |
 | title | The content of hyperlink | VueNode \| (item: AnchorItem) => VueNode |  |  |
 | children | Nested Anchor Link, `Attention: This attribute does not support horizontal orientation` | [AnchorItem](#anchoritem)\[] | - |  |
+| replace | Replace item href in browser history instead of pushing it | boolean | false | 4.3.0 |
+| targetOffset | Customize scroll offset for this anchor link. It takes precedence over the `targetOffset` prop of the Anchor component | number | - | 4.3.0 |
 
 ### Events
 
@@ -58,4 +65,5 @@ For displaying anchor hyperlinks on page and jumping between them.
 | href | target of hyperlink | string | - |  |
 | replace | Replace item href in browser history instead of pushing it | boolean | false | 4.3.0 |
 | target | Specifies where to display the linked URL | string | - | 1.5.0 |
+| targetOffset | Customize scroll offset for this anchor link. It takes precedence over the `targetOffset` prop of the Anchor component | number | - | 4.3.0 |
 | title | content of hyperlink | string \| slot | - |  |

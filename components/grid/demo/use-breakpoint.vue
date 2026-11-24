@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 12
 title:
   zh-CN: useBreakpoint Hook
   en-US: useBreakpoint Hook

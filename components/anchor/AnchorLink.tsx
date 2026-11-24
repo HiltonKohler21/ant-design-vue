@@ -1,4 +1,4 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { defineComponent, nextTick, onBeforeUnmount, onMounted, watch } from 'vue';
 import { initDefaultProps } from '../_util/props-util';
 import classNames from '../_util/classNames';
@@ -6,12 +6,12 @@ import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectAnchor } from './context';
 import type { Key, VueNode, CustomSlotsType } from '../_util/type';
 import { objectType, anyType } from '../_util/type';
-import type { CSSProperties } from '../_util/cssinjs/hooks/useStyleRegister';
 
 export const anchorLinkProps = () => ({
   prefixCls: String,
   href: String,
   replace: { type: Boolean, default: false },
+  targetOffset: Number,
   title: anyType<VueNode | ((item: any) => VueNode)>(),
   target: String,
   /* private use  */
@@ -23,6 +23,8 @@ export interface AnchorLinkItemProps {
   style?: CSSProperties;
   href?: string;
   target?: string;
+  replace?: boolean;
+  targetOffset?: number;
   children?: AnchorLinkItemProps[];
   title?: VueNode | ((item: AnchorLinkItemProps) => VueNode);
 }
@@ -47,13 +49,15 @@ export default defineComponent({
       unregisterLink,
       registerLink,
       activeLink,
+      classNames: mergedClassNames,
+      styles: mergedStyles,
     } = useInjectAnchor();
     const { prefixCls } = useConfigInject('anchor', props);
 
     const handleClick = (e: Event) => {
-      const { href, replace } = props;
+      const { href, replace, targetOffset } = props;
       contextHandleClick(e, { title: mergedTitle, href });
-      scrollTo(href);
+      scrollTo(href, targetOffset);
       // Support clicking on an anchor does not record history.
       if (e.defaultPrevented || !href) {
         return;
@@ -72,18 +76,17 @@ export default defineComponent({
       }
     };
 
-    watch(
-      () => props.href,
-      (val, oldVal) => {
-        nextTick(() => {
+    watch([() => props.href, () => props.targetOffset], ([val, nextOffset], [oldVal]) => {
+      nextTick(() => {
+        if (oldVal !== val) {
           unregisterLink(oldVal);
-          registerLink(val);
-        });
-      },
-    );
+        }
+        registerLink(val, nextOffset);
+      });
+    });
 
     onMounted(() => {
-      registerLink(props.href);
+      registerLink(props.href, props.targetOffset);
     });
 
     onBeforeUnmount(() => {
@@ -95,20 +98,26 @@ export default defineComponent({
       const pre = prefixCls.value;
       mergedTitle = typeof title === 'function' ? title(customTitleProps) : title;
       const active = activeLink.value === href;
+      const { class: attrClass, style: attrStyle, ...restAttrs } = attrs;
       const wrapperClassName = classNames(
         `${pre}-link`,
+        mergedClassNames?.value?.item,
         {
           [`${pre}-link-active`]: active,
         },
-        attrs.class,
+        attrClass as any,
       );
-      const titleClassName = classNames(`${pre}-link-title`, {
+      const itemStyle = mergedStyles?.value?.item;
+      const wrapperStyle =
+        itemStyle || attrStyle ? [itemStyle, attrStyle as CSSProperties] : undefined;
+      const titleClassName = classNames(`${pre}-link-title`, mergedClassNames?.value?.itemTitle, {
         [`${pre}-link-title-active`]: active,
       });
       return (
-        <div {...attrs} class={wrapperClassName}>
+        <div {...restAttrs} class={wrapperClassName} style={wrapperStyle}>
           <a
             class={titleClassName}
+            style={mergedStyles?.value?.itemTitle}
             href={href}
             title={typeof mergedTitle === 'string' ? mergedTitle : ''}
             target={target}

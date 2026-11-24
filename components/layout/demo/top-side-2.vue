@@ -18,7 +18,7 @@ Both the top navigation and the sidebar, commonly used in application site.
 
 </docs>
 <template>
-  <a-layout style="border-radius: 8px; overflow: hidden">
+  <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
     <a-layout-header class="header" style="display: flex; align-items: center">
       <div class="demo-logo" />
       <a-menu

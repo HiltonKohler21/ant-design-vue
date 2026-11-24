@@ -69,4 +69,29 @@ describe('Flex', () => {
     expect(wrapper.find('.ant-flex-align-stretch')).toBeTruthy();
     expect(wrapper2.find('.ant-flex-align-center')).toBeTruthy();
   });
+
+  it('supports boolean wrap and medium gap alias', () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <Flex wrap={true} gap="medium">
+            <span>a</span>
+          </Flex>
+        );
+      },
+    });
+    expect(wrapper.find('.ant-flex').classes()).toContain('ant-flex-wrap-wrap');
+    expect(wrapper.find('.ant-flex').classes()).toContain('ant-flex-gap-middle');
+
+    const wrapper2 = mount({
+      render() {
+        return (
+          <Flex wrap={false}>
+            <span>a</span>
+          </Flex>
+        );
+      },
+    });
+    expect(wrapper2.find('.ant-flex').classes()).toContain('ant-flex-wrap-nowrap');
+  });
 });

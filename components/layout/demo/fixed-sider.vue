@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 9
 title:
   zh-CN: 固定侧边栏
   en-US: Fixed Sider
@@ -18,7 +18,7 @@ When dealing with long content, a fixed sider can provide a better user experien
 <template>
   <a-layout
     has-sider
-    style="height: 400px; overflow: hidden; position: relative; border-radius: 8px"
+    style="height: 400px; overflow: hidden; max-width: 100%; position: relative; border-radius: 8px"
   >
     <a-layout-sider
       :style="{

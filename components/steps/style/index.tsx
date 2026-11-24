@@ -11,10 +11,24 @@ import genStepsRTLStyle from './rtl';
 import genStepsSmallStyle from './small';
 import genStepsVerticalStyle from './vertical';
 import genStepsInlineStyle from './inline';
+import genStepsPanelStyle from './panel';
 import { resetComponent, textEllipsis } from '../../style';
 
 export interface ComponentToken {
   descriptionWidth: number;
+  descriptionMaxWidth?: number;
+  titleLineHeight?: number;
+  customIconSize?: number;
+  customIconTop?: number;
+  customIconFontSize?: number;
+  iconSize?: number;
+  iconTop?: number;
+  iconFontSize?: number;
+  iconSizeSM?: number;
+  dotSize?: number;
+  dotCurrentSize?: number;
+  navArrowColor?: string;
+  navContentMaxWidth?: number | string;
 }
 
 export interface StepsToken extends FullToken<'Steps'> {
@@ -437,10 +451,23 @@ const genStepsStyle: GenerateStyle<StepsToken, CSSObject> = token => {
       ...genStepsProgressStyle(token),
       // inline
       ...genStepsInlineStyle(token),
+      // panel
+      ...genStepsPanelStyle(token),
       // outlined variant
       ...genStepsOutlinedStyle(token),
       // ellipsis
       ...genStepsEllipsisStyle(token),
+      // maxCount ellipsis item
+      [`&${componentCls}-max-count`]: {
+        [`${componentCls}-item-ellipsis`]: {
+          [`${componentCls}-item-title`]: {
+            paddingInlineEnd: token.paddingXS,
+          },
+          [`${componentCls}-item-icon`]: {
+            cursor: 'not-allowed',
+          },
+        },
+      },
     },
   };
 };
@@ -471,24 +498,27 @@ export default genComponentStyleHook(
 
     // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
     const rawToken: any = (token as any)._realToken ?? token;
-    const stepsIconSize = token.controlHeight;
+    const stepsIconSize = token.iconSize ?? token.controlHeight;
     const processTailColor = token.colorSplit;
+    const descriptionWidth = token.descriptionMaxWidth ?? token.descriptionWidth;
 
     const stepsToken = mergeToken<StepsToken>(token, {
+      descriptionWidth,
       // Steps variable default.less
       processTailColor,
-      stepsNavArrowColor: colorTextDisabled,
+      stepsNavArrowColor: token.navArrowColor ?? colorTextDisabled,
       stepsIconSize,
-      stepsIconCustomSize: stepsIconSize,
-      stepsIconCustomTop: 0,
-      stepsIconCustomFontSize: rawToken.controlHeightLG / 2,
-      stepsIconTop: -0.5, // magic for ui experience
-      stepsIconFontSize: fontSize,
-      stepsTitleLineHeight: controlHeight,
-      stepsSmallIconSize: fontSizeHeading3,
-      stepsDotSize: rawToken.controlHeight / 4,
-      stepsCurrentDotSize: rawToken.controlHeightLG / 4,
-      stepsNavContentMaxWidth: 'auto',
+      stepsIconCustomSize: token.customIconSize ?? stepsIconSize,
+      stepsIconCustomTop: token.customIconTop ?? 0,
+      stepsIconCustomFontSize: token.customIconFontSize ?? rawToken.controlHeightLG / 2,
+      stepsIconTop: token.iconTop ?? -0.5, // magic for ui experience
+      stepsIconFontSize: token.iconFontSize ?? fontSize,
+      stepsTitleLineHeight: token.titleLineHeight ?? controlHeight,
+      stepsSmallIconSize: token.iconSizeSM ?? fontSizeHeading3,
+      stepsDotSize: token.dotSize ?? rawToken.controlHeight / 4,
+      stepsCurrentDotSize: token.dotCurrentSize ?? rawToken.controlHeightLG / 4,
+      stepsNavContentMaxWidth:
+        token.navContentMaxWidth !== undefined ? unit(token.navContentMaxWidth) : 'auto',
       // Steps component less variable
       processIconColor: colorTextLightSolid,
       processTitleColor: colorText,

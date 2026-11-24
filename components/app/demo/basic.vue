@@ -17,10 +17,44 @@ Static method for `message`, `notification`, `modal`.
 
 <template>
   <a-app>
-    <my-page />
+    <MyPage />
   </a-app>
 </template>
 
 <script lang="ts" setup>
-import myPage from './myPage.vue';
+import { defineComponent, h } from 'vue';
+import { App, Button, Space } from 'ant-design-vue';
+
+const MyPage = defineComponent({
+  name: 'AppBasicPage',
+  setup() {
+    const { message, modal, notification } = App.useApp();
+
+    const showMessage = () => {
+      message.success('Success!');
+    };
+
+    const showModal = () => {
+      modal.warning({
+        title: 'This is a warning message',
+        content: 'some messages...some messages...',
+      });
+    };
+
+    const showNotification = () => {
+      notification.info({
+        title: 'Notification topLeft',
+        description: 'Hello, Ant Design Vue!!',
+        placement: 'topLeft',
+      });
+    };
+
+    return () =>
+      h(Space, { wrap: true }, () => [
+        h(Button, { type: 'primary', onClick: showMessage }, () => 'Open message'),
+        h(Button, { type: 'primary', onClick: showModal }, () => 'Open modal'),
+        h(Button, { type: 'primary', onClick: showNotification }, () => 'Open notification'),
+      ]);
+  },
+});
 </script>

@@ -19,6 +19,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Tr90QKrE_LcAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | Record<SemanticDOM, string> \| (info: { props: BreadcrumbProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | dropdownIcon | 自定义下拉菜单图标 | VNode \| slot | `<DownOutlined />` | 4.3.0 |
 | itemRender | 自定义链接函数，和 vue-router 配置使用， 也可使用 #itemRender="props" | ({route, params, routes, paths}) => vNode | - |  |
 | items | 路由栈信息 | [ItemType\[\]](#itemtype) | - | 4.3.0 |
@@ -26,6 +27,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Tr90QKrE_LcAAA
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | ~~routes~~ | router 的路由栈信息（已废弃，请使用 `items` 代替） | [routes\[\]](#routes) | - |  |
 | separator | 分隔符自定义 | string \| slot | `'/'` |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | Record<SemanticDOM, CSSProperties> \| (info: { props: BreadcrumbProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `item` \| `separator`。
 
 ### ItemType
 

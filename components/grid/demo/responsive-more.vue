@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 10
 title:
   zh-CN: 其他属性的响应式
   en-US: More responsive

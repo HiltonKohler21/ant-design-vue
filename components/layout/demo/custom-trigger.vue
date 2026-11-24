@@ -18,7 +18,7 @@ If you want to use a customized trigger, you can hide the default one by setting
 
 </docs>
 <template>
-  <a-layout>
+  <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible>
       <div class="demo-logo-vertical" />
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">

@@ -40,16 +40,16 @@ Our grid systems support Flex layout to allow the elements within the parent to 
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| align | Vertical alignment | `top` \| `middle` \| `bottom` \| `stretch` \| `{[key in 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl']: 'top' \| 'middle' \| 'bottom' \| 'stretch'}` | `top` | object: 4.0 |
-| gutter | Spacing between grids, could be a number or an object like `{ xs: 8, sm: 16, md: 24}`. Or you can use array to make horizontal and vertical spacing work at the same time `[horizontal, vertical]` (supported after `1.5.0`) | number \| object \| array | 0 | - |
-| justify | Horizontal arrangement | `start` \| `end` \| `center` \| `space-around` \| `space-between` \| `space-evenly` \| `{[key in 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl']: 'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between' \| 'space-evenly'}` | `start` | object: 4.0 |
+| align | Vertical alignment | `top` \| `middle` \| `bottom` \| `stretch` \| `{[key in 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl' \| 'xxxl']: 'top' \| 'middle' \| 'bottom' \| 'stretch'}` | `top` | object: 4.0 |
+| gutter | Spacing between grids, could be a number, a [string CSS unit](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Values_and_Units) or an object like `{ xs: 8, sm: 16, md: 24}`. Or you can use array to make horizontal and vertical spacing work at the same time `[horizontal, vertical]` (supported after `1.5.0`) | number \| string \| object \| array | 0 | string: 4.3.0 |
+| justify | Horizontal arrangement | `start` \| `end` \| `center` \| `space-around` \| `space-between` \| `space-evenly` \| `{[key in 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'xxl' \| 'xxxl']: 'start' \| 'end' \| 'center' \| 'space-around' \| 'space-between' \| 'space-evenly'}` | `start` | object: 4.0 |
 | wrap | Auto wrap line | boolean | true | - |
 
 ### Col
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| flex | The layout fill of flex | string \| number | - |  |
+| flex | The layout fill of flex (also supported inside responsive breakpoint objects) | string \| number | - | responsive: 4.3.0 |
 | offset | The number of cells to offset Col from the left | number | 0 |  |
 | order | Raster order, used in `flex` layout mode | number | 0 |  |
 | pull | The number of cells that raster is moved to the left | number | 0 |  |
@@ -61,6 +61,7 @@ Our grid systems support Flex layout to allow the elements within the parent to 
 | lg | `≥992px`, could be a `span` value or an object containing above props | number \| object | - |  |
 | xl | `≥1200px`, could be a `span` value or an object containing above props | number \| object | - |  |
 | xxl | `≥1600px`, could be a `span` value or an object containing above props | number \| object | - |  |
+| xxxl | `≥2000px`, could be a `span` value or an object containing above props | number \| object | - | 4.3.0 |
 
 You can modify the breakpoints values using by modifying `screen[XS|SM|MD|LG|XL|XXL]` with [theme customization](/docs/vue/customize-theme) (since 4.0.0, [sandbox demo](https://codesandbox.io/s/usebreakpoint-hook-ant-design-vue-4-0-0-beta-4-forked-n2k1sy?file=/src/demo.vue)).
 

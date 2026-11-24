@@ -449,4 +449,50 @@ describe('Splitter', () => {
     expect(dragger.attributes('style')).toContain('z-index: 5');
     expect(dragger.attributes('style')).toContain('background-color: rgb(200, 100, 50)');
   });
+
+  it('supports collapsible.motion, collapsible.icon render functions, draggerIcon=null, and showCollapsibleIcon modes', async () => {
+    const wrapper = mount(Splitter, {
+      props: {
+        draggerIcon: null,
+        collapsible: {
+          motion: true,
+          icon: {
+            start: () => <span class="fn-start">S</span>,
+            end: () => <span class="fn-end">E</span>,
+          },
+        },
+      },
+      slots: {
+        default: () => [
+          <Splitter.Panel collapsible={{ start: true, end: true, showCollapsibleIcon: true }}>
+            A
+          </Splitter.Panel>,
+          <Splitter.Panel collapsible={{ start: true, end: true, showCollapsibleIcon: false }}>
+            B
+          </Splitter.Panel>,
+          <Splitter.Panel collapsible={{ start: true, end: true, showCollapsibleIcon: 'auto' }}>
+            C
+          </Splitter.Panel>,
+        ],
+      },
+    });
+    const ro = wrapper.findComponent({ name: 'ResizeObserver' });
+    ro.props('onResize')({ width: 600, height: 200, offsetWidth: 600, offsetHeight: 200 });
+    await nextTick();
+
+    expect(wrapper.vm.nativeElement).toBe(wrapper.find('.ant-splitter').element);
+    expect(wrapper.findAll('.ant-splitter-panel')[0].classes()).toContain(
+      'ant-splitter-panel-transition',
+    );
+    expect(wrapper.find('.ant-splitter-bar-dragger').classes()).toContain(
+      'ant-splitter-bar-dragger-customize',
+    );
+    expect(wrapper.find('.fn-start').text()).toBe('S');
+    expect(wrapper.find('.fn-end').text()).toBe('E');
+    expect(wrapper.findAll('.ant-splitter-bar-collapse-bar-always-visible').length).toBeGreaterThan(
+      0,
+    );
+    expect(wrapper.findAll('.ant-splitter-bar-collapse-bar-hover-only').length).toBeGreaterThan(0);
+    wrapper.unmount();
+  });
 });

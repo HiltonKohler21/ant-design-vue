@@ -18,6 +18,7 @@ A breadcrumb displays the current location within a hierarchy. It allows going b
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, string> \| (info: { props: BreadcrumbProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
 | dropdownIcon | Custom dropdown icon for items with menu/overlay | VNode \| slot | `<DownOutlined />` | 4.3.0 |
 | itemRender | Custom item renderer, #itemRender="{route, params, routes, paths}" | ({route, params, routes, paths}) => vNode | - |  |
 | items | The routing stack information of router | [ItemType\[\]](#itemtype) | - | 4.3.0 |
@@ -25,6 +26,9 @@ A breadcrumb displays the current location within a hierarchy. It allows going b
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | ~~routes~~ | The routing stack information of router (deprecated, please use `items` instead) | [routes\[\]](#routes) | - |  |
 | separator | Custom separator | string \| slot | `/` |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, CSSProperties> \| (info: { props: BreadcrumbProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
+
+> `SemanticDOM` slots: `root` \| `item` \| `separator`.
 
 ### ItemType
 

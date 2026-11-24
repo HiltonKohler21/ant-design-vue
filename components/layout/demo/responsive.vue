@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 7
 title:
   zh-CN: 响应式布局
   en-US: Responsive
@@ -20,7 +20,7 @@ Layout.Sider supports responsive layout.
 
 </docs>
 <template>
-  <a-layout>
+  <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
     <a-layout-sider
       breakpoint="lg"
       collapsed-width="0"

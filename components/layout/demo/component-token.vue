@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 9
+order: 11
 debug: true
 title:
   zh-CN: 组件 Token
@@ -18,7 +18,7 @@ Component Token
 
 <template>
   <a-config-provider :theme="layoutTheme">
-    <a-layout>
+    <a-layout style="border-radius: 8px; overflow: hidden; max-width: 100%">
       <a-layout-header style="display: flex; align-items: center">
         <div class="demo-logo" />
         <div style="margin-inline-start: 24px; font-size: 24px">Ant Design</div>

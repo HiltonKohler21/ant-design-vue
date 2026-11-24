@@ -23,21 +23,24 @@ The whole of the step bar.
 | --- | --- | --- | --- | --- |
 | classNames | Semantic DOM class names (object or function) | `StepsClassNamesType` | - | 4.3.0 |
 | current(v-model) | to set the current step, counting from 0. You can overwrite this state by using `status` of `Step`, support v-model after 1.5.0 | number | 0 |  |
-| direction | to specify the direction of the step bar (deprecated, please use `orientation`), `horizontal` and `vertical` are supported | string | `horizontal` |  |
+| ~~direction~~ | to specify the direction of the step bar (deprecated, please use `orientation`), `horizontal` and `vertical` are supported | string | `horizontal` |  |
 | ellipsis | Whether to apply text ellipsis to step title, subtitle, and description | boolean | false | 4.3.0 |
+| iconRender | Custom render icon, please use `items.icon` first | `(oriNode, info: { index, active, item }) => VueNode` | - | 4.3.0 |
 | initial | set the initial step, counting from 0 | number | 0 |  |
 | items | StepItem content | [StepItem](#stepsstep)[] | [] |  |
-| labelPlacement | support vertical title and description (deprecated, please use `titlePlacement`) | string | `horizontal` |  |
+| ~~labelPlacement~~ | support vertical title and description (deprecated, please use `titlePlacement`) | string | `horizontal` |  |
+| maxCount | Maximum number of step items to display (`>= 3`). Hidden ranges are collapsed into disabled ellipsis steps | number | - | 4.3.0 |
+| offset | Offset cells, only works when `type` is `inline` | number | 0 | 4.3.0 |
 | orientation | Direction of the step bar, takes precedence over `direction` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
 | percent | Progress circle percentage of current step in `process` status (only works on basic Steps) | number | - | 3.0 |
-| progressDot | Steps with progress dot style, customize the progress dot by setting a scoped slot. labelPlacement will be `vertical` | Boolean or v-slot:progressDot="{index, status, title, description, prefixCls, iconDot}" | false |  |
+| ~~progressDot~~ | Steps with progress dot style, please use `type="dot"` instead. Customize via scoped slot. `titlePlacement` will be `vertical` | Boolean or v-slot:progressDot="{index, status, title, description, prefixCls, iconDot}" | false |  |
 | responsive | change to vertical direction when screen width smaller than `532px` | boolean | true | 3.0 |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
-| size | to specify the size of the step bar, `default` and `small` are currently supported | string | `default` |  |
+| size | to specify the size of the step bar, `medium` (`default`) and `small` are currently supported | `default` \| `medium` \| `small` | `default` | `medium`: 4.3.0 |
 | status | to specify the status of current step, can be set to one of the following values: `wait` `process` `finish` `error` | string | `process` |  |
 | styles | Semantic DOM styles (object or function) | `StepsStylesType` | - | 4.3.0 |
 | titlePlacement | Label placement, takes precedence over `labelPlacement` | `horizontal` \| `vertical` | `horizontal` | 4.3.0 |
-| type | Type of steps, can be set to one of the following values: `default`, `navigation`, `inline` | string | `default` | 1.5.0 |
+| type | Type of steps, can be set to one of the following values: `default`, `dot`, `inline`, `navigation`, `panel` | string | `default` | 1.5.0 (`dot` / `panel`: 4.3.0) |
 | variant | Visual variant of steps | `filled` \| `outlined` | `filled` | 4.3.0 |
 
 ### `type="inline"` (4.0+)

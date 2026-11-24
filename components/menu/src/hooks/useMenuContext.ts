@@ -9,6 +9,8 @@ import type {
   TriggerSubMenuAction,
 } from '../interface';
 import type { CSSMotionProps } from '../../../_util/transition';
+import type { TooltipProps } from '../../../tooltip';
+import type { ResolvedMenuClassNames, ResolvedMenuStyles } from '../Menu';
 
 export interface StoreMenuInfo {
   eventKey: string;
@@ -75,6 +77,19 @@ export interface MenuContextProps {
   onItemClick: MenuClickEventHandler;
   onOpenChange: (key: Key, open: boolean) => void;
   getPopupContainer: ComputedRef<(node: HTMLElement) => HTMLElement>;
+
+  // // Semantic & v6 props
+  classNames?: ComputedRef<ResolvedMenuClassNames>;
+  styles?: ComputedRef<ResolvedMenuStyles>;
+  tooltip?: ComputedRef<false | TooltipProps | undefined>;
+  disableMenuItemTitleTooltip?: ComputedRef<boolean | undefined>;
+  popupRender?: ComputedRef<((node: any, info: { item: any; keys: Key[] }) => any) | undefined>;
+  _internalRenderMenuItem?: ComputedRef<
+    ((originNode: any, menuItemProps: any, stateProps?: any) => any) | undefined
+  >;
+  _internalRenderSubMenuItem?: ComputedRef<
+    ((originNode: any, subMenuItemProps: any, stateProps?: any) => any) | undefined
+  >;
 }
 
 const MenuContextKey: InjectionKey<MenuContextProps> = Symbol('menuContextKey');

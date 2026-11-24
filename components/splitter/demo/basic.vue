@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 0.5
 title:
   zh-CN: 基本
   en-US: Basic

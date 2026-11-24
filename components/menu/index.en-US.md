@@ -27,6 +27,10 @@ More layouts with navigation: [Layout](/components/layout).
 
 | Param | Description | Type | Default value | Version |
 | --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, string> \| (info: { props: MenuProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
+| defaultOpenKeys | Array with the keys of default opened sub menus | (string \| number)[] | - | 4.3.0 |
+| defaultSelectedKeys | Array with the keys of default selected menu items | (string \| number)[] | - | 4.3.0 |
+| expandIcon | Custom expand icon of submenu | VueNode \| `(props: SubMenuProps & { isOpen: boolean }) => VueNode` | - |  |
 | forceSubMenuRender | render submenu into DOM before it shows | boolean | false |  |
 | inlineCollapsed | specifies the collapsed status when menu is inline mode | boolean | - |  |
 | inlineIndent | indent px of inline menu item on each level | number | 24 |  |
@@ -34,14 +38,20 @@ More layouts with navigation: [Layout](/components/layout).
 | mode | type of the menu; `vertical`, `horizontal`, and `inline` modes are supported | `vertical` \| `horizontal` \| `inline` | `vertical` |  |
 | multiple | Allow selection of multiple items | boolean | false |  |
 | openKeys(v-model) | array with the keys of currently opened sub menus | (string \| number)[] | - |  |
-| overflowedIndicator | Customized the ellipsis icon when menu is collapsed horizontally | slot | `<EllipsisOutlined />` |  |
+| overflowedIndicator | Customized the ellipsis icon when menu is collapsed horizontally | VueNode \| slot | `<EllipsisOutlined />` |  |
+| popupRender | Custom popup renderer for submenu | `(node: VNode, info: { item: SubMenuProps; keys: Key[] }) => VueNode` | - | 4.3.0 |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
 | selectable | allow selecting menu items | boolean | true |  |
 | selectedKeys(v-model) | array with the keys of currently selected menu items | (string \| number)[] | - |  |
 | style | style of the root node | CSSProperties | - |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function. | Record<SemanticDOM, CSSProperties> \| (info: { props: MenuProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | subMenuCloseDelay | delay time to hide submenu when mouse leave, unit: second | number | 0.1 |  |
 | subMenuOpenDelay | delay time to show submenu when mouse enter, unit: second | number | 0 |  |
 | theme | color theme of the menu | `light` \| `dark` | `light` |  |
+| tooltip | Config tooltip props for menu items in inline collapsed mode. Set to `false` to disable. | false \| TooltipProps | - | 4.3.0 |
 | triggerSubMenuAction | method of trigger submenu | `click` \| `hover` | `hover` |  |
+
+> `SemanticDOM` slots: `root` \| `item` \| `itemIcon` \| `itemContent` \| `itemTitle` \| `list` \| `popup` (`{ root }` or string/CSSProperties) \| `subMenu` (`{ item, itemTitle, list, itemIcon, itemContent }`).
 
 ### Menu Events
 
@@ -71,6 +81,7 @@ More layouts with navigation: [Layout](/components/layout).
 | --- | --- | --- | --- | --- |
 | danger | Display the danger style | boolean | false |  |
 | disabled | Whether menu item is disabled | boolean | false |  |
+| extra | The extra of the menu item | VueNode | - | 4.3.0 |
 | icon | The icon of the menu item | VueNode \| (item: MenuItemType) => VNode | - |  |
 | key | Unique ID of the menu item | string \| number | - |  |
 | label | Menu label | VueNode | - |  |
@@ -88,6 +99,7 @@ More layouts with navigation: [Layout](/components/layout).
 | label | Menu label | VueNode | - |  |
 | popupClassName | Sub-menu class name, not working when `mode="inline"` | string | - |  |
 | popupOffset | Sub-menu offset, not working when `mode="inline"` | \[number, number] | - |  |
+| popupRender | Custom popup renderer for current sub-menu | `(node: VNode, info: { item: SubMenuProps; keys: Key[] }) => VueNode` | - | 4.3.0 |
 | theme | Color theme of the SubMenu (inherits from Menu by default) | `light` \| `dark` | - |  |
 | onTitleClick | Callback executed when the sub-menu title is clicked | function({ key, domEvent }) | - |  |
 

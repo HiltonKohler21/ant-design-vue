@@ -29,7 +29,9 @@ export interface SubMenuType extends ItemSharedProps {
 
   // >>>>> Popup
   popupClassName?: string;
+  popupStyle?: CSSProperties;
   popupOffset?: number[];
+  popupRender?: (node: any, info: { item: any; keys: Key[] }) => any;
 
   // >>>>> Events
   onClick?: MenuClickEventHandler;
@@ -40,6 +42,8 @@ export interface SubMenuType extends ItemSharedProps {
 
 export interface MenuItemType extends ItemSharedProps {
   label?: any;
+
+  extra?: any;
 
   disabled?: boolean;
 

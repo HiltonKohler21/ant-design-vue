@@ -20,7 +20,13 @@ The level of the aside navigation is scalable. The first, second, and third leve
 </docs>
 <template>
   <a-layout
-    style="min-height: 360px; position: relative; overflow: hidden; transform: translate(0)"
+    style="
+      min-height: 360px;
+      position: relative;
+      overflow: hidden;
+      max-width: 100%;
+      transform: translate(0);
+    "
   >
     <a-layout-sider v-model:collapsed="collapsed" collapsible>
       <div class="demo-logo-vertical" />

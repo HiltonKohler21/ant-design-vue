@@ -79,9 +79,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HdS6Q5vUCDcAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | class | 容器 class | string | - |  |
+| classNames | 用于自定义 Layout 组件内部各语义化结构的 class，支持对象或函数 | Record\<[SemanticDOM](#semantic-dom), string> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), string> | - | 4.3.0 |
 | hasSider | 表示子元素里有 Sider，一般不用指定。可用于服务端渲染时避免样式闪动 | boolean | - |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | style | 指定样式 | object | - |  |
+| styles | 用于自定义 Layout 组件内部各语义化结构的行内 style，支持对象或函数 | Record\<[SemanticDOM](#semantic-dom), CSSProperties> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), CSSProperties> | - | 4.3.0 |
 
 ### Layout.Sider
 
@@ -89,8 +91,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HdS6Q5vUCDcAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| breakpoint | 触发响应式布局的[断点](/components/grid#api) | `xs` \| `sm` \| `md` \| `lg` \| `xl` \| `xxl` | - |  |
+| breakpoint | 触发响应式布局的[断点](/components/grid#api) | `xs` \| `sm` \| `md` \| `lg` \| `xl` \| `xxl` \| `xxxl` | - | xxxl: 4.3.0 |
 | class | 容器 class | string | - |  |
+| classNames | 用于自定义 Sider 组件内部各语义化结构的 class，支持对象或函数 | Record\<[SemanticDOM](#semantic-dom), string> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), string> | - | 4.3.0 |
 | collapsed(v-model) | 当前收起状态 | boolean | - |  |
 | collapsedWidth | 收缩宽度，设置为 0 会出现特殊 trigger | number | 80 |  |
 | collapsible | 是否可收起 | boolean | false |  |
@@ -98,6 +101,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HdS6Q5vUCDcAAA
 | reverseArrow | 翻转折叠提示箭头的方向，当 Sider 在右边时可以使用 | boolean | false |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | style | 指定样式 | object \| string | - |  |
+| styles | 用于自定义 Sider 组件内部各语义化结构的行内 style，支持对象或函数 | Record\<[SemanticDOM](#semantic-dom), CSSProperties> \| (info: { props }) => Record\<[SemanticDOM](#semantic-dom), CSSProperties> | - | 4.3.0 |
 | theme | 主题颜色 | `light` \| `dark` | `dark` |  |
 | trigger | 自定义 trigger，设置为 null 时隐藏 trigger | string \| slot | - |  |
 | width | 宽度 | number \| string | 200 |  |
@@ -109,6 +113,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*HdS6Q5vUCDcAAA
 | --- | --- | --- |
 | breakpoint | 触发响应式布局[断点](/components/grid#api)时的回调 | (broken) => {} |
 | collapse | 展开-收起时的回调函数，有点击 trigger 以及响应式反馈两种方式可以触发 | (collapsed, type) => {} |
+
+### Semantic DOM
+
+`Layout` 与 `Layout.Sider` 的 `classNames` 与 `styles` 支持静态对象或 `(info: { props }) => ...` 函数形式（并合并 `ConfigProvider.layout` 配置）：
+
+- `root`：根元素，包含 Layout / Sider 的布局、主题、宽度和折叠状态样式
+- `body`（`Layout.Sider`）：内容包裹元素，包含 Sider 子内容的布局和展示样式
 
 #### breakpoint width
 

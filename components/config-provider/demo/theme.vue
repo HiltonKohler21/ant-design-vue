@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 3
-version: 3.0
+version: '3.0'
 title:
   zh-CN: 主题
   en-US: Theme

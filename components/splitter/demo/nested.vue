@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 6.5
 title:
   zh-CN: 嵌套使用
   en-US: Nested

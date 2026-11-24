@@ -10,6 +10,7 @@ type ColSpanType = number | string;
 type FlexType = number | 'none' | 'auto' | string;
 
 export interface ColSize {
+  flex?: FlexType;
   span?: ColSpanType;
   order?: ColSpanType;
   offset?: ColSpanType;
@@ -59,13 +60,17 @@ export const colProps = () => ({
     type: [String, Number, Object] as PropType<string | number | ColSize>,
     default: undefined as string | number | ColSize,
   },
+  xxxl: {
+    type: [String, Number, Object] as PropType<string | number | ColSize>,
+    default: undefined as string | number | ColSize,
+  },
   prefixCls: String,
   flex: [String, Number],
 });
 
 export type ColProps = Partial<ExtractPropTypes<ReturnType<typeof colProps>>>;
 
-const sizes = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
+const sizes = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl', 'xxxl'] as const;
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'ACol',
@@ -77,10 +82,10 @@ export default defineComponent({
 
     const [wrapSSR, hashId] = useColStyle(prefixCls);
 
-    const classes = computed(() => {
-      const { span, order, offset, push, pull } = props;
+    const sizeMeta = computed(() => {
       const pre = prefixCls.value;
-      let sizeClassObj = {};
+      let sizeClassObj: Record<string, any> = {};
+      const sizeStyle: Record<string, string> = {};
       sizes.forEach(size => {
         let sizeProps: ColSize = {};
         const propSize = props[size];
@@ -99,7 +104,18 @@ export default defineComponent({
           [`${pre}-${size}-pull-${sizeProps.pull}`]: sizeProps.pull || sizeProps.pull === 0,
           [`${pre}-rtl`]: direction.value === 'rtl',
         };
+
+        if (sizeProps.flex || sizeProps.flex === 0) {
+          sizeClassObj[`${pre}-${size}-flex`] = true;
+          sizeStyle[`--${pre}-${size}-flex`] = parseFlex(sizeProps.flex);
+        }
       });
+      return { sizeClassObj, sizeStyle };
+    });
+
+    const classes = computed(() => {
+      const { span, order, offset, push, pull } = props;
+      const pre = prefixCls.value;
       return classNames(
         pre,
         {
@@ -109,7 +125,7 @@ export default defineComponent({
           [`${pre}-push-${push}`]: push,
           [`${pre}-pull-${pull}`]: pull,
         },
-        sizeClassObj,
+        sizeMeta.value.sizeClassObj,
         attrs.class,
         hashId.value,
       );
@@ -117,23 +133,37 @@ export default defineComponent({
 
     const mergedStyle = computed(() => {
       const { flex } = props;
-      const gutterVal = gutter.value;
+      const gutterVal = gutter.value as [number | string | undefined, number | string | undefined];
       const style: CSSProperties = {};
       // Horizontal gutter use padding
-      if (gutterVal && gutterVal[0] > 0) {
-        const horizontalGutter = `${gutterVal[0] / 2}px`;
-        style.paddingLeft = horizontalGutter;
-        style.paddingRight = horizontalGutter;
+      if (gutterVal && gutterVal[0]) {
+        const horizontalGutter =
+          typeof gutterVal[0] === 'number'
+            ? gutterVal[0] > 0
+              ? `${gutterVal[0] / 2}px`
+              : undefined
+            : `calc(${gutterVal[0]} / 2)`;
+        if (horizontalGutter) {
+          style.paddingLeft = horizontalGutter;
+          style.paddingRight = horizontalGutter;
+        }
       }
 
       // Vertical gutter use padding when gap not support
-      if (gutterVal && gutterVal[1] > 0 && !supportFlexGap.value) {
-        const verticalGutter = `${gutterVal[1] / 2}px`;
-        style.paddingTop = verticalGutter;
-        style.paddingBottom = verticalGutter;
+      if (gutterVal && gutterVal[1] && !supportFlexGap.value) {
+        const verticalGutter =
+          typeof gutterVal[1] === 'number'
+            ? gutterVal[1] > 0
+              ? `${gutterVal[1] / 2}px`
+              : undefined
+            : `calc(${gutterVal[1]} / 2)`;
+        if (verticalGutter) {
+          style.paddingTop = verticalGutter;
+          style.paddingBottom = verticalGutter;
+        }
       }
 
-      if (flex) {
+      if (flex || flex === 0) {
         style.flex = parseFlex(flex);
 
         // Hack for Firefox to avoid size issue
@@ -150,7 +180,7 @@ export default defineComponent({
         <div
           {...attrs}
           class={classes.value}
-          style={[mergedStyle.value, attrs.style as CSSProperties]}
+          style={[mergedStyle.value, attrs.style as CSSProperties, sizeMeta.value.sizeStyle]}
         >
           {slots.default?.()}
         </div>,

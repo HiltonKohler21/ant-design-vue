@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 5
 title:
   zh-CN: 设置锚点滚动偏移量
   en-US: Set Anchor scroll offset

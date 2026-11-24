@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 13
 debug: true
 title:
   zh-CN: 组件 Token
@@ -17,9 +17,15 @@ Debug Component Token.
 </docs>
 
 <template>
-  <a-space direction="vertical">
+  <a-flex vertical gap="middle" :style="{ maxWidth: '100%', overflow: 'hidden' }">
     <a-config-provider :theme="darkPopupTheme">
-      <a-menu v-model:selected-keys="current" mode="horizontal" :items="items" @click="onClick" />
+      <a-menu
+        v-model:selected-keys="current"
+        mode="horizontal"
+        :items="items"
+        :style="{ maxWidth: '100%' }"
+        @click="onClick"
+      />
       <a-menu
         v-model:selected-keys="selectedKeys1"
         v-model:open-keys="openKeys1"
@@ -31,7 +37,13 @@ Debug Component Token.
       />
     </a-config-provider>
     <a-config-provider :theme="horizontalTheme">
-      <a-menu v-model:selected-keys="current" mode="horizontal" :items="items" @click="onClick" />
+      <a-menu
+        v-model:selected-keys="current"
+        mode="horizontal"
+        :items="items"
+        :style="{ maxWidth: '100%' }"
+        @click="onClick"
+      />
     </a-config-provider>
     <a-config-provider :theme="darkInlineTheme">
       <a-menu
@@ -40,10 +52,10 @@ Debug Component Token.
         mode="inline"
         theme="dark"
         :items="items2"
-        :style="{ width: '256px' }"
+        :style="{ width: '256px', maxWidth: '100%' }"
       />
     </a-config-provider>
-  </a-space>
+  </a-flex>
 </template>
 
 <script lang="ts" setup>

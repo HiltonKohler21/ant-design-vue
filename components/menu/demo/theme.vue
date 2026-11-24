@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 7
 title:
   zh-CN: 主题
   en-US: Menu Themes

@@ -1,14 +1,16 @@
 import type { Ref, InjectionKey, ComputedRef } from 'vue';
-import type { AnchorDirection } from './Anchor';
+import type { AnchorDirection, AnchorSemanticClassNames, AnchorSemanticStyles } from './Anchor';
 import { computed, inject, provide } from 'vue';
 
 export interface AnchorContext {
-  registerLink: (link: string) => void;
+  registerLink: (link: string, targetOffset?: number) => void;
   unregisterLink: (link: string) => void;
   activeLink: Ref<string>;
-  scrollTo: (link: string) => void;
+  scrollTo: (link: string, targetOffset?: number) => void;
   handleClick: (e: Event, info: { title: any; href: string }) => void;
   direction: ComputedRef<AnchorDirection>;
+  classNames?: ComputedRef<AnchorSemanticClassNames>;
+  styles?: ComputedRef<AnchorSemanticStyles>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,6 +30,8 @@ const useInjectAnchor = () => {
     activeLink: computed(() => ''),
     handleClick: noop,
     direction: computed(() => 'vertical'),
+    classNames: computed(() => ({})),
+    styles: computed(() => ({})),
   } as AnchorContext);
 };
 

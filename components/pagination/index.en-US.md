@@ -22,6 +22,9 @@ A long list can be divided into several pages using `Pagination`, and only one p
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| align | Alignment of pagination | `start` \| `center` \| `end` | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | Record<SemanticDOM, string> \| (info: { props: PaginationProps }) => Record<SemanticDOM, string> | - | 4.3.0 |
+| components | Customize internal components | { sizeChanger?: Component } | - | 4.3.0 |
 | current(v-model) | current page number | number | - |  |
 | defaultCurrent | default initial page number | number | 1 |  |
 | defaultPageSize | default number of data items per page | number | 10 |  |
@@ -33,14 +36,17 @@ A long list can be divided into several pages using `Pagination`, and only one p
 | responsive | If `size` is not specified, `Pagination` would resize according to the width of the window | boolean | - | 3.1 |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | showLessItems | Show less page items | boolean | false | 1.5.0 |
-| showQuickJumper | determine whether you can jump to pages directly | boolean | false |  |
-| showSizeChanger | Determine whether to show `pageSize` select, it will be true when `total > 50` | boolean | - |  |
+| showQuickJumper | determine whether you can jump to pages directly | boolean \| { goButton: VueNode } | false |  |
+| showSizeChanger | Determine whether to show `pageSize` select, it will be true when `total > 50` | boolean \| [SelectProps](/components/select/#api) | - | SelectProps: 4.3.0 |
 | showTitle | Show page item's title | boolean | true | 1.5.0 |
 | showTotal | to display the total number and range | Function(total, range) | - |  |
-| simple | whether to use simple mode | boolean | - |  |
-| size | specify the size of `Pagination`, can be set to `small` | string | "" |  |
+| simple | whether to use simple mode | boolean \| { readOnly?: boolean } | - | readOnly: 4.3.0 |
+| size | specify the size of `Pagination`, can be set to `small` | `default` \| `small` \| `middle` \| `large` | "" |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | Record<SemanticDOM, CSSProperties> \| (info: { props: PaginationProps }) => Record<SemanticDOM, CSSProperties> | - | 4.3.0 |
 | total | total number of data items | number | 0 |  |
 | totalBoundaryShowSizeChanger | Determine when to show `pageSize` select when `total` exceeds this value | number | 50 |  |
+
+> `SemanticDOM` slots: `root` \| `item`.
 
 ### events
 

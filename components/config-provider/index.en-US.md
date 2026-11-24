@@ -65,7 +65,7 @@ Some components use dynamic style to support wave effect. You can config `csp` p
 | variant | Set the default variant of input-like components (Input / Select / DatePicker, etc.) | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | virtual | Disable virtual scroll when set to `false` | boolean | - | 3.0 |
 | warning | Configure warning behavior; when `strict` is `false`, deprecation warnings are aggregated | { strict?: boolean } | - | 4.3.0 |
-| wave | Config wave effect | { disabled?: boolean } | - | 4.0.7 |
+| wave | Config wave effect | [WaveConfig](#waveconfig) | - | 4.0.7 |
 
 ### ThemeConfig
 
@@ -86,13 +86,25 @@ The `theme` prop configures design tokens, theme algorithms, CSS variables mode,
 Configure global defaults for `Modal`, `Message`, and `Notification` static methods (supports reactive `ref`):
 
 ```ts
-import { ref } from 'vue';
-import { ConfigProvider } from 'ant-design-vue';
+import { h, ref } from 'vue';
+import { App, ConfigProvider, StyleProvider } from 'ant-design-vue';
 
 ConfigProvider.config({
   prefixCls: 'ant',
   iconPrefixCls: 'anticon',
-  holderRender: children => children,
+  // 4.3.0+
+  holderRender: children =>
+    h(StyleProvider, { hashPriority: 'high' }, () =>
+      h(
+        ConfigProvider,
+        {
+          prefixCls: 'ant',
+          iconPrefixCls: 'anticon',
+          theme: { token: { colorPrimary: '#1677ff' } },
+        },
+        () => h(App, null, () => children),
+      ),
+    ),
 });
 
 // Reactive refs are supported — updating prefixCls.value takes effect immediately
@@ -101,6 +113,31 @@ ConfigProvider.config({
   prefixCls,
 });
 ```
+
+### ConfigProvider.useConfig() `4.3.0+`
+
+Get values from parent `Provider`s, such as `DisabledContext` and `SizeContext` (returns reactive `Ref`s in Vue 3).
+
+```ts
+import { ConfigProvider } from 'ant-design-vue';
+
+const {
+  componentDisabled, // 4.3.0+
+  componentSize, // 4.3.0+
+} = ConfigProvider.useConfig();
+```
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| componentDisabled | antd component disabled state | `Ref<boolean \| undefined>` | - | 4.3.0 |
+| componentSize | antd component size state | `Ref<'small' \| 'middle' \| 'large' \| undefined>` | - | 4.3.0 |
+
+### WaveConfig
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| disabled | Whether to disable wave effect | boolean | `false` | 4.0.7 |
+| showEffect | Customized wave effect | (node: HTMLElement, info: { className, token, component, event, hashId }) => void | - | 4.3.0 |
 
 ### Component Config
 
@@ -208,3 +245,9 @@ const getPopupContainer = (node?: HTMLElement) => {
 #### Why can't ConfigProvider props (like `prefixCls` and `theme`) affect VueNode inside `message.info`, `notification.open`, or `Modal.confirm`?
 
 Static methods render outside the main Vue component tree. Prefer using [App](/components/app/) with `App.useApp()`, or wrap static method holders via `ConfigProvider.config({ holderRender })`.
+
+#### `prefixCls` priority (the former is overridden by the latter)
+
+1. `ConfigProvider.config({ prefixCls: 'prefix-1' })`
+2. `ConfigProvider.config({ holderRender: children => h(ConfigProvider, { prefixCls: 'prefix-2' }, () => children) })`
+3. `message.config({ prefixCls: 'prefix-3' })`

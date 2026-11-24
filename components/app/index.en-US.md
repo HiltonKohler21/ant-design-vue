@@ -20,8 +20,10 @@ Application wrapper for some global usages.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| component | Config render element, if `false` will not create DOM node | string \| Component \| false | `div` | 4.3.0 |
 | message | Global config for Message | [MessageConfig](/components/message/#messageconfig) | - | 4.x |
 | notification | Global config for Notification | [NotificationConfig](/components/notification/#notificationconfig) | - | 4.x |
+| prefixCls | Custom prefix class name | string | `ant-app` | 4.3.0 |
 | rootClassName | Root element class name | string | - | 4.3.0 |
 
 ## How to use
@@ -128,3 +130,9 @@ export const useGlobalStore = defineStore('global', () => {
   };
 </script>
 ```
+
+## FAQ
+
+### CSS Var doesn't work inside `<a-app :component="false">`
+
+CSS variables mode is enabled by default since `4.3.0`. `App` needs a valid HTML element to hold its root class name and default reset styles. When `component` is `false`, `App` only provides context without rendering a root DOM node, so `class`, `rootClassName`, and `style` cannot be applied and trigger a development warning. Keep the default `div` or specify another valid element when these styles are required.

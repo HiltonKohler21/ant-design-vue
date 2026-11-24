@@ -32,6 +32,9 @@ import { VcStepProps } from '../vc-steps/Step';
 import type { Status, ProgressDotRender } from '../vc-steps/interface';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import { useToken } from '../theme/internal';
+import warning from '../_util/warning';
+import PanelArrow from './PanelArrow';
+import useDisplaySteps from './useDisplaySteps';
 
 // CSSINJS
 import useStyle from './style';
@@ -39,6 +42,16 @@ import useStyle from './style';
 export type StepsVariant = 'filled' | 'outlined';
 export type StepsOrientation = 'horizontal' | 'vertical';
 export type StepsTitlePlacement = 'horizontal' | 'vertical';
+export type StepsType = 'default' | 'navigation' | 'inline' | 'panel' | 'dot';
+export type StepsSize = 'default' | 'medium' | 'small';
+export type IconRenderType = (
+  oriNode: VueNode,
+  info: {
+    index: number;
+    active: boolean;
+    item: StepProps;
+  },
+) => VueNode;
 
 export type StepsSemanticName =
   | 'root'
@@ -59,6 +72,7 @@ export type StepsSemanticClassNames = SemanticClassNames<StepsSemanticName>;
 export type StepsSemanticStyles = SemanticStyles<StepsSemanticName>;
 
 export const stepProps = () => ({
+  key: someType<string | number>([String, Number]),
   /** @deprecated Please use `content` instead */
   description: anyType(),
   content: anyType(),
@@ -89,14 +103,17 @@ const stepsBaseProps = () => ({
   labelPlacement: stringType<StepsTitlePlacement>(),
   titlePlacement: stringType<StepsTitlePlacement>(),
   status: stringType<Status>(),
-  size: stringType<'default' | 'small'>(),
+  size: stringType<StepsSize>(),
   /** @deprecated Please use `orientation` instead */
   direction: stringType<StepsOrientation>(),
   orientation: stringType<StepsOrientation>(),
   variant: stringType<StepsVariant>(),
   ellipsis: booleanType(),
+  maxCount: Number,
+  offset: Number,
+  iconRender: functionType<IconRenderType>(),
   progressDot: someType<boolean | ProgressDotRender>([Boolean, Function]),
-  type: stringType<'default' | 'navigation' | 'inline'>(),
+  type: stringType<StepsType>(),
   onChange: functionType<(current: number) => void>(),
   'onUpdate:current': functionType<(current: number) => void>(),
 });
@@ -270,7 +287,25 @@ const Steps = defineComponent({
     const [, , , realToken] = useToken();
 
     const screens = useBreakpoint();
+    const mergedType = computed<StepsType | undefined>(() => {
+      if (props.type && props.type !== 'default') {
+        return props.type;
+      }
+      if (props.progressDot) {
+        return 'dot';
+      }
+      return props.type;
+    });
+    const isInline = computed(() => mergedType.value === 'inline');
+    const isPanel = computed(() => mergedType.value === 'panel');
+    const isDot = computed(
+      () => mergedType.value === 'dot' || mergedType.value === 'inline' || !!slots.progressDot,
+    );
+
     const mergedOrientation = computed<StepsOrientation | undefined>(() => {
+      if (isPanel.value) {
+        return 'horizontal';
+      }
       const nextDirection = props.orientation ?? props.direction;
       if (props.responsive && screens.value.xs) {
         return 'vertical';
@@ -285,15 +320,51 @@ const Steps = defineComponent({
     );
 
     const iconPrefix = computed(() => configProvider.getPrefixCls('', props.iconPrefix));
-    const handleChange = (current: number) => {
-      emit('update:current', current);
-      emit('change', current);
-    };
-    const isInline = computed(() => props.type === 'inline');
     const mergedPercent = computed(() => (isInline.value ? undefined : props.percent));
+
+    const normalizedItems = computed<StepProps[]>(() =>
+      (props.items || []).filter(Boolean).map(item => {
+        const resolvedDescription = item.content !== undefined ? item.content : item.description;
+        if (resolvedDescription === item.description) {
+          return item;
+        }
+        return {
+          ...item,
+          description: resolvedDescription,
+        };
+      }),
+    );
+
+    const currentRef = computed(() => props.current ?? 0);
+    const initialRef = computed(() => props.initial ?? 0);
+    const maxCountRef = computed(() => props.maxCount);
+
+    const { canApplyMaxCount, displaySteps, mappedDisplayCurrent, displayItems } = useDisplaySteps(
+      normalizedItems,
+      currentRef,
+      initialRef,
+      maxCountRef,
+      prefixCls,
+    );
+
+    const handleChange = (displayCurrent: number) => {
+      if (canApplyMaxCount.value) {
+        const target = displaySteps.value[displayCurrent];
+        if (!target || target.originIndex < 0) {
+          return;
+        }
+        const nextCurrent = initialRef.value + target.originIndex;
+        emit('update:current', nextCurrent);
+        emit('change', nextCurrent);
+        return;
+      }
+      emit('update:current', displayCurrent);
+      emit('change', displayCurrent);
+    };
 
     const mergedPropsForSemantic = computed<StepsProps>(() => ({
       ...props,
+      type: mergedType.value,
       direction: mergedOrientation.value ?? 'horizontal',
       orientation: mergedOrientation.value ?? 'horizontal',
       labelPlacement: mergedTitlePlacement.value,
@@ -314,7 +385,10 @@ const Steps = defineComponent({
 
     const stepIconRender = ({
       node,
+      index,
       status,
+      title,
+      description,
     }: {
       node: any;
       index: number;
@@ -322,7 +396,26 @@ const Steps = defineComponent({
       title: any;
       description: any;
     }) => {
-      if (status === 'process' && props.percent !== undefined) {
+      const displayStep = displaySteps.value[index];
+      const originIndex = displayStep?.originIndex;
+      const item = displayStep?.item;
+
+      let iconNode = node;
+      if (
+        canApplyMaxCount.value &&
+        originIndex !== undefined &&
+        originIndex >= 0 &&
+        !item?.icon &&
+        !isDot.value &&
+        status !== 'finish' &&
+        status !== 'error'
+      ) {
+        iconNode = (
+          <span class={`${prefixCls.value}-icon`}>{initialRef.value + originIndex + 1}</span>
+        );
+      }
+
+      if (status === 'process' && mergedPercent.value !== undefined) {
         // currently it's hard-coded, since we can't easily read the actually width of icon
 
         const progressWidth =
@@ -330,7 +423,7 @@ const Steps = defineComponent({
             ? Number(realToken.value.controlHeight)
             : Number(realToken.value.controlHeightLG);
 
-        const iconWithProgress = (
+        iconNode = (
           <div class={`${prefixCls.value}-progress-icon`}>
             <Progress
               type="circle"
@@ -339,18 +432,36 @@ const Steps = defineComponent({
               strokeWidth={4}
               format={() => null}
             />
-            {node}
+            {iconNode}
           </div>
         );
-        return iconWithProgress;
       }
-      return node;
+
+      if (props.iconRender) {
+        const mappedIndex =
+          originIndex !== undefined && originIndex >= 0 ? initialRef.value + originIndex : index;
+        iconNode = props.iconRender(iconNode, {
+          index: mappedIndex,
+          active: mappedIndex === currentRef.value,
+          item: item || { title, description, status: status as Status },
+        });
+      }
+
+      return iconNode;
     };
     const icons = computed(() => ({
       finish: <CheckOutlined class={`${prefixCls.value}-finish-icon`} />,
       error: <CloseOutlined class={`${prefixCls.value}-error-icon`} />,
     }));
     return () => {
+      if (process.env.NODE_ENV !== 'production') {
+        warning(
+          props.maxCount === undefined || props.maxCount >= 3,
+          'Steps',
+          '`maxCount` should be greater than or equal to 3.',
+        );
+      }
+
       const explicitFilled =
         props.variant === 'filled' ||
         (props.variant === undefined &&
@@ -363,6 +474,8 @@ const Steps = defineComponent({
           [`${prefixCls.value}-outlined`]: mergedVariant.value === 'outlined',
           [`${prefixCls.value}-filled`]: explicitFilled,
           [`${prefixCls.value}-ellipsis`]: !!props.ellipsis,
+          [`${prefixCls.value}-panel`]: isPanel.value,
+          [`${prefixCls.value}-max-count`]: canApplyMaxCount.value,
         },
         contextClassName.value,
         mergedClassNames.value.root,
@@ -371,23 +484,30 @@ const Steps = defineComponent({
         hashId.value,
       );
 
-      const normalizedItems = props.items?.map(item => {
-        if (!item) return item;
-        const resolvedDescription = item.content !== undefined ? item.content : item.description;
-        if (resolvedDescription === item.description) {
-          return item;
-        }
-        return {
-          ...item,
-          description: resolvedDescription,
-        };
-      });
+      const finalItems = props.items ? displayItems.value : undefined;
 
       const hasTopItemSemantics = hasAnyItemSemantic(mergedClassNames.value, mergedStyles.value);
       const hasPerItemSemantics = Boolean(
-        normalizedItems?.some(item => item && (item.className || item.classNames || item.styles)),
+        finalItems?.some(item => item && (item.className || item.classNames || item.styles)),
       );
       const needsItemPatch = hasTopItemSemantics || hasPerItemSemantics;
+
+      const appendPanelArrow = (stepNode: VueNode): VueNode => {
+        if (!isPanel.value || !isVNode(stepNode)) {
+          return stepNode;
+        }
+        const existingChildren = Array.isArray(stepNode.children)
+          ? stepNode.children
+          : stepNode.children
+          ? [stepNode.children]
+          : [];
+        const cloned = cloneVNode(stepNode);
+        cloned.children = [
+          ...existingChildren,
+          <PanelArrow prefixCls={prefixCls.value} />,
+        ] as VNode['children'];
+        return cloned;
+      };
 
       const itemRender = (item: StepProps, stepItem: VueNode) => {
         let node = stepItem;
@@ -399,6 +519,9 @@ const Steps = defineComponent({
             ? mergeStyles<StepsSemanticStyles>(mergedStyles.value, item.styles)
             : mergedStyles.value;
           node = patchStepVNode(node, prefixCls.value, itemCls, itemSt, item?.className);
+        }
+        if (isPanel.value) {
+          node = appendPanelArrow(node);
         }
         if (isInline.value) {
           const tooltipContent = item.content ?? item.description;
@@ -420,14 +543,14 @@ const Steps = defineComponent({
             const childHasPerItem = Boolean(
               childProps.className || childProps.classNames || childProps.styles,
             );
-            if (!hasContentAlias && !hasTopItemSemantics && !childHasPerItem) {
+            if (!hasContentAlias && !hasTopItemSemantics && !childHasPerItem && !isPanel.value) {
               return child;
             }
             const extraProps: Record<string, any> = {};
             if (hasContentAlias) {
               extraProps.description = childProps.content;
             }
-            if (hasTopItemSemantics || childHasPerItem) {
+            if (hasTopItemSemantics || childHasPerItem || isPanel.value) {
               const itemCls = childProps.classNames
                 ? mergeClassNames<StepsSemanticClassNames>(
                     mergedClassNames.value,
@@ -437,13 +560,43 @@ const Steps = defineComponent({
               const itemSt = childProps.styles
                 ? mergeStyles<StepsSemanticStyles>(mergedStyles.value, childProps.styles)
                 : mergedStyles.value;
-              extraProps.itemRender = (stepNode: VueNode) =>
-                patchStepVNode(stepNode, prefixCls.value, itemCls, itemSt, childProps.className);
+              extraProps.itemRender = (stepNode: VueNode) => {
+                let nextNode =
+                  hasTopItemSemantics || childHasPerItem
+                    ? patchStepVNode(
+                        stepNode,
+                        prefixCls.value,
+                        itemCls,
+                        itemSt,
+                        childProps.className,
+                      )
+                    : stepNode;
+                if (isPanel.value) {
+                  nextNode = appendPanelArrow(nextNode);
+                }
+                return nextNode;
+              };
             }
             return cloneVNode(child, extraProps);
           });
         };
       }
+
+      const vcType =
+        mergedType.value === 'navigation' || mergedType.value === 'inline'
+          ? mergedType.value
+          : 'default';
+      const vcProgressDot =
+        props.progressDot !== undefined
+          ? props.progressDot
+          : mergedType.value === 'dot' && !slots.progressDot
+          ? true
+          : undefined;
+      const vcSize = props.size === 'medium' ? 'default' : props.size;
+      const inlineOffsetStyle =
+        isInline.value && props.offset
+          ? ({ '--ant-steps-items-offset': String(props.offset) } as CSSProperties)
+          : undefined;
 
       return wrapSSR(
         <VcSteps
@@ -456,19 +609,37 @@ const Steps = defineComponent({
             'titlePlacement',
             'variant',
             'ellipsis',
+            'maxCount',
+            'offset',
+            'iconRender',
             'classNames',
             'styles',
+            'type',
+            'size',
+            'progressDot',
+            'initial',
+            'current',
           ])}
-          items={normalizedItems}
+          type={vcType}
+          size={vcSize}
+          progressDot={vcProgressDot}
+          initial={canApplyMaxCount.value ? 0 : props.initial}
+          current={mappedDisplayCurrent.value}
+          items={finalItems}
           direction={mergedOrientation.value}
           labelPlacement={mergedTitlePlacement.value}
           prefixCls={prefixCls.value}
           iconPrefix={iconPrefix.value}
           class={stepsClassName}
-          style={[contextStyle.value, mergedStyles.value.root, attrs.style as CSSProperties]}
+          style={[
+            contextStyle.value,
+            inlineOffsetStyle,
+            mergedStyles.value.root,
+            attrs.style as CSSProperties,
+          ]}
           onChange={handleChange}
           isInline={isInline.value}
-          itemRender={isInline.value || needsItemPatch ? itemRender : undefined}
+          itemRender={isInline.value || isPanel.value || needsItemPatch ? itemRender : undefined}
           v-slots={vcSlots}
         />,
       );

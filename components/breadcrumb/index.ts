@@ -5,6 +5,11 @@ import BreadcrumbSeparator from './BreadcrumbSeparator';
 
 export type {
   BreadcrumbProps,
+  BreadcrumbSemanticName,
+  BreadcrumbSemanticClassNames,
+  BreadcrumbSemanticStyles,
+  BreadcrumbClassNamesType,
+  BreadcrumbStylesType,
   ItemType,
   BreadcrumbItemType,
   BreadcrumbSeparatorType,

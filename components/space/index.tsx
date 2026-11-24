@@ -37,6 +37,7 @@ export type { SpaceCompactProps } from './Compact';
 const spaceSize = {
   small: 8,
   middle: 16,
+  medium: 16,
   large: 24,
 };
 

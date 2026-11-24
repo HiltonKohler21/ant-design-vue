@@ -20,7 +20,7 @@ Generally, the mainnav is placed at the top of the page, and includes the logo, 
 
 </docs>
 <template>
-  <a-layout class="layout" style="border-radius: 8px; overflow: hidden">
+  <a-layout class="layout" style="border-radius: 8px; overflow: hidden; max-width: 100%">
     <a-layout-header style="display: flex; align-items: center">
       <div class="demo-logo" />
       <a-menu

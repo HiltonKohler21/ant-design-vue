@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 11
 title:
   zh-CN: 自定义下拉选项
   en-US: Custom dropdown options
