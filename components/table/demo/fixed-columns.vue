@@ -25,7 +25,13 @@ To fix some columns and scroll inside other columns, and you must set `scroll.x`
 </docs>
 
 <template>
-  <a-table :columns="columns" :data-source="data" :scroll="{ x: 1300, y: 1000 }">
+  <a-table
+    class="fixed-columns-table"
+    :pagination="false"
+    :columns="columns"
+    :data-source="data"
+    :scroll="{ x: 'max-content' }"
+  >
     <template #bodyCell="{ column }">
       <template v-if="column.key === 'operation'">
         <a>action</a>
@@ -33,27 +39,9 @@ To fix some columns and scroll inside other columns, and you must set `scroll.x`
     </template>
   </a-table>
 </template>
+
 <script lang="ts" setup>
 import type { TableColumnsType } from 'ant-design-vue';
-
-const columns: TableColumnsType = [
-  { title: 'Full Name', width: 100, dataIndex: 'name', key: 'name', fixed: 'left' },
-  { title: 'Age', width: 100, dataIndex: 'age', key: 'age', fixed: 'left' },
-  { title: 'Column 1', dataIndex: 'address', key: '1' },
-  { title: 'Column 2', dataIndex: 'address', key: '2' },
-  { title: 'Column 3', dataIndex: 'address', key: '3' },
-  { title: 'Column 4', dataIndex: 'address', key: '4' },
-  { title: 'Column 5', dataIndex: 'address', key: '5' },
-  { title: 'Column 6', dataIndex: 'address', key: '6' },
-  { title: 'Column 7', dataIndex: 'address', key: '7' },
-  { title: 'Column 8', dataIndex: 'address', key: '8' },
-  {
-    title: 'Action',
-    key: 'operation',
-    fixed: 'right',
-    width: 100,
-  },
-];
 
 interface DataItem {
   key: string;
@@ -62,18 +50,42 @@ interface DataItem {
   address: string;
 }
 
+const columns: TableColumnsType<DataItem> = [
+  { title: 'Full Name', width: 100, dataIndex: 'name', key: 'name', fixed: 'start' },
+  { title: 'Age', width: 100, dataIndex: 'age', key: 'age', fixed: 'start', sorter: true },
+  ...Array.from({ length: 20 }, (_, i) => ({
+    title: `Column ${i + 1}`,
+    dataIndex: 'address',
+    key: String(i + 1),
+  })),
+  {
+    title: 'Action',
+    key: 'operation',
+    fixed: 'end',
+    width: 100,
+  },
+];
+
 const data: DataItem[] = [
   {
     key: '1',
-    name: 'John Brown',
+    name: 'Olivia',
     age: 32,
     address: 'New York Park',
   },
   {
     key: '2',
-    name: 'Jim Green',
+    name: 'Ethan',
     age: 40,
     address: 'London Park',
   },
 ];
 </script>
+
+<style scoped>
+.fixed-columns-table :deep(.ant-table-body),
+.fixed-columns-table :deep(.ant-table-content) {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 140, 0.35) transparent;
+}
+</style>

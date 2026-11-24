@@ -68,6 +68,8 @@ const genFixedStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-container`]: {
+        position: 'relative',
+
         '&::before, &::after': {
           position: 'absolute',
           top: 0,

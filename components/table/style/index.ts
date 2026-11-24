@@ -187,6 +187,14 @@ export interface ComponentToken {
    * @descEN Border radius of sticky scrollbar
    */
   stickyScrollBarBorderRadius: number;
+  /** @internal */
+  expandIconMarginTop?: number;
+  /** @internal */
+  expandIconHalfInner?: number;
+  /** @internal */
+  expandIconSize?: number;
+  /** @internal */
+  expandIconScale?: number;
 }
 
 export interface TableToken extends FullToken<'Table'> {
@@ -222,7 +230,7 @@ export interface TableToken extends FullToken<'Table'> {
   tableFontSizeSmall: number;
   tableSelectionColumnWidth: number | string;
   tableExpandIconBg: string;
-  tableExpandColumnWidth: number;
+  tableExpandColumnWidth: number | string;
   tableExpandedRowBg: string;
   tableFilterDropdownWidth: number;
   tableFilterDropdownSearchWidth: number;
@@ -265,6 +273,8 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
     [`${componentCls}-wrapper`]: {
       clear: 'both',
       maxWidth: '100%',
+      // fix https://github.com/ant-design/ant-design/issues/46177
+      ['--rc-virtual-list-scrollbar-bg' as const]: token.tableScrollBg,
       ...clearFix(),
 
       [componentCls]: {
@@ -272,6 +282,8 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
         fontSize: tableFontSize,
         background: tableBg,
         borderRadius: `${unit(tableRadius)} ${unit(tableRadius)} 0 0`,
+        // https://github.com/ant-design/ant-design/issues/47486
+        scrollbarColor: `${token.tableScrollThumbBg} ${token.tableScrollBg}`,
       },
       // https://github.com/ant-design/ant-design/issues/17611
       table: {
@@ -284,7 +296,9 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
       // ============================= Cell =============================
       [`
+          ${componentCls}-cell,
           ${componentCls}-thead > tr > th,
+          ${componentCls}-tbody > tr > th,
           ${componentCls}-tbody > tr > td,
           tfoot > tr > th,
           tfoot > tr > td
@@ -311,7 +325,7 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
           textAlign: 'start',
           background: tableHeaderBg,
           borderBottom: tableBorder,
-          transition: `background ${motionDurationMid} ease`,
+          transition: `background-color ${motionDurationMid} ease`,
 
           "&[colspan]:not([colspan='1'])": {
             textAlign: 'center',
@@ -331,50 +345,21 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
             },
         },
 
+        [`> tr > ${componentCls}-cell-scrollbar`]: {
+          paddingInline: 0,
+        },
+
         '> tr:not(:last-child) > th[colspan]': {
           borderBottom: 0,
         },
       },
 
       // ============================ Body ============================
-      // Borderless Table has unique hover style, which would be implemented with `borderTop`.
-      [`${componentCls}:not(${componentCls}-bordered)`]: {
-        [`${componentCls}-tbody`]: {
-          '> tr': {
-            '> td': {
-              borderTop: tableBorder,
-              borderBottom: 'transparent',
-            },
-
-            '&:last-child > td': {
-              borderBottom: tableBorder,
-            },
-
-            [`&:first-child > td,
-              &${componentCls}-measure-row + tr > td`]: {
-              borderTop: 'none',
-              borderTopColor: 'transparent',
-            },
-          },
-        },
-      },
-
-      // Bordered Table remains simple `borderBottom`.
-      // Ref issue: https://github.com/ant-design/ant-design/issues/38724
-      [`${componentCls}${componentCls}-bordered`]: {
-        [`${componentCls}-tbody`]: {
-          '> tr': {
-            '> td': {
-              borderBottom: tableBorder,
-            },
-          },
-        },
-      },
-
       [`${componentCls}-tbody`]: {
         '> tr': {
-          '> td': {
-            transition: `background ${motionDurationMid}, border-color ${motionDurationMid}`,
+          '> th, > td': {
+            borderBottom: tableBorder,
+            transition: `background-color ${motionDurationMid}, border-color ${motionDurationMid}`,
 
             // ========================= Nest Table ===========================
             [`
@@ -386,22 +371,45 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
                 marginInline: `${unit(
                   token.calc(token.tableExpandColumnWidth).sub(tablePaddingHorizontal).equal(),
                 )} ${unit(token.calc(tablePaddingHorizontal).mul(-1).equal())}`,
-                [`${componentCls}-tbody > tr:last-child > td`]: {
-                  borderBottom: 0,
-                  '&:first-child, &:last-child': {
-                    borderRadius: 0,
+                [`${componentCls}-tbody > tr:last-child > th, ${componentCls}-tbody > tr:last-child > td`]:
+                  {
+                    borderBottomWidth: 0,
+                    '&:first-child, &:last-child': {
+                      borderRadius: 0,
+                    },
                   },
-                },
               },
             },
           },
 
+          '> th': {
+            position: 'relative',
+            color: tableHeaderTextColor,
+            fontWeight: fontWeightStrong,
+            textAlign: 'start',
+            background: tableHeaderBg,
+            borderBottom: tableBorder,
+            transition: `background-color ${motionDurationMid} ease`,
+          },
+
+          // measure cell styles
+          [`& > ${componentCls}-measure-cell`]: {
+            paddingBlock: `0 !important`,
+            borderBlock: `0 !important`,
+
+            [`${componentCls}-measure-cell-content`]: {
+              height: 0,
+              overflow: 'hidden',
+              pointerEvents: 'none',
+            },
+          },
+
           [`&${componentCls}-row-selected`]: {
-            '> td': {
+            '> th, > td': {
               background: tableSelectedRowBg,
             },
 
-            '&:hover > td': {
+            '&:hover > th, &:hover > td': {
               background: tableSelectedRowHoverBg,
             },
           },
@@ -411,18 +419,20 @@ const genTableStyle: GenerateStyle<TableToken, CSSObject> = token => {
       [`${componentCls}:not(${componentCls}-row-hover-disabled)`]: {
         [`${componentCls}-tbody > tr`]: {
           [`
+            &${componentCls}-row:hover > th,
             &${componentCls}-row:hover > td,
+            > th${componentCls}-cell-row-hover,
             > td${componentCls}-cell-row-hover
           `]: {
             background: tableRowHoverBg,
           },
 
           [`&${componentCls}-row-selected`]: {
-            '> td': {
+            '> th, > td': {
               background: tableSelectedRowBg,
             },
 
-            '&:hover > td': {
+            '&:hover > th, &:hover > td': {
               background: tableSelectedRowHoverBg,
             },
           },
@@ -480,9 +490,6 @@ export default genComponentStyleHook(
       headerIconHoverColor,
     } = token;
 
-    // 尺寸派生需要真实数值（cssVar 下 token 值是 var() 字符串）
-    const rawToken: any = (token as any)._realToken ?? token;
-
     const zIndexTableFixed = 2;
 
     const tableToken = mergeToken<TableToken>(token, {
@@ -519,7 +526,10 @@ export default genComponentStyleHook(
       tableFontSizeSmall: cellFontSizeSM,
       tableSelectionColumnWidth: selectionColumnWidth,
       tableExpandIconBg: expandIconBg,
-      tableExpandColumnWidth: rawToken.controlInteractiveSize + 2 * rawToken.padding,
+      tableExpandColumnWidth: token
+        .calc(token.controlInteractiveSize)
+        .add(token.calc(token.padding).mul(2))
+        .equal(),
       tableExpandedRowBg: rowExpandedBg,
 
       // Dropdown
@@ -575,6 +585,8 @@ export default genComponentStyleHook(
       .clone()
       .setAlpha(baseColorActionHover.getAlpha() * token.opacityLoading)
       .toRgbString();
+    const expandIconHalfInner = token.controlInteractiveSize / 2 - token.lineWidth;
+    const expandIconSize = expandIconHalfInner * 2 + token.lineWidth * 3;
 
     return {
       headerBg: colorFillAlterSolid,
@@ -610,6 +622,17 @@ export default genComponentStyleHook(
       selectionColumnWidth: token.controlHeight,
       stickyScrollBarBg: token.colorTextPlaceholder,
       stickyScrollBarBorderRadius: 100,
+      expandIconMarginTop:
+        (token.fontSize * token.lineHeight - token.lineWidth * 3) / 2 -
+        Math.ceil((token.fontSizeSM * 1.4 - token.lineWidth * 3) / 2),
+      expandIconHalfInner,
+      expandIconSize,
+      expandIconScale: token.controlInteractiveSize / expandIconSize,
     };
+  },
+  {
+    unitless: {
+      expandIconScale: true,
+    },
   },
 );

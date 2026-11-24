@@ -17,12 +17,7 @@ With `expandedRowRender`, set `showExpandAll` to display an expand-all control i
 </docs>
 
 <template>
-  <a-table
-    :columns="columns"
-    :data-source="data"
-    :expandable="expandable"
-    :scroll="{ x: 'max-content' }"
-  >
+  <a-table :columns="columns" :data-source="data" :expandable="expandable">
     <template #expandedRowRender="{ record }">
       <p style="margin: 0">{{ record.description }}</p>
     </template>

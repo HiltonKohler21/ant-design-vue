@@ -24,18 +24,17 @@ Control filters and sorters by `filteredValue` and `sortOrder`.
 </docs>
 
 <template>
-  <div>
-    <div class="table-operations">
-      <a-button @click="setAgeSort">Sort age</a-button>
-      <a-button @click="clearFilters">Clear filters</a-button>
-      <a-button @click="clearAll">Clear filters and sorters</a-button>
-    </div>
-    <a-table :columns="columns" :data-source="data" @change="handleChange" />
-  </div>
+  <a-space :style="{ marginBottom: '16px' }">
+    <a-button @click="setAgeSort">Sort age</a-button>
+    <a-button @click="clearFilters">Clear filters</a-button>
+    <a-button @click="clearAll">Clear filters and sorters</a-button>
+  </a-space>
+  <a-table :columns="columns" :data-source="data" @change="handleChange" />
 </template>
+
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { TableColumnType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from 'ant-design-vue';
 
 interface DataItem {
   key: string;
@@ -61,7 +60,7 @@ const data: DataItem[] = [
     key: '3',
     name: 'Joe Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
   {
     key: '4',
@@ -71,10 +70,10 @@ const data: DataItem[] = [
   },
 ];
 
-const filteredInfo = ref();
-const sortedInfo = ref();
+const filteredInfo = ref<Record<string, any>>();
+const sortedInfo = ref<Record<string, any>>();
 
-const columns = computed<TableColumnType[]>(() => {
+const columns = computed<TableColumnsType<DataItem>>(() => {
   const filtered = filteredInfo.value || {};
   const sorted = sortedInfo.value || {};
   return [
@@ -87,17 +86,18 @@ const columns = computed<TableColumnType[]>(() => {
         { text: 'Jim', value: 'Jim' },
       ],
       filteredValue: filtered.name || null,
-      onFilter: (value: string, record: DataItem) => record.name.includes(value),
-      sorter: (a: DataItem, b: DataItem) => a.name.length - b.name.length,
-      sortOrder: sorted.columnKey === 'name' && sorted.order,
+      onFilter: (value, record) => record.name.includes(value as string),
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortOrder: sorted.columnKey === 'name' ? sorted.order : null,
       ellipsis: true,
     },
     {
       title: 'Age',
       dataIndex: 'age',
       key: 'age',
-      sorter: (a: DataItem, b: DataItem) => a.age - b.age,
-      sortOrder: sorted.columnKey === 'age' && sorted.order,
+      sorter: (a, b) => a.age - b.age,
+      sortOrder: sorted.columnKey === 'age' ? sorted.order : null,
+      ellipsis: true,
     },
     {
       title: 'Address',
@@ -108,25 +108,25 @@ const columns = computed<TableColumnType[]>(() => {
         { text: 'New York', value: 'New York' },
       ],
       filteredValue: filtered.address || null,
-      onFilter: (value: string, record: DataItem) => record.address.includes(value),
-      sorter: (a: DataItem, b: DataItem) => a.address.length - b.address.length,
-      sortOrder: sorted.columnKey === 'address' && sorted.order,
+      onFilter: (value, record) => record.address.includes(value as string),
+      sorter: (a, b) => a.address.length - b.address.length,
+      sortOrder: sorted.columnKey === 'address' ? sorted.order : null,
       ellipsis: true,
     },
   ];
 });
 
-const handleChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+const handleChange: TableProps<DataItem>['onChange'] = (pagination, filters, sorter) => {
   console.log('Various parameters', pagination, filters, sorter);
   filteredInfo.value = filters;
-  sortedInfo.value = sorter;
+  sortedInfo.value = sorter as Record<string, any>;
 };
 const clearFilters = () => {
-  filteredInfo.value = null;
+  filteredInfo.value = {};
 };
 const clearAll = () => {
-  filteredInfo.value = null;
-  sortedInfo.value = null;
+  filteredInfo.value = {};
+  sortedInfo.value = {};
 };
 const setAgeSort = () => {
   sortedInfo.value = {
@@ -135,12 +135,3 @@ const setAgeSort = () => {
   };
 };
 </script>
-<style scoped>
-.table-operations {
-  margin-bottom: 16px;
-}
-
-.table-operations > button {
-  margin-right: 8px;
-}
-</style>

@@ -18,57 +18,76 @@ Implement a customized column search example via `customFilterDropdown`.
 
 <template>
   <a-table :data-source="data" :columns="columns">
-    <template #headerCell="{ column }">
-      <template v-if="column.key === 'name'">
-        <span style="color: #1890ff">Name</span>
-      </template>
-    </template>
     <template
-      #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }"
+      #customFilterDropdown="{
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+        column,
+        close,
+      }"
     >
-      <div style="padding: 8px">
+      <div :style="{ padding: '8px' }" @keydown.stop>
         <a-input
           ref="searchInput"
           :placeholder="`Search ${column.dataIndex}`"
           :value="selectedKeys[0]"
-          style="width: 188px; margin-bottom: 8px; display: block"
+          :style="{ marginBottom: '8px', display: 'block', width: '188px' }"
           @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-          @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
+          @press-enter="handleSearch(selectedKeys, confirm, column.dataIndex)"
         />
-        <a-button
-          type="primary"
-          size="small"
-          style="width: 90px; margin-right: 8px"
-          @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
-        >
-          <template #icon><SearchOutlined /></template>
-          Search
-        </a-button>
-        <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
-          Reset
-        </a-button>
+        <a-space>
+          <a-button
+            type="primary"
+            size="small"
+            :style="{ width: '90px' }"
+            @click="handleSearch(selectedKeys, confirm, column.dataIndex)"
+          >
+            <template #icon><SearchOutlined /></template>
+            Search
+          </a-button>
+          <a-button size="small" :style="{ width: '90px' }" @click="handleReset(clearFilters)">
+            Reset
+          </a-button>
+          <a-button
+            type="link"
+            size="small"
+            @click="
+              () => {
+                confirm({ closeDropdown: false });
+                state.searchText = selectedKeys[0] || '';
+                state.searchedColumn = column.dataIndex;
+              }
+            "
+          >
+            Filter
+          </a-button>
+          <a-button type="link" size="small" @click="close?.()">close</a-button>
+        </a-space>
       </div>
     </template>
     <template #customFilterIcon="{ filtered }">
-      <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
+      <SearchOutlined :style="{ color: filtered ? '#1677ff' : undefined }" />
     </template>
     <template #bodyCell="{ text, column }">
       <span v-if="state.searchText && state.searchedColumn === column.dataIndex">
         <template
-          v-for="(fragment, i) in text
-            .toString()
-            .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))"
+          v-for="(fragment, i) in String(text ?? '').split(
+            new RegExp(
+              `(?<=${escapeRegExp(state.searchText)})|(?=${escapeRegExp(state.searchText)})`,
+              'i',
+            ),
+          )"
+          :key="i"
         >
-          <mark
-            v-if="fragment.toLowerCase() === state.searchText.toLowerCase()"
-            :key="i"
-            class="highlight"
-          >
+          <mark v-if="fragment.toLowerCase() === state.searchText.toLowerCase()" class="highlight">
             {{ fragment }}
           </mark>
           <template v-else>{{ fragment }}</template>
         </template>
       </span>
+      <template v-else>{{ text }}</template>
     </template>
   </a-table>
 </template>
@@ -76,7 +95,16 @@ Implement a customized column search example via `customFilterDropdown`.
 <script lang="ts" setup>
 import { SearchOutlined } from '@ant-design/icons-vue';
 import { reactive, ref } from 'vue';
-const data = [
+import type { TableColumnsType } from 'ant-design-vue';
+
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+}
+
+const data: DataType[] = [
   {
     key: '1',
     name: 'John Brown',
@@ -93,7 +121,7 @@ const data = [
     key: '3',
     name: 'Jim Green',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
   {
     key: '4',
@@ -110,57 +138,64 @@ const state = reactive({
 
 const searchInput = ref();
 
-const columns = [
+const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const getColumnSearchProps = (dataIndex: keyof DataType) => ({
+  customFilterDropdown: true,
+  onFilter: (value: any, record: DataType) =>
+    record[dataIndex].toString().toLowerCase().includes(String(value).toLowerCase()),
+  filterDropdownProps: {
+    onOpenChange(open: boolean) {
+      if (open) {
+        setTimeout(() => {
+          searchInput.value?.focus?.();
+        }, 100);
+      }
+    },
+  },
+});
+
+const columns: TableColumnsType<DataType> = [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    customFilterDropdown: true,
-    onFilter: (value, record) => record.name.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => {
-          searchInput.value.focus();
-        }, 100);
-      }
-    },
+    width: '30%',
+    ...getColumnSearchProps('name'),
   },
   {
     title: 'Age',
     dataIndex: 'age',
     key: 'age',
+    width: '20%',
+    ...getColumnSearchProps('age'),
   },
   {
     title: 'Address',
     dataIndex: 'address',
     key: 'address',
-    customFilterDropdown: true,
-    onFilter: (value, record) =>
-      record.address.toString().toLowerCase().includes(value.toLowerCase()),
-    onFilterDropdownOpenChange: visible => {
-      if (visible) {
-        setTimeout(() => {
-          searchInput.value.focus();
-        }, 100);
-      }
-    },
+    ...getColumnSearchProps('address'),
+    sorter: (a, b) => a.address.length - b.address.length,
+    sortDirections: ['descend', 'ascend'],
   },
 ];
 
-const handleSearch = (selectedKeys, confirm, dataIndex) => {
+const handleSearch = (selectedKeys: any[], confirm: any, dataIndex: string) => {
   confirm();
-  state.searchText = selectedKeys[0];
+  state.searchText = selectedKeys[0] || '';
   state.searchedColumn = dataIndex;
 };
 
-const handleReset = clearFilters => {
-  clearFilters({ confirm: true });
+const handleReset = (clearFilters?: any) => {
+  clearFilters?.({ confirm: true });
   state.searchText = '';
 };
 </script>
+
 <style scoped>
 .highlight {
-  background-color: rgb(255, 192, 105);
-  padding: 0px;
+  background-color: #ffc069;
+  color: #000;
+  padding: 0;
 }
 </style>

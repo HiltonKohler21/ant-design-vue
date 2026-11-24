@@ -9,30 +9,44 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
     antCls,
     iconCls,
     fontSizeIcon,
+    padding,
     paddingXS,
     tableHeaderIconColor,
     tableHeaderIconColorHover,
+    tableSelectionColumnWidth,
+    calc,
   } = token;
   return {
     [`${componentCls}-wrapper`]: {
       // ========================== Selections ==========================
       [`${componentCls}-selection-col`]: {
-        width: token.tableSelectionColumnWidth,
+        width: tableSelectionColumnWidth,
+        [`&${componentCls}-selection-col-with-dropdown`]: {
+          width: calc(tableSelectionColumnWidth)
+            .add(fontSizeIcon)
+            .add(calc(padding).div(4))
+            .equal(),
+        },
       },
 
       [`${componentCls}-bordered ${componentCls}-selection-col`]: {
-        width: token
-          .calc(token.tableSelectionColumnWidth)
-          .add(token.calc(paddingXS).mul(2).equal())
-          .equal(),
+        width: calc(tableSelectionColumnWidth).add(calc(paddingXS).mul(2)).equal(),
+        [`&${componentCls}-selection-col-with-dropdown`]: {
+          width: calc(tableSelectionColumnWidth)
+            .add(fontSizeIcon)
+            .add(calc(padding).div(4))
+            .add(calc(paddingXS).mul(2))
+            .equal(),
+        },
       },
 
       [`
         table tr th${componentCls}-selection-column,
-        table tr td${componentCls}-selection-column
+        table tr td${componentCls}-selection-column,
+        ${componentCls}-selection-column
       `]: {
-        paddingInlineEnd: token.paddingXS,
-        paddingInlineStart: token.paddingXS,
+        paddingInlineEnd: paddingXS,
+        paddingInlineStart: paddingXS,
         textAlign: 'center',
 
         [`${antCls}-radio-wrapper`]: {
@@ -41,7 +55,7 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`table tr th${componentCls}-selection-column${componentCls}-cell-fix-left`]: {
-        zIndex: token.calc(token.zIndexTableFixed).add(1).equal({ unit: false }),
+        zIndex: calc(token.zIndexTableFixed).add(1).equal({ unit: false }),
       },
 
       [`table tr th${componentCls}-selection-column::after`]: {
@@ -61,7 +75,7 @@ const genSelectionStyle: GenerateStyle<TableToken, CSSObject> = token => {
         cursor: 'pointer',
         transition: `all ${token.motionDurationSlow}`,
         marginInlineStart: '100%',
-        paddingInlineStart: `${unit(token.calc(token.tablePaddingHorizontal).div(4).equal())}`,
+        paddingInlineStart: unit(calc(token.tablePaddingHorizontal).div(4).equal()),
 
         [iconCls]: {
           color: tableHeaderIconColor,

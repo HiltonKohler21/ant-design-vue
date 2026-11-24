@@ -29,6 +29,7 @@ import type {
   GetPopupContainer,
 } from '../interface';
 import useMaxLevel from '../../vc-tree/useMaxLevel';
+import classNames from '../../_util/classNames';
 
 // TODO: warning if use ajax!!!
 
@@ -696,7 +697,10 @@ export default function useSelection<RecordType>(
       customRender: renderSelectionCell,
       customCell: mergedRowSelection.value.customCell || mergedRowSelection.value.onCell,
       [INTERNAL_COL_DEFINE]: {
-        class: `${prefixCls.value}-selection-col`,
+        class: classNames(`${prefixCls.value}-selection-col`, {
+          [`${prefixCls.value}-selection-col-with-dropdown`]:
+            mergedRowSelection.value.selections && selectionType !== 'radio',
+        }),
       },
     };
 

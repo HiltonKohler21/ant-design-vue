@@ -1,7 +1,7 @@
 <docs>
 ---
 order: 7
-version: 4.19.0
+version: '3.3.0'
 title:
   en-US: Filter search
   zh-CN: 自定义筛选的搜索
@@ -85,7 +85,7 @@ const data = [
     key: '3',
     name: 'Joe Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
   {
     key: '4',

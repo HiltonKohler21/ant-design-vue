@@ -4,31 +4,38 @@ import type { GenerateStyle } from '../../theme/internal';
 import type { TableToken } from './index';
 
 const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
-  const { componentCls } = token;
-  const tableBorder = `${unit(token.lineWidth)} ${token.lineType} ${token.tableBorderColor}`;
+  const { antCls, componentCls, lineWidth, lineType, tableBorderColor, tableHeaderBg, calc } =
+    token;
+  const tableBorder = `${unit(lineWidth)} ${lineType} ${tableBorderColor}`;
+  const nestedBorderTopVar = `--${antCls.slice(1)}-table-nested-border-top`;
 
   const getSizeBorderStyle = (
-    size: 'small' | 'middle',
+    sizes: ('small' | 'middle' | 'medium')[],
     paddingVertical: number,
     paddingHorizontal: number,
-  ) => ({
-    [`&${componentCls}-${size}`]: {
-      [`> ${componentCls}-container`]: {
-        [`> ${componentCls}-content, > ${componentCls}-body`]: {
-          '> table > tbody > tr > td': {
-            [`> ${componentCls}-expanded-row-fixed`]: {
-              margin: `${unit(token.calc(paddingVertical).mul(-1).equal())} ${unit(
-                token.calc(paddingHorizontal).add(token.lineWidth).mul(-1).equal(),
-              )}`,
+  ) => {
+    const selector = sizes.map(s => `&${componentCls}-${s}`).join(', ');
+    return {
+      [selector]: {
+        [`> ${componentCls}-container`]: {
+          [`> ${componentCls}-content, > ${componentCls}-body`]: {
+            '> table > tbody > tr > th, > table > tbody > tr > td': {
+              [`> ${componentCls}-expanded-row-fixed`]: {
+                margin: `${unit(calc(paddingVertical).mul(-1).equal())} ${unit(
+                  calc(paddingHorizontal).add(lineWidth).mul(-1).equal(),
+                )}`,
+              },
             },
           },
         },
       },
-    },
-  });
+    };
+  };
 
   return {
     [`${componentCls}-wrapper`]: {
+      [nestedBorderTopVar]: tableBorder,
+
       [`${componentCls}${componentCls}-bordered`]: {
         // ============================ Title =============================
         [`> ${componentCls}-title`]: {
@@ -39,6 +46,16 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
         // ============================ Content ============================
         [`> ${componentCls}-container`]: {
           borderInlineStart: tableBorder,
+          borderTop: tableBorder,
+
+          '&:first-child': {
+            borderTop: `var(${nestedBorderTopVar}, ${tableBorder})`,
+          },
+
+          [`> ${componentCls}-header${componentCls}-sticky-holder`]: {
+            marginTop: calc(lineWidth).mul(-1).equal(),
+            borderTop: tableBorder,
+          },
 
           [`
             > ${componentCls}-content,
@@ -50,6 +67,8 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
               // ============================= Cell =============================
               [`
                 > thead > tr > th,
+                > thead > tr > td,
+                > tbody > tr > th,
                 > tbody > tr > td,
                 > tfoot > tr > th,
                 > tfoot > tr > td
@@ -68,7 +87,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
                 },
               },
 
-              // Fixed right should provides additional border
+              // Fixed right should provide additional border
               [`
                 > thead > tr,
                 > tbody > tr,
@@ -80,31 +99,22 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
               },
 
               // ========================== Expandable ==========================
-              '> tbody > tr > td': {
+              '> tbody > tr > th, > tbody > tr > td': {
                 [`> ${componentCls}-expanded-row-fixed`]: {
-                  margin: `${unit(token.calc(token.tablePaddingVertical).mul(-1).equal())} ${unit(
-                    token.calc(token.tablePaddingHorizontal).add(token.lineWidth).mul(-1).equal(),
+                  margin: `${unit(calc(token.tablePaddingVertical).mul(-1).equal())} ${unit(
+                    calc(token.tablePaddingHorizontal).add(lineWidth).mul(-1).equal(),
                   )}`,
 
                   '&::after': {
                     position: 'absolute',
                     top: 0,
-                    insetInlineEnd: token.lineWidth,
+                    insetInlineEnd: lineWidth,
                     bottom: 0,
                     borderInlineEnd: tableBorder,
                     content: '""',
                   },
                 },
               },
-            },
-          },
-
-          [`
-            > ${componentCls}-content,
-            > ${componentCls}-header
-          `]: {
-            '> table': {
-              borderTop: tableBorder,
             },
           },
         },
@@ -117,7 +127,7 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
                 > tr${componentCls}-expanded-row,
                 > tr${componentCls}-placeholder
               `]: {
-                '> td': {
+                '> th, > td': {
                   borderInlineEnd: 0,
                 },
               },
@@ -127,12 +137,12 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
         // ============================ Size ============================
         ...getSizeBorderStyle(
-          'middle',
+          ['middle', 'medium'],
           token.tablePaddingVerticalMiddle,
           token.tablePaddingHorizontalMiddle,
         ),
         ...getSizeBorderStyle(
-          'small',
+          ['small'],
           token.tablePaddingVerticalSmall,
           token.tablePaddingHorizontalSmall,
         ),
@@ -146,14 +156,20 @@ const genBorderedStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
       // ============================ Nested ============================
       [`${componentCls}-cell`]: {
-        [`${componentCls}-container:first-child`]: {
-          // :first-child to avoid the case when bordered and title is set
-          borderTop: 0,
+        [`
+          > ${componentCls}-wrapper:only-child,
+          > ${componentCls}-expanded-row-fixed > ${componentCls}-wrapper:only-child
+        `]: {
+          [nestedBorderTopVar]: 0,
         },
         // https://github.com/ant-design/ant-design/issues/35577
         '&-scrollbar:not([rowspan])': {
-          boxShadow: `0 ${unit(token.lineWidth)} 0 ${unit(token.lineWidth)} ${token.tableHeaderBg}`,
+          boxShadow: `0 ${unit(lineWidth)} 0 ${unit(lineWidth)} ${tableHeaderBg}`,
         },
+      },
+
+      [`${componentCls}-bordered ${componentCls}-cell-scrollbar`]: {
+        borderInlineEnd: tableBorder,
       },
     },
   };

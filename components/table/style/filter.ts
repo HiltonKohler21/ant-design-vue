@@ -21,7 +21,7 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
     tablePaddingHorizontal,
     borderRadius,
     motionDurationSlow,
-    colorTextDescription,
+    colorIcon,
     colorPrimary,
     tableHeaderFilterActiveBg,
     colorTextDisabled,
@@ -60,7 +60,7 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
           transition: `all ${motionDurationSlow}`,
 
           '&:hover': {
-            color: colorTextDescription,
+            color: colorIcon,
             background: tableHeaderFilterActiveBg,
           },
 
@@ -80,6 +80,7 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
           backgroundColor: tableFilterDropdownBg,
           borderRadius,
           boxShadow: boxShadowSecondary,
+          overflow: 'hidden',
 
           // Reset menu
           [`${dropdownPrefixCls}-menu`]: {
@@ -90,6 +91,7 @@ const genFilterStyle: GenerateStyle<TableToken> = token => {
             backgroundColor: token.filterDropdownMenuBg,
             border: 0,
             boxShadow: 'none',
+            borderRadius: 'unset',
 
             '&:empty::after': {
               display: 'block',

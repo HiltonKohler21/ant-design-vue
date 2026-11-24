@@ -402,4 +402,86 @@ describe('Table v6 parity: semantics, column defaults, expandAll, placement, Con
       document.body.innerHTML = '';
     }
   });
+
+  it('adds selection-col-with-dropdown and sorter-icon tooltip target classes and supports virtual scrollTo', async () => {
+    const tblRef = ref();
+    const wrapper = mount(Table, {
+      props: {
+        columns: [
+          {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+          },
+        ],
+        dataSource: baseData,
+        rowSelection: { selections: true },
+        showSorterTooltip: { target: 'sorter-icon' },
+        pagination: false,
+      },
+    });
+    await nextTick();
+
+    expect(wrapper.find('col.ant-table-selection-col-with-dropdown').exists()).toBe(true);
+    expect(wrapper.find('.ant-table-column-sorters-tooltip-target-sorter').exists()).toBe(true);
+    wrapper.unmount();
+
+    const virtualWrapper = mount({
+      render() {
+        return (
+          <Table
+            ref={tblRef}
+            virtual
+            columns={[{ title: 'Name', dataIndex: 'name', key: 'name', width: 120 }]}
+            dataSource={Array.from({ length: 100 }, (_, i) => ({ key: i, name: `Row ${i}` }))}
+            scroll={{ y: 200 }}
+            pagination={false}
+          />
+        );
+      },
+    });
+    await nextTick();
+    expect(() => tblRef.value?.scrollTo({ index: 50 })).not.toThrow();
+    virtualWrapper.unmount();
+  });
+
+  it('mounts all updated Table demos cleanly without errors', async () => {
+    const updatedDemos = [
+      'basic',
+      'template',
+      'row-selection',
+      'row-selection-and-operation',
+      'row-selection-custom',
+      'head',
+      'filter-search',
+      'reset-filter',
+      'custom-filter-panel',
+      'size',
+      'bordered',
+      'expand',
+      'fixed-columns',
+      'edit-cell',
+      'nested-table',
+      'summary',
+      'virtual-list',
+      'resizable-column',
+      'stripe',
+      'component-token',
+    ];
+
+    for (const name of updatedDemos) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const mod = require(`../demo/${name}.vue`);
+      const DemoComp = mod.default || mod;
+      const wrapper = mount(DemoComp, {
+        global: { plugins: [antd] },
+        attachTo: document.body,
+      });
+      await nextTick();
+      expect(wrapper.find('.ant-table').exists()).toBe(true);
+      wrapper.unmount();
+      document.body.innerHTML = '';
+    }
+  });
 });

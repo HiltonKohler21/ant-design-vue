@@ -27,9 +27,11 @@ Using template style API.
 <template>
   <a-table :data-source="data">
     <a-table-column-group>
-      <template #title><span style="color: #1890ff">Name</span></template>
+      <template #title><span style="color: var(--ant-color-primary, #1677ff)">Name</span></template>
       <a-table-column key="firstName" data-index="firstName">
-        <template #title><span style="color: #1890ff">First Name</span></template>
+        <template #title>
+          <span style="color: var(--ant-color-primary, #1677ff)">First Name</span>
+        </template>
       </a-table-column>
       <a-table-column key="lastName" title="Last Name" data-index="lastName" />
     </a-table-column-group>
@@ -37,22 +39,28 @@ Using template style API.
     <a-table-column key="address" title="Address" data-index="address" />
     <a-table-column key="tags" title="Tags" data-index="tags">
       <template #default="{ text: tags }">
-        <span>
-          <a-tag v-for="tag in tags" :key="tag" color="blue">{{ tag }}</a-tag>
-        </span>
+        <a-flex gap="small" align="center" wrap="wrap">
+          <a-tag
+            v-for="tag in tags"
+            :key="tag"
+            :color="tag === 'kawaii' ? 'volcano' : tag.length > 5 ? 'geekblue' : 'green'"
+          >
+            {{ tag.toUpperCase() }}
+          </a-tag>
+        </a-flex>
       </template>
     </a-table-column>
     <a-table-column key="action" title="Action">
       <template #default="{ record }">
-        <span>
-          <a>Action 一 {{ record.firstName }}</a>
-          <a-divider type="vertical" />
+        <a-space size="middle">
+          <a>Invite {{ record.lastName }}</a>
           <a>Delete</a>
-        </span>
+        </a-space>
       </template>
     </a-table-column>
   </a-table>
 </template>
+
 <script lang="ts" setup>
 const data = [
   {
@@ -69,14 +77,14 @@ const data = [
     lastName: 'Green',
     age: 42,
     address: 'London No. 1 Lake Park',
-    tags: ['loser'],
+    tags: ['kawaii'],
   },
   {
     key: '3',
     firstName: 'Joe',
     lastName: 'Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
     tags: ['cool', 'teacher'],
   },
 ];

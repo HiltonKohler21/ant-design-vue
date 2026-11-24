@@ -17,44 +17,46 @@ Set summary content by `summary` prop. Sync column fixed status with `a-table-su
 </docs>
 
 <template>
-  <a-table :columns="columns" :data-source="data" :pagination="false" bordered>
-    <template #summary>
-      <a-table-summary-row>
-        <a-table-summary-cell>Total</a-table-summary-cell>
-        <a-table-summary-cell>
-          <a-typography-text type="danger">{{ totals.totalBorrow }}</a-typography-text>
-        </a-table-summary-cell>
-        <a-table-summary-cell>
-          <a-typography-text>{{ totals.totalRepayment }}</a-typography-text>
-        </a-table-summary-cell>
-      </a-table-summary-row>
-      <a-table-summary-row>
-        <a-table-summary-cell>Balance</a-table-summary-cell>
-        <a-table-summary-cell :col-span="2">
-          <a-typography-text type="danger">
-            {{ totals.totalBorrow - totals.totalRepayment }}
-          </a-typography-text>
-        </a-table-summary-cell>
-      </a-table-summary-row>
-    </template>
-  </a-table>
-  <br />
-  <a-table
-    :columns="fixedColumns"
-    :data-source="fixedData"
-    :pagination="false"
-    :scroll="{ x: 2000, y: 500 }"
-    bordered
-  >
-    <template #summary>
-      <a-table-summary fixed>
+  <a-flex vertical gap="middle" class="components-table-demo-summary">
+    <a-table :columns="columns" :data-source="data" :pagination="false" bordered>
+      <template #summary>
         <a-table-summary-row>
-          <a-table-summary-cell :index="0">Summary</a-table-summary-cell>
-          <a-table-summary-cell :index="1">This is a summary content</a-table-summary-cell>
+          <a-table-summary-cell :index="0">Total</a-table-summary-cell>
+          <a-table-summary-cell :index="1">
+            <a-typography-text type="danger">{{ totals.totalBorrow }}</a-typography-text>
+          </a-table-summary-cell>
+          <a-table-summary-cell :index="2">
+            <a-typography-text>{{ totals.totalRepayment }}</a-typography-text>
+          </a-table-summary-cell>
         </a-table-summary-row>
-      </a-table-summary>
-    </template>
-  </a-table>
+        <a-table-summary-row>
+          <a-table-summary-cell :index="0">Balance</a-table-summary-cell>
+          <a-table-summary-cell :index="1" :col-span="2">
+            <a-typography-text type="danger">
+              {{ totals.totalBorrow - totals.totalRepayment }}
+            </a-typography-text>
+          </a-table-summary-cell>
+        </a-table-summary-row>
+      </template>
+    </a-table>
+
+    <a-table
+      :columns="fixedColumns"
+      :data-source="fixedData"
+      :pagination="false"
+      :scroll="{ x: 2000, y: 500 }"
+      bordered
+    >
+      <template #summary>
+        <a-table-summary fixed>
+          <a-table-summary-row>
+            <a-table-summary-cell :index="0">Summary</a-table-summary-cell>
+            <a-table-summary-cell :index="1">This is a summary content</a-table-summary-cell>
+          </a-table-summary-row>
+        </a-table-summary>
+      </template>
+    </a-table>
+  </a-flex>
 </template>
 
 <script lang="ts" setup>
@@ -116,14 +118,13 @@ const fixedColumns = ref<TableColumnsType>([
   },
 ]);
 
-const fixedData = ref<{ key: number; name: string; description: string }[]>([]);
-for (let i = 0; i < 20; i += 1) {
-  fixedData.value.push({
+const fixedData = ref(
+  Array.from({ length: 20 }, (_, i) => ({
     key: i,
     name: ['Light', 'Bamboo', 'Little'][i % 3],
     description: 'Everything that has a beginning, has an end.',
-  });
-}
+  })),
+);
 
 const totals = computed(() => {
   let totalBorrow = 0;
@@ -137,9 +138,9 @@ const totals = computed(() => {
 });
 </script>
 
-<style>
-#components-table-demo-summary tfoot th,
-#components-table-demo-summary tfoot td {
+<style scoped>
+.components-table-demo-summary :deep(tfoot th),
+.components-table-demo-summary :deep(tfoot td) {
   background: var(--ant-color-fill-alter, #fafafa);
 }
 </style>

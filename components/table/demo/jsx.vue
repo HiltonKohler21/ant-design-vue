@@ -20,7 +20,7 @@ Using declarative component (`a-table-column` / `a-table-column-group`) style AP
 </docs>
 
 <template>
-  <a-table :data-source="data" :scroll="{ x: 'max-content' }">
+  <a-table :data-source="data">
     <a-table-column-group title="Name">
       <a-table-column key="firstName" title="First Name" data-index="firstName" />
       <a-table-column key="lastName" title="Last Name" data-index="lastName" />

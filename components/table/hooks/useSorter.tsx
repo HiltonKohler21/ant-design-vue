@@ -184,7 +184,12 @@ function injectSorter<RecordType>(
             </span>
           );
           const renderSortTitle = (
-            <div class={`${prefixCls}-column-sorters`}>
+            <div
+              class={classNames(`${prefixCls}-column-sorters`, {
+                [`${prefixCls}-column-sorters-tooltip-target-sorter`]:
+                  showSorterTooltip && tooltipTarget === 'sorter-icon',
+              })}
+            >
               <span class={`${prefixCls}-column-title`}>
                 {renderColumnTitle(column.title, renderProps)}
               </span>

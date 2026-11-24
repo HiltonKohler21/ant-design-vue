@@ -17,31 +17,43 @@ When there's too much information to show and the table can't display all at onc
 </docs>
 
 <template>
-  <a-table :columns="columns" :data-source="data" :scroll="{ x: 2000 }" :expand-column-width="100">
+  <a-table
+    :columns="columns"
+    :data-source="data"
+    :row-expandable="record => record.name !== 'Not Expandable'"
+  >
     <template #bodyCell="{ column }">
-      <template v-if="column.key === 'action'">
+      <template v-if="column.key === 'x'">
         <a>Delete</a>
       </template>
     </template>
     <template #expandedRowRender="{ record }">
-      <p style="margin: 0">
+      <p :style="{ margin: '0' }">
         {{ record.description }}
       </p>
     </template>
-    <template #expandColumnTitle>
-      <span style="color: red">More</span>
-    </template>
   </a-table>
 </template>
+
 <script lang="ts" setup>
-const columns = [
-  { title: 'Name', dataIndex: 'name', key: 'name', fixed: true },
+import type { TableColumnsType } from 'ant-design-vue';
+
+interface DataType {
+  key: number;
+  name: string;
+  age: number;
+  address: string;
+  description: string;
+}
+
+const columns: TableColumnsType<DataType> = [
+  { title: 'Name', dataIndex: 'name', key: 'name' },
   { title: 'Age', dataIndex: 'age', key: 'age' },
   { title: 'Address', dataIndex: 'address', key: 'address' },
-  { title: 'Action', key: 'action' },
+  { title: 'Action', dataIndex: '', key: 'x' },
 ];
 
-const data = [
+const data: DataType[] = [
   {
     key: 1,
     name: 'John Brown',
@@ -58,10 +70,17 @@ const data = [
   },
   {
     key: 3,
+    name: 'Not Expandable',
+    age: 29,
+    address: 'Jiangsu No. 1 Lake Park',
+    description: 'This not expandable',
+  },
+  {
+    key: 4,
     name: 'Joe Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    description: 'My name is Joe Black, I am 32 years old, living in Sidney No. 1 Lake Park.',
+    address: 'Sydney No. 1 Lake Park',
+    description: 'My name is Joe Black, I am 32 years old, living in Sydney No. 1 Lake Park.',
   },
 ];
 </script>

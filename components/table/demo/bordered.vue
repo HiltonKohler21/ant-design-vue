@@ -26,8 +26,18 @@ Add border, title and footer for table.
     <template #footer>Footer</template>
   </a-table>
 </template>
+
 <script lang="ts" setup>
-const columns = [
+import type { TableColumnsType } from 'ant-design-vue';
+
+interface DataType {
+  key: string;
+  name: string;
+  money: string;
+  address: string;
+}
+
+const columns: TableColumnsType<DataType> = [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -36,6 +46,7 @@ const columns = [
     title: 'Cash Assets',
     className: 'column-money',
     dataIndex: 'money',
+    align: 'right',
   },
   {
     title: 'Address',
@@ -43,7 +54,7 @@ const columns = [
   },
 ];
 
-const data = [
+const data: DataType[] = [
   {
     key: '1',
     name: 'John Brown',
@@ -60,13 +71,7 @@ const data = [
     key: '3',
     name: 'Joe Black',
     money: '￥120,000.00',
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
 ];
 </script>
-<style scoped>
-th.column-money,
-td.column-money {
-  text-align: right !important;
-}
-</style>

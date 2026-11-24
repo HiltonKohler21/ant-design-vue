@@ -156,7 +156,7 @@ const fnStyles: TableProps<DataType>['styles'] = info => {
         cell: {
           fontWeight: 600,
           fontSize: '14px',
-          color: '#5b4bd6',
+          color: '#7c66f5',
           backgroundColor: 'rgba(106, 90, 205, 0.08)',
           padding: '12px 16px',
           borderBottom: '1px solid rgba(106, 90, 205, 0.25)',

@@ -17,7 +17,16 @@ Component Token
 </docs>
 
 <template>
-  <a-form layout="inline" class="table-demo-control-bar" style="margin-bottom: 16px">
+  <a-form
+    layout="inline"
+    class="table-demo-control-bar"
+    :style="{
+      marginBottom: '16px',
+      display: 'flex',
+      flexWrap: 'wrap',
+      rowGap: '8px',
+    }"
+  >
     <a-form-item label="Bordered">
       <a-switch v-model:checked="bordered" />
     </a-form-item>
@@ -51,7 +60,7 @@ Component Token
     <a-form-item label="Size">
       <a-radio-group v-model:value="size">
         <a-radio-button value="large">Large</a-radio-button>
-        <a-radio-button value="middle">Middle</a-radio-button>
+        <a-radio-button value="medium">Medium</a-radio-button>
         <a-radio-button value="small">Small</a-radio-button>
       </a-radio-group>
     </a-form-item>
@@ -70,17 +79,17 @@ Component Token
     </a-form-item>
     <a-form-item label="Pagination Top">
       <a-radio-group v-model:value="top">
-        <a-radio-button value="topLeft">TopLeft</a-radio-button>
+        <a-radio-button value="topStart">TopStart</a-radio-button>
         <a-radio-button value="topCenter">TopCenter</a-radio-button>
-        <a-radio-button value="topRight">TopRight</a-radio-button>
+        <a-radio-button value="topEnd">TopEnd</a-radio-button>
         <a-radio-button value="none">None</a-radio-button>
       </a-radio-group>
     </a-form-item>
     <a-form-item label="Pagination Bottom">
       <a-radio-group v-model:value="bottom">
-        <a-radio-button value="bottomLeft">BottomLeft</a-radio-button>
+        <a-radio-button value="bottomStart">BottomStart</a-radio-button>
         <a-radio-button value="bottomCenter">BottomCenter</a-radio-button>
-        <a-radio-button value="bottomRight">BottomRight</a-radio-button>
+        <a-radio-button value="bottomEnd">BottomEnd</a-radio-button>
         <a-radio-button value="none">None</a-radio-button>
       </a-radio-group>
     </a-form-item>
@@ -97,7 +106,7 @@ Component Token
       :row-selection="hasRowSelection ? {} : undefined"
       :scroll="scroll"
       :table-layout="tableLayout === 'unset' ? undefined : (tableLayout as TableProps['tableLayout'])"
-      :pagination="{ position: [top, bottom] as any }"
+      :pagination="{ placement: [top, bottom] as any }"
       :columns="tableColumns"
       :data-source="hasData ? dataSource : []"
     >
@@ -122,8 +131,6 @@ Component Token
 import { computed, h, ref } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 import type { ConfigProviderProps, TableColumnsType, TableProps } from 'ant-design-vue';
-
-type SizeType = ConfigProviderProps['componentSize'];
 
 interface DataType {
   key: number;
@@ -180,7 +187,7 @@ const defaultFooter = () => 'Here is footer';
 
 const bordered = ref(false);
 const loading = ref(false);
-const size = ref<SizeType>('large');
+const size = ref<TableProps['size']>('large');
 const expandable = ref(true);
 const showTitle = ref(false);
 const showHeader = ref(true);
@@ -189,7 +196,7 @@ const hasRowSelection = ref(true);
 const hasData = ref(true);
 const tableLayout = ref<string>('unset');
 const top = ref<string>('none');
-const bottom = ref<string>('bottomRight');
+const bottom = ref<string>('bottomEnd');
 const ellipsis = ref(false);
 const yScroll = ref(false);
 const xScroll = ref<string>('unset');

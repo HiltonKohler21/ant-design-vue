@@ -17,7 +17,7 @@ Table with editable cells.
 </docs>
 
 <template>
-  <a-button class="editable-add-btn" style="margin-bottom: 8px" @click="handleAdd">Add</a-button>
+  <a-button type="primary" :style="{ marginBottom: '16px' }" @click="handleAdd">Add a row</a-button>
   <a-table bordered :data-source="dataSource" :columns="columns">
     <template #bodyCell="{ column, text, record }">
       <template v-if="column.dataIndex === 'name'">
@@ -145,11 +145,7 @@ const handleAdd = () => {
 
   .editable-cell-icon:hover,
   .editable-cell-icon-check:hover {
-    color: #108ee9;
-  }
-
-  .editable-add-btn {
-    margin-bottom: 8px;
+    color: var(--ant-color-primary, #1677ff);
   }
 }
 .editable-cell:hover .editable-cell-icon {

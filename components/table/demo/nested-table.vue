@@ -4,7 +4,6 @@ order: 25
 title:
   zh-CN: 嵌套子表格
   en-US: Nested tables
-
 ---
 
 ## zh-CN
@@ -18,47 +17,76 @@ Showing more detailed info of every row.
 </docs>
 
 <template>
-  <a-table :columns="columns" :data-source="data" class="components-table-demo-nested">
-    <template #bodyCell="{ column }">
-      <template v-if="column.key === 'operation'">
-        <a>Publish</a>
-      </template>
-    </template>
-    <template #expandedRowRender>
-      <a-table :columns="innerColumns" :data-source="innerData" :pagination="false">
-        <template #bodyCell="{ column }">
-          <template v-if="column.key === 'state'">
-            <span>
-              <a-badge status="success" />
-              Finished
-            </span>
-          </template>
-          <template v-else-if="column.key === 'operation'">
-            <span class="table-operation">
-              <a>Pause</a>
-              <a>Stop</a>
-              <a-dropdown>
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item>Action 1</a-menu-item>
-                    <a-menu-item>Action 2</a-menu-item>
-                  </a-menu>
-                </template>
-                <a>
-                  More
-                  <down-outlined />
-                </a>
-              </a-dropdown>
-            </span>
-          </template>
+  <a-flex vertical gap="middle">
+    <a-table
+      v-for="tableSize in tableSizes"
+      :key="tableSize || 'large'"
+      :size="tableSize"
+      :columns="columns"
+      :data-source="data"
+      :default-expanded-row-keys="['0']"
+      class="components-table-demo-nested"
+    >
+      <template #bodyCell="{ column }">
+        <template v-if="column.key === 'operation'">
+          <a>Publish</a>
         </template>
-      </a-table>
-    </template>
-  </a-table>
+      </template>
+      <template #expandedRowRender>
+        <a-table :columns="innerColumns" :data-source="innerData" :pagination="false">
+          <template #bodyCell="{ column }">
+            <template v-if="column.key === 'state'">
+              <a-badge status="success" text="Finished" />
+            </template>
+            <template v-else-if="column.key === 'operation'">
+              <a-space size="middle">
+                <a>Pause</a>
+                <a>Stop</a>
+                <a-dropdown>
+                  <template #overlay>
+                    <a-menu>
+                      <a-menu-item key="1">Action 1</a-menu-item>
+                      <a-menu-item key="2">Action 2</a-menu-item>
+                    </a-menu>
+                  </template>
+                  <a>
+                    More
+                    <DownOutlined />
+                  </a>
+                </a-dropdown>
+              </a-space>
+            </template>
+          </template>
+        </a-table>
+      </template>
+    </a-table>
+  </a-flex>
 </template>
+
 <script lang="ts" setup>
 import { DownOutlined } from '@ant-design/icons-vue';
-const columns = [
+import type { TableColumnsType, TableProps } from 'ant-design-vue';
+
+interface DataItem {
+  key: string;
+  name: string;
+  platform: string;
+  version: string;
+  upgradeNum: number;
+  creator: string;
+  createdAt: string;
+}
+
+interface InnerDataItem {
+  key: string;
+  date: string;
+  name: string;
+  upgradeNum: string;
+}
+
+const tableSizes: TableProps['size'][] = ['large', 'medium', 'small'];
+
+const columns: TableColumnsType<DataItem> = [
   { title: 'Name', dataIndex: 'name', key: 'name' },
   { title: 'Platform', dataIndex: 'platform', key: 'platform' },
   { title: 'Version', dataIndex: 'version', key: 'version' },
@@ -68,55 +96,28 @@ const columns = [
   { title: 'Action', key: 'operation' },
 ];
 
-interface DataItem {
-  key: number;
-  name: string;
-  platform: string;
-  version: string;
-  upgradeNum: number;
-  creator: string;
-  createdAt: string;
-}
+const data: DataItem[] = Array.from({ length: 3 }, (_, i) => ({
+  key: String(i),
+  name: 'Screen',
+  platform: 'iOS',
+  version: '10.3.4.5654',
+  upgradeNum: 500,
+  creator: 'Jack',
+  createdAt: '2014-12-24 23:12:00',
+}));
 
-const data: DataItem[] = [];
-for (let i = 0; i < 3; ++i) {
-  data.push({
-    key: i,
-    name: `Screem ${i + 1}`,
-    platform: 'iOS',
-    version: '10.3.4.5654',
-    upgradeNum: 500,
-    creator: 'Jack',
-    createdAt: '2014-12-24 23:12:00',
-  });
-}
-
-const innerColumns = [
+const innerColumns: TableColumnsType<InnerDataItem> = [
   { title: 'Date', dataIndex: 'date', key: 'date' },
   { title: 'Name', dataIndex: 'name', key: 'name' },
   { title: 'Status', key: 'state' },
   { title: 'Upgrade Status', dataIndex: 'upgradeNum', key: 'upgradeNum' },
-  {
-    title: 'Action',
-    dataIndex: 'operation',
-    key: 'operation',
-  },
+  { title: 'Action', dataIndex: 'operation', key: 'operation' },
 ];
 
-interface innerDataItem {
-  key: number;
-  date: string;
-  name: string;
-  upgradeNum: string;
-}
-
-const innerData: innerDataItem[] = [];
-for (let i = 0; i < 3; ++i) {
-  innerData.push({
-    key: i,
-    date: '2014-12-24 23:12:00',
-    name: `This is production name ${i + 1}`,
-    upgradeNum: 'Upgraded: 56',
-  });
-}
+const innerData: InnerDataItem[] = Array.from({ length: 3 }, (_, i) => ({
+  key: String(i),
+  date: '2014-12-24 23:12:00',
+  name: 'This is production name',
+  upgradeNum: 'Upgraded: 56',
+}));
 </script>

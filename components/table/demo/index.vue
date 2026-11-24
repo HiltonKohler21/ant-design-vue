@@ -55,7 +55,6 @@
     <SelectionsDebug />
     <ResizableColumn />
     <Stripe />
-    <big-data />
     <component-token />
     <MeasureRowRender />
   </demo-sort>
@@ -63,7 +62,6 @@
 
 <script lang="ts">
 import OrderColumn from './order-column.vue';
-import BigData from './big-data.vue';
 import VirtualList from './virtual-list.vue';
 import HiddenColumns from './hidden-columns.vue';
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -130,7 +128,6 @@ export default defineComponent({
   US,
   components: {
     OrderColumn,
-    BigData,
     VirtualList,
     HiddenColumns,
     filterInTreeVue,

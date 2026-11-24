@@ -553,6 +553,7 @@ const InternalTable = defineComponent({
   },
   setup(props, { attrs, slots, expose, emit }) {
     const rootRef = ref<HTMLDivElement>();
+    const virtualListRef = ref<any>();
 
     const {
       size: configSize,
@@ -1171,11 +1172,32 @@ const InternalTable = defineComponent({
     };
 
     const scrollToRow: TableRef['scrollTo'] = config => {
+      if (!config) return;
+      if (props.virtual && virtualListRef.value?.scrollTo) {
+        if (typeof config.top === 'number') {
+          virtualListRef.value.scrollTo(config.top);
+          return;
+        }
+        if (config.key !== undefined || typeof config.index === 'number') {
+          const alignMap: Record<string, 'top' | 'bottom' | 'auto'> = {
+            start: 'top',
+            end: 'bottom',
+            center: 'auto',
+            nearest: 'auto',
+          };
+          virtualListRef.value.scrollTo({
+            ...(config.key !== undefined ? { key: config.key } : { index: config.index! }),
+            align: alignMap[config.align || 'nearest'] || 'auto',
+            offset: config.offset,
+          });
+          return;
+        }
+      }
       const bodyEl =
         internalRefs.body ||
         rootRef.value?.querySelector<HTMLElement>(`.${prefixCls.value}-body`) ||
         rootRef.value?.querySelector<HTMLElement>(`.${prefixCls.value}-content`);
-      if (!bodyEl || !config) return;
+      if (!bodyEl) return;
       if (typeof config.top === 'number') {
         if (typeof bodyEl.scrollTo === 'function') {
           bodyEl.scrollTo({ top: config.top });
@@ -1553,6 +1575,7 @@ const InternalTable = defineComponent({
           }
           return (
             <VirtualList
+              ref={virtualListRef}
               prefixCls={`${prefixCls.value}-tbody-virtual`}
               class={mergedClassNames.value.body?.wrapper}
               style={mergedStyles.value.body?.wrapper}

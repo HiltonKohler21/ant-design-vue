@@ -2,7 +2,7 @@
 
 exports[`Table renders empty table 1`] = `
 <div class="ant-table-wrapper">
-  <div class="ant-spin-nested-loading">
+  <div class="ant-spin ant-spin-nested-loading" aria-live="polite" aria-busy="false">
     <!---->
     <div class="ant-spin-container">
       <!---->
@@ -84,7 +84,7 @@ exports[`Table renders empty table 1`] = `
 
 exports[`Table renders empty table with custom emptyText 1`] = `
 <div class="ant-table-wrapper">
-  <div class="ant-spin-nested-loading">
+  <div class="ant-spin ant-spin-nested-loading" aria-live="polite" aria-busy="false">
     <!---->
     <div class="ant-spin-container">
       <!---->
@@ -153,7 +153,7 @@ exports[`Table renders empty table with custom emptyText 1`] = `
 
 exports[`Table renders empty table with fixed columns 1`] = `
 <div class="ant-table-wrapper">
-  <div class="ant-spin-nested-loading">
+  <div class="ant-spin ant-spin-nested-loading" aria-live="polite" aria-busy="false">
     <!---->
     <div class="ant-spin-container">
       <!---->
@@ -259,11 +259,10 @@ exports[`Table renders empty table with fixed columns 1`] = `
 
 exports[`Table renders empty table without emptyText when loading 1`] = `
 <div class="ant-table-wrapper">
-  <div class="ant-spin-nested-loading">
-    <div>
-      <div class="ant-spin ant-spin-spinning" aria-live="polite" aria-busy="true"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>
-        <!---->
-      </div>
+  <div class="ant-spin ant-spin-spinning ant-spin-nested-loading" aria-live="polite" aria-busy="true">
+    <div class="ant-spin-section"><span class="ant-spin-dot-holder"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></span>
+      <!---->
+      <!---->
     </div>
     <div class="ant-spin-container ant-spin-blur">
       <!---->

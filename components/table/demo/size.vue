@@ -7,29 +7,39 @@ title:
 ---
 
 ## zh-CN
+
 两种紧凑型的列表，小型列表只用于对话框内。
 
 ## en-US
 
-There are two compacted table sizes: `middle` and `small`. The `small` size is used in Modals only.
+There are two compacted table sizes: `medium` and `small`. The `small` size is used in Modals only.
 
 </docs>
 
 <template>
-  <div class="components-table-demo-size">
-    <h4>Middle size table</h4>
-    <a-table :columns="columns" :data-source="data" size="middle" />
-    <h4>Small size table</h4>
-    <a-table :columns="columns" :data-source="data" size="small" />
-  </div>
+  <a-divider>Medium size table</a-divider>
+  <a-table :columns="columns" :data-source="data" size="medium" />
+  <a-divider>Small size table</a-divider>
+  <a-table :columns="columns" :data-source="data" size="small" />
 </template>
+
 <script lang="ts" setup>
-const columns = [
+import type { TableColumnsType } from 'ant-design-vue';
+
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+}
+
+const columns: TableColumnsType<DataType> = [
   { title: 'Name', dataIndex: 'name' },
   { title: 'Age', dataIndex: 'age' },
   { title: 'Address', dataIndex: 'address' },
 ];
-const data = [
+
+const data: DataType[] = [
   {
     key: '1',
     name: 'John Brown',
@@ -46,12 +56,7 @@ const data = [
     key: '3',
     name: 'Joe Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
 ];
 </script>
-<style scoped>
-.components-table-demo-size h4 {
-  margin-bottom: 16px;
-}
-</style>

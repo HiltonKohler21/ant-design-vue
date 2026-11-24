@@ -17,24 +17,23 @@ To perform operations and clear selections after selecting some rows, use `rowSe
 </docs>
 
 <template>
-  <div>
-    <div style="margin-bottom: 16px">
+  <a-flex gap="middle" vertical>
+    <a-flex align="center" gap="middle">
       <a-button type="primary" :disabled="!hasSelected" :loading="state.loading" @click="start">
         Reload
       </a-button>
-      <span style="margin-left: 8px">
-        <template v-if="hasSelected">
-          {{ `Selected ${state.selectedRowKeys.length} items` }}
-        </template>
-      </span>
-    </div>
+      <template v-if="hasSelected">
+        {{ `Selected ${state.selectedRowKeys.length} items` }}
+      </template>
+    </a-flex>
     <a-table
       :row-selection="{ selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
       :columns="columns"
       :data-source="data"
     />
-  </div>
+  </a-flex>
 </template>
+
 <script lang="ts" setup>
 import { computed, reactive } from 'vue';
 
@@ -62,15 +61,12 @@ const columns = [
   },
 ];
 
-const data: DataType[] = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    key: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`,
-  });
-}
+const data: DataType[] = Array.from({ length: 46 }).map((_, i) => ({
+  key: i,
+  name: `Edward King ${i}`,
+  age: 32,
+  address: `London, Park Lane no. ${i}`,
+}));
 
 const state = reactive<{
   selectedRowKeys: Key[];

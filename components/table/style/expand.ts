@@ -19,14 +19,15 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
     tablePaddingVertical,
     tablePaddingHorizontal,
     tableExpandedRowBg,
+    paddingXXS,
+    expandIconMarginTop,
+    expandIconSize,
+    expandIconHalfInner,
+    expandIconScale,
+    calc,
   } = token;
-  // 尺寸派生使用真实数值 token（cssVar 下 token 值是 var() 字符串）
-  const rawToken: any = (token as any)._realToken ?? token;
-  const halfInnerSize = rawToken.controlInteractiveSize / 2 - rawToken.lineWidth;
-  // must be odd number, unless it cannot align center
-  const expandIconSize = halfInnerSize * 2 + rawToken.lineWidth * 3;
   const tableBorder = `${unit(lineWidth)} ${lineType} ${tableBorderColor}`;
-  const expandIconLineOffset = rawToken.paddingXXS - rawToken.lineWidth;
+  const expandIconLineOffset = calc(paddingXXS).sub(lineWidth).equal();
 
   return {
     [`${componentCls}-wrapper`]: {
@@ -34,7 +35,10 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
         width: tableExpandColumnWidth,
       },
 
-      [`${componentCls}-row-expand-icon-cell`]: {
+      [`
+        ${componentCls}-thead > tr > ${componentCls}-row-expand-icon-cell,
+        ${componentCls}-row-expand-icon-cell
+      `]: {
         textAlign: 'center',
 
         [`${componentCls}-row-expand-icon`]: {
@@ -58,11 +62,11 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
         height: expandIconSize,
         padding: 0,
         color: 'inherit',
-        lineHeight: `${unit(expandIconSize)}`,
+        lineHeight: unit(expandIconSize!),
         background: tableExpandIconBg,
         border: tableBorder,
         borderRadius,
-        transform: `scale(${rawToken.controlInteractiveSize / expandIconSize})`,
+        transform: `scale(${expandIconScale})`,
         transition: `all ${motionDurationSlow}`,
         userSelect: 'none',
 
@@ -78,7 +82,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
         },
 
         '&::before': {
-          top: halfInnerSize,
+          top: expandIconHalfInner,
           insetInlineEnd: expandIconLineOffset,
           insetInlineStart: expandIconLineOffset,
           height: lineWidth,
@@ -87,7 +91,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
         '&::after': {
           top: expandIconLineOffset,
           bottom: expandIconLineOffset,
-          insetInlineStart: halfInnerSize,
+          insetInlineStart: expandIconHalfInner,
           width: lineWidth,
           transform: 'rotate(90deg)',
         },
@@ -113,15 +117,13 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
       },
 
       [`${componentCls}-row-indent + ${componentCls}-row-expand-icon`]: {
-        marginTop:
-          (rawToken.fontSize * rawToken.lineHeight - rawToken.lineWidth * 3) / 2 -
-          Math.ceil((rawToken.fontSizeSM * 1.4 - rawToken.lineWidth * 3) / 2),
+        marginTop: expandIconMarginTop,
         marginInlineEnd: paddingXS,
       },
 
       [`tr${componentCls}-expanded-row`]: {
         '&, &:hover': {
-          '> td': {
+          '> th, > td': {
             background: tableExpandedRowBg,
           },
         },
@@ -132,7 +134,7 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
           table: {
             flex: 'auto',
-            width: 'auto',
+            width: '100%',
           },
         },
       },
@@ -140,7 +142,9 @@ const genExpandStyle: GenerateStyle<TableToken, CSSObject> = token => {
       // With fixed
       [`${componentCls}-expanded-row-fixed`]: {
         position: 'relative',
-        margin: `${unit(token.calc(tablePaddingVertical).mul(-1).equal())} ${unit(token.calc(tablePaddingHorizontal).mul(-1).equal())}`,
+        margin: `${unit(calc(tablePaddingVertical).mul(-1).equal())} ${unit(
+          calc(tablePaddingHorizontal).mul(-1).equal(),
+        )}`,
         padding: `${unit(tablePaddingVertical)} ${unit(tablePaddingHorizontal)}`,
       },
     },

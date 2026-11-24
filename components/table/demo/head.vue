@@ -25,10 +25,16 @@ If a `sortOrder` or `defaultSortOrder` is specified with the value `ascend` or `
 </docs>
 
 <template>
-  <a-table :columns="columns" :data-source="data" @change="onChange" />
+  <a-table
+    :columns="columns"
+    :data-source="data"
+    :show-sorter-tooltip="{ target: 'sorter-icon' }"
+    @change="onChange"
+  />
 </template>
+
 <script lang="ts" setup>
-import type { TableColumnType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from 'ant-design-vue';
 
 type TableDataType = {
   key: string;
@@ -37,10 +43,11 @@ type TableDataType = {
   address: string;
 };
 
-const columns: TableColumnType<TableDataType>[] = [
+const columns: TableColumnsType<TableDataType> = [
   {
     title: 'Name',
     dataIndex: 'name',
+    showSorterTooltip: { target: 'full-header' },
     filters: [
       {
         text: 'Joe',
@@ -67,15 +74,15 @@ const columns: TableColumnType<TableDataType>[] = [
     ],
     // specify the condition of filtering result
     // here is that finding the name started with `value`
-    onFilter: (value: string, record: TableDataType) => record.name.indexOf(value) === 0,
-    sorter: (a: TableDataType, b: TableDataType) => a.name.length - b.name.length,
+    onFilter: (value, record) => record.name.indexOf(value as string) === 0,
+    sorter: (a, b) => a.name.length - b.name.length,
     sortDirections: ['descend'],
   },
   {
     title: 'Age',
     dataIndex: 'age',
     defaultSortOrder: 'descend',
-    sorter: (a: TableDataType, b: TableDataType) => a.age - b.age,
+    sorter: (a, b) => a.age - b.age,
   },
   {
     title: 'Address',
@@ -90,10 +97,7 @@ const columns: TableColumnType<TableDataType>[] = [
         value: 'New York',
       },
     ],
-    filterMultiple: false,
-    onFilter: (value: string, record: TableDataType) => record.address.indexOf(value) === 0,
-    sorter: (a: TableDataType, b: TableDataType) => a.address.length - b.address.length,
-    sortDirections: ['descend', 'ascend'],
+    onFilter: (value, record) => record.address.indexOf(value as string) === 0,
   },
 ];
 
@@ -114,7 +118,7 @@ const data: TableDataType[] = [
     key: '3',
     name: 'Joe Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
   {
     key: '4',
@@ -123,7 +127,8 @@ const data: TableDataType[] = [
     address: 'London No. 2 Lake Park',
   },
 ];
-const onChange: TableProps<TableDataType>['onChange'] = (pagination, filters, sorter) => {
-  console.log('params', pagination, filters, sorter);
+
+const onChange: TableProps<TableDataType>['onChange'] = (pagination, filters, sorter, extra) => {
+  console.log('params', pagination, filters, sorter, extra);
 };
 </script>

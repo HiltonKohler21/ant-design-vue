@@ -87,7 +87,7 @@ Debug `sticky` table measure row rendering together with custom filter dropdowns
           >
             <mark
               v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-              :style="{ backgroundColor: '#ffc069', padding: '0' }"
+              :style="{ backgroundColor: '#ffc069', color: '#000', padding: '0' }"
             >
               {{ fragment }}
             </mark>

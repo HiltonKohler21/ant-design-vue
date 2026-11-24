@@ -20,29 +20,38 @@ This example shows how to fetch and present data from a remote server, and how t
 
 Setting `rowSelection.preserveSelectedRowKeys` to keep the `key` when enable selection.
 
-**Note, this example use [Mock API](https://randomuser.me) that you can look up in Network Console.**
 </docs>
 
 <template>
   <a-table
     :columns="columns"
-    :row-key="record => record.login.uuid"
-    :data-source="dataSource"
+    :row-key="record => record.id"
+    :data-source="data"
     :pagination="pagination"
     :loading="loading"
     @change="handleTableChange"
-  >
-    <template #bodyCell="{ column, text }">
-      <template v-if="column.dataIndex === 'name'">{{ text.first }} {{ text.last }}</template>
-    </template>
-  </a-table>
+  />
 </template>
+
 <script lang="ts" setup>
-import { computed } from 'vue';
-import type { TableProps } from 'ant-design-vue';
-import { usePagination } from 'vue-request';
-import axios from 'axios';
-const columns = [
+import { computed, onMounted, ref } from 'vue';
+import type { TableColumnsType, TablePaginationConfig, TableProps } from 'ant-design-vue';
+
+interface DataType {
+  id: string;
+  name: string;
+  gender: 'male' | 'female';
+  email: string;
+}
+
+interface TableParams {
+  pagination: TablePaginationConfig;
+  sortField?: string;
+  sortOrder?: string | null;
+  filters?: Record<string, any>;
+}
+
+const columns: TableColumnsType<DataType> = [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -64,56 +73,155 @@ const columns = [
   },
 ];
 
-type APIParams = {
-  results: number;
-  page?: number;
-  sortField?: string;
-  sortOrder?: number;
-  [key: string]: any;
-};
-type APIResult = {
-  results: {
-    gender: 'female' | 'male';
-    name: string;
-    email: string;
-  }[];
+const firstNames = [
+  'Olivia',
+  'Ethan',
+  'Sophia',
+  'Liam',
+  'Ava',
+  'Noah',
+  'Emma',
+  'Lucas',
+  'Mia',
+  'Mason',
+];
+const lastNames = [
+  'Brown',
+  'Green',
+  'Clark',
+  'Walker',
+  'Hall',
+  'Young',
+  'Allen',
+  'King',
+  'Wright',
+  'Scott',
+];
+
+const fallbackUsers: DataType[] = Array.from({ length: 100 }, (_, i) => {
+  const first = firstNames[i % firstNames.length];
+  const last = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
+  const gender: 'male' | 'female' = i % 2 === 0 ? 'female' : 'male';
+  return {
+    id: `user-${i + 1}`,
+    name: `${first} ${last}`,
+    gender,
+    email: `${first.toLowerCase()}.${last.toLowerCase()}${i + 1}@example.com`,
+  };
+});
+
+const getLocalFallbackData = (params: TableParams) => {
+  let list = [...fallbackUsers];
+  const genderFilters = params.filters?.gender;
+  if (Array.isArray(genderFilters) && genderFilters.length > 0) {
+    list = list.filter(item => genderFilters.includes(item.gender));
+  }
+  if (params.sortField === 'name' && params.sortOrder) {
+    list.sort((a, b) =>
+      params.sortOrder === 'ascend' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name),
+    );
+  }
+  const current = params.pagination.current || 1;
+  const pageSize = params.pagination.pageSize || 10;
+  const start = (current - 1) * pageSize;
+  return {
+    rows: list.slice(start, start + pageSize),
+    total: list.length,
+  };
 };
 
-const queryData = async (params: APIParams) => {
-  const res = await axios.get<APIResult>('https://randomuser.me/api?noinfo', { params });
-  return res.data.results;
-};
-
-const {
-  data: dataSource,
-  run,
-  loading,
-  current,
-  pageSize,
-} = usePagination(queryData, {
+const data = ref<DataType[]>([]);
+const loading = ref(false);
+const tableParams = ref<TableParams>({
   pagination: {
-    currentKey: 'page',
-    pageSizeKey: 'results',
+    current: 1,
+    pageSize: 10,
+    total: 100,
   },
 });
 
-const pagination = computed(() => ({
-  total: 200,
-  current: current.value,
-  pageSize: pageSize.value,
-}));
+const pagination = computed(() => tableParams.value.pagination);
 
-const handleTableChange: TableProps['onChange'] = (
-  pag: { pageSize: number; current: number },
-  filters: any,
-  sorter: any,
-) => {
-  run({
-    results: pag.pageSize,
-    page: pag?.current,
-    sortField: sorter.field,
-    sortOrder: sorter.order,
-    ...filters,
-  });
+const buildQueryString = (params: TableParams) => {
+  const search = new URLSearchParams();
+  search.append('limit', String(params.pagination.pageSize || 10));
+  search.append('page', String(params.pagination.current || 1));
+  if (params.filters) {
+    Object.entries(params.filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        search.append(key, String(value));
+      }
+    });
+  }
+  if (params.sortField && params.sortOrder) {
+    search.append('orderby', params.sortField);
+    search.append('order', params.sortOrder === 'ascend' ? 'asc' : 'desc');
+  }
+  return search.toString();
+};
+
+const fetchData = async () => {
+  loading.value = true;
+  const currentParams = tableParams.value;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch(
+      `https://660d2bd96ddfa2943b33731c.mockapi.io/api/users?${buildQueryString(currentParams)}`,
+      { signal: controller.signal },
+    );
+    clearTimeout(timer);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const list = await res.json();
+    if (Array.isArray(list)) {
+      data.value = list;
+      tableParams.value = {
+        ...currentParams,
+        pagination: {
+          ...currentParams.pagination,
+          total: 100,
+        },
+      };
+    } else {
+      const fallback = getLocalFallbackData(currentParams);
+      data.value = fallback.rows;
+      tableParams.value = {
+        ...currentParams,
+        pagination: {
+          ...currentParams.pagination,
+          total: fallback.total,
+        },
+      };
+    }
+  } catch {
+    const fallback = getLocalFallbackData(currentParams);
+    data.value = fallback.rows;
+    tableParams.value = {
+      ...currentParams,
+      pagination: {
+        ...currentParams.pagination,
+        total: fallback.total,
+      },
+    };
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
+
+const handleTableChange: TableProps<DataType>['onChange'] = (pag, filters, sorter) => {
+  const singleSorter = Array.isArray(sorter) ? undefined : sorter;
+  tableParams.value = {
+    pagination: pag,
+    filters,
+    sortField: singleSorter?.field as string | undefined,
+    sortOrder: singleSorter?.order ?? null,
+  };
+  fetchData();
 };
 </script>

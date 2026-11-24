@@ -10,17 +10,17 @@ const genVirtualStyle: GenerateStyle<TableToken, CSSObject> = token => {
     lineWidth,
     lineType,
     tableBorderColor,
-    tablePaddingHorizontal,
-    paddingContentVerticalLG,
     tableRowHoverBg,
     tableSelectedRowBg,
     tableSelectedRowHoverBg,
   } = token;
 
   const tableBorder = `${unit(lineWidth)} ${lineType} ${tableBorderColor}`;
+  const rowCellCls = `${componentCls}-expanded-row-cell`;
 
   return {
     [`${componentCls}-wrapper`]: {
+      // ========================== Row ==========================
       [`${componentCls}-tbody-virtual`]: {
         [`${componentCls}-tbody-virtual-scrollbar`]: {
           cursor: 'pointer',
@@ -38,16 +38,7 @@ const genVirtualStyle: GenerateStyle<TableToken, CSSObject> = token => {
 
             [`> ${componentCls}-cell`]: {
               boxSizing: 'border-box',
-              padding: `${unit(paddingContentVerticalLG)} ${unit(tablePaddingHorizontal)}`,
-              borderBottom: tableBorder,
-              overflowWrap: 'break-word',
-              transition: `background-color ${motionDurationMid}`,
-            },
-
-            '&:hover': {
-              [`> ${componentCls}-cell`]: {
-                background: tableRowHoverBg,
-              },
+              alignContent: 'center',
             },
 
             [`&${componentCls}-row-selected`]: {
@@ -62,12 +53,60 @@ const genVirtualStyle: GenerateStyle<TableToken, CSSObject> = token => {
             },
           },
         },
+
+        [`${componentCls}-cell`]: {
+          borderBottom: tableBorder,
+          transition: `background-color ${motionDurationMid}`,
+        },
+
+        [`${componentCls}-expanded-row`]: {
+          [`${rowCellCls}${rowCellCls}-fixed`]: {
+            position: 'sticky',
+            insetInlineStart: 0,
+            overflow: 'hidden',
+            width: `calc(var(--virtual-width) - ${unit(lineWidth)})`,
+            borderInlineEnd: 'none',
+          },
+        },
       },
 
+      [`${componentCls}:not(${componentCls}-row-hover-disabled) ${componentCls}-tbody-virtual-holder-inner`]:
+        {
+          [`& > ${componentCls}-row:hover, & > div:not(${componentCls}-row) > ${componentCls}-row:hover`]:
+            {
+              [`> ${componentCls}-cell`]: {
+                background: tableRowHoverBg,
+              },
+            },
+          [`& > ${componentCls}-row${componentCls}-row-selected:hover, & > div:not(${componentCls}-row) > ${componentCls}-row${componentCls}-row-selected:hover`]:
+            {
+              [`> ${componentCls}-cell`]: {
+                background: tableSelectedRowHoverBg,
+              },
+            },
+        },
+
+      // ======================== Border =========================
       [`${componentCls}-bordered`]: {
         [`${componentCls}-tbody-virtual`]: {
+          '&:after': {
+            content: '""',
+            insetInline: 0,
+            bottom: 0,
+            borderBottom: tableBorder,
+            position: 'absolute',
+          },
+
           [`${componentCls}-cell`]: {
             borderInlineEnd: tableBorder,
+          },
+        },
+
+        // Empty placeholder
+        [`&${componentCls}-virtual`]: {
+          [`${componentCls}-placeholder ${componentCls}-cell`]: {
+            borderInlineEnd: tableBorder,
+            borderBottom: tableBorder,
           },
         },
       },

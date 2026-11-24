@@ -7,26 +7,35 @@ title:
 ---
 
 ## zh-CN
-第一列是联动的选择框。
-默认点击 checkbox 触发选择行为，需要 `点击行` 触发可参考例子：https://codesandbox.io/s/row-selection-on-click-tr58v
+
+第一列是联动的选择框。可以通过选择框类型切换多选或单选。
 
 ## en-US
-Rows can be selectable by making first column as a selectable column.
-selection happens when clicking checkbox defaultly. You can see https://codesandbox.io/s/row-selection-on-click-tr58v if you need row-click selection behavior.
+
+Rows can be selectable by making first column as a selectable column. You can switch between checkbox and radio selection.
 
 </docs>
 
 <template>
-  <a-table :row-selection="rowSelection" :columns="columns" :data-source="data">
-    <template #bodyCell="{ column, text }">
-      <template v-if="column.dataIndex === 'name'">
-        <a>{{ text }}</a>
+  <div>
+    <a-radio-group v-model:value="selectionType">
+      <a-radio value="checkbox">Checkbox</a-radio>
+      <a-radio value="radio">radio</a-radio>
+    </a-radio-group>
+    <a-divider />
+    <a-table :row-selection="rowSelection" :columns="columns" :data-source="data">
+      <template #bodyCell="{ column, text }">
+        <template v-if="column.dataIndex === 'name'">
+          <a>{{ text }}</a>
+        </template>
       </template>
-    </template>
-  </a-table>
+    </a-table>
+  </div>
 </template>
+
 <script lang="ts" setup>
-import type { TableProps, TableColumnType } from 'ant-design-vue';
+import { computed, ref } from 'vue';
+import type { TableColumnType, TableProps } from 'ant-design-vue';
 
 interface DataType {
   key: string;
@@ -34,6 +43,8 @@ interface DataType {
   age: number;
   address: string;
 }
+
+const selectionType = ref<'checkbox' | 'radio'>('checkbox');
 
 const columns: TableColumnType<DataType>[] = [
   {
@@ -49,6 +60,7 @@ const columns: TableColumnType<DataType>[] = [
     dataIndex: 'address',
   },
 ];
+
 const data: DataType[] = [
   {
     key: '1',
@@ -66,23 +78,24 @@ const data: DataType[] = [
     key: '3',
     name: 'Joe Black',
     age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
   {
     key: '4',
     name: 'Disabled User',
     age: 99,
-    address: 'Sidney No. 1 Lake Park',
+    address: 'Sydney No. 1 Lake Park',
   },
 ];
 
-const rowSelection: TableProps['rowSelection'] = {
-  onChange: (selectedRowKeys: string[], selectedRows: DataType[]) => {
+const rowSelection = computed<TableProps<DataType>['rowSelection']>(() => ({
+  type: selectionType.value,
+  onChange: (selectedRowKeys: (string | number)[], selectedRows: DataType[]) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
   getCheckboxProps: (record: DataType) => ({
     disabled: record.name === 'Disabled User', // Column configuration not to be checked
     name: record.name,
   }),
-};
+}));
 </script>
