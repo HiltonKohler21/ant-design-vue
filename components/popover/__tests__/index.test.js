@@ -82,11 +82,26 @@ describe('Popover', () => {
     expect(wrapper.find('.ant-popover-pure').exists()).toBe(true);
     expect(wrapper.find('.ant-popover-placement-bottomLeft').exists()).toBe(true);
     expect(wrapper.find('.ant-popover-pure').classes()).toContain('pure-root');
+    // Arrow must live inside .ant-popover-content so placement padding does not detach it
+    expect(wrapper.find('.ant-popover-content > .ant-popover-arrow').exists()).toBe(true);
     expect(wrapper.find('.ant-popover-title').text()).toBe('Pure Title');
     expect(wrapper.find('.ant-popover-title').classes()).toContain('pure-title');
     expect(wrapper.find('.ant-popover-title').attributes('style')).toContain('rgb(1, 2, 3)');
     expect(wrapper.find('.ant-popover-inner-content').text()).toBe('Pure Content');
     expect(wrapper.find('.ant-popover-inner-content').classes()).toContain('pure-content');
     wrapper.unmount();
+
+    const noArrowWrapper = mount(InternalPopover, {
+      props: {
+        title: 'No Arrow',
+        content: 'Body',
+        arrow: false,
+      },
+    });
+    expect(noArrowWrapper.find('.ant-popover-arrow').exists()).toBe(false);
+    expect(noArrowWrapper.find('.ant-popover-pure').classes()).toContain(
+      'ant-popover-arrow-hidden',
+    );
+    noArrowWrapper.unmount();
   });
 });

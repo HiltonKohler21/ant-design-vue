@@ -67,7 +67,7 @@ const stylesFn: PopoverProps['styles'] = info => {
 </script>
 
 <style scoped>
-:global(.popover-style-class-container) {
+:global(.ant-popover .popover-style-class-container) {
   padding: 10px;
 }
 </style>

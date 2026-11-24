@@ -48,6 +48,9 @@ const PurePanel = defineComponent({
         prefixCls.value,
         `${prefixCls.value}-pure`,
         `${prefixCls.value}-placement-${placement}`,
+        {
+          [`${prefixCls.value}-arrow-hidden`]: arrow === false,
+        },
         colorInfo.value.className,
         props.rootClassName,
         props.overlayClassName,
@@ -81,15 +84,15 @@ const PurePanel = defineComponent({
             attrs.style as CSSProperties,
           ]}
         >
-          {arrow !== false && (
-            <div
-              class={classNames(`${prefixCls.value}-arrow`, semanticClassNames.arrow)}
-              style={semanticStyles.arrow}
-            >
-              <span class={`${prefixCls.value}-arrow-content`} />
-            </div>
-          )}
           <div class={`${prefixCls.value}-content`}>
+            {arrow !== false && (
+              <div
+                class={classNames(`${prefixCls.value}-arrow`, semanticClassNames.arrow)}
+                style={semanticStyles.arrow}
+              >
+                <span class={`${prefixCls.value}-arrow-content`} />
+              </div>
+            )}
             <div class={containerCls} role="tooltip" style={containerStyle}>
               {typeof titleNode === 'function' ? titleNode() : titleNode}
             </div>

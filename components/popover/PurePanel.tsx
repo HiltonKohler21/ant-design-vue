@@ -104,6 +104,9 @@ export const RawPurePanel = defineComponent({
         prefixCls,
         `${prefixCls}-pure`,
         `${prefixCls}-placement-${placement}`,
+        {
+          [`${prefixCls}-arrow-hidden`]: arrow === false,
+        },
         props.rootClassName,
         props.overlayClassName,
         mergedClassNames.root,
@@ -129,13 +132,13 @@ export const RawPurePanel = defineComponent({
           class={rootCls}
           style={[props.overlayStyle, mergedStyles.root, attrs.style as CSSProperties]}
         >
-          {arrow !== false && (
-            <div
-              class={classNames(`${prefixCls}-arrow`, mergedClassNames.arrow)}
-              style={mergedStyles.arrow}
-            />
-          )}
           <div class={`${prefixCls}-content`}>
+            {arrow !== false && (
+              <div
+                class={classNames(`${prefixCls}-arrow`, mergedClassNames.arrow)}
+                style={mergedStyles.arrow}
+              />
+            )}
             <div class={containerCls} style={containerStyle}>
               {hasChildren ? (
                 defaultSlot

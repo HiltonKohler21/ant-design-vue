@@ -672,6 +672,7 @@ function devAntdBundlePlugin(): Plugin {
           }
         }, 180);
       };
+      server.watcher.add(COMPONENTS_DIR);
       server.watcher.on('change', onComponentChange);
       server.watcher.on('add', onComponentChange);
       server.watcher.on('unlink', onComponentChange);

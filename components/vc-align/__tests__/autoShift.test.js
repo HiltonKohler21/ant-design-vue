@@ -181,13 +181,222 @@ describe('vc-align scroll realignment & auto-shift', () => {
     expect(parseFloat(source.style.left)).toBe(340);
     expect(arrow.style.left).toBe('180px');
 
-    // 5. Button completely scrolled out above top edge [330..470] x [20..52]
+    // 5. Smooth scroll-out when target just left top edge [330..470] x [20..52]:
+    // bottom popup [56..156] is still partially visible inside [100..400], so it stays bottom without teleporting
     target.getBoundingClientRect = () => createRect(330, 20, 140, 32);
-    syncSourceRect(270, 100);
+    syncSourceRect(270, 56);
     const r5 = applyAutoShift(source, target, baseAlign, dummyResult);
-    expect(r5.points).toEqual(['bc', 'tc']);
-    expect(parseFloat(source.style.top)).toBe(-184);
+    expect(r5.points).toEqual(['tc', 'bc']);
+    expect(parseFloat(source.style.top)).toBe(-44);
+
+    // 6. Once target AND both top/bottom popups are completely outside [100..400], cleanly resets offscreen to top
+    target.getBoundingClientRect = () => createRect(330, -120, 140, 32);
+    syncSourceRect(270, -84);
+    const r6 = applyAutoShift(source, target, baseAlign, dummyResult);
+    expect(r6.points).toEqual(['bc', 'tc']);
+    expect(parseFloat(source.style.top)).toBe(-324);
     expect(arrow.style.left).toBe('');
+  });
+
+  it('recovers natural un-squished dimensions at right edge and never overlaps trigger even with shiftX/shiftY', () => {
+    const container = document.createElement('div');
+    container.style.overflow = 'auto';
+    container.style.position = 'relative';
+
+    const target = document.createElement('button');
+    const source = document.createElement('div');
+    source.className = 'ant-popover ant-popover-placement-top';
+    source.style.position = 'absolute';
+    source.style.left = '520px';
+    source.style.top = '100px';
+
+    const content = document.createElement('div');
+    content.className = 'ant-popover-content';
+    const arrow = document.createElement('div');
+    arrow.className = 'ant-popover-arrow';
+    content.appendChild(arrow);
+    source.appendChild(content);
+
+    container.appendChild(target);
+    container.appendChild(source);
+    document.body.appendChild(container);
+
+    // Container [0..580] x [0..300]
+    container.getBoundingClientRect = () => createRect(0, 0, 580, 300);
+    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 580 });
+    Object.defineProperty(container, 'clientHeight', { configurable: true, value: 300 });
+    Object.defineProperty(source, 'offsetParent', { configurable: true, value: container });
+    Object.defineProperty(arrow, 'offsetWidth', { configurable: true, value: 16 });
+    Object.defineProperty(arrow, 'offsetHeight', { configurable: true, value: 16 });
+    Object.defineProperty(arrow, 'offsetParent', { configurable: true, value: content });
+
+    // Simulate CSS right-edge shrink-to-fit when source.style.left >= 500px
+    source.getBoundingClientRect = () => {
+      const l = parseFloat(source.style.left) || 0;
+      const t = parseFloat(source.style.top) || 0;
+      const squished = l >= 500;
+      return createRect(l, t, squished ? 60 : 260, squished ? 190 : 58);
+    };
+    content.getBoundingClientRect = () => source.getBoundingClientRect();
+
+    // Button near right edge [480..636] x [134..166]
+    target.getBoundingClientRect = () => createRect(480, 134, 156, 32);
+
+    const alignWithShift = {
+      points: ['bc', 'tc'],
+      offset: [0, -4],
+      targetOffset: [0, 0],
+      overflow: { adjustX: 1, adjustY: 1, shiftX: true, shiftY: true },
+    };
+    const dummyResult = {
+      points: ['bc', 'tc'],
+      offset: [0, -4],
+      targetOffset: [0, 0],
+      overflow: { adjustX: false, adjustY: false },
+    };
+
+    const res = applyAutoShift(source, target, alignWithShift, dummyResult);
+    const finalLeft = parseFloat(source.style.left);
+    const finalTop = parseFloat(source.style.top);
+    const finalRect = source.getBoundingClientRect();
+
+    expect(res.points).toEqual(['bc', 'tc']);
+    // Un-squished width 260 shifted left inside [0..580] -> left = 320
+    expect(finalLeft).toBe(320);
+    expect(finalRect.width).toBe(260);
+    // Positioned strictly above button (134 - 4 - 58 = 72), never overlapping button!
+    expect(finalTop).toBe(72);
+    expect(finalTop + finalRect.height).toBeLessThanOrEqual(134);
+    // Arrow stays cleanly inside [0..260]
+    const arrowLeft = parseFloat(arrow.style.left);
+    expect(arrowLeft).toBeGreaterThanOrEqual(18);
+    expect(arrowLeft).toBeLessThanOrEqual(260 - 18);
+
+    // Also test short container where BOTH top & bottom overflow: top/bottom popup MUST NOT overlap button
+    container.getBoundingClientRect = () => createRect(0, 0, 580, 120);
+    Object.defineProperty(container, 'clientHeight', { configurable: true, value: 120 });
+    target.getBoundingClientRect = () => createRect(210, 44, 156, 32);
+    source.style.left = '158px';
+    source.style.top = '0px';
+    const shortRes = applyAutoShift(source, target, alignWithShift, dummyResult);
+    const shortTop = parseFloat(source.style.top);
+    if (shortRes.points[0].startsWith('b')) {
+      expect(shortTop + 58).toBeLessThanOrEqual(44);
+    } else {
+      expect(shortTop).toBeGreaterThanOrEqual(76);
+    }
+
+    // Horizontal placement (left/right) with shiftX: true MUST NOT overlap trigger horizontally
+    const leftAlign = {
+      points: ['cr', 'cl'],
+      offset: [-4, 0],
+      targetOffset: [0, 0],
+      overflow: { adjustX: 1, adjustY: 1, shiftX: true, shiftY: true },
+    };
+    target.getBoundingClientRect = () => createRect(200, 100, 140, 32);
+    container.getBoundingClientRect = () => createRect(0, 0, 580, 300);
+    Object.defineProperty(container, 'clientHeight', { configurable: true, value: 300 });
+    source.style.left = '0px';
+    source.style.top = '87px';
+    const hRes = applyAutoShift(source, target, leftAlign, {
+      ...dummyResult,
+      points: ['cr', 'cl'],
+      offset: [-4, 0],
+    });
+    const hLeft = parseFloat(source.style.left);
+    if (hRes.points[0].endsWith('r')) {
+      expect(hLeft + 260).toBeLessThanOrEqual(200);
+    } else {
+      expect(hLeft).toBeGreaterThanOrEqual(340);
+    }
+  });
+
+  it('maintains non-overlap and arrow-in-bounds across all 9 shift positions', () => {
+    const container = document.createElement('div');
+    container.style.overflow = 'auto';
+    container.style.position = 'relative';
+
+    const target = document.createElement('button');
+    const source = document.createElement('div');
+    source.className = 'ant-popover ant-popover-placement-top';
+    source.style.position = 'absolute';
+
+    const content = document.createElement('div');
+    content.className = 'ant-popover-content';
+    const arrow = document.createElement('div');
+    arrow.className = 'ant-popover-arrow';
+    content.appendChild(arrow);
+    source.appendChild(content);
+
+    container.appendChild(target);
+    container.appendChild(source);
+    document.body.appendChild(container);
+
+    // Container [0..600] x [0..300]
+    container.getBoundingClientRect = () => createRect(0, 0, 600, 300);
+    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 600 });
+    Object.defineProperty(container, 'clientHeight', { configurable: true, value: 300 });
+    Object.defineProperty(arrow, 'offsetWidth', { configurable: true, value: 16 });
+    Object.defineProperty(arrow, 'offsetHeight', { configurable: true, value: 16 });
+    Object.defineProperty(arrow, 'offsetParent', { configurable: true, value: content });
+
+    const popupW = 260;
+    const popupH = 58;
+    const align = {
+      points: ['bc', 'tc'],
+      offset: [0, -4],
+      targetOffset: [0, 0],
+      overflow: { adjustX: 1, adjustY: 1 },
+    };
+    const dummy = {
+      points: ['bc', 'tc'],
+      offset: [0, -4],
+      targetOffset: [0, 0],
+      overflow: { adjustX: false, adjustY: false },
+    };
+
+    const cases = [
+      { name: 'center', tL: 222, tT: 134, expectFlipY: false },
+      { name: 'left', tL: 10, tT: 134, expectFlipY: false },
+      { name: 'right', tL: 490, tT: 134, expectFlipY: false },
+      { name: 'top', tL: 222, tT: 20, expectFlipY: true },
+      { name: 'bottom', tL: 222, tT: 250, expectFlipY: false },
+      { name: 'top-left', tL: 10, tT: 20, expectFlipY: true },
+      { name: 'top-right', tL: 490, tT: 20, expectFlipY: true },
+      { name: 'bottom-left', tL: 10, tT: 250, expectFlipY: false },
+      { name: 'bottom-right', tL: 490, tT: 250, expectFlipY: false },
+    ];
+
+    cases.forEach(({ tL, tT, expectFlipY }) => {
+      target.getBoundingClientRect = () => createRect(tL, tT, 156, 32);
+      source.style.left = '0px';
+      source.style.top = '0px';
+      source.getBoundingClientRect = () => {
+        const l = parseFloat(source.style.left) || 0;
+        const t = parseFloat(source.style.top) || 0;
+        return createRect(l, t, popupW, popupH);
+      };
+      content.getBoundingClientRect = () => source.getBoundingClientRect();
+
+      const r = applyAutoShift(source, target, align, dummy);
+      const pL = parseFloat(source.style.left);
+      const pT = parseFloat(source.style.top);
+
+      if (expectFlipY) {
+        expect(r.points).toEqual(['tc', 'bc']);
+        expect(pT).toBeGreaterThanOrEqual(tT + 32);
+      } else {
+        expect(r.points).toEqual(['bc', 'tc']);
+        expect(pT + popupH).toBeLessThanOrEqual(tT);
+      }
+      expect(pL).toBeGreaterThanOrEqual(0);
+      expect(pL + popupW).toBeLessThanOrEqual(600);
+      if (arrow.style.left) {
+        const al = parseFloat(arrow.style.left);
+        expect(al).toBeGreaterThanOrEqual(18);
+        expect(al).toBeLessThanOrEqual(popupW - 18);
+      }
+    });
   });
 
   it('mounts popup into delayed containerRef and exposes forceAlign/forcePopupAlign on Popconfirm & Popover', async () => {

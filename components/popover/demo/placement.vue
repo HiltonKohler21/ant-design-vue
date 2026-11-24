@@ -16,148 +16,148 @@ There are 12 `placement` options available.
 
 </docs>
 <template>
-  <div class="components-popover-demo-placement">
-    <div :style="{ marginLeft: `${buttonWidth}px`, whiteSpace: 'nowrap' }">
-      <a-popover placement="topLeft">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>TL</a-button>
-      </a-popover>
-      <a-popover placement="top">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>Top</a-button>
-      </a-popover>
-      <a-popover placement="topRight">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>TR</a-button>
-      </a-popover>
-    </div>
-    <div :style="{ width: `${buttonWidth}px`, float: 'left' }">
-      <a-popover placement="leftTop">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>LT</a-button>
-      </a-popover>
-      <a-popover placement="left">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>Left</a-button>
-      </a-popover>
-      <a-popover placement="leftBottom">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>LB</a-button>
-      </a-popover>
-    </div>
-    <div :style="{ width: `${buttonWidth}px`, marginLeft: `${buttonWidth * 4 + 24}px` }">
-      <a-popover placement="rightTop">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>RT</a-button>
-      </a-popover>
-      <a-popover placement="right">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>Right</a-button>
-      </a-popover>
-      <a-popover placement="rightBottom">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>RB</a-button>
-      </a-popover>
-    </div>
-    <div :style="{ marginLeft: `${buttonWidth}px`, clear: 'both', whiteSpace: 'nowrap' }">
-      <a-popover placement="bottomLeft">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>BL</a-button>
-      </a-popover>
-      <a-popover placement="bottom">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>Bottom</a-button>
-      </a-popover>
-      <a-popover placement="bottomRight">
-        <template #content>
-          <p>Content</p>
-          <p>Content</p>
-        </template>
-        <template #title>
-          <span>Title</span>
-        </template>
-        <a-button>BR</a-button>
-      </a-popover>
-    </div>
-  </div>
+  <a-config-provider
+    :button="{ style: { width: `${buttonWidth}px`, margin: '4px', padding: '0px' } }"
+  >
+    <a-flex vertical justify="center" align="center" class="demo">
+      <a-flex justify="center" align="center" :style="{ whiteSpace: 'nowrap' }">
+        <a-popover placement="topLeft">
+          <template #title><span>Title</span></template>
+          <template #content>
+            <div>
+              <p>Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <a-button>TL</a-button>
+        </a-popover>
+        <a-popover placement="top">
+          <template #title><span>Title</span></template>
+          <template #content>
+            <div>
+              <p>Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <a-button>Top</a-button>
+        </a-popover>
+        <a-popover placement="topRight">
+          <template #title><span>Title</span></template>
+          <template #content>
+            <div>
+              <p>Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <a-button>TR</a-button>
+        </a-popover>
+      </a-flex>
+      <a-flex
+        :style="{ width: `${buttonWidth * 5 + 32}px`, maxWidth: '100%' }"
+        justify="space-between"
+        align="center"
+      >
+        <a-flex align="center" vertical>
+          <a-popover placement="leftTop">
+            <template #title><span>Title</span></template>
+            <template #content>
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <a-button>LT</a-button>
+          </a-popover>
+          <a-popover placement="left">
+            <template #title><span>Title</span></template>
+            <template #content>
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <a-button>Left</a-button>
+          </a-popover>
+          <a-popover placement="leftBottom">
+            <template #title><span>Title</span></template>
+            <template #content>
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <a-button>LB</a-button>
+          </a-popover>
+        </a-flex>
+        <a-flex align="center" vertical>
+          <a-popover placement="rightTop">
+            <template #title><span>Title</span></template>
+            <template #content>
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <a-button>RT</a-button>
+          </a-popover>
+          <a-popover placement="right">
+            <template #title><span>Title</span></template>
+            <template #content>
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <a-button>Right</a-button>
+          </a-popover>
+          <a-popover placement="rightBottom">
+            <template #title><span>Title</span></template>
+            <template #content>
+              <div>
+                <p>Content</p>
+                <p>Content</p>
+              </div>
+            </template>
+            <a-button>RB</a-button>
+          </a-popover>
+        </a-flex>
+      </a-flex>
+      <a-flex justify="center" align="center" :style="{ whiteSpace: 'nowrap' }">
+        <a-popover placement="bottomLeft">
+          <template #title><span>Title</span></template>
+          <template #content>
+            <div>
+              <p>Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <a-button>BL</a-button>
+        </a-popover>
+        <a-popover placement="bottom">
+          <template #title><span>Title</span></template>
+          <template #content>
+            <div>
+              <p>Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <a-button>Bottom</a-button>
+        </a-popover>
+        <a-popover placement="bottomRight">
+          <template #title><span>Title</span></template>
+          <template #content>
+            <div>
+              <p>Content</p>
+              <p>Content</p>
+            </div>
+          </template>
+          <a-button>BR</a-button>
+        </a-popover>
+      </a-flex>
+    </a-flex>
+  </a-config-provider>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-const buttonWidth = ref<number>(70);
+const buttonWidth = 64;
 </script>
-<style scoped>
-.components-popover-demo-placement :deep(.ant-btn) {
-  width: 70px;
-  text-align: center;
-  padding: 0;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-</style>

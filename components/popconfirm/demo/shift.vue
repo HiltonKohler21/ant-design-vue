@@ -26,7 +26,7 @@ Auto adjust Popup and arrow position when Popconfirm is close to the edge of the
         :auto-adjust-overflow="true"
         :get-popup-container="getPopupContainer"
       >
-        <a-button type="primary">Scroll The Window</a-button>
+        <a-button type="primary">Scroll The Container</a-button>
       </a-popconfirm>
     </div>
   </div>
@@ -47,8 +47,9 @@ const scrollContainerStyle = {
 };
 
 const innerStyle = {
-  width: '200%',
-  height: '700px',
+  width: '320%',
+  minWidth: '1500px',
+  height: '900px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

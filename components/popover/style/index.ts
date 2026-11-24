@@ -97,9 +97,11 @@ const genBaseStyle: GenerateStyle<PopoverToken> = token => {
         maxWidth: 'none',
         margin: token.sizePopupArrow,
         display: 'inline-block',
+        verticalAlign: 'top',
 
         [`${componentCls}-content`]: {
-          display: 'inline-block',
+          display: 'block',
+          width: '100%',
         },
       },
     },

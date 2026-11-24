@@ -8,15 +8,15 @@ title:
 
 ## zh-CN
 
-使用 `visible` 属性控制浮层显示。
+使用 `open` 属性控制浮层显示。
 
 ## en-US
 
-Use `visible` prop to control the display of the card.
+Use `open` prop to control the display of the card.
 
 </docs>
 <template>
-  <a-popover v-model:open="visible" title="Title" trigger="click">
+  <a-popover v-model:open="open" title="Title" trigger="click">
     <template #content>
       <a @click="hide">Close</a>
     </template>
@@ -26,9 +26,9 @@ Use `visible` prop to control the display of the card.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-const visible = ref<boolean>(false);
+const open = ref<boolean>(false);
 
 const hide = () => {
-  visible.value = false;
+  open.value = false;
 };
 </script>

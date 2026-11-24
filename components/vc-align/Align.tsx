@@ -17,7 +17,7 @@ import raf from '../_util/raf';
 import supportsPassive from '../_util/supportsPassive';
 
 import { isSamePoint, restoreFocus, monitorResize, getScrollableAncestors } from './util';
-import { applyAutoShift } from './autoShift';
+import { applyAutoShift, shouldUseAutoShift } from './autoShift';
 import type { AlignType, AlignResult, TargetType, TargetPoint } from './interface';
 import useBuffer from './hooks/useBuffer';
 import isEqual from 'lodash-es/isEqual';
@@ -92,9 +92,20 @@ export default defineComponent({
           const { activeElement } = document;
           // We only align when element is visible
           if (element && isVisible(element)) {
-            result = alignElement(source, element, latestAlign);
+            const alignConfig = latestAlign as AlignType | undefined;
+            const baseAlign = shouldUseAutoShift(alignConfig)
+              ? {
+                  ...alignConfig,
+                  overflow: {
+                    ...alignConfig.overflow,
+                    adjustX: 0,
+                    adjustY: 0,
+                  },
+                }
+              : alignConfig;
+            result = alignElement(source, element, baseAlign);
             if (result) {
-              result = applyAutoShift(source, element, latestAlign, result);
+              result = applyAutoShift(source, element, alignConfig, result);
             }
           } else if (point) {
             result = alignPoint(source, point, latestAlign);

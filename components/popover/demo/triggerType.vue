@@ -16,32 +16,27 @@ Mouse to click, focus and move in.
 
 </docs>
 <template>
-  <div class="components-popover-demo-triggertype">
+  <a-space wrap>
     <a-popover title="Title" trigger="hover">
       <template #content>
-        <p>Content</p>
-        <p>Content</p>
+        <p style="margin: 0">Content</p>
+        <p style="margin: 0">Content</p>
       </template>
       <a-button>Hover me</a-button>
     </a-popover>
     <a-popover title="Title" trigger="focus">
       <template #content>
-        <p>Content</p>
-        <p>Content</p>
+        <p style="margin: 0">Content</p>
+        <p style="margin: 0">Content</p>
       </template>
       <a-button>Focus me</a-button>
     </a-popover>
     <a-popover title="Title" trigger="click">
       <template #content>
-        <p>Content</p>
-        <p>Content</p>
+        <p style="margin: 0">Content</p>
+        <p style="margin: 0">Content</p>
       </template>
       <a-button>Click me</a-button>
     </a-popover>
-  </div>
+  </a-space>
 </template>
-<style scoped>
-.components-popover-demo-triggertype :deep(.ant-btn) {
-  margin-right: 8px;
-}
-</style>

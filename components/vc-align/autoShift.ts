@@ -267,13 +267,43 @@ function clampCrossAxis(
   return desired;
 }
 
+function isRectCompletelyOutside(
+  left: number,
+  top: number,
+  width: number,
+  height: number,
+  clip: RectLike,
+): boolean {
+  return (
+    left + width <= clip.left ||
+    left >= clip.right ||
+    top + height <= clip.top ||
+    top >= clip.bottom
+  );
+}
+
+export function shouldUseAutoShift(align: AlignType | undefined): align is AlignType {
+  const overflow = align?.overflow as
+    | (AlignType['overflow'] & { resizeWidth?: boolean; resizeHeight?: boolean })
+    | undefined;
+  return !!(
+    align?.points &&
+    align.points.length >= 2 &&
+    !align.useCssTransform &&
+    !overflow?.resizeWidth &&
+    !overflow?.resizeHeight &&
+    (overflow?.adjustX || overflow?.adjustY || overflow?.shiftX || overflow?.shiftY)
+  );
+}
+
 /**
  * Post-align refinement on top of `dom-align`:
- * 1. Computes the true visible clip rect (browser viewport intersected with scrollable ancestors).
- * 2. Flips primary axis (`top <-> bottom` / `left <-> right`) first toward the side with less overflow.
- * 3. Smoothly clamps/shifts along the cross axis inside visible bounds, releasing cleanly so the popup
- *    scrolls out together with its target once the target leaves the visible area.
- * 4. Dynamically tracks `.ant-*-arrow` toward the target center when shifted, and resets inline
+ * 1. Measures un-squished popup dimensions (guarding against CSS right-edge shrink-to-fit).
+ * 2. Computes the true visible clip rect (browser viewport intersected with scrollable ancestors).
+ * 3. Flips primary axis (`top <-> bottom` / `left <-> right`) first toward the side with less overflow.
+ * 4. Smoothly clamps/shifts ONLY along the cross axis (never overlapping the trigger along the primary
+ *    stacking axis), releasing continuously so the popup scrolls out cleanly with its target.
+ * 5. Dynamically tracks `.ant-*-arrow` toward the target center when shifted, and resets inline
  *    arrow styles whenever unshifted.
  */
 export function applyAutoShift(
@@ -303,7 +333,31 @@ export function applyAutoShift(
     return result;
   }
 
-  const sourceSize = { width: sourceRect.width, height: sourceRect.height };
+  // Guard against CSS shrink-to-fit squishing when an absolutely positioned popup
+  // is currently placed near the right edge of its containing block.
+  let sourceSize = { width: sourceRect.width, height: sourceRect.height };
+  let wasUnsquished = false;
+  if (!align.useCssTransform && !align.useCssRight) {
+    const doc = source.ownerDocument || document;
+    const win = doc.defaultView || window;
+    const offsetParent = source.offsetParent as HTMLElement | null;
+    const parentRight = offsetParent
+      ? offsetParent.getBoundingClientRect().right
+      : doc.documentElement?.clientWidth || win.innerWidth || 0;
+    if (parentRight > 0 && sourceRect.right >= parentRight - 2) {
+      const prevLeft = source.style.left;
+      if (prevLeft !== '0px') {
+        source.style.left = '0px';
+        const probeRect = source.getBoundingClientRect();
+        source.style.left = prevLeft;
+        if (probeRect.width > sourceRect.width + 0.5) {
+          sourceSize = { width: probeRect.width, height: probeRect.height };
+          wasUnsquished = true;
+        }
+      }
+    }
+  }
+
   const origPoints = [align.points[0], align.points[1]];
   const origOffset = normalizeOffset(align.offset as (number | string)[] | undefined, sourceSize);
   const origTargetOffset = normalizeOffset(align.targetOffset as (number | string)[] | undefined, {
@@ -312,24 +366,17 @@ export function applyAutoShift(
   });
 
   const visibleRect = getVisibleClipRect(target, source, overflow?.alwaysByViewport);
-  const isTargetVisible =
-    !!visibleRect &&
-    targetRect.right > visibleRect.left &&
-    targetRect.left < visibleRect.right &&
-    targetRect.bottom > visibleRect.top &&
-    targetRect.top < visibleRect.bottom;
+  const basePos = computeAlignedPos(
+    sourceSize,
+    targetRect,
+    origPoints,
+    origOffset,
+    origTargetOffset,
+  );
 
-  if (!visibleRect || !isTargetVisible) {
-    // Target is outside visible clip rect: keep original un-flipped position so popup scrolls out cleanly
-    const naturalPos = computeAlignedPos(
-      sourceSize,
-      targetRect,
-      origPoints,
-      origOffset,
-      origTargetOffset,
-    );
-    const deltaX = Math.round(naturalPos.left - sourceRect.left);
-    const deltaY = Math.round(naturalPos.top - sourceRect.top);
+  if (!visibleRect) {
+    const deltaX = Math.round(basePos.left - sourceRect.left);
+    const deltaY = Math.round(basePos.top - sourceRect.top);
     shiftSourceByDelta(source, deltaX, deltaY, align);
     resetArrowStyle(arrowEl);
     return {
@@ -344,18 +391,16 @@ export function applyAutoShift(
     };
   }
 
+  const isTargetVisible =
+    targetRect.right > visibleRect.left &&
+    targetRect.left < visibleRect.right &&
+    targetRect.bottom > visibleRect.top &&
+    targetRect.top < visibleRect.bottom;
+
   // Step 1: Independent vertical & horizontal flip towards the side with strictly less overflow
   let finalPoints = [...origPoints];
   const finalOffset: [number, number] = [...origOffset];
   const finalTargetOffset: [number, number] = [...origTargetOffset];
-
-  const basePos = computeAlignedPos(
-    sourceSize,
-    targetRect,
-    origPoints,
-    origOffset,
-    origTargetOffset,
-  );
 
   if (canAdjustY) {
     const origOverflowY =
@@ -442,11 +487,13 @@ export function applyAutoShift(
     Math.max(arrowHeight / 2 + 10, ARROW_MIN_MARGIN),
   );
 
-  // Step 2: Smooth cross-axis edge shift with scroll-out release limitation
+  // Step 2: Smooth cross-axis edge shift with continuous scroll-out release.
+  // Never clamp along the primary stacking axis so a top/bottom popup never overlaps
+  // its trigger vertically and a left/right popup never overlaps its trigger horizontally.
   let finalLeft = desiredPos.left;
   let finalTop = desiredPos.top;
 
-  if (canAdjustX && (isVerticalPlacement || !isHorizontalPlacement || overflow?.shiftX)) {
+  if (canAdjustX && !isHorizontalPlacement) {
     finalLeft = clampCrossAxis(
       desiredPos.left,
       sourceSize.width,
@@ -458,7 +505,7 @@ export function applyAutoShift(
     );
   }
 
-  if (canAdjustY && (isHorizontalPlacement || !isVerticalPlacement || overflow?.shiftY)) {
+  if (canAdjustY && !isVerticalPlacement) {
     finalTop = clampCrossAxis(
       desiredPos.top,
       sourceSize.height,
@@ -470,17 +517,66 @@ export function applyAutoShift(
     );
   }
 
+  // Once the target, the shifted/flipped popup, AND the natural popup are ALL completely
+  // outside the visible clip rect, cleanly reset back to the original un-flipped placement
+  // offscreen without causing any visible jump.
+  if (
+    !isTargetVisible &&
+    isRectCompletelyOutside(
+      finalLeft,
+      finalTop,
+      sourceSize.width,
+      sourceSize.height,
+      visibleRect,
+    ) &&
+    isRectCompletelyOutside(
+      basePos.left,
+      basePos.top,
+      sourceSize.width,
+      sourceSize.height,
+      visibleRect,
+    )
+  ) {
+    const deltaX = Math.round(basePos.left - sourceRect.left);
+    const deltaY = Math.round(basePos.top - sourceRect.top);
+    shiftSourceByDelta(source, deltaX, deltaY, align);
+    resetArrowStyle(arrowEl);
+    return {
+      ...result,
+      points: origPoints,
+      offset: origOffset,
+      targetOffset: origTargetOffset,
+      overflow: {
+        adjustX: false,
+        adjustY: false,
+      },
+    };
+  }
+
   // Read arrow offsetParent geometry BEFORE mutating source styles to avoid extra forced reflow
+  // (re-measure after shift only in the rare un-squished case so contentWidth is accurate).
   const arrowParent = (arrowEl?.offsetParent as HTMLElement | null) || source;
-  const arrowParentRect = arrowEl ? arrowParent.getBoundingClientRect() : sourceRect;
-  const contentOffsetX = arrowParentRect.left - sourceRect.left;
-  const contentOffsetY = arrowParentRect.top - sourceRect.top;
-  const contentWidth = arrowParentRect.width || sourceSize.width;
-  const contentHeight = arrowParentRect.height || sourceSize.height;
+  let arrowParentRect =
+    arrowEl && !wasUnsquished ? arrowParent.getBoundingClientRect() : sourceRect;
+  let contentOffsetX = wasUnsquished ? 0 : arrowParentRect.left - sourceRect.left;
+  let contentOffsetY = wasUnsquished ? 0 : arrowParentRect.top - sourceRect.top;
+  let contentWidth = wasUnsquished ? sourceSize.width : arrowParentRect.width || sourceSize.width;
+  let contentHeight = wasUnsquished
+    ? sourceSize.height
+    : arrowParentRect.height || sourceSize.height;
 
   const deltaX = Math.round(finalLeft - sourceRect.left);
   const deltaY = Math.round(finalTop - sourceRect.top);
   shiftSourceByDelta(source, deltaX, deltaY, align);
+
+  if (arrowEl && wasUnsquished) {
+    const shiftedSourceRect = source.getBoundingClientRect();
+    arrowParentRect = arrowParent.getBoundingClientRect();
+    contentOffsetX = arrowParentRect.left - shiftedSourceRect.left;
+    contentOffsetY = arrowParentRect.top - shiftedSourceRect.top;
+    contentWidth = arrowParentRect.width || sourceSize.width;
+    contentHeight = arrowParentRect.height || sourceSize.height;
+  }
 
   const shiftedX = Math.abs(finalLeft - desiredPos.left) > 0.5;
   const shiftedY = Math.abs(finalTop - desiredPos.top) > 0.5;

@@ -138,6 +138,12 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
         maxWidth: 'none',
         margin: token.sizePopupArrow,
         display: 'inline-block',
+        verticalAlign: 'top',
+
+        [`${componentCls}-content`]: {
+          display: 'block',
+          width: '100%',
+        },
       },
     },
 
