@@ -3,10 +3,10 @@ import type {
   UploadRequestOption as RcCustomRequestOptions,
 } from '../vc-upload/interface';
 import type { ProgressProps } from '../progress';
+import type { ExtractPropTypes, CSSProperties, ImgHTMLAttributes, PropType } from 'vue';
 import type { VueNode } from '../_util/type';
-import { anyType } from '../_util/type';
-import type { ExtractPropTypes, CSSProperties, ImgHTMLAttributes } from 'vue';
 import {
+  anyType,
   booleanType,
   stringType,
   functionType,
@@ -14,6 +14,17 @@ import {
   objectType,
   someType,
 } from '../_util/type';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
+
+export type UploadSemanticName = 'root' | 'list' | 'item' | 'trigger';
+export type UploadSemanticClassNames = SemanticClassNames<UploadSemanticName>;
+export type UploadSemanticStyles = SemanticStyles<UploadSemanticName>;
+export type UploadClassNamesType =
+  | UploadSemanticClassNames
+  | ((info: { props: UploadProps }) => UploadSemanticClassNames);
+export type UploadStylesType =
+  | UploadSemanticStyles
+  | ((info: { props: UploadProps }) => UploadSemanticStyles);
 
 export interface FileType extends OriRcFile {
   readonly lastModifiedDate: Date;
@@ -51,9 +62,12 @@ export interface InternalUploadFile<T = any> extends UploadFile<T> {
 }
 
 export interface ShowUploadListInterface<T = any> {
-  showRemoveIcon?: boolean;
-  showPreviewIcon?: boolean;
-  showDownloadIcon?: boolean;
+  showRemoveIcon?: boolean | ((file: UploadFile<T>) => boolean);
+  showPreviewIcon?: boolean | ((file: UploadFile<T>) => boolean);
+  showDownloadIcon?: boolean | ((file: UploadFile<T>) => boolean);
+  removeIcon?: VueNode | ((opt: { file: UploadFile<T> }) => VueNode);
+  downloadIcon?: VueNode | ((opt: { file: UploadFile<T> }) => VueNode);
+  previewIcon?: VueNode | ((opt: { file: UploadFile<T> }) => VueNode);
   extra?: VueNode | ((file: UploadFile<T>) => VueNode);
 }
 
@@ -73,7 +87,7 @@ export interface UploadLocale {
 }
 
 export type UploadType = 'drag' | 'select';
-export type UploadListType = 'text' | 'picture' | 'picture-card';
+export type UploadListType = 'text' | 'picture' | 'picture-card' | 'picture-circle';
 export type UploadListProgressProps = Omit<ProgressProps, 'percent' | 'type'> & {
   class?: string;
   style?: CSSProperties;
@@ -99,6 +113,15 @@ type BeforeUploadValueType = void | boolean | string | Blob | FileType;
 function uploadProps<T = any>() {
   return {
     rootClassName: String,
+    classNames: {
+      type: [Object, Function] as PropType<UploadClassNamesType>,
+      default: undefined,
+    },
+    styles: {
+      type: [Object, Function] as PropType<UploadStylesType>,
+      default: undefined,
+    },
+    pastable: booleanType(),
     extra: anyType<VueNode | ((file: UploadFile<T>) => VueNode)>(),
     capture: someType<boolean | 'user' | 'environment'>([Boolean, String]),
     type: stringType<UploadType>(),
@@ -170,6 +193,8 @@ export interface UploadState<T = any> {
 
 function uploadListProps<T = any>() {
   return {
+    classNames: objectType<UploadSemanticClassNames>(),
+    styles: objectType<UploadSemanticStyles>(),
     listType: stringType<UploadListType>(),
     onPreview: functionType<(file: UploadFile<T>) => void>(),
     onDownload: functionType<(file: UploadFile<T>) => void>(),
@@ -177,12 +202,12 @@ function uploadListProps<T = any>() {
     items: arrayType<Array<UploadFile<T>>>(),
     progress: objectType<UploadListProgressProps>(),
     prefixCls: stringType<string>(),
-    showRemoveIcon: booleanType(),
-    showDownloadIcon: booleanType(),
-    showPreviewIcon: booleanType(),
-    removeIcon: functionType<(opt: { file: UploadFile }) => VueNode>(),
-    downloadIcon: functionType<(opt: { file: UploadFile }) => VueNode>(),
-    previewIcon: functionType<(opt: { file: UploadFile }) => VueNode>(),
+    showRemoveIcon: someType<boolean | ((file: UploadFile<T>) => boolean)>([Boolean, Function]),
+    showDownloadIcon: someType<boolean | ((file: UploadFile<T>) => boolean)>([Boolean, Function]),
+    showPreviewIcon: someType<boolean | ((file: UploadFile<T>) => boolean)>([Boolean, Function]),
+    removeIcon: anyType<VueNode | ((opt: { file: UploadFile }) => VueNode)>(),
+    downloadIcon: anyType<VueNode | ((opt: { file: UploadFile }) => VueNode)>(),
+    previewIcon: anyType<VueNode | ((opt: { file: UploadFile }) => VueNode)>(),
     locale: objectType<UploadLocale>(undefined as UploadLocale),
     previewFile: functionType<PreviewFileHandler>(),
     iconRender:
@@ -192,6 +217,7 @@ function uploadListProps<T = any>() {
     appendActionVisible: booleanType(),
     itemRender: functionType<ItemRender<T>>(),
     extra: anyType<VueNode | ((file: UploadFile<T>) => VueNode)>(),
+    disabled: booleanType(),
   };
 }
 

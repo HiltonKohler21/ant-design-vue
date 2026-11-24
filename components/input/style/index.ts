@@ -1105,6 +1105,27 @@ const genTextAreaStyle: GenerateStyle<InputToken> = token => {
           float: 'left',
         },
       },
+
+      [`&${componentCls}-out-of-range`]: {
+        '&::after': {
+          color: token.colorError,
+        },
+        [`${componentCls}-data-count`]: {
+          color: token.colorError,
+        },
+      },
+    },
+  };
+};
+
+const genRangeStyle: GenerateStyle<InputToken> = token => {
+  const { componentCls } = token;
+
+  return {
+    [`${componentCls}-out-of-range`]: {
+      [`&, & input, & textarea, ${componentCls}-show-count-suffix, ${componentCls}-data-count`]: {
+        color: token.colorError,
+      },
     },
   };
 };
@@ -1188,6 +1209,7 @@ export default genComponentStyleHook(
       genAffixStyle(inputToken),
       genGroupStyle(inputToken),
       genSearchInputStyle(inputToken),
+      genRangeStyle(inputToken),
       // =====================================================
       // ==                Variant                          ==
       // =====================================================

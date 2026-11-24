@@ -1,6 +1,7 @@
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, VNode } from 'vue';
 import {
   computed,
+  watch,
   watchEffect,
   onMounted,
   defineComponent,
@@ -9,6 +10,7 @@ import {
   ref,
 } from 'vue';
 import classNames from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import VcCheckbox from '../vc-checkbox/Checkbox';
 import { flattenChildren } from '../_util/props-util';
 import warning from '../_util/warning';
@@ -17,11 +19,63 @@ import { FormItemInputContext, useInjectFormItemContext } from '../form/FormItem
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 
-import type { CheckboxChangeEvent, CheckboxProps } from './interface';
+import type {
+  CheckboxChangeEvent,
+  CheckboxProps,
+  CheckboxSemanticClassNames,
+  CheckboxSemanticStyles,
+} from './interface';
 import { CheckboxGroupContextKey, checkboxProps } from './interface';
 
 // CSSINJS
 import useStyle from './style';
+
+const UNITLESS_CSS_PROPS = new Set([
+  'opacity',
+  'zIndex',
+  'fontWeight',
+  'lineHeight',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'order',
+  'zoom',
+]);
+
+function applyStyleObjectToElement(
+  el: unknown,
+  styleObj: CSSProperties | undefined,
+  prevKeys: string[],
+): string[] {
+  if (!(el instanceof HTMLElement)) return prevKeys;
+  for (const key of prevKeys) {
+    if (!styleObj || !(key in styleObj)) {
+      if (key.startsWith('--')) {
+        el.style.removeProperty(key);
+      } else {
+        (el.style as any)[key] = '';
+      }
+    }
+  }
+  if (!styleObj) return [];
+  const nextKeys = Object.keys(styleObj);
+  for (const key of nextKeys) {
+    const val = (styleObj as any)[key];
+    if (val === undefined || val === null) {
+      if (key.startsWith('--')) {
+        el.style.removeProperty(key);
+      } else {
+        (el.style as any)[key] = '';
+      }
+    } else if (key.startsWith('--')) {
+      el.style.setProperty(key, String(val));
+    } else {
+      (el.style as any)[key] =
+        typeof val === 'number' && !UNITLESS_CSS_PROPS.has(key) ? `${val}px` : val;
+    }
+  }
+  return nextKeys;
+}
 
 export default defineComponent({
   compatConfig: { MODE: 3 },
@@ -50,6 +104,13 @@ export default defineComponent({
     const mergedDisabled = computed(() => {
       return checkboxGroup?.disabled.value || disabled.value;
     });
+    const innerChecked = ref(props.checked !== undefined ? props.checked : props.defaultChecked);
+    watch(
+      () => props.checked,
+      val => {
+        innerChecked.value = val;
+      },
+    );
     watchEffect(() => {
       if (!props.skipGroup && checkboxGroup) {
         checkboxGroup.registerValue(uniId, props.value);
@@ -70,11 +131,15 @@ export default defineComponent({
 
     const handleChange = (event: CheckboxChangeEvent) => {
       const targetChecked = event.target.checked;
+      if (props.checked === undefined) {
+        innerChecked.value = targetChecked;
+      }
       emit('update:checked', targetChecked);
       emit('change', event);
       formItemContext.onFieldChange();
     };
     const checkboxRef = ref();
+    let prevIconStyleKeys: string[] = [];
     const focus = () => {
       checkboxRef.value?.focus();
     };
@@ -87,7 +152,15 @@ export default defineComponent({
     });
     return () => {
       const children = flattenChildren(slots.default?.());
-      const { indeterminate, skipGroup, id = formItemContext.id.value, ...restProps } = props;
+      const {
+        indeterminate,
+        skipGroup,
+        id = formItemContext.id.value,
+        classNames: propClassNames,
+        styles: propStyles,
+        title,
+        ...restProps
+      } = props;
       const { onMouseenter, onMouseleave, onInput, class: className, style, ...restAttrs } = attrs;
       const checkboxProps: CheckboxProps = {
         ...restProps,
@@ -96,22 +169,57 @@ export default defineComponent({
         ...restAttrs,
         disabled: mergedDisabled.value,
       };
+      let mergedChecked: boolean | undefined;
       if (checkboxGroup && !skipGroup) {
         checkboxProps.onChange = (...args) => {
           emit('change', ...args);
           checkboxGroup.toggleOption({ label: children, value: props.value });
         };
         checkboxProps.name = checkboxGroup.name.value;
-        checkboxProps.checked = checkboxGroup.mergedValue.value.includes(props.value);
+        mergedChecked = checkboxGroup.mergedValue.value.includes(props.value);
+        checkboxProps.checked = mergedChecked;
         checkboxProps.disabled = mergedDisabled.value || contextDisabled.value;
         checkboxProps.indeterminate = indeterminate;
       } else {
+        mergedChecked = props.checked !== undefined ? props.checked : innerChecked.value;
         checkboxProps.onChange = handleChange;
       }
+
+      const mergedPropsForSemantic: CheckboxProps = {
+        ...props,
+        indeterminate,
+        disabled: checkboxProps.disabled,
+        checked: !!mergedChecked,
+      };
+
+      const [mergedClassNames, mergedStyles] = mergeSemantic<
+        CheckboxSemanticClassNames,
+        CheckboxSemanticStyles,
+        CheckboxProps
+      >(
+        [
+          contextClassNames.value,
+          skipGroup ? undefined : checkboxGroup?.classNames?.value,
+          propClassNames,
+        ],
+        [contextStyles.value, skipGroup ? undefined : checkboxGroup?.styles?.value, propStyles],
+        {
+          props: mergedPropsForSemantic,
+        },
+      );
+
+      const syncIconStyle = (vnode: VNode) => {
+        prevIconStyleKeys = applyStyleObjectToElement(
+          vnode.el,
+          mergedStyles.icon,
+          prevIconStyleKeys,
+        );
+      };
+
       const classString = classNames(
         props.rootClassName,
         contextClassName.value,
-        contextClassNames.value.root,
+        mergedClassNames.root,
         {
           [`${prefixCls.value}-wrapper`]: true,
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
@@ -126,14 +234,15 @@ export default defineComponent({
         {
           [`${prefixCls.value}-indeterminate`]: indeterminate,
         },
-        contextClassNames.value.icon,
+        mergedClassNames.icon,
         hashId.value,
       );
       const ariaChecked = indeterminate ? 'mixed' : undefined;
       return wrapSSR(
         <label
           class={classString}
-          style={[contextStyle.value, contextStyles.value.root, style as CSSProperties]}
+          style={[contextStyle.value, mergedStyles.root, style as CSSProperties]}
+          title={title}
           onMouseenter={onMouseenter as EventHandler}
           onMouseleave={onMouseleave as EventHandler}
         >
@@ -141,11 +250,13 @@ export default defineComponent({
             aria-checked={ariaChecked}
             {...checkboxProps}
             class={checkboxClass}
-            style={contextStyles.value.icon}
+            style={mergedStyles.icon}
+            onVnodeMounted={syncIconStyle}
+            onVnodeUpdated={syncIconStyle}
             ref={checkboxRef}
           />
           {children.length ? (
-            <span class={contextClassNames.value.label} style={contextStyles.value.label}>
+            <span class={mergedClassNames.label} style={mergedStyles.label}>
               {children}
             </span>
           ) : null}

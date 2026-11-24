@@ -21,7 +21,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*M7_ER7GJr6wAAA
 | allowClear | 是否允许再次点击后清除 | boolean | true |  |
 | allowHalf | 是否允许半选 | boolean | false |  |
 | autofocus | 自动获取焦点 | boolean | false |  |
-| character | 自定义字符 | string \| slot | `<StarOutlined />` |  |
+| character | 自定义字符 | string \| slot \| ((props: { index?: number; value?: number; count?: number; disabled?: boolean }) => VueNode) | `<StarOutlined />` |  |
 | count | star 总数 | number | 5 |  |
 | disabled | 只读，无法进行交互 | boolean | false |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |

@@ -27,6 +27,20 @@ export type TextAreaStylesType<P = Record<string, any>> = SemanticValue<TextArea
 
 export const inputDefaultValue = Symbol() as unknown as string;
 
+export interface CountConfig {
+  max?: number;
+  strategy?: (value: string) => number;
+  show?: boolean | ((args: { value: string; count: number; maxLength?: number }) => VueNode);
+  exceedFormatter?: (value: string, config: { max: number }) => string;
+}
+
+export interface AllowClearConfig {
+  clearIcon?: VueNode;
+  disabled?: boolean;
+  label?: string;
+  tabIndex?: number;
+}
+
 export interface AutoSizeType {
   minRows?: number;
   maxRows?: number;
@@ -38,7 +52,19 @@ const inputProps = () => {
       'groupClassName',
       'inputClassName',
       'affixWrapperClassName',
+      'allowClear',
     ]),
+    allowClear: {
+      type: [Boolean, Object] as PropType<boolean | AllowClearConfig>,
+      default: undefined,
+    },
+    count: {
+      type: Object as PropType<CountConfig>,
+      default: undefined,
+    },
+    onClear: {
+      type: Function as PropType<() => void>,
+    },
     variant: { type: String as PropType<Variant> },
     rootClassName: String,
     /** 语义化 classNames（支持对象与函数式）：root / prefix / suffix / input / count */

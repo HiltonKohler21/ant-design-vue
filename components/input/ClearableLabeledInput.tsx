@@ -9,6 +9,7 @@ import { anyType, tuple } from '../_util/type';
 import type { Direction, SizeType } from '../config-provider';
 import type { Variant } from '../config-provider/context';
 import type { MouseEventHandler } from '../_util/EventInterface';
+import type { AllowClearConfig } from './inputProps';
 import { hasAddon } from './util';
 import { FormItemInputContext } from '../form/FormItemContext';
 import type { InputStatus } from '../_util/statusUtils';
@@ -25,7 +26,10 @@ export default defineComponent({
     inputType: PropTypes.oneOf(tuple('text', 'input')),
     value: anyType<VueNode>(),
     defaultValue: anyType<VueNode>(),
-    allowClear: { type: Boolean, default: undefined },
+    allowClear: {
+      type: [Boolean, Object] as PropType<boolean | AllowClearConfig>,
+      default: undefined,
+    },
     element: anyType<VueNode>(),
     handleReset: Function as PropType<MouseEventHandler>,
     disabled: { type: Boolean, default: undefined },
@@ -47,9 +51,32 @@ export default defineComponent({
   setup(props, { slots, attrs }) {
     const statusContext = FormItemInputContext.useInject();
     const renderClearIcon = (prefixCls: string) => {
-      const { value, disabled, readonly, handleReset, suffix = slots.suffix } = props;
+      const { allowClear, value, disabled, readonly, handleReset, suffix = slots.suffix } = props;
+      const clearConfig =
+        typeof allowClear === 'object' && allowClear !== null ? allowClear : undefined;
       const needClear = !disabled && !readonly && value;
       const className = `${prefixCls}-clear-icon`;
+      const customIcon = clearConfig?.clearIcon ?? slots.clearIcon?.();
+      if (customIcon) {
+        return (
+          <span
+            onClick={handleReset}
+            onMousedown={e => e.preventDefault()}
+            class={classNames(
+              {
+                [`${className}-hidden`]: !needClear,
+                [`${className}-has-suffix`]: !!suffix,
+              },
+              className,
+            )}
+            role="button"
+            tabindex={clearConfig?.tabIndex}
+            aria-label={clearConfig?.label}
+          >
+            {customIcon}
+          </span>
+        );
+      }
       return (
         <CloseCircleFilled
           onClick={handleReset}
@@ -63,6 +90,8 @@ export default defineComponent({
             className,
           )}
           role="button"
+          tabindex={clearConfig?.tabIndex}
+          aria-label={clearConfig?.label}
         />
       );
     };
@@ -80,8 +109,12 @@ export default defineComponent({
       } = props;
 
       const { status: contextStatus, hasFeedback } = statusContext;
+      const isAllowClearEnabled =
+        typeof allowClear === 'object' && allowClear !== null
+          ? !allowClear.disabled
+          : Boolean(allowClear);
 
-      if (!allowClear) {
+      if (!isAllowClearEnabled) {
         return cloneElement(element, {
           value,
           disabled: props.disabled,

@@ -21,10 +21,11 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 | --- | --- | --- | --- | --- |
 | addonAfter | The label text displayed after (on the right side of) the input field | string \| slot | - |  |
 | addonBefore | The label text displayed before (on the left side of) the input field | string \| slot | - |  |
-| allowClear | Allow to remove input content with clear icon | boolean | - |  |
+| allowClear | Allow to remove input content with clear icon | boolean \| [AllowClearConfig](#allowclearconfig) | - | 4.3.0 |
 | ~~bordered~~ | Whether has border style (deprecated, use `variant` instead) | boolean | `true` | 3.0 |
 | classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; input?: string; prefix?: string; suffix?: string; count?: string } \| ((info: { props: InputProps }) => ...)` | - | 4.3.0 |
 | clearIcon | Custom clear icon when `allowClear` is `true` | slot | `<CloseCircleFilled />` | 3.3.0 |
+| count | Character count config | [CountConfig](#countconfig) | - | 4.3.0 |
 | defaultValue | The initial input content | string | - |  |
 | disabled | Whether the input is disabled | boolean | `false` |  |
 | id | The ID for input | string | - |  |
@@ -42,10 +43,37 @@ A basic widget for getting the user input is a text field. Keyboard and mouse ca
 
 ### Input Events
 
-| Events Name | Description                                                       | Arguments   |
-| ----------- | ----------------------------------------------------------------- | ----------- |
-| change      | Callback when user input                                          | function(e) |
-| pressEnter  | The callback function that is triggered when Enter key is pressed | function(e) |
+| Events Name | Description | Arguments | Version |
+| --- | --- | --- | --- |
+| change | Callback when user input | function(e) |  |
+| clear | Callback when click the clear button | () => void | 4.3.0 |
+| pressEnter | The callback function that is triggered when Enter key is pressed | function(e) |  |
+
+### Input Methods
+
+| Name | Description | Parameters | Version |
+| --- | --- | --- | --- |
+| blur() | Remove focus | - |  |
+| focus() | Get focus | (option?: { preventScroll?: boolean, cursor?: 'start' \| 'end' \| 'all' }) | 4.3.0 |
+| nativeElement | Get native DOM element | - | 4.3.0 |
+
+#### AllowClearConfig
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| clearIcon | Custom clear icon | VueNode | - | 4.3.0 |
+| disabled | When `true`, equivalent to `allowClear={false}` | boolean | `false` | 4.3.0 |
+| label | Accessible name of the clear button | string | - | 4.3.0 |
+| tabIndex | Tab order of the clear button. `-1` excludes it from Tab navigation | number | `0` | 4.3.0 |
+
+#### CountConfig
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| exceedFormatter | Custom clipping logic when character count exceeds `count.max` | (value: string, config: { max: number }) => string | - | 4.3.0 |
+| max | Max character count. Unlike native `maxlength`, marks warning without truncating | number | - | 4.3.0 |
+| show | Same as `showCount` | boolean \| ((args: { value: string; count: number; maxLength?: number }) => VueNode) | `false` | 4.3.0 |
+| strategy | Custom character counting strategy | (value: string) => number | - | 4.3.0 |
 
 > When `Input` is used in a `Form.Item` context, if the `Form.Item` has the `id` and `options` props defined then `value`, `defaultValue`, and `id` props of `Input` are automatically set.
 

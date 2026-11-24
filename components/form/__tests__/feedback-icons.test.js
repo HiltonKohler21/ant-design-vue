@@ -3,6 +3,23 @@ import Form from '..';
 import Input from '../../input';
 
 describe('Form feedbackIcons', () => {
+  let originGetComputedStyle;
+
+  beforeAll(() => {
+    originGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = (...args) => {
+      try {
+        return originGetComputedStyle(...args);
+      } catch {
+        return { getPropertyValue: () => '', marginBottom: '0px' };
+      }
+    };
+  });
+
+  afterAll(() => {
+    window.getComputedStyle = originGetComputedStyle;
+  });
+
   it('声明 feedbackIcons 并用于校验状态图标，且支持响应式更新与区分 warnings', async () => {
     let lastArgs = null;
     const feedbackIcons = args => {
@@ -59,6 +76,7 @@ describe('Form feedbackIcons', () => {
           </Form.Item>
         ),
       },
+      attachTo: document.body,
     });
     await wrapper.vm.validateFields();
     await new Promise(r => setTimeout(r, 120));
@@ -67,6 +85,7 @@ describe('Form feedbackIcons', () => {
     expect(lastArgs.warnings.length).toBeGreaterThan(0);
     expect(wrapper.html()).toContain('custom-warning-icon');
     expect(wrapper.html()).not.toContain('custom-error-icon');
+    wrapper.unmount();
   });
 
   it('FormItem 脱离 Form 单独使用时安全回退默认 feedbackIcon', async () => {

@@ -1,14 +1,16 @@
-import type { InjectionKey, ComputedRef } from 'vue';
+import type { InjectionKey, ComputedRef, CSSProperties } from 'vue';
 import { inject, provide, computed } from 'vue';
 import type { Variant } from '../config-provider/context';
 import type { ColProps } from '../grid';
-import type { RequiredMark } from './Form';
+import type { FormLayout, FormSemanticName, RequiredMark } from './Form';
 import type { ValidateStatus, FieldExpose } from './FormItem';
+import type { FormTooltipProps } from './FormItemLabel';
 import type { FormLabelAlign, Rule, ValidateMessages } from './interface';
 import { defaultValidateMessages } from './utils/messages';
 
 export interface FormContextProps {
   model?: ComputedRef<any>;
+  layout?: ComputedRef<FormLayout>;
   vertical: ComputedRef<boolean>;
   name?: ComputedRef<string>;
   colon?: ComputedRef<boolean>;
@@ -17,6 +19,9 @@ export interface FormContextProps {
   labelCol?: ComputedRef<ColProps>;
   wrapperCol?: ComputedRef<ColProps>;
   requiredMark?: ComputedRef<RequiredMark>;
+  tooltip?: ComputedRef<FormTooltipProps | undefined>;
+  classNames?: ComputedRef<Partial<Record<FormSemanticName, string>>>;
+  styles?: ComputedRef<Partial<Record<FormSemanticName, CSSProperties>>>;
   //itemRef: (name: (string | number)[]) => (node: React.ReactElement) => void;
   addField: (eventKey: string, field: FieldExpose) => void;
   removeField: (eventKey: string) => void;
@@ -40,6 +45,7 @@ export const useInjectForm = () => {
   return inject(FormContextKey, {
     name: computed(() => undefined),
     labelAlign: computed(() => 'right' as FormLabelAlign),
+    layout: computed(() => 'horizontal' as FormLayout),
     vertical: computed(() => false),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     addField: (_eventKey: string, _field: FieldExpose) => {},
@@ -51,6 +57,9 @@ export const useInjectForm = () => {
     labelWrap: computed(() => undefined),
     labelCol: computed(() => undefined),
     requiredMark: computed(() => false),
+    tooltip: computed(() => undefined),
+    classNames: computed(() => ({})),
+    styles: computed(() => ({})),
     validateTrigger: computed(() => undefined),
     onValidate: () => {},
     validateMessages: computed(() => defaultValidateMessages),

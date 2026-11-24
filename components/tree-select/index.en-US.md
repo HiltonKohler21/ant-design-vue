@@ -19,24 +19,29 @@ Tree selection control.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | allowClear | Whether allow clear | boolean | false |  |
+| ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true |  |
 | classNames | Semantic DOM class (supports object and function `({ props }) => ...`) | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
+| defaultOpen | Initial open state of dropdown | boolean | - |  |
 | defaultValue | To set the initial selected treeNode(s). | string\|string\[] | - |  |
 | disabled | Disabled or not | boolean | false |  |
-| dropdownMatchSelectWidth | Determine whether the dropdown menu and the select input are the same width (deprecated, please use `popupMatchSelectWidth`) | boolean \| number | true |  |
-| dropdownStyle | To set the style of the dropdown menu | object | - |  |
+| ~~dropdownMatchSelectWidth~~ | Determine whether the dropdown menu and the select input are the same width (deprecated, please use `popupMatchSelectWidth`) | boolean \| number | true |  |
+| ~~dropdownStyle~~ | To set the style of the dropdown menu (deprecated, please use `styles.popup.root` instead) | object | - |  |
 | fieldNames | Replace the label,value and children fields in treeNode with the corresponding fields in treeData | object | { children:'children', label:'title', value:'value' } | 3.0.0 |
 | filterTreeNode | Whether to filter treeNodes by input value. The value of `treeNodeFilterProp` is used for filtering by default. | boolean\|Function(inputValue: string, treeNode: TreeNode) (should return boolean) | Function |  |
 | getPopupContainer | To set the container of the dropdown menu. The default is to create a `div` element in `body`, you can reset it to the scrolling area and make a relative reposition. | Function(triggerNode) | () => document.body |  |
 | labelInValue | whether to embed label in value, turn the format of value from `string` to `{value: string, label: VNode, halfChecked: string[]}` | boolean | false |  |
 | listHeight | Config popup height | number | 256 |  |
 | loadData | Load data asynchronously. | function(node) | - |  |
-| maxTagCount | Max tag count to show | number | - |  |
+| maxCount | The maximum number of items that can be selected. Only takes effect when `multiple=true`. If (`showCheckedStrategy = 'SHOW_ALL'` and `treeCheckStrictly` is disabled) or `showCheckedStrategy = 'SHOW_PARENT'` is used, `maxCount` will not take effect. | number | - | 4.3.0 |
+| maxTagCount | Max tag count to show | number \| `responsive` | - |  |
 | maxTagPlaceholder | Placeholder for not showing tags | slot/function(omittedValues) | - |  |
+| maxTagTextLength | Max tag text length to show | number | - |  |
 | multiple | Support multiple or not, will be `true` when enable `treeCheckable`. | boolean | false |  |
 | notFoundContent | Specify content to show when no result matches | slot | `Not Found` |  |
+| open | Controlled open state of dropdown | boolean | - |  |
 | placeholder | Placeholder of the select input | string\|slot | - |  |
 | placement | The position where the selection box pops up | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
-| popupClassName | className of dropdown menu | string | - | 4.0 |
+| ~~popupClassName~~ | className of dropdown menu (deprecated, please use `classNames.popup.root` instead) | string | - | 4.0 |
 | popupMatchSelectWidth | Determine whether the popup menu and the select input are the same width. Default set `min-width` same as input. Will ignore when value less than select width. `false` will disable virtual scroll | boolean \| number | true | 4.3.0 |
 | popupRender | Customize popup content | `(menu: VueNode) => VueNode \| v-slot:popupRender` | - | 4.3.0 |
 | prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
@@ -45,8 +50,8 @@ Tree selection control.
 | searchPlaceholder | Placeholder of the search input | string\|slot | - |  |
 | searchValue(v-model) | work with `search` event to make search value controlled. | string | - |  |
 | showCheckedStrategy | The way show selected item in box. **Default:** just show child nodes. **`TreeSelect.SHOW_ALL`:** show all checked treeNodes (include parent treeNode). **`TreeSelect.SHOW_PARENT`:** show checked treeNodes (just show parent treeNode). | enum { TreeSelect.SHOW_ALL, TreeSelect.SHOW_PARENT, TreeSelect.SHOW_CHILD } | TreeSelect.SHOW_CHILD |  |
-| showSearch | Whether to display a search input in the dropdown menu(valid only in the single mode) | boolean | false |  |
-| size | To set the size of the select input, options: `large` `small` | string | 'default' |  |
+| showSearch | Support search or not, supports object config | boolean \| [showSearch](#showsearch) | single: false \| multiple: true | Object: 4.3.0 |
+| size | To set the size of the select input, options: `large` `middle` `small` | string | 'default' |  |
 | status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
 | styles | Semantic DOM style (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
 | suffix | The custom suffix icon (replaces `suffixIcon`) | VNode \| slot | - | 4.3.0 |
@@ -60,6 +65,7 @@ Tree selection control.
 | treeDataSimpleMode | Enable simple mode of treeData. Changes the `treeData` schema to: \[{id:1, pId:0, value:'1', title:"test1",...},...] where pId is parent node's id). It is possible to replace the default `id` and `pId` keys by providing object to `treeDataSimpleMode` | false\|object\\&lt;{ id: string, pId: string, rootPId: null }> | false |  |
 | treeDefaultExpandAll | Whether to expand all treeNodes by default | boolean | false |  |
 | treeDefaultExpandedKeys | Default expanded treeNodes | string\[] \| number\[] | - |  |
+| treeExpandAction | Tree title open logic when click, optional: `false` \| `'click'` \| `'doubleClick'` | string \| boolean | false |  |
 | treeExpandedKeys(v-model) | Set expanded keys | string\[] \| number\[] | - |  |
 | treeIcon | Shows the icon before a TreeNode's title. There is no default style; you must set a custom style for it if set to `true` | boolean | false |  |
 | treeLine | Show the line. Ref [Tree - showLine](/components/tree/#components-tree-demo-line) | boolean \| object | false | 3.0 |
@@ -69,6 +75,16 @@ Tree selection control.
 | value(v-model) | To set the current selected treeNode(s). | string\|string\[] | - |  |
 | variant | Variants of selector | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |
+
+### showSearch
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| autoClearSearchValue | If auto clear search input value when multiple select is selected/deselected | boolean | true | 4.3.0 |
+| filterTreeNode | Whether to filter treeNodes by input value | boolean \| function(inputValue: string, treeNode: TreeNode) | - | 4.3.0 |
+| searchValue | Work with `onSearch` to make search value controlled | string | - | 4.3.0 |
+| treeNodeFilterProp | Will be used for filtering if `filterTreeNode` returns true | string | `value` | 4.3.0 |
+| onSearch | A callback function, can be executed when the search input changes | function(value: string) | - | 4.3.0 |
 
 ### Events
 

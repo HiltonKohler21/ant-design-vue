@@ -1,6 +1,9 @@
+import type { Options } from 'scroll-into-view-if-needed';
 import type { VueNode } from '../_util/type';
 
-export type FormLabelAlign = 'left' | 'right';
+export type FormLabelAlign = 'left' | 'right' | 'start' | 'end';
+
+export type ScrollFocusOptions = Options & { focus?: boolean };
 
 export type InternalNamePath = (string | number)[];
 export type NamePath = string | number | InternalNamePath;
@@ -114,6 +117,9 @@ export interface RuleError {
 export interface ValidateOptions {
   triggerName?: string;
   validateMessages?: ValidateMessages;
+  validateOnly?: boolean;
+  recursive?: boolean;
+  dirty?: boolean;
 }
 
 export type InternalValidateFields = (

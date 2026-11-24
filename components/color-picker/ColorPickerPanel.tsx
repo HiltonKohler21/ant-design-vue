@@ -3,21 +3,37 @@ import type { PropType } from 'vue';
 import classNames from '../_util/classNames';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import Segmented from '../segmented';
+import type { VueNode } from '../_util/type';
 import { AggregationColor, generateColor, type HsbType } from './color';
 import GradientColorBar from './components/GradientColorBar';
+
+export type PresetColorValue =
+  | string
+  | AggregationColor
+  | { color: string | AggregationColor; percent: number }[];
+
+export interface PresetsItem {
+  label: VueNode;
+  colors: PresetColorValue[];
+  defaultOpen?: boolean;
+  key?: string | number;
+}
 
 const colorPickerPanelProps = () => ({
   prefixCls: String,
   class: String,
   value: { type: Object as PropType<AggregationColor>, required: true },
   onChange: Function as PropType<(color: AggregationColor) => void>,
+  disabled: { type: Boolean, default: false },
   disabledAlpha: { type: Boolean, default: false },
-  presets: { type: Array as PropType<{ label: string; colors: string[] }[]>, default: undefined },
+  presets: { type: Array as PropType<PresetsItem[]>, default: undefined },
   mode: { type: String as PropType<'single' | 'gradient'>, default: 'single' },
   allowMode: { type: Boolean, default: false },
   onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
   onChangeComplete: Function as PropType<(color: AggregationColor) => void>,
-  panelRender: Function as PropType<(panel: any) => any>,
+  panelRender: Function as PropType<
+    (panel: any, extra?: { components: { Picker: any; Presets: any } }) => any
+  >,
   format: { type: String as PropType<'hex' | 'rgb' | 'hsb'>, default: 'hex' },
   onFormatChange: Function as PropType<(format: 'hex' | 'rgb' | 'hsb') => void>,
   disabledFormat: { type: Boolean, default: false },
@@ -57,6 +73,7 @@ export default defineComponent({
     const hsv = computed(() => activeColor.value.toHsb());
 
     const emitSingleColor = (nextSingle: AggregationColor, complete = false) => {
+      if (props.disabled) return;
       let nextColor: AggregationColor;
       if (isGradientMode.value) {
         const stops = gradientColors.value;
@@ -82,6 +99,29 @@ export default defineComponent({
       }
     };
 
+    const handlePresetClick = (presetRaw: PresetColorValue) => {
+      if (props.disabled) return;
+      const presetColor = generateColor(presetRaw as any);
+      if (presetColor.isGradient()) {
+        if (props.allowMode || isGradientMode.value) {
+          if (!isGradientMode.value) {
+            props.onModeChange?.('gradient');
+          }
+          props.onChange?.(presetColor);
+          props.onChangeComplete?.(presetColor);
+        } else {
+          const first = presetColor.getColors()[0]?.color ?? presetColor;
+          emitSingleColor(new AggregationColor(first), true);
+        }
+      } else if (isGradientMode.value && props.allowMode) {
+        props.onModeChange?.('single');
+        props.onChange?.(presetColor);
+        props.onChangeComplete?.(presetColor);
+      } else {
+        emitSingleColor(presetColor, true);
+      }
+    };
+
     const onChangeColor = (next: HsbType) => {
       emitSingleColor(new AggregationColor(next));
     };
@@ -97,6 +137,7 @@ export default defineComponent({
       onChangeColor({ h: hsv.value.h, s: x, b: 1 - y, a: hsv.value.a ?? 1 });
     };
     const svDown = (e: MouseEvent) => {
+      if (props.disabled) return;
       dragging.value = 'sv';
       svUpdate(e);
       bindWindow();
@@ -112,6 +153,7 @@ export default defineComponent({
       onChangeColor({ h: x * 360, s: hsv.value.s, b: hsv.value.b, a: hsv.value.a ?? 1 });
     };
     const hueDown = (e: MouseEvent) => {
+      if (props.disabled) return;
       dragging.value = 'hue';
       hueUpdate(e);
       bindWindow();
@@ -128,6 +170,7 @@ export default defineComponent({
       onChangeColor({ h, s, b, a: Math.round(x * 100) / 100 });
     };
     const alphaDown = (e: MouseEvent) => {
+      if (props.disabled) return;
       dragging.value = 'alpha';
       alphaUpdate(e);
       bindWindow();
@@ -215,8 +258,8 @@ export default defineComponent({
       const isGradient = isGradientMode.value;
       const opaqueColor = new AggregationColor({ h, s, b, a: 1 }).toHexString();
 
-      const panelContent = (
-        <div class={classNames(panelPrefixCls.value, props.class, attrs.class)}>
+      const renderPickerSection = () => (
+        <>
           {/* mode 切换（仅在同时允许 single 与 gradient 时展示） */}
           {allowMode && (
             <Segmented
@@ -291,34 +334,61 @@ export default defineComponent({
             )}
             <input
               value={formatValue.value}
+              disabled={props.disabled}
               onInput={onFormatInput}
               onChange={() => {}}
               spellcheck={false}
             />
           </div>
-          {/* 预设色 */}
-          {presets?.map(preset => (
-            <div key={preset.label} class={`${panelPrefixCls.value}-presets`}>
-              <span class={`${panelPrefixCls.value}-presets-label`}>{preset.label}</span>
-              <div class={`${panelPrefixCls.value}-presets-colors`}>
-                {preset.colors.map(c => (
+        </>
+      );
+
+      const renderPresetsSection = () =>
+        presets?.map((preset, presetIdx) => (
+          <div
+            key={preset.key ?? String(preset.label ?? presetIdx)}
+            class={`${panelPrefixCls.value}-presets`}
+          >
+            <span class={`${panelPrefixCls.value}-presets-label`}>{preset.label}</span>
+            <div class={`${panelPrefixCls.value}-presets-colors`}>
+              {preset.colors.map((c, idx) => {
+                const presetColor = generateColor(c as any);
+                const cssBg = presetColor.toCssString();
+                const isActive = presetColor.isGradient()
+                  ? color.equals(presetColor)
+                  : curColor.equals(presetColor);
+                return (
                   <div
-                    key={c}
+                    key={`${cssBg}-${idx}`}
                     class={classNames(`${panelPrefixCls.value}-presets-color`, {
-                      active: curColor.toHexString().toLowerCase() === c.toLowerCase(),
+                      active: isActive,
                     })}
-                    style={{ background: c }}
-                    onClick={() => emitSingleColor(new AggregationColor(c), true)}
+                    style={{ background: cssBg }}
+                    onClick={() => handlePresetClick(c)}
                   />
-                ))}
-              </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
+        ));
+
+      const panelContent = (
+        <div class={classNames(panelPrefixCls.value, props.class, attrs.class)}>
+          {renderPickerSection()}
+          {renderPresetsSection()}
         </div>
       );
 
       if (props.panelRender) {
-        return props.panelRender(panelContent);
+        const PickerComp = () => (
+          <div class={`${panelPrefixCls.value}-picker`}>{renderPickerSection()}</div>
+        );
+        const PresetsComp = () => (
+          <div class={`${panelPrefixCls.value}-presets-wrapper`}>{renderPresetsSection()}</div>
+        );
+        return props.panelRender(panelContent, {
+          components: { Picker: PickerComp, Presets: PresetsComp },
+        });
       }
       return panelContent;
     };

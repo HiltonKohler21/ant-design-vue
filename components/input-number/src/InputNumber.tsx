@@ -5,13 +5,15 @@ import StepHandler from './StepHandler';
 import { getNumberPrecision, num2str, validateNumber } from './utils/numberUtil';
 import useCursor from './hooks/useCursor';
 import useFrame from './hooks/useFrame';
-import type { HTMLAttributes } from 'vue';
-import { watch, computed, shallowRef, defineComponent } from 'vue';
+import type { CSSProperties, HTMLAttributes, PropType } from 'vue';
+import { watch, computed, shallowRef, onBeforeUnmount, defineComponent } from 'vue';
 import type { ChangeEvent, KeyboardEventHandler } from '../../_util/EventInterface';
 import KeyCode from '../../_util/KeyCode';
 import classNames from '../../_util/classNames';
 import { booleanType, stringType, someType, functionType } from '../../_util/type';
 import type { CustomSlotsType } from '../../_util/type';
+import type { InputFocusOptions } from '../../vc-input/utils/commonUtils';
+import { triggerFocus } from '../../vc-input/utils/commonUtils';
 
 /**
  * We support `stringMode` which need handle correct type when user call in onChange
@@ -53,6 +55,7 @@ export const inputNumberProps = () => ({
   disabled: booleanType(),
   autofocus: booleanType(),
   keyboard: booleanType(true),
+  changeOnBlur: booleanType(true),
   changeOnWheel: booleanType(false),
 
   /** Parse display value to validate number */
@@ -84,13 +87,25 @@ export default defineComponent({
   props: {
     ...inputNumberProps(),
     lazy: Boolean,
+    mode: stringType<'input' | 'spinner'>('input'),
+    semanticClassNames: {
+      type: Object as PropType<Record<string, string>>,
+      default: undefined,
+    },
+    semanticStyles: {
+      type: Object as PropType<Record<string, CSSProperties>>,
+      default: undefined,
+    },
   },
   slots: Object as CustomSlotsType<{
     upHandler: any;
     downHandler: any;
+    prefix: any;
+    suffix: any;
     default: any;
   }>,
   setup(props, { attrs, slots, emit, expose }) {
+    const rootRef = shallowRef<HTMLDivElement>();
     const inputRef = shallowRef<HTMLInputElement>();
     const focus = shallowRef(false);
     const userTypingRef = shallowRef(false);
@@ -430,7 +445,9 @@ export default defineComponent({
 
     // >>> Focus & Blur
     const onBlur = (e: FocusEvent) => {
-      flushInputValue(false);
+      if (props.changeOnBlur !== false) {
+        flushInputValue(false);
+      }
       focus.value = false;
       userTypingRef.value = false;
       emit('blur', e);
@@ -509,12 +526,46 @@ export default defineComponent({
       { immediate: true, flush: 'post' },
     );
 
+    // ========================== Spinner Hold ==========================
+    const spinnerTimeoutRef = shallowRef<any>();
+    const onStopSpinnerStep = () => {
+      clearTimeout(spinnerTimeoutRef.value);
+    };
+    const onSpinnerMouseDown = (e: MouseEvent, up: boolean) => {
+      if (props.disabled || props.readonly) return;
+      if ((up && upDisabled.value) || (!up && downDisabled.value)) return;
+      e.preventDefault();
+      onInternalStep(up);
+      function loopStep() {
+        onInternalStep(up);
+        spinnerTimeoutRef.value = setTimeout(loopStep, 200);
+      }
+      spinnerTimeoutRef.value = setTimeout(loopStep, 600);
+    };
+    onBeforeUnmount(() => {
+      onStopSpinnerStep();
+    });
+
+    const clear = () => {
+      const emptyDecimal = getMiniDecimal('');
+      setUncontrolledDecimalValue(emptyDecimal);
+      inputValue.value = '';
+      props.onChange?.(null);
+    };
+
     expose({
-      focus: () => {
-        inputRef.value?.focus();
+      focus: (option?: InputFocusOptions) => {
+        triggerFocus(inputRef.value, option);
       },
       blur: () => {
         inputRef.value?.blur();
+      },
+      clear,
+      get input() {
+        return inputRef.value;
+      },
+      get nativeElement() {
+        return rootRef.value;
       },
     });
 
@@ -529,9 +580,13 @@ export default defineComponent({
         disabled,
         readonly,
         keyboard,
+        changeOnBlur,
         changeOnWheel,
         controls = true,
         autofocus,
+        mode = 'input',
+        semanticClassNames,
+        semanticStyles,
 
         stringMode,
 
@@ -550,17 +605,21 @@ export default defineComponent({
 
         ...inputProps
       } = { ...(attrs as HTMLAttributes), ...props };
-      const { upHandler, downHandler } = slots;
+      const { upHandler, downHandler, prefix: prefixSlot, suffix: suffixSlot } = slots;
       const inputClassName = `${prefixCls}-input`;
+      const isSpinner = mode === 'spinner';
       const eventProps = {} as any;
       if (lazy) {
         eventProps.onChange = onInternalInput;
       } else {
         eventProps.onInput = onInternalInput;
       }
+      const isUpDisabled = upDisabled.value || disabled || readonly;
+      const isDownDisabled = downDisabled.value || disabled || readonly;
       return (
         <div
-          class={classNames(prefixCls, className, {
+          ref={rootRef}
+          class={classNames(prefixCls, `${prefixCls}-mode-${mode}`, className, {
             [`${prefixCls}-focused`]: focus.value,
             [`${prefixCls}-disabled`]: disabled,
             [`${prefixCls}-readonly`]: readonly,
@@ -572,15 +631,45 @@ export default defineComponent({
           onKeydown={onKeyDown}
           onKeyup={onKeyUp}
         >
-          {controls && (
+          {!isSpinner && controls && (
             <StepHandler
               prefixCls={prefixCls}
               upDisabled={upDisabled.value}
               downDisabled={downDisabled.value}
               onStep={onInternalStep}
+              classNames={semanticClassNames}
+              styles={semanticStyles}
               v-slots={{ upNode: upHandler, downNode: downHandler }}
             />
           )}
+          {isSpinner && controls && (
+            <span
+              unselectable="on"
+              role="button"
+              aria-label="Decrease Value"
+              aria-disabled={isDownDisabled}
+              class={classNames(
+                `${prefixCls}-action`,
+                `${prefixCls}-action-down`,
+                `${prefixCls}-handler`,
+                `${prefixCls}-handler-down`,
+                {
+                  [`${prefixCls}-action-down-disabled`]: isDownDisabled,
+                  [`${prefixCls}-handler-down-disabled`]: isDownDisabled,
+                },
+                semanticClassNames?.action,
+              )}
+              style={semanticStyles?.action}
+              onMousedown={e => onSpinnerMouseDown(e, false)}
+              onMouseup={onStopSpinnerStep}
+              onMouseleave={onStopSpinnerStep}
+            >
+              {downHandler?.() || (
+                <span unselectable="on" class={`${prefixCls}-handler-down-inner`} />
+              )}
+            </span>
+          )}
+          {isSpinner && prefixSlot?.()}
           <div class={`${inputClassName}-wrap`}>
             <input
               autofocus={autofocus}
@@ -594,7 +683,8 @@ export default defineComponent({
               step={step}
               {...inputProps}
               ref={inputRef}
-              class={inputClassName}
+              class={classNames(inputClassName, semanticClassNames?.input)}
+              style={semanticStyles?.input}
               value={inputValue.value}
               disabled={disabled}
               readonly={readonly}
@@ -609,6 +699,32 @@ export default defineComponent({
               onBeforeinput={onBeforeInput}
             />
           </div>
+          {isSpinner && suffixSlot?.()}
+          {isSpinner && controls && (
+            <span
+              unselectable="on"
+              role="button"
+              aria-label="Increase Value"
+              aria-disabled={isUpDisabled}
+              class={classNames(
+                `${prefixCls}-action`,
+                `${prefixCls}-action-up`,
+                `${prefixCls}-handler`,
+                `${prefixCls}-handler-up`,
+                {
+                  [`${prefixCls}-action-up-disabled`]: isUpDisabled,
+                  [`${prefixCls}-handler-up-disabled`]: isUpDisabled,
+                },
+                semanticClassNames?.action,
+              )}
+              style={semanticStyles?.action}
+              onMousedown={e => onSpinnerMouseDown(e, true)}
+              onMouseup={onStopSpinnerStep}
+              onMouseleave={onStopSpinnerStep}
+            >
+              {upHandler?.() || <span unselectable="on" class={`${prefixCls}-handler-up-inner`} />}
+            </span>
+          )}
         </div>
       );
     };

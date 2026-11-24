@@ -1,6 +1,7 @@
 import type { App, VNode, ExtractPropTypes, CSSProperties, PropType } from 'vue';
 import { defineComponent, ref } from 'vue';
 import Select, { selectProps } from '../select';
+import genPurePanel from '../select/utils/purePanel';
 import type {
   SelectClassNamesType,
   SelectSemanticClassNames,
@@ -52,7 +53,10 @@ export const autoCompleteProps = () => ({
   /** 语义化 styles（支持对象与函数式），透传给 Select */
   styles: someType<SelectStylesType>([Object, Function]),
   prefixCls: String,
-  showSearch: { type: Boolean, default: undefined },
+  showSearch: {
+    type: [Boolean, Object] as PropType<boolean | Record<string, any>>,
+    default: undefined,
+  },
   transitionName: String,
   choiceTransitionName: { type: String, default: 'zoom' },
   autofocus: { type: Boolean, default: undefined },
@@ -214,6 +218,10 @@ const AutoComplete = defineComponent({
           : hasExplicitSuffix && mergedSuffix !== null
           ? true
           : undefined;
+      const hasShowSearchFilter =
+        props.showSearch &&
+        typeof props.showSearch === 'object' &&
+        (props.showSearch as Record<string, any>).filterOption !== undefined;
       const selectProps = omit(
         {
           ...props,
@@ -235,7 +243,9 @@ const AutoComplete = defineComponent({
           popupClassName: props.popupClassName || props.dropdownClassName,
           ref: selectRef,
         },
-        ['dataSource', 'loading', 'suffixIcon'],
+        hasShowSearchFilter
+          ? ['dataSource', 'loading', 'suffixIcon', 'filterOption']
+          : ['dataSource', 'loading', 'suffixIcon'],
       );
       return (
         <Select
@@ -249,14 +259,26 @@ const AutoComplete = defineComponent({
   },
 });
 
+// We don't care debug panel
+/* istanbul ignore next */
+const PurePanel = genPurePanel(AutoComplete, 'dropdownAlign', (props: any) =>
+  omit(props, ['visible']),
+);
+
 /* istanbul ignore next */
 export default Object.assign(AutoComplete, {
   Option,
   OptGroup,
+  _InternalPanelDoNotUseOrYouWillBeFired: PurePanel,
   install(app: App) {
     app.component(AutoComplete.name, AutoComplete);
     app.component(Option.displayName, Option);
     app.component(OptGroup.displayName, OptGroup);
     return app;
   },
-});
+}) as typeof AutoComplete & {
+  readonly Option: typeof Option;
+  readonly OptGroup: typeof OptGroup;
+  readonly _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
+  install(app: App): App;
+};

@@ -1,6 +1,15 @@
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import type { CSSProperties, PropType } from 'vue';
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRaw,
+  toRef,
+  watch,
+} from 'vue';
 import PickerPanel from '../../vc-picker/PickerPanel';
 import PickerTrigger from '../../vc-picker/PickerTrigger';
 import PresetPanel from '../../vc-picker/PresetPanel';
@@ -8,7 +17,6 @@ import usePresets from '../../vc-picker/hooks/usePresets';
 import { useProvidePanel } from '../../vc-picker/PanelContext';
 import type { ContextOperationRefProps } from '../../vc-picker/PanelContext';
 import type {
-  Components,
   CustomFormat,
   Locale,
   PanelMode,
@@ -36,6 +44,12 @@ import classNames from '../../_util/classNames';
 import KeyCode from '../../_util/KeyCode';
 import type { VueNode } from '../../_util/type';
 import type { AlignType } from '../../vc-align/interface';
+import type {
+  ResolvedDatePickerSemanticClassNames,
+  ResolvedDatePickerSemanticStyles,
+} from '../hooks/useMergedPickerSemantic';
+import { applyPickerPopupSemantics, hasPopupSubSemantics } from '../hooks/useMergedPickerSemantic';
+import type { PickerComponents } from './interface';
 
 function isSamePickerUnit<DateType>(
   picker: PickerMode,
@@ -81,6 +95,7 @@ export default defineComponent({
     showTime: [Boolean, Object] as PropType<boolean | Record<string, any>>,
     showNow: { type: Boolean, default: undefined },
     showToday: { type: Boolean, default: true },
+    showWeek: { type: Boolean, default: undefined },
     showHour: { type: Boolean, default: undefined },
     showMinute: { type: Boolean, default: undefined },
     showSecond: { type: Boolean, default: undefined },
@@ -89,6 +104,7 @@ export default defineComponent({
     minuteStep: Number,
     secondStep: Number,
     hideDisabledOptions: { type: Boolean, default: undefined },
+    changeOnScroll: { type: Boolean, default: undefined },
     picker: { type: String as PropType<PickerMode>, default: 'date' },
     mode: String as PropType<PanelMode>,
     format: [String, Function, Array] as PropType<
@@ -110,6 +126,7 @@ export default defineComponent({
     dateRender: Function as PropType<any>,
     monthCellRender: Function as PropType<any>,
     presets: Array as PropType<PresetDate<any>[]>,
+    prefix: null as unknown as PropType<VueNode>,
     suffixIcon: null as unknown as PropType<VueNode>,
     clearIcon: null as unknown as PropType<VueNode>,
     removeIcon: null as unknown as PropType<VueNode>,
@@ -117,7 +134,9 @@ export default defineComponent({
     nextIcon: null as unknown as PropType<VueNode>,
     superPrevIcon: null as unknown as PropType<VueNode>,
     superNextIcon: null as unknown as PropType<VueNode>,
-    components: Object as PropType<Components>,
+    components: Object as PropType<PickerComponents>,
+    semanticClassNames: Object as PropType<ResolvedDatePickerSemanticClassNames>,
+    semanticStyles: Object as PropType<ResolvedDatePickerSemanticStyles>,
     direction: String as PropType<'ltr' | 'rtl'>,
     autocomplete: { type: String, default: 'off' },
     multiple: { type: Boolean, default: false },
@@ -125,8 +144,10 @@ export default defineComponent({
     maxTagPlaceholder: [Function, String, Object] as PropType<
       VueNode | ((omittedValues: any[]) => VueNode)
     >,
+    tagRender: Function as PropType<(props: any) => VueNode>,
     needConfirm: { type: Boolean, default: undefined },
     onChange: Function as PropType<(value: any, dateString: any) => void>,
+    onClear: Function as PropType<() => void>,
     onOpenChange: Function as PropType<(open: boolean) => void>,
     onPanelChange: Function as PropType<(date: any, mode: PanelMode) => void>,
     onFocus: Function as PropType<(e: FocusEvent) => void>,
@@ -145,6 +166,7 @@ export default defineComponent({
     const panelDivRef = ref<HTMLDivElement | null>(null);
     const inputRef = ref<HTMLInputElement | null>(null);
     const focused = ref(false);
+    const hoveredText = ref('');
     const operationRef = ref<ContextOperationRefProps | null>(null);
 
     const picker = computed<PickerMode>(() => props.picker ?? 'date');
@@ -224,6 +246,7 @@ export default defineComponent({
       onChange: newOpen => {
         props.onOpenChange?.(newOpen);
         if (!newOpen) {
+          hoveredText.value = '';
           operationRef.value?.onClose?.();
         }
       },
@@ -370,6 +393,104 @@ export default defineComponent({
       }
     };
 
+    // ========================= Semantic Popup Sync ===================
+    let panelObserver: MutationObserver | null = null;
+    const syncPopupSemantics = () => {
+      const el = panelDivRef.value;
+      const sc = props.semanticClassNames;
+      const ss = props.semanticStyles;
+      if (!el || !sc || !ss) return;
+      if (hasPopupSubSemantics(sc, ss)) {
+        applyPickerPopupSemantics(el, props.prefixCls, sc, ss);
+      }
+    };
+
+    const cleanupObserver = () => {
+      if (panelObserver) {
+        panelObserver.disconnect();
+        panelObserver = null;
+      }
+    };
+
+    watch(
+      [panelDivRef, () => props.semanticClassNames, () => props.semanticStyles, mergedOpen],
+      () => {
+        syncPopupSemantics();
+        cleanupObserver();
+        const el = panelDivRef.value;
+        const sc = props.semanticClassNames;
+        const ss = props.semanticStyles;
+        if (
+          el &&
+          mergedOpen.value &&
+          sc &&
+          ss &&
+          hasPopupSubSemantics(sc, ss) &&
+          typeof MutationObserver !== 'undefined'
+        ) {
+          panelObserver = new MutationObserver(() => {
+            applyPickerPopupSemantics(el, props.prefixCls, sc, ss);
+          });
+          panelObserver.observe(el, { childList: true, subtree: true });
+        }
+      },
+      { flush: 'post', deep: true },
+    );
+
+    // ========================= changeOnScroll ========================
+    const scrollTimers = new Map<HTMLElement, ReturnType<typeof setTimeout>>();
+    const scrollCleanupFns: (() => void)[] = [];
+
+    const cleanupScrollListeners = () => {
+      scrollCleanupFns.forEach(fn => fn());
+      scrollCleanupFns.length = 0;
+      scrollTimers.forEach(timer => clearTimeout(timer));
+      scrollTimers.clear();
+    };
+
+    const attachChangeOnScroll = () => {
+      cleanupScrollListeners();
+      if (!props.changeOnScroll || picker.value !== 'time' || !mergedOpen.value) return;
+      const panelEl = panelDivRef.value;
+      if (!panelEl) return;
+      const columns = panelEl.querySelectorAll<HTMLElement>(
+        `.${props.prefixCls}-time-panel-column`,
+      );
+      columns.forEach(col => {
+        const onScroll = () => {
+          const prevTimer = scrollTimers.get(col);
+          if (prevTimer) clearTimeout(prevTimer);
+          const timer = setTimeout(() => {
+            const items = Array.from(
+              col.querySelectorAll<HTMLElement>(
+                `li.${props.prefixCls}-time-panel-cell:not(.${props.prefixCls}-time-panel-cell-disabled)`,
+              ),
+            );
+            if (!items.length) return;
+            const firstHeight = items[0].offsetHeight || 28;
+            const targetIdx = Math.min(
+              items.length - 1,
+              Math.max(0, Math.round(col.scrollTop / firstHeight)),
+            );
+            const targetLi = items[targetIdx];
+            if (
+              targetLi &&
+              !targetLi.classList.contains(`${props.prefixCls}-time-panel-cell-selected`)
+            ) {
+              targetLi.click();
+            }
+          }, 120);
+          scrollTimers.set(col, timer);
+        };
+        col.addEventListener('scroll', onScroll, { passive: true });
+        scrollCleanupFns.push(() => col.removeEventListener('scroll', onScroll));
+      });
+    };
+
+    watch([panelDivRef, mergedOpen, () => props.changeOnScroll], attachChangeOnScroll, {
+      flush: 'post',
+    });
+
     // ========================= Click Outside =========================
     const onGlobalMouseDown = (e: MouseEvent) => {
       if (!mergedOpen.value) return;
@@ -387,6 +508,8 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      cleanupObserver();
+      cleanupScrollListeners();
       if (typeof document !== 'undefined') {
         document.removeEventListener('mousedown', onGlobalMouseDown);
       }
@@ -452,6 +575,7 @@ export default defineComponent({
         renderExtraFooter,
         dateRender,
         monthCellRender,
+        prefix,
         suffixIcon,
         clearIcon,
         removeIcon,
@@ -460,13 +584,17 @@ export default defineComponent({
         superPrevIcon,
         superNextIcon,
         components,
+        semanticClassNames,
+        semanticStyles,
         direction,
         autocomplete,
         showTime,
         showNow,
         showToday,
+        showWeek,
         maxTagCount,
         maxTagPlaceholder,
+        tagRender,
         onMousedown,
         onMouseup,
         onMouseenter,
@@ -476,6 +604,8 @@ export default defineComponent({
       } = props;
 
       const pre = prefixCls;
+      const sc = semanticClassNames || ({ popup: {} } as ResolvedDatePickerSemanticClassNames);
+      const ss = semanticStyles || ({ popup: {} } as ResolvedDatePickerSemanticStyles);
 
       // ================== Multiple cell highlight ==================
       const wrappedDateRender = isMultiple.value
@@ -532,7 +662,9 @@ export default defineComponent({
 
       // ======================= Footer ==============================
       const extraFooter = getExtraFooter(pre, panelMode.value, renderExtraFooter);
-      const ButtonComp = ((components as Components | undefined)?.button || 'button') as any;
+      const compMap = components as PickerComponents | undefined;
+      const OkButtonComp = toRaw(compMap?.okButton || compMap?.button || 'button') as any;
+      const NowButtonComp = toRaw(compMap?.nowButton || 'a') as any;
 
       const showNowBtn =
         !isMultiple.value && (picker.value === 'time' || !!showTime) && showNow !== false;
@@ -547,14 +679,14 @@ export default defineComponent({
           <ul class={`${pre}-ranges`}>
             {showNowBtn && (
               <li class={`${pre}-now`}>
-                <a class={`${pre}-now-btn`} onClick={handleNow}>
+                <NowButtonComp class={`${pre}-now-btn`} onClick={handleNow}>
                   {locale.now}
-                </a>
+                </NowButtonComp>
               </li>
             )}
             {effectiveNeedConfirm.value && (
               <li class={`${pre}-ok`}>
-                <ButtonComp
+                <OkButtonComp
                   disabled={okDisabled}
                   onClick={(e: MouseEvent) => {
                     e.stopPropagation();
@@ -562,7 +694,7 @@ export default defineComponent({
                   }}
                 >
                   {locale.ok}
-                </ButtonComp>
+                </OkButtonComp>
               </li>
             )}
           </ul>
@@ -576,13 +708,14 @@ export default defineComponent({
         showToday !== false &&
         panelMode.value === 'date' &&
         picker.value === 'date' &&
-        !showTime
+        !showTime &&
+        !compMap?.date
       ) {
         const now = generateConfig.getNow();
         const todayCls = `${pre}-today-btn`;
         const todayDisabled = !!disabledDate?.(now);
         todayNode = (
-          <a
+          <NowButtonComp
             class={classNames(todayCls, todayDisabled && `${todayCls}-disabled`)}
             aria-disabled={todayDisabled}
             onClick={() => {
@@ -593,13 +726,16 @@ export default defineComponent({
             }}
           >
             {locale.today}
-          </a>
+          </NowButtonComp>
         );
       }
 
       const panelValue = isMultiple.value
         ? activeMultipleValues.value[activeMultipleValues.value.length - 1] ?? null
         : activeSingleValue.value;
+
+      const rawCustomPanel = compMap?.[panelMode.value as keyof PickerComponents];
+      const CustomPanelComp = rawCustomPanel ? (toRaw(rawCustomPanel) as any) : undefined;
 
       const panelProps: Record<string, any> = {
         prefixCls: pre,
@@ -614,6 +750,7 @@ export default defineComponent({
         showTime,
         showNow: false,
         showToday: false,
+        showWeek,
         showHour: props.showHour,
         showMinute: props.showMinute,
         showSecond: props.showSecond,
@@ -639,7 +776,7 @@ export default defineComponent({
 
       const footerNode =
         extraFooter || rangesNode || todayNode ? (
-          <div class={`${pre}-footer`}>
+          <div class={classNames(`${pre}-footer`, sc.popup?.footer)} style={ss.popup?.footer}>
             {extraFooter}
             {rangesNode}
             {todayNode}
@@ -662,7 +799,22 @@ export default defineComponent({
             }}
           />
           <div class={`${pre}-panel-wrapper`}>
-            <PickerPanel {...(panelProps as any)} />
+            {CustomPanelComp ? (
+              <CustomPanelComp
+                value={panelValue}
+                locale={locale}
+                generateConfig={generateConfig}
+                onSelect={(nextDate: any) => {
+                  hoveredText.value = '';
+                  onContextSelect(nextDate, 'mouse');
+                }}
+                onHover={(hoverDate: any) => {
+                  hoveredText.value = hoverDate ? formatDate(hoverDate) : '';
+                }}
+              />
+            ) : (
+              <PickerPanel {...(panelProps as any)} />
+            )}
             {footerNode}
           </div>
         </div>
@@ -674,7 +826,8 @@ export default defineComponent({
 
       const panel = (
         <div
-          class={`${pre}-panel-container`}
+          class={classNames(`${pre}-panel-container`, sc.popup?.container)}
+          style={ss.popup?.container}
           ref={panelDivRef}
           onMousedown={e => {
             e.preventDefault();
@@ -685,7 +838,18 @@ export default defineComponent({
       );
 
       // ======================= Selector / Input ====================
-      const suffixNode = suffixIcon ? <span class={`${pre}-suffix`}>{suffixIcon}</span> : null;
+      const hasPrefix = prefix !== undefined && prefix !== null;
+      const prefixNode = hasPrefix ? (
+        <span class={classNames(`${pre}-prefix`, sc.prefix)} style={ss.prefix}>
+          {prefix}
+        </span>
+      ) : null;
+
+      const suffixNode = suffixIcon ? (
+        <span class={classNames(`${pre}-suffix`, sc.suffix)} style={ss.suffix}>
+          {suffixIcon}
+        </span>
+      ) : null;
 
       const hasValue = isMultiple.value
         ? mergedMultipleValues.value.length > 0
@@ -706,6 +870,7 @@ export default defineComponent({
               } else {
                 commitSingle(null);
               }
+              props.onClear?.();
               triggerOpen(false);
             }}
             onClick={e => {
@@ -727,27 +892,45 @@ export default defineComponent({
           }))
         : [];
 
-      const renderMultipleTag = (item: { key: string; label: string; index: number }) => (
-        <span class={`${pre}-selection-item`} title={item.label}>
-          <span class={`${pre}-selection-item-content`}>{item.label}</span>
-          {!disabled && (
-            <span
-              class={`${pre}-selection-item-remove`}
-              aria-label="close"
-              onMousedown={e => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              onClick={e => {
-                e.stopPropagation();
-                removeMultipleAt(item.index);
-              }}
-            >
-              {removeIcon || <CloseOutlined />}
-            </span>
-          )}
-        </span>
-      );
+      const renderMultipleTag = (item: {
+        key: string;
+        label: string;
+        value: any;
+        index: number;
+      }) => {
+        const onClose = (e?: MouseEvent) => {
+          e?.stopPropagation();
+          removeMultipleAt(item.index);
+        };
+        if (tagRender) {
+          return tagRender({
+            label: item.label,
+            value: item.value,
+            closable: !disabled,
+            onClose,
+          });
+        }
+        return (
+          <span class={`${pre}-selection-item`} title={item.label}>
+            <span class={`${pre}-selection-item-content`}>{item.label}</span>
+            {!disabled && (
+              <span
+                class={`${pre}-selection-item-remove`}
+                aria-label="close"
+                onMousedown={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onClick={e => {
+                  onClose(e);
+                }}
+              >
+                {removeIcon || <CloseOutlined />}
+              </span>
+            )}
+          </span>
+        );
+      };
 
       const renderMultipleRest = (omittedItems: any[]) => {
         const content =
@@ -761,7 +944,8 @@ export default defineComponent({
         );
       };
 
-      const singleDisplayText = activeSingleValue.value ? formatDate(activeSingleValue.value) : '';
+      const singleDisplayText =
+        hoveredText.value || (activeSingleValue.value ? formatDate(activeSingleValue.value) : '');
 
       const selectorContent = isMultiple.value ? (
         <div class={`${pre}-selector`}>
@@ -780,7 +964,8 @@ export default defineComponent({
           <input
             id={id}
             ref={inputRef}
-            class={`${pre}-multiple-input`}
+            class={classNames(`${pre}-multiple-input`, sc.input)}
+            style={ss.input}
             readonly
             disabled={disabled}
             autofocus={autofocus}
@@ -798,10 +983,16 @@ export default defineComponent({
           />
         </div>
       ) : (
-        <div class={`${pre}-input`}>
+        <div
+          class={classNames(`${pre}-input`, {
+            [`${pre}-input-placeholder`]: !!hoveredText.value,
+          })}
+        >
           <input
             id={id}
             ref={inputRef}
+            class={sc.input}
+            style={ss.input}
             tabindex={tabindex}
             disabled={disabled}
             readonly={inputReadOnly || true}
@@ -855,6 +1046,7 @@ export default defineComponent({
             }
           }}
         >
+          {prefixNode}
           {selectorContent}
           {suffixNode}
           {clearNode}

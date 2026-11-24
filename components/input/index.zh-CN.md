@@ -22,10 +22,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sBqqTatJ-AkAAA
 | --- | --- | --- | --- | --- |
 | addonAfter | 带标签的 input，设置后置标签 | string \| slot | - |  |
 | addonBefore | 带标签的 input，设置前置标签 | string \| slot | - |  |
-| allowClear | 可以点击清除图标删除内容 | boolean | - |  |
+| allowClear | 可以点击清除图标删除内容 | boolean \| [AllowClearConfig](#allowclearconfig) | - | 4.3.0 |
 | ~~bordered~~ | 是否有边框（已废弃，请使用 `variant`） | boolean | `true` | 3.0 |
 | classNames | 语义化结构 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; input?: string; prefix?: string; suffix?: string; count?: string } \| ((info: { props: InputProps }) => ...)` | - | 4.3.0 |
 | clearIcon | 自定义清除图标（`allowClear` 为 `true` 时生效） | slot | `<CloseCircleFilled />` | 3.3.0 |
+| count | 字符计数配置 | [CountConfig](#countconfig) | - | 4.3.0 |
 | defaultValue | 输入框默认内容 | string | - |  |
 | disabled | 是否禁用状态，默认为 `false` | boolean | `false` |  |
 | id | 输入框的 id | string | - |  |
@@ -43,10 +44,37 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sBqqTatJ-AkAAA
 
 ### Input 事件
 
-| 事件名称   | 说明                   | 回调参数    |
-| ---------- | ---------------------- | ----------- |
-| change     | 输入框内容变化时的回调 | function(e) |
-| pressEnter | 按下回车的回调         | function(e) |
+| 事件名称   | 说明                   | 回调参数    | 版本  |
+| ---------- | ---------------------- | ----------- | ----- |
+| change     | 输入框内容变化时的回调 | function(e) |       |
+| clear      | 按下清除按钮的回调     | () => void  | 4.3.0 |
+| pressEnter | 按下回车的回调         | function(e) |       |
+
+### Input 方法
+
+| 名称 | 说明 | 参数 | 版本 |
+| --- | --- | --- | --- |
+| blur() | 取消焦点 | - |  |
+| focus() | 获取焦点 | (option?: { preventScroll?: boolean, cursor?: 'start' \| 'end' \| 'all' }) | 4.3.0 |
+| nativeElement | 获取原生 DOM 节点 | - | 4.3.0 |
+
+#### AllowClearConfig
+
+| 参数      | 说明                                              | 类型    | 默认值  | 版本  |
+| --------- | ------------------------------------------------- | ------- | ------- | ----- |
+| clearIcon | 自定义清除图标                                    | VueNode | -       | 4.3.0 |
+| disabled  | `true` 时等同于 `allowClear={false}`              | boolean | `false` | 4.3.0 |
+| label     | 清除按钮的无障碍名称                              | string  | -       | 4.3.0 |
+| tabIndex  | 清除按钮的 Tab 键顺序。`-1` 表示不参与 Tab 键导航 | number  | `0`     | 4.3.0 |
+
+#### CountConfig
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| exceedFormatter | 当字符数超出 `count.max` 时的自定义裁剪逻辑，不配置时不进行裁剪 | (value: string, config: { max: number }) => string | - | 4.3.0 |
+| max | 最大字符数，不同于原生 `maxlength`，超出后标红但不会截断 | number | - | 4.3.0 |
+| show | 同 `showCount` | boolean \| ((args: { value: string; count: number; maxLength?: number }) => VueNode) | `false` | 4.3.0 |
+| strategy | 自定义字符计数策略 | (value: string) => number | - | 4.3.0 |
 
 > 如果 `Input` 在 `Form.Item` 内，并且 `Form.Item` 设置了 `id` 和 `options` 属性，则 `value`、`defaultValue` 和 `id` 属性会被自动设置。
 

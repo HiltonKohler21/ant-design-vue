@@ -164,6 +164,20 @@ const genColorPickerStyle: GenerateStyle<ColorPickerToken, any> = token => {
       },
     },
 
+    // PurePanel inline styling
+    [`${componentCls}-pure`]: {
+      display: 'inline-block',
+      maxWidth: '100%',
+      borderRadius: token.borderRadiusLG,
+      boxShadow: token.boxShadowSecondary,
+      background: token.colorBgElevated,
+      overflow: 'hidden',
+
+      [`${componentCls}-pure-container`]: {
+        borderRadius: 'inherit',
+      },
+    },
+
     // Panel styling
     [panelCls]: {
       width: token.colorPickerWidth,

@@ -1,4 +1,5 @@
 import isMobile from '../../vc-util/isMobile';
+import type { CSSProperties, PropType } from 'vue';
 import { onBeforeUnmount, ref, defineComponent } from 'vue';
 import classNames from '../../_util/classNames';
 import { functionType } from '../../_util/type';
@@ -23,6 +24,14 @@ export default defineComponent({
     upDisabled: Boolean,
     downDisabled: Boolean,
     onStep: functionType<(up: boolean) => void>(),
+    classNames: {
+      type: Object as PropType<{ actions?: string; action?: string }>,
+      default: undefined,
+    },
+    styles: {
+      type: Object as PropType<{ actions?: CSSProperties; action?: CSSProperties }>,
+      default: undefined,
+    },
   },
   slots: Object as CustomSlotsType<{
     upNode?: any;
@@ -61,15 +70,31 @@ export default defineComponent({
       if (isMobile()) {
         return null;
       }
-      const { prefixCls, upDisabled, downDisabled } = props;
+      const { prefixCls, upDisabled, downDisabled, classNames: semanticCls, styles } = props;
       const handlerClassName = `${prefixCls}-handler`;
 
-      const upClassName = classNames(handlerClassName, `${handlerClassName}-up`, {
-        [`${handlerClassName}-up-disabled`]: upDisabled,
-      });
-      const downClassName = classNames(handlerClassName, `${handlerClassName}-down`, {
-        [`${handlerClassName}-down-disabled`]: downDisabled,
-      });
+      const upClassName = classNames(
+        handlerClassName,
+        `${handlerClassName}-up`,
+        `${prefixCls}-action`,
+        `${prefixCls}-action-up`,
+        {
+          [`${handlerClassName}-up-disabled`]: upDisabled,
+          [`${prefixCls}-action-up-disabled`]: upDisabled,
+        },
+        semanticCls?.action,
+      );
+      const downClassName = classNames(
+        handlerClassName,
+        `${handlerClassName}-down`,
+        `${prefixCls}-action`,
+        `${prefixCls}-action-down`,
+        {
+          [`${handlerClassName}-down-disabled`]: downDisabled,
+          [`${prefixCls}-action-down-disabled`]: downDisabled,
+        },
+        semanticCls?.action,
+      );
 
       const sharedHandlerProps = {
         unselectable: 'on' as const,
@@ -79,7 +104,14 @@ export default defineComponent({
       };
       const { upNode, downNode } = slots;
       return (
-        <div class={`${handlerClassName}-wrap`}>
+        <div
+          class={classNames(
+            `${handlerClassName}-wrap`,
+            `${prefixCls}-actions`,
+            semanticCls?.actions,
+          )}
+          style={styles?.actions}
+        >
           <span
             {...sharedHandlerProps}
             onMousedown={e => {
@@ -88,6 +120,7 @@ export default defineComponent({
             aria-label="Increase Value"
             aria-disabled={upDisabled}
             class={upClassName}
+            style={styles?.action}
           >
             {upNode?.() || <span unselectable="on" class={`${prefixCls}-handler-up-inner`} />}
           </span>
@@ -99,6 +132,7 @@ export default defineComponent({
             aria-label="Decrease Value"
             aria-disabled={downDisabled}
             class={downClassName}
+            style={styles?.action}
           >
             {downNode?.() || <span unselectable="on" class={`${prefixCls}-handler-down-inner`} />}
           </span>

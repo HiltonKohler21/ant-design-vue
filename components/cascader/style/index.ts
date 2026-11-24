@@ -90,6 +90,7 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
               '&-item': {
                 ...textEllipsis,
                 display: 'flex',
+                maxWidth: 400,
                 flexWrap: 'nowrap',
                 alignItems: 'center',
                 padding: `${unit(itemPaddingVertical)} ${unit(token.paddingSM)}`,
@@ -123,6 +124,8 @@ const genBaseStyle: GenerateStyle<CascaderToken> = token => {
 
                 '&-content': {
                   flex: 'auto',
+                  minWidth: 0,
+                  ...textEllipsis,
                 },
 
                 [iconCls]: {

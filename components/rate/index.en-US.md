@@ -20,7 +20,7 @@ Rate component.
 | allowClear | whether to allow clear when click again | boolean | true |  |
 | allowHalf | whether to allow semi selection | boolean | false |  |
 | autofocus | get focus when component mounted | boolean | false |  |
-| character | custom character of rate | string \| slot | `<StarOutlined />` |  |
+| character | custom character of rate | string \| slot \| ((props: { index?: number; value?: number; count?: number; disabled?: boolean }) => VueNode) | `<StarOutlined />` |  |
 | count | star count | number | 5 |  |
 | disabled | read only, unable to interact | boolean | false |  |
 | rootClassName | Root class name | string | - | 4.3.0 |

@@ -7,6 +7,7 @@
     <disabled />
     <clear />
     <character />
+    <character-function />
     <component-token />
   </demo-sort>
 </template>
@@ -18,6 +19,7 @@ import Text from './text.vue';
 import Disabled from './disabled.vue';
 import Clear from './clear.vue';
 import Character from './character.vue';
+import CharacterFunction from './character-function.vue';
 import Size from './size.vue';
 import ComponentToken from './component-token.vue';
 
@@ -35,6 +37,7 @@ export default defineComponent({
     Disabled,
     Clear,
     Character,
+    CharacterFunction,
     Size,
     ComponentToken,
   },

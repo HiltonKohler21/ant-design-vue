@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 8
+order: 21
 title:
   zh-CN: 自定义表单控件
   en-US: Customized Form Controls
@@ -14,12 +14,12 @@ title:
 
 Customized or third-party form controls can be used in Form, too.
 
-Controls must injects `useInjectFormItemContext` and calls the corresponding method.
+Controls must inject `useInjectFormItemContext` and call the corresponding method.
 </docs>
 <template>
   <a-form name="customized_form_controls" layout="inline" :model="formState" @finish="onFinish">
     <a-form-item name="price" label="Price" :rules="[{ validator: checkPrice }]">
-      <price-input v-model:value="formState.price" />
+      <PriceInput v-model:value="formState.price" />
     </a-form-item>
     <a-form-item>
       <a-button type="primary" html-type="submit">Submit</a-button>
@@ -27,20 +27,72 @@ Controls must injects `useInjectFormItemContext` and calls the corresponding met
   </a-form>
 </template>
 <script lang="ts" setup>
-import { reactive } from 'vue';
-// sourceCode https://github.com/vueComponent/ant-design-vue/blob/cb3c002e17f0f4f5b3e8d01846069da0e2645aff/components/form/demo/price-input.vue
-import PriceInput from './price-input.vue';
-import type { Currency } from './price-input.vue';
+import { defineComponent, h, reactive } from 'vue';
+import type { PropType } from 'vue';
+import { Form, Input, Select } from 'ant-design-vue';
 
-const formState = reactive({
-  price: {
-    number: 0,
-    currency: 'rmb' as Currency,
+type Currency = 'rmb' | 'dollar';
+
+interface PriceValue {
+  number: number;
+  currency: Currency;
+}
+
+const PriceInput = defineComponent({
+  name: 'PriceInput',
+  props: {
+    value: {
+      type: Object as PropType<PriceValue>,
+      required: true,
+    },
+  },
+  emits: ['update:value'],
+  setup(props, { emit }) {
+    const formItemContext = Form.useInjectFormItemContext();
+    const triggerChange = (changedValue: { number?: number; currency?: Currency }) => {
+      emit('update:value', { ...props.value, ...changedValue });
+      formItemContext.onFieldChange();
+    };
+    const onNumberChange = (e: Event) => {
+      const newNumber = parseInt((e.target as HTMLInputElement).value || '0', 10);
+      triggerChange({ number: Number.isNaN(newNumber) ? 0 : newNumber });
+    };
+    const onCurrencyChange = (newCurrency: any) => {
+      triggerChange({ currency: newCurrency as Currency });
+    };
+
+    return () =>
+      h('span', { style: { display: 'inline-flex', alignItems: 'center', flexWrap: 'wrap' } }, [
+        h(Input, {
+          type: 'text',
+          value: String(props.value.number),
+          style: { width: '100px' },
+          onChange: onNumberChange,
+        }),
+        h(Select, {
+          value: props.value.currency,
+          style: { width: '80px', margin: '0 8px' },
+          options: [
+            { value: 'rmb', label: 'RMB' },
+            { value: 'dollar', label: 'Dollar' },
+          ],
+          onChange: onCurrencyChange,
+        }),
+      ]);
   },
 });
+
+const formState = reactive<{ price: PriceValue }>({
+  price: {
+    number: 0,
+    currency: 'rmb',
+  },
+});
+
 const onFinish = (values: any) => {
   console.log('Received values from form: ', values);
 };
+
 const checkPrice = (_: any, value: { number: number }) => {
   if (value.number > 0) {
     return Promise.resolve();

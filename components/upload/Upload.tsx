@@ -1,7 +1,15 @@
 import type { UploadProps as RcUploadProps } from '../vc-upload';
 import VcUpload from '../vc-upload';
 import UploadList from './UploadList';
-import type { UploadFile, UploadChangeParam, ShowUploadListInterface, FileType } from './interface';
+import type {
+  UploadFile,
+  UploadChangeParam,
+  ShowUploadListInterface,
+  FileType,
+  UploadProps,
+  UploadSemanticClassNames,
+  UploadSemanticStyles,
+} from './interface';
 import { uploadProps } from './interface';
 import { file2Obj, getFileItem, removeFileItem, updateFileList } from './utils';
 import { useLocaleReceiver } from '../locale-provider/LocaleReceiver';
@@ -10,11 +18,14 @@ import type { CSSProperties } from 'vue';
 import { computed, defineComponent, onMounted, ref, toRef } from 'vue';
 import { flattenChildren, initDefaultProps } from '../_util/props-util';
 import useMergedState from '../_util/hooks/useMergedState';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import devWarning from '../vc-util/devWarning';
-import useConfigInject from '../config-provider/hooks/useConfigInject';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import type { VueNode } from '../_util/type';
 import classNames from '../_util/classNames';
 import { useInjectFormItemContext } from '../form';
+import defaultRequest from '../vc-upload/request';
+import getUid from '../vc-upload/uid';
 
 // CSSINJS
 import useStyle from './style';
@@ -38,8 +49,14 @@ export default defineComponent({
   }),
   setup(props, { slots, attrs, expose }) {
     const formItemContext = useInjectFormItemContext();
-    const { configProvider, prefixCls, direction, disabled } = useConfigInject('upload', props);
-    const uploadConfig = computed(() => (configProvider as any).upload?.value);
+    const { prefixCls, direction, disabled } = useConfigInject('upload', props);
+    const {
+      componentConfig: uploadConfig,
+      className: contextClassName,
+      style: contextStyle,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('upload');
 
     // style
     const [wrapSSR, hashId] = useStyle(prefixCls);
@@ -286,6 +303,70 @@ export default defineComponent({
         props.onDrop?.(e);
       }
     };
+
+    const onFilePaste = async (e: ClipboardEvent) => {
+      if (!props.pastable || mergedDisabled.value) return;
+      const clipboardFiles: File[] = [];
+      if (e.clipboardData?.files?.length) {
+        clipboardFiles.push(...Array.from(e.clipboardData.files));
+      } else if (e.clipboardData?.items?.length) {
+        Array.from(e.clipboardData.items).forEach(item => {
+          if (item.kind === 'file') {
+            const f = item.getAsFile();
+            if (f) clipboardFiles.push(f);
+          }
+        });
+      }
+      if (!clipboardFiles.length) return;
+      const selectedFiles = props.multiple ? clipboardFiles : clipboardFiles.slice(0, 1);
+      const rcFiles = selectedFiles.map(f => {
+        const rcFile = f as FileType;
+        rcFile.uid = getUid();
+        return rcFile;
+      });
+      const processed = await Promise.all(
+        rcFiles.map(async origin => {
+          let parsed: any = origin;
+          try {
+            const res = await mergedBeforeUpload(origin, rcFiles);
+            if (res === false) {
+              return { file: origin, parsedFile: null as FileType | null };
+            }
+            if (res) parsed = res;
+          } catch {
+            return { file: origin, parsedFile: null as FileType | null };
+          }
+          const parsedFile = (
+            parsed instanceof File ? parsed : new File([parsed], origin.name, { type: origin.type })
+          ) as FileType;
+          parsedFile.uid = origin.uid;
+          return { file: origin, parsedFile };
+        }),
+      );
+      onBatchStart(processed as any);
+      const requestFn =
+        props.customRequest || (uploadConfig.value as any)?.customRequest || defaultRequest;
+      for (const item of processed) {
+        if (!item.parsedFile) continue;
+        const resolvedAction =
+          typeof props.action === 'function' ? await props.action(item.parsedFile) : props.action;
+        const resolvedData =
+          typeof props.data === 'function' ? await props.data(item.parsedFile as any) : props.data;
+        requestFn({
+          action: resolvedAction,
+          filename: props.name || 'file',
+          data: resolvedData,
+          file: item.parsedFile,
+          headers: props.headers,
+          withCredentials: props.withCredentials,
+          method: props.method || 'post',
+          onProgress: (ev: any) => onProgress(ev, item.parsedFile!),
+          onSuccess: (ret: any, xhr: any) => onSuccess(ret, item.parsedFile!, xhr),
+          onError: (err: any, ret: any) => onError(err, ret, item.parsedFile!),
+        });
+      }
+    };
+
     expose({
       onBatchStart,
       onSuccess,
@@ -300,7 +381,12 @@ export default defineComponent({
       defaultLocale.Upload,
       computed(() => props.locale),
     );
-    const renderUploadList = (button?: () => VueNode, buttonVisible?: boolean) => {
+    const renderUploadList = (
+      semanticClassNames: UploadSemanticClassNames,
+      semanticStyles: UploadSemanticStyles,
+      button?: () => VueNode,
+      buttonVisible?: boolean,
+    ) => {
       const {
         removeIcon,
         previewIcon,
@@ -319,11 +405,22 @@ export default defineComponent({
         showDownloadIcon,
         showPreviewIcon,
         showRemoveIcon,
+        removeIcon: showUploadListRemoveIcon,
+        previewIcon: showUploadListPreviewIcon,
+        downloadIcon: showUploadListDownloadIcon,
         extra: showUploadListExtra,
       } = typeof showUploadList === 'boolean' ? ({} as ShowUploadListInterface) : showUploadList;
       const mergedExtra = showUploadListExtra ?? extra;
+      const mergedProgress =
+        (uploadConfig.value as any)?.progress || progress
+          ? { ...(uploadConfig.value as any)?.progress, ...progress }
+          : undefined;
+      const realShowRemoveIcon =
+        typeof showRemoveIcon === 'undefined' ? !mergedDisabled.value : showRemoveIcon;
       return showUploadList ? (
         <UploadList
+          classNames={semanticClassNames}
+          styles={semanticStyles}
           prefixCls={prefixCls.value}
           listType={props.listType}
           items={mergedFileList.value}
@@ -331,18 +428,19 @@ export default defineComponent({
           onPreview={onPreview}
           onDownload={onDownload}
           onRemove={handleRemove}
-          showRemoveIcon={!mergedDisabled.value && showRemoveIcon}
+          showRemoveIcon={realShowRemoveIcon}
           showPreviewIcon={showPreviewIcon}
           showDownloadIcon={showDownloadIcon}
-          removeIcon={removeIcon}
-          previewIcon={previewIcon}
-          downloadIcon={downloadIcon}
+          removeIcon={showUploadListRemoveIcon ?? removeIcon}
+          previewIcon={showUploadListPreviewIcon ?? previewIcon}
+          downloadIcon={showUploadListDownloadIcon ?? downloadIcon}
           iconRender={iconRender}
           locale={locale.value}
           isImageUrl={isImageUrl}
-          progress={progress}
+          progress={mergedProgress}
           itemRender={itemRender}
           extra={mergedExtra}
+          disabled={mergedDisabled.value}
           appendActionVisible={buttonVisible}
           appendAction={button}
           v-slots={{ ...slots }}
@@ -354,9 +452,26 @@ export default defineComponent({
     return () => {
       const { listType, type } = props;
       const { class: className, style: styleName, ...transAttrs } = attrs;
-      const mergedRootStyle = uploadConfig.value?.style
-        ? [uploadConfig.value.style, styleName]
-        : styleName;
+
+      const mergedPropsForSemantic: UploadProps = {
+        ...props,
+        disabled: mergedDisabled.value,
+      };
+      const [mergedClassNames, mergedStyles] = mergeSemantic<
+        UploadSemanticClassNames,
+        UploadSemanticStyles,
+        UploadProps
+      >([contextClassNames.value, props.classNames], [contextStyles.value, props.styles], {
+        props: mergedPropsForSemantic,
+      });
+
+      const mergedRootStyle =
+        contextStyle.value || mergedStyles.root
+          ? [contextStyle.value, mergedStyles.root, styleName]
+          : styleName;
+      const mergedCustomRequest = props.customRequest || (uploadConfig.value as any)?.customRequest;
+      const mergedAccept = props.accept || (uploadConfig.value as any)?.accept || '';
+
       const rcUploadProps = {
         onBatchStart,
         onError,
@@ -364,6 +479,8 @@ export default defineComponent({
         onSuccess,
         ...transAttrs,
         ...(props as RcUploadProps),
+        customRequest: mergedCustomRequest,
+        accept: mergedAccept,
         id: props.id ?? formItemContext.id.value,
         prefixCls: prefixCls.value,
         beforeUpload: mergedBeforeUpload,
@@ -371,6 +488,9 @@ export default defineComponent({
         disabled: mergedDisabled.value,
       };
       delete (rcUploadProps as any).remove;
+      delete (rcUploadProps as any).classNames;
+      delete (rcUploadProps as any).styles;
+      delete (rcUploadProps as any).pastable;
 
       // Remove id to avoid open by label when trigger is hidden
       // !children: https://github.com/ant-design/ant-design/issues/14298
@@ -384,6 +504,8 @@ export default defineComponent({
         [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
       };
 
+      const pasteProps = props.pastable ? { onPaste: onFilePaste } : {};
+
       if (type === 'drag') {
         const dragCls = classNames(
           prefixCls.value,
@@ -396,17 +518,24 @@ export default defineComponent({
             [`${prefixCls.value}-disabled`]: mergedDisabled.value,
             [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           },
+          mergedClassNames.trigger,
           attrs.class,
           hashId.value,
         );
+        const dragStyle =
+          mergedStyles.trigger || attrs.style
+            ? [mergedStyles.trigger, attrs.style as CSSProperties]
+            : undefined;
 
         return wrapSSR(
           <span
             {...attrs}
+            {...pasteProps}
             style={mergedRootStyle as any}
             class={classNames(
               `${prefixCls.value}-wrapper`,
-              uploadConfig.value?.className,
+              contextClassName.value,
+              mergedClassNames.root,
               props.rootClassName,
               rtlCls,
               className,
@@ -418,7 +547,7 @@ export default defineComponent({
               onDrop={onFileDrop}
               onDragover={onFileDrop}
               onDragleave={onFileDrop}
-              style={attrs.style as CSSProperties}
+              style={dragStyle as any}
             >
               <VcUpload
                 {...rcUploadProps}
@@ -429,50 +558,72 @@ export default defineComponent({
                 <div class={`${prefixCls.value}-drag-container`}>{slots.default?.()}</div>
               </VcUpload>
             </div>
-            {renderUploadList()}
+            {renderUploadList(mergedClassNames, mergedStyles)}
           </span>,
         );
       }
 
-      const uploadButtonCls = classNames(prefixCls.value, {
-        [`${prefixCls.value}-select`]: true,
-        [`${prefixCls.value}-select-${listType}`]: true,
-        [`${prefixCls.value}-disabled`]: mergedDisabled.value,
-        [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-      });
-      const children = flattenChildren(slots.default?.());
-      const renderUploadButton = (uploadButtonStyle?: CSSProperties) => (
-        <div class={uploadButtonCls} style={uploadButtonStyle}>
-          <VcUpload {...rcUploadProps} ref={upload} v-slots={slots} />
-        </div>
+      const uploadButtonCls = classNames(
+        prefixCls.value,
+        {
+          [`${prefixCls.value}-select`]: true,
+          [`${prefixCls.value}-select-${listType}`]: true,
+          [`${prefixCls.value}-disabled`]: mergedDisabled.value,
+          [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+        },
+        mergedClassNames.trigger,
       );
+      const children = flattenChildren(slots.default?.());
+      const renderUploadButton = (uploadButtonStyle?: CSSProperties) => {
+        const mergedTriggerStyle =
+          mergedStyles.trigger || uploadButtonStyle
+            ? { ...mergedStyles.trigger, ...uploadButtonStyle }
+            : undefined;
+        return (
+          <div class={uploadButtonCls} style={mergedTriggerStyle}>
+            <VcUpload {...rcUploadProps} ref={upload} v-slots={slots} />
+          </div>
+        );
+      };
 
-      if (listType === 'picture-card') {
+      if (listType === 'picture-card' || listType === 'picture-circle') {
         return wrapSSR(
           <span
             {...attrs}
+            {...pasteProps}
             style={mergedRootStyle as any}
             class={classNames(
               `${prefixCls.value}-wrapper`,
-              uploadConfig.value?.className,
+              contextClassName.value,
+              mergedClassNames.root,
               props.rootClassName,
-              `${prefixCls.value}-picture-card-wrapper`,
+              {
+                [`${prefixCls.value}-picture-card-wrapper`]: listType === 'picture-card',
+                [`${prefixCls.value}-picture-circle-wrapper`]: listType === 'picture-circle',
+              },
               rtlCls,
               attrs.class,
               hashId.value,
             )}
           >
-            {renderUploadList(renderUploadButton, !!(children && children.length))}
+            {renderUploadList(
+              mergedClassNames,
+              mergedStyles,
+              renderUploadButton,
+              !!(children && children.length),
+            )}
           </span>,
         );
       }
       return wrapSSR(
         <span
           {...attrs}
+          {...pasteProps}
           style={mergedRootStyle as any}
           class={classNames(
             `${prefixCls.value}-wrapper`,
-            uploadConfig.value?.className,
+            contextClassName.value,
+            mergedClassNames.root,
             props.rootClassName,
             rtlCls,
             attrs.class,
@@ -480,7 +631,7 @@ export default defineComponent({
           )}
         >
           {renderUploadButton(children && children.length ? undefined : { display: 'none' })}
-          {renderUploadList()}
+          {renderUploadList(mergedClassNames, mergedStyles)}
         </span>,
       );
     };

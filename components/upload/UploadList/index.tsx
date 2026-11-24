@@ -63,7 +63,11 @@ export default defineComponent({
       },
     );
     watchEffect(() => {
-      if (props.listType !== 'picture' && props.listType !== 'picture-card') {
+      if (
+        props.listType !== 'picture' &&
+        props.listType !== 'picture-card' &&
+        props.listType !== 'picture-circle'
+      ) {
         return;
       }
       let hasUpdate = false;
@@ -127,7 +131,7 @@ export default defineComponent({
       let icon: VueNode = isLoading ? <LoadingOutlined /> : <PaperClipOutlined />;
       if (props.listType === 'picture') {
         icon = isLoading ? <LoadingOutlined /> : fileIcon;
-      } else if (props.listType === 'picture-card') {
+      } else if (props.listType === 'picture-card' || props.listType === 'picture-circle') {
         icon = isLoading ? props.locale.uploading : fileIcon;
       }
       return icon;
@@ -166,9 +170,13 @@ export default defineComponent({
 
     const { prefixCls, rootPrefixCls } = useConfigInject('upload', props);
 
+    const isPictureCardOrCircle = computed(
+      () => props.listType === 'picture-card' || props.listType === 'picture-circle',
+    );
     const listClassNames = computed(() => ({
       [`${prefixCls.value}-list`]: true,
       [`${prefixCls.value}-list-${props.listType}`]: true,
+      [props.classNames?.list as string]: !!props.classNames?.list,
     }));
     const transitionGroupProps = computed(() => {
       const motion = {
@@ -179,12 +187,13 @@ export default defineComponent({
       delete motion.onAfterLeave;
       const motionConfig = {
         ...getTransitionGroupProps(
-          `${prefixCls.value}-${props.listType === 'picture-card' ? 'animate-inline' : 'animate'}`,
+          `${prefixCls.value}-${isPictureCardOrCircle.value ? 'animate-inline' : 'animate'}`,
         ),
         class: listClassNames.value,
+        style: props.styles?.list,
         appear: motionAppear.value,
       };
-      return props.listType !== 'picture-card'
+      return !isPictureCardOrCircle.value
         ? {
             ...motion,
             ...motionConfig,
@@ -193,6 +202,8 @@ export default defineComponent({
     });
     return () => {
       const {
+        classNames: semanticClassNames,
+        styles: semanticStyles,
         listType,
         locale,
         isImageUrl: isImgUrl,
@@ -217,6 +228,8 @@ export default defineComponent({
             return (
               <ListItem
                 key={key}
+                classNames={semanticClassNames}
+                styles={semanticStyles}
                 locale={locale}
                 prefixCls={prefixCls.value}
                 file={file}

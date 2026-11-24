@@ -27,7 +27,7 @@ There are five kinds of picker:
 
 The default locale is en-US, if you need to use other languages, recommend to use internationalized components provided by us at the entrance. Look at: [ConfigProvider](/components/config-provider/).
 
-If there are special needs (only modifying single component language), Please use the property: local. Example: [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json).
+If there are special needs (only modifying single component language), Please use the property: locale. Example: [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json).
 
 ```html
 <template>
@@ -63,9 +63,9 @@ If there are special needs (only modifying single component language), Please us
   export default defineComponent({
     setup() {
       return {
-        value: dayjs('2015-01-01', 'YYYY-MM-DD')
+        value: dayjs('2015-01-01', 'YYYY-MM-DD'),
         dayjs,
-        locale
+        locale,
       };
     },
   });
@@ -78,44 +78,75 @@ The following APIs are shared by DatePicker, RangePicker.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| allowClear | Whether to show clear button | boolean | true |  |
+| allowClear | Whether to show clear button | boolean \| [AllowClearConfig](#allowclearconfig) | true | 4.3.0 |
 | autofocus | If get focus when component mounted | boolean | false |  |
-| ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true |  |
+| ~~bordered~~ | Whether has border style, please use `variant` instead | boolean | true |  |
+| cellRender | Custom rendering function for picker cells | `(current: dayjs, info: { originNode: VNode, today: dayjs, range?: 'start' \| 'end', type: PanelMode, locale?: Locale }) => VNode` \| v-slot:cellRender | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | Record<[SemanticDOM](#semantic-dom), string> \| `(info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | clearIcon | Custom clear icon | VNode \| slot | `<CloseCircleFilled />` | 4.3.0 |
-| dateRender | Custom rendering function for date cells | v-slot:dateRender="{current, today}" | - |  |
+| components | Custom panels, input, and footer buttons | [Components](#components) | - | 4.3.0 |
+| ~~dateRender~~ | Custom rendering function for date cells, please use `cellRender` instead | v-slot:dateRender="{current, today}" | - |  |
 | defaultOpen | Initial open state of picker | boolean | - |  |
 | disabled | Determine whether the DatePicker is disabled | boolean | false |  |
-| disabledDate | Specify the date that cannot be selected | (currentDate: dayjs) => boolean | - |  |
-| format | To set the date format, refer to [dayjs](https://day.js.org/). When an array is provided, all values are used for parsing and first value is used for formatting, support [Custom Format](#components-date-picker-demo-format) | [formatType](#formattype) | `YYYY-MM-DD` |  |
+| disabledDate | Specify the date that cannot be selected | (currentDate: dayjs, info?: { from?: dayjs, type?: Picker }) => boolean | - |  |
+| ~~dropdownClassName~~ | The className of popup calendar, please use `classNames.popup.root` instead | string | - |  |
+| format | To set the date format, refer to [dayjs](https://day.js.org/). When an array is provided, all values are used for parsing and first value is used for formatting, support [Custom Format](#components-date-picker-demo-format) | [formatType](#formattype) | `YYYY-MM-DD` | `mask`: 4.3.0 |
 | getPopupContainer | To set the container of the floating layer, while the default is to create a `div` element in `body` | function(trigger) | - |  |
-| id | Input `id` attribute | string | - |  |
+| id | Input `id` attribute | string \| `{ start?: string, end?: string }` | - |  |
 | inputReadOnly | Set the `readonly` attribute of the input tag (avoids virtual keyboard on touch devices) | boolean | false |  |
 | locale | Localization configuration | object | [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
+| maxDate | The maximum date, which also limits the selectable range | [dayjs](https://day.js.org/) | - | 4.3.0 |
+| minDate | The minimum date, which also limits the selectable range | [dayjs](https://day.js.org/) | - | 4.3.0 |
 | mode | The picker panel mode | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |
-| needConfirm | Require clicking the OK button to confirm selection (defaults to `true` when `showTime` or `TimePicker` is used) | boolean | - | 4.3.0 |
+| needConfirm | Require clicking the OK button to confirm selection (defaults to `true` when `showTime` or `TimePicker` is used, `false` when `multiple`) | boolean | - | 4.3.0 |
 | nextIcon | The custom next icon | slot | - | 3.0 |
 | open | The open state of picker | boolean | - |  |
+| order | Auto order date when multiple or range selection | boolean | true | 4.3.0 |
 | panelRender | Customize panel render | `(panelNode: VNode) => VNode` | - |  |
 | picker | Set picker type | `date` \| `week` \| `month` \| `quarter` \| `year` | `date` | `quarter` |
 | placeholder | The placeholder of date input | string \| \[string,string] | - |  |
 | placement | The position where the selection box pops up | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
-| popupClassName | To customize the className of the popup calendar | string | - |  |
-| popupStyle | To customize the style of the popup calendar | CSSProperties | {} |  |
-| presets | The preset ranges for quick selection | { label: slot, value: [dayjs](https://day.js.org/) }[] | - | 4.0 |
+| ~~popupClassName~~ | To customize the className of the popup calendar, use `classNames.popup.root` instead | string | - |  |
+| ~~popupStyle~~ | To customize the style of the popup calendar, use `styles.popup.root` instead | CSSProperties | {} |  |
+| prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
+| preserveInvalidOnBlur | Don't clear the input on blur even when the typed value is invalid | boolean | false | 4.3.0 |
+| presets | The preset ranges for quick selection | { label: slot, value: [dayjs](https://day.js.org/) \| (() => [dayjs](https://day.js.org/)) }[] | - | 4.0 |
 | prevIcon | The custom prev icon | slot | - | 3.0 |
+| previewValue | When the user selects the date hover option, whether the input field undergoes a temporary change | `false` \| `'hover'` | `'hover'` | 4.3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | size | To determine the size of the input box, the height of `large` and `small`, are 40px and 24px respectively, while default size is 32px | `large` \| `middle` \| `small` | - |  |
 | status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
-| suffixIcon | The custom suffix icon | v-slot:suffixIcon | - |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | Record<[SemanticDOM](#semantic-dom), CSSProperties> \| `(info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
+| suffix | The custom suffix | VNode \| slot | - | 4.3.0 |
+| ~~suffixIcon~~ | The custom suffix icon, please use `suffix` instead | v-slot:suffixIcon | - |  |
 | superNextIcon | The custom super next icon | slot | - | 3.0 |
 | superPrevIcon | The custom super prev icon | slot | - | 3.0 |
 | valueFormat | Optional, format of binding value. If not specified, the binding value will be a dayjs object | string, [date formats](https://day.js.org/docs/en/display/format) | - |  |
 | variant | Variants of selector | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
 
+### Components
+
+`components` supports custom panel components keyed by panel type (`date`, `month`, `year`, `quarter`, `week`, `time`, `decade`) as well as footer buttons.
+
+| Property  | Description                | Type                | Default              | Version |
+| --------- | -------------------------- | ------------------- | -------------------- | ------- |
+| nowButton | Custom Today/Now button    | Component \| string | `a`                  | 4.3.0   |
+| okButton  | Custom confirmation button | Component \| string | Small primary Button | 4.3.0   |
+
+### AllowClearConfig
+
+| Property  | Description                                     | Type    | Default | Version |
+| --------- | ----------------------------------------------- | ------- | ------- | ------- |
+| clearIcon | Custom clear icon                               | VNode   | -       | 4.3.0   |
+| disabled  | When `true`, equivalent to `allowClear={false}` | boolean | false   | 4.3.0   |
+| label     | Accessible name of the clear button             | string  | -       | 4.3.0   |
+| tabIndex  | Tab order of the clear button                   | number  | 0       | 4.3.0   |
+
 ### Common Events
 
 | Events Name | Description | Arguments | Version |
 | --- | --- | --- | --- |
+| clear | Callback when click the clear button | `() => void` | 4.3.0 |
 | openChange | a callback function, can be executed whether the popup calendar is popped up or closed | function(status) |  |
 | panelChange | callback when picker panel mode is changed | function(value, mode) |  |
 
@@ -137,11 +168,14 @@ The following APIs are shared by DatePicker, RangePicker.
 | maxTagCount | Max tag count to show in `multiple` mode, `responsive` will collapse automatically | number \| `'responsive'` | - | 4.3.0 |
 | maxTagPlaceholder | Placeholder for omitted tags | VNode \| (omittedValues) => VNode | - | 4.3.0 |
 | multiple | Allow selecting multiple dates (not supported with `showTime`) | boolean | false | 4.3.0 |
+| pickerValue | Panel date. Used for controlled switching of panel date | [dayjs](https://day.js.org/) | - | 4.3.0 |
 | renderExtraFooter | Render extra footer in panel | v-slot:renderExtraFooter="mode" | - |  |
 | showNow | Whether to show 'Now' button on panel when `showTime` is set | boolean | - |  |
 | showTime | To provide an additional time selection | object \| boolean | [TimePicker Options](/components/time-picker/#api) |  |
 | showTime.defaultValue | To set default time of selected date, [demo](#components-date-picker-demo-disabled-date) | [dayjs](https://day.js.org/) | dayjs() |  |
 | showToday | Whether to show `Today` button | boolean | true |  |
+| showWeek | Show week info when in DatePicker | boolean | false | 4.3.0 |
+| tagRender | Customize tag render, only applies when `multiple` is set | `(props) => VNode` | - | 4.3.0 |
 | value(v-model) | To set date | [dayjs](https://day.js.org/) | - |  |
 
 ### DatePicker Events
@@ -181,16 +215,17 @@ The following APIs are shared by DatePicker, RangePicker.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | allowEmpty | Allow start or end input leave empty | \[boolean, boolean] | \[false, false] |  |
-| dateRender | Customize date cell. | v-slot:dateRender="{current: dayjs, today: dayjs, info: { range: `start` \| `end` }}" | - |  |
+| cellRender | Custom rendering function for picker cells | `(current: dayjs, info: { originNode: VNode, today: dayjs, range?: 'start' \| 'end', type: PanelMode, locale?: Locale }) => VNode` | - | 4.3.0 |
+| ~~dateRender~~ | Customize date cell, please use `cellRender` instead | v-slot:dateRender="{current: dayjs, today: dayjs, info: { range: `start` \| `end` }}" | - |  |
 | defaultPickerValue | To set default picker date | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
 | defaultValue | To set default date | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
-| disabled | If disable start or end | \[boolean, boolean] | - |  |
+| disabled | If disable start or end | boolean \| \[boolean, boolean] | - |  |
 | disabledTime | To specify the time that cannot be selected | function(date: dayjs, partial: `start` \| `end`) | - |  |
 | format | To set the date format, refer to [dayjs](https://day.js.org/) | [formatType](#formattype) | `YYYY-MM-DD HH:mm:ss` |  |
 | presets | The preset ranges for quick selection | { label: slot, value: [dayjs](https://day.js.org/)\[] }[] | - | 4.0 |
 | ranges | The preseted ranges for quick selection | { \[range: string]: [dayjs](https://day.js.org/)\[] } \| { \[range: string]: () => [dayjs](https://day.js.org/)\[] } | - |  |
 | renderExtraFooter | Render extra footer in panel | v-slot:renderExtraFooter="mode" | - |  |
-| separator | Set separator between inputs | string \| v-slot:separator | `<SwapRightOutlined />` |  |
+| separator | Set separator between inputs | string \| VNode \| v-slot:separator | `<SwapRightOutlined />` |  |
 | showTime | To provide an additional time selection | object \| boolean | [TimePicker Options](/components/time-picker/#api) |  |
 | showTime.defaultValue | To set default time of selected date, [demo](#components-date-picker-demo-disabled-date) | [dayjs](https://day.js.org/)\[] | \[dayjs(), dayjs()] |  |
 | value(v-model) | To set date | \[[dayjs](https://day.js.org/), [dayjs](https://day.js.org/)] | - |  |
@@ -211,8 +246,31 @@ import type { Dayjs } from 'dayjs';
 type Generic = string;
 type GenericFn = (value: Dayjs) => string;
 
-export type FormatType = Generic | GenericFn | Array<Generic | GenericFn>;
+export type FormatType =
+  | Generic
+  | GenericFn
+  | Array<Generic | GenericFn>
+  | {
+      format: string;
+      type?: 'mask';
+    };
 ```
+
+## Semantic DOM
+
+| Slot            | Description                       | Version |
+| --------------- | --------------------------------- | ------- |
+| root            | Root container element            | 4.3.0   |
+| prefix          | Prefix element                    | 4.3.0   |
+| input           | Input element                     | 4.3.0   |
+| suffix          | Suffix element                    | 4.3.0   |
+| popup.root      | Popup overlay root element        | 4.3.0   |
+| popup.container | Popup panel container element     | 4.3.0   |
+| popup.header    | Popup panel header element        | 4.3.0   |
+| popup.body      | Popup panel body element          | 4.3.0   |
+| popup.content   | Popup panel content table element | 4.3.0   |
+| popup.item      | Popup panel cell inner element    | 4.3.0   |
+| popup.footer    | Popup panel footer element        | 4.3.0   |
 
 ## FAQ
 

@@ -4,7 +4,20 @@ import Group from './Group';
 import Button from './RadioButton';
 export type { RadioProps } from './Radio';
 export type { RadioGroupProps } from './Group';
-export type { RadioChangeEventTarget, RadioChangeEvent } from './interface';
+export type {
+  RadioChangeEventTarget,
+  RadioChangeEvent,
+  RadioSemanticName,
+  RadioSemanticClassNames,
+  RadioSemanticStyles,
+  RadioClassNamesType,
+  RadioStylesType,
+  RadioGroupSemanticName,
+  RadioGroupSemanticClassNames,
+  RadioGroupSemanticStyles,
+  RadioGroupClassNamesType,
+  RadioGroupStylesType,
+} from './interface';
 
 Radio.Group = Group;
 Radio.Button = Button;

@@ -42,7 +42,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WERTQ6qvgEYAAA
 | ~~dropdownMatchSelectWidth~~ | 下拉菜单和选择器同宽（已废弃，请使用 `popupMatchSelectWidth`） | boolean \| number | true |  |
 | dropdownMenuStyle | dropdown 菜单自定义样式 | object | - | 1.5.0 |
 | ~~dropdownRender~~ | 自定义下拉框内容（已废弃，请使用 `popupRender`） | `({ menuNode, props }) => VNode` \| slot | - |  |
+| ~~dropdownStyle~~ | 下拉菜单的 style 属性（已废弃，请使用 `styles.popup.root`） | CSSProperties | - |  |
 | filterOption | 是否根据输入项进行筛选。当其为一个函数时，会接收 `inputValue` `option` 两个参数，当 `option` 符合筛选条件时，应返回 `true`，反之则返回 `false`。 | boolean \| function(inputValue, option) | true |  |
+| getPopupContainer | 菜单渲染父节点。默认渲染到 body 上 | function(triggerNode) | () => document.body |  |
 | notFoundContent | 当下拉列表为空时显示的内容 | string \| slot | - |  |
 | open | 是否展开下拉菜单 | boolean | - |  |
 | option | 通过 option 插槽，自定义节点 | v-slot:option="{value, label, [disabled, key, title]}" | - | 3.0 |
@@ -53,7 +55,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WERTQ6qvgEYAAA
 | popupRender | 自定义下拉框内容（支持 prop 与 `#popupRender` 插槽，直接接收菜单节点） | `(originNode: VNode) => VNode` \| slot | - | 4.3.0 |
 | prefix | 自定义前缀 | VNode \| slot | - | 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
-| showSearch | 是否支持搜索 | boolean | - |  |
+| showSearch | 搜索配置，支持 boolean 或配置对象 | boolean \| [showSearch](#showsearch) | - | Object: 4.3.0 |
 | size | 输入框大小 | `large` \| `middle` \| `small` | - |  |
 | status | 设置校验状态 | `'error'` \| `'warning'` | - | 3.3.0 |
 | styles | 用于自定义组件内部各语义化结构的行内 style（支持对象与函数式 `({ props }) => ...`） | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: AutoCompleteProps }) => ...)` | - | 4.3.0 |
@@ -61,6 +63,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WERTQ6qvgEYAAA
 | ~~suffixIcon~~ | 自定义的选择框后缀图标（已废弃，请使用 `suffix` 替代） | VNode \| slot | - |  |
 | v-model:value | 指定当前选中的条目 | string \| string\[] \| { key: string, label: string \| vNodes } \| Array&lt;{ key: string, label: string \| vNodes }> | 无 |  |
 | variant | 形态变体 | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
+| virtual | 设置 false 时关闭虚拟滚动 | boolean | true | 3.0 |
+
+### showSearch
+
+| 参数         | 说明                   | 类型                                    | 默认值 | 版本  |
+| ------------ | ---------------------- | --------------------------------------- | ------ | ----- |
+| filterOption | 是否根据输入项进行筛选 | boolean \| function(inputValue, option) | true   | 4.3.0 |
+| onSearch     | 搜索补全项的时候调用   | function(value: string)                 | -      | 4.3.0 |
 
 ### 事件
 

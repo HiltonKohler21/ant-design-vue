@@ -8,6 +8,7 @@ import RightOutlined from '@ant-design/icons-vue/RightOutlined';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 import LeftOutlined from '@ant-design/icons-vue/LeftOutlined';
 import getIcons from '../select/utils/iconUtil';
+import genPurePanel from '../select/utils/purePanel';
 import type { VueNode } from '../_util/type';
 import omit from '../_util/omit';
 import { computed, defineComponent, ref, watchEffect } from 'vue';
@@ -485,10 +486,15 @@ const Cascader = defineComponent({
     };
   },
 });
+// We don't care debug panel
+/* istanbul ignore next */
+const PurePanel = genPurePanel(Cascader, 'dropdownAlign', (props: any) => omit(props, ['visible']));
+
 export default Object.assign(Cascader, {
   SHOW_CHILD,
   SHOW_PARENT,
   Panel: CascaderPanel,
+  _InternalPanelDoNotUseOrYouWillBeFired: PurePanel,
   install: (app: App) => {
     app.component(Cascader.name, Cascader);
     app.component(CascaderPanel.name, CascaderPanel);
@@ -499,4 +505,5 @@ export default Object.assign(Cascader, {
     readonly SHOW_PARENT: typeof SHOW_PARENT;
     readonly SHOW_CHILD: typeof SHOW_CHILD;
     readonly Panel: typeof CascaderPanel;
+    readonly _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
   };

@@ -41,7 +41,9 @@ The differences with Select are:
 | ~~dropdownMatchSelectWidth~~ | Determine whether the dropdown menu and the select input are the same width (deprecated, please use `popupMatchSelectWidth` instead) | boolean \| number | true |  |
 | dropdownMenuStyle | Additional style applied to dropdown menu | object | - | 1.5.0 |
 | ~~dropdownRender~~ | Customize dropdown content (deprecated, please use `popupRender` instead) | `({ menuNode, props }) => VNode` \| slot | - |  |
+| ~~dropdownStyle~~ | The style of dropdown menu (deprecated, please use `styles.popup.root` instead) | CSSProperties | - |  |
 | filterOption | If true, filter options by input, if function, filter options against it. The function will receive two arguments, `inputValue` and `option`, if the function returns `true`, the option will be included in the filtered set; Otherwise, it will be excluded. | boolean \| function(inputValue, option) | true |  |
+| getPopupContainer | Parent node of the dropdown. Default to body | function(triggerNode) | () => document.body |  |
 | notFoundContent | Specify content to show when no result matches | string \| slot | - |  |
 | open | Controlled open state of dropdown | boolean | - |  |
 | option | Custom render option by slot | v-slot:option="{value, label, [disabled, key, title]}" | - | 3.0 |
@@ -52,7 +54,7 @@ The differences with Select are:
 | popupRender | Customize popup content (supports prop and `#popupRender` slot, receives the menu VNode directly) | `(originNode: VNode) => VNode` \| slot | - | 4.3.0 |
 | prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
-| showSearch | Whether to support search | boolean | - |  |
+| showSearch | Search configuration (supports boolean or object) | boolean \| [showSearch](#showsearch) | - | Object: 4.3.0 |
 | size | Size of input | `large` \| `middle` \| `small` | - |  |
 | status | Set validation status | `'error'` \| `'warning'` | - | 3.3.0 |
 | styles | Customize inline style for each semantic structure inside the component (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: AutoCompleteProps }) => ...)` | - | 4.3.0 |
@@ -60,6 +62,14 @@ The differences with Select are:
 | ~~suffixIcon~~ | The custom suffix icon (deprecated, please use `suffix` instead) | VNode \| slot | - |  |
 | v-model:value | Selected option | string \| string\[] \| { key: string, label: string \| vNodes } \| Array&lt;{ key: string, label: string \| vNodes }> | - |  |
 | variant | Variants of selector | `'outlined'` \| `'borderless'` \| `'filled'` \| `'underlined'` | `'outlined'` | 4.3.0 |
+| virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |
+
+### showSearch
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| filterOption | If true, filter options by input, if function, filter options against it | boolean \| function(inputValue, option) | true | 4.3.0 |
+| onSearch | Called when searching items | function(value: string) | - | 4.3.0 |
 
 ### events
 

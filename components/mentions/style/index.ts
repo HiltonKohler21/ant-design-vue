@@ -30,18 +30,28 @@ type MentionsToken = InputToken<FullToken<'Mentions'>>;
 const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
   const {
     componentCls,
+    antCls,
     colorTextDisabled,
     controlItemBgHover,
     controlPaddingHorizontal,
     colorText,
     motionDurationSlow,
     lineHeight,
+    lineHeightLG,
     controlHeight,
+    controlHeightLG,
+    controlHeightSM,
     inputPaddingHorizontal,
+    inputPaddingHorizontalLG,
+    inputPaddingHorizontalSM,
     inputPaddingVertical,
+    inputPaddingVerticalLG,
+    inputPaddingVerticalSM,
     fontSize,
-    colorBgElevated,
+    fontSizeLG,
     borderRadiusLG,
+    borderRadiusSM,
+    colorBgElevated,
     boxShadowSecondary,
   } = token;
 
@@ -57,7 +67,7 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
       ...genBasicInputStyle(token),
 
       position: 'relative',
-      display: 'inline-block',
+      display: 'inline-flex',
       height: 'auto',
       padding: 0,
       overflow: 'hidden',
@@ -77,15 +87,84 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
         ...genActiveStyle(token),
       },
 
-      [`&-affix-wrapper ${componentCls}-suffix`]: {
-        position: 'absolute',
-        top: 0,
-        insetInlineEnd: inputPaddingHorizontal,
-        bottom: 0,
-        zIndex: 1,
+      // ================= Size =================
+      '&-lg': {
+        padding: 0,
+        fontSize: fontSizeLG,
+        lineHeight: lineHeightLG,
+        borderRadius: borderRadiusLG,
+
+        [`> textarea, ${componentCls}-measure`]: {
+          minHeight: token.calc(controlHeightLG).sub(2).equal(),
+          padding: `${unit(inputPaddingVerticalLG)} ${unit(inputPaddingHorizontalLG)}`,
+        },
+      },
+
+      '&-sm': {
+        padding: 0,
+        fontSize,
+        borderRadius: borderRadiusSM,
+
+        [`> textarea, ${componentCls}-measure`]: {
+          minHeight: token.calc(controlHeightSM).sub(2).equal(),
+          padding: `${unit(inputPaddingVerticalSM)} ${unit(inputPaddingHorizontalSM)}`,
+        },
+      },
+
+      // ================= Suffix & AllowClear =================
+      [`${componentCls}-suffix`]: {
         display: 'inline-flex',
         alignItems: 'center',
-        margin: 'auto',
+        flex: 'none',
+        color: token.colorTextQuaternary,
+        fontSize: token.fontSizeIcon,
+        lineHeight: 1,
+        position: 'absolute',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        insetInlineEnd: inputPaddingHorizontal,
+        columnGap: token.marginXS,
+        zIndex: 1,
+
+        [`${componentCls}-clear-icon`]: {
+          cursor: 'pointer',
+          border: 0,
+          background: 'transparent',
+          display: 'inline-flex',
+          alignItems: 'center',
+          color: token.colorTextQuaternary,
+          transition: `color ${motionDurationSlow}`,
+
+          '&:hover': {
+            color: token.colorTextTertiary,
+          },
+
+          '&:active': {
+            color: colorText,
+          },
+
+          '&-hidden': {
+            visibility: 'hidden',
+            pointerEvents: 'none',
+          },
+        },
+
+        [`${antCls}-form-item-feedback-icon`]: {
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+      },
+
+      '&-has-suffix': {
+        '> textarea': {
+          paddingInlineEnd: token
+            .calc(token.paddingXXS)
+            .mul(1.5)
+            .add(token.fontSizeIcon)
+            .add(inputPaddingHorizontal)
+            .equal(),
+        },
       },
 
       // ================= Input Area =================
@@ -118,6 +197,8 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
 
       '> textarea': {
         width: '100%',
+        flex: 'auto',
+        minWidth: 0,
         border: 'none',
         outline: 'none',
         resize: 'none',
@@ -157,6 +238,15 @@ const genMentionsStyle: GenerateStyle<MentionsToken> = token => {
         borderRadius: borderRadiusLG,
         outline: 'none',
         boxShadow: boxShadowSecondary,
+
+        '&-pure': {
+          position: 'static',
+          top: 'auto',
+          insetInlineStart: 'auto',
+          marginTop: token.marginXXS,
+          display: 'inline-block',
+          minWidth: token.controlItemWidth,
+        },
 
         '&-hidden': {
           display: 'none',

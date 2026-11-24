@@ -21,11 +21,13 @@ Switching Selector.
 | checked(v-model) | determine whether the `Switch` is checked | checkedValue \| unCheckedValue | false |  |
 | checkedChildren | content to be shown when the state is checked | string\|slot |  |  |
 | checkedValue | value for checked state | boolean \| string \| number | true | 2.2.1 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | defaultValue | Default checked value (uncontrolled) | boolean \| string \| number | - | 4.3.0 |
 | disabled | Disable switch | boolean | false |  |
 | loading | loading state of switch | boolean | false |  |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
-| size | the size of the `Switch`, options: `default` `small` | string | default |  |
+| size | the size of the `Switch`, options: `default` `medium` `small` | `'default'` \| `'medium'` \| `'small'` | `'default'` |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | unCheckedChildren | content to be shown when the state is unchecked | string \| slot |  |  |
 | unCheckedValue | value for unchecked state | boolean \| string \| number | false | 2.2.1 |
 
@@ -42,3 +44,7 @@ Switching Selector.
 | ------- | ------------ |
 | blur()  | remove focus |
 | focus() | get focus    |
+
+## Semantic DOM
+
+Supported slots: `root` (switch root button), `content` (switch inner content), `indicator` (switch toggle handle).

@@ -3,10 +3,13 @@
     <basic />
     <size />
     <variant />
+    <search-variant-debug />
+    <filled-debug />
     <addon />
+    <compact-style />
     <search-input />
     <search-input-loading />
-    <textarea-resize />
+    <textarea-demo />
     <autosize-textarea />
     <otp />
     <tooltip />
@@ -14,10 +17,16 @@
     <password-input />
     <allow-clear />
     <show-count />
+    <advance-count />
     <statusVue />
+    <focus-demo />
     <style-class />
     <group />
     <borderlessVue />
+    <borderless-debug />
+    <align-debug />
+    <textarea-resize />
+    <debug-addon />
     <component-token />
   </demo-sort>
 </template>
@@ -32,15 +41,24 @@ import SearchInput from './search-input.vue';
 import SearchInputLoading from './search-input-loading.vue';
 import Size from './size.vue';
 import Group from './group.vue';
-import TextareaResize from './textarea.vue';
+import TextareaDemo from './textarea.vue';
 import AllowClear from './allow-clear.vue';
 import PasswordInput from './password-input.vue';
 import ShowCount from './show-count.vue';
+import AdvanceCount from './advance-count.vue';
+import CompactStyle from './compact-style.vue';
+import FocusDemo from './focus.vue';
 import Addon from './addon.vue';
 import Tooltip from './tooltip.vue';
 import borderlessVue from './borderless.vue';
 import statusVue from './status.vue';
 import StyleClass from './style-class.vue';
+import SearchVariantDebug from './search-variant-debug.vue';
+import FilledDebug from './filled-debug.vue';
+import BorderlessDebug from './borderless-debug.vue';
+import AlignDebug from './align.vue';
+import TextareaResize from './textarea-resize.vue';
+import DebugAddon from './debug-addon.vue';
 import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -62,13 +80,22 @@ export default defineComponent({
     SearchInputLoading,
     Size,
     Group,
-    TextareaResize,
+    TextareaDemo,
+    CompactStyle,
+    AdvanceCount,
+    FocusDemo,
     Addon,
     Tooltip,
     AllowClear,
     PasswordInput,
     ShowCount,
     borderlessVue,
+    SearchVariantDebug,
+    FilledDebug,
+    BorderlessDebug,
+    AlignDebug,
+    TextareaResize,
+    DebugAddon,
   },
 });
 </script>

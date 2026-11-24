@@ -23,14 +23,17 @@ Cascade selection box.
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | allowClear | Whether allow clear | boolean | true |  |
+| autoClearSearchValue | Whether the current search will be cleared on selecting an item. Only applies when `multiple` is `true` | boolean | true | 4.3.0 |
 | autofocus | Get focus when component mounted | boolean | false |  |
 | ~~bordered~~ | Whether has border style (deprecated, please use `variant` instead) | boolean | true | 3.2 |
 | classNames | Customize class for each semantic structure inside the component (supports object and function `({ props }) => ...`) | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: CascaderProps }) => ...)` | - | 4.3.0 |
 | clearIcon | The custom clear icon | slot | - | 3.2 |
 | changeOnSelect | (Work on single select) change value on each selection if set to true, see above demo for details | boolean | false |  |
+| defaultOpen | Initial visible of cascader popup | boolean | - |  |
 | defaultValue | Initial selected value | string\[] \| number\[] | \[] |  |
 | disabled | Whether disabled select | boolean | false |  |
 | displayRender | Render function of displaying selected options, you can use #displayRender="{labels, selectedOptions}". | `({labels, selectedOptions}) => VNode` | `labels => labels.join(' / ')` |  |
+| ~~dropdownMenuColumnStyle~~ | The style of the drop-down menu column (deprecated, please use `popupMenuColumnStyle` instead) | CSSProperties | - |  |
 | ~~dropdownRender~~ | Customize dropdown content (deprecated, please use `popupRender` instead) | `({ menuNode, props }) => VNode` \| slot | - |  |
 | ~~dropdownStyle~~ | Additional style of popup overlay (deprecated, please use `styles.popup.root` instead) | CSSProperties | {} | 3.0 |
 | expandIcon | Customize the current item expand icon | slot | - | 3.0 |
@@ -38,8 +41,10 @@ Cascade selection box.
 | fieldNames | Custom field name for label and value and children | object | `{ label: 'label', value: 'value', children: 'children' }` |  |
 | getPopupContainer | Parent Node which the selector should be rendered to. Default to `body`. When position issues happen, try to modify it into scrollable content and position it relative. | Function(triggerNode) | () => document.body |  |
 | loadData | To load option lazily, and it cannot work with `showSearch` | `(selectedOptions) => void` | - |  |
+| loadingIcon | Customize the loading icon | VNode \| slot | - | 4.3.0 |
 | maxTagCount | Max tag count to show. `responsive` will cost render performance | number \| `responsive` | - | 3.0 |
 | maxTagPlaceholder | Placeholder for not showing tags | v-slot \| function(omittedValues) | - | 3.0 |
+| maxTagTextLength | Max tag text length to show | number | - |  |
 | multiple | Support multiple or not | boolean | - | 3.0 |
 | notFoundContent | Specify content to show when no result matches. | string \| slot | 'Not Found' |  |
 | open | Set visible of cascader popup | boolean | - | 3.0 |
@@ -47,6 +52,7 @@ Cascade selection box.
 | placeholder | Input placeholder | string | 'Please select' |  |
 | placement | Use preset popup align config from builtinPlacements | `bottomLeft` \| `bottomRight` \| `topLeft` \| `topRight` | `bottomLeft` | 3.0 |
 | ~~popupClassName~~ | Additional className of popup overlay (deprecated, please use `classNames.popup.root` instead) | string | - | 4.0 |
+| popupMenuColumnStyle | The style of the drop-down menu column | CSSProperties | - | 4.3.0 |
 | popupRender | Customize popup content, receives the menu VNode `menuNode` directly (supports prop and `#popupRender` slot, replaces `dropdownRender`) | `(menuNode: VNode) => VNode` \| slot | - | 4.3.0 |
 | prefix | The custom prefix | VNode \| slot | - | 4.3.0 |
 | removeIcon | The custom remove icon | slot | - | 3.2 |

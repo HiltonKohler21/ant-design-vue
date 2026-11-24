@@ -223,7 +223,7 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
         textAlign: 'end',
         verticalAlign: 'middle',
 
-        '&-left': {
+        '&-start, &-left': {
           textAlign: 'start',
         },
 
@@ -231,6 +231,11 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
           overflow: 'unset',
           lineHeight: token.lineHeight,
           whiteSpace: 'unset',
+
+          '> label': {
+            verticalAlign: 'middle',
+            textWrap: 'balance',
+          },
         },
 
         '> label': {
@@ -248,17 +253,24 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
           },
 
           // Required mark
-          [`&${formItemCls}-required:not(${formItemCls}-required-mark-optional)::before`]: {
-            display: 'inline-block',
-            marginInlineEnd: token.marginXXS,
-            color: labelRequiredMarkColor,
-            fontSize: token.fontSize,
-            fontFamily: 'SimSun, sans-serif',
-            lineHeight: 1,
-            content: '"*"',
+          [`&${formItemCls}-required`]: {
+            '&::before': {
+              display: 'inline-block',
+              marginInlineEnd: token.marginXXS,
+              color: labelRequiredMarkColor,
+              fontSize: token.fontSize,
+              fontFamily: 'SimSun, sans-serif',
+              lineHeight: 1,
+              content: '"*"',
 
-            [`${componentCls}-hide-required-mark &`]: {
-              display: 'none',
+              [`${componentCls}-hide-required-mark &`]: {
+                display: 'none',
+              },
+            },
+            [`&${formItemCls}-required-mark-hidden, &${formItemCls}-required-mark-optional`]: {
+              '&::before': {
+                display: 'none',
+              },
             },
           },
 
@@ -390,10 +402,10 @@ const genFormItemStyle: GenerateStyle<FormToken> = token => {
 };
 
 const genHorizontalStyle: GenerateStyle<FormToken> = token => {
-  const { componentCls, formItemCls, rootPrefixCls } = token;
+  const { formItemCls, rootPrefixCls } = token;
 
   return {
-    [`${componentCls}-horizontal`]: {
+    [`${formItemCls}-horizontal`]: {
       [`${formItemCls}-label`]: {
         flexGrow: 0,
       },
@@ -405,10 +417,17 @@ const genHorizontalStyle: GenerateStyle<FormToken> = token => {
         minWidth: 0,
       },
 
+      // Do not change this to `ant-col-24`! `-24` match all the responsive rules
       // https://github.com/ant-design/ant-design/issues/32980
-      [`${formItemCls}-label.${rootPrefixCls}-col-24 + ${formItemCls}-control`]: {
-        minWidth: 'unset',
+      [`${formItemCls}-label[class$='-24'], ${formItemCls}-label[class*='-24 ']`]: {
+        [`& + ${formItemCls}-control`]: {
+          minWidth: 'unset',
+        },
       },
+
+      [`> ${formItemCls}-row > .${rootPrefixCls}-col-24${formItemCls}-label,
+        > ${formItemCls}-row > .${rootPrefixCls}-col-xl-24${formItemCls}-label`]:
+        makeVerticalLayoutLabel(token),
     },
   };
 };
@@ -463,7 +482,7 @@ const makeVerticalLayoutLabel = (token: FormToken): CSSObject => ({
     margin: 0,
 
     '&::after': {
-      display: 'none',
+      visibility: 'hidden',
     },
   },
 });
@@ -491,25 +510,25 @@ const genVerticalStyle: GenerateStyle<FormToken> = token => {
   const { componentCls, formItemCls, rootPrefixCls } = token;
 
   return {
-    [`${componentCls}-vertical`]: {
-      [formItemCls]: {
-        '&-row': {
-          flexDirection: 'column',
-        },
-
-        '&-label > label': {
-          height: 'auto',
-        },
-
-        [`${componentCls}-item-control`]: {
-          width: '100%',
-        },
+    [`${formItemCls}-vertical`]: {
+      [`${formItemCls}-row`]: {
+        flexDirection: 'column',
       },
-    },
 
-    [`${componentCls}-vertical ${formItemCls}-label,
-      .${rootPrefixCls}-col-24${formItemCls}-label,
-      .${rootPrefixCls}-col-xl-24${formItemCls}-label`]: makeVerticalLayoutLabel(token),
+      [`${formItemCls}-label > label`]: {
+        height: 'auto',
+      },
+
+      [`${formItemCls}-control`]: {
+        width: '100%',
+        flex: 'none',
+      },
+
+      [`> ${formItemCls}-row > ${formItemCls}-label,
+        > ${formItemCls}-row > .${rootPrefixCls}-col-24${formItemCls}-label,
+        > ${formItemCls}-row > .${rootPrefixCls}-col-xl-24${formItemCls}-label`]:
+        makeVerticalLayoutLabel(token),
+    },
 
     [`@media (max-width: ${unit(token.screenXSMax)})`]: [
       makeVerticalLayout(token),

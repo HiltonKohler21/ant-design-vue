@@ -70,6 +70,13 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         transition: `background-color ${token.motionDurationMid}`,
       },
 
+      [`${componentCls}-tracks`]: {
+        position: 'absolute',
+        borderRadius: token.borderRadiusXS,
+        pointerEvents: 'none',
+        zIndex: 0,
+      },
+
       '&:hover': {
         [`${componentCls}-rail`]: {
           backgroundColor: token.colorFillSecondary,
@@ -97,6 +104,21 @@ const genBaseStyle: GenerateStyle<SliderToken> = token => {
         width: token.handleSize,
         height: token.handleSize,
         outline: 'none',
+        zIndex: 2,
+
+        [`&-disabled`]: {
+          cursor: 'not-allowed',
+
+          '&::after, &:hover::after, &:active::after, &:focus::after': {
+            backgroundColor: token.colorBgElevated,
+            cursor: 'not-allowed',
+            width: token.handleSize,
+            height: token.handleSize,
+            boxShadow: `0 0 0 ${unit(token.handleLineWidth)} ${token.handleColorDisabled}`,
+            insetInlineStart: 0,
+            insetBlockStart: 0,
+          },
+        },
 
         [`${componentCls}-dragging`]: {
           zIndex: 1,
@@ -282,7 +304,7 @@ const genDirectionStyle = (token: SliderToken, horizontal: boolean): CSSObject =
       [part]: railSize,
     },
 
-    [`${componentCls}-track`]: {
+    [`${componentCls}-track, ${componentCls}-tracks`]: {
       [part]: railSize,
     },
 

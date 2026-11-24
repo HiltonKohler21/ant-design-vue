@@ -23,6 +23,7 @@ Uploading is the process of publishing information (web pages, text, pictures, v
 | accept | File types that can be accepted. See [input accept Attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept) | string | - |  |
 | action | Uploading URL | string\|(file) => `Promise` | - |  |
 | beforeUpload | Hook function which will be executed before uploading. Uploading will be stopped with `false` or a rejected Promise returned. | (file, fileList) => `boolean` \| `Promise` | - |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | customRequest | override for the default xhr behavior allowing for additional customization and ability to implement your own XMLHttpRequest | function | - |  |
 | data | Uploading params or function which can return uploading params. | object\|function(file) | - |  |
 | defaultFileList | Default list of files that have been uploaded | object\[] | - |  |
@@ -35,20 +36,26 @@ Uploading is the process of publishing information (web pages, text, pictures, v
 | iconRender | Custom show icon | v-slot:iconRender="{file: UploadFile, listType?: UploadListType}" | - | 3.0 |
 | isImageUrl | Customize if render &lt;img /> in thumbnail | (file: UploadFile) => boolean | - | 3.0 |
 | itemRender | Custom item of uploadList | v-slot:itemRender="{originNode: VNode, file: UploadFile, fileList: object\[], actions: { download: function, preview: function, remove: function }}" | - | 3.0 |
-| listType | Built-in stylesheets, support for three types: `text`, `picture` or `picture-card` | string | `text` |  |
+| listType | Built-in stylesheets, support for four types: `text`, `picture`, `picture-card` or `picture-circle` | string | `text` | `picture-circle`(4.3.0) |
 | maxCount | Limit the number of uploaded files. Will replace current one when `maxCount` is `1` | number | - | 3.0 |
 | method | http method of upload request | string | `post` | 1.5.0 |
 | multiple | Whether to support selected multiple file. `IE10+` supported. You can select multiple files with CTRL holding down while multiple is set to be true | boolean | false |  |
 | name | The name of uploading file | string | `file` |  |
 | openFileDialogOnClick | Click open file dialog | boolean | true | 3.0 |
+| pastable | Support pasting files from clipboard | boolean | false | 4.3.0 |
 | previewFile | Customize preview file logic | (file: File \| Blob) => Promise&lt;dataURL: string> | - | 1.5.0 |
 | previewIcon | custom preview icon | v-slot:previewIcon="{file: UploadFile}" | - | 3.0 |
 | progress | Custom progress bar | [ProgressProps](/components/progress/#api) (support `type="line"` only) | { strokeWidth: 2, showInfo: false } | 3.0 |
 | removeIcon | custom remove icon | v-slot:removeIcon="{file: UploadFile}" | - | 3.0 |
 | rootClassName | The class name of the root element | string | - | 4.3.0 |
-| showUploadList | Whether to show default upload list, could be an object to specify `showPreviewIcon`, `showRemoveIcon`, `showDownloadIcon` and `extra` individually | boolean \| { showPreviewIcon?: boolean, showRemoveIcon?: boolean, showDownloadIcon?: boolean, extra?: VueNode \| ((file: UploadFile) => VueNode) } | true | showDownloadIcon(3.0), extra(4.3.0) |
+| showUploadList | Whether to show default upload list, could be an object to specify `showPreviewIcon`, `showRemoveIcon`, `showDownloadIcon` and `extra` individually | boolean \| { showPreviewIcon?: boolean \| ((file: UploadFile) => boolean), showRemoveIcon?: boolean \| ((file: UploadFile) => boolean), showDownloadIcon?: boolean \| ((file: UploadFile) => boolean), extra?: VueNode \| ((file: UploadFile) => VueNode) } | true | showDownloadIcon(3.0), extra(4.3.0) |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | supportServerRender | Need to be turned on while the server side is rendering. | boolean | false |  |
 | withCredentials | ajax upload with cookie sent | boolean | false |  |
+
+## Semantic DOM
+
+Supported slots: `root` (upload wrapper root), `trigger` (upload trigger area), `list` (file list container), `item` (file list item).
 
 ### Events
 

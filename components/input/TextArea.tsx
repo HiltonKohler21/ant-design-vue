@@ -88,11 +88,30 @@ export default defineComponent({
     const disabled = useInjectDisabled();
 
     const showCount = computed(() => {
+      if (props.count) {
+        return props.count.show ?? false;
+      }
       return (props.showCount as any) === '' || props.showCount || false;
     });
     // Max length value
     const hasMaxLength = computed(() => Number(props.maxlength) > 0);
     const compositing = shallowRef(false);
+
+    const applyCountExceedFormat = (rawVal: string) => {
+      const countConfig = props.count;
+      if (!countConfig || !countConfig.exceedFormatter) {
+        return rawVal;
+      }
+      const max = countConfig.max ?? props.maxlength;
+      if (max === undefined) {
+        return rawVal;
+      }
+      const strategy = countConfig.strategy ?? ((v: string) => v.length);
+      if (strategy(rawVal) > max) {
+        return countConfig.exceedFormatter(rawVal, { max });
+      }
+      return rawVal;
+    };
 
     const oldCompositionValueRef = shallowRef<string>();
     const oldSelectionStartRef = shallowRef<number>(0);
@@ -108,7 +127,9 @@ export default defineComponent({
     const onInternalCompositionEnd = (e: CompositionEvent) => {
       compositing.value = false;
       let triggerValue = (e.currentTarget as any).value;
-      if (hasMaxLength.value) {
+      if (props.count?.exceedFormatter) {
+        triggerValue = applyCountExceedFormat(triggerValue);
+      } else if (hasMaxLength.value) {
         const isCursorInEnd =
           oldSelectionStartRef.value >= props.maxlength + 1 ||
           oldSelectionStartRef.value === oldCompositionValueRef.value?.length;
@@ -184,6 +205,7 @@ export default defineComponent({
 
     const handleReset = (e: MouseEvent) => {
       resolveOnChange(resizableTextArea.value.textArea, e, triggerChange);
+      emit('clear');
       setValue('', () => {
         focus();
       });
@@ -193,7 +215,9 @@ export default defineComponent({
       let triggerValue = (e.target as any).value;
       if (stateValue.value === triggerValue) return;
 
-      if (hasMaxLength.value) {
+      if (props.count?.exceedFormatter && !compositing.value) {
+        triggerValue = applyCountExceedFormat(triggerValue);
+      } else if (hasMaxLength.value) {
         // 1. 复制粘贴超过maxlength的情况 2.未超过maxlength的情况
         const target = e.target as any;
         const isCursorInEnd =
@@ -291,16 +315,22 @@ export default defineComponent({
       );
     };
 
+    const rootRef = shallowRef<HTMLElement>();
+
     expose({
       focus,
       blur,
       resizableTextArea,
+      get nativeElement() {
+        return rootRef.value || resizableTextArea.value?.textArea;
+      },
     });
 
     watchEffect(() => {
       let val = fixControlledValue(stateValue.value);
       if (
         !compositing.value &&
+        !props.count &&
         hasMaxLength.value &&
         (props.value === null || props.value === undefined)
       ) {
@@ -310,7 +340,7 @@ export default defineComponent({
       mergedValue.value = val;
     });
     return () => {
-      const { maxlength, hidden } = props;
+      const { maxlength, hidden, count } = props;
       const { style, class: customClass } = attrs;
       const mergedSemanticClassNames = mergedSemanticClassNamesRef.value;
       const mergedSemanticStyles = mergedSemanticStylesRef.value;
@@ -318,7 +348,7 @@ export default defineComponent({
         textAreaConfig.value?.style || mergedSemanticStyles.root
           ? [textAreaConfig.value?.style, mergedSemanticStyles.root, style]
           : style;
-      const hasShowCountWrapper = showCount.value || formItemInputContext.hasFeedback;
+      const hasShowCountWrapper = !!showCount.value || formItemInputContext.hasFeedback;
       const clearableClass = !hasShowCountWrapper
         ? classNames(
             textAreaConfig.value?.className,
@@ -328,7 +358,7 @@ export default defineComponent({
           )
         : customClass;
       const inputProps: any = {
-        ...omit(props, ['classNames', 'styles', 'rootClassName']),
+        ...omit(props, ['classNames', 'styles', 'rootClassName', 'count', 'onClear']),
         ...attrs,
         class: clearableClass,
         prefixCls: prefixCls.value,
@@ -352,21 +382,33 @@ export default defineComponent({
       );
 
       if (hasShowCountWrapper) {
-        const valueLength = [...mergedValue.value].length;
+        const countStrategy =
+          count?.strategy ?? (count ? (v: string) => v.length : (v: string) => [...v].length);
+        const countMax = count?.max ?? maxlength;
+        const hasCountMax = countMax !== undefined && Number(countMax) > 0;
+        const valueLength = countStrategy(mergedValue.value);
+        const isOutOfRange = countMax !== undefined && valueLength > countMax;
         let dataCount: VueNode = '';
-        if (typeof showCount.value === 'object') {
+        if (count && typeof count.show === 'function') {
+          dataCount = count.show({
+            value: mergedValue.value,
+            count: valueLength,
+            maxLength: countMax,
+          });
+        } else if (typeof showCount.value === 'object') {
           dataCount = showCount.value.formatter({
             value: mergedValue.value,
             count: valueLength,
-            maxlength,
+            maxlength: countMax,
           });
         } else {
-          dataCount = `${valueLength}${hasMaxLength.value ? ` / ${maxlength}` : ''}`;
+          dataCount = `${valueLength}${hasCountMax ? ` / ${countMax}` : ''}`;
         }
         const useSemanticCountNode =
           showCount.value && !!(mergedSemanticClassNames.count || mergedSemanticStyles.count);
         textareaNode = (
           <div
+            ref={rootRef}
             hidden={hidden}
             class={classNames(
               `${prefixCls.value}-textarea`,
@@ -374,6 +416,7 @@ export default defineComponent({
                 [`${prefixCls.value}-textarea-rtl`]: direction.value === 'rtl',
                 [`${prefixCls.value}-textarea-show-count`]: showCount.value,
                 [`${prefixCls.value}-textarea-in-form-item`]: formItemInputContext.isFormItemInput,
+                [`${prefixCls.value}-out-of-range`]: isOutOfRange,
               },
               `${prefixCls.value}-textarea-show-count`,
               textAreaConfig.value?.className,

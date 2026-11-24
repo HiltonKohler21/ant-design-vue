@@ -9,6 +9,7 @@
     <table-transfer />
     <tree-transfer />
     <statusVue />
+    <actions />
     <style-class />
     <custom-select-all-labels></custom-select-all-labels>
     <component-token />
@@ -25,6 +26,7 @@ import TableTransfer from './table-transfer.vue';
 import TreeTransfer from './tree-transfer.vue';
 import Pagination from './pagination.vue';
 import statusVue from './status.vue';
+import Actions from './actions.vue';
 import StyleClass from './style-class.vue';
 import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
@@ -45,6 +47,7 @@ export default defineComponent({
     Pagination,
     TableTransfer,
     TreeTransfer,
+    Actions,
     StyleClass,
     ComponentToken,
   },

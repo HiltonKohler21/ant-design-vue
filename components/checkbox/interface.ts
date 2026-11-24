@@ -1,8 +1,29 @@
-import type { ExtractPropTypes, InjectionKey, Ref } from 'vue';
+import type { CSSProperties, ExtractPropTypes, InjectionKey, PropType, Ref } from 'vue';
 import type { MouseEventHandler } from '../_util/EventInterface';
 import type { VueNode } from '../_util/type';
 import PropTypes from '../_util/vue-types';
 import { booleanType, functionType, stringType, arrayType } from '../_util/type';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
+
+export type CheckboxSemanticName = 'root' | 'icon' | 'label';
+export type CheckboxSemanticClassNames = SemanticClassNames<CheckboxSemanticName>;
+export type CheckboxSemanticStyles = SemanticStyles<CheckboxSemanticName>;
+export type CheckboxClassNamesType =
+  | CheckboxSemanticClassNames
+  | ((info: { props: CheckboxProps }) => CheckboxSemanticClassNames);
+export type CheckboxStylesType =
+  | CheckboxSemanticStyles
+  | ((info: { props: CheckboxProps }) => CheckboxSemanticStyles);
+
+export type CheckboxGroupSemanticName = 'root' | 'item' | 'itemIcon' | 'itemLabel';
+export type CheckboxGroupSemanticClassNames = SemanticClassNames<CheckboxGroupSemanticName>;
+export type CheckboxGroupSemanticStyles = SemanticStyles<CheckboxGroupSemanticName>;
+export type CheckboxGroupClassNamesType =
+  | CheckboxGroupSemanticClassNames
+  | ((info: { props: CheckboxGroupProps }) => CheckboxGroupSemanticClassNames);
+export type CheckboxGroupStylesType =
+  | CheckboxGroupSemanticStyles
+  | ((info: { props: CheckboxGroupProps }) => CheckboxGroupSemanticStyles);
 
 export type CheckboxValueType = string | number | boolean;
 export interface CheckboxOptionType {
@@ -10,6 +31,11 @@ export interface CheckboxOptionType {
   value: CheckboxValueType;
   disabled?: boolean;
   indeterminate?: boolean;
+  className?: string;
+  style?: CSSProperties;
+  title?: string;
+  id?: string;
+  required?: boolean;
   onChange?: (e: CheckboxChangeEvent) => void;
 }
 
@@ -28,11 +54,20 @@ export const abstractCheckboxGroupProps = () => {
   return {
     name: String,
     prefixCls: String,
+    rootClassName: String,
     options: arrayType<Array<CheckboxOptionType | string | number>>(
       [] as Array<CheckboxOptionType | string | number>,
     ),
     disabled: Boolean,
     id: String,
+    classNames: {
+      type: [Object, Function] as PropType<CheckboxGroupClassNamesType>,
+      default: undefined,
+    },
+    styles: {
+      type: [Object, Function] as PropType<CheckboxGroupStylesType>,
+      default: undefined,
+    },
   };
 };
 
@@ -60,9 +95,18 @@ export const abstractCheckboxProps = () => {
     value: PropTypes.any,
     name: String,
     id: String,
+    title: String,
     indeterminate: booleanType(),
     type: stringType('checkbox'),
     autofocus: booleanType(),
+    classNames: {
+      type: [Object, Function] as PropType<CheckboxClassNamesType>,
+      default: undefined,
+    },
+    styles: {
+      type: [Object, Function] as PropType<CheckboxStylesType>,
+      default: undefined,
+    },
     onChange: functionType<(e: CheckboxChangeEvent) => void>(),
     'onUpdate:checked': functionType<(checked: boolean) => void>(),
     onClick: functionType<MouseEventHandler>(),
@@ -86,6 +130,8 @@ export type CheckboxGroupContext = {
   name: Ref<string>;
   disabled: Ref<boolean>;
   mergedValue: Ref<CheckboxValueType[]>;
+  classNames?: Ref<CheckboxSemanticClassNames | undefined>;
+  styles?: Ref<CheckboxSemanticStyles | undefined>;
 };
 export const CheckboxGroupContextKey: InjectionKey<CheckboxGroupContext> =
   Symbol('CheckboxGroupContext');

@@ -1,7 +1,17 @@
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes } from 'vue';
 import { computed, defineComponent, ref } from 'vue';
 import useVariant from '../form/hooks/useVariant';
-import type { RangePickerTimeProps } from '../date-picker/generatePicker';
+import type {
+  CellRender,
+  PickerComponents,
+  RangePickerTimeProps,
+  TimePickerClassNamesType,
+  TimePickerPopupSemanticClassNames,
+  TimePickerPopupSemanticStyles,
+  TimePickerSemanticClassNames,
+  TimePickerSemanticStyles,
+  TimePickerStylesType,
+} from '../date-picker/generatePicker';
 import generatePicker from '../date-picker/generatePicker';
 import {
   commonProps,
@@ -9,6 +19,7 @@ import {
   rangePickerProps,
 } from '../date-picker/generatePicker/props';
 import type { CommonProps, DatePickerProps } from '../date-picker/generatePicker/props';
+import generatePurePanel from '../date-picker/PurePanel';
 import type { GenerateConfig } from '../vc-picker/generate';
 import type { PanelMode, RangeValue } from '../vc-picker/interface';
 import type { RangePickerSharedProps } from '../vc-picker/RangePicker';
@@ -17,8 +28,17 @@ import { useInjectFormItemContext } from '../form/FormItemContext';
 import omit from '../_util/omit';
 
 import type { InputStatus } from '../_util/statusUtils';
-import { booleanType, stringType } from '../_util/type';
-import type { CustomSlotsType } from '../_util/type';
+import { anyType, booleanType, objectType, someType, stringType } from '../_util/type';
+import type { CustomSlotsType, VueNode } from '../_util/type';
+
+export type {
+  TimePickerPopupSemanticClassNames,
+  TimePickerPopupSemanticStyles,
+  TimePickerSemanticClassNames,
+  TimePickerSemanticStyles,
+  TimePickerClassNamesType,
+  TimePickerStylesType,
+};
 
 export interface TimePickerLocale {
   placeholder?: string;
@@ -37,16 +57,43 @@ export const timePickerProps = () => ({
   minuteStep: Number,
   secondStep: Number,
   hideDisabledOptions: booleanType(),
+  changeOnScroll: booleanType(),
   popupClassName: String,
+  popupStyle: objectType<CSSProperties>(),
+  classNames: someType<TimePickerClassNamesType<any>>([Object, Function]),
+  styles: someType<TimePickerStylesType<any>>([Object, Function]),
+  prefix: anyType<VueNode>(),
+  suffix: {
+    type: [Boolean, String, Number, Object, Function, Array] as any,
+    default: undefined,
+  },
   status: stringType<InputStatus>(),
 });
 type CommonTimePickerProps = Partial<ExtractPropTypes<ReturnType<typeof timePickerProps>>>;
 export type TimeRangePickerProps<DateType> = Omit<
   RangePickerTimeProps<DateType>,
-  'picker' | 'defaultPickerValue' | 'defaultValue' | 'value' | 'onChange' | 'onPanelChange' | 'onOk'
+  | 'picker'
+  | 'defaultPickerValue'
+  | 'defaultValue'
+  | 'value'
+  | 'onChange'
+  | 'onPanelChange'
+  | 'onOk'
+  | 'classNames'
+  | 'styles'
 > & {
   popupClassName?: string;
+  popupStyle?: CSSProperties;
   valueFormat?: string;
+  classNames?: TimePickerClassNamesType<any>;
+  styles?: TimePickerStylesType<any>;
+  prefix?: VueNode;
+  suffix?: VueNode;
+  cellRender?: CellRender<DateType>;
+  components?: PickerComponents;
+  changeOnScroll?: boolean;
+  needConfirm?: boolean;
+  onClear?: () => void;
   defaultPickerValue?: RangeValue<DateType> | RangeValue<string>;
   defaultValue?: RangeValue<DateType> | RangeValue<string>;
   value?: RangeValue<DateType> | RangeValue<string>;
@@ -62,10 +109,12 @@ export type TimeRangePickerProps<DateType> = Omit<
   onOk?: (dates: RangeValue<DateType> | RangeValue<string>) => void;
 };
 
-export type TimePickerProps<DateType> = CommonProps<DateType> &
+export type TimePickerProps<DateType> = Omit<CommonProps<DateType>, 'classNames' | 'styles'> &
   DatePickerProps<DateType> &
   CommonTimePickerProps & {
     addon?: () => void;
+    classNames?: TimePickerClassNamesType<any>;
+    styles?: TimePickerStylesType<any>;
   };
 
 function createTimePicker<
@@ -79,6 +128,11 @@ function createTimePicker<
   });
 
   const { TimePicker: InternalTimePicker, RangePicker: InternalRangePicker } = DatePicker as any;
+  const PurePanel = generatePurePanel<DateType>(generateConfig, {
+    defaultPicker: 'time',
+    displayName: 'ATimePickerPurePanel',
+  });
+
   const TimePicker = defineComponent<DTimePickerProps>({
     name: 'ATimePicker',
     inheritAttrs: false,
@@ -91,8 +145,11 @@ function createTimePicker<
     slots: Object as CustomSlotsType<{
       addon?: any;
       renderExtraFooter?: any;
+      prefix?: any;
+      suffix?: any;
       suffixIcon?: any;
       clearIcon?: any;
+      cellRender?: any;
       default: any;
     }>,
     setup(p, { slots, expose, emit, attrs }) {
@@ -136,17 +193,21 @@ function createTimePicker<
       const onOk = (value: DateType) => {
         emit('ok', value);
       };
+      const onClear = () => {
+        emit('clear');
+        props.onClear?.();
+      };
       return () => {
         const { id = formItemContext.id.value } = props;
-        //restProps.addon
         return (
           <InternalTimePicker
             {...attrs}
-            {...omit(props, ['onUpdate:value', 'onUpdate:open', 'rootClassName'])}
+            {...omit(props, ['onUpdate:value', 'onUpdate:open', 'rootClassName', 'onClear'])}
             variant={mergedVariant.value}
             rootClassName={props.rootClassName}
             id={id}
-            dropdownClassName={props.popupClassName}
+            popupClassName={props.popupClassName}
+            popupStyle={props.popupStyle}
             mode={undefined}
             ref={pickerRef}
             renderExtraFooter={
@@ -157,6 +218,7 @@ function createTimePicker<
             onFocus={onFocus}
             onBlur={onBlur}
             onOk={onOk}
+            onClear={onClear}
             v-slots={slots}
           />
         );
@@ -175,8 +237,11 @@ function createTimePicker<
     } as any,
     slots: Object as CustomSlotsType<{
       renderExtraFooter?: any;
+      prefix?: any;
+      suffix?: any;
       suffixIcon?: any;
       clearIcon?: any;
+      cellRender?: any;
       default: any;
     }>,
     setup(p, { slots, expose, emit, attrs }) {
@@ -219,6 +284,10 @@ function createTimePicker<
       const onOk = (values: RangeValue<string | DateType>) => {
         emit('ok', values);
       };
+      const onClear = () => {
+        emit('clear');
+        props.onClear?.();
+      };
       const onCalendarChange: RangePickerSharedProps<DateType>['onCalendarChange'] = (
         values: RangeValue<string> | RangeValue<DateType>,
         dateStrings: [string, string],
@@ -231,9 +300,10 @@ function createTimePicker<
         return (
           <InternalRangePicker
             {...attrs}
-            {...omit(props, ['onUpdate:open', 'onUpdate:value'] as any)}
+            {...omit(props, ['onUpdate:open', 'onUpdate:value', 'onClear'] as any)}
             id={id}
-            dropdownClassName={props.popupClassName}
+            popupClassName={props.popupClassName}
+            popupStyle={props.popupStyle}
             picker="time"
             mode={undefined}
             ref={pickerRef}
@@ -243,6 +313,7 @@ function createTimePicker<
             onBlur={onBlur}
             onPanelChange={onPanelChange}
             onOk={onOk}
+            onClear={onClear}
             onCalendarChange={onCalendarChange}
             v-slots={slots}
           />
@@ -254,6 +325,7 @@ function createTimePicker<
   return {
     TimePicker,
     TimeRangePicker,
+    PurePanel,
   };
 }
 

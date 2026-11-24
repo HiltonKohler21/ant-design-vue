@@ -1,5 +1,28 @@
 import type { RadioProps } from './Radio';
+import type { RadioGroupProps } from './Group';
 import type { ComputedRef, Ref } from 'vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
+
+export type RadioSemanticName = 'root' | 'icon' | 'label';
+export type RadioSemanticClassNames = SemanticClassNames<RadioSemanticName>;
+export type RadioSemanticStyles = SemanticStyles<RadioSemanticName>;
+export type RadioClassNamesType =
+  | RadioSemanticClassNames
+  | ((info: { props: RadioProps }) => RadioSemanticClassNames);
+export type RadioStylesType =
+  | RadioSemanticStyles
+  | ((info: { props: RadioProps }) => RadioSemanticStyles);
+
+export type RadioGroupSemanticName = 'root' | 'item' | 'itemIcon' | 'itemLabel';
+export type RadioGroupSemanticClassNames = SemanticClassNames<RadioGroupSemanticName>;
+export type RadioGroupSemanticStyles = SemanticStyles<RadioGroupSemanticName>;
+export type RadioGroupClassNamesType =
+  | RadioGroupSemanticClassNames
+  | ((info: { props: RadioGroupProps }) => RadioGroupSemanticClassNames);
+export type RadioGroupStylesType =
+  | RadioGroupSemanticStyles
+  | ((info: { props: RadioGroupProps }) => RadioGroupSemanticStyles);
+
 export interface RadioChangeEventTarget extends RadioProps {
   checked: boolean;
 }
@@ -28,6 +51,8 @@ export interface RadioGroupContext {
    */
   optionType?: Ref<RadioGroupOptionType>;
   block?: ComputedRef<boolean>;
+  classNames?: Ref<RadioSemanticClassNames | undefined>;
+  styles?: Ref<RadioSemanticStyles | undefined>;
 }
 
 export type RadioOptionTypeContextProps = RadioGroupOptionType;

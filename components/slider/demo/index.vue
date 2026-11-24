@@ -10,6 +10,11 @@
     <ShowTooltip />
     <Reverse />
     <HandleRender />
+    <DraggableTrack />
+    <Multiple />
+    <Editable />
+    <DisabledHandle />
+    <StyleClass />
     <ComponentToken />
   </demo-sort>
 </template>
@@ -24,6 +29,11 @@ import Vertical from './vertical.vue';
 import ShowTooltip from './show-tooltip.vue';
 import Reverse from './reverse.vue';
 import HandleRender from './handle-render.vue';
+import DraggableTrack from './draggableTrack.vue';
+import Multiple from './multiple.vue';
+import Editable from './editable.vue';
+import DisabledHandle from './disabled-handle.vue';
+import StyleClass from './style-class.vue';
 import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -43,6 +53,11 @@ export default defineComponent({
     ShowTooltip,
     Reverse,
     HandleRender,
+    DraggableTrack,
+    Multiple,
+    Editable,
+    DisabledHandle,
+    StyleClass,
     ComponentToken,
   },
   setup() {

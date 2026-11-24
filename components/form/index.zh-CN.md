@@ -33,21 +33,24 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*ylFATY6w-ygAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<FormSemanticName, string>` \| `(info: { props: FormProps }) => Record<FormSemanticName, string>` | - | 4.3.0 |
 | colon | 配置 Form.Item 的 colon 的默认值 (只有在属性 layout 为 horizontal 时有效) | boolean | true |  |
-| disabled | 设置表单组件禁用，仅对 antdv 组件有效 | boolean | false | 4.0 |
-| feedbackIcons | 当 `Form.Item` 有 `hasFeedback` 属性时可以自定义图标 | `({ status, errors, warnings }) => Partial<Record<ValidateStatus, Component>>` | - | 4.3.0 |
+| disabled | 设置表单组件禁用，仅对 antdv 组件有效 | boolean | false | '4.0' |
+| feedbackIcons | 当 `Form.Item` 有 `hasFeedback` 属性时可以自定义图标 | `({ status, errors, warnings }) => Partial<Record<ValidateStatus, VueNode>>` | - | 4.3.0 |
 | ~~hideRequiredMark~~ | 隐藏所有表单项的必选标记（已废弃，请使用 `requiredMark`） | boolean | false |  |
-| labelAlign | label 标签的文本对齐方式 | `'left'` \| `'right'` | `'right'` |  |
+| labelAlign | label 标签的文本对齐方式 | `'left'` \| `'right'` \| `'start'` \| `'end'` | `'right'` | `start`/`end`: 4.3.0 |
 | labelCol | label 标签布局，同 `<Col>` 组件，设置 `span` `offset` 值，如 `{span: 3, offset: 12}` 或 `sm: {span: 3, offset: 12}` | [object](/components/grid-cn/#col) | - |  |
-| labelWrap | label 标签的文本换行方式 | boolean | false | 3.0 |
+| labelWrap | label 标签的文本换行方式 | boolean | false | '3.0' |
 | layout | 表单布局 | `'horizontal'` \| `'vertical'` \| `'inline'` | `'horizontal'` |  |
 | model | 表单数据对象 | object | - |  |
 | name | 表单名称，会作为表单字段 `id` 前缀使用 | string | - | 2.0.0 |
-| requiredMark | 必选样式，可以切换为必选或者可选展示样式 | boolean \| `'optional'` | true |  |
+| requiredMark | 必选样式，可以切换为必选、可选、隐藏或自定义渲染函数样式 | boolean \| `'optional'` \| `((label: VueNode, info: { required: boolean }) => VueNode)` | true | `renderProps`: 4.3.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | rules | 表单验证规则 | object | - |  |
-| scrollToFirstError | 提交失败自动滚动到第一个错误字段 | boolean \| [options](https://github.com/stipsan/scroll-into-view-if-needed/#options) | false | 2.0.0 |
+| scrollToFirstError | 提交失败自动滚动到第一个错误字段 | boolean \| [options](https://github.com/stipsan/scroll-into-view-if-needed/#options) \| `{ focus?: boolean }` | false | 2.0.0 \| `focus`: 4.3.0 |
 | size | 设置字段组件的尺寸（仅限 antdv 组件） | `'small'` \| `'middle'` \| `'large'` | - |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<FormSemanticName, CSSProperties>` \| `(info: { props: FormProps }) => Record<FormSemanticName, CSSProperties>` | - | 4.3.0 |
+| tooltip | 统一配置表单项提示属性 | `TooltipProps & { icon?: VueNode }` | - | 4.3.0 |
 | validateMessages | 验证提示模板 | ValidateMessages | - |  |
 | validateOnRuleChange | 是否在 rules 属性改变后立即触发一次验证 | boolean | true |  |
 | validateTrigger | 统一设置字段校验规则 | string \| string\[] | `change` | 2.0.0 |
@@ -70,10 +73,11 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*ylFATY6w-ygAAA
 | 方法名 | 说明 | 参数 | 版本 |
 | --- | --- | --- | --- |
 | clearValidate | 移除表单项的校验结果。传入待移除的表单项的 name 属性或者 name 组成的数组，如不传则移除整个表单的校验结果 | (nameList?: [NamePath](#namepath)\[]) => void |  |
+| getFieldInstance | 获取对应字段 DOM 节点 | (name: [NamePath](#namepath)) => HTMLElement \| null | 4.3.0 |
 | resetFields | 对整个表单进行重置，将所有字段值重置为初始值并移除校验结果 | (nameList?: [NamePath](#namepath)\[]) => void |  |
-| scrollToField | 滚动到对应字段位置 | (name: [NamePath](#namepath), options: \[[ScrollOptions](https://github.com/stipsan/scroll-into-view-if-needed/tree/ece40bd9143f48caf4b99503425ecb16b0ad8249#options)]) => void |  |
-| validate | 触发表单验证, 同 validateFields | (nameList?: [NamePath](#namepath)\[]) => Promise |  |
-| validateFields | 触发表单验证 | (nameList?: [NamePath](#namepath)\[]) => Promise |  |
+| scrollToField | 滚动到对应字段位置 | (name: [NamePath](#namepath), options?: [ScrollOptions](https://github.com/stipsan/scroll-into-view-if-needed/tree/ece40bd9143f48caf4b99503425ecb16b0ad8249#options) \| `{ focus?: boolean }`) => void | `focus`: 4.3.0 |
+| validate | 触发表单验证, 同 validateFields | (nameList?: [NamePath](#namepath)\[] \| ValidateOptions, options?: ValidateOptions) => Promise | `validateOnly`: 4.3.0 |
+| validateFields | 触发表单验证，支持 `{ validateOnly: true }` 仅校验不展示错误信息 | (nameList?: [NamePath](#namepath)\[] \| ValidateOptions, options?: ValidateOptions) => Promise | `validateOnly`: 4.3.0 |
 
 #### NamePath
 
@@ -85,21 +89,24 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*ylFATY6w-ygAAA
 | --- | --- | --- | --- | --- |
 | autoLink | 是否自动关联表单域，对于大部分情况都可以使用自动关联，如果不满足自动关联的条件，可以手动关联，参见下方注意事项 | boolean | true |  |
 | colon | 配合 label 属性使用，表示是否显示 label 后面的冒号 | boolean | true |  |
+| dependencies | 设置依赖字段，当依赖字段更新时自动触发关联校验 | [NamePath](#namepath)\[] | - | 4.3.0 |
 | extra | 额外的提示信息，和 help 类似，当需要错误信息和提示文案同时出现时，可以使用这个。 | string \| slot | - |  |
-| hasFeedback | 配合 validateStatus 属性使用，展示校验状态图标，建议只配合 Input 组件使用 | boolean | false |  |
+| hasFeedback | 配合 validateStatus 属性使用，展示校验状态图标，支持自定义反馈图标 | boolean \| `{ icons?: FeedbackIcons }` | false | `icons`: 4.3.0 |
 | help | 提示信息，如不设置，则会根据校验规则自动生成 | string \| slot | - |  |
 | hidden | 是否隐藏字段（依然会收集和校验字段） | boolean | false |  |
 | htmlFor | 设置子元素 label `htmlFor` 属性 | string | - |  |
-| label | label 标签的文本 | string \| slot | - |  |
-| labelAlign | 标签文本对齐方式 | `'left'` \| `'right'` | `'right'` |  |
+| label | label 标签的文本，设为 `null` 时可自动根据表单 `labelCol` 对齐控件列 | string \| null \| slot | - | `null`: 4.3.0 |
+| labelAlign | 标签文本对齐方式 | `'left'` \| `'right'` \| `'start'` \| `'end'` | `'right'` | `start`/`end`: 4.3.0 |
 | labelCol | label 标签布局，同 `<Col>` 组件，设置 `span` `offset` 值，如 `{span: 3, offset: 12}` 或 `sm: {span: 3, offset: 12}` | [object](/components/grid-cn/#col) | - |  |
+| layout | 表单项独立布局 | `'horizontal'` \| `'vertical'` | - | 4.3.0 |
 | messageVariables | 默认验证字段的信息 | `Record<string, string>` | - |  |
 | name | 表单域 model 字段，在使用 validate、resetFields 方法的情况下，该属性是必填的 | [NamePath](#namepath) | - |  |
-| noStyle | 为 `true` 时不带样式，作为纯字段控件使用 | boolean | false | 3.0 |
-| required | 是否必填，如不设置，则会根据校验规则自动生成 | boolean | false |  |
+| noStyle | 为 `true` 时不带样式，作为纯字段控件使用 | boolean | false | '3.0' |
+| required | 是否必填，如不设置，则会根据校验规则自动生成 | boolean | - |  |
 | rules | 表单验证规则 | object \| array | - |  |
-| tooltip | 配置提示信息 | string \| slot | - | 4.0.4 |
-| validateFirst | 当某一规则校验不通过时，是否停止剩下的规则的校验。 | boolean | false | 2.0.0 |
+| tooltip | 配置提示信息 | string \| slot \| `(TooltipProps & { icon?: VueNode })` | - | 4.0.4 \| `object`: 4.3.0 |
+| validateDebounce | 设置防抖，延迟毫秒数后进行校验 | number | - | 4.3.0 |
+| validateFirst | 当某一规则校验不通过时，是否停止剩下的规则的校验，设置 `parallel` 时会并行校验 | boolean \| `'parallel'` | false | 2.0.0 \| `parallel`: 4.3.0 |
 | validateStatus | 校验状态，如不设置，则会根据校验规则自动生成，可选：`'success'` `'warning'` `'error'` `'validating'` | string | - |  |
 | validateTrigger | 设置字段校验的时机 | string \| string\[] | `change` | 2.0.0 |
 | wrapperCol | 需要为输入控件设置布局样式时，使用该属性，用法同 labelCol | [object](/components/grid-cn/#col) | - |  |
@@ -201,9 +208,21 @@ Form.Item 会对唯一子元素进行劫持，并监听 `blur` 和 `change` 事�
 | trigger | 校验触发的时机 | 'blur' \| 'change' \| `['change', 'blur']` | - |
 | type | 内建校验类型，[可选项](https://github.com/yiminghe/async-validator#type) | string | 'string' |
 | validator | 自定义校验（注意，[callback 必须被调用](https://github.com/ant-design/ant-design/issues/5155)） | function(rule, value, callback) | - |
+| warningOnly | 仅警告，不阻塞表单提交 | boolean | `false` |
 | whitespace | 必选时，空格是否会被视为错误 | boolean | `false` |
 
 更多高级用法可研究 [async-validator](https://github.com/yiminghe/async-validator)。
+
+## Semantic DOM
+
+| 名称     | 说明                                                               | 版本  |
+| -------- | ------------------------------------------------------------------ | ----- |
+| root     | 根元素，包含表单容器的基础样式                                     | 4.3.0 |
+| label    | 标签元素，包含标签的颜色、字体大小、高度、必填标记等显示样式       | 4.3.0 |
+| content  | 内容元素，包含表单控件内容容器的相关样式                           | 4.3.0 |
+| help     | 帮助信息容器元素，包含帮助文案与校验信息区域的间距、过渡与展示样式 | 4.3.0 |
+| helpItem | 帮助信息单项元素，包含错误、警告与提示文案的排版样式               | 4.3.0 |
+| extra    | 额外提示容器元素，包含补充说明文案的间距、颜色与排版样式           | 4.3.0 |
 
 ### useForm (v2.2)
 

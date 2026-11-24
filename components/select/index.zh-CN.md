@@ -45,14 +45,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a6ggRInInJ4AAA
 | dropdownStyle | 下拉菜单的 style 属性（已废弃，请使用 `styles.popup.root` 替代） | object | - |  |
 | fieldNames | 自定义节点 label、value、options 的字段 | object | { label: `label`, value: `value`, options: `options` } | 3.0 |
 | filterOption | 是否根据输入项进行筛选。当其为一个函数时，会接收 `inputValue` `option` 两个参数，当 `option` 符合筛选条件时，应返回 `true`，反之则返回 `false`。 | `boolean` \| `function(inputValue, option)` | true |  |
-| filterSort | 搜索时对筛选结果项的排序函数, 类似[Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)里的 compareFunction | (optionA: Option, optionB: Option) => number | - | 3.0 |
+| filterSort | 搜索时对筛选结果项的排序函数, 类似[Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)里的 compareFunction | (optionA: Option, optionB: Option, info?: { searchValue: string }) => number | - | 3.0 (`searchValue`: 4.3.0) |
 | firstActiveValue | 默认高亮的选项 | string \| string\[] | - |  |
 | getPopupContainer | 菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位。 | function(triggerNode) | () => document.body |  |
 | labelInValue | 是否把每个选项的 label 包装到 value 中，会把 Select 的 value 类型从 `string` 变为 `{key: string, label: vNodes, originLabel: any}` 的格式, originLabel（3.1） 保持原始类型，如果通过 a-select-option children 构造的节点，该值是是个函数（即 a-select-option 的默认插槽） | boolean | false |  |
+| labelRender | 自定义当前选中的 label 内容渲染（支持 prop 与 `#labelRender` 插槽） | (props: { label: any; value: any; key?: any }) => VueNode \| slot | - | 4.3.0 |
 | listHeight | 设置弹窗滚动高度 | number | 256 |  |
 | loading | 加载中状态 | boolean | false |  |
 | loadingIcon | 自定义加载中图标（`loading` 为 `true` 时生效） | VNode \| slot | `<LoadingOutlined spin />` | 4.3.0 |
-| maxTagCount | 最多显示多少个 tag | number | - |  |
+| maxCount | 指定可选中的最多 items 数量，仅在 `mode` 为 `multiple` 或 `tags` 时生效 | number | - | 4.3.0 |
+| maxTagCount | 最多显示多少个 tag | number \| `responsive` | - |  |
 | maxTagPlaceholder | 隐藏 tag 时显示的内容 | slot \| function(omittedValues) | - |  |
 | maxTagTextLength | 最大显示的 tag 文本长度 | number | - |  |
 | menuItemSelectedIcon | 自定义当前选中的条目图标 | VNode \| slot | - |  |
@@ -60,8 +62,9 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a6ggRInInJ4AAA
 | notFoundContent | 当下拉列表为空时显示的内容 | string\|slot | `Not Found` |  |
 | open | 是否展开下拉菜单 | boolean | - |  |
 | option | 通过 option 插槽，自定义节点 | v-slot:option="{value, label, [disabled, key, title]}" | - | 2.2.5 |
-| optionFilterProp | 搜索时过滤对应的 option 属性，不支持 children | string | value |  |
+| optionFilterProp | 搜索时过滤对应的 option 属性，传入 `string[]` 时多字段 OR 匹配搜索，不支持 children | string \| string\[] | value | `string[]`: 4.3.0 |
 | optionLabelProp | 回填到选择框的 Option 的属性值，默认是 Option 的子元素。比如在子元素需要高亮效果时，此值可以设为 `value`。 | string | `children` \| `label`(设置 options 时) |  |
+| optionRender | 自定义渲染下拉选项（支持 prop 与 `#optionRender` 插槽） | (option: { data, label, value, key }, info: { index: number }) => VueNode \| slot | - | 4.3.0 |
 | options | options 数据，如果设置则不需要手动构造 selectOption 节点 | Array&lt;{value, label, [disabled, key, title]}> | \[] |  |
 | placeholder | 选择框默认文字 | string\|slot | - |  |
 | placement | 选择框弹出的位置 | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
@@ -70,19 +73,30 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*a6ggRInInJ4AAA
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | searchValue | 控制搜索文本 | string | - |  |
 | showArrow | 是否显示下拉小箭头 | boolean | 单选为 true,多选为 false |  |
-| showSearch | 配置是否可搜索 | boolean | 单选为 false,多选为 true |  |
+| showSearch | 配置是否可搜索，支持传入搜索配置对象 | boolean \| [showSearch](#showsearch) | 单选为 false,多选为 true | Object: 4.3.0 |
 | size | 选择框大小，可选 `middle` `large` `small` | string | middle |  |
 | status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
 | styles | 用于自定义 Select 组件内部各语义化结构的行内 style（支持对象与函数式 `({ props }) => ...`） | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: SelectProps }) => ...)` | - | 4.3.0 |
 | suffix | 自定义的选择框后缀图标（替代 `suffixIcon`） | VNode \| slot | - | 4.3.0 |
 | ~~suffixIcon~~ | 自定义的选择框后缀图标（已废弃，请使用 `suffix` 替代） | VNode \| slot | - |  |
 | tagRender | 自定义 tag 内容 render，仅在 `mode` 为 `multiple` 或 `tags` 时生效 | slot \| (props) => any | - | 3.0 |
-| tokenSeparators | 自动分词的分隔符，仅在 `mode="tags"` 时生效 | string\[] | - |  |
+| tokenSeparators | 自动分词的分隔符或自定义分词函数，仅在 `mode="tags"` 或 `mode="multiple"` 时生效 | string\[] \| ((input: string) => string\[]) | - | function: 4.3.0 |
 | value(v-model) | 指定当前选中的条目 | string\|string\[]\|number\|number\[] | - |  |
 | variant | 形态变体 | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | virtual | 设置 false 时关闭虚拟滚动 | boolean | true | 3.0 |
 
 > 注意，如果发现下拉菜单跟随页面滚动，或者需要在其他弹层中触发 Select，请尝试使用 `getPopupContainer={triggerNode => triggerNode.parentNode}` 将下拉弹层渲染节点固定在触发器的父元素中。
+
+### showSearch
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| autoClearSearchValue | 是否在选中项后清空搜索框，只在 `mode` 为 `multiple` 或 `tags` 时有效 | boolean | true | 4.3.0 |
+| filterOption | 是否根据输入项进行筛选 | boolean \| function(inputValue, option) | true | 4.3.0 |
+| filterSort | 搜索时对筛选结果项的排序函数 | (optionA: Option, optionB: Option, info?: { searchValue: string }) => number | - | 4.3.0 |
+| optionFilterProp | 搜索时过滤对应的 `option` 属性，支持单字段或 `string[]` 多字段 OR 匹配 | string \| string\[] | `value` | 4.3.0 |
+| searchValue | 控制搜索文本 | string | - | 4.3.0 |
+| onSearch | 文本框值变化时回调 | function(value: string) | - | 4.3.0 |
 
 ### 事件
 

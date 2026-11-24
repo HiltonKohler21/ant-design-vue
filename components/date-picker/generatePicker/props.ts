@@ -1,10 +1,17 @@
 import type { FocusEventHandler, MouseEventHandler } from '../../_util/EventInterface';
 import type { CSSProperties } from 'vue';
-import type { PickerLocale } from '.';
+import type {
+  AllowClearConfig,
+  CellRender,
+  DatePickerClassNamesType,
+  DatePickerStylesType,
+  FormatType,
+  PickerComponents,
+  PickerLocale,
+} from './interface';
 import type { SizeType, Variant } from '../../config-provider';
 import type {
   PresetDate,
-  CustomFormat,
   DisabledTime,
   DisabledTimes,
   EventValue,
@@ -18,6 +25,7 @@ import type { SharedTimeProps } from '../../vc-picker/panels/TimePanel';
 import type { RangeDateRender, RangeInfo, RangeType } from '../../vc-picker/RangePicker';
 import type { VueNode } from '../../_util/type';
 import {
+  anyType,
   stringType,
   arrayType,
   someType,
@@ -36,18 +44,28 @@ type RangeShowTimeObject<DateType> = Omit<SharedTimeProps<DateType>, 'defaultVal
 
 function commonProps<DateType = any>() {
   return {
-    id: String,
+    id: someType<string | { start?: string; end?: string }>([String, Object]),
     rootClassName: String,
     /**
      * @deprecated `dropdownClassName` is deprecated which will be removed in next major
-     *   version.Please use `popupClassName` instead.
+     *   version.Please use `classNames.popup.root` instead.
      */
     dropdownClassName: String,
+    /**
+     * @deprecated Please use `classNames.popup.root` instead.
+     */
     popupClassName: String,
+    /**
+     * @deprecated Please use `styles.popup.root` instead.
+     */
     popupStyle: objectType<CSSProperties>(),
+    /** 语义化 classNames（支持对象与函数式，对齐 antd v6） */
+    classNames: someType<DatePickerClassNamesType<any>>([Object, Function]),
+    /** 语义化 styles（支持对象与函数式，对齐 antd v6） */
+    styles: someType<DatePickerStylesType<any>>([Object, Function]),
     transitionName: String,
     placeholder: String,
-    allowClear: booleanType(),
+    allowClear: someType<boolean | AllowClearConfig>([Boolean, Object]),
     autofocus: booleanType(),
     disabled: booleanType(),
     tabindex: Number,
@@ -55,26 +73,30 @@ function commonProps<DateType = any>() {
     defaultOpen: booleanType(),
     /** Make input readOnly to avoid popup keyboard in mobile */
     inputReadOnly: booleanType(),
-    format: someType<string | CustomFormat<DateType> | (string | CustomFormat<DateType>)[]>([
-      String,
-      Function,
-      Array,
-    ]),
-    // Value
-    // format:  string | CustomFormat<DateType> | (string | CustomFormat<DateType>)[];
-    // Render
-    // suffixIcon?: VueNode;
-    // clearIcon?: VueNode;
-    // prevIcon?: VueNode;
-    // nextIcon?: VueNode;
-    // superPrevIcon?: VueNode;
-    // superNextIcon?: VueNode;
+    format: someType<FormatType<DateType>>([String, Function, Array, Object]),
+    prefix: anyType<VueNode>(),
+    suffix: {
+      type: [Boolean, String, Number, Object, Function, Array] as any,
+      default: undefined,
+    },
+    suffixIcon: anyType<VueNode>(),
+    clearIcon: anyType<VueNode>(),
     getPopupContainer: functionType<(node: HTMLElement) => HTMLElement>(),
     panelRender: functionType<(originPanel: VueNode) => VueNode>(),
-    // // Events
+    cellRender: functionType<CellRender<DateType>>(),
+    components: objectType<PickerComponents>(),
+    minDate: someType<DateType | string>([Object, String]),
+    maxDate: someType<DateType | string>([Object, String]),
+    order: booleanType(),
+    preserveInvalidOnBlur: booleanType(),
+    previewValue: someType<false | 'hover'>([Boolean, String]),
+    showWeek: booleanType(),
+    changeOnScroll: booleanType(),
+    // Events
     onChange: functionType<(value: any, dateString: any) => void>(),
     'onUpdate:value': functionType<(value: any) => void>(),
     onOk: functionType<(value: any) => void>(),
+    onClear: functionType<() => void>(),
     onOpenChange: functionType<(open: boolean) => void>(),
     'onUpdate:open': functionType<(open: boolean) => void>(),
     onFocus: functionType<FocusEventHandler>(),
@@ -101,7 +123,7 @@ function commonProps<DateType = any>() {
     /** 是否需要确认按钮（antd 5.14+） */
     needConfirm: booleanType(),
     dateRender: functionType<DateRender<DateType>>(),
-    disabledDate: functionType<(date: DateType) => boolean>(),
+    disabledDate: functionType<(date: DateType, info?: any) => boolean>(),
     mode: stringType<PanelMode>(),
     picker: stringType<PickerMode>(),
     valueFormat: String,
@@ -118,27 +140,30 @@ function commonProps<DateType = any>() {
 }
 
 export interface CommonProps<DateType> {
-  id?: string;
+  id?: string | { start?: string; end?: string };
   rootClassName?: string;
   prefixCls?: string;
   /**
    * @deprecated `dropdownClassName` is deprecated which will be removed in next major
-   *   version.Please use `popupClassName` instead.
+   *   version.Please use `classNames.popup.root` instead.
    */
-
   dropdownClassName?: string;
   popupClassName?: string;
   popupStyle?: CSSProperties;
+  classNames?: DatePickerClassNamesType<any>;
+  styles?: DatePickerStylesType<any>;
   transitionName?: string;
   placeholder?: string;
-  allowClear?: boolean;
+  allowClear?: boolean | AllowClearConfig;
   autofocus?: boolean;
   disabled?: boolean;
   tabindex?: number;
   open?: boolean;
   defaultOpen?: boolean;
   inputReadOnly?: boolean;
-  format?: string | CustomFormat<DateType> | (string | CustomFormat<DateType>)[];
+  format?: FormatType<DateType>;
+  prefix?: VueNode;
+  suffix?: VueNode;
   suffixIcon?: VueNode;
   clearIcon?: VueNode;
   prevIcon?: VueNode;
@@ -147,9 +172,19 @@ export interface CommonProps<DateType> {
   superNextIcon?: VueNode;
   getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
   panelRender?: (originPanel: VueNode) => VueNode;
+  cellRender?: CellRender<DateType>;
+  components?: PickerComponents;
+  minDate?: DateType | string;
+  maxDate?: DateType | string;
+  order?: boolean;
+  preserveInvalidOnBlur?: boolean;
+  previewValue?: false | 'hover';
+  showWeek?: boolean;
+  changeOnScroll?: boolean;
   onChange?: (value: DateType | string | null, dateString: string) => void;
   'onUpdate:value'?: (value: DateType | string | null) => void;
   onOk?: (value: DateType | string | null) => void;
+  onClear?: () => void;
   onOpenChange?: (open: boolean) => void;
   'onUpdate:open'?: (open: boolean) => void;
   onFocus?: FocusEventHandler;
@@ -173,7 +208,7 @@ export interface CommonProps<DateType> {
   variant?: Variant;
   needConfirm?: boolean;
   dateRender?: DateRender<DateType>;
-  disabledDate?: (date: DateType) => boolean;
+  disabledDate?: (date: DateType, info?: any) => boolean;
   mode?: PanelMode;
   picker?: PickerMode;
   valueFormat?: string;
@@ -184,6 +219,7 @@ export interface CommonProps<DateType> {
 function datePickerProps<DateType = any>() {
   return {
     rootClassName: String,
+    pickerValue: someType<DateType | string>([Object, String]),
     defaultPickerValue: someType<DateType | string>([Object, String]),
     defaultValue: someType<DateType | string | DateType[] | string[]>([Object, String, Array]),
     value: someType<DateType | string | DateType[] | string[]>([Object, String, Array]),
@@ -197,6 +233,8 @@ function datePickerProps<DateType = any>() {
       String,
       Object,
     ]),
+    /** 多选模式下自定义 tag 渲染 */
+    tagRender: functionType<(props: any) => VueNode>(),
     presets: arrayType<PresetDate<DateType>[]>(),
     disabledTime: functionType<DisabledTime<DateType>>(),
     renderExtraFooter: functionType<(mode: PanelMode) => VueNode>(),
@@ -208,12 +246,14 @@ function datePickerProps<DateType = any>() {
 }
 
 export interface DatePickerProps<DateType> {
+  pickerValue?: DateType | string;
   defaultPickerValue?: DateType | string;
   defaultValue?: DateType | string | DateType[] | string[];
   value?: DateType | string | DateType[] | string[];
   multiple?: boolean;
   maxTagCount?: number | 'responsive';
   maxTagPlaceholder?: VueNode | ((omittedValues: any[]) => VueNode);
+  tagRender?: (props: any) => VueNode;
   presets?: PresetDate<DateType>[];
   disabledTime?: DisabledTime<DateType>;
   renderExtraFooter?: (mode: PanelMode) => VueNode;
@@ -228,6 +268,7 @@ function rangePickerProps<DateType>() {
     rootClassName: String,
     allowEmpty: arrayType<[boolean, boolean]>(),
     dateRender: functionType<RangeDateRender<DateType>>(),
+    pickerValue: arrayType<RangeValue<DateType> | RangeValue<string>>(),
     defaultPickerValue: arrayType<RangeValue<DateType> | RangeValue<string>>(),
     defaultValue: arrayType<RangeValue<DateType> | RangeValue<string>>(),
     value: arrayType<RangeValue<DateType> | RangeValue<string>>(),
@@ -235,7 +276,7 @@ function rangePickerProps<DateType>() {
     disabledTime: functionType<(date: EventValue<DateType>, type: RangeType) => DisabledTimes>(),
     disabled: someType<boolean | [boolean, boolean]>([Boolean, Array]),
     renderExtraFooter: functionType<() => VueNode>(),
-    separator: { type: String },
+    separator: anyType<VueNode>(),
     showTime: someType<boolean | RangeShowTimeObject<DateType>>([Boolean, Object]),
     ranges:
       objectType<
@@ -274,14 +315,15 @@ function rangePickerProps<DateType>() {
 export interface RangePickerProps<DateType> {
   allowEmpty?: [boolean, boolean];
   dateRender?: RangeDateRender<DateType>;
+  pickerValue?: RangeValue<DateType> | RangeValue<string>;
   defaultPickerValue?: RangeValue<DateType> | RangeValue<string>;
   defaultValue?: RangeValue<DateType> | RangeValue<string>;
   value?: RangeValue<DateType> | RangeValue<string>;
   presets?: PresetDate<RangeValue<DateType>>[];
   disabledTime?: (date: EventValue<DateType>, type: RangeType) => DisabledTimes;
-  disabled?: [boolean, boolean];
+  disabled?: boolean | [boolean, boolean];
   renderExtraFooter?: () => VueNode;
-  separator?: string;
+  separator?: VueNode;
   showTime?: boolean | RangeShowTimeObject<DateType>;
   ranges?: Record<
     string,
@@ -308,21 +350,45 @@ export interface RangePickerProps<DateType> {
 
 export type ExtraDatePickerProps<DateType> = {
   valueFormat?: string;
+  pickerValue?: DateType | string;
   defaultPickerValue?: DateType | string;
   defaultValue?: DateType | string | DateType[] | string[];
   value?: DateType | string | DateType[] | string[];
   multiple?: boolean;
   maxTagCount?: number | 'responsive';
   maxTagPlaceholder?: VueNode | ((omittedValues: any[]) => VueNode);
+  tagRender?: (props: any) => VueNode;
   needConfirm?: boolean;
+  classNames?: DatePickerClassNamesType<any>;
+  styles?: DatePickerStylesType<any>;
+  prefix?: VueNode;
+  suffix?: VueNode;
+  minDate?: DateType | string;
+  maxDate?: DateType | string;
+  cellRender?: CellRender<DateType>;
+  components?: PickerComponents;
+  changeOnScroll?: boolean;
+  previewValue?: false | 'hover';
+  onClear?: () => void;
 };
 
 export type ExtraRangePickerProps<DateType> = {
   valueFormat?: string;
+  pickerValue?: RangeValue<DateType> | RangeValue<string>;
   defaultPickerValue?: RangeValue<DateType> | RangeValue<string>;
   defaultValue?: RangeValue<DateType> | RangeValue<string>;
   value?: RangeValue<DateType> | RangeValue<string>;
   needConfirm?: boolean;
+  classNames?: DatePickerClassNamesType<any>;
+  styles?: DatePickerStylesType<any>;
+  prefix?: VueNode;
+  suffix?: VueNode;
+  minDate?: DateType | string;
+  maxDate?: DateType | string;
+  cellRender?: CellRender<DateType>;
+  components?: PickerComponents;
+  previewValue?: false | 'hover';
+  onClear?: () => void;
 };
 
 export { commonProps, datePickerProps, rangePickerProps };

@@ -15,6 +15,7 @@ import type {
 } from '../_util/EventInterface';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import omit from '../_util/omit';
+import type { InputFocusOptions } from '../vc-input/utils/commonUtils';
 import inputProps from './inputProps';
 import { mergeSemanticClassNames, mergeSemanticStyles, resolveSemanticValue } from './util';
 
@@ -37,8 +38,8 @@ export default defineComponent({
   setup(props, { slots, attrs, expose, emit }) {
     const inputRef = shallowRef();
     const composedRef = shallowRef(false);
-    const focus = () => {
-      inputRef.value?.focus();
+    const focus = (option?: InputFocusOptions) => {
+      inputRef.value?.focus(option);
     };
     const blur = () => {
       inputRef.value?.blur();
@@ -46,6 +47,9 @@ export default defineComponent({
     expose({
       focus,
       blur,
+      get nativeElement() {
+        return inputRef.value?.nativeElement;
+      },
     });
 
     const onChange = (e: ChangeEvent) => {

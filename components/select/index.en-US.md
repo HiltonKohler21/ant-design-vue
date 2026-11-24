@@ -44,14 +44,16 @@ Select component to select value from options.
 | dropdownStyle | style of dropdown menu (Deprecated, please use `styles.popup.root` instead) | object | - |  |
 | fieldNames | Customize node label, value, options field name | object | { label: `label`, value: `value`, options: `options` } | 3.0 |
 | filterOption | If true, filter options by input, if function, filter options against it. The function will receive two arguments, `inputValue` and `option`, if the function returns `true`, the option will be included in the filtered set; Otherwise, it will be excluded. | `boolean` \| `function(inputValue, option)` | true |  |
-| filterSort | Sort function for search options sorting, see [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)'s compareFunction | (optionA: Option, optionB: Option) => number | - | 3.0 |
+| filterSort | Sort function for search options sorting, see [Array.sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)'s compareFunction | (optionA: Option, optionB: Option, info?: { searchValue: string }) => number | - | 3.0 (`searchValue`: 4.3.0) |
 | firstActiveValue | Value of action option by default | string \| string\[] | - |  |
 | getPopupContainer | Parent Node which the selector should be rendered to. Default to `body`. When position issues happen, try to modify it into scrollable content and position it relative. | function(triggerNode) | () => document.body |  |
 | labelInValue | whether to embed label in value, turn the format of value from `string` to `{key: string, label: vNodes, originLabel: any}`, originLabel (3.1) maintains the original type. If the node is constructed through a-select-option children, the value is a function (the default slot of a-select-option) | boolean | false |  |
+| labelRender | Customize selected label render (supports prop and `#labelRender` slot) | (props: { label: any; value: any; key?: any }) => VueNode \| slot | - | 4.3.0 |
 | listHeight | Config popup height | number | 256 |  |
 | loading | indicate loading state | boolean | false |  |
 | loadingIcon | Custom loading icon when `loading` is `true` | VNode \| slot | `<LoadingOutlined spin />` | 4.3.0 |
-| maxTagCount | Max tag count to show | number | - |  |
+| maxCount | The max number of items can be selected, only applies when `mode` is `multiple` or `tags` | number | - | 4.3.0 |
+| maxTagCount | Max tag count to show | number \| `responsive` | - |  |
 | maxTagPlaceholder | Placeholder for not showing tags | slot \| function(omittedValues) | - |  |
 | maxTagTextLength | Max text length to show | number | - |  |
 | menuItemSelectedIcon | The custom menuItemSelected icon | VNode \| slot | - |  |
@@ -59,8 +61,9 @@ Select component to select value from options.
 | notFoundContent | Specify content to show when no result matches.. | string\|slot | `Not Found` |  |
 | open | Controlled open state of dropdown | boolean | - |  |
 | option | custom render option by slot | v-slot:option="{value, label, [disabled, key, title]}" | - | 2.2.5 |
-| optionFilterProp | Which prop value of option will be used for filter if filterOption is true | string | value |  |
+| optionFilterProp | Which prop value of option will be used for filter if filterOption is true. Supports `string[]` for multi-field OR search | string \| string\[] | value | `string[]`: 4.3.0 |
 | optionLabelProp | Which prop value of option will render as content of select. | string | `children` \| `label`(when use options) |  |
+| optionRender | Customize the rendering of dropdown options (supports prop and `#optionRender` slot) | (option: { data, label, value, key }, info: { index: number }) => VueNode \| slot | - | 4.3.0 |
 | options | Data of the selectOption, manual construction work is no longer needed if this property has been set | Array&lt;{value, label, [disabled, key, title]}> | \[] |  |
 | placeholder | Placeholder of select | string\|slot | - |  |
 | placement | The position where the selection box pops up | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
@@ -69,19 +72,30 @@ Select component to select value from options.
 | rootClassName | Root class name | string | - | 4.3.0 |
 | searchValue | The current input "search" text | string | - |  |
 | showArrow | Whether to show the drop-down arrow | boolean | single:true, multiple:false |  |
-| showSearch | Whether select is searchable | boolean | single:false, multiple:true |  |
+| showSearch | Whether select is searchable, supports object config | boolean \| [showSearch](#showsearch) | single:false, multiple:true | Object: 4.3.0 |
 | size | Size of Select input. `middle` `large` `small` | string | middle |  |
 | status | Set validation status | 'error' \| 'warning' | - | 3.3.0 |
 | styles | Semantic DOM inline styles (supports object and function `({ props }) => ...`) | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: SelectProps }) => ...)` | - | 4.3.0 |
 | suffix | The custom suffix icon (replaces `suffixIcon`) | VNode \| slot | - | 4.3.0 |
 | ~~suffixIcon~~ | The custom suffix icon (deprecated, please use `suffix` instead) | VNode \| slot | - |  |
 | tagRender | Customize tag render, only applies when `mode` is set to `multiple` or `tags` | slot \| (props) => any | - |  |
-| tokenSeparators | Separator used to tokenize, only applies when `mode="tags"` | string\[] | - |  |
+| tokenSeparators | Separator used to tokenize or custom tokenizer function, applies when `mode="tags"` or `mode="multiple"` | string\[] \| ((input: string) => string\[]) | - | function: 4.3.0 |
 | value(v-model) | Current selected option. | string\|number\|string\[]\|number\[] | - |  |
 | variant | Variants of selector | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |
 
 > Note, if you find that the drop-down menu scrolls with the page, or you need to trigger Select in other popup layers, please try to use `getPopupContainer={triggerNode => triggerNode.parentElement}` to fix the drop-down popup rendering node in the parent element of the trigger .
+
+### showSearch
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| autoClearSearchValue | Whether the current search will be cleared on selecting an item. Only applies when `mode` is set to `multiple` or `tags` | boolean | true | 4.3.0 |
+| filterOption | If true, filter options by input, if function, filter options against it | boolean \| function(inputValue, option) | true | 4.3.0 |
+| filterSort | Sort function for search options sorting | (optionA: Option, optionB: Option, info?: { searchValue: string }) => number | - | 4.3.0 |
+| optionFilterProp | Which prop value(s) of option will be used for filter (supports `string[]` OR matching) | string \| string\[] | `value` | 4.3.0 |
+| searchValue | The current input "search" text | string | - | 4.3.0 |
+| onSearch | Callback function that is fired when input changed | function(value: string) | - | 4.3.0 |
 
 ### events
 

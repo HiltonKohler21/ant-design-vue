@@ -16,6 +16,7 @@ import useStyle from '../style/otp';
 import OTPInput from './OTPInput';
 import type { Variant } from '../../config-provider/context';
 import type { InputStatus } from '../../_util/statusUtils';
+import useVariant from '../../form/hooks/useVariant';
 import {
   mergeSemanticClassNames,
   mergeSemanticStyles,
@@ -75,6 +76,10 @@ const OTP = defineComponent({
   setup(props, { attrs, emit, expose }) {
     const { configProvider, prefixCls, direction } = useConfigInject('otp', props);
     const otpConfig = computed(() => (configProvider as any).otp?.value);
+    const [mergedVariant] = useVariant(
+      'otp',
+      computed(() => props.variant),
+    );
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
     const formContext = FormItemInputContext.useInject();
@@ -173,9 +178,9 @@ const OTP = defineComponent({
     };
 
     return () => {
-      const mergedVariant = props.variant ?? otpConfig.value?.variant;
+      const currentVariant = mergedVariant.value;
       const inputSharedProps = {
-        variant: mergedVariant,
+        variant: currentVariant,
         disabled: props.disabled,
         status: mergedStatus.value,
         mask: props.mask,
@@ -186,7 +191,7 @@ const OTP = defineComponent({
       const semanticInfo = {
         props: {
           ...props,
-          variant: mergedVariant,
+          variant: currentVariant,
           status: mergedStatus.value,
         },
       };

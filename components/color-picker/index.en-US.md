@@ -20,27 +20,56 @@ Provide color selection input, supporting solid colors, gradients, preset palett
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
-| value(v-model:value) | The color value (controlled) | string | - | 4.3.0 |
-| defaultValue | The default color value | string | `#1677ff` | 4.3.0 |
-| open(v-model:open) | Whether the popup is open (controlled) | boolean | - | 4.3.0 |
 | allowClear | Allow clearing the selected color | boolean | false | 4.3.0 |
-| arrow | Configuration for popup arrow | boolean \| { pointAtCenter: boolean } | false | 4.3.0 |
+| arrow | Configuration for popup arrow | boolean \| { pointAtCenter?: boolean } | true | 4.3.0 |
+| autoAdjustOverflow | Whether to adjust popup placement automatically when popup is off screen | boolean | true | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | Record<[SemanticDOM](#semantic-dom), string> \| `(info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | defaultFormat | Default color format | `'hex' \| 'rgb' \| 'hsb'` | `'hex'` | 4.3.0 |
+| defaultValue | The default color value | [ColorType](#colortype) | `#1677ff` | 4.3.0 |
+| destroyOnHidden | Whether destroy DOM when closed | boolean | false | 4.3.0 |
+| ~~destroyTooltipOnHide~~ | Whether destroy DOM when closed, please use `destroyOnHidden` instead | boolean | false | 4.3.0 |
 | disabled | Whether disabled | boolean | false | 4.3.0 |
 | disabledAlpha | Disable alpha channel adjustment | boolean | false | 4.3.0 |
 | disabledFormat | Disable format switching | boolean | false | 4.3.0 |
 | format | Color format (controlled) | `'hex' \| 'rgb' \| 'hsb'` | - | 4.3.0 |
 | formatter | Custom formatter for output color string | `(color: string) => string` | - | 4.3.0 |
+| getPopupContainer | Set container of the floating layer | `(triggerNode: HTMLElement) => HTMLElement` | `() => document.body` | 4.3.0 |
 | mode | Color mode: single or gradient | `'single' \| 'gradient' \| ('single' \| 'gradient')[]` | `'single'` | 4.3.0 |
-| panelRender | Customize panel content layout | `(panel: VNode) => VNode` | - | 4.3.0 |
+| open(v-model:open) | Whether the popup is open (controlled) | boolean | - | 4.3.0 |
+| panelRender | Customize panel content layout | `(panel: VNode, extra?: { components: { Picker: any; Presets: any } }) => VNode` | - | 4.3.0 |
 | placement | The position of the popup | `top` \| `left` \| `right` \| `bottom` \| `topLeft` \| `topRight` \| `bottomLeft` \| `bottomRight` \| `leftTop` \| `leftBottom` \| `rightTop` \| `rightBottom` | `bottomLeft` | 4.3.0 |
 | prefix | Trigger prefix content | VNode | - | 4.3.0 |
-| presets | Preset color options | `{ label: string; colors: string[] }[]` | - | 4.3.0 |
+| presets | Preset color options | [PresetColorType](#presetcolortype)[] | - | 4.3.0 |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
 | showText | Show color text or provide a custom render function | boolean \| `(color: AggregationColor) => VNode \| string` | false | 4.3.0 |
-| size | Trigger size | `'large' \| 'middle' \| 'small'` | `'middle'` | 4.3.0 |
+| size | Trigger size | `'large' \| 'middle' \| 'medium' \| 'small'` | `'middle'` | 4.3.0 |
 | status | Validation status | `'error' \| 'warning'` | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | Record<[SemanticDOM](#semantic-dom), CSSProperties> \| `(info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | trigger | Trigger event of popup | `'click' \| 'hover'` | `'click'` | 4.3.0 |
+| value(v-model:value) | The color value (controlled) | [ColorType](#colortype) | - | 4.3.0 |
+
+#### ColorType
+
+```typescript
+type ColorType =
+  | string
+  | AggregationColor
+  | {
+      color: string;
+      percent: number;
+    }[];
+```
+
+#### PresetColorType
+
+```typescript
+type PresetColorType = {
+  label: VNode | string;
+  defaultOpen?: boolean;
+  key?: string | number;
+  colors: ColorType[];
+};
+```
 
 ### Events
 
@@ -58,3 +87,14 @@ Provide color selection input, supporting solid colors, gradients, preset palett
 | Slot Name | Description            | Arguments |
 | --------- | ---------------------- | --------- |
 | default   | Custom trigger element | -         |
+
+## Semantic DOM
+
+| Slot            | Description                      | Version |
+| --------------- | -------------------------------- | ------- |
+| root            | Root container element           | 4.3.0   |
+| body            | Color block container element    | 4.3.0   |
+| content         | Color block inner element        | 4.3.0   |
+| description     | Trigger description text element | 4.3.0   |
+| popup.root      | Popup overlay root element       | 4.3.0   |
+| popup.container | Popup panel container element    | 4.3.0   |

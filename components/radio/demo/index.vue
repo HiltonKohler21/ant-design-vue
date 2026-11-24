@@ -10,7 +10,12 @@
     <radio-group-with-name />
     <size />
     <radio-button-solid />
+    <style-class />
+    <badge />
+    <debug-group-width />
+    <wireframe />
     <component-token />
+    <debug-upload />
   </demo-sort>
 </template>
 
@@ -25,7 +30,12 @@ import RadioGroup from './radioGroup.vue';
 import RadioGroupBlock from './radiogroup-block.vue';
 import RadioButtonSolid from './radioButton-solid.vue';
 import Size from './size.vue';
+import StyleClass from './style-class.vue';
+import Badge from './badge.vue';
+import DebugGroupWidth from './debug-group-width.vue';
+import Wireframe from './wireframe.vue';
 import ComponentToken from './component-token.vue';
+import DebugUpload from './debug-upload.vue';
 
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -45,7 +55,12 @@ export default defineComponent({
     RadioGroup,
     RadioGroupBlock,
     Size,
+    StyleClass,
+    Badge,
+    DebugGroupWidth,
+    Wireframe,
     ComponentToken,
+    DebugUpload,
   },
 });
 </script>

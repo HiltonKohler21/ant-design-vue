@@ -13,11 +13,13 @@ import type { SizeType } from '../config-provider';
 import type { Variant } from '../config-provider/context';
 import type { FieldNames, Key } from '../vc-tree-select/interface';
 import omit from '../_util/omit';
+import useMergedState from '../_util/hooks/useMergedState';
 import PropTypes from '../_util/vue-types';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import devWarning from '../vc-util/devWarning';
 import useVariant from '../form/hooks/useVariant';
 import getIcons from '../select/utils/iconUtil';
+import genPurePanel from '../select/utils/purePanel';
 import type { SwitcherIconProps } from '../tree/utils/iconUtil';
 import renderSwitcherIcon from '../tree/utils/iconUtil';
 import { warning } from '../vc-util/warning';
@@ -85,6 +87,7 @@ export function treeSelectProps<
       'getInputElement',
       'treeLine',
       'customSlots',
+      'showSearch',
     ]),
     prefix: PropTypes.any,
     /** 自定义后缀（antd v6 替代 suffixIcon） */
@@ -93,6 +96,10 @@ export function treeSelectProps<
     size: stringType<SizeType>(),
     bordered: booleanType(),
     variant: stringType<Variant>(),
+    /** 最大可选中数量（仅在 multiple=true 且非 SHOW_ALL/SHOW_PARENT 策略时生效） */
+    maxCount: Number,
+    /** 搜索配置（支持 boolean 或对象形式） */
+    showSearch: someType<boolean | Record<string, any>>([Boolean, Object]),
     /** 自定义弹层宽度（antd 5.25 起替代 dropdownMatchSelectWidth） */
     popupMatchSelectWidth: { type: [Number, Boolean], default: undefined },
     rootClassName: String,
@@ -267,6 +274,48 @@ const TreeSelect = defineComponent({
     );
 
     const isMultiple = computed(() => !!(props.treeCheckable || props.multiple));
+    const mergedMaxCount = computed(() => {
+      if (
+        props.maxCount &&
+        ((props.showCheckedStrategy === 'SHOW_ALL' && !props.treeCheckStrictly) ||
+          props.showCheckedStrategy === 'SHOW_PARENT')
+      ) {
+        return undefined;
+      }
+      return props.maxCount;
+    });
+    const isMaxCountActive = computed(
+      () =>
+        isMultiple.value && typeof mergedMaxCount.value === 'number' && mergedMaxCount.value >= 0,
+    );
+
+    const [innerValue, setInnerValue] = useMergedState<any>(props.defaultValue, {
+      value: computed(() => props.value),
+    });
+
+    const extractRawValues = (val: any): RawValue[] => {
+      if (val === undefined || val === null) return [];
+      const list = Array.isArray(val) ? val : [val];
+      return list.map(item => (item !== null && typeof item === 'object' ? item.value : item));
+    };
+
+    const selectedRawValues = computed(() => extractRawValues(innerValue.value));
+    const selectedRawValueSet = computed(() => new Set(selectedRawValues.value));
+    const isMaxCountReached = computed(
+      () =>
+        isMaxCountActive.value &&
+        selectedRawValueSet.value.size >= (mergedMaxCount.value as number),
+    );
+
+    const searchConfig = computed<Record<string, any> | undefined>(() =>
+      props.showSearch && typeof props.showSearch === 'object'
+        ? (props.showSearch as Record<string, any>)
+        : undefined,
+    );
+    const mergedShowSearchBool = computed<boolean | undefined>(() =>
+      searchConfig.value ? true : (props.showSearch as boolean | undefined),
+    );
+
     const mergedShowArrow = computed(() =>
       props.showArrow !== undefined ? props.showArrow : props.loading || !isMultiple.value,
     );
@@ -283,7 +332,17 @@ const TreeSelect = defineComponent({
     });
 
     const handleChange: TreeSelectProps['onChange'] = (...args: any[]) => {
-      emit('update:value', args[0]);
+      const nextVal = args[0];
+      if (isMaxCountActive.value) {
+        const max = mergedMaxCount.value as number;
+        const nextLen = extractRawValues(nextVal).length;
+        const prevLen = selectedRawValues.value.length;
+        if (nextLen > max && nextLen > prevLen) {
+          return;
+        }
+      }
+      setInnerValue(nextVal);
+      emit('update:value', nextVal);
       emit('change', ...args);
       formItemContext.onFieldChange();
     };
@@ -292,6 +351,7 @@ const TreeSelect = defineComponent({
       emit('treeExpand', keys);
     };
     const handleSearch: TreeSelectProps['onSearch'] = (value: string) => {
+      searchConfig.value?.onSearch?.(value);
       emit('update:searchValue', value);
       emit('search', value);
     };
@@ -299,6 +359,74 @@ const TreeSelect = defineComponent({
       emit('blur', e);
       formItemContext.onFieldBlur();
     };
+
+    const applyMaxCountDisabledToTreeData = (
+      data: any[] | undefined,
+      fieldNames?: FieldNames,
+    ): any[] | undefined => {
+      if (!Array.isArray(data) || !isMaxCountReached.value) {
+        return data;
+      }
+      const valueField = fieldNames?.value || 'value';
+      const childrenField = fieldNames?.children || 'children';
+      const selected = selectedRawValueSet.value;
+      const checkable = !!props.treeCheckable && !props.treeCheckStrictly;
+
+      if (props.treeDataSimpleMode) {
+        return data.map(node => {
+          if (!node || typeof node !== 'object') return node;
+          const nodeVal = node[valueField];
+          if (!selected.has(nodeVal) && !node.disabled) {
+            return {
+              ...node,
+              disabled: true,
+              ...(checkable ? { disableCheckbox: true } : {}),
+            };
+          }
+          return node;
+        });
+      }
+
+      const processNodes = (nodes: any[]): { list: any[]; allSelected: boolean } => {
+        let allSelected = nodes.length > 0;
+        const list = nodes.map(node => {
+          if (!node || typeof node !== 'object') return node;
+          const nodeVal = node[valueField];
+          const children = node[childrenField];
+          if (Array.isArray(children) && children.length > 0) {
+            const childResult = processNodes(children);
+            const nodeIsSelected = checkable ? childResult.allSelected : selected.has(nodeVal);
+            if (!nodeIsSelected) {
+              allSelected = false;
+            }
+            const shouldDisable = !nodeIsSelected && !node.disabled;
+            return {
+              ...node,
+              [childrenField]: childResult.list,
+              ...(shouldDisable
+                ? { disabled: true, ...(checkable ? { disableCheckbox: true } : {}) }
+                : {}),
+            };
+          }
+          const isLeafSelected = selected.has(nodeVal);
+          if (!isLeafSelected) {
+            allSelected = false;
+          }
+          if (!isLeafSelected && !node.disabled) {
+            return {
+              ...node,
+              disabled: true,
+              ...(checkable ? { disableCheckbox: true } : {}),
+            };
+          }
+          return node;
+        });
+        return { list, allSelected };
+      };
+
+      return processNodes(data).list;
+    };
+
     return () => {
       const {
         notFoundContent = slots.notFoundContent?.(),
@@ -378,6 +506,10 @@ const TreeSelect = defineComponent({
         'bordered',
         'variant',
         'status',
+        'maxCount',
+        'showSearch',
+        'treeData',
+        'value',
         'popupMatchSelectWidth',
         'popupRender',
         'dropdownRender',
@@ -413,11 +545,21 @@ const TreeSelect = defineComponent({
       if (props.treeData === undefined && slots.default) {
         otherProps.children = flattenChildren(slots.default());
       }
+      const mergedTreeData = applyMaxCountDisabledToTreeData(props.treeData, fieldNames);
       return wrapSelectSSR(
         wrapTreeSelectSSR(
           <VcTreeSelect
             {...attrs}
             {...selectProps}
+            treeData={mergedTreeData}
+            value={isMaxCountActive.value ? innerValue.value : props.value}
+            showSearch={mergedShowSearchBool.value}
+            filterTreeNode={searchConfig.value?.filterTreeNode ?? props.filterTreeNode}
+            treeNodeFilterProp={searchConfig.value?.treeNodeFilterProp ?? props.treeNodeFilterProp}
+            searchValue={searchConfig.value?.searchValue ?? props.searchValue}
+            autoClearSearchValue={
+              searchConfig.value?.autoClearSearchValue ?? props.autoClearSearchValue
+            }
             disabled={mergedDisabled.value}
             virtual={virtual.value}
             dropdownMatchSelectWidth={mergedPopupMatchSelectWidth.value}
@@ -483,6 +625,12 @@ const TreeSelect = defineComponent({
   },
 });
 
+// We don't care debug panel
+/* istanbul ignore next */
+const PurePanel = genPurePanel(TreeSelect, 'dropdownAlign', (props: any) =>
+  omit(props, ['visible']),
+);
+
 /* istanbul ignore next */
 export const TreeSelectNode = TreeNode;
 export default Object.assign(TreeSelect, {
@@ -490,9 +638,17 @@ export default Object.assign(TreeSelect, {
   SHOW_ALL: SHOW_ALL as typeof SHOW_ALL,
   SHOW_PARENT: SHOW_PARENT as typeof SHOW_PARENT,
   SHOW_CHILD: SHOW_CHILD as typeof SHOW_CHILD,
+  _InternalPanelDoNotUseOrYouWillBeFired: PurePanel,
   install: (app: App) => {
     app.component(TreeSelect.name, TreeSelect);
     app.component(TreeSelectNode.displayName, TreeSelectNode);
     return app;
   },
-});
+}) as typeof TreeSelect & {
+  readonly TreeNode: typeof TreeNode;
+  readonly SHOW_ALL: typeof SHOW_ALL;
+  readonly SHOW_PARENT: typeof SHOW_PARENT;
+  readonly SHOW_CHILD: typeof SHOW_CHILD;
+  readonly _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
+  install: (app: App) => App;
+};

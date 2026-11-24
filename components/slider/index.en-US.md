@@ -18,9 +18,9 @@ To input a value in a range.
 | --- | --- | --- | --- | --- |
 | autoAdjustOverflow | Whether to adjust popup placement automatically when popup is off screen | boolean | true |  |
 | autofocus | get focus when component mounted | boolean | false |  |
-| classNames | Semantic DOM class names | `{ root?: string; tracks?: string; track?: string; rail?: string; handle?: string }` | - | 4.3.0 |
-| defaultValue | The default value of slider. When `range` is `false`, use `number`, otherwise, use `[number, number]` | number \| \[number, number] | 0 \| \[0, 0] |  |
-| disabled | If true, the slider will not be intractable. | boolean | false |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
+| defaultValue | The default value of slider. When `range` is `false`, use `number`, otherwise, use `number[]` | number \| number\[] | 0 \| \[0, 0] |  |
+| disabled | If true, the slider will not be interactive. Can also be a boolean array to disable specific handles in range mode | boolean \| boolean\[] | false | boolean\[]: 4.3.0 |
 | dots | Whether the thumb can drag over tick only. | boolean | false |  |
 | formatter | Slider will pass its value to `formatter`, and display its value in Tooltip, and hide Tooltip when return value is null (replaces `tipFormatter`) | (value?: number) => VueNode \| null | IDENTITY | 4.3.0 |
 | handleRender | Custom handle render | (node: VNode, info: { index: number; value: number; dragging: boolean }) => VNode | - | 4.3.0 |
@@ -32,19 +32,28 @@ To input a value in a range.
 | max | The maximum value the slider can slide to | number | 100 |  |
 | min | The minimum value the slider can slide to. | number | 0 |  |
 | orientation | Slider orientation (takes precedence over `vertical`) | `'horizontal'` \| `'vertical'` | `'horizontal'` | 4.3.0 |
-| range | dual thumb mode | boolean \| `{ draggableTrack?: boolean }` | false |  |
+| range | Dual/multiple thumb mode | boolean \| [range](#range) | false |  |
 | reverse | reverse the component | boolean | false | 1.5.0 |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | step | The granularity the slider can step through values. Must greater than 0, and be divided by (max - min) . When `marks` no null, `step` can be `null`. | number\|null | 1 |  |
-| styles | Semantic DOM inline styles | `{ root?: CSSProperties; tracks?: CSSProperties; track?: CSSProperties; rail?: CSSProperties; handle?: CSSProperties }` | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | tooltip | The tooltip related props | [tooltip](#tooltip) | - | 4.3.0 |
 | trackStyle | The style of slider track (Deprecated, please use `styles.track` instead) | CSSProperties \| CSSProperties\[] | - |  |
-| value(v-model) | The value of slider. When `range` is `false`, use `number`, otherwise, use `[number, number]` | number\|number\[] | - |  |
+| value(v-model) | The value of slider. When `range` is `false`, use `number`, otherwise, use `number[]` | number\|number\[] | - |  |
 | vertical | If true, the slider will be vertical. | Boolean | false |  |
 | tipFormatter | Slider will pass its value to `tipFormatter`, and display its value in Tooltip, and hide Tooltip when return value is null (Deprecated, please use `formatter` instead). | Function\|null | IDENTITY |  |
 | tooltipPlacement | Set Tooltip display position. Ref [`Tooltip`](/components/tooltip/). | string | - | 1.5.0 |
 | tooltipOpen | If true, Tooltip will show always, or it will not show anyway, even if dragging or hovering. | Boolean | - | 4.0 |
 | getTooltipPopupContainer | The DOM container of the Tooltip, the default behavior is to create a div element in body. | Function | () => document.body | 1.5.0 |
+
+### range
+
+| Property | Description | Type | Default | Version |
+| --- | --- | --- | --- | --- |
+| draggableTrack | Whether range track can be dragged | boolean | false |  |
+| editable | Dynamic edit nodes. Cannot be used with `draggableTrack` | boolean | false | 4.3.0 |
+| minCount | The minimum count of nodes when `editable` is enabled | number | 0 | 4.3.0 |
+| maxCount | The maximum count of nodes when `editable` is enabled | number | - | 4.3.0 |
 
 ### tooltip
 
@@ -71,3 +80,7 @@ To input a value in a range.
 | ------- | ------------ |
 | blur()  | remove focus |
 | focus() | get focus    |
+
+## Semantic DOM
+
+Supported slots: `root` (slider root), `rail` (background rail), `tracks` (range tracks container), `track` (selected track), `handle` (slider thumb handle).

@@ -1012,6 +1012,8 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
         position: 'relative',
         display: 'inline-flex',
         alignItems: 'center',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
         background: colorBgContainer,
         lineHeight: 1,
         border: `${unit(lineWidth)} ${lineType} ${colorBorder}`,
@@ -1055,6 +1057,45 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
             background: colorBgContainer,
             borderColor: colorPrimary,
             boxShadow: 'none',
+          },
+
+          [`&${componentCls}-disabled`]: {
+            background: colorBgContainerDisabled,
+            borderColor: colorBorder,
+          },
+
+          [`&${componentCls}-status-error`]: {
+            background: token.colorErrorBg,
+            borderColor: 'transparent',
+            color: token.colorError,
+
+            '&:hover': {
+              background: token.colorErrorBgHover,
+              borderColor: 'transparent',
+            },
+
+            [`&${componentCls}-focused`]: {
+              background: colorBgContainer,
+              borderColor: token.colorError,
+              boxShadow: 'none',
+            },
+          },
+
+          [`&${componentCls}-status-warning`]: {
+            background: token.colorWarningBg,
+            borderColor: 'transparent',
+            color: token.colorWarning,
+
+            '&:hover': {
+              background: token.colorWarningBgHover,
+              borderColor: 'transparent',
+            },
+
+            [`&${componentCls}-focused`]: {
+              background: colorBgContainer,
+              borderColor: token.colorWarning,
+              boxShadow: 'none',
+            },
           },
         },
 
@@ -1266,6 +1307,16 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
           ),
         },
 
+        [`${componentCls}-prefix`]: {
+          display: 'flex',
+          flex: 'none',
+          alignSelf: 'center',
+          alignItems: 'center',
+          marginInlineEnd: token.marginXXS,
+          color: token.colorText,
+          lineHeight: 1,
+        },
+
         [`${componentCls}-suffix`]: {
           display: 'flex',
           flex: 'none',
@@ -1392,6 +1443,15 @@ const genPickerStyle: GenerateStyle<PickerToken> = token => {
 
           [`&${componentCls}-dropdown-hidden`]: {
             display: 'none',
+          },
+
+          [`&${componentCls}-dropdown-pure`]: {
+            position: 'static',
+            top: 'auto',
+            left: 'auto',
+            zIndex: 'auto',
+            display: 'inline-block',
+            maxWidth: '100%',
           },
 
           [`&${componentCls}-dropdown-placement-bottomLeft`]: {

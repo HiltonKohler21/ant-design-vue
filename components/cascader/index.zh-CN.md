@@ -24,14 +24,17 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Nt8xR7afyr0AAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | allowClear | 是否支持清除 | boolean | true |  |
+| autoClearSearchValue | 是否在选中项后清空搜索框，只在 `multiple` 为 `true` 时有效 | boolean | true | 4.3.0 |
 | autofocus | 自动获取焦点 | boolean | false |  |
 | ~~bordered~~ | 是否有边框（已废弃，请使用 `variant`） | boolean | true | 3.2 |
 | classNames | 用于自定义组件内部各语义化结构的 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: CascaderProps }) => ...)` | - | 4.3.0 |
 | clearIcon | 自定义的选择框清空图标 | slot | - | 3.2 |
 | changeOnSelect | （单选时生效）当此项为 true 时，点选每级菜单选项值都会发生变化，具体见上面的演示 | boolean | false |  |
+| defaultOpen | 是否默认展示浮层 | boolean | - |  |
 | defaultValue | 默认的选中项 | string\[] \| number\[] | \[] |  |
 | disabled | 禁用 | boolean | false |  |
 | displayRender | 选择后展示的渲染函数,可使用 #displayRender="{labels, selectedOptions}" | `({labels, selectedOptions}) => VNode` | `labels => labels.join(' / ')` |  |
+| ~~dropdownMenuColumnStyle~~ | 下拉菜单列的样式（已废弃，请使用 `popupMenuColumnStyle`） | CSSProperties | - |  |
 | ~~dropdownRender~~ | 自定义下拉框内容（已废弃，请使用 `popupRender`） | `({ menuNode, props }) => VNode` \| slot | - |  |
 | ~~dropdownStyle~~ | 自定义浮层样式（已废弃，请使用 `styles.popup.root`） | CSSProperties | {} | 3.0 |
 | expandIcon | 自定义次级菜单展开图标 | slot | - | 3.0 |
@@ -39,8 +42,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Nt8xR7afyr0AAA
 | fieldNames | 自定义 options 中 `label` `value` `children` 的字段 | object | `{ label: 'label', value: 'value', children: 'children' }` |  |
 | getPopupContainer | 菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位。 | Function(triggerNode) | () => document.body |  |
 | loadData | 用于动态加载选项，无法与 `showSearch` 一起使用 | `(selectedOptions) => void` | - |  |
+| loadingIcon | 自定义的加载图标 | VNode \| slot | - | 4.3.0 |
 | maxTagCount | 最多显示多少个 tag，响应式模式会对性能产生损耗 | number \| `responsive` | - | 3.0 |
 | maxTagPlaceholder | 隐藏 tag 时显示的内容 | v-slot \| function(omittedValues) | - | 3.0 |
+| maxTagTextLength | 最大显示的 tag 文本长度 | number | - |  |
 | multiple | 支持多选节点 | boolean | - | 3.0 |
 | notFoundContent | 当下拉列表为空时显示的内容 | string \| slot | 'Not Found' |  |
 | open | 控制浮层显隐 | boolean | - | 3.0 |
@@ -48,6 +53,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Nt8xR7afyr0AAA
 | placeholder | 输入框占位文本 | string | '请选择' |  |
 | placement | 浮层预设位置 | `bottomLeft` \| `bottomRight` \| `topLeft` \| `topRight` | `bottomLeft` | 3.0 |
 | ~~popupClassName~~ | 自定义浮层类名（已废弃，请使用 `classNames.popup.root`） | string | - | 4.0 |
+| popupMenuColumnStyle | 下拉菜单列的样式 | CSSProperties | - | 4.3.0 |
 | popupRender | 自定义下拉框内容，直接接收菜单节点 `menuNode`（支持 prop 与 `#popupRender` 插槽，替代 `dropdownRender`） | `(menuNode: VNode) => VNode` \| slot | - | 4.3.0 |
 | prefix | 自定义前缀 | VNode \| slot | - | 4.3.0 |
 | removeIcon | 自定义的多选框清除图标 | slot | - | 3.2 |

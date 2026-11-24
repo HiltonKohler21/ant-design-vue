@@ -22,11 +22,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*al07RK8SGf4AAA
 | checked(v-model) | 指定当前是否选中 | checkedValue \| unCheckedValue | false |  |
 | checkedChildren | 选中时的内容 | string\|slot |  |  |
 | checkedValue | 选中时的值 | boolean \| string \| number | true | 2.2.1 |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | defaultValue | 默认是否选中（非受控） | boolean \| string \| number | - | 4.3.0 |
 | disabled | 是否禁用 | boolean | false |  |
 | loading | 加载中的开关 | boolean | false |  |
 | rootClassName | 根节点 className | string | - | 4.3.0 |
-| size | 开关大小，可选值：`default` `small` | string | default |  |
+| size | 开关大小，可选值：`default` `medium` `small` | `'default'` \| `'medium'` \| `'small'` | `'default'` |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | unCheckedChildren | 非选中时的内容 | string \| slot |  |  |
 | unCheckedValue | 非选中时的值 | boolean \| string \| number | false | 2.2.1 |
 
@@ -43,3 +45,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*al07RK8SGf4AAA
 | ------- | -------- |
 | blur()  | 移除焦点 |
 | focus() | 获取焦点 |
+
+## Semantic DOM
+
+支持：`root`（开关根按钮）、`content`（开关内容区域）、`indicator`（开关滑块把手）。

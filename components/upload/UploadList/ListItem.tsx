@@ -20,34 +20,38 @@ import type {
   UploadListProgressProps,
   UploadListType,
   UploadLocale,
+  UploadSemanticClassNames,
+  UploadSemanticStyles,
 } from '../interface';
 import type { VueNode } from '../../_util/type';
 import useConfigInject from '../../config-provider/hooks/useConfigInject';
 import { getTransitionProps } from '../../_util/transition';
 import {
-  booleanType,
   stringType,
   functionType,
   arrayType,
   objectType,
   anyType,
+  someType,
 } from '../../_util/type';
 
 export const listItemProps = () => {
   return {
     prefixCls: String,
+    classNames: objectType<UploadSemanticClassNames>(),
+    styles: objectType<UploadSemanticStyles>(),
     locale: objectType<UploadLocale>(undefined as UploadLocale),
     file: objectType<UploadFile>(),
     items: arrayType<UploadFile[]>(),
     listType: stringType<UploadListType>(),
     isImgUrl: functionType<(file: UploadFile) => boolean>(),
 
-    showRemoveIcon: booleanType(),
-    showDownloadIcon: booleanType(),
-    showPreviewIcon: booleanType(),
-    removeIcon: functionType<(opt: { file: UploadFile }) => VueNode>(),
-    downloadIcon: functionType<(opt: { file: UploadFile }) => VueNode>(),
-    previewIcon: functionType<(opt: { file: UploadFile }) => VueNode>(),
+    showRemoveIcon: someType<boolean | ((file: UploadFile) => boolean)>([Boolean, Function]),
+    showDownloadIcon: someType<boolean | ((file: UploadFile) => boolean)>([Boolean, Function]),
+    showPreviewIcon: someType<boolean | ((file: UploadFile) => boolean)>([Boolean, Function]),
+    removeIcon: anyType<VueNode | ((opt: { file: UploadFile }) => VueNode)>(),
+    downloadIcon: anyType<VueNode | ((opt: { file: UploadFile }) => VueNode)>(),
+    previewIcon: anyType<VueNode | ((opt: { file: UploadFile }) => VueNode)>(),
 
     iconRender: functionType<(opt: { file: UploadFile }) => VueNode>(),
     actionIconRender:
@@ -124,8 +128,9 @@ export default defineComponent({
       // We will force these to be `display: block` with non `picture-card`
 
       const iconNode = iconRender({ file });
+      const isPictureCardOrCircle = listType === 'picture-card' || listType === 'picture-circle';
       let icon = <div class={`${prefixCls}-text-icon`}>{iconNode}</div>;
-      if (listType === 'picture' || listType === 'picture-card') {
+      if (listType === 'picture' || isPictureCardOrCircle) {
         if (mergedStatus.value === 'uploading' || (!file.thumbUrl && !file.url)) {
           const uploadingClassName = {
             [`${prefixCls}-list-item-thumbnail`]: true,
@@ -164,28 +169,46 @@ export default defineComponent({
       const infoUploadingClass = {
         [`${prefixCls}-list-item`]: true,
         [`${prefixCls}-list-item-${mergedStatus.value}`]: true,
+        [props.classNames?.item as string]: !!props.classNames?.item,
       };
       const linkProps =
         typeof file.linkProps === 'string' ? JSON.parse(file.linkProps) : file.linkProps;
 
-      const removeIcon = showRemoveIcon
+      const resolvedShowRemove =
+        typeof showRemoveIcon === 'function' ? showRemoveIcon(file) : showRemoveIcon;
+      const resolvedShowDownload =
+        typeof showDownloadIcon === 'function' ? showDownloadIcon(file) : showDownloadIcon;
+      const resolvedShowPreview =
+        typeof showPreviewIcon === 'function' ? showPreviewIcon(file) : showPreviewIcon;
+
+      const resolveCustomIcon = (
+        custom: VueNode | ((opt: any) => VueNode) | undefined,
+        fallback: VueNode,
+      ) => {
+        if (typeof custom === 'function') {
+          return custom({ file });
+        }
+        return custom ?? fallback;
+      };
+
+      const removeIcon = resolvedShowRemove
         ? actionIconRender({
-            customIcon: customRemoveIcon ? customRemoveIcon({ file }) : <DeleteOutlined />,
+            customIcon: resolveCustomIcon(customRemoveIcon, <DeleteOutlined />),
             callback: () => onClose(file),
             prefixCls,
             title: locale.removeFile,
           })
         : null;
       const downloadIcon =
-        showDownloadIcon && mergedStatus.value === 'done'
+        resolvedShowDownload && mergedStatus.value === 'done'
           ? actionIconRender({
-              customIcon: customDownloadIcon ? customDownloadIcon({ file }) : <DownloadOutlined />,
+              customIcon: resolveCustomIcon(customDownloadIcon, <DownloadOutlined />),
               callback: () => onDownload(file),
               prefixCls,
               title: locale.downloadFile,
             })
           : null;
-      const downloadOrDelete = listType !== 'picture-card' && (
+      const downloadOrDelete = !isPictureCardOrCircle && (
         <span
           key="download-delete"
           class={[
@@ -231,7 +254,7 @@ export default defineComponent({
         pointerEvents: 'none',
         opacity: 0.5,
       };
-      const previewIcon = showPreviewIcon ? (
+      const previewIcon = resolvedShowPreview ? (
         <a
           href={file.url || file.thumbUrl}
           target="_blank"
@@ -240,18 +263,17 @@ export default defineComponent({
           onClick={e => onPreview(file, e)}
           title={locale.previewFile}
         >
-          {customPreviewIcon ? customPreviewIcon({ file }) : <EyeOutlined />}
+          {resolveCustomIcon(customPreviewIcon, <EyeOutlined />)}
         </a>
       ) : null;
 
-      const pictureCardActions = listType === 'picture-card' &&
-        mergedStatus.value !== 'uploading' && (
-          <span class={`${prefixCls}-list-item-actions`}>
-            {previewIcon}
-            {mergedStatus.value === 'done' && downloadIcon}
-            {removeIcon}
-          </span>
-        );
+      const pictureCardActions = isPictureCardOrCircle && mergedStatus.value !== 'uploading' && (
+        <span class={`${prefixCls}-list-item-actions`}>
+          {previewIcon}
+          {mergedStatus.value === 'done' && downloadIcon}
+          {removeIcon}
+        </span>
+      );
 
       const extraNode =
         extra !== undefined
@@ -261,7 +283,7 @@ export default defineComponent({
           : slots.extra?.(file);
 
       const dom = (
-        <div class={infoUploadingClass}>
+        <div class={infoUploadingClass} style={props.styles?.item}>
           {icon}
           {fileName}
           {extraNode && <span class={`${prefixCls}-list-item-extra`}>{extraNode}</span>}

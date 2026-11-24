@@ -1,6 +1,7 @@
 import { nextTick, defineComponent, ref, watch, computed } from 'vue';
-import type { ExtractPropTypes } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import classNames from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import PropTypes from '../_util/vue-types';
 import Radio from './Radio';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
@@ -8,8 +9,14 @@ import { booleanType, stringType, arrayType, functionType } from '../_util/type'
 import type {
   RadioChangeEvent,
   RadioGroupButtonStyle,
+  RadioGroupClassNamesType,
   RadioGroupOptionType,
   RadioGroupOrientation,
+  RadioGroupSemanticClassNames,
+  RadioGroupSemanticStyles,
+  RadioGroupStylesType,
+  RadioSemanticClassNames,
+  RadioSemanticStyles,
 } from './interface';
 import { useInjectFormItemContext } from '../form/FormItemContext';
 import { useProvideRadioGroupContext } from './context';
@@ -27,10 +34,17 @@ export type RadioGroupChildOption = {
   label?: any;
   value: any;
   disabled?: boolean;
+  className?: string;
+  style?: CSSProperties;
+  title?: string;
+  id?: string;
+  required?: boolean;
+  onChange?: (e: RadioChangeEvent) => void;
 };
 
 export const radioGroupProps = () => ({
   prefixCls: String,
+  rootClassName: String,
   value: PropTypes.any,
   /** 非受控默认值 */
   defaultValue: PropTypes.any,
@@ -44,6 +58,14 @@ export const radioGroupProps = () => ({
   block: booleanType(),
   orientation: stringType<RadioGroupOrientation>(),
   vertical: booleanType(),
+  classNames: {
+    type: [Object, Function] as PropType<RadioGroupClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<RadioGroupStylesType>,
+    default: undefined,
+  },
   onChange: functionType<(e: RadioChangeEvent) => void>(),
   'onUpdate:value': functionType<(val: any) => void>(),
 });
@@ -99,6 +121,41 @@ export default defineComponent({
       return !!props.vertical;
     });
 
+    const mergedSemantic = computed(() =>
+      mergeSemantic<RadioGroupSemanticClassNames, RadioGroupSemanticStyles, RadioGroupProps>(
+        [props.classNames],
+        [props.styles],
+        {
+          props: {
+            ...props,
+            value: stateValue.value,
+            orientation: isVertical.value ? 'vertical' : 'horizontal',
+            vertical: isVertical.value,
+          },
+        },
+      ),
+    );
+
+    const itemSemanticClassNames = computed<RadioSemanticClassNames | undefined>(() => {
+      const cn = mergedSemantic.value[0];
+      if (!cn.item && !cn.itemIcon && !cn.itemLabel) return undefined;
+      return {
+        root: cn.item,
+        icon: cn.itemIcon,
+        label: cn.itemLabel,
+      };
+    });
+
+    const itemSemanticStyles = computed<RadioSemanticStyles | undefined>(() => {
+      const st = mergedSemantic.value[1];
+      if (!st.item && !st.itemIcon && !st.itemLabel) return undefined;
+      return {
+        root: st.item,
+        icon: st.itemIcon,
+        label: st.itemLabel,
+      };
+    });
+
     useProvideRadioGroupContext({
       onChange: onRadioChange,
       value: stateValue,
@@ -106,10 +163,13 @@ export default defineComponent({
       name: computed(() => props.name),
       optionType: computed(() => props.optionType),
       block: computed(() => props.block),
+      classNames: itemSemanticClassNames,
+      styles: itemSemanticStyles,
     });
 
     return () => {
       const { options, buttonStyle, id = formItemContext.id.value } = props;
+      const [mergedClassNames, mergedStyles] = mergedSemantic.value;
 
       const groupPrefixCls = `${prefixCls.value}-group`;
 
@@ -122,6 +182,8 @@ export default defineComponent({
           [`${groupPrefixCls}-block`]: props.block,
           [`${groupPrefixCls}-vertical`]: isVertical.value,
         },
+        props.rootClassName,
+        mergedClassNames.root,
         attrs.class,
         hashId.value,
       );
@@ -142,7 +204,17 @@ export default defineComponent({
               </Radio>
             );
           }
-          const { value, disabled, label } = option as RadioGroupChildOption;
+          const {
+            value,
+            disabled,
+            label,
+            className,
+            style,
+            title,
+            id: optId,
+            required,
+            onChange,
+          } = option as RadioGroupChildOption;
           return (
             <Radio
               key={`radio-group-value-options-${value}`}
@@ -150,6 +222,12 @@ export default defineComponent({
               disabled={disabled || props.disabled}
               value={value}
               checked={stateValue.value === value}
+              class={className}
+              style={style}
+              title={title}
+              id={optId}
+              required={required}
+              onChange={onChange}
             >
               {label}
             </Radio>
@@ -158,8 +236,11 @@ export default defineComponent({
       } else {
         children = slots.default?.();
       }
+      const mergedRootStyle = mergedStyles.root
+        ? [mergedStyles.root, attrs.style as CSSProperties]
+        : (attrs.style as CSSProperties);
       return wrapSSR(
-        <div {...attrs} class={classString} id={id}>
+        <div {...attrs} class={classString} style={mergedRootStyle} id={id}>
           {children}
         </div>,
       );

@@ -5,6 +5,9 @@ import PropTypes from '../_util/vue-types';
 import KeyCode from '../_util/KeyCode';
 import Wave from '../_util/wave';
 import warning from '../_util/warning';
+import classNamesUtil from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
 import type { CustomSlotsType } from '../_util/type';
 import { tuple, withInstall } from '../_util/type';
 import { getPropsSlot } from '../_util/props-util';
@@ -14,8 +17,20 @@ import omit from '../_util/omit';
 import type { FocusEventHandler } from '../_util/EventInterface';
 import useStyle from './style';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
-export const SwitchSizes = tuple('small', 'default');
+export const SwitchSizes = tuple('small', 'medium', 'default');
+export type SwitchSize = (typeof SwitchSizes)[number];
 type CheckedType = boolean | string | number;
+
+export type SwitchSemanticName = 'root' | 'content' | 'indicator';
+export type SwitchSemanticClassNames = SemanticClassNames<SwitchSemanticName>;
+export type SwitchSemanticStyles = SemanticStyles<SwitchSemanticName>;
+export type SwitchClassNamesType =
+  | SwitchSemanticClassNames
+  | ((info: { props: SwitchProps }) => SwitchSemanticClassNames);
+export type SwitchStylesType =
+  | SwitchSemanticStyles
+  | ((info: { props: SwitchProps }) => SwitchSemanticStyles);
+
 export const switchProps = () => ({
   id: String,
   prefixCls: String,
@@ -41,6 +56,14 @@ export const switchProps = () => ({
     PropTypes.number,
     PropTypes.looseBool,
   ]).def(false),
+  classNames: {
+    type: [Object, Function] as PropType<SwitchClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<SwitchStylesType>,
+    default: undefined,
+  },
   onChange: {
     type: Function as PropType<(checked: CheckedType, e: Event) => void>,
   },
@@ -135,6 +158,9 @@ const Switch = defineComponent({
       if (mergedDisabled.value) {
         return;
       }
+      if (props.checked === undefined) {
+        checked.value = check;
+      }
       emit('update:checked', check);
       emit('change', check, e);
       formItemContext.onFieldChange();
@@ -176,8 +202,22 @@ const Switch = defineComponent({
       [hashId.value]: true,
     }));
 
-    return () =>
-      wrapSSR(
+    return () => {
+      const mergedPropsForSemantic: SwitchProps = {
+        ...props,
+        size: props.size ?? (size.value === 'small' ? 'small' : 'medium'),
+        checked: checkedStatus.value,
+        disabled: mergedDisabled.value || props.loading,
+      };
+      const [mergedClassNames, mergedStyles] = mergeSemantic<
+        SwitchSemanticClassNames,
+        SwitchSemanticStyles,
+        SwitchProps
+      >([contextClassNames.value, props.classNames], [contextStyles.value, props.styles], {
+        props: mergedPropsForSemantic,
+      });
+
+      return wrapSSR(
         <Wave>
           <button
             {...omit(props, [
@@ -191,6 +231,8 @@ const Switch = defineComponent({
               'checkedValue',
               'unCheckedValue',
               'id',
+              'classNames',
+              'styles',
               'onChange',
               'onUpdate:checked',
             ])}
@@ -204,19 +246,20 @@ const Switch = defineComponent({
             role="switch"
             aria-checked={checked.value as any}
             disabled={mergedDisabled.value || props.loading}
-            class={[
-              contextClassName.value,
-              contextClassNames.value.root,
-              attrs.class,
-              classNames.value,
-            ]}
-            style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+            class={[contextClassName.value, mergedClassNames.root, attrs.class, classNames.value]}
+            style={[contextStyle.value, mergedStyles.root, attrs.style as CSSProperties]}
             ref={refSwitchNode}
           >
-            <div class={`${prefixCls.value}-handle`}>
+            <div
+              class={classNamesUtil(`${prefixCls.value}-handle`, mergedClassNames.indicator)}
+              style={mergedStyles.indicator}
+            >
               {props.loading ? <LoadingOutlined class={`${prefixCls.value}-loading-icon`} /> : null}
             </div>
-            <span class={`${prefixCls.value}-inner`}>
+            <span
+              class={classNamesUtil(`${prefixCls.value}-inner`, mergedClassNames.content)}
+              style={mergedStyles.content}
+            >
               <span class={`${prefixCls.value}-inner-checked`}>
                 {getPropsSlot(slots, props, 'checkedChildren')}
               </span>
@@ -227,6 +270,7 @@ const Switch = defineComponent({
           </button>
         </Wave>,
       );
+    };
   },
 });
 

@@ -1,4 +1,5 @@
 import type {
+  CSSProperties,
   PropType,
   ExtractPropTypes,
   ComputedRef,
@@ -7,6 +8,8 @@ import type {
   HTMLAttributes,
 } from 'vue';
 import {
+  h,
+  isVNode,
   onMounted,
   reactive,
   watch,
@@ -28,15 +31,16 @@ import Row from '../grid/Row';
 import type { ColProps } from '../grid/Col';
 import { filterEmpty } from '../_util/props-util';
 import { validateRules as validateRulesUtil } from './utils/validateUtil';
-import { getNamePath } from './utils/valueUtil';
+import { getNamePath, getValue } from './utils/valueUtil';
 import { toArray } from './utils/typeUtil';
 import { warning } from '../vc-util/warning';
 import find from 'lodash-es/find';
 import type { CustomSlotsType } from '../_util/type';
-import { tuple } from '../_util/type';
+import { someType, tuple } from '../_util/type';
 import type {
   FormLabelAlign,
   InternalNamePath,
+  NamePath,
   Rule,
   RuleError,
   RuleObject,
@@ -44,9 +48,11 @@ import type {
 } from './interface';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectForm } from './context';
+import type { FormItemLayout } from './Form';
 import FormItemLabel from './FormItemLabel';
+import type { FormItemTooltipType } from './FormItemLabel';
 import FormItemInput from './FormItemInput';
-import type { FormItemStatusContextProps } from './FormItemContext';
+import type { FeedbackIcons, FormItemStatusContextProps } from './FormItemContext';
 import {
   FormItemInputContext,
   useProvideFormItemContext,
@@ -76,6 +82,12 @@ const iconMap: { [key: string]: any } = {
   error: CloseCircleFilled,
   validating: LoadingOutlined,
 };
+
+function normalizeTrigger(trigger: string): string {
+  if (trigger === 'onBlur') return 'blur';
+  if (trigger === 'onChange') return 'change';
+  return trigger;
+}
 
 function getPropByPath(obj: any, namePathList: any, strict?: boolean) {
   let tempObj = obj;
@@ -116,21 +128,24 @@ export const formItemProps = () => ({
   extra: PropTypes.any,
   labelCol: { type: Object as PropType<ColProps & HTMLAttributes> },
   wrapperCol: { type: Object as PropType<ColProps & HTMLAttributes> },
-  hasFeedback: { type: Boolean, default: false },
+  hasFeedback: someType<boolean | { icons?: FeedbackIcons }>([Boolean, Object], false),
   colon: { type: Boolean, default: undefined },
   labelAlign: String as PropType<FormLabelAlign>,
+  layout: String as PropType<FormItemLayout>,
   prop: { type: [String, Number, Array] as PropType<string | number | Array<string | number>> },
   name: { type: [String, Number, Array] as PropType<string | number | Array<string | number>> },
   rules: [Array, Object] as PropType<Rule[] | Rule>,
+  dependencies: { type: Array as PropType<NamePath[]> },
   autoLink: { type: Boolean, default: true },
   required: { type: Boolean, default: undefined },
-  validateFirst: { type: Boolean, default: undefined },
+  validateFirst: someType<boolean | 'parallel'>([Boolean, String]),
+  validateDebounce: Number,
   validateStatus: PropTypes.oneOf(tuple('', 'success', 'warning', 'error', 'validating')),
   validateTrigger: { type: [String, Array] as PropType<string | string[]> },
   messageVariables: { type: Object as PropType<Record<string, string>> },
   hidden: Boolean,
   noStyle: Boolean,
-  tooltip: String,
+  tooltip: someType<FormItemTooltipType>([String, Object, Function]),
 });
 
 export type FormItemProps = Partial<ExtractPropTypes<ReturnType<typeof formItemProps>>>;
@@ -205,7 +220,7 @@ export default defineComponent({
           ? props.validateTrigger
           : formContext.validateTrigger.value;
       validateTrigger = validateTrigger === undefined ? 'change' : validateTrigger;
-      return toArray(validateTrigger);
+      return toArray(validateTrigger).map(normalizeTrigger);
     });
     const rulesRef = computed<Rule[]>(() => {
       let formRules = formContext.rules.value;
@@ -224,18 +239,21 @@ export default defineComponent({
       }
     });
     const isRequired = computed(() => {
+      if (props.required !== undefined) {
+        return props.required;
+      }
       const rules = rulesRef.value;
-      let isRequired = false;
+      let requiredFlag = false;
       if (rules && rules.length) {
         rules.every(rule => {
-          if (rule.required) {
-            isRequired = true;
+          if (rule.required && !rule.warningOnly) {
+            requiredFlag = true;
             return false;
           }
           return true;
         });
       }
-      return isRequired || props.required;
+      return requiredFlag;
     });
 
     const validateState = shallowRef();
@@ -254,23 +272,32 @@ export default defineComponent({
       }
       return variables;
     });
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    const clearDebounceTimer = () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+        debounceTimer = null;
+      }
+    };
+
     const validateRules = (options: ValidateOptions) => {
       // no name, no value, so the validate result is incorrect
       if (namePath.value.length === 0) {
         return;
       }
       const { validateFirst = false } = props;
-      const { triggerName } = options || {};
+      const { triggerName, validateOnly } = options || {};
+      const normalizedTrigger = triggerName ? normalizeTrigger(triggerName) : undefined;
 
       let filteredRules = rulesRef.value;
-      if (triggerName) {
+      if (normalizedTrigger) {
         filteredRules = filteredRules.filter(rule => {
           const { trigger } = rule;
           if (!trigger && !mergedValidateTrigger.value.length) {
             return true;
           }
-          const triggerList = toArray(trigger || mergedValidateTrigger.value);
-          return triggerList.includes(triggerName);
+          const triggerList = toArray(trigger || mergedValidateTrigger.value).map(normalizeTrigger);
+          return triggerList.includes(normalizedTrigger);
         });
       }
       if (!filteredRules.length) {
@@ -287,6 +314,11 @@ export default defineComponent({
         validateFirst,
         messageVariables.value,
       );
+
+      if (validateOnly) {
+        return promise;
+      }
+
       validateState.value = 'validating';
       errors.value = [];
       warnings.value = [];
@@ -318,17 +350,30 @@ export default defineComponent({
       return promise;
     };
 
+    const triggerValidate = (triggerName: string) => {
+      if (props.validateDebounce && props.validateDebounce > 0) {
+        clearDebounceTimer();
+        debounceTimer = setTimeout(() => {
+          debounceTimer = null;
+          validateRules({ triggerName });
+        }, props.validateDebounce);
+      } else {
+        validateRules({ triggerName });
+      }
+    };
+
     const onFieldBlur = () => {
-      validateRules({ triggerName: 'blur' });
+      triggerValidate('blur');
     };
     const onFieldChange = () => {
       if (validateDisabled.value) {
         validateDisabled.value = false;
         return;
       }
-      validateRules({ triggerName: 'change' });
+      triggerValidate('change');
     };
     const clearValidate = () => {
+      clearDebounceTimer();
       validateState.value = props.validateStatus;
       validateDisabled.value = false;
       errors.value = [];
@@ -336,6 +381,7 @@ export default defineComponent({
     };
 
     const resetField = () => {
+      clearDebounceTimer();
       validateState.value = props.validateStatus;
       validateDisabled.value = true;
       errors.value = [];
@@ -417,7 +463,26 @@ export default defineComponent({
       },
       { immediate: true },
     );
+
+    watch(
+      () => {
+        if (!props.dependencies?.length || !formContext.model?.value) {
+          return undefined;
+        }
+        return props.dependencies.map(dep => getValue(formContext.model.value, getNamePath(dep)));
+      },
+      (nextVals, prevVals) => {
+        if (!nextVals || !prevVals || !fieldName.value) return;
+        const hasValue =
+          fieldValue.value !== undefined && fieldValue.value !== '' && fieldValue.value !== null;
+        if (hasValue || errors.value.length || warnings.value.length) {
+          validateRules({});
+        }
+      },
+    );
+
     onBeforeUnmount(() => {
+      clearDebounceTimer();
       formContext.removeField(eventKey);
     });
     const debounceErrors = useDebounce(errors);
@@ -432,48 +497,83 @@ export default defineComponent({
       }
       return validateState.value;
     });
+    const mergedLayout = computed(() => {
+      if (props.layout) return props.layout;
+      if (formContext.layout?.value) return formContext.layout.value;
+      return formContext.vertical?.value ? 'vertical' : 'horizontal';
+    });
+    const isVertical = computed(() => mergedLayout.value === 'vertical');
     const feedbackIcons = useInjectFormFeedbackIcons();
     const itemClassName = computed(() => ({
       [`${prefixCls.value}-item`]: true,
       [hashId.value]: true,
       // Status
-      [`${prefixCls.value}-item-has-feedback`]: mergedValidateStatus.value && props.hasFeedback,
+      [`${prefixCls.value}-item-has-feedback`]: mergedValidateStatus.value && !!props.hasFeedback,
       [`${prefixCls.value}-item-has-success`]: mergedValidateStatus.value === 'success',
       [`${prefixCls.value}-item-has-warning`]: mergedValidateStatus.value === 'warning',
       [`${prefixCls.value}-item-has-error`]: mergedValidateStatus.value === 'error',
       [`${prefixCls.value}-item-is-validating`]: mergedValidateStatus.value === 'validating',
       [`${prefixCls.value}-item-hidden`]: props.hidden,
+      // Layout
+      [`${prefixCls.value}-item-${mergedLayout.value}`]: !!mergedLayout.value,
     }));
     const formItemInputContext = reactive<FormItemStatusContextProps>({});
     FormItemInputContext.useProvide(formItemInputContext);
     watchEffect(() => {
       let feedbackIcon: any;
       if (props.hasFeedback) {
-        const feedbackIconsFn =
+        const rawHasFeedback = props.hasFeedback;
+        const itemFeedbackIcons =
+          typeof rawHasFeedback === 'object' && rawHasFeedback ? rawHasFeedback.icons : undefined;
+        const formFeedbackIconsFn =
           typeof feedbackIcons === 'function' ? feedbackIcons : feedbackIcons?.value;
-        const customIcons = feedbackIconsFn
-          ? feedbackIconsFn({
-              status: mergedValidateStatus.value,
-              errors: debounceErrors.value,
-              warnings: debounceWarnings.value,
-            })
-          : undefined;
-        const mergedIconMap = { ...iconMap, ...(customIcons || {}) };
-        const IconNode = mergedValidateStatus.value && mergedIconMap[mergedValidateStatus.value];
-        feedbackIcon = IconNode ? (
-          <span
-            class={classNames(
-              `${prefixCls.value}-item-feedback-icon`,
-              `${prefixCls.value}-item-feedback-icon-${mergedValidateStatus.value}`,
-            )}
-          >
-            <IconNode />
-          </span>
-        ) : null;
+        const feedbackIconsFn = itemFeedbackIcons || formFeedbackIconsFn;
+        const status = mergedValidateStatus.value;
+        const customIcons =
+          status && feedbackIconsFn
+            ? feedbackIconsFn({
+                status,
+                errors: debounceErrors.value.flat(),
+                warnings: debounceWarnings.value.flat(),
+              })
+            : undefined;
+        const customIconNode = status ? customIcons?.[status] : undefined;
+        const DefaultIcon = status && iconMap[status];
+        if (customIconNode !== false && (customIconNode !== undefined || DefaultIcon)) {
+          let iconContent: any;
+          if (customIconNode !== undefined) {
+            if (isVNode(customIconNode)) {
+              iconContent = customIconNode;
+            } else if (
+              typeof customIconNode === 'function' ||
+              (typeof customIconNode === 'object' &&
+                customIconNode !== null &&
+                ('render' in customIconNode || 'setup' in customIconNode))
+            ) {
+              iconContent = h(customIconNode);
+            } else {
+              iconContent = customIconNode;
+            }
+          } else if (DefaultIcon) {
+            iconContent = <DefaultIcon />;
+          }
+          feedbackIcon = iconContent ? (
+            <span
+              class={classNames(
+                `${prefixCls.value}-item-feedback-icon`,
+                `${prefixCls.value}-item-feedback-icon-${status}`,
+              )}
+            >
+              {iconContent}
+            </span>
+          ) : null;
+        } else {
+          feedbackIcon = null;
+        }
       }
       Object.assign(formItemInputContext, {
         status: mergedValidateStatus.value,
-        hasFeedback: props.hasFeedback,
+        hasFeedback: !!props.hasFeedback,
         feedbackIcon,
         isFormItemInput: true,
       });
@@ -483,8 +583,12 @@ export default defineComponent({
     const showMarginOffset = shallowRef(false);
     const updateMarginBottom = () => {
       if (itemRef.value) {
-        const itemStyle = getComputedStyle(itemRef.value);
-        marginBottom.value = parseInt(itemStyle.marginBottom, 10);
+        try {
+          const itemStyle = getComputedStyle(itemRef.value);
+          marginBottom.value = parseInt(itemStyle.marginBottom, 10);
+        } catch {
+          marginBottom.value = null;
+        }
       }
     };
     onMounted(() => {
@@ -507,22 +611,27 @@ export default defineComponent({
     return () => {
       if (props.noStyle) return slots.default?.();
       const help = props.help ?? (slots.help ? filterEmpty(slots.help()) : null);
+      const hasExplicitHelp = help !== undefined && help !== null;
+      const helpHasContent =
+        hasExplicitHelp && help !== '' && (!Array.isArray(help) || help.length > 0);
       const withHelp = !!(
-        (help !== undefined && help !== null && Array.isArray(help) && help.length) ||
-        debounceErrors.value.length
+        helpHasContent ||
+        (!hasExplicitHelp && (debounceErrors.value.length || debounceWarnings.value.length))
       );
       showMarginOffset.value = withHelp;
+      const { class: attrClass, style: attrStyle, ...restAttrs } = attrs;
       return wrapSSR(
         <div
           class={[
             itemClassName.value,
             withHelp ? `${prefixCls.value}-item-with-help` : '',
-            attrs.class,
+            attrClass,
           ]}
+          style={attrStyle as CSSProperties}
           ref={itemRef}
         >
           <Row
-            {...attrs}
+            {...restAttrs}
             class={`${prefixCls.value}-item-row`}
             key="row"
             v-slots={{
@@ -535,6 +644,7 @@ export default defineComponent({
                     required={isRequired.value}
                     requiredMark={formContext.requiredMark.value}
                     prefixCls={prefixCls.value}
+                    vertical={isVertical.value}
                     onClick={onLabelClick}
                     label={props.label}
                     v-slots={{ label: slots.label, tooltip: slots.tooltip }}
@@ -543,8 +653,9 @@ export default defineComponent({
                   <FormItemInput
                     {...props}
                     errors={
-                      help !== undefined && help !== null ? toArray(help) : debounceErrors.value
+                      hasExplicitHelp ? (helpHasContent ? toArray(help) : []) : debounceErrors.value
                     }
+                    warnings={hasExplicitHelp ? [] : debounceWarnings.value}
                     marginBottom={marginBottom.value}
                     prefixCls={prefixCls.value}
                     status={mergedValidateStatus.value}

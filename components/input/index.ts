@@ -8,6 +8,8 @@ import OTP from './OTP';
 export type {
   InputProps,
   TextAreaProps,
+  CountConfig,
+  AllowClearConfig,
   InputSemanticName,
   InputSemanticClassNames,
   InputSemanticStyles,

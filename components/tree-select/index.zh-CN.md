@@ -20,24 +20,29 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*hjwGSIa4J8QAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | allowClear | 显示清除按钮 | boolean | false |  |
+| ~~bordered~~ | 是否带边框（已废弃，请使用 `variant` 替代） | boolean | true |  |
 | classNames | 语义化结构 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; prefix?: string; suffix?: string; popup?: { root?: string } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
+| defaultOpen | 是否默认展开下拉菜单 | boolean | - |  |
 | defaultValue | 指定默认选中的条目 | string/string\[] | - |  |
 | disabled | 是否禁用 | boolean | false |  |
-| dropdownMatchSelectWidth | 下拉菜单和选择器同宽（已废弃，请使用 `popupMatchSelectWidth`） | boolean \| number | true |  |
-| dropdownStyle | 下拉菜单的样式 | object | - |  |
+| ~~dropdownMatchSelectWidth~~ | 下拉菜单和选择器同宽（已废弃，请使用 `popupMatchSelectWidth`） | boolean \| number | true |  |
+| ~~dropdownStyle~~ | 下拉菜单的样式（已废弃，请使用 `styles.popup.root`） | object | - |  |
 | fieldNames | 替换 treeNode 中 label,value,children 字段为 treeData 中对应的字段 | object | {children:'children', label:'title', value: 'value' } | 3.0.0 |
 | filterTreeNode | 是否根据输入项进行筛选，默认用 treeNodeFilterProp 的值作为要筛选的 TreeNode 的属性值 | boolean\|Function(inputValue: string, treeNode: TreeNode) (函数需要返回 bool 值) | Function |  |
 | getPopupContainer | 菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位。 | Function(triggerNode) | () => document.body |  |
 | labelInValue | 是否把每个选项的 label 包装到 value 中，会把 value 类型从 `string` 变为 `{value: string, label: VNode, halfChecked(treeCheckStrictly 时有效): string[] }` 的格式 | boolean | false |  |
 | listHeight | 设置弹窗滚动高度 | number | 256 |  |
 | loadData | 异步加载数据 | function(node) | - |  |
-| maxTagCount | 最多显示多少个 tag | number | - |  |
+| maxCount | 指定可选中的最多 items 数量，仅在 `multiple=true` 时生效。如果此时（`showCheckedStrategy = 'SHOW_ALL'` 且未开启 `treeCheckStrictly`），或使用 `showCheckedStrategy = 'SHOW_PARENT'`，则 `maxCount` 无效 | number | - | 4.3.0 |
+| maxTagCount | 最多显示多少个 tag | number \| `responsive` | - |  |
 | maxTagPlaceholder | 隐藏 tag 时显示的内容 | slot/function(omittedValues) | - |  |
+| maxTagTextLength | 最大显示的 tag 文本长度 | number | - |  |
 | multiple | 支持多选（当设置 treeCheckable 时自动变为 true） | boolean | false |  |
 | notFoundContent | 当下拉列表为空时显示的内容 | slot | `Not Found` |  |
+| open | 是否展开下拉菜单 | boolean | - |  |
 | placeholder | 选择框默认文字 | string\|slot | - |  |
 | placement | 选择框弹出的位置 | `bottomLeft` `bottomRight` `topLeft` `topRight` | bottomLeft | 3.3.0 |
-| popupClassName | 下拉菜单的 className 属性 | string | - | 4.0 |
+| ~~popupClassName~~ | 下拉菜单的 className 属性（已废弃，请使用 `classNames.popup.root`） | string | - | 4.0 |
 | popupMatchSelectWidth | 下拉菜单和选择器同宽。默认将设置 `min-width`，当值小于选择框宽度时会被忽略。`false` 时会关闭虚拟滚动 | boolean \| number | true | 4.3.0 |
 | popupRender | 自定义下拉框内容 | `(menu: VueNode) => VueNode \| v-slot:popupRender` | - | 4.3.0 |
 | prefix | 自定义前缀 | VNode \| slot | - | 4.3.0 |
@@ -46,8 +51,8 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*hjwGSIa4J8QAAA
 | searchPlaceholder | 搜索框默认文字 | string\|slot | - |  |
 | searchValue(v-model) | 搜索框的值，可以通过 `search` 事件获取用户输入 | string | - |  |
 | showCheckedStrategy | 定义选中项回填的方式。`TreeSelect.SHOW_ALL`: 显示所有选中节点(包括父节点). `TreeSelect.SHOW_PARENT`: 只显示父节点(当父节点下所有子节点都选中时). 默认只显示子节点. | enum{TreeSelect.SHOW_ALL, TreeSelect.SHOW_PARENT, TreeSelect.SHOW_CHILD } | TreeSelect.SHOW_CHILD |  |
-| showSearch | 在下拉中显示搜索框(仅在单选模式下生效) | boolean | false |  |
-| size | 选择框大小，可选 `large` `small` | string | 'default' |  |
+| showSearch | 是否支持搜索框，支持对象形式配置 | boolean \| [showSearch](#showsearch) | 单选：false \| 多选：true | Object: 4.3.0 |
+| size | 选择框大小，可选 `large` `middle` `small` | string | 'default' |  |
 | status | 设置校验状态 | 'error' \| 'warning' | - | 3.3.0 |
 | styles | 语义化结构 style（支持对象与函数式 `({ props }) => ...`） | `{ root?: CSSProperties; prefix?: CSSProperties; suffix?: CSSProperties; popup?: { root?: CSSProperties } } \| ((info: { props: TreeSelectProps }) => ...)` | - | 4.3.0 |
 | suffix | 自定义的选择框后缀图标（替代 `suffixIcon`） | VNode \| slot | - | 4.3.0 |
@@ -61,6 +66,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*hjwGSIa4J8QAAA
 | treeDataSimpleMode | 使用简单格式的 treeData，具体设置参考可设置的类型 (此时 treeData 应变为这样的数据结构: \[{id:1, pId:0, value:'1', label:"test1",...},...], `pId` 是父节点的 id) | false\|Array&lt;{ id: string, pId: string, rootPId: null }> | false |  |
 | treeDefaultExpandAll | 默认展开所有树节点 | boolean | false |  |
 | treeDefaultExpandedKeys | 默认展开的树节点 | string\[] \| number\[] | - |  |
+| treeExpandAction | 点击节点 title 时的展开逻辑，可选：`false` \| `'click'` \| `'doubleClick'` | string \| boolean | false |  |
 | treeExpandedKeys(v-model) | 设置展开的树节点 | string\[] \| number\[] | - |  |
 | treeIcon | 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式 | boolean | false |  |
 | treeLine | 是否展示线条样式，请参考 [Tree - showLine](/components/tree/#components-tree-demo-line) | boolean \| object | false | 3.0 |
@@ -70,6 +76,16 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*hjwGSIa4J8QAAA
 | value(v-model) | 指定当前选中的条目 | string/string\[] | - |  |
 | variant | 形态变体 | `outlined` \| `borderless` \| `filled` \| `underlined` | `outlined` | 4.3.0 |
 | virtual | 设置 false 时关闭虚拟滚动 | boolean | true | 3.0 |
+
+### showSearch
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| autoClearSearchValue | 当多选模式下值被选择，自动清空搜索框 | boolean | true | 4.3.0 |
+| filterTreeNode | 是否根据输入项进行筛选 | boolean \| function(inputValue: string, treeNode: TreeNode) | - | 4.3.0 |
+| searchValue | 搜索框的值 | string | - | 4.3.0 |
+| treeNodeFilterProp | 输入项过滤对应的 treeNode 属性 | string | `value` | 4.3.0 |
+| onSearch | 文本框值变化时的回调 | function(value: string) | - | 4.3.0 |
 
 ### 事件
 

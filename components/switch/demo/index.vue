@@ -5,6 +5,7 @@
     <text-and-icon />
     <size />
     <loading />
+    <style-class />
     <component-token />
   </demo-sort>
 </template>
@@ -16,6 +17,7 @@ import Disabled from './disabled.vue';
 import Text from './text.vue';
 import Size from './size.vue';
 import Loading from './loading.vue';
+import StyleClass from './style-class.vue';
 import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
@@ -29,6 +31,7 @@ export default defineComponent({
     TextAndIcon: Text, // text 无法识别
     Size,
     Loading,
+    StyleClass,
     ComponentToken,
   },
 });

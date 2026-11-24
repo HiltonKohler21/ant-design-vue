@@ -2,7 +2,18 @@ import type { App } from 'vue';
 import Upload, { LIST_IGNORE } from './Upload';
 import Dragger from './Dragger';
 
-export type { UploadProps, UploadListProps, UploadChangeParam, UploadFile } from './interface';
+export type {
+  UploadProps,
+  UploadListProps,
+  UploadChangeParam,
+  UploadFile,
+  UploadListType,
+  UploadSemanticName,
+  UploadSemanticClassNames,
+  UploadSemanticStyles,
+  UploadClassNamesType,
+  UploadStylesType,
+} from './interface';
 
 /* istanbul ignore next */
 export const UploadDragger = Dragger;

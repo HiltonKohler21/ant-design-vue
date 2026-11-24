@@ -3,10 +3,21 @@ import Form, { formProps } from './Form';
 import FormItem, { formItemProps } from './FormItem';
 import useForm from './useForm';
 import FormItemRest, { useInjectFormItemContext } from './FormItemContext';
-export type { Rule, RuleObject } from './interface';
+export type { Rule, RuleObject, ScrollFocusOptions, FormLabelAlign } from './interface';
 
-export type { FormProps, FormInstance } from './Form';
-export type { FormItemProps, FormItemInstance } from './FormItem';
+export type {
+  FormProps,
+  FormInstance,
+  FormLayout,
+  FormItemLayout,
+  FormSemanticName,
+  FormClassNamesType,
+  FormStylesType,
+  RequiredMark,
+} from './Form';
+export type { FormItemProps, FormItemInstance, ValidateStatus } from './FormItem';
+export type { FormTooltipProps, FormItemTooltipType } from './FormItemLabel';
+export type { FeedbackIcons } from './FormItemContext';
 
 Form.useInjectFormItemContext = useInjectFormItemContext;
 Form.ItemRest = FormItemRest;

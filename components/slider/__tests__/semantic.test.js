@@ -110,4 +110,89 @@ describe('upstream semantic API: Slider（antd 5.25）', () => {
     expect(wrapper.element.hasAttribute('classnames')).toBe(false);
     expect(wrapper.element.hasAttribute('styles')).toBe(false);
   });
+
+  it('supports functional classNames and styles with orientation prop', () => {
+    const wrapper = mount(Slider, {
+      props: {
+        defaultValue: 30,
+        orientation: 'vertical',
+        classNames: info => ({
+          root: `fn-${info.props.orientation}`,
+          handle: 'fn-handle',
+        }),
+        styles: info =>
+          info.props.orientation === 'vertical'
+            ? {
+                root: { height: '240px' },
+                track: { backgroundColor: 'rgb(114, 46, 209)' },
+              }
+            : {},
+      },
+    });
+    const root = wrapper.find('.ant-slider');
+    expect(root.classes()).toContain('fn-vertical');
+    expect(root.element.style.height).toBe('240px');
+    expect(wrapper.find('.ant-slider-handle').classes()).toContain('fn-handle');
+    expect(wrapper.find('.ant-slider-track').element.style.backgroundColor).toBe(
+      'rgb(114, 46, 209)',
+    );
+  });
+
+  it('supports disabled array per handle in range mode', () => {
+    const wrapper = mount(Slider, {
+      props: {
+        range: true,
+        defaultValue: [20, 50, 80],
+        disabled: [true, false, true],
+      },
+    });
+    const handles = wrapper.findAll('.ant-slider-handle');
+    expect(handles.length).toBe(3);
+    expect(handles[0].classes()).toContain('ant-slider-handle-disabled');
+    expect(handles[0].attributes('aria-disabled')).toBe('true');
+    expect(handles[1].classes()).not.toContain('ant-slider-handle-disabled');
+    expect(handles[1].attributes('aria-disabled')).toBe('false');
+    expect(handles[2].classes()).toContain('ant-slider-handle-disabled');
+    expect(handles[2].attributes('aria-disabled')).toBe('true');
+  });
+
+  it('supports range editable add and delete nodes within minCount/maxCount', async () => {
+    const onChange = jest.fn();
+    const wrapper = mount(Slider, {
+      props: {
+        range: { editable: true, minCount: 1, maxCount: 3 },
+        defaultValue: [20, 80],
+        onChange,
+      },
+      attachTo: document.body,
+    });
+    const sliderEl = wrapper.find('.ant-slider').element;
+    sliderEl.getBoundingClientRect = () => ({
+      left: 0,
+      right: 100,
+      top: 0,
+      bottom: 20,
+      width: 100,
+      height: 20,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    });
+
+    // Click rail at x=50 to add node -> [20, 50, 80]
+    const rail = wrapper.find('.ant-slider-rail').element;
+    rail.dispatchEvent(
+      new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: 50, clientY: 10 }),
+    );
+    await wrapper.vm.$nextTick();
+    expect(onChange).toHaveBeenLastCalledWith([20, 50, 80]);
+
+    // Press Delete on first handle -> [50, 80]
+    const firstHandle = wrapper.findAll('.ant-slider-handle')[0].element;
+    firstHandle.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Delete' }));
+    await wrapper.vm.$nextTick();
+    expect(onChange).toHaveBeenLastCalledWith([50, 80]);
+
+    wrapper.unmount();
+  });
 });

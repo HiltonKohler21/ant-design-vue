@@ -1,6 +1,7 @@
 import { computed, defineComponent, ref, watch } from 'vue';
-import type { PropType } from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import classNames from '../_util/classNames';
+import { mergeClassNames, mergeStyles, resolveSemantic } from '../_util/hooks/useMergeSemantic';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { withInstall } from '../_util/type';
 import Popover from '../popover';
@@ -8,11 +9,60 @@ import { getStatusClassNames, getMergedStatus } from '../_util/statusUtils';
 import { FormItemInputContext } from '../form/FormItemContext';
 import useStyle from './style';
 import ColorPickerPanel from './ColorPickerPanel';
+import type { PresetsItem, PresetColorValue } from './ColorPickerPanel';
 import { AggregationColor, generateColor } from './color';
+import PurePanel, { normalizeColorPickerClassNames, normalizeColorPickerStyles } from './PurePanel';
+
+export type { PresetsItem, PresetColorValue };
+export { AggregationColor, generateColor };
+
+export interface ColorPickerPopupSemanticClassNames {
+  root?: string;
+  container?: string;
+}
+
+export interface ColorPickerPopupSemanticStyles {
+  root?: CSSProperties;
+  container?: CSSProperties;
+}
+
+export interface ColorPickerSemanticClassNames {
+  root?: string;
+  body?: string;
+  content?: string;
+  description?: string;
+  popup?: string | ColorPickerPopupSemanticClassNames;
+}
+
+export interface ColorPickerSemanticStyles {
+  root?: CSSProperties;
+  body?: CSSProperties;
+  content?: CSSProperties;
+  description?: CSSProperties;
+  /** @deprecated Please use `popup.container` instead. */
+  popupOverlayInner?: CSSProperties;
+  popup?: CSSProperties | ColorPickerPopupSemanticStyles;
+}
+
+export type ColorPickerClassNamesType =
+  | ColorPickerSemanticClassNames
+  | ((info: { props: ColorPickerProps }) => ColorPickerSemanticClassNames);
+
+export type ColorPickerStylesType =
+  | ColorPickerSemanticStyles
+  | ((info: { props: ColorPickerProps }) => ColorPickerSemanticStyles);
 
 export const colorPickerProps = () => ({
   prefixCls: String,
   rootClassName: String,
+  classNames: {
+    type: [Object, Function] as PropType<ColorPickerClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<ColorPickerStylesType>,
+    default: undefined,
+  },
   value: { type: [String, Object, Array] as PropType<any>, default: undefined },
   defaultValue: { type: [String, Object, Array] as PropType<any>, default: '#1677ff' },
   open: { type: Boolean, default: undefined },
@@ -24,7 +74,7 @@ export const colorPickerProps = () => ({
     default: false,
   },
   presets: {
-    type: Array as PropType<{ label: string; colors: string[] }[]>,
+    type: Array as PropType<PresetsItem[]>,
     default: undefined,
   },
   allowClear: { type: Boolean, default: false },
@@ -38,22 +88,31 @@ export const colorPickerProps = () => ({
   onModeChange: Function as PropType<(mode: 'single' | 'gradient') => void>,
   onClear: Function as PropType<() => void>,
   onChangeComplete: Function as PropType<(color: string) => void>,
-  panelRender: Function as PropType<(panel: any) => any>,
+  panelRender: Function as PropType<
+    (panel: any, extra?: { components: { Picker: any; Presets: any } }) => any
+  >,
   prefix: { type: Object as PropType<any>, default: undefined },
   formatter: Function as PropType<(color: string) => string>,
   onChange: Function as PropType<(color: string) => void>,
   'onUpdate:value': Function as PropType<(color: string) => void>,
   'onUpdate:open': Function as PropType<(open: boolean) => void>,
   onOpenChange: Function as PropType<(open: boolean) => void>,
-  size: String as PropType<'large' | 'middle' | 'small'>,
+  size: String as PropType<'large' | 'middle' | 'medium' | 'small'>,
   status: String as PropType<'error' | 'warning'>,
   trigger: { type: String as PropType<'click' | 'hover'>, default: 'click' },
   placement: { type: String as PropType<any>, default: 'bottomLeft' },
   arrow: {
-    type: [Boolean, Object] as PropType<boolean | { pointAtCenter: boolean }>,
-    default: false,
+    type: [Boolean, Object] as PropType<boolean | { pointAtCenter?: boolean }>,
+    default: undefined,
   },
+  getPopupContainer: Function as PropType<(triggerNode: HTMLElement) => HTMLElement>,
+  autoAdjustOverflow: { type: Boolean, default: true },
+  /** @deprecated Please use `destroyOnHidden` instead */
+  destroyTooltipOnHide: { type: Boolean, default: undefined },
+  destroyOnHidden: { type: Boolean, default: undefined },
 });
+
+export type ColorPickerProps = Partial<ExtractPropTypes<ReturnType<typeof colorPickerProps>>>;
 
 const ColorPicker = defineComponent({
   compatConfig: { MODE: 3 },
@@ -67,13 +126,18 @@ const ColorPicker = defineComponent({
       direction,
       size,
       disabled: mergedDisabled,
+      getPopupContainer: contextGetPopupContainer,
     } = useConfigInject('color-picker', props);
     const colorPickerConfig = computed(() => (configProvider as any).colorPicker?.value);
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const isZhLocale = computed(() =>
+      configProvider.locale?.value?.locale?.toLowerCase().startsWith('zh'),
+    );
 
     const formItemInputContext = FormItemInputContext.useInject();
     const mergedStatus = computed(() => getMergedStatus(formItemInputContext.status, props.status));
     const mergedSize = computed(() => props.size ?? size.value);
+    const mergedArrow = computed(() => props.arrow ?? colorPickerConfig.value?.arrow ?? true);
 
     // 内部颜色状态（受控/非受控）
     const innerValue = ref<any>(props.value ?? props.defaultValue);
@@ -183,12 +247,37 @@ const ColorPicker = defineComponent({
       props.onOpenChange?.(next);
     };
 
+    // ===================== Semantic Merge =====================
+    const resolvedSemantics = computed(() => {
+      const mergedProps: ColorPickerProps = {
+        ...props,
+        disabled: mergedDisabled.value,
+        size: mergedSize.value,
+        status: mergedStatus.value as any,
+        arrow: mergedArrow.value,
+      };
+      const info = { props: mergedProps };
+      const mergedCN = mergeClassNames<Record<string, any>>(
+        normalizeColorPickerClassNames(resolveSemantic(colorPickerConfig.value?.classNames, info)),
+        normalizeColorPickerClassNames(resolveSemantic(props.classNames as any, info)),
+      );
+      const mergedST = mergeStyles<Record<string, any>>(
+        normalizeColorPickerStyles(resolveSemantic(colorPickerConfig.value?.styles, info)),
+        colorPickerConfig.value?.style ? { root: colorPickerConfig.value.style } : undefined,
+        normalizeColorPickerStyles(resolveSemantic(props.styles as any, info)),
+      );
+      return { mergedCN, mergedST };
+    });
+
     return () => {
       const { disabledAlpha, presets, showText, allowClear, rootClassName } = props;
+      const { mergedCN, mergedST } = resolvedSemantics.value;
       const isCleared = color.value.cleared;
       const display = isCleared ? 'transparent' : color.value.toCssString();
       const triggerText = isCleared
-        ? ''
+        ? isZhLocale.value
+          ? '透明'
+          : 'Transparent'
         : color.value.isGradient()
         ? color.value.toCssString()
         : mergedFormat.value === 'rgb'
@@ -211,18 +300,25 @@ const ColorPicker = defineComponent({
           )}
         >
           {props.prefix && <span class={`${prefixCls.value}-trigger-prefix`}>{props.prefix}</span>}
-          <div class={`${prefixCls.value}-color-block`}>
+          <div
+            class={classNames(`${prefixCls.value}-color-block`, mergedCN.body)}
+            style={mergedST.body}
+          >
             <div
               class={classNames(
                 `${prefixCls.value}-color-block-inner`,
                 `${prefixCls.value}-trigger-color`,
+                mergedCN.content,
               )}
-              style={{ background: display }}
+              style={{ background: display, ...(mergedST.content || {}) }}
             />
             {isCleared && <span class={`${prefixCls.value}-clear`}>/</span>}
           </div>
           {showText && (
-            <span class={`${prefixCls.value}-trigger-text`}>
+            <span
+              class={classNames(`${prefixCls.value}-trigger-text`, mergedCN.description)}
+              style={mergedST.description}
+            >
               {typeof showText === 'function' ? showText(color.value) : triggerText}
             </span>
           )}
@@ -243,9 +339,36 @@ const ColorPicker = defineComponent({
         </div>
       );
 
-      const mergedStyle = colorPickerConfig.value?.style
-        ? [colorPickerConfig.value.style, attrs.style]
-        : attrs.style;
+      const mergedPopupCls = classNames(
+        `${prefixCls.value}-popover`,
+        { [`${prefixCls.value}-rtl`]: direction.value === 'rtl' },
+        rootClassName,
+        mergedCN.popup?.root,
+        hashId.value,
+      );
+
+      const popupContainerStyle: CSSProperties | undefined =
+        mergedST.popupOverlayInner || mergedST.popup?.container
+          ? { ...(mergedST.popupOverlayInner || {}), ...(mergedST.popup?.container || {}) }
+          : undefined;
+
+      const popoverClassNames =
+        mergedCN.popup?.root || mergedCN.popup?.container
+          ? {
+              root: mergedCN.popup?.root,
+              container: mergedCN.popup?.container,
+            }
+          : undefined;
+
+      const popoverStyles =
+        mergedST.popup?.root || popupContainerStyle
+          ? {
+              root: mergedST.popup?.root,
+              container: popupContainerStyle,
+            }
+          : undefined;
+
+      const mergedDestroyOnHidden = props.destroyOnHidden ?? props.destroyTooltipOnHide;
 
       return wrapSSR(
         <div
@@ -253,6 +376,7 @@ const ColorPicker = defineComponent({
             prefixCls.value,
             colorPickerConfig.value?.className,
             rootClassName,
+            mergedCN.root,
             hashId.value,
             {
               [`${prefixCls.value}-disabled`]: mergedDisabled.value,
@@ -262,19 +386,19 @@ const ColorPicker = defineComponent({
             },
             attrs.class,
           )}
-          style={mergedStyle as any}
+          style={[mergedST.root, attrs.style as CSSProperties]}
         >
           <Popover
             open={open.value}
             trigger={props.trigger}
             placement={props.placement}
-            arrow={props.arrow}
-            overlayClassName={classNames(
-              `${prefixCls.value}-popover`,
-              { [`${prefixCls.value}-rtl`]: direction.value === 'rtl' },
-              rootClassName,
-              hashId.value,
-            )}
+            arrow={mergedArrow.value}
+            getPopupContainer={props.getPopupContainer ?? contextGetPopupContainer?.value}
+            autoAdjustOverflow={props.autoAdjustOverflow}
+            destroyTooltipOnHide={mergedDestroyOnHidden}
+            overlayClassName={mergedPopupCls}
+            classNames={popoverClassNames}
+            styles={popoverStyles}
             onOpenChange={setOpen}
             v-slots={{
               default: () => triggerNode,
@@ -287,6 +411,7 @@ const ColorPicker = defineComponent({
                   value={color.value}
                   onChange={setColor}
                   onChangeComplete={setColorComplete}
+                  disabled={mergedDisabled.value}
                   disabledAlpha={disabledAlpha}
                   presets={presets}
                   mode={mergedMode.value}
@@ -306,4 +431,8 @@ const ColorPicker = defineComponent({
   },
 });
 
-export default withInstall(ColorPicker);
+const ColorPickerWithPanel = Object.assign(ColorPicker, {
+  _InternalPanelDoNotUseOrYouWillBeFired: PurePanel,
+});
+
+export default withInstall(ColorPickerWithPanel);

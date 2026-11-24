@@ -11,6 +11,7 @@ import { computed, defineComponent, shallowRef, watchEffect } from 'vue';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 import omit from '../_util/omit';
+import type { InputFocusOptions } from '../vc-input/utils/commonUtils';
 import { mergeSemanticClassNames, mergeSemanticStyles, resolveSemanticValue } from './util';
 
 const ActionMap = {
@@ -49,8 +50,8 @@ export default defineComponent({
       }
     });
     const inputRef = shallowRef();
-    const focus = () => {
-      inputRef.value?.focus();
+    const focus = (option?: InputFocusOptions) => {
+      inputRef.value?.focus(option);
     };
     const blur = () => {
       inputRef.value?.blur();
@@ -58,6 +59,9 @@ export default defineComponent({
     expose({
       focus,
       blur,
+      get nativeElement() {
+        return inputRef.value?.nativeElement;
+      },
     });
     const getIcon = (prefixCls: string) => {
       const {

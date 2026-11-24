@@ -1,7 +1,21 @@
 import type { App, Plugin } from 'vue';
 import Checkbox from './Checkbox';
 import CheckboxGroup from './Group';
-export type { CheckboxProps, CheckboxGroupProps, CheckboxOptionType } from './interface';
+export type {
+  CheckboxProps,
+  CheckboxGroupProps,
+  CheckboxOptionType,
+  CheckboxSemanticName,
+  CheckboxSemanticClassNames,
+  CheckboxSemanticStyles,
+  CheckboxClassNamesType,
+  CheckboxStylesType,
+  CheckboxGroupSemanticName,
+  CheckboxGroupSemanticClassNames,
+  CheckboxGroupSemanticStyles,
+  CheckboxGroupClassNamesType,
+  CheckboxGroupStylesType,
+} from './interface';
 export { checkboxProps, checkboxGroupProps } from './interface';
 
 Checkbox.Group = CheckboxGroup;

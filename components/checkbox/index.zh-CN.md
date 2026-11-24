@@ -24,10 +24,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*G3MjTYXL6AIAAA
 | --- | --- | --- | --- | --- |
 | autofocus | 自动获取焦点 | boolean | false |  |
 | checked(v-model) | 指定当前是否选中 | boolean | false |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | defaultChecked | 初始是否选中 | boolean | false |  |
 | disabled | 失效状态 | boolean | false |  |
 | indeterminate | 设置 indeterminate 状态，只负责样式控制 | boolean | false |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | value | 与 CheckboxGroup 组合使用时的值 | boolean \| string \| number | - |  |
 
 #### 事件
@@ -40,10 +42,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*G3MjTYXL6AIAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<GroupSemanticDOM, string> \| (info: { props }) => Record<GroupSemanticDOM, string>` | - | 4.3.0 |
 | defaultValue | 默认选中的选项 | (boolean \| string \| number)\[] | \[] |  |
 | disabled | 整组失效 | boolean | false |  |
 | name | CheckboxGroup 下所有 `input[type="checkbox"]` 的 `name` 属性 | string | - | 1.5.0 |
-| options | 指定可选项，可以通过 slot="label" slot-scope="option" 定制`label` | string\[] \| Array&lt;{ label: string value: string disabled?: boolean, indeterminate?: boolean, onChange?: function }> | \[] |  |
+| options | 指定可选项，可以通过 slot="label" slot-scope="option" 定制`label` | string\[] \| Array&lt;{ label: string, value: string, disabled?: boolean, indeterminate?: boolean, className?: string, style?: CSSProperties, title?: string, onChange?: function }> | \[] |  |
+| rootClassName | 根节点类名 | string | - | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<GroupSemanticDOM, CSSProperties> \| (info: { props }) => Record<GroupSemanticDOM, CSSProperties>` | - | 4.3.0 |
 | value(v-model) | 指定选中的选项 | (boolean \| string \| number)\[] | \[] |  |
 
 #### 事件
@@ -60,3 +65,8 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*G3MjTYXL6AIAAA
 | ------- | -------- | ---- |
 | blur()  | 移除焦点 |      |
 | focus() | 获取焦点 |      |
+
+## Semantic DOM
+
+- **Checkbox**：`root`（根元素）、`icon`（勾选框图标元素）、`label`（文本标签元素）。
+- **Checkbox.Group**：`root`（组根元素）、`item`（选项根元素）、`itemIcon`（选项图标元素）、`itemLabel`（选项文本元素）。

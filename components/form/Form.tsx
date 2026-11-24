@@ -1,18 +1,25 @@
-import type { ExtractPropTypes, HTMLAttributes, ComponentPublicInstance, PropType } from 'vue';
+import type {
+  CSSProperties,
+  ExtractPropTypes,
+  HTMLAttributes,
+  ComponentPublicInstance,
+  PropType,
+} from 'vue';
 import { defineComponent, computed, watch, ref } from 'vue';
 import PropTypes from '../_util/vue-types';
 import classNames from '../_util/classNames';
 import warning from '../_util/warning';
 import type { FieldExpose } from './FormItem';
 import FormItem from './FormItem';
+import type { FormTooltipProps } from './FormItemLabel';
 import { getNamePath, containsNamePath, cloneByNamePathList } from './utils/valueUtil';
 import { defaultValidateMessages } from './utils/messages';
 import { allPromiseFinish } from './utils/asyncUtil';
 import { toArray } from './utils/typeUtil';
 import isEqual from 'lodash-es/isEqual';
-import type { Options } from 'scroll-into-view-if-needed';
 import scrollIntoView from 'scroll-into-view-if-needed';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
+import type { VueNode } from '../_util/type';
 import {
   anyType,
   booleanType,
@@ -20,8 +27,9 @@ import {
   objectType,
   someType,
   stringType,
-  tuple,
 } from '../_util/type';
+import { useMergeSemantic } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
 import type { ColProps } from '../grid/Col';
 import type {
   InternalNamePath,
@@ -33,6 +41,7 @@ import type {
   ValidateMessages,
   Rule,
   FormLabelAlign,
+  ScrollFocusOptions,
 } from './interface';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useProvideForm, useProvideFormVariant } from './context';
@@ -45,29 +54,53 @@ import { useProviderSize } from '../config-provider/SizeContext';
 import { useProvideFormFeedbackIcons } from './FormItemContext';
 import type { FeedbackIcons } from './FormItemContext';
 import { useProviderDisabled } from '../config-provider/DisabledContext';
-export type RequiredMark = boolean | 'optional';
+
+export type RequiredMark =
+  | boolean
+  | 'optional'
+  | ((labelNode: VueNode, info: { required: boolean }) => VueNode);
 export type FormLayout = 'horizontal' | 'inline' | 'vertical';
+export type FormItemLayout = 'horizontal' | 'vertical';
+export type { ScrollFocusOptions };
+
+export type FormSemanticName = 'root' | 'label' | 'content' | 'help' | 'helpItem' | 'extra';
+export interface FormSemanticProps {
+  layout?: FormLayout;
+  size?: SizeType;
+  disabled?: boolean;
+  colon?: boolean;
+  requiredMark?: RequiredMark;
+  labelAlign?: FormLabelAlign;
+  labelWrap?: boolean;
+  variant?: Variant;
+  [key: string]: any;
+}
+export type FormClassNamesType = SemanticClassNamesType<FormSemanticProps, FormSemanticName>;
+export type FormStylesType = SemanticStylesType<FormSemanticProps, FormSemanticName>;
 
 export const formProps = () => ({
   rootClassName: String,
-  layout: PropTypes.oneOf(tuple('horizontal', 'inline', 'vertical')),
+  classNames: someType<FormClassNamesType>([Object, Function]),
+  styles: someType<FormStylesType>([Object, Function]),
+  layout: stringType<FormLayout>(),
   labelCol: objectType<ColProps & HTMLAttributes>(),
   wrapperCol: objectType<ColProps & HTMLAttributes>(),
   colon: booleanType(),
   labelAlign: stringType<FormLabelAlign>(),
   labelWrap: booleanType(),
   prefixCls: String,
-  requiredMark: someType<RequiredMark | ''>([String, Boolean]),
+  requiredMark: someType<RequiredMark | ''>([String, Boolean, Function]),
   /** @deprecated Will warning in future branch. Pls use `requiredMark` instead. */
   hideRequiredMark: booleanType(),
   model: PropTypes.object,
   rules: objectType<{ [k: string]: Rule[] | Rule }>(),
   validateMessages: objectType<ValidateMessages>(),
-  /** 5.x 自定义校验状态图标 */
+  /** 自定义校验状态图标 */
   feedbackIcons: { type: Function as PropType<FeedbackIcons>, default: undefined },
+  tooltip: objectType<FormTooltipProps>(),
   validateOnRuleChange: booleanType(),
   // 提交失败自动滚动到第一个错误字段
-  scrollToFirstError: anyType<boolean | Options>(),
+  scrollToFirstError: anyType<boolean | ScrollFocusOptions>(),
   onSubmit: functionType<(e: Event) => void>(),
   name: String,
   validateTrigger: someType<string | string[]>([String, Array]),
@@ -87,7 +120,7 @@ export type FormExpose = {
   resetFields: (name?: NamePath) => void;
   clearValidate: (name?: NamePath) => void;
   validateFields: (
-    nameList?: NamePath[] | string,
+    nameList?: NamePath[] | string | ValidateOptions,
     options?: ValidateOptions,
   ) => Promise<{
     [key: string]: any;
@@ -95,13 +128,14 @@ export type FormExpose = {
   getFieldsValue: (nameList?: InternalNamePath[] | true) => {
     [key: string]: any;
   };
+  getFieldInstance: (name: NamePath) => HTMLElement | null;
   validate: (
-    nameList?: NamePath[] | string,
+    nameList?: NamePath[] | string | ValidateOptions,
     options?: ValidateOptions,
   ) => Promise<{
     [key: string]: any;
   }>;
-  scrollToField: (name: NamePath, options?: {}) => void;
+  scrollToField: (name: NamePath, options?: ScrollFocusOptions) => void;
 };
 
 export type FormInstance = ComponentPublicInstance<FormProps, FormExpose>;
@@ -130,8 +164,10 @@ const Form = defineComponent({
       size,
       disabled,
     } = useConfigInject('form', props);
-    const requiredMark = computed(() => props.requiredMark === '' || props.requiredMark);
-    const mergedRequiredMark = computed(() => {
+    const requiredMark = computed<RequiredMark | undefined>(() =>
+      props.requiredMark === '' ? true : props.requiredMark,
+    );
+    const mergedRequiredMark = computed<RequiredMark>(() => {
       if (requiredMark.value !== undefined) {
         return requiredMark.value;
       }
@@ -151,6 +187,21 @@ const Form = defineComponent({
     const mergedVariant = computed(() => props.variant ?? contextForm?.value?.variant);
     useProvideFormVariant(mergedVariant);
     const mergedColon = computed(() => props.colon ?? contextForm?.value?.colon);
+    const mergedLabelAlign = computed<FormLabelAlign | undefined>(
+      () => props.labelAlign ?? (contextForm?.value?.labelAlign as FormLabelAlign | undefined),
+    );
+    const mergedLabelWrap = computed<boolean | undefined>(
+      () => props.labelWrap ?? contextForm?.value?.labelWrap,
+    );
+    const mergedTooltip = computed<FormTooltipProps | undefined>(() => {
+      if (!contextForm?.value?.tooltip && !props.tooltip) {
+        return undefined;
+      }
+      return {
+        ...contextForm?.value?.tooltip,
+        ...props.tooltip,
+      };
+    });
     const { validateMessages: globalValidateMessages } = useInjectGlobalForm();
     const validateMessages = computed(() => {
       return {
@@ -163,6 +214,33 @@ const Form = defineComponent({
     // Style
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
+    // Semantic classNames & styles
+    const mergedProps = computed<FormProps>(() => ({
+      ...props,
+      size: size.value,
+      disabled: disabled.value,
+      layout: props.layout,
+      colon: mergedColon.value,
+      requiredMark: mergedRequiredMark.value,
+      labelAlign: mergedLabelAlign.value,
+      labelWrap: mergedLabelWrap.value,
+      variant: mergedVariant.value,
+    }));
+
+    const [mergedClassNames, mergedStyles] = useMergeSemantic<
+      Partial<Record<FormSemanticName, string>>,
+      Partial<Record<FormSemanticName, CSSProperties>>,
+      FormProps
+    >(
+      () => [contextForm?.value?.classNames, props.classNames],
+      () => [
+        contextForm?.value?.styles,
+        contextForm?.value?.style ? { root: contextForm.value.style } : undefined,
+        props.styles,
+      ],
+      () => ({ props: mergedProps.value }),
+    );
+
     const formClassName = computed(() =>
       classNames(
         prefixCls.value,
@@ -172,7 +250,9 @@ const Form = defineComponent({
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
           [`${prefixCls.value}-${size.value}`]: size.value,
         },
+        contextForm?.value?.className,
         props.rootClassName,
+        mergedClassNames.value.root,
         hashId.value,
       ),
     );
@@ -185,7 +265,7 @@ const Form = defineComponent({
       delete fields[eventKey];
     };
 
-    const getFieldsByNameList = (nameList: NamePath | NamePath[]) => {
+    const getFieldsByNameList = (nameList?: NamePath | NamePath[]) => {
       const provideNameList = !!nameList;
       const namePathList = provideNameList ? toArray(nameList).map(getNamePath) : [];
       if (!provideNameList) {
@@ -212,12 +292,15 @@ const Form = defineComponent({
       });
     };
     const handleFinishFailed = (errorInfo: ValidateErrorEntity) => {
-      const { scrollToFirstError } = props;
+      const mergedScrollToFirstError =
+        props.scrollToFirstError !== undefined
+          ? props.scrollToFirstError
+          : contextForm?.value?.scrollToFirstError;
       emit('finishFailed', errorInfo);
-      if (scrollToFirstError && errorInfo.errorFields.length) {
-        let scrollToFieldOptions: Options = {};
-        if (typeof scrollToFirstError === 'object') {
-          scrollToFieldOptions = scrollToFirstError;
+      if (mergedScrollToFirstError && errorInfo.errorFields.length) {
+        let scrollToFieldOptions: ScrollFocusOptions = {};
+        if (typeof mergedScrollToFirstError === 'object') {
+          scrollToFieldOptions = mergedScrollToFirstError;
         }
         scrollToField(errorInfo.errorFields[0].name, scrollToFieldOptions);
       }
@@ -225,18 +308,30 @@ const Form = defineComponent({
     const validate = (...args: any[]) => {
       return validateField(...args);
     };
-    const scrollToField = (name?: NamePath, options = {}) => {
-      const fields = getFieldsByNameList(name ? [name] : undefined);
-      if (fields.length) {
-        const fieldId = fields[0].fieldId.value;
+    const getFieldInstance = (name?: NamePath) => {
+      const targetFields = getFieldsByNameList(name !== undefined ? [name] : undefined);
+      if (targetFields.length) {
+        const fieldId = targetFields[0].fieldId.value;
+        return fieldId ? document.getElementById(fieldId) : null;
+      }
+      return null;
+    };
+    const scrollToField = (name?: NamePath, options: ScrollFocusOptions = {}) => {
+      const { focus, ...restOptions } = options || {};
+      const targetFields = getFieldsByNameList(name !== undefined ? [name] : undefined);
+      if (targetFields.length) {
+        const fieldId = targetFields[0].fieldId.value;
         const node = fieldId ? document.getElementById(fieldId) : null;
 
         if (node) {
           scrollIntoView(node, {
             scrollMode: 'if-needed',
             block: 'nearest',
-            ...options,
+            ...restOptions,
           });
+          if (focus && typeof (node as HTMLElement).focus === 'function') {
+            (node as HTMLElement).focus();
+          }
         }
       }
     };
@@ -252,7 +347,10 @@ const Form = defineComponent({
         return cloneByNamePathList(props.model, nameList);
       }
     };
-    const validateFields = (nameList?: NamePath[], options?: ValidateOptions) => {
+    const validateFields = (
+      nameList?: NamePath[] | string | ValidateOptions,
+      options?: ValidateOptions,
+    ) => {
       warning(
         !(nameList instanceof Function),
         'Form',
@@ -262,9 +360,16 @@ const Form = defineComponent({
         warning(false, 'Form', 'model is required for validateFields to work.');
         return Promise.reject('Form `model` is required for validateFields to work.');
       }
-      const provideNameList = !!nameList;
+      let actualNameList: NamePath[] | string | undefined = nameList as any;
+      let actualOptions: ValidateOptions | undefined = options;
+      if (nameList && !Array.isArray(nameList) && typeof nameList === 'object') {
+        actualOptions = nameList as ValidateOptions;
+        actualNameList = undefined;
+      }
+      const isValidateOnly = !!actualOptions?.validateOnly;
+      const provideNameList = !!actualNameList;
       const namePathList: InternalNamePath[] = provideNameList
-        ? toArray(nameList).map(getNamePath)
+        ? toArray(actualNameList).map(getNamePath)
         : [];
 
       // Collect result in promise list
@@ -290,7 +395,7 @@ const Form = defineComponent({
         if (!provideNameList || containsNamePath(namePathList, fieldNamePath)) {
           const promise = field.validateRules({
             validateMessages: validateMessages.value,
-            ...options,
+            ...actualOptions,
           });
 
           // Wrap promise with field
@@ -328,11 +433,13 @@ const Form = defineComponent({
       });
 
       const summaryPromise = allPromiseFinish(promiseList);
-      lastValidatePromise.value = summaryPromise;
+      if (!isValidateOnly) {
+        lastValidatePromise.value = summaryPromise;
+      }
 
       const returnPromise = summaryPromise
         .then(() => {
-          if (lastValidatePromise.value === summaryPromise) {
+          if (isValidateOnly || lastValidatePromise.value === summaryPromise) {
             return Promise.resolve(getFieldsValue(namePathList));
           }
           return Promise.reject([]);
@@ -342,7 +449,7 @@ const Form = defineComponent({
           return Promise.reject({
             values: getFieldsValue(namePathList),
             errorFields: errorList,
-            outOfDate: lastValidatePromise.value !== summaryPromise,
+            outOfDate: !isValidateOnly && lastValidatePromise.value !== summaryPromise,
           });
         });
 
@@ -375,6 +482,7 @@ const Form = defineComponent({
       clearValidate,
       validateFields,
       getFieldsValue,
+      getFieldInstance,
       validate,
       scrollToField,
     } as FormExpose);
@@ -382,13 +490,17 @@ const Form = defineComponent({
     useProvideForm({
       model: computed(() => props.model),
       name: computed(() => props.name),
-      labelAlign: computed(() => props.labelAlign),
+      labelAlign: mergedLabelAlign,
       labelCol: computed(() => props.labelCol),
-      labelWrap: computed(() => props.labelWrap),
+      labelWrap: mergedLabelWrap,
       wrapperCol: computed(() => props.wrapperCol),
+      layout: computed(() => props.layout),
       vertical: computed(() => props.layout === 'vertical'),
       colon: mergedColon,
       requiredMark: mergedRequiredMark,
+      tooltip: mergedTooltip,
+      classNames: mergedClassNames,
+      styles: mergedStyles,
       validateTrigger: computed(() => props.validateTrigger),
       rules: computed(() => props.rules),
       addField,
@@ -410,7 +522,12 @@ const Form = defineComponent({
 
     return () => {
       return wrapSSR(
-        <form {...attrs} onSubmit={handleSubmit} class={[formClassName.value, attrs.class]}>
+        <form
+          {...attrs}
+          onSubmit={handleSubmit}
+          class={[formClassName.value, attrs.class]}
+          style={[mergedStyles.value.root, attrs.style as CSSProperties]}
+        >
           {slots.default?.()}
         </form>,
       );

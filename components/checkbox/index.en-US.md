@@ -23,10 +23,12 @@ Checkbox component.
 | --- | --- | --- | --- | --- |
 | autofocus | Get focus when component mounted | boolean | false |  |
 | checked(v-model) | Specifies whether the checkbox is selected. | boolean | false |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | defaultChecked | Specifies the initial state: whether or not the checkbox is selected | boolean | false |  |
 | disabled | Disable checkbox | boolean | false |  |
 | indeterminate | Indeterminate checked state of checkbox | boolean | false |  |
 | rootClassName | Class name of the root element | string | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | value | Value of checkbox in CheckboxGroup | boolean \| string \| number | - |  |
 
 #### events
@@ -39,10 +41,13 @@ Checkbox component.
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<GroupSemanticDOM, string> \| (info: { props }) => Record<GroupSemanticDOM, string>` | - | 4.3.0 |
 | defaultValue | Default selected value | (boolean \| string \| number)\[] | \[] |  |
 | disabled | Disable all checkboxes | boolean | false |  |
 | name | The `name` property of all `input[type="checkbox"]` children | string | - | 1.5.0 |
-| options | Specifies options, you can customize `label` with slot = "label" slot-scope="option" | string\[] \| Array&lt;{ label: string value: string disabled?: boolean, indeterminate?: boolean, onChange?: function }> | \[] |  |
+| options | Specifies options, you can customize `label` with slot = "label" slot-scope="option" | string\[] \| Array&lt;{ label: string, value: string, disabled?: boolean, indeterminate?: boolean, className?: string, style?: CSSProperties, title?: string, onChange?: function }> | \[] |  |
+| rootClassName | Class name of the root element | string | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<GroupSemanticDOM, CSSProperties> \| (info: { props }) => Record<GroupSemanticDOM, CSSProperties>` | - | 4.3.0 |
 | value(v-model) | Used for setting the currently selected value. | (boolean \| string \| number)\[] | \[] |  |
 
 #### events
@@ -59,3 +64,8 @@ Checkbox component.
 | ------- | ------------ | ------- |
 | blur()  | remove focus |         |
 | focus() | get focus    |         |
+
+## Semantic DOM
+
+- **Checkbox**: `root` (wrapper element), `icon` (checkbox box element), `label` (label text element).
+- **Checkbox.Group**: `root` (group wrapper), `item` (option wrapper), `itemIcon` (option checkbox box), `itemLabel` (option label text).

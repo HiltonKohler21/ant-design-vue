@@ -1,26 +1,34 @@
 <template>
   <demo-sort>
     <basic />
+    <default-value />
     <custom-trigger />
     <hover />
     <disabled-option />
     <change-on-select />
     <multipleVue />
+    <show-checked-strategy />
     <size />
     <custom-render />
     <search />
     <lazy />
     <fields-name />
     <suffix />
+    <custom-dropdown />
+    <placement />
     <variantVue />
+    <status />
     <style-class />
     <panelVue />
     <tagRender />
+    <ellipsis-debug />
+    <render-panel />
     <component-token />
   </demo-sort>
 </template>
 <script>
 import Basic from './basic.vue';
+import DefaultValue from './default-value.vue';
 import ChangeOnSelect from './change-on-select.vue';
 import CustomRender from './custom-render.vue';
 import CustomTrigger from './custom-trigger.vue';
@@ -32,10 +40,16 @@ import Size from './size.vue';
 import FieldsName from './fields-name.vue';
 import Suffix from './suffix.vue';
 import multipleVue from './multiple.vue';
+import ShowCheckedStrategy from './showCheckedStrategy.vue';
+import CustomDropdown from './custom-dropdown.vue';
+import Placement from './placement.vue';
+import Status from './status.vue';
 import tagRender from './tagRender.vue';
 import panelVue from './panel.vue';
 import variantVue from './variant.vue';
 import StyleClass from './style-class.vue';
+import EllipsisDebug from './ellipsis-debug.vue';
+import RenderPanel from './render-panel.vue';
 import ComponentToken from './component-token.vue';
 
 import CN from '../index.zh-CN.md';
@@ -46,6 +60,7 @@ export default defineComponent({
   US,
   components: {
     Basic,
+    DefaultValue,
     ChangeOnSelect,
     CustomRender,
     CustomTrigger,
@@ -57,10 +72,16 @@ export default defineComponent({
     FieldsName,
     Suffix,
     multipleVue,
+    ShowCheckedStrategy,
+    CustomDropdown,
+    Placement,
+    Status,
     tagRender,
     panelVue,
     variantVue,
     StyleClass,
+    EllipsisDebug,
+    RenderPanel,
     ComponentToken,
   },
 });
@@ -68,5 +89,6 @@ export default defineComponent({
 <style>
 [id^='components-cascader-demo-'] .ant-cascader {
   width: 300px;
+  max-width: 100%;
 }
 </style>

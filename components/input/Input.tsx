@@ -5,6 +5,8 @@ import {
   onMounted,
   onUpdated,
   ref,
+  shallowRef,
+  watch,
   defineComponent,
 } from 'vue';
 import classNames from '../_util/classNames';
@@ -18,7 +20,7 @@ import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 import type { InputFocusOptions } from '../vc-input/utils/commonUtils';
 import { hasPrefixSuffix } from '../vc-input/utils/commonUtils';
 import VcInput from '../vc-input/Input';
-import type { InputSemanticClassNames, InputSemanticStyles } from './inputProps';
+import type { AllowClearConfig, InputSemanticClassNames, InputSemanticStyles } from './inputProps';
 import inputProps from './inputProps';
 import omit from '../_util/omit';
 import CloseCircleFilled from '@ant-design/icons-vue/CloseCircleFilled';
@@ -36,6 +38,31 @@ import {
 import useStyle from './style';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 
+function resolveAllowClear(
+  propAllowClear: boolean | AllowClearConfig | undefined,
+  contextAllowClear: boolean | AllowClearConfig | undefined,
+): { enabled: boolean; clearIcon?: any } {
+  const source = propAllowClear !== undefined ? propAllowClear : contextAllowClear;
+  if (!source) {
+    return { enabled: false };
+  }
+  if (typeof source === 'object') {
+    if (source.disabled) {
+      return { enabled: false };
+    }
+    const ctxIcon =
+      typeof contextAllowClear === 'object' && contextAllowClear !== null
+        ? contextAllowClear.clearIcon
+        : undefined;
+    return { enabled: true, clearIcon: source.clearIcon ?? ctxIcon };
+  }
+  const ctxObj =
+    typeof contextAllowClear === 'object' && contextAllowClear !== null
+      ? contextAllowClear
+      : undefined;
+  return { enabled: true, clearIcon: ctxObj?.clearIcon };
+}
+
 export default defineComponent({
   compatConfig: { MODE: 3 },
   name: 'AInput',
@@ -51,6 +78,18 @@ export default defineComponent({
       props,
     );
     const inputConfig = computed(() => (configProvider as any).input?.value);
+
+    // ====================== Count =======================
+    const countStateValue = shallowRef(props.value ?? props.defaultValue ?? '');
+    const isComposing = shallowRef(false);
+    watch(
+      () => props.value,
+      val => {
+        if (val !== undefined) {
+          countStateValue.value = val;
+        }
+      },
+    );
 
     // ====================== Variant =======================
     const [mergedVariant, enableVariantCls] = useVariant(
@@ -136,6 +175,9 @@ export default defineComponent({
       input: inputRef,
       setSelectionRange,
       select,
+      get nativeElement() {
+        return inputRef.value?.$el;
+      },
     });
     // ===================== Remove Password value =====================
     const removePasswordTimeoutRef = ref<any[]>([]);
@@ -177,8 +219,62 @@ export default defineComponent({
       emit('focus', e);
     };
 
+    const applyCountExceedFormat = (rawVal: string) => {
+      const countConfig = props.count;
+      if (!countConfig || !countConfig.exceedFormatter) {
+        return rawVal;
+      }
+      const max = countConfig.max ?? props.maxlength;
+      if (max === undefined) {
+        return rawVal;
+      }
+      const strategy = countConfig.strategy ?? ((v: string) => v.length);
+      if (strategy(rawVal) > max) {
+        return countConfig.exceedFormatter(rawVal, { max });
+      }
+      return rawVal;
+    };
+
+    const handleCompositionStart = (e: CompositionEvent) => {
+      isComposing.value = true;
+      emit('compositionstart', e);
+    };
+
+    const handleCompositionEnd = (e: CompositionEvent) => {
+      isComposing.value = false;
+      if (props.count?.exceedFormatter) {
+        const target = e.target as HTMLInputElement;
+        const formatted = applyCountExceedFormat(target.value);
+        if (formatted !== target.value) {
+          target.value = formatted;
+          if (props.value === undefined) {
+            countStateValue.value = formatted;
+          }
+          emit('update:value', formatted);
+          emit('change', e);
+          emit('input', e);
+          formItemContext.onFieldChange();
+        }
+      }
+      emit('compositionend', e);
+    };
+
     const triggerChange = (e: Event) => {
-      emit('update:value', (e.target as HTMLInputElement).value);
+      const target = e.target as HTMLInputElement;
+      let val = target.value;
+      if (e.type === 'click') {
+        emit('clear');
+      } else if (props.count?.exceedFormatter && !isComposing.value) {
+        const formatted = applyCountExceedFormat(val);
+        if (formatted !== val) {
+          val = formatted;
+          target.value = val;
+        }
+      }
+      if (props.value === undefined) {
+        countStateValue.value = val;
+      }
+      emit('update:value', val);
       emit('change', e);
       emit('input', e);
       formItemContext.onFieldChange();
@@ -188,6 +284,7 @@ export default defineComponent({
       const { hasFeedback, feedbackIcon } = formItemInputContext;
       const {
         allowClear,
+        count,
         prefix = slots.prefix?.(),
         suffix = slots.suffix?.(),
         addonAfter = slots.addonAfter?.(),
@@ -195,6 +292,32 @@ export default defineComponent({
         id = formItemContext.id?.value,
         ...rest
       } = props;
+      const clearInfo = resolveAllowClear(allowClear, inputConfig.value?.allowClear);
+      const effectiveAllowClear = clearInfo.enabled ? true : undefined;
+
+      // Count config resolution
+      const currentCountVal = String(
+        (props.value !== undefined ? props.value : countStateValue.value) ?? '',
+      );
+      let effectiveShowCount: any = props.showCount || undefined;
+      let isOutOfRange = false;
+      if (count) {
+        const countStrategy = count.strategy ?? ((v: string) => v.length);
+        const countMax = count.max ?? props.maxlength;
+        const valLen = countStrategy(currentCountVal);
+        isOutOfRange = countMax !== undefined && valLen > countMax;
+        if (count.show) {
+          effectiveShowCount = {
+            formatter: () =>
+              typeof count.show === 'function'
+                ? count.show({ value: currentCountVal, count: valLen, maxLength: countMax })
+                : `${valLen}${countMax !== undefined ? ` / ${countMax}` : ''}`,
+          };
+        } else {
+          effectiveShowCount = undefined;
+        }
+      }
+
       const suffixNode = (hasFeedback || suffix) && (
         <>
           {suffix}
@@ -203,19 +326,26 @@ export default defineComponent({
       );
       const prefixClsValue = prefixCls.value;
       const inputHasPrefixSuffix = hasPrefixSuffix({ prefix, suffix }) || !!hasFeedback;
+      const hasAffixWrapper = Boolean(
+        hasPrefixSuffix({
+          prefix,
+          suffix: suffixNode || effectiveShowCount,
+          allowClear: effectiveAllowClear,
+        }),
+      );
       const variantCls =
         enableVariantCls.value && mergedVariant.value !== 'outlined'
           ? `${prefixClsValue}-${mergedVariant.value}`
           : undefined;
       const isBorderless = mergedVariant.value === 'borderless';
-      const clearIcon = slots.clearIcon || (() => <CloseCircleFilled />);
+      const clearIcon =
+        slots.clearIcon ||
+        (clearInfo.clearIcon !== undefined
+          ? () => clearInfo.clearIcon
+          : () => <CloseCircleFilled />);
       const currentClassNames = mergedClassNames.value;
       const currentStyles = mergedStyles.value;
-      const hasWrapper = Boolean(
-        hasPrefixSuffix({ prefix, suffix: suffixNode || props.showCount, allowClear }) ||
-          addonAfter ||
-          addonBefore,
-      );
+      const hasWrapper = Boolean(hasAffixWrapper || addonAfter || addonBefore);
       isCurrentlyWrapped = hasWrapper;
       const hasCustomStyle =
         inputConfig.value?.style || currentStyles.root || (!hasWrapper && currentStyles.input);
@@ -227,6 +357,10 @@ export default defineComponent({
             attrs.style,
           ]
         : attrs.style;
+      const vcExtraProps: Record<string, any> = {};
+      if (count) {
+        vcExtraProps.value = props.value !== undefined ? props.value : countStateValue.value;
+      }
       return wrapSSR(
         <VcInput
           {...attrs}
@@ -234,12 +368,20 @@ export default defineComponent({
             'onUpdate:value',
             'onChange',
             'onInput',
+            'onClear',
+            'onCompositionstart',
+            'onCompositionend',
             'classNames',
             'styles',
             'rootClassName',
+            'showCount',
           ])}
+          {...vcExtraProps}
+          showCount={effectiveShowCount}
           style={mergedStyle as any}
           onChange={triggerChange}
+          onCompositionstart={handleCompositionStart}
+          onCompositionend={handleCompositionEnd}
           id={id}
           disabled={mergedDisabled.value}
           ref={inputRef}
@@ -255,7 +397,7 @@ export default defineComponent({
           prefixStyle={currentStyles.prefix}
           suffixStyle={currentStyles.suffix}
           countStyle={currentStyles.count}
-          allowClear={allowClear}
+          allowClear={effectiveAllowClear}
           addonAfter={
             addonAfter && (
               <NoCompactStyle>
@@ -276,6 +418,7 @@ export default defineComponent({
             compactItemClassnames.value,
             props.rootClassName,
             currentClassNames.root,
+            isOutOfRange ? `${prefixClsValue}-out-of-range` : undefined,
           ]}
           inputClassName={classNames(
             {
@@ -283,7 +426,7 @@ export default defineComponent({
               [`${prefixClsValue}-lg`]: mergedSize.value === 'large',
               [`${prefixClsValue}-rtl`]: direction.value === 'rtl',
               [`${prefixClsValue}-borderless`]: isBorderless,
-              [variantCls]: !inputHasPrefixSuffix && !!variantCls,
+              [variantCls]: !hasAffixWrapper && !!variantCls,
               [currentClassNames.input as string]: !!currentClassNames.input,
             },
             !inputHasPrefixSuffix && getStatusClassNames(prefixClsValue, mergedStatus.value),
@@ -296,7 +439,8 @@ export default defineComponent({
               [`${prefixClsValue}-affix-wrapper-rtl`]: direction.value === 'rtl',
               [`${prefixClsValue}-affix-wrapper-borderless`]: isBorderless,
               [`${prefixClsValue}-affix-wrapper-${mergedVariant.value}`]:
-                inputHasPrefixSuffix && enableVariantCls.value,
+                (inputHasPrefixSuffix || (mergedVariant.value !== 'outlined' && hasAffixWrapper)) &&
+                enableVariantCls.value,
             },
             getStatusClassNames(`${prefixClsValue}-affix-wrapper`, mergedStatus.value, hasFeedback),
             hashId.value,
