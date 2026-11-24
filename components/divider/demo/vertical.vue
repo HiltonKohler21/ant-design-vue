@@ -8,19 +8,19 @@ title:
 
 ## zh-CN
 
-使用 `type="vertical"` 设置为行内的垂直分割线。
+使用 `orientation="vertical"` 或者 `vertical` 设置为行内的垂直分割线。
 
 ## en-US
 
-Use `type="vertical"` make it vertical.
+Use `orientation="vertical"` or `vertical` to make the divider vertical.
 </docs>
 
 <template>
   <div>
     Text
-    <a-divider type="vertical" />
-    <a href="#">Link</a>
-    <a-divider type="vertical" />
-    <a href="#">Link</a>
+    <a-divider orientation="vertical" />
+    <a href="#" aria-label="Ant Design component examples">Link</a>
+    <a-divider vertical />
+    <a href="#" aria-label="Ant Design component examples">Link</a>
   </div>
 </template>

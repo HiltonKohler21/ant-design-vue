@@ -6,6 +6,7 @@
     <plain />
     <vertical />
     <customize-style />
+    <component-token />
     <variant />
     <style-class />
   </demo-sort>
@@ -14,11 +15,12 @@
 <script lang="ts">
 import Horizontal from './horizontal.vue';
 import WithText from './with-text.vue';
-import Plain from './plain.vue';
-import Variant from './variant.vue';
 import Size from './size.vue';
+import Plain from './plain.vue';
 import Vertical from './vertical.vue';
 import CustomizeStyle from './customize-style.vue';
+import ComponentToken from './component-token.vue';
+import Variant from './variant.vue';
 import StyleClass from './style-class.vue';
 
 import CN from '../index.zh-CN.md';
@@ -31,11 +33,12 @@ export default defineComponent({
   components: {
     Horizontal,
     WithText,
-    Plain,
-    Variant,
     Size,
+    Plain,
     Vertical,
     CustomizeStyle,
+    ComponentToken,
+    Variant,
     StyleClass,
   },
   setup() {

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 7
 title:
   zh-CN: 变体
   en-US: Variant
@@ -8,32 +8,31 @@ title:
 
 ## zh-CN
 
-分割线默认为 `solid`（实线）变体，可以通过 `variant` 切换为 `dashed`（虚线）或 `dotted`（点线），支持水平、带文字及垂直分割线。
+分隔线默认为 `solid`（实线）变体。您可以将其更改为 `dashed`（虚线）或 `dotted`（点线）。
 
 ## en-US
 
-Divider uses the `solid` variant by default. You can change `variant` to `dashed` or `dotted` for horizontal, with-text, and vertical dividers.
+Divider is of `solid` variant by default. You can change that to either `dashed` or `dotted`.
 </docs>
 
 <template>
-  <p>Plain horizontal dividers:</p>
-  <a-divider variant="solid" style="border-color: #7cb305" />
-  <a-divider variant="dashed" style="border-color: #7cb305" />
-  <a-divider variant="dotted" style="border-color: #7cb305" />
-
-  <p>Horizontal dividers with text:</p>
-  <a-divider variant="solid" style="border-color: #7cb305">Solid</a-divider>
-  <a-divider variant="dashed" style="border-color: #7cb305">Dashed</a-divider>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
+    probare, quae sunt a te dicta? Refert tamen, quo modo.
+  </p>
+  <a-divider style="border-color: #7cb305">Solid</a-divider>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
+    probare, quae sunt a te dicta? Refert tamen, quo modo.
+  </p>
   <a-divider variant="dotted" style="border-color: #7cb305">Dotted</a-divider>
-
-  <p>Vertical dividers:</p>
-  <div>
-    Solid
-    <a-divider type="vertical" variant="solid" style="border-color: #7cb305" />
-    Dashed
-    <a-divider type="vertical" variant="dashed" style="border-color: #7cb305" />
-    Dotted
-    <a-divider type="vertical" variant="dotted" style="border-color: #7cb305" />
-    End
-  </div>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
+    probare, quae sunt a te dicta? Refert tamen, quo modo.
+  </p>
+  <a-divider variant="dashed" style="border-color: #7cb305" dashed>Dashed</a-divider>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
+    probare, quae sunt a te dicta? Refert tamen, quo modo.
+  </p>
 </template>

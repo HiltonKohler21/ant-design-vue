@@ -1,6 +1,7 @@
 <docs>
 ---
 order: 2
+version: 5.25.0
 title:
   zh-CN: 设置分割线的间距大小
   en-US: Set the spacing size of the divider
@@ -8,11 +9,11 @@ title:
 
 ## zh-CN
 
-通过 `size` 设置水平分割线的上下间距大小，可选 `small`、`middle`、`large`。
+间距的大小。
 
 ## en-US
 
-Set the vertical spacing of a horizontal divider using `size`: `small`, `middle`, or `large`.
+The size of the spacing.
 </docs>
 
 <template>
@@ -25,7 +26,7 @@ Set the vertical spacing of a horizontal divider using `size`: `small`, `middle`
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.
   </p>
-  <a-divider size="middle" />
+  <a-divider size="medium" />
   <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.

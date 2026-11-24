@@ -8,11 +8,11 @@ title:
 
 ## zh-CN
 
-分割线中带有文字，可以用 `orientation` 指定文字位置。
+分割线中带有文字，可以用 `titlePlacement` 指定文字位置。
 
 ## en-US
 
-Divider with inner title, set `orientation="left/right"` to align it.
+Divider with inner title, set `titlePlacement="start/end"` to align it.
 </docs>
 
 <template>
@@ -25,25 +25,25 @@ Divider with inner title, set `orientation="left/right"` to align it.
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.
   </p>
-  <a-divider orientation="left">Left Text</a-divider>
+  <a-divider title-placement="start">Left Text</a-divider>
   <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.
   </p>
-  <a-divider orientation="right">Right Text</a-divider>
+  <a-divider title-placement="end">Right Text</a-divider>
   <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.
   </p>
-  <a-divider orientation="left" orientation-margin="0px">
-    Left Text with 0 orientationMargin
+  <a-divider title-placement="start" :styles="{ content: { margin: 0 } }">
+    Left Text margin with 0
   </a-divider>
   <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.
   </p>
-  <a-divider orientation="right" orientation-margin="50px">
-    Right Text with 50px orientationMargin
+  <a-divider title-placement="end" :styles="{ content: { margin: '0 50px' } }">
+    Right Text margin with 50px
   </a-divider>
   <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista

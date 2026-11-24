@@ -12,7 +12,7 @@ title:
 
 ## en-US
 
-Divider is `horizontal` by default. You can add text within Divider.
+A Divider is `horizontal` by default. You can add text within Divider.
 </docs>
 
 <template>
@@ -21,11 +21,6 @@ Divider is `horizontal` by default. You can add text within Divider.
     probare, quae sunt a te dicta? Refert tamen, quo modo.
   </p>
   <a-divider />
-  <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
-    probare, quae sunt a te dicta? Refert tamen, quo modo.
-  </p>
-  <a-divider>With Text</a-divider>
   <p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed nonne merninisti licere mihi ista
     probare, quae sunt a te dicta? Refert tamen, quo modo.
