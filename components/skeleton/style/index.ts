@@ -157,6 +157,18 @@ const genSkeletonElementImage = (token: SkeletonToken): CSSObject => {
     [`${skeletonImageCls}${skeletonImageCls}-circle`]: {
       borderRadius: '50%',
     },
+    [`${token.componentCls}-node`]: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      verticalAlign: 'top',
+      background: color,
+      borderRadius: borderRadiusSM,
+      ...genSkeletonElementImageSize(
+        token,
+        token.calc(imageSizeBase).mul(2).equal() as unknown as number,
+      ),
+    },
   };
 };
 const genSkeletonElementButtonShape = (
@@ -347,7 +359,8 @@ const genBaseStyle: GenerateStyle<SkeletonToken> = (token: SkeletonToken) => {
         ${skeletonAvatarCls},
         ${skeletonButtonCls},
         ${skeletonInputCls},
-        ${skeletonImageCls}
+        ${skeletonImageCls},
+        ${componentCls}-node
       `]: {
         ...genSkeletonColor(token),
       },

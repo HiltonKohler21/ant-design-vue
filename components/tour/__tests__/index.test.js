@@ -5,15 +5,21 @@ import { mount } from '@vue/test-utils';
 describe('Tour', () => {
   mountTest(Tour);
 
-  it('The Tour should render successfully ', function () {
-    const wrapper = mount({
-      setup() {
-        return () => {
-          return <Tour class="Tour" content="Ant Design" />;
-        };
+  it('The Tour should render successfully ', async function () {
+    document.body.innerHTML = '';
+    const wrapper = mount(
+      {
+        setup() {
+          return () => {
+            return <Tour open class="Tour" steps={[{ title: 'Ant Design' }]} />;
+          };
+        },
       },
-    });
-    expect(wrapper.find('.Tour').exists()).toBe(true);
+      { attachTo: 'body' },
+    );
+    await new Promise(r => setTimeout(r, 60));
+    expect(document.body.querySelector('.Tour')).not.toBeNull();
+    wrapper.unmount();
   });
 
   it('forwards top-level actionsRender, preserves step-level type, and passes numeric total to indicatorsRender', async () => {

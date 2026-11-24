@@ -53,13 +53,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*fv7mQIWdUgcAAA
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
 | class | 自定义 CSS class | string | - |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | content | 提示内容 | string\| VNode \| ()=> VNode | - |  |
 | duration | 自动关闭的延时，单位秒。设为 0 时不自动关闭。 | number | 3 |  |
 | icon | 自定义图标 | VNode \| () => VNode | - |  |
 | key | 当前提示的唯一标志 | string \| number | - |  |
+| pauseOnHover | 悬停时是否暂停计时器 | boolean | true | 4.3.0 |
 | style | 自定义内联样式 | CSSProperties | - |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | onClick | 点击 message 时触发的回调函数 | function | - |  |
 | onClose | 关闭时触发的回调函数 | function | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `wrapper` \| `icon` \| `title`（别名 `content`） \| `list`。
 
 ### 全局方法
 
@@ -88,7 +93,8 @@ message.config({
 | maxCount | 最大显示数, 超过限制时，最早的消息会被自动关闭 | number | - |  |
 | prefixCls | 消息节点的 className 前缀 | string | `ant-message` | 3.0 |
 | rtl | 是否开启 RTL 模式 | boolean | false |  |
-| top | 消息距离顶部的位置 | string | `8px` |  |
+| stack | 堆叠模式，超过阈值时会将所有消息收起。折叠状态下仅展示最新的消息 | boolean \| `{ threshold?: number }` | false | 4.3.0 |
+| top | 消息距离顶部的位置 | string \| number | `8px` |  |
 
 ## FAQ
 

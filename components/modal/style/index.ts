@@ -491,6 +491,48 @@ const genWireframeStyle: GenerateStyle<ModalToken> = token => {
   };
 };
 
+const genResponsiveWidthStyle: GenerateStyle<ModalToken> = token => {
+  const { componentCls } = token;
+  const rawToken: any = (token as any)._realToken ?? token;
+  const oriGridMediaSizesMap: Record<string, number> = {
+    xs: rawToken.screenXSMin,
+    sm: rawToken.screenSMMin,
+    md: rawToken.screenMDMin,
+    lg: rawToken.screenLGMin,
+    xl: rawToken.screenXLMin,
+    xxl: rawToken.screenXXLMin,
+  };
+  const gridMediaSizesMap = { ...oriGridMediaSizesMap };
+  delete gridMediaSizesMap.xs;
+
+  const cssVarPrefix = `--${componentCls.replace('.', '')}-`;
+
+  const responsiveStyles = Object.keys(gridMediaSizesMap).map(key => ({
+    [`@media (min-width: ${unit(gridMediaSizesMap[key])})`]: {
+      width: `var(${cssVarPrefix}${key}-width)`,
+    },
+  }));
+
+  return {
+    [`${componentCls}-root`]: {
+      [componentCls]: [
+        ...Object.keys(oriGridMediaSizesMap).map((currentKey, index) => {
+          const previousKey = Object.keys(oriGridMediaSizesMap)[index - 1];
+          return previousKey
+            ? {
+                [`${cssVarPrefix}${currentKey}-width`]: `var(${cssVarPrefix}${previousKey}-width)`,
+              }
+            : null;
+        }),
+        {
+          width: `var(${cssVarPrefix}xs-width)`,
+        },
+        ...responsiveStyles,
+      ],
+    },
+  };
+};
+
 // ============================== Export ==============================
 export default genComponentStyleHook(
   'Modal',
@@ -532,6 +574,7 @@ export default genComponentStyleHook(
       genModalMaskStyle(modalToken),
       token.wireframe && genWireframeStyle(modalToken),
       initZoomMotion(modalToken, 'zoom'),
+      genResponsiveWidthStyle(modalToken),
     ];
   },
   token => ({

@@ -17,11 +17,12 @@ To customize the style or font of the close button.
 </docs>
 
 <template>
+  <contextHolder />
   <a-button type="primary" @click="openNotification">Open the notification box</a-button>
 </template>
 
 <script lang="ts" setup>
-import { notification, Button } from 'ant-design-vue';
+import { Button, Space, notification } from 'ant-design-vue';
 import { h } from 'vue';
 
 const close = () => {
@@ -29,22 +30,37 @@ const close = () => {
     'Notification was closed. Either the close button was clicked or duration time elapsed.',
   );
 };
+
+const [api, contextHolder] = notification.useNotification();
+
 const openNotification = () => {
   const key = `open${Date.now()}`;
-  notification.open({
-    message: 'Notification Title',
-    description:
-      'A function will be be called after the notification is closed (automatically after the "duration" time of manually).',
-    btn: () =>
+  const actions = () =>
+    h(Space, null, () => [
+      h(
+        Button,
+        {
+          type: 'link',
+          size: 'small',
+          onClick: () => api.destroy(),
+        },
+        () => 'Destroy All',
+      ),
       h(
         Button,
         {
           type: 'primary',
           size: 'small',
-          onClick: () => notification.close(key),
+          onClick: () => api.destroy(key),
         },
-        { default: () => 'Confirm' },
+        () => 'Confirm',
       ),
+    ]);
+  api.open({
+    title: 'Notification Title',
+    description:
+      'A function will be be called after the notification is closed (automatically after the "duration" time of manually).',
+    actions,
     key,
     onClose: close,
   });

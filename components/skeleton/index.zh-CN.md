@@ -25,11 +25,15 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*VcjGQLSrYdcAAA
 | --- | --- | --- | --- | --- |
 | active | 是否展示动画效果 | boolean | false |  |
 | avatar | 是否显示头像占位图 | boolean \| [SkeletonAvatarProps](#skeletonavatarprops) | false |  |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | loading | 为 `true` 时，显示占位图。反之则直接展示子组件 | boolean | - |  |
 | paragraph | 是否显示段落占位图 | boolean \| [SkeletonParagraphProps](#skeletonparagraphprops) | true |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | round | 为 `true` 时，段落和标题显示圆角 | boolean | false |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | 是否显示标题占位图 | boolean \| [SkeletonTitleProps](#skeletontitleprops) | true |  |
+
+> 语义化结构 `SemanticDOM` 支持：`Skeleton` 为 `root` \| `header` \| `section` \| `avatar` \| `title` \| `paragraph`；`Skeleton.Avatar` / `Skeleton.Button` / `Skeleton.Input` / `Skeleton.Image` / `Skeleton.Node` 为 `root` \| `content`。
 
 ### SkeletonAvatarProps
 

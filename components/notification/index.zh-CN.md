@@ -27,31 +27,68 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*W3RmSov-xVMAAA
 - `notification.open(config)`
 - `notification.close(key: String)`
 - `notification.destroy()`
-- `notification.useNotification()`
+- `notification.useNotification(config)`
 
 config 参数如下：
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| actions | 自定义操作按钮组（推荐使用，替代 `btn`） | VNode \| () => VNode | - | 4.3.0 |
-| bottom | 消息从底部弹出时，距离底部的位置，单位像素。 | string | `24px` |  |
-| btn | 自定义关闭按钮（已废弃，请使用 `actions` 替代） | VNode \| () => VNode | - |  |
-| class | 自定义 CSS class | string | - |  |
-| closable | 是否显示关闭按钮，或自定义关闭按钮配置 | boolean \| `{ closeIcon?: VueNode \| (() => VueNode); disabled?: boolean; onClose?: () => void; 'aria-label'?: string }` | `true` | 4.3.0 |
-| closeIcon | 自定义关闭图标 | VNode \| () => VNode | - |  |
-| description | 通知提醒内容，必选 | string \| VNode \| () => VNode | - |  |
-| duration | 默认 4.5 秒后自动关闭，配置为 null 则不自动关闭 | number \| null | 4.5 |  |
-| getContainer | 配置渲染节点的输出位置 | () => HTMLNode | () => document.body |  |
-| icon | 自定义图标 | VNode \| () => VNode | - |  |
-| key | 当前通知唯一标志 | string | - |  |
-| message | 通知提醒标题，必选 | string \| VNode \| () => VNode | - |  |
-| pauseOnHover | 悬停时是否暂停计时器 | boolean | true | 4.3.0 |
-| placement | 弹出位置，可选 `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` | `top` `bottom` 3.3.0 |
-| showProgress | 显示自动关闭进度条 | boolean | false | 4.3.0 |
-| style | 自定义内联样式 | Object \| string | - |  |
-| top | 消息从顶部弹出时，距离顶部的位置，单位像素。 | string | `24px` |  |
-| onClick | 点击通知时触发的回调函数 | Function | - |  |
-| onClose | 点击默认关闭按钮时触发的回调函数 | Function | - |  |
+| actions | 自定义操作按钮组 | VNode \| () => VNode | - | 4.3.0 |
+| bottom | 消息从底部弹出时，距离底部的位置，单位像素 | string \| number | `24px` | - |
+| ~~btn~~ | 自定义操作按钮组，请使用 `actions` 替换 | VNode \| () => VNode | - | - |
+| class | 自定义 CSS class | string | - | - |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| ((info: { props }) => Record<SemanticDOM, string>)` | - | 4.3.0 |
+| closable | 是否显示右上角的关闭按钮，或自定义关闭按钮配置 | boolean \| [ClosableType](#closabletype) | `true` | 4.3.0 |
+| closeIcon | 自定义关闭图标，设置为 `null` 或 `false` 时隐藏关闭按钮 | VNode \| () => VNode \| null \| false | - | `null` / `false`: 4.3.0 |
+| description | 通知提醒内容 | string \| VNode \| () => VNode | - | - |
+| duration | 默认 4.5 秒后自动关闭，配置为 `0`、`null` 或 `false` 则不会自动关闭 | number \| null \| false | `4.5` | `false`: 4.3.0 |
+| getContainer | 配置渲染节点的输出位置 | () => HTMLNode | () => document.body | - |
+| icon | 自定义图标 | VNode \| () => VNode | - | - |
+| key | 当前通知唯一标志 | string | - | - |
+| ~~message~~ | 通知提醒标题，请使用 `title` 替换 | string \| VNode \| () => VNode | - | - |
+| pauseOnHover | 悬停时是否暂停计时器 | boolean | `true` | 4.3.0 |
+| placement | 弹出位置，可选 `top` \| `topLeft` \| `topRight` \| `bottom` \| `bottomLeft` \| `bottomRight` | string | `topRight` | `top` `bottom` 3.3.0 |
+| props | 透传至通知 `div` 上的 props 对象，支持传入 `data-*`、`aria-*` 或 `role` | Object | - | 4.3.0 |
+| role | 供屏幕阅读器识别的通知内容语义，默认为 `alert`。此情况下屏幕阅读器会立即打断当前正在阅读的其他内容，转而阅读通知内容 | `'alert' \| 'status'` | `'alert'` | 4.3.0 |
+| showProgress | 显示自动关闭通知框的进度条 | boolean | `false` | 4.3.0 |
+| style | 自定义内联样式 | CSSProperties | - | - |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| ((info: { props }) => Record<SemanticDOM, CSSProperties>)` | - | 4.3.0 |
+| title | 通知提醒标题 | string \| VNode \| () => VNode | - | 4.3.0 |
+| top | 消息从顶部弹出时，距离顶部的位置，单位像素 | string \| number | `24px` | - |
+| onClick | 点击通知时触发的回调函数 | Function | - | - |
+| onClose | 当通知关闭时触发 | Function | - | - |
+
+- `notification.useNotification(config)`
+
+config 参数如下：
+
+| 参数 | 说明 | 类型 | 默认值 | 版本 |
+| --- | --- | --- | --- | --- |
+| bottom | 消息从底部弹出时，距离底部的位置，单位像素 | number \| string | `24` | - |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| ((info: { props }) => Record<SemanticDOM, string>)` | - | 4.3.0 |
+| closable | 是否显示右上角的关闭按钮，或自定义关闭按钮配置 | boolean \| [ClosableType](#closabletype) | `true` | 4.3.0 |
+| closeIcon | 自定义关闭图标，设置为 `null` 或 `false` 时隐藏关闭按钮 | VNode \| () => VNode \| null \| false | - | `null` / `false`: 4.3.0 |
+| duration | 默认自动关闭延时，单位秒，配置为 `0`、`null` 或 `false` 则不自动关闭 | number \| null \| false | `4.5` | `false`: 4.3.0 |
+| getContainer | 配置渲染节点的输出位置 | () => HTMLNode | () => document.body | - |
+| maxCount | 最大显示数，超过限制时，最早的消息会被自动关闭 | number | - | 3.0 |
+| pauseOnHover | 悬停时是否暂停计时器 | boolean | `true` | 4.3.0 |
+| placement | 弹出位置，可选 `top` \| `topLeft` \| `topRight` \| `bottom` \| `bottomLeft` \| `bottomRight` | string | `topRight` | - |
+| rtl | 是否开启 RTL 模式 | boolean | `false` | 3.0 |
+| showProgress | 显示自动关闭通知框的进度条 | boolean | `false` | 4.3.0 |
+| stack | 堆叠模式，超过阈值时会将所有消息收起，鼠标移入展开 | boolean \| `{ threshold?: number }` | `{ threshold: 3 }` | 4.3.0 |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| ((info: { props }) => Record<SemanticDOM, CSSProperties>)` | - | 4.3.0 |
+| top | 消息从顶部弹出时，距离顶部的位置，单位像素 | number \| string | `24` | - |
+
+### ClosableType
+
+| 参数       | 说明                 | 类型                 | 默认值  | 版本  |
+| ---------- | -------------------- | -------------------- | ------- | ----- |
+| aria-label | 关闭按钮的无障碍标签 | string               | -       | 4.3.0 |
+| closeIcon  | 自定义关闭图标       | VNode \| () => VNode | -       | 4.3.0 |
+| disabled   | 是否禁用关闭按钮     | boolean              | `false` | 4.3.0 |
+| onClose    | 当通知关闭时触发     | () => void           | -       | 4.3.0 |
+
+### 全局配置
 
 还提供了一个全局配置方法，在调用前提前配置，全局一次生效。
 
@@ -72,18 +109,32 @@ notification.config({
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
-| bottom | 消息从底部弹出时，距离底部的位置，单位像素。 | string | `24px` |  |
-| closable | 是否显示关闭按钮，或自定义关闭按钮配置 | boolean \| `{ closeIcon?: VueNode \| (() => VueNode); disabled?: boolean; onClose?: () => void; 'aria-label'?: string }` | `true` | 4.3.0 |
-| closeIcon | 自定义关闭图标 | VNode \| () => VNode | - |  |
-| duration | 默认自动关闭延时，单位秒 | number | 4.5 |  |
-| getContainer | 配置渲染节点的输出位置 | () => HTMLNode | () => document.body |  |
-| maxCount | 最大显示数, 超过限制时，最早的消息会被自动关闭 | number | - | 3.0 |
-| pauseOnHover | 悬停时是否暂停计时器 | boolean | true | 4.3.0 |
-| placement | 弹出位置，可选 `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` |  |
-| rtl | 是否开启 RTL 模式 | boolean | false | 3.0 |
-| showProgress | 显示自动关闭进度条 | boolean | false | 4.3.0 |
-| stack | 通知数量达到阈值时折叠堆叠，鼠标移入展开 | boolean \| `{ threshold?: number }` | `{ threshold: 3 }` | 4.3.0 |
-| top | 消息从顶部弹出时，距离顶部的位置，单位像素。 | string | `24px` |  |
+| bottom | 消息从底部弹出时，距离底部的位置，单位像素 | string \| number | `24px` | - |
+| closable | 是否显示关闭按钮，或自定义关闭按钮配置 | boolean \| [ClosableType](#closabletype) | `true` | 4.3.0 |
+| closeIcon | 自定义关闭图标，设置为 `null` 或 `false` 时隐藏关闭按钮 | VNode \| () => VNode \| null \| false | - | `null` / `false`: 4.3.0 |
+| duration | 默认自动关闭延时，单位秒 | number \| null \| false | `4.5` | `false`: 4.3.0 |
+| getContainer | 配置渲染节点的输出位置，但依旧为全屏展示 | () => HTMLNode | () => document.body | - |
+| maxCount | 最大显示数，超过限制时，最早的消息会被自动关闭 | number | - | 3.0 |
+| pauseOnHover | 悬停时是否暂停计时器 | boolean | `true` | 4.3.0 |
+| placement | 弹出位置，可选 `top` `topLeft` `topRight` `bottom` `bottomLeft` `bottomRight` | string | `topRight` | - |
+| rtl | 是否开启 RTL 模式 | boolean | `false` | 3.0 |
+| showProgress | 显示自动关闭通知框的进度条 | boolean | `false` | 4.3.0 |
+| stack | 堆叠模式，通知数量达到阈值时折叠堆叠，鼠标移入展开 | boolean \| `{ threshold?: number }` | `{ threshold: 3 }` | 4.3.0 |
+| top | 消息从顶部弹出时，距离顶部的位置，单位像素 | string \| number | `24px` | - |
+
+## Semantic DOM
+
+`classNames` 与 `styles` 支持静态对象或 `(info: { props }) => ...` 函数形式，并会自动与 `ConfigProvider` 的 `notification.classNames` / `notification.styles` 合并，支持以下语义化键名（4.3.0+）：
+
+- `root`：通知项根元素，设置背景色、圆角、阴影、内边距和动画样式
+- `wrapper`：图标与内容的包裹元素，设置内容布局样式
+- `icon`：图标元素，设置定位、字体大小、行高和状态颜色样式
+- `section`：内容区域元素，包含标题和描述内容
+- `title`：标题元素，设置颜色、字体大小、行高和外边距样式
+- `description`：描述元素，设置字体大小、颜色和外边距样式
+- `actions`：操作组元素，设置右浮动、上边距和操作按钮布局样式
+- `close`：关闭按钮元素，设置位置、尺寸和交互样式
+- `list`：通知列表容器元素（`useNotification` / `ConfigProvider` 配置生效）
 
 ## FAQ
 
@@ -114,3 +165,25 @@ notification.config({
 ### 静态方法如何设置 prefixCls ？
 
 你可以通过 [`ConfigProvider.config`](/components/config-provider-cn#configproviderconfig-4130) 进行设置。
+
+### 为什么 `style: { width: 'max-content' }` 在 Notification 上不生效？
+
+Notification 使用固定宽度布局，以保证堆叠卡片样式的一致性。因此不支持在通知外层节点上使用 `max-content`、`min-content`、`fit-content(...)` 这类 intrinsic width。
+
+如果你需要调整 Notification 的整体宽度，建议通过组件 token `width` 来配置：
+
+```html
+<a-config-provider
+  :theme="{
+    components: {
+      Notification: {
+        width: 480,
+      },
+    },
+  }"
+>
+  <a-app>...</a-app>
+</a-config-provider>
+```
+
+如果你只是希望通知内容本身按内容宽度排布，可以在 `title` 或 `description` 里自行渲染 VNode，并把 `max-content` 放在内部节点上，而不是放在 Notification 根节点上。

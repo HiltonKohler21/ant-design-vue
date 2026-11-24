@@ -289,6 +289,13 @@ const Watermark = defineComponent({
             ctx.drawImage(img, alternateDrawX, alternateDrawY, drawWidth, drawHeight);
             appendWatermark(canvas.toDataURL(), markWidth);
           };
+          img.onerror = () => {
+            fillTexts(ctx, drawX, drawY, drawWidth, drawHeight);
+            ctx.restore();
+            rotateWatermark(ctx, alternateRotateX, alternateRotateY, rotate);
+            fillTexts(ctx, alternateDrawX, alternateDrawY, drawWidth, drawHeight);
+            appendWatermark(canvas.toDataURL(), markWidth);
+          };
           img.crossOrigin = 'anonymous';
           img.referrerPolicy = 'no-referrer';
           img.src = image;

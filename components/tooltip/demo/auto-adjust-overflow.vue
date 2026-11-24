@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 4
+order: 5
 title:
   zh-CN: 自动调整位置
   en-US: Adjust placement automatically

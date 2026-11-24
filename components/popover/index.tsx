@@ -16,6 +16,8 @@ import { tooltipDefaultProps } from '../tooltip/Tooltip';
 import useStyle from './style';
 import classNames from '../_util/classNames';
 import warning from '../_util/warning';
+import PurePanel from './PurePanel';
+export type { PurePanelProps } from './PurePanel';
 
 const resolveSemanticValue = <T,>(
   val: T | ((info: { props: any }) => T) | undefined,
@@ -292,4 +294,8 @@ const Popover = defineComponent({
   },
 });
 
-export default withInstall(Popover);
+const PopoverWithPanel = Object.assign(Popover, {
+  _InternalPanelDoNotUseOrYouWillBeFired: PurePanel,
+});
+
+export default withInstall(PopoverWithPanel);

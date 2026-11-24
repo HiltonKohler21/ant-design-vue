@@ -1,7 +1,7 @@
 <docs>
 ---
-order: 5
-version: 3.0
+order: 7
+version: '3.0'
 title:
   zh-CN: 基于 Promise 的异步关闭
   en-US: Asynchronously close on Promise
@@ -18,21 +18,22 @@ Asynchronously close a popconfirm when the OK button is pressed. For example, yo
 </docs>
 
 <template>
-  <a-popconfirm title="Title" @confirm="confirm" @cancel="cancel">
+  <a-popconfirm
+    title="Title"
+    description="Open Popconfirm with Promise"
+    @confirm="confirm"
+    @openChange="onOpenChange"
+  >
     <a-button type="primary">Open Popconfirm with Promise</a-button>
   </a-popconfirm>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
-const confirm = (e: MouseEvent) => {
-  console.log(e);
-  return new Promise(resolve => {
-    setTimeout(() => resolve(true), 3000);
+const confirm = () =>
+  new Promise(resolve => {
+    setTimeout(() => resolve(null), 3000);
   });
-};
 
-const cancel = (e: MouseEvent) => {
-  console.log(e);
-  message.error('Click on No');
+const onOpenChange = () => {
+  console.log('open change');
 };
 </script>

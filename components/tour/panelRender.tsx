@@ -1,9 +1,8 @@
 import { computed, defineComponent, toRefs } from 'vue';
 import classNames from '../_util/classNames';
-import { isFunction } from '../_util/util';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import { tourStepProps } from './interface';
-import type { TourBtnProps } from './interface';
+import type { TourBtnProps, TourSemanticClassNames, TourSemanticStyles } from './interface';
 
 import LocaleReceiver from '../locale/LocaleReceiver';
 import Button from '../button';
@@ -23,15 +22,15 @@ const panelRender = defineComponent({
 
     const isLastStep = computed(() => current.value === total.value - 1);
 
-    const prevBtnClick = e => {
+    const prevBtnClick = (e: MouseEvent) => {
       const prevButtonProps = props.prevButtonProps as TourBtnProps;
       props.onPrev?.(e);
       if (typeof prevButtonProps?.onClick === 'function') {
-        prevButtonProps?.onClick();
+        prevButtonProps.onClick(e);
       }
     };
 
-    const nextBtnClick = e => {
+    const nextBtnClick = (e: MouseEvent) => {
       const nextButtonProps = props.nextButtonProps as TourBtnProps;
       if (isLastStep.value) {
         props.onFinish?.(e);
@@ -39,34 +38,75 @@ const panelRender = defineComponent({
         props.onNext?.(e);
       }
       if (typeof nextButtonProps?.onClick === 'function') {
-        nextButtonProps?.onClick();
+        nextButtonProps.onClick(e);
       }
     };
 
     return () => {
-      const { prefixCls, title, onClose, cover, description, type: stepType, arrow } = props;
+      const {
+        prefixCls,
+        title,
+        onClose,
+        cover,
+        description,
+        type: stepType,
+        arrow,
+        closable,
+        closeIcon,
+      } = props;
+
+      const semanticClassNames: TourSemanticClassNames = props.classNames || {};
+      const semanticStyles: TourSemanticStyles = props.styles || {};
 
       const prevButtonProps = props.prevButtonProps as TourBtnProps;
       const nextButtonProps = props.nextButtonProps as TourBtnProps;
       const actionsRender = props.actionsRender;
 
+      const isClosable = closable !== false && closeIcon !== false && closeIcon !== null;
+      const resolvedCloseIcon =
+        (typeof closable === 'object' && closable?.closeIcon) ||
+        (closeIcon !== true && closeIcon !== undefined ? closeIcon : undefined) ||
+        tourConfig.value.closeIcon;
+
       let headerNode: VueNode;
       if (title) {
         headerNode = (
-          <div class={`${prefixCls}-header`}>
-            <div class={`${prefixCls}-title`}>{title}</div>
+          <div
+            class={classNames(`${prefixCls}-header`, semanticClassNames.header)}
+            style={semanticStyles.header}
+          >
+            <div
+              class={classNames(`${prefixCls}-title`, semanticClassNames.title)}
+              style={semanticStyles.title}
+            >
+              {title}
+            </div>
           </div>
         );
       }
 
       let descriptionNode: VueNode;
       if (description) {
-        descriptionNode = <div class={`${prefixCls}-description`}>{description}</div>;
+        descriptionNode = (
+          <div
+            class={classNames(`${prefixCls}-description`, semanticClassNames.description)}
+            style={semanticStyles.description}
+          >
+            {description}
+          </div>
+        );
       }
 
       let coverNode: VueNode;
       if (cover) {
-        coverNode = <div class={`${prefixCls}-cover`}>{cover}</div>;
+        coverNode = (
+          <div
+            class={classNames(`${prefixCls}-cover`, semanticClassNames.cover)}
+            style={semanticStyles.cover}
+          >
+            {cover}
+          </div>
+        );
       }
 
       let mergeIndicatorNode: VueNode;
@@ -83,7 +123,9 @@ const panelRender = defineComponent({
               class={classNames(
                 index === current.value && `${prefixCls}-indicator-active`,
                 `${prefixCls}-indicator`,
+                semanticClassNames.indicator,
               )}
+              style={semanticStyles.indicator}
             />
           ),
         );
@@ -97,73 +139,100 @@ const panelRender = defineComponent({
 
       return (
         <LocaleReceiver componentName="Tour" defaultLocale={defaultLocale.Tour}>
-          {contextLocale => (
-            <div
-              {...attrs}
-              class={classNames(
-                stepType === 'primary' ? `${prefixCls}-primary` : '',
-                attrs.class,
-                `${prefixCls}-content`,
-              )}
-            >
-              {arrow && <div class={`${prefixCls}-arrow`} key="arrow" />}
-              <div class={`${prefixCls}-inner`}>
-                {tourConfig.value.closeIcon ? (
-                  <span class={`${prefixCls}-close`} onClick={onClose}>
-                    {tourConfig.value.closeIcon}
-                  </span>
-                ) : (
-                  <CloseOutlined class={`${prefixCls}-close`} onClick={onClose} />
+          {contextLocale => {
+            const defaultActionsNode = (
+              <>
+                {current.value !== 0 ? (
+                  <Button
+                    {...secondaryBtnProps}
+                    {...prevButtonProps}
+                    onClick={prevBtnClick}
+                    size="small"
+                    class={classNames(`${prefixCls}-prev-btn`, prevButtonProps?.className)}
+                  >
+                    {typeof prevButtonProps?.children === 'function'
+                      ? prevButtonProps.children()
+                      : prevButtonProps?.children ?? contextLocale.Previous}
+                  </Button>
+                ) : null}
+                <Button
+                  type={mainBtnType}
+                  {...nextButtonProps}
+                  onClick={nextBtnClick}
+                  size="small"
+                  class={classNames(`${prefixCls}-next-btn`, nextButtonProps?.className)}
+                >
+                  {typeof nextButtonProps?.children === 'function'
+                    ? nextButtonProps.children()
+                    : nextButtonProps?.children ??
+                      (isLastStep.value ? contextLocale.Finish : contextLocale.Next)}
+                </Button>
+              </>
+            );
+
+            return (
+              <div
+                {...attrs}
+                class={classNames(
+                  stepType === 'primary' ? `${prefixCls}-primary` : '',
+                  attrs.class,
+                  `${prefixCls}-content`,
                 )}
-                {coverNode}
-                {headerNode}
-                {descriptionNode}
-                <div class={`${prefixCls}-footer`}>
-                  {total.value > 1 && (
-                    <div class={`${prefixCls}-indicators`}>{mergeIndicatorNode}</div>
+              >
+                {arrow && <div class={`${prefixCls}-arrow`} key="arrow" />}
+                <div
+                  class={classNames(
+                    `${prefixCls}-inner`,
+                    `${prefixCls}-section`,
+                    semanticClassNames.section,
                   )}
-                  {(() => {
-                    const defaultActionsNode = (
-                      <div class={`${prefixCls}-buttons`}>
-                        {current.value !== 0 ? (
-                          <Button
-                            {...secondaryBtnProps}
-                            {...prevButtonProps}
-                            onClick={prevBtnClick}
-                            size="small"
-                            class={classNames(`${prefixCls}-prev-btn`, prevButtonProps?.className)}
-                          >
-                            {isFunction(prevButtonProps?.children)
-                              ? prevButtonProps.children()
-                              : prevButtonProps?.children ?? contextLocale.Previous}
-                          </Button>
-                        ) : null}
-                        <Button
-                          type={mainBtnType}
-                          {...nextButtonProps}
-                          onClick={nextBtnClick}
-                          size="small"
-                          class={classNames(`${prefixCls}-next-btn`, nextButtonProps?.className)}
-                        >
-                          {isFunction(nextButtonProps?.children)
-                            ? nextButtonProps?.children()
-                            : isLastStep.value
-                            ? contextLocale.Finish
-                            : contextLocale.Next}
-                        </Button>
+                  style={semanticStyles.section}
+                >
+                  {isClosable && (
+                    <button
+                      type="button"
+                      class={classNames(`${prefixCls}-close`, semanticClassNames.close)}
+                      style={semanticStyles.close}
+                      onClick={onClose}
+                    >
+                      {resolvedCloseIcon || <CloseOutlined class={`${prefixCls}-close-icon`} />}
+                    </button>
+                  )}
+                  {coverNode}
+                  {headerNode}
+                  {descriptionNode}
+                  <div
+                    class={classNames(`${prefixCls}-footer`, semanticClassNames.footer)}
+                    style={semanticStyles.footer}
+                  >
+                    {total.value > 1 && (
+                      <div
+                        class={classNames(`${prefixCls}-indicators`, semanticClassNames.indicators)}
+                        style={semanticStyles.indicators}
+                      >
+                        {mergeIndicatorNode}
                       </div>
-                    );
-                    return actionsRender
-                      ? actionsRender(defaultActionsNode, {
-                          current: current.value,
-                          total: total.value,
-                        })
-                      : defaultActionsNode;
-                  })()}
+                    )}
+                    <div
+                      class={classNames(
+                        `${prefixCls}-buttons`,
+                        `${prefixCls}-actions`,
+                        semanticClassNames.actions,
+                      )}
+                      style={semanticStyles.actions}
+                    >
+                      {actionsRender
+                        ? actionsRender(defaultActionsNode, {
+                            current: current.value,
+                            total: total.value,
+                          })
+                        : defaultActionsNode}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          }}
         </LocaleReceiver>
       );
     };

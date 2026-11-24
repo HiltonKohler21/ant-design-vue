@@ -6,6 +6,12 @@ import type { MouseEventHandler } from '../_util/EventInterface';
 import type { MenuProps } from '../menu';
 import type { AdjustOverflow } from '../_util/placements';
 import { booleanType, eventType, functionType, objectType, someType } from '../_util/type';
+import type {
+  SemanticClassNames,
+  SemanticClassNamesType,
+  SemanticStyles,
+  SemanticStylesType,
+} from '../_util/hooks/useMergeSemantic';
 
 export type Align = {
   points?: [string, string];
@@ -20,11 +26,52 @@ export type Align = {
   useCssTransform?: boolean;
 };
 
-export type Trigger = 'click' | 'hover' | 'contextmenu';
+export type Trigger = 'click' | 'hover' | 'contextmenu' | 'contextMenu';
 
 export type DropdownArrowOptions = {
   pointAtCenter?: boolean;
 };
+
+export type DropdownPlacement =
+  | 'topLeft'
+  | 'topCenter'
+  | 'top'
+  | 'topRight'
+  | 'bottomLeft'
+  | 'bottomCenter'
+  | 'bottom'
+  | 'bottomRight'
+  | 'left'
+  | 'leftTop'
+  | 'leftBottom'
+  | 'right'
+  | 'rightTop'
+  | 'rightBottom';
+
+export type DropdownSemanticName =
+  | 'root'
+  | 'menu'
+  | 'item'
+  | 'itemTitle'
+  | 'itemIcon'
+  | 'itemContent';
+
+export type DropdownSemanticClassNames = SemanticClassNames<DropdownSemanticName>;
+export type DropdownSemanticStyles = SemanticStyles<DropdownSemanticName>;
+export type DropdownClassNamesType<Props = any> = SemanticClassNamesType<
+  Props,
+  DropdownSemanticName
+>;
+export type DropdownStylesType<Props = any> = SemanticStylesType<Props, DropdownSemanticName>;
+
+export type DropdownMenuProps = MenuProps & {
+  defaultSelectedKeys?: (string | number)[];
+  defaultOpenKeys?: (string | number)[];
+  items?: any[];
+  class?: any;
+  style?: CSSProperties;
+};
+
 const dropdownProps = () => ({
   rootClassName: String,
   /** 自定义下拉内容渲染（popupRender 别名） */
@@ -35,7 +82,7 @@ const dropdownProps = () => ({
   trigger: {
     type: [Array, String] as PropType<Trigger[] | Trigger>,
   },
-  menu: objectType<MenuProps>(),
+  menu: objectType<DropdownMenuProps>(),
   overlay: PropTypes.any,
   /** @deprecated Please use `open` instead */
   visible: booleanType(),
@@ -47,18 +94,13 @@ const dropdownProps = () => ({
   getPopupContainer: Function as PropType<(triggerNode: HTMLElement) => HTMLElement>,
   prefixCls: String,
   transitionName: String,
-  placement: String as PropType<
-    | 'topLeft'
-    | 'topCenter'
-    | 'top'
-    | 'topRight'
-    | 'bottomLeft'
-    | 'bottomCenter'
-    | 'bottom'
-    | 'bottomRight'
-  >,
+  placement: String as PropType<DropdownPlacement>,
   overlayClassName: String,
   overlayStyle: objectType<CSSProperties>(),
+  /** 语义化 classNames（支持对象或函数）：root / menu / item / itemTitle / itemIcon / itemContent */
+  classNames: [Object, Function] as PropType<DropdownClassNamesType>,
+  /** 语义化 styles（支持对象或函数）：root / menu / item / itemTitle / itemIcon / itemContent */
+  styles: [Object, Function] as PropType<DropdownStylesType>,
   forceRender: booleanType(),
   mouseEnterDelay: Number,
   mouseLeaveDelay: Number,
@@ -67,18 +109,18 @@ const dropdownProps = () => ({
   destroyPopupOnHide: booleanType(),
   /** 5.14+ 自定义左右按钮渲染 */
   buttonsRender: functionType<(buttons: any[]) => any[]>(),
-  /** @deprecated Please use `destroyOnHidden` instead */
+  /** 关闭后是否销毁 Dropdown */
   destroyOnHidden: booleanType(),
   /** @deprecated Please use `onOpenChange` instead */
   onVisibleChange: {
-    type: Function as PropType<(val: boolean) => void>,
+    type: Function as PropType<(val: boolean, info?: { source: 'trigger' | 'menu' }) => void>,
   },
   /** @deprecated Please use `onUpdate:open` instead */
   'onUpdate:visible': {
     type: Function as PropType<(val: boolean) => void>,
   },
   onOpenChange: {
-    type: Function as PropType<(val: boolean) => void>,
+    type: Function as PropType<(val: boolean, info?: { source: 'trigger' | 'menu' }) => void>,
   },
   'onUpdate:open': {
     type: Function as PropType<(val: boolean) => void>,

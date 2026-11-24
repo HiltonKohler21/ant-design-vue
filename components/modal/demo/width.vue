@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 10
+order: 13
 title:
   zh-CN: 自定义模态的宽度
   en-US: To customize the width of modal
@@ -8,34 +8,55 @@ title:
 
 ## zh-CN
 
-使用`width`来设置模态对话框的宽度
+使用 `width` 来设置模态对话框的宽度。
 
 ## en-US
 
-Use `width` to set the width of the modal dialog
-
+Use `width` to set the width of the modal dialog.
 </docs>
 
 <template>
-  <div>
-    <a-button type="primary" @click="showModal">Open Modal of 1000px width</a-button>
-    <a-modal v-model:open="open" width="1000px" title="Basic Modal" @ok="handleOk">
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+  <a-flex vertical gap="middle" align="flex-start">
+    <a-button type="primary" @click="open = true">Open Modal of 1000px width</a-button>
+    <a-modal
+      v-model:open="open"
+      title="Modal 1000px width"
+      centered
+      :width="1000"
+      @ok="open = false"
+    >
+      <p>some contents...</p>
+      <p>some contents...</p>
+      <p>some contents...</p>
     </a-modal>
-  </div>
+
+    <a-button type="primary" @click="openResponsive = true">
+      Open Modal of responsive width
+    </a-button>
+    <a-modal
+      v-model:open="openResponsive"
+      title="Modal responsive width"
+      centered
+      :width="{
+        xs: '90%',
+        sm: '80%',
+        md: '70%',
+        lg: '60%',
+        xl: '50%',
+        xxl: '40%',
+      }"
+      @ok="openResponsive = false"
+    >
+      <p>some contents...</p>
+      <p>some contents...</p>
+      <p>some contents...</p>
+    </a-modal>
+  </a-flex>
 </template>
+
 <script lang="ts" setup>
 import { ref } from 'vue';
+
 const open = ref<boolean>(false);
-
-const showModal = () => {
-  open.value = true;
-};
-
-const handleOk = (e: MouseEvent) => {
-  console.log(e);
-  open.value = false;
-};
+const openResponsive = ref<boolean>(false);
 </script>

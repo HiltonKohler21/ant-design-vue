@@ -15,12 +15,32 @@ export interface ComponentToken {
    * @desc 提醒框宽度
    * @descEN Width of Notification
    */
-  width: number;
+  width: number | string;
   /**
    * @desc 提醒框进度条背景色
    * @descEN Background color of Notification progress bar
    */
   progressBg: string;
+  /**
+   * @desc 成功提醒框容器背景色
+   * @descEN Background color of success notification container
+   */
+  colorSuccessBg?: string;
+  /**
+   * @desc 错误提醒框容器背景色
+   * @descEN Background color of error notification container
+   */
+  colorErrorBg?: string;
+  /**
+   * @desc 信息提醒框容器背景色
+   * @descEN Background color of info notification container
+   */
+  colorInfoBg?: string;
+  /**
+   * @desc 警告提醒框容器背景色
+   * @descEN Background color of warning notification container
+   */
+  colorWarningBg?: string;
 }
 
 export interface NotificationToken extends FullToken<'Notification'> {
@@ -61,6 +81,11 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
   } = token;
 
   const noticeCls = `${componentCls}-notice`;
+  const cssVarMatch =
+    typeof token.progressBg === 'string'
+      ? /^var\(--(.+)-notification-progress-bg\)$/.exec(token.progressBg)
+      : null;
+  const cssVarPrefix = cssVarMatch?.[1];
 
   const notificationFadeIn = new Keyframes('antNotificationFadeIn', {
     '0%': {
@@ -201,7 +226,7 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
         '&-rtl': {
           direction: 'rtl',
 
-          [`${componentCls}-notice-btn`]: {
+          [`${noticeCls}-btn, ${noticeCls}-actions`]: {
             float: 'left',
           },
         },
@@ -211,6 +236,7 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
     // ============================ Notice ============================
     {
       [noticeCls]: {
+        ...resetComponent(token),
         position: 'relative',
         width,
         maxWidth: `calc(100vw - ${unit(token.calc(notificationMarginEdge).mul(2).equal())})`,
@@ -224,12 +250,34 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
         borderRadius: borderRadiusLG,
         boxShadow: boxShadowSecondary,
 
+        // Type background tokens (v6 ComponentToken)
+        '&-success': {
+          background: cssVarPrefix
+            ? `var(--${cssVarPrefix}-notification-color-success-bg, ${notificationBg})`
+            : token.colorSuccessBg || notificationBg,
+        },
+        '&-error': {
+          background: cssVarPrefix
+            ? `var(--${cssVarPrefix}-notification-color-error-bg, ${notificationBg})`
+            : token.colorErrorBg || notificationBg,
+        },
+        '&-info': {
+          background: cssVarPrefix
+            ? `var(--${cssVarPrefix}-notification-color-info-bg, ${notificationBg})`
+            : token.colorInfoBg || notificationBg,
+        },
+        '&-warning': {
+          background: cssVarPrefix
+            ? `var(--${cssVarPrefix}-notification-color-warning-bg, ${notificationBg})`
+            : token.colorWarningBg || notificationBg,
+        },
+
         [`${componentCls}-close-icon`]: {
           fontSize,
           cursor: 'pointer',
         },
 
-        [`${noticeCls}-message`]: {
+        [`${noticeCls}-message, ${noticeCls}-title`]: {
           marginBottom: token.marginXS,
           color: colorTextHeading,
           fontSize: fontSizeLG,
@@ -240,15 +288,22 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
           fontSize,
         },
 
-        [`&${noticeCls}-closable ${noticeCls}-message`]: {
-          paddingInlineEnd: token.paddingLG,
+        [`&${noticeCls}-closable`]: {
+          [`${noticeCls}-message, ${noticeCls}-title, ${noticeCls}-description`]: {
+            paddingInlineEnd: token.paddingLG,
+          },
+          [`${noticeCls}-message + ${noticeCls}-description, ${noticeCls}-title + ${noticeCls}-description`]:
+            {
+              paddingInlineEnd: 0,
+            },
         },
 
-        [`${noticeCls}-with-icon ${noticeCls}-message`]: {
-          marginBottom: token.marginXS,
-          marginInlineStart: token.calc(token.marginSM).add(notificationIconSize).equal(),
-          fontSize: fontSizeLG,
-        },
+        [`${noticeCls}-with-icon ${noticeCls}-message, ${noticeCls}-with-icon ${noticeCls}-title`]:
+          {
+            marginBottom: token.marginXS,
+            marginInlineStart: token.calc(token.marginSM).add(notificationIconSize).equal(),
+            fontSize: fontSizeLG,
+          },
 
         [`${noticeCls}-with-icon ${noticeCls}-description`]: {
           marginInlineStart: token.calc(token.marginSM).add(notificationIconSize).equal(),
@@ -292,6 +347,15 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
           alignItems: 'center',
           justifyContent: 'center',
 
+          [`${componentCls}-close-x`]: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            borderRadius: 'inherit',
+          },
+
           '&:hover': {
             color: token.colorIconHover,
             backgroundColor: token.wireframe ? 'transparent' : token.colorFillContent,
@@ -304,7 +368,7 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
           },
         },
 
-        [`${noticeCls}-btn`]: {
+        [`${noticeCls}-btn, ${noticeCls}-actions`]: {
           float: 'right',
           marginTop: token.marginSM,
         },
@@ -348,6 +412,11 @@ const genNotificationStyle: GenerateStyle<NotificationToken> = token => {
     {
       [`${noticeCls}-pure-panel`]: {
         margin: 0,
+
+        [`${noticeCls}-btn, ${noticeCls}-actions`]: {
+          float: 'none',
+          textAlign: 'end',
+        },
       },
     },
   ];
@@ -383,5 +452,9 @@ export default genComponentStyleHook(
     zIndexPopup: token.zIndexPopupBase + 50,
     width: 384,
     progressBg: `linear-gradient(90deg, ${token.colorPrimaryBorderHover}, ${token.colorPrimary})`,
+    colorSuccessBg: undefined,
+    colorErrorBg: undefined,
+    colorInfoBg: undefined,
+    colorWarningBg: undefined,
   }),
 );

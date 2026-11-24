@@ -1,19 +1,18 @@
 <docs>
 ---
-order: 11
+order: 14
 title:
-  zh-CN: 信息提示
-  en-US: Information modal dialog
+  zh-CN: 静态方法
+  en-US: Static Method
 ---
 
 ## zh-CN
 
-各种类型的信息提示，只提供一个按钮用于关闭。
+静态方法无法消费 Context，不能动态响应 ConfigProvider 提供的各项配置，启用 `layer` 时还可能导致样式异常。请优先使用 hooks 版本或者 App 组件提供的 `modal` 实例。
 
 ## en-US
 
-In the various types of information modal dialog, only one button to close dialog is provided.
-
+Static methods cannot consume Context provided by `ConfigProvider`. When enable `layer`, they may also cause style errors. Please use hooks version or `App` provided instance first.
 </docs>
 
 <template>
@@ -24,9 +23,11 @@ In the various types of information modal dialog, only one button to close dialo
     <a-button @click="warning">Warning</a-button>
   </a-space>
 </template>
+
 <script lang="ts" setup>
-import { Modal } from 'ant-design-vue';
 import { h } from 'vue';
+import { Modal } from 'ant-design-vue';
+
 const info = () => {
   Modal.info({
     title: 'This is a notification message',
@@ -34,18 +35,13 @@ const info = () => {
       h('p', 'some messages...some messages...'),
       h('p', 'some messages...some messages...'),
     ]),
-    onOk() {
-      console.log('ok');
-    },
+    onOk() {},
   });
 };
+
 const success = () => {
   Modal.success({
-    title: 'This is a success message',
-    content: h('div', {}, [
-      h('p', 'some messages...some messages...'),
-      h('p', 'some messages...some messages...'),
-    ]),
+    content: 'some messages...some messages...',
   });
 };
 

@@ -10,18 +10,20 @@ export interface HookModalProps {
   afterClose: () => void;
   config: ModalFuncProps;
   destroyAction: (...args: any[]) => void;
+  onConfirm?: (confirmed: boolean) => void;
   open: boolean;
 }
 
 export interface HookModalRef {
   destroy: () => void;
-  update: (config: ModalFuncProps) => void;
+  update: (config: ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps)) => void;
 }
 
 const comfirmFuncProps = () => ({
   config: Object as PropType<ModalFuncProps>,
   afterClose: Function as PropType<() => void>,
   destroyAction: Function as PropType<(e: any) => void>,
+  onConfirm: Function as PropType<(confirmed: boolean) => void>,
   open: Boolean,
 });
 
@@ -51,23 +53,26 @@ export default defineComponent({
     };
 
     expose({ destroy: close });
-    const mergedOkCancel = innerConfig.value.okCancel ?? innerConfig.value.type === 'confirm';
     const [contextLocale] = useLocaleReceiver('Modal', defaultLocale.Modal);
-    return () => (
-      <ConfirmDialog
-        prefixCls={prefixCls}
-        rootPrefixCls={rootPrefixCls}
-        {...innerConfig.value}
-        close={close}
-        open={open.value}
-        afterClose={afterClose}
-        okText={
-          innerConfig.value.okText ||
-          (mergedOkCancel ? contextLocale?.value.okText : contextLocale?.value.justOkText)
-        }
-        direction={innerConfig.value.direction || direction.value}
-        cancelText={innerConfig.value.cancelText || contextLocale?.value.cancelText}
-      />
-    );
+    return () => {
+      const mergedOkCancel = innerConfig.value.okCancel ?? innerConfig.value.type === 'confirm';
+      return (
+        <ConfirmDialog
+          prefixCls={prefixCls}
+          rootPrefixCls={rootPrefixCls}
+          {...innerConfig.value}
+          close={close}
+          onConfirm={props.onConfirm}
+          open={open.value}
+          afterClose={afterClose}
+          okText={
+            innerConfig.value.okText ||
+            (mergedOkCancel ? contextLocale?.value.okText : contextLocale?.value.justOkText)
+          }
+          direction={innerConfig.value.direction || direction.value}
+          cancelText={innerConfig.value.cancelText || contextLocale?.value.cancelText}
+        />
+      );
+    };
   },
 });

@@ -60,6 +60,12 @@ Provides a shared unique-tooltip context so sibling `<a-tooltip>` components ins
 | afterOpenChange | Callback executed when visibility of the tooltip card is changed (after transition) | (open: boolean) => void | 4.3.0 |
 | openChange | Callback executed when visibility of the tooltip card is changed | (open: boolean) => void | 4.0 |
 
+### Methods
+
+| Name         | Description                                                          | Version |
+| ------------ | -------------------------------------------------------------------- | ------- |
+| forceAlign() | Manually realign the tooltip popup (e.g. after async layout changes) | 4.3.0   |
+
 ## Note
 
 Please ensure that the child node of `Tooltip` accepts `mouseenter`, `mouseleave`, `focus`, `click` events.

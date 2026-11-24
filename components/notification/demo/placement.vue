@@ -8,16 +8,17 @@ title:
 
 ## zh-CN
 
-使用 `placement` 可以配置通知从右上角、右下角、左下角、左上角弹出。
+使用 `placement` 可以配置通知从上面、下面、左上角、右上角、左下角、右下角弹出。
 
 ## en-US
 
-A notification box can appear from the `topRight`, `bottomRight`, `bottomLeft` or `topLeft` of the viewport via `placement`.
+A notification box can appear from the `top`, `bottom`, `topLeft`, `topRight`, `bottomLeft` or `bottomRight` of the viewport via `placement`.
 
 </docs>
 
 <template>
-  <div>
+  <contextHolder />
+  <a-space>
     <a-button type="primary" @click="openNotification('top')">
       <template #icon><BorderTopOutlined /></template>
       top
@@ -26,39 +27,47 @@ A notification box can appear from the `topRight`, `bottomRight`, `bottomLeft` o
       <template #icon><BorderBottomOutlined /></template>
       bottom
     </a-button>
+  </a-space>
+  <a-divider />
+  <a-space>
     <a-button type="primary" @click="openNotification('topLeft')">
-      <template #icon><radius-upleft-outlined /></template>
+      <template #icon><RadiusUpleftOutlined /></template>
       topLeft
     </a-button>
     <a-button type="primary" @click="openNotification('topRight')">
-      <template #icon><radius-upright-outlined /></template>
+      <template #icon><RadiusUprightOutlined /></template>
       topRight
     </a-button>
-    <a-divider />
+  </a-space>
+  <a-divider />
+  <a-space>
     <a-button type="primary" @click="openNotification('bottomLeft')">
-      <template #icon><radius-bottomleft-outlined /></template>
+      <template #icon><RadiusBottomleftOutlined /></template>
       bottomLeft
     </a-button>
     <a-button type="primary" @click="openNotification('bottomRight')">
-      <template #icon><radius-bottomright-outlined /></template>
+      <template #icon><RadiusBottomrightOutlined /></template>
       bottomRight
     </a-button>
-  </div>
+  </a-space>
 </template>
 <script lang="ts" setup>
 import {
-  RadiusUpleftOutlined,
-  RadiusUprightOutlined,
+  BorderBottomOutlined,
+  BorderTopOutlined,
   RadiusBottomleftOutlined,
   RadiusBottomrightOutlined,
-  BorderTopOutlined,
-  BorderBottomOutlined,
+  RadiusUpleftOutlined,
+  RadiusUprightOutlined,
 } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
 import type { NotificationPlacement } from 'ant-design-vue';
+
+const [api, contextHolder] = notification.useNotification();
+
 const openNotification = (placement: NotificationPlacement) => {
-  notification.open({
-    message: `Notification ${placement}`,
+  api.info({
+    title: `Notification ${placement}`,
     description:
       'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
     placement,

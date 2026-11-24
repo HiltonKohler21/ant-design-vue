@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: 条件触发
   en-US: Conditional trigger
@@ -19,41 +19,43 @@ Make it pop up under some conditions.
 <template>
   <div>
     <a-popconfirm
-      title="Are you sure delete this task?"
-      :open="visible"
+      title="Delete the task"
+      description="Are you sure to delete this task?"
+      :open="open"
       ok-text="Yes"
       cancel-text="No"
-      @openChange="handleVisibleChange"
+      @openChange="handleOpenChange"
       @confirm="confirm"
       @cancel="cancel"
     >
-      <a href="#">Delete a task</a>
+      <a-button danger>Delete a task</a-button>
     </a-popconfirm>
     <br />
     <br />
     Whether directly execute：
-    <a-checkbox v-model:checked="condition" />
+    <a-switch v-model:checked="condition" />
   </div>
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { message } from 'ant-design-vue';
-const visible = ref<boolean>(false);
+
+const open = ref<boolean>(false);
 const condition = ref<boolean>(true);
 
 const confirm = () => {
-  visible.value = false;
+  open.value = false;
   message.success('Next step.');
 };
 
 const cancel = () => {
-  visible.value = false;
+  open.value = false;
   message.error('Click on cancel.');
 };
 
-const handleVisibleChange = (bool: boolean) => {
-  if (!bool) {
-    visible.value = false;
+const handleOpenChange = (newOpen: boolean) => {
+  if (!newOpen) {
+    open.value = false;
     return;
   }
   // Determining condition before show the popconfirm.
@@ -61,7 +63,7 @@ const handleVisibleChange = (bool: boolean) => {
   if (condition.value) {
     confirm(); // next step
   } else {
-    visible.value = true;
+    open.value = true;
   }
 };
 </script>

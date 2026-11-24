@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 16
+order: 22
 debug: true
 title:
   zh-CN: 组件 Token
@@ -18,52 +18,25 @@ Component Token Debug.
 
 <template>
   <a-config-provider :theme="modalTheme">
-    <a-space wrap>
-      <a-button @click="openBasic = true">Basic Modal</a-button>
-      <a-button @click="openWireframe = true">Wireframe Modal</a-button>
-      <ModalHookDemo />
-    </a-space>
-    <a-modal v-model:open="openBasic" title="Hello World!">Hello World?!</a-modal>
-    <a-config-provider :theme="wireframeTheme">
-      <a-modal v-model:open="openWireframe" title="Hello World!">Hello World?!</a-modal>
-    </a-config-provider>
+    <div :style="{ display: 'flex', flexDirection: 'column', rowGap: '16px' }">
+      <InternalPanel title="Hello World!" :style="{ width: '100%' }">Hello World?!</InternalPanel>
+      <a-config-provider :theme="wireframeTheme">
+        <InternalPanel title="Hello World!" :style="{ width: '100%' }">Hello World?!</InternalPanel>
+      </a-config-provider>
+      <InternalPanel type="success" :style="{ width: '200px' }">A good news!</InternalPanel>
+      <InternalPanel title="Confirm This?" type="confirm" :style="{ width: '300px' }">
+        Some descriptions.
+      </InternalPanel>
+    </div>
   </a-config-provider>
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, h, ref } from 'vue';
-import { Button, Modal } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue';
 import type { ConfigProviderProps } from 'ant-design-vue';
 
-const openBasic = ref<boolean>(false);
-const openWireframe = ref<boolean>(false);
-
-const ModalHookDemo = defineComponent({
-  setup() {
-    const [modal, contextHolder] = Modal.useModal();
-
-    const showSuccess = () => {
-      modal.success({
-        content: 'A good news!',
-        width: 200,
-      });
-    };
-
-    const showConfirm = () => {
-      modal.confirm({
-        title: 'Confirm This?',
-        content: 'Some descriptions.',
-        width: 300,
-      });
-    };
-
-    return () => [
-      h(contextHolder),
-      h(Button, { onClick: showSuccess }, () => 'Success Modal'),
-      h(Button, { onClick: showConfirm }, () => 'Confirm Modal'),
-    ];
-  },
-});
+/** Test usage. Do not use in your production. */
+const InternalPanel = Modal._InternalPanelDoNotUseOrYouWillBeFired;
 
 const modalTheme: ConfigProviderProps['theme'] = {
   components: {

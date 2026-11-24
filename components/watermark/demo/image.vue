@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 2
 title:
   zh-CN: 图片水印
   en-US: Image watermark

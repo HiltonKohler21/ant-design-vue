@@ -27,13 +27,14 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 | autofocus | Whether Drawer should get focused after open | boolean | `true` | 3.0.0 |
 | ~~bodyStyle~~ | Style of the drawer content part (deprecated, use `styles.body` instead) | CSSProperties | - |  |
 | class | Config Drawer Panel className. Use `rootClassName` if you want to config top dom style | string | - |  |
-| classNames | Semantic DOM class names | { mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string } | - | 4.3.0 |
+| classNames | Customize class for each semantic structure inside the Drawer. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | closable | Whether a close (x) button is visible or custom close button config | boolean \| `{ closeIcon?: VueNode; disabled?: boolean; placement?: 'start' \| 'end'; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | Custom close icon | VueNode \| slot | `<CloseOutlined />` | 3.0.0 |
 | ~~contentWrapperStyle~~ | Style of the drawer wrapper of content part (deprecated, use `styles.wrapper` instead) | CSSProperties | - | 3.0.0 |
 | ~~destroyOnClose~~ | Whether to unmount child components on closing drawer or not (deprecated, use `destroyOnHidden` instead) | boolean | `false` |  |
 | destroyOnHidden | Whether to unmount child components when closing drawer | boolean | `false` | 4.3.0 |
-| ~~drawerStyle~~ | Style of the Drawer popup layer (deprecated, use `styles.content` instead) | CSSProperties | - |  |
+| drawerRender | Custom drawer panel render | `(node: VueNode) => VueNode` | - | 4.3.0 |
+| ~~drawerStyle~~ | Style of the Drawer popup layer (deprecated, use `styles.section` instead) | CSSProperties | - |  |
 | extra | Extra actions area at corner | VueNode \| slot | - | 3.0.0 |
 | footer | The footer for Drawer | VueNode \| slot | - | 3.0.0 |
 | ~~footerStyle~~ | Style of the drawer footer part (deprecated, use `styles.footer` instead) | CSSProperties | - | 3.0.0 |
@@ -46,6 +47,7 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 | mask | Whether to show mask or not, or configure mask blur/closable | boolean \| `{ enabled?: boolean; blur?: boolean; closable?: boolean }` | `true` | 4.3.0 |
 | maskClosable | Clicking on the mask (area outside the Drawer) to close the Drawer or not | boolean | `true` |  |
 | ~~maskStyle~~ | Style for Drawer's mask element (deprecated, use `styles.mask` instead) | CSSProperties | `{}` |  |
+| maxSize | Maximum resizable size (width or height depending on `placement`) | number | - | 4.3.0 |
 | open(v-model) | Whether the Drawer dialog is visible or not | boolean | - | 4.0 |
 | placement | The placement of the Drawer | `top` \| `right` \| `bottom` \| `left` | `right` |  |
 | push | Nested drawers push behavior | boolean \| { distance: string \| number } | `{ distance: 180 }` | 3.0.0 |
@@ -54,10 +56,12 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 | rootStyle | Style of wrapper element which **contains mask** compared to `style` | CSSProperties | - | 4.0 |
 | size | Presetted size of drawer (`default` 378px, `large` 736px) or custom width/height | `default` \| `large` \| number \| string | `default` | 3.0.0 |
 | style | Style of Drawer panel. Use `styles.body` if you want to config body only | CSSProperties | - |  |
-| styles | Semantic DOM inline styles | { mask?: CSSProperties; wrapper?: CSSProperties; content?: CSSProperties; header?: CSSProperties; body?: CSSProperties; footer?: CSSProperties } | - | 4.3.0 |
+| styles | Customize inline style for each semantic structure inside the Drawer. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | The title for Drawer | string \| slot | - |  |
 | width | Width of the Drawer dialog | string \| number | `378` |  |
 | zIndex | The `z-index` of the Drawer | number | `1000` |  |
+
+> Supported `SemanticDOM` keys: `root` \| `mask` \| `wrapper` \| `section` (alias `content`) \| `header` \| `title` \| `extra` \| `body` \| `footer` \| `dragger` \| `close`.
 
 ## Events
 

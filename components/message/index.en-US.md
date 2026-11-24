@@ -50,13 +50,18 @@ The properties of config are as follows:
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
 | class | Customized CSS class | string | - |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | content | content of the message | string\| VNode \| () => VNode | - |  |
 | duration | time(seconds) before auto-dismiss, don't dismiss if set to 0 | number | 3 |  |
 | icon | Customized Icon | VNode \| ()=> VNode | - |  |
 | key | The unique identifier of the Message | string\|number | - |  |
+| pauseOnHover | Keep the timer running or not on hover | boolean | true | 4.3.0 |
 | style | Customized inline style | CSSProperties | - |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | onClick | Specify a function that will be called when the message is clicked | function | - |  |
 | onClose | Specify a function that will be called when the message is closed | function | - |  |
+
+> Supported `SemanticDOM` keys: `root` \| `wrapper` \| `icon` \| `title` (alias `content`) \| `list`.
 
 ### Global static methods
 
@@ -85,7 +90,8 @@ message.config({
 | maxCount | max message show, drop oldest if exceed limit | number | - |  |
 | prefixCls | The prefix className of message node | string | `ant-message` | 3.0 |
 | rtl | Whether to enable RTL mode | boolean | false | 3.0 |
-| top | distance from top | string | `8px` |  |
+| stack | Stack messages when count exceeds threshold | boolean \| `{ threshold?: number }` | false | 4.3.0 |
+| top | distance from top | string \| number | `8px` |  |
 
 ## FAQ
 

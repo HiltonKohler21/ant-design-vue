@@ -1,4 +1,5 @@
-import { shallowRef, computed, defineComponent } from 'vue';
+import { shallowRef, computed, defineComponent, unref } from 'vue';
+import type { ComputedRef, Ref, VNode } from 'vue';
 import { useNotification as useVcNotification } from '../vc-notification';
 import type { NotificationAPI } from '../vc-notification';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
@@ -10,17 +11,19 @@ import type {
   ConfigOptions,
   NoticeType,
   TypeOpen,
+  MessageSemanticClassNames,
+  MessageSemanticStyles,
 } from './interface';
 
 import { PureContent } from './PurePanel';
 import { getMotion } from '../vc-trigger/utils/motionUtil';
 import type { Key } from '../_util/type';
 import { wrapPromiseFn } from '../_util/util';
-import type { ComputedRef, VNode } from 'vue';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import { globalConfig } from '../config-provider';
 import type { MessageConfig } from '../config-provider/context';
 import classNames from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 
 const DEFAULT_OFFSET = 8;
 const DEFAULT_DURATION = 3;
@@ -31,6 +34,8 @@ const DEFAULT_DURATION = 3;
 type HolderProps = ConfigOptions & {
   onAllRemoved?: VoidFunction;
 };
+
+type MaybeRefConfig = HolderProps | Ref<HolderProps> | ComputedRef<HolderProps>;
 
 interface HolderRef extends NotificationAPI {
   prefixCls: string;
@@ -48,6 +53,10 @@ const Holder = defineComponent({
     'maxCount',
     'duration',
     'rtl',
+    'stack',
+    'pauseOnHover',
+    'classNames',
+    'styles',
     'transitionName',
     'onAllRemoved',
     'animation',
@@ -58,28 +67,42 @@ const Holder = defineComponent({
       'message',
       props,
     );
-    const { componentConfig: contextMessage, classNames: contextClassNames } =
-      useComponentConfig('message');
+    const {
+      componentConfig: contextMessage,
+      classNames: contextClassNames,
+      styles: contextStyles,
+    } = useComponentConfig('message');
 
     const prefixCls = computed(() => getPrefixCls('message', props.prefixCls));
 
     const [, hashId] = useStyle(prefixCls);
 
+    const resolveHolderSemantic = () =>
+      mergeSemantic<MessageSemanticClassNames, MessageSemanticStyles, ArgsProps>(
+        [contextClassNames.value, props.classNames],
+        [contextStyles.value, props.styles],
+        { props: props as unknown as ArgsProps },
+      );
+
     // =============================== Style ===============================
     const getStyles = () => {
+      const [, holderStyles] = resolveHolderSemantic();
       const top = props.top ?? DEFAULT_OFFSET;
       return {
         left: '50%',
         transform: 'translateX(-50%)',
         top: typeof top === 'number' ? `${top}px` : top,
+        ...holderStyles.list,
       };
     };
-    const getClassName = () =>
-      classNames(
+    const getClassName = () => {
+      const [holderClassNames] = resolveHolderSemantic();
+      return classNames(
         hashId.value,
         props.rtl ?? direction.value === 'rtl' ? `${prefixCls.value}-rtl` : '',
-        contextClassNames.value.root,
+        holderClassNames.list,
       );
+    };
 
     // ============================== Motion ===============================
     const getNotificationMotion = () =>
@@ -96,6 +119,7 @@ const Holder = defineComponent({
       </span>
     );
     // ============================== Origin ===============================
+    const stackRef = computed(() => unref(props.stack));
     const [api, holder] = useVcNotification({
       //@ts-ignore
       getStyles,
@@ -107,6 +131,8 @@ const Holder = defineComponent({
       duration: props.duration ?? DEFAULT_DURATION,
       getContainer: props.staticGetContainer ?? getPopupContainer.value,
       maxCount: props.maxCount,
+      stack: stackRef,
+      pauseOnHover: props.pauseOnHover,
       onAllRemoved: props.onAllRemoved,
     });
 
@@ -131,7 +157,7 @@ const Holder = defineComponent({
 let keyIndex = 0;
 
 export function useInternalMessage(
-  messageConfig?: HolderProps,
+  messageConfig?: MaybeRefConfig,
 ): readonly [MessageInstance, () => VNode] {
   const holderRef = shallowRef<HolderRef>(null);
   const holderKey = Symbol('messageHolderKey');
@@ -153,14 +179,47 @@ export function useInternalMessage(
 
     const { open: originOpen, prefixCls, hashId, message: contextMessage } = holderRef.value;
     const noticePrefixCls = `${prefixCls}-notice`;
-    const { content, icon, type, key, class: className, style, onClose, ...restConfig } = config;
+    const {
+      content,
+      icon,
+      type,
+      key,
+      class: className,
+      className: propClassName,
+      style,
+      classNames: configClassNames,
+      styles: configStyles,
+      onClose,
+      ...restConfig
+    } = config;
     const ctxMsg = contextMessage?.value || (contextMessage as any);
+    const resolvedMessageConfig = unref(messageConfig);
 
     let mergedKey: Key = key!;
     if (mergedKey === undefined || mergedKey === null) {
       keyIndex += 1;
       mergedKey = `antd-message-${keyIndex}`;
     }
+
+    const mergedPropsForSemantic = {
+      ...resolvedMessageConfig,
+      ...config,
+    } as ArgsProps;
+
+    const [mergedClassNames, mergedStyles] = mergeSemantic<
+      MessageSemanticClassNames,
+      MessageSemanticStyles,
+      ArgsProps
+    >(
+      [ctxMsg?.classNames, resolvedMessageConfig?.classNames, configClassNames],
+      [ctxMsg?.styles, resolvedMessageConfig?.styles, configStyles],
+      { props: mergedPropsForSemantic },
+    );
+
+    const mergedRootStyle =
+      ctxMsg?.style || mergedStyles.root || style
+        ? { ...ctxMsg?.style, ...mergedStyles.root, ...style }
+        : undefined;
 
     return wrapPromiseFn(resolve => {
       originOpen({
@@ -171,6 +230,8 @@ export function useInternalMessage(
             prefixCls={prefixCls}
             type={type}
             icon={typeof icon === 'function' ? icon() : icon}
+            classNames={mergedClassNames}
+            styles={mergedStyles}
           >
             {typeof content === 'function' ? content() : content}
           </PureContent>
@@ -181,14 +242,12 @@ export function useInternalMessage(
           type && `${noticePrefixCls}-${type}`,
           hashId,
           ctxMsg?.className,
-          ctxMsg?.classNames?.root,
+          mergedClassNames.root,
           className,
+          propClassName,
         ),
         // @ts-ignore
-        style:
-          ctxMsg?.style || ctxMsg?.styles?.root || style
-            ? { ...ctxMsg?.style, ...ctxMsg?.styles?.root, ...style }
-            : undefined,
+        style: mergedRootStyle,
         onClose: () => {
           onClose?.();
           resolve();
@@ -252,9 +311,14 @@ export function useInternalMessage(
   });
 
   // ============================== Return ===============================
-  return [wrapAPI, () => <Holder key={holderKey} {...messageConfig} ref={holderRef} />] as const;
+  return [
+    wrapAPI,
+    () => <Holder key={holderKey} {...unref(messageConfig)} ref={holderRef} />,
+  ] as const;
 }
 
-export default function useMessage(messageConfig?: ConfigOptions) {
+export default function useMessage(
+  messageConfig?: ConfigOptions | Ref<ConfigOptions> | ComputedRef<ConfigOptions>,
+) {
   return useInternalMessage(messageConfig);
 }

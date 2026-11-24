@@ -1,6 +1,7 @@
 <docs>
 ---
-order: 6
+order: 15
+debug: true
 title:
   zh-CN: 箭头指向
   en-US: Arrow pointing at the center

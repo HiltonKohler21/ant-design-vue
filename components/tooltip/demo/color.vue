@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 5
+order: 8
 title:
   zh-CN: 多彩文字提示
   en-US: Colorful Tooltip

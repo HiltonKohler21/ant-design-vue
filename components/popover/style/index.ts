@@ -8,6 +8,7 @@ import getArrowStyle from '../../style/placementArrow';
 export interface ComponentToken {
   zIndexPopup: number;
   width: number;
+  titleMinWidth?: number;
 }
 
 export type PopoverToken = FullToken<'Popover'> & {
@@ -72,7 +73,7 @@ const genBaseStyle: GenerateStyle<PopoverToken> = token => {
         },
 
         [`${componentCls}-title`]: {
-          minWidth: width,
+          minWidth: token.titleMinWidth ?? width,
           marginBottom: marginXS,
           color: colorTextHeading,
           fontWeight: fontWeightStrong,
@@ -92,6 +93,8 @@ const genBaseStyle: GenerateStyle<PopoverToken> = token => {
       [`${componentCls}-pure`]: {
         position: 'relative',
         maxWidth: 'none',
+        margin: token.sizePopupArrow,
+        display: 'inline-block',
 
         [`${componentCls}-content`]: {
           display: 'inline-block',
@@ -190,5 +193,6 @@ export default genComponentStyleHook(
   ({ zIndexPopupBase }) => ({
     zIndexPopup: zIndexPopupBase + 30,
     width: 177,
+    titleMinWidth: 177,
   }),
 );

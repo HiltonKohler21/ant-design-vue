@@ -10,6 +10,7 @@
     <style-class />
     <fullscreen />
     <inside />
+    <list-debug />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -23,6 +24,7 @@ import CustomIndicator from './custom-indicator.vue';
 import Percent from './percent.vue';
 import StyleClass from './style-class.vue';
 import Fullscreen from './fullscreen.vue';
+import ListDebug from './list-debug.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -40,6 +42,7 @@ export default defineComponent({
     Percent,
     StyleClass,
     Fullscreen,
+    ListDebug,
   },
   setup() {
     return {};

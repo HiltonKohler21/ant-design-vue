@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import Result from '../index';
 import Button from '../../button';
+import ConfigProvider from '../../config-provider';
 import { sleep } from '../../../tests/utils';
 
 describe('Result', () => {
@@ -67,5 +68,64 @@ describe('Result', () => {
       },
     });
     expect(wrapper.findAll('.ant-result.my-result')).toHaveLength(1);
+  });
+
+  it('supports semantic classNames and styles (Object + Function) merged with ConfigProvider.result', () => {
+    const wrapper = mount({
+      render() {
+        return (
+          <ConfigProvider
+            result={{
+              classNames: {
+                root: 'ctx-result-root',
+                title: 'ctx-result-title',
+              },
+              styles: {
+                root: { padding: '10px' },
+                extra: { marginTop: '4px' },
+              },
+            }}
+          >
+            <Result
+              status="success"
+              title="Done"
+              subTitle="All set"
+              extra={<Button>OK</Button>}
+              classNames={({ props }) => ({
+                root: `fn-result-${props.status}`,
+                icon: 'fn-result-icon',
+                subTitle: 'fn-result-subtitle',
+                extra: 'fn-result-extra',
+                body: 'fn-result-body',
+              })}
+              styles={({ props }) => ({
+                title: { color: props.status === 'success' ? 'rgb(82, 196, 26)' : 'red' },
+                subTitle: { fontWeight: '700' },
+                icon: { opacity: '0.8' },
+                body: { padding: '12px' },
+              })}
+            >
+              <div>Body content</div>
+            </Result>
+          </ConfigProvider>
+        );
+      },
+    });
+
+    const root = wrapper.find('.ant-result');
+    expect(root.classes()).toContain('ctx-result-root');
+    expect(root.classes()).toContain('fn-result-success');
+    expect(root.attributes('style')).toContain('padding: 10px');
+    expect(wrapper.find('.ant-result-icon').classes()).toContain('fn-result-icon');
+    expect(wrapper.find('.ant-result-icon').attributes('style')).toContain('opacity: 0.8');
+    expect(wrapper.find('.ant-result-title').classes()).toContain('ctx-result-title');
+    expect(wrapper.find('.ant-result-title').attributes('style')).toContain(
+      'color: rgb(82, 196, 26)',
+    );
+    expect(wrapper.find('.ant-result-subtitle').classes()).toContain('fn-result-subtitle');
+    expect(wrapper.find('.ant-result-extra').classes()).toContain('fn-result-extra');
+    expect(wrapper.find('.ant-result-extra').attributes('style')).toContain('margin-top: 4px');
+    expect(wrapper.find('.ant-result-content').classes()).toContain('fn-result-body');
+    expect(wrapper.find('.ant-result-content').attributes('style')).toContain('padding: 12px');
   });
 });

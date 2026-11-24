@@ -9,6 +9,16 @@ export interface ComponentToken {
    * @descEN z-index of drawer
    */
   zIndexPopup: number;
+  /**
+   * @desc 底部区域纵向内边距
+   * @descEN Vertical padding of footer
+   */
+  footerPaddingBlock?: number;
+  /**
+   * @desc 底部区域横向内边距
+   * @descEN Horizontal padding of footer
+   */
+  footerPaddingInline?: number;
 }
 
 export interface DrawerToken extends FullToken<'Drawer'> {
@@ -306,8 +316,8 @@ export default genComponentStyleHook(
   'Drawer',
   token => {
     const drawerToken = mergeToken<DrawerToken>(token, {
-      drawerFooterPaddingVertical: token.paddingXS,
-      drawerFooterPaddingHorizontal: token.padding,
+      drawerFooterPaddingVertical: token.footerPaddingBlock ?? token.paddingXS,
+      drawerFooterPaddingHorizontal: token.footerPaddingInline ?? token.padding,
       drawerDraggerSize: 4,
     });
 
@@ -315,5 +325,7 @@ export default genComponentStyleHook(
   },
   token => ({
     zIndexPopup: token.zIndexPopupBase,
+    footerPaddingBlock: token.paddingXS,
+    footerPaddingInline: token.padding,
   }),
 );

@@ -1,27 +1,44 @@
 import type { CSSProperties } from 'vue';
 import { ref } from 'vue';
 import Notification from '../vc-notification';
-import CheckCircleOutlined from '@ant-design/icons-vue/CheckCircleOutlined';
-import InfoCircleOutlined from '@ant-design/icons-vue/InfoCircleOutlined';
-import CloseCircleOutlined from '@ant-design/icons-vue/CloseCircleOutlined';
-import ExclamationCircleOutlined from '@ant-design/icons-vue/ExclamationCircleOutlined';
-import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import type { VueNode } from '../_util/type';
-import { renderHelper } from '../_util/util';
 import { globalConfig, globalConfigForApi } from '../config-provider';
 import type { NotificationInstance as VCNotificationInstance } from '../vc-notification/Notification';
 import classNames from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import type {
+  DivProps,
+  NotificationClassNamesType,
   NotificationClosable,
   NotificationClosableType,
+  NotificationConfig,
+  NotificationSemanticClassNames,
+  NotificationSemanticName,
+  NotificationSemanticStyles,
   NotificationStack,
+  NotificationStylesType,
   StackConfig,
 } from './interface';
 import useStyle from './style';
 import useNotification from './useNotification';
+import PurePanel, { getCloseIcon, PureContent, resolveClosableConfig } from './PurePanel';
+import type { PurePanelProps } from './PurePanel';
 import { getPlacementStyle } from './util';
 
-export type { NotificationClosable, NotificationClosableType, NotificationStack, StackConfig };
+export type {
+  DivProps,
+  NotificationClassNamesType,
+  NotificationClosable,
+  NotificationClosableType,
+  NotificationConfig,
+  NotificationSemanticClassNames,
+  NotificationSemanticName,
+  NotificationSemanticStyles,
+  NotificationStack,
+  NotificationStylesType,
+  PurePanelProps,
+  StackConfig,
+};
 
 export type NotificationPlacement =
   | 'top'
@@ -36,7 +53,7 @@ export type IconType = 'success' | 'info' | 'error' | 'warning';
 export interface ConfigProps {
   top?: string | number;
   bottom?: string | number;
-  duration?: number;
+  duration?: number | null | false;
   prefixCls?: string;
   placement?: NotificationPlacement;
   getContainer?: () => HTMLElement;
@@ -47,22 +64,24 @@ export interface ConfigProps {
   stack?: NotificationStack;
   rtl?: boolean;
   maxCount?: number;
+  props?: DivProps;
 }
 
 const notificationInstance: { [key: string]: VCNotificationInstance } = {};
-let defaultDuration = 4.5;
+let defaultDuration: number | null | false = 4.5;
 let defaultTop = '24px';
 let defaultBottom = '24px';
 let defaultPrefixCls = '';
 let defaultPlacement: NotificationPlacement = 'topRight';
 let defaultGetContainer = () => document.body;
 let defaultClosable: NotificationClosable = true;
-let defaultCloseIcon = null;
+let defaultCloseIcon: VueNode | (() => VueNode) | undefined = undefined;
 let defaultShowProgress = false;
 let defaultPauseOnHover = true;
 const defaultStack = ref<NotificationStack>({ threshold: 3 });
 let rtl = false;
 let maxCount: number;
+let defaultDivProps: DivProps | undefined = undefined;
 
 function setNotificationConfig(options: ConfigProps) {
   const {
@@ -77,6 +96,7 @@ function setNotificationConfig(options: ConfigProps) {
     showProgress,
     pauseOnHover,
     stack,
+    props,
   } = options;
   if (prefixCls !== undefined) {
     defaultPrefixCls = prefixCls;
@@ -117,6 +137,9 @@ function setNotificationConfig(options: ConfigProps) {
   if (options.maxCount !== undefined) {
     maxCount = options.maxCount;
   }
+  if (props !== undefined) {
+    defaultDivProps = props;
+  }
 }
 
 function getNotificationInstance(
@@ -155,14 +178,7 @@ function getNotificationInstance(
       style: getPlacementStyle(placement, top ?? defaultTop, bottom ?? defaultBottom),
       appContext,
       getContainer,
-      closeIcon: ({ prefixCls }) => {
-        const closeIconToRender = (
-          <span class={`${prefixCls}-close-x`}>
-            {renderHelper(closeIcon, {}, <CloseOutlined class={`${prefixCls}-close-icon`} />)}
-          </span>
-        );
-        return closeIconToRender;
-      },
+      closeIcon: ({ prefixCls: currentPrefixCls }) => getCloseIcon(currentPrefixCls, closeIcon),
       maxCount,
       stack: defaultStack,
       hasTransitionName: true,
@@ -174,26 +190,26 @@ function getNotificationInstance(
   );
 }
 
-const typeToIcon = {
-  success: CheckCircleOutlined,
-  info: InfoCircleOutlined,
-  error: CloseCircleOutlined,
-  warning: ExclamationCircleOutlined,
-};
-
 export interface NotificationArgsProps {
-  message: VueNode | (() => VueNode);
+  /** @deprecated Please use `title` instead */
+  message?: VueNode | (() => VueNode);
+  title?: VueNode | (() => VueNode);
   description?: VueNode | (() => VueNode);
+  /** @deprecated Please use `actions` instead */
   btn?: VueNode | (() => VueNode);
+  actions?: VueNode | (() => VueNode);
   key?: string;
   onClose?: () => void;
-  duration?: number | null;
+  duration?: number | null | false;
   icon?: VueNode | (() => VueNode);
   placement?: NotificationPlacement;
   maxCount?: number;
   style?: CSSProperties;
   prefixCls?: string;
   class?: string;
+  className?: string;
+  classNames?: NotificationClassNamesType<NotificationArgsProps>;
+  styles?: NotificationStylesType<NotificationArgsProps>;
   readonly type?: IconType;
   onClick?: () => void;
   top?: string | number;
@@ -203,37 +219,61 @@ export interface NotificationArgsProps {
   closeIcon?: VueNode | (() => VueNode);
   showProgress?: boolean;
   pauseOnHover?: boolean;
+  role?: 'alert' | 'status';
+  props?: DivProps;
   appContext?: any;
 }
 
 function notice(args: NotificationArgsProps) {
-  const { icon, type, description, message, btn } = args;
-  const duration = args.duration === undefined ? defaultDuration : args.duration;
+  const { icon, type, description, title, message, actions, btn, role = 'alert' } = args;
+  const rawDuration = args.duration === undefined ? defaultDuration : args.duration;
+  const normalizedDuration = rawDuration === false ? null : rawDuration;
   const contextNotification = globalConfigForApi.notification;
   const { getPrefixCls } = globalConfig();
   const resolvedPrefixCls = getPrefixCls('notification', args.prefixCls || defaultPrefixCls);
+  const noticePrefixCls = `${resolvedPrefixCls}-notice`;
+  const mergedTitle = title ?? message;
+  const mergedActions = actions ?? btn;
+
+  const mergedProps: NotificationArgsProps = {
+    ...args,
+    title: mergedTitle,
+    actions: mergedActions,
+    placement: args.placement ?? defaultPlacement,
+    duration: rawDuration,
+    showProgress: args.showProgress ?? defaultShowProgress,
+    pauseOnHover: args.pauseOnHover ?? defaultPauseOnHover,
+    role,
+  };
+
+  const [mergedClassNames, mergedStyles] = mergeSemantic<
+    NotificationSemanticClassNames,
+    NotificationSemanticStyles,
+    NotificationArgsProps
+  >(
+    [contextNotification?.classNames, args.classNames],
+    [contextNotification?.styles, args.styles],
+    {
+      props: mergedProps,
+    },
+  );
+
   const rawClosable = args.closable !== undefined ? args.closable : defaultClosable;
   const mergedCloseIcon =
     args.closeIcon !== undefined
       ? args.closeIcon
-      : defaultCloseIcon !== null
+      : defaultCloseIcon !== undefined
       ? defaultCloseIcon
       : contextNotification?.closeIcon;
-  const resolvedClosable: NotificationClosable =
-    rawClosable && typeof rawClosable === 'object'
-      ? {
-          ...rawClosable,
-          ...(rawClosable.closeIcon !== undefined
-            ? {
-                closeIcon: (
-                  <span class={`${resolvedPrefixCls}-close-x`}>
-                    {renderHelper(rawClosable.closeIcon)}
-                  </span>
-                ),
-              }
-            : {}),
-        }
-      : rawClosable;
+
+  const { closable: resolvedClosable, closeIcon: wrappedCloseIcon } = resolveClosableConfig(
+    resolvedPrefixCls,
+    rawClosable,
+    mergedCloseIcon,
+    mergedClassNames.close,
+    mergedStyles.close,
+  );
+
   getNotificationInstance(
     {
       ...args,
@@ -241,45 +281,40 @@ function notice(args: NotificationArgsProps) {
     },
     notification => {
       notification.notice({
-        content: ({ prefixCls: outerPrefixCls }) => {
-          const prefixCls = `${outerPrefixCls}-notice`;
-          let iconNode = null;
-          if (icon) {
-            iconNode = () => <span class={`${prefixCls}-icon`}>{renderHelper(icon)}</span>;
-          } else if (type) {
-            const Icon = typeToIcon[type];
-            iconNode = () => <Icon class={`${prefixCls}-icon ${prefixCls}-icon-${type}`} />;
-          }
-          return (
-            <div class={iconNode ? `${prefixCls}-with-icon` : ''}>
-              {iconNode && iconNode()}
-              <div class={`${prefixCls}-message`}>
-                {!description && iconNode ? (
-                  <span class={`${prefixCls}-message-single-line-auto-margin`} />
-                ) : null}
-                {renderHelper(message)}
-              </div>
-              <div class={`${prefixCls}-description`}>{renderHelper(description)}</div>
-              {btn ? <span class={`${prefixCls}-btn`}>{renderHelper(btn)}</span> : null}
-            </div>
-          );
-        },
-        duration,
+        content: ({ prefixCls: outerPrefixCls }) => (
+          <PureContent
+            prefixCls={`${outerPrefixCls}-notice`}
+            icon={icon}
+            type={type}
+            title={mergedTitle}
+            description={description}
+            actions={mergedActions}
+            role={role}
+            classNames={mergedClassNames}
+            styles={mergedStyles}
+          />
+        ),
+        duration: normalizedDuration,
         closable: resolvedClosable,
-        ...(mergedCloseIcon !== undefined && mergedCloseIcon !== null
-          ? {
-              closeIcon: (
-                <span class={`${resolvedPrefixCls}-close-x`}>{renderHelper(mergedCloseIcon)}</span>
-              ),
-            }
-          : {}),
+        ...(wrappedCloseIcon !== undefined ? { closeIcon: wrappedCloseIcon } : {}),
         showProgress: args.showProgress ?? defaultShowProgress,
         pauseOnHover: args.pauseOnHover ?? defaultPauseOnHover,
         onClose: args.onClose,
         onClick: args.onClick,
         key: args.key,
-        style: { ...(contextNotification?.style as CSSProperties), ...(args.style || {}) },
-        class: classNames(contextNotification?.className, args.class),
+        props: args.props ?? defaultDivProps,
+        style: {
+          ...(contextNotification?.style as CSSProperties),
+          ...(mergedStyles.root || {}),
+          ...(args.style || {}),
+        },
+        class: classNames(
+          type && `${noticePrefixCls}-${type}`,
+          contextNotification?.className,
+          mergedClassNames.root,
+          args.class,
+          args.className,
+        ),
       });
     },
   );
@@ -316,6 +351,7 @@ iconTypes.forEach(type => {
 
 api.warn = api.warning;
 api.useNotification = useNotification;
+api._InternalPanelDoNotUseOrYouWillBeFired = PurePanel;
 
 export interface NotificationInstance {
   success(args: NotificationArgsProps): void;
@@ -331,6 +367,8 @@ export interface NotificationApi extends NotificationInstance {
   config(options: ConfigProps): void;
   destroy(): void;
   useNotification: typeof useNotification;
+  /** @private Internal Component. Do not use in your production. */
+  _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
 }
 
 /** @private test Only function. Not work on production */

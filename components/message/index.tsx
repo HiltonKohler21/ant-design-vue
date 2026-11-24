@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'vue';
+import { unref } from 'vue';
 import Notification from '../vc-notification';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 import ExclamationCircleFilled from '@ant-design/icons-vue/ExclamationCircleFilled';
@@ -8,8 +9,28 @@ import InfoCircleFilled from '@ant-design/icons-vue/InfoCircleFilled';
 import type { Key, VueNode } from '../_util/type';
 import type { NotificationInstance } from '../vc-notification/Notification';
 import classNames from '../_util/classNames';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
 import useStyle from './style';
 import useMessage from './useMessage';
+import PurePanel, { renderMessageIcon } from './PurePanel';
+import type {
+  MessageSemanticName,
+  MessageSemanticClassNames,
+  MessageSemanticStyles,
+  MessageClassNamesType,
+  MessageStylesType,
+  MessageStackConfig,
+} from './interface';
+
+export type {
+  MessageSemanticName,
+  MessageSemanticClassNames,
+  MessageSemanticStyles,
+  MessageClassNamesType,
+  MessageStylesType,
+  MessageStackConfig,
+};
+
 let defaultDuration = 3;
 let defaultTop: string;
 let messageInstance: NotificationInstance;
@@ -20,24 +41,32 @@ let hasTransitionName = false;
 let getContainer = () => document.body;
 let maxCount: number;
 let rtl = false;
+let defaultStack: MessageStackConfig | undefined;
+let defaultPauseOnHover: boolean | undefined;
+let defaultClassNames: MessageClassNamesType | undefined;
+let defaultStyles: MessageStylesType | undefined;
 
 export function getKeyThenIncreaseKey() {
   return key++;
 }
 
 export interface ConfigOptions {
-  top?: string;
+  top?: string | number;
   duration?: number;
   prefixCls?: string;
   getContainer?: () => HTMLElement;
   transitionName?: string;
   maxCount?: number;
   rtl?: boolean;
+  stack?: MessageStackConfig;
+  pauseOnHover?: boolean;
+  classNames?: MessageClassNamesType;
+  styles?: MessageStylesType;
 }
 
 function setMessageConfig(options: ConfigOptions) {
   if (options.top !== undefined) {
-    defaultTop = options.top;
+    defaultTop = typeof options.top === 'number' ? `${options.top}px` : options.top;
     messageInstance = null; // delete messageInstance for new defaultTop
   }
   if (options.duration !== undefined) {
@@ -63,6 +92,19 @@ function setMessageConfig(options: ConfigOptions) {
   if (options.rtl !== undefined) {
     rtl = options.rtl;
   }
+  if (options.stack !== undefined) {
+    defaultStack = unref(options.stack);
+    messageInstance = null;
+  }
+  if (options.pauseOnHover !== undefined) {
+    defaultPauseOnHover = options.pauseOnHover;
+  }
+  if (options.classNames !== undefined) {
+    defaultClassNames = options.classNames;
+  }
+  if (options.styles !== undefined) {
+    defaultStyles = options.styles;
+  }
 }
 
 function getMessageInstance(args: MessageArgsProps, callback: (i: NotificationInstance) => void) {
@@ -71,6 +113,12 @@ function getMessageInstance(args: MessageArgsProps, callback: (i: NotificationIn
     return;
   }
 
+  const [holderClassNames, holderStyles] = mergeSemantic<
+    MessageSemanticClassNames,
+    MessageSemanticStyles,
+    MessageArgsProps
+  >([defaultClassNames], [defaultStyles], { props: args });
+
   Notification.newInstance(
     {
       appContext: args.appContext,
@@ -78,9 +126,11 @@ function getMessageInstance(args: MessageArgsProps, callback: (i: NotificationIn
       rootPrefixCls: args.rootPrefixCls,
       transitionName,
       hasTransitionName,
-      style: { top: defaultTop }, // 覆盖原来的样式
+      class: holderClassNames.list,
+      style: { top: defaultTop, ...holderStyles.list }, // 覆盖原来的样式
       getContainer: getContainer || args.getPopupContainer,
       maxCount,
+      stack: defaultStack,
       name: 'message',
       useStyle,
     },
@@ -125,14 +175,26 @@ export interface MessageArgsProps {
   key?: string | number;
   style?: CSSProperties;
   class?: string;
+  className?: string;
+  classNames?: MessageClassNamesType;
+  styles?: MessageStylesType;
   appContext?: any;
   onClick?: (e: MouseEvent) => void;
+  pauseOnHover?: boolean;
 }
 
 function notice(args: MessageArgsProps): MessageType {
   const duration = args.duration !== undefined ? args.duration : defaultDuration;
 
   const target = args.key || getKeyThenIncreaseKey();
+  const [mergedClassNames, mergedStyles] = mergeSemantic<
+    MessageSemanticClassNames,
+    MessageSemanticStyles,
+    MessageArgsProps
+  >([defaultClassNames, args.classNames], [defaultStyles, args.styles], {
+    props: args,
+  });
+
   const closePromise = new Promise(resolve => {
     const callback = () => {
       if (typeof args.onClose === 'function') {
@@ -144,19 +206,34 @@ function notice(args: MessageArgsProps): MessageType {
       instance.notice({
         key: target,
         duration,
-        style: args.style || {},
-        class: args.class,
+        pauseOnHover: args.pauseOnHover ?? defaultPauseOnHover,
+        style: { ...mergedStyles.root, ...args.style },
+        class: classNames(mergedClassNames.root, args.class, args.className),
         content: ({ prefixCls }) => {
           const Icon = typeToIcon[args.type];
           const iconNode = Icon ? <Icon /> : '';
-          const messageClass = classNames(`${prefixCls}-custom-content`, {
-            [`${prefixCls}-${args.type}`]: args.type,
-            [`${prefixCls}-rtl`]: rtl === true,
-          });
+          const rawIcon = typeof args.icon === 'function' ? args.icon() : args.icon || iconNode;
+          const renderedIcon = renderMessageIcon(rawIcon, mergedClassNames.icon, mergedStyles.icon);
+          const messageClass = classNames(
+            `${prefixCls}-custom-content`,
+            {
+              [`${prefixCls}-${args.type}`]: args.type,
+              [`${prefixCls}-rtl`]: rtl === true,
+            },
+            mergedClassNames.wrapper,
+          );
+          const textClass =
+            classNames(mergedClassNames.content, mergedClassNames.title) || undefined;
+          const textStyle =
+            mergedStyles.content || mergedStyles.title
+              ? [mergedStyles.content, mergedStyles.title]
+              : undefined;
           return (
-            <div class={messageClass}>
-              {typeof args.icon === 'function' ? args.icon() : args.icon || iconNode}
-              <span>{typeof args.content === 'function' ? args.content() : args.content}</span>
+            <div class={messageClass} style={mergedStyles.wrapper}>
+              {renderedIcon}
+              <span class={textClass} style={textStyle}>
+                {typeof args.content === 'function' ? args.content() : args.content}
+              </span>
             </div>
           );
         },
@@ -227,6 +304,8 @@ typeList.forEach(type => attachTypeApi(api, type));
 
 api.warn = api.warning;
 api.useMessage = useMessage;
+api._InternalPanelDoNotUseOrYouWillBeFired = PurePanel;
+
 export interface MessageInstance {
   info(content: JointContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
   success(content: JointContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
@@ -241,6 +320,8 @@ export interface MessageApi extends MessageInstance {
   warn(content: JointContent, duration?: ConfigDuration, onClose?: ConfigOnClose): MessageType;
   config(options: ConfigOptions): void;
   destroy(messageKey?: Key): void;
+  /** @private Internal Component. Do not use in your production. */
+  _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
 }
 
 /** @private test Only function. Not work on production */

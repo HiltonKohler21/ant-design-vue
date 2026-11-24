@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 9
 title:
   zh-CN: 自定义位置
   en-US: To customize the position of modal

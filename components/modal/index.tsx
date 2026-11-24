@@ -1,10 +1,12 @@
 import type { App, Plugin } from 'vue';
 import type { ModalFunc, ModalFuncProps } from './Modal';
 import Modal from './Modal';
+import PurePanel from './PurePanel';
 import confirm, { withWarn, withInfo, withSuccess, withError, withConfirm } from './confirm';
 import useModal from './useModal';
 import destroyFns from './destroyFns';
 export type { ActionButtonProps } from '../_util/ActionButton';
+export type { PurePanelProps } from './PurePanel';
 export type {
   ModalProps,
   ModalFuncProps,
@@ -12,6 +14,16 @@ export type {
   ClosableType,
   MaskConfig,
   MaskType,
+  ModalFocusableConfig,
+  ModalFooterRender,
+  ModalFooterRenderExtra,
+  ModalSemanticName,
+  ModalSemanticClassNames,
+  ModalSemanticStyles,
+  ModalClassNamesType,
+  ModalStylesType,
+  ModalWidthType,
+  MousePosition,
 } from './Modal';
 
 function modalWarn(props: ModalFuncProps) {
@@ -47,6 +59,8 @@ Modal.destroyAll = function destroyAllFn() {
   }
 };
 
+Modal._InternalPanelDoNotUseOrYouWillBeFired = PurePanel;
+
 /* istanbul ignore next */
 Modal.install = function (app: App) {
   app.component(Modal.name, Modal);
@@ -70,4 +84,7 @@ export default Modal as typeof Modal &
     readonly destroyAll: () => void;
 
     readonly useModal: typeof useModal;
+
+    /** @private Internal Component. Do not use in your production. */
+    readonly _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
   };

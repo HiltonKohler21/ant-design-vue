@@ -4,6 +4,8 @@
     <multi-line />
     <watermark-image />
     <custom />
+    <portal />
+    <debug />
   </demo-sort>
 </template>
 
@@ -15,6 +17,8 @@ import Basic from './basic.vue';
 import MultiLine from './multi-line.vue';
 import WatermarkImage from './image.vue';
 import Custom from './custom.vue';
+import Portal from './portal.vue';
+import Debug from './debug.vue';
 export default defineComponent({
   CN,
   US,
@@ -23,6 +27,8 @@ export default defineComponent({
     MultiLine,
     WatermarkImage,
     Custom,
+    Portal,
+    Debug,
   },
 });
 </script>

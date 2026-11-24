@@ -109,6 +109,9 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
             top: padding,
             insetInlineEnd: padding,
             color: token.colorIcon,
+            background: 'none',
+            border: 'none',
+            padding: 0,
             outline: 'none',
             width: closeBtnSize,
             height: closeBtnSize,
@@ -117,6 +120,7 @@ const genBaseStyle: GenerateStyle<TourToken> = token => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            cursor: 'pointer',
 
             '&:hover': {
               color: token.colorIconHover,

@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 12
+order: 15
 title:
   zh-CN: 静态确认对话框
   en-US: Static confirmation

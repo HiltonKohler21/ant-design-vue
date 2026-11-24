@@ -25,7 +25,7 @@ export default defineComponent({
     placement: 'bottomRight',
     type: 'default',
   }),
-  // emits: ['click', 'visibleChange', 'update:visible'],s
+  // emits: ['click', 'visibleChange', 'update:visible'],
   slots: Object as CustomSlotsType<{
     icon: any;
     leftButton: { button: any };
@@ -34,11 +34,11 @@ export default defineComponent({
     default: any;
   }>,
   setup(props, { slots, attrs, emit }) {
-    const handleVisibleChange = (val: boolean) => {
+    const handleVisibleChange = (val: boolean, info?: { source: 'trigger' | 'menu' }) => {
       emit('update:visible', val);
-      emit('visibleChange', val);
+      emit('visibleChange', val, info);
       emit('update:open', val);
-      emit('openChange', val);
+      emit('openChange', val, info);
     };
 
     const { prefixCls, direction, getPopupContainer } = useConfigInject('dropdown', props);
@@ -53,6 +53,8 @@ export default defineComponent({
         htmlType,
         class: className = '',
         overlay = slots.overlay?.(),
+        menu,
+        arrow,
         autoAdjustOverflow,
         trigger,
         align,
@@ -67,7 +69,13 @@ export default defineComponent({
         mouseLeaveDelay,
         overlayClassName,
         overlayStyle,
+        rootClassName,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
+        dropdownRender,
+        popupRender,
         destroyPopupOnHide,
+        destroyOnHidden,
         onClick,
         buttonsRender,
         'onUpdate:open': _updateVisible,
@@ -76,6 +84,7 @@ export default defineComponent({
 
       const dropdownProps = {
         align,
+        arrow,
         autoAdjustOverflow,
         disabled,
         trigger: disabled ? [] : trigger,
@@ -85,10 +94,18 @@ export default defineComponent({
         buttonsRender,
         mouseEnterDelay,
         mouseLeaveDelay,
-        open: open ?? visible,
+        open,
+        visible,
+        menu,
         overlayClassName,
         overlayStyle,
+        rootClassName,
+        classNames: semanticClassNames,
+        styles: semanticStyles,
+        dropdownRender,
+        popupRender,
         destroyPopupOnHide,
+        destroyOnHidden,
       };
 
       const leftButton = (
@@ -111,13 +128,18 @@ export default defineComponent({
         ? buttonsRender([leftButton, rightButton])
         : [leftButton, rightButton];
 
+      const hasOverlay = props.overlay !== undefined || !!slots.overlay;
+
       return wrapSSR(
         <ButtonGroup
           {...restProps}
           class={classNames(buttonPrefixCls.value, className, hashId.value)}
         >
           {slots.leftButton ? slots.leftButton({ button: leftButtonToRender }) : leftButtonToRender}
-          <Dropdown {...dropdownProps} v-slots={{ overlay: () => overlay }}>
+          <Dropdown
+            {...dropdownProps}
+            v-slots={hasOverlay ? { overlay: () => overlay } : undefined}
+          >
             {slots.rightButton
               ? slots.rightButton({ button: rightButtonToRender })
               : rightButtonToRender}

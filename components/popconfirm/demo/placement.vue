@@ -8,126 +8,164 @@ title:
 
 ## zh-CN
 
-位置有十二个方向。如需箭头指向目标元素中心，可以设置 `arrowPointAtCenter`。
+位置有十二个方向。如需箭头指向目标元素中心，可以设置 `arrow: { pointAtCenter: true }`。
 
 ## en-US
 
-There are 12 `placement` options available. Use `arrowPointAtCenter` if you want arrow point at the center of target.
+There are 12 `placement` options available. Use `arrow: { pointAtCenter: true }` if you want the arrow to point at the center of target.
 
 </docs>
 
 <template>
-  <div id="components-a-popconfirm-demo-placement">
-    <div :style="{ marginLeft: `${buttonWidth}px`, whiteSpace: 'nowrap' }">
-      <a-popconfirm placement="topLeft" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>TL</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="top" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>Top</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="topRight" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>TR</a-button>
-      </a-popconfirm>
-    </div>
-    <div :style="{ width: `${buttonWidth}px`, float: 'left' }">
-      <a-popconfirm placement="leftTop" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>LT</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="left" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>Left</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="leftBottom" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>LB</a-button>
-      </a-popconfirm>
-    </div>
-    <div :style="{ width: `${buttonWidth}px`, marginLeft: `${buttonWidth * 4 + 24}px` }">
-      <a-popconfirm placement="rightTop" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>RT</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="right" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>Right</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="rightBottom" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>RB</a-button>
-      </a-popconfirm>
-    </div>
-    <div :style="{ marginLeft: `${buttonWidth}px`, clear: 'both', whiteSpace: 'nowrap' }">
-      <a-popconfirm placement="bottomLeft" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>BL</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="bottom" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>Bottom</a-button>
-      </a-popconfirm>
-      <a-popconfirm placement="bottomRight" ok-text="Yes" cancel-text="No" @confirm="confirm">
-        <template #title>
-          <p>{{ text }}</p>
-          <p>{{ text }}</p>
-        </template>
-        <a-button>BR</a-button>
-      </a-popconfirm>
-    </div>
-  </div>
+  <a-config-provider
+    :button="{ style: { width: `${buttonWidth}px`, margin: '4px', padding: '0px' } }"
+  >
+    <a-flex vertical justify="center" align="center" class="demo">
+      <a-flex justify="center" align="center" :style="{ whiteSpace: 'nowrap' }">
+        <a-popconfirm
+          placement="topLeft"
+          :title="text"
+          :description="description"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="confirm"
+        >
+          <a-button>TL</a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          placement="top"
+          :title="text"
+          :description="description"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="confirm"
+        >
+          <a-button>Top</a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          placement="topRight"
+          :title="text"
+          :description="description"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="confirm"
+        >
+          <a-button>TR</a-button>
+        </a-popconfirm>
+      </a-flex>
+      <a-flex
+        :style="{ width: `${buttonWidth * 5 + 32}px`, maxWidth: '100%' }"
+        justify="space-between"
+        align="center"
+      >
+        <a-flex align="center" vertical>
+          <a-popconfirm
+            placement="leftTop"
+            :title="text"
+            :description="description"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirm"
+          >
+            <a-button>LT</a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            placement="left"
+            :title="text"
+            :description="description"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirm"
+          >
+            <a-button>Left</a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            placement="leftBottom"
+            :title="text"
+            :description="description"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirm"
+          >
+            <a-button>LB</a-button>
+          </a-popconfirm>
+        </a-flex>
+        <a-flex align="center" vertical>
+          <a-popconfirm
+            placement="rightTop"
+            :title="text"
+            :description="description"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirm"
+          >
+            <a-button>RT</a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            placement="right"
+            :title="text"
+            :description="description"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirm"
+          >
+            <a-button>Right</a-button>
+          </a-popconfirm>
+          <a-popconfirm
+            placement="rightBottom"
+            :title="text"
+            :description="description"
+            ok-text="Yes"
+            cancel-text="No"
+            @confirm="confirm"
+          >
+            <a-button>RB</a-button>
+          </a-popconfirm>
+        </a-flex>
+      </a-flex>
+      <a-flex justify="center" align="center" :style="{ whiteSpace: 'nowrap' }">
+        <a-popconfirm
+          placement="bottomLeft"
+          :title="text"
+          :description="description"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="confirm"
+        >
+          <a-button>BL</a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          placement="bottom"
+          :title="text"
+          :description="description"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="confirm"
+        >
+          <a-button>Bottom</a-button>
+        </a-popconfirm>
+        <a-popconfirm
+          placement="bottomRight"
+          :title="text"
+          :description="description"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="confirm"
+        >
+          <a-button>BR</a-button>
+        </a-popconfirm>
+      </a-flex>
+    </a-flex>
+  </a-config-provider>
 </template>
 <script lang="ts" setup>
 import { message } from 'ant-design-vue';
-const buttonWidth = 70;
 
 const text = 'Are you sure to delete this task?';
+const description = 'Delete the task';
+const buttonWidth = 64;
 
 const confirm = () => {
   message.info('Clicked on Yes.');
 };
 </script>
-<style scoped>
-:deep(#components-a-popconfirm-demo-placement) .ant-btn {
-  width: 70px;
-  text-align: center;
-  padding: 0;
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-</style>

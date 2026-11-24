@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 11
+order: 14
 title:
   zh-CN: 加载中状态
   en-US: Loading

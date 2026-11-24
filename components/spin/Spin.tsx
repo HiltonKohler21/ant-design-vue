@@ -22,7 +22,7 @@ import Progress from '../progress';
 import omit from '../_util/omit';
 import type { CustomSlotsType } from '../_util/type';
 
-export type SpinSize = 'small' | 'default' | 'large';
+export type SpinSize = 'small' | 'default' | 'medium' | 'large';
 
 export type SpinSemanticName =
   | 'root'

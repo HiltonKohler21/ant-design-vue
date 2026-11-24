@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 1
+order: 2
 title:
   zh-CN: 弹出位置
   en-US: Placement
@@ -8,57 +8,89 @@ title:
 
 ## zh-CN
 
-支持 6 个弹出位置。
+支持 12 个弹出位置。
 
 ## en-US
 
-Support 6 placements.
-
+Support 12 placements.
 </docs>
 
 <template>
-  <div class="components-dropdown-demo-placement">
-    <template v-for="(placement, index) in placements" :key="placement">
-      <a-dropdown :placement="placement">
-        <a-button>{{ placement }}</a-button>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-                1st menu item
-              </a>
-            </a-menu-item>
-            <a-menu-item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-                2nd menu item
-              </a>
-            </a-menu-item>
-            <a-menu-item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-                3rd menu item
-              </a>
-            </a-menu-item>
-          </a-menu>
-        </template>
+  <a-space direction="vertical">
+    <a-space wrap>
+      <a-dropdown :menu="{ items }" placement="bottomLeft">
+        <a-button>bottomLeft</a-button>
       </a-dropdown>
-      <br v-if="index === 2" />
-    </template>
-  </div>
+      <a-dropdown :menu="{ items }" placement="bottom">
+        <a-button>bottom</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="bottomRight">
+        <a-button>bottomRight</a-button>
+      </a-dropdown>
+    </a-space>
+    <a-space wrap>
+      <a-dropdown :menu="{ items }" placement="topLeft">
+        <a-button>topLeft</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="top">
+        <a-button>top</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="topRight">
+        <a-button>topRight</a-button>
+      </a-dropdown>
+    </a-space>
+    <a-space wrap>
+      <a-dropdown :menu="{ items }" placement="leftTop">
+        <a-button>leftTop</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="left">
+        <a-button>left</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="leftBottom">
+        <a-button>leftBottom</a-button>
+      </a-dropdown>
+    </a-space>
+    <a-space wrap>
+      <a-dropdown :menu="{ items }" placement="rightTop">
+        <a-button>rightTop</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="right">
+        <a-button>right</a-button>
+      </a-dropdown>
+      <a-dropdown :menu="{ items }" placement="rightBottom">
+        <a-button>rightBottom</a-button>
+      </a-dropdown>
+    </a-space>
+  </a-space>
 </template>
+
 <script lang="ts" setup>
-import type { DropdownProps } from 'ant-design-vue';
-const placements = [
-  'bottomLeft',
-  'bottom',
-  'bottomRight',
-  'topLeft',
-  'top',
-  'topRight',
-] as DropdownProps['placement'][];
+import { h } from 'vue';
+
+const items = [
+  {
+    key: '1',
+    label: h(
+      'a',
+      { target: '_blank', rel: 'noopener noreferrer', href: 'https://www.antgroup.com' },
+      '1st menu item',
+    ),
+  },
+  {
+    key: '2',
+    label: h(
+      'a',
+      { target: '_blank', rel: 'noopener noreferrer', href: 'https://www.aliyun.com' },
+      '2nd menu item',
+    ),
+  },
+  {
+    key: '3',
+    label: h(
+      'a',
+      { target: '_blank', rel: 'noopener noreferrer', href: 'https://www.luohanacademy.com' },
+      '3rd menu item',
+    ),
+  },
+];
 </script>
-<style scoped>
-.components-dropdown-demo-placement :deep(.ant-btn) {
-  margin-right: 8px;
-  margin-bottom: 8px;
-}
-</style>

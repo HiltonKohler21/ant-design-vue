@@ -1,15 +1,9 @@
-import type { ExtractPropTypes, HTMLAttributes, PropType } from 'vue';
+import type { ExtractPropTypes, HTMLAttributes, Plugin, PropType } from 'vue';
 import { computed, ref, toRef, defineComponent } from 'vue';
 import Popover from '../popover';
 import abstractTooltipProps from '../tooltip/abstractTooltipProps';
 import { initDefaultProps } from '../_util/props-util';
 import type { ButtonProps, LegacyButtonType } from '../button/buttonTypes';
-import { convertLegacyProps } from '../button/buttonTypes';
-import ExclamationCircleFilled from '@ant-design/icons-vue/ExclamationCircleFilled';
-import Button from '../button';
-import { useLocaleReceiver } from '../locale-provider/LocaleReceiver';
-
-import defaultLocale from '../locale/en_US';
 import { anyType, objectType, someType, stringType, withInstall } from '../_util/type';
 import type { CustomSlotsType } from '../_util/type';
 import type { SemanticNames, SemanticStylesMap } from '../_util/semantic';
@@ -27,9 +21,12 @@ import { getTransitionName } from '../_util/transition';
 import { cloneVNodes } from '../_util/vnode';
 import omit from '../_util/omit';
 import { tooltipDefaultProps } from '../tooltip/Tooltip';
-import ActionButton from '../_util/ActionButton';
+import PurePanel, { Overlay } from './PurePanel';
 import usePopconfirmStyle from './style';
 import warning from '../_util/warning';
+
+export type { OverlayProps, PurePanelProps } from './PurePanel';
+export { Overlay, PurePanel };
 
 const resolveSemanticValue = <T,>(
   val: T | ((info: { props: any }) => T) | undefined,
@@ -52,8 +49,8 @@ const popconfirmBaseProps = () => ({
   ...abstractTooltipProps(),
   prefixCls: String,
   content: anyType(),
-  title: anyType<string | number>(),
-  description: anyType<string | number>(),
+  title: anyType(),
+  description: anyType(),
   okType: stringType<LegacyButtonType>('primary'),
   disabled: { type: Boolean, default: false },
   okText: anyType(),
@@ -133,6 +130,7 @@ const Popconfirm = defineComponent({
       },
     });
     const [open, setOpen] = useMergedState(false, {
+      defaultValue: props.defaultOpen ?? props.defaultVisible,
       value: toRef(props, 'open'),
     });
 
@@ -143,6 +141,7 @@ const Popconfirm = defineComponent({
 
       emit('update:open', value);
       emit('openChange', value, e);
+      emit('visibleChange', value, e);
     };
 
     const close = (e: MouseEvent) => {
@@ -159,7 +158,7 @@ const Popconfirm = defineComponent({
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.keyCode === KeyCode.ESC && open) {
+      if (e.keyCode === KeyCode.ESC && open.value) {
         settingOpen(false, e);
       }
     };
@@ -180,9 +179,7 @@ const Popconfirm = defineComponent({
       styles: contextStyles,
     } = useComponentConfig('popconfirm');
     const rootPrefixCls = computed(() => getPrefixCls());
-    const btnPrefixCls = computed(() => getPrefixCls('btn'));
     const [wrapSSR] = usePopconfirmStyle(prefixClsConfirm);
-    const [popconfirmLocale] = useLocaleReceiver('Popconfirm', defaultLocale.Popconfirm);
 
     const resolvedSemantics = computed(() => {
       const mergedTrigger = props.trigger ?? popconfirmConfig.value.trigger ?? 'click';
@@ -219,84 +216,37 @@ const Popconfirm = defineComponent({
     });
 
     const renderOverlay = () => {
-      const {
-        okButtonProps,
-        cancelButtonProps,
-        title = slots.title?.(),
-        description = slots.description?.(),
-        cancelText = slots.cancel?.(),
-        okText = slots.okText?.(),
-        okType,
-        icon = slots.icon?.() || <ExclamationCircleFilled />,
-        showCancel = true,
-      } = props;
       const { mergedClassNames, mergedStyles } = resolvedSemantics.value;
-      const { cancelButton, okButton } = slots;
-      const cancelProps: ButtonProps = {
-        onClick: onCancel,
-        size: 'small',
-        ...cancelButtonProps,
-      };
-      const okProps: ButtonProps = {
-        onClick: onConfirm,
-        ...convertLegacyProps(okType),
-        size: 'small',
-        ...okButtonProps,
-      };
+      const overlaySlots: Record<string, any> = {};
+      if (slots.title) overlaySlots.title = slots.title;
+      if (slots.description) overlaySlots.description = slots.description;
+      if (slots.icon) overlaySlots.icon = slots.icon;
+      if (slots.okText) overlaySlots.okText = slots.okText;
+      if (slots.cancelText) overlaySlots.cancelText = slots.cancelText;
+      if (slots.cancel) overlaySlots.cancel = slots.cancel;
+      if (slots.okButton) overlaySlots.okButton = slots.okButton;
+      if (slots.cancelButton) overlaySlots.cancelButton = slots.cancelButton;
+
       return (
-        <div class={`${prefixClsConfirm.value}-inner-content`} onClick={props.onPopupClick}>
-          <div class={`${prefixClsConfirm.value}-message`}>
-            {icon && (
-              <span
-                class={[`${prefixClsConfirm.value}-message-icon`, mergedClassNames.icon]}
-                style={mergedStyles.icon}
-              >
-                {icon}
-              </span>
-            )}
-            <div
-              class={[
-                `${prefixClsConfirm.value}-message-title`,
-                { [`${prefixClsConfirm.value}-message-title-only`]: !!description },
-                mergedClassNames.title,
-              ]}
-              style={mergedStyles.title}
-            >
-              {title}
-            </div>
-          </div>
-          {description && (
-            <div
-              class={[`${prefixClsConfirm.value}-description`, mergedClassNames.content]}
-              style={mergedStyles.content}
-            >
-              {description}
-            </div>
-          )}
-          <div class={`${prefixClsConfirm.value}-buttons`}>
-            {showCancel ? (
-              cancelButton ? (
-                cancelButton(cancelProps)
-              ) : (
-                <Button {...cancelProps}>{cancelText || popconfirmLocale.value.cancelText}</Button>
-              )
-            ) : null}
-            {okButton ? (
-              okButton(okProps)
-            ) : (
-              <ActionButton
-                buttonProps={{ size: 'small', ...convertLegacyProps(okType), ...okButtonProps }}
-                actionFn={onConfirm}
-                close={close}
-                prefixCls={btnPrefixCls.value}
-                quitOnNullishReturnValue
-                emitEvent
-              >
-                {okText || popconfirmLocale.value.okText}
-              </ActionButton>
-            )}
-          </div>
-        </div>
+        <Overlay
+          prefixCls={prefixClsConfirm.value}
+          title={props.title}
+          description={props.description}
+          icon={props.icon}
+          okType={props.okType}
+          okText={props.okText}
+          cancelText={props.cancelText}
+          okButtonProps={props.okButtonProps}
+          cancelButtonProps={props.cancelButtonProps}
+          showCancel={props.showCancel}
+          close={close}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          onPopupClick={props.onPopupClick}
+          classNames={mergedClassNames}
+          styles={mergedStyles}
+          v-slots={overlaySlots}
+        />
       );
     };
 
@@ -329,11 +279,19 @@ const Popconfirm = defineComponent({
       const otherProps = omit(restProps, [
         'title',
         'content',
+        'description',
+        'icon',
         'cancelText',
         'okText',
+        'okType',
+        'okButtonProps',
+        'cancelButtonProps',
+        'showCancel',
         'onUpdate:open',
+        'onVisibleChange',
         'onConfirm',
         'onCancel',
+        'onPopupClick',
         'prefixCls',
         'classNames',
         'styles',
@@ -378,4 +336,10 @@ const Popconfirm = defineComponent({
     };
   },
 });
-export default withInstall(Popconfirm);
+
+(Popconfirm as any)._InternalPanelDoNotUseOrYouWillBeFired = PurePanel;
+
+export default withInstall(Popconfirm) as typeof Popconfirm &
+  Plugin & {
+    readonly _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
+  };

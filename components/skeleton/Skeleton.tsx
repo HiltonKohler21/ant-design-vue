@@ -2,6 +2,8 @@ import type { ExtractPropTypes, PropType } from 'vue';
 import { defineComponent } from 'vue';
 import classNames from '../_util/classNames';
 import { initDefaultProps } from '../_util/props-util';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
 import type { SkeletonAvatarProps as AvatarProps } from './Avatar';
 import type { SkeletonTitleProps } from './Title';
 import Title from './Title';
@@ -13,6 +15,23 @@ import useStyle from './style';
 
 /* This only for skeleton internal. */
 type SkeletonAvatarProps = Omit<AvatarProps, 'active'>;
+
+export type SkeletonSemanticName =
+  | 'root'
+  | 'header'
+  | 'section'
+  | 'avatar'
+  | 'title'
+  | 'paragraph'
+  | 'content';
+export type SkeletonSemanticClassNames = SemanticClassNames<SkeletonSemanticName>;
+export type SkeletonSemanticStyles = SemanticStyles<SkeletonSemanticName>;
+export type SkeletonClassNamesType =
+  | SkeletonSemanticClassNames
+  | ((info: { props: SkeletonProps }) => SkeletonSemanticClassNames);
+export type SkeletonStylesType =
+  | SkeletonSemanticStyles
+  | ((info: { props: SkeletonProps }) => SkeletonSemanticStyles);
 
 export const skeletonProps = () => ({
   rootClassName: String,
@@ -32,6 +51,14 @@ export const skeletonProps = () => ({
     default: undefined as SkeletonParagraphProps | boolean,
   },
   round: { type: Boolean, default: undefined },
+  classNames: {
+    type: [Object, Function] as PropType<SkeletonClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<SkeletonStylesType>,
+    default: undefined,
+  },
 });
 
 export type SkeletonProps = Partial<ExtractPropTypes<ReturnType<typeof skeletonProps>>>;
@@ -107,6 +134,20 @@ const Skeleton = defineComponent({
         const hasTitle = !!title || (title as string) === '';
         const hasParagraph = !!paragraph || (paragraph as string) === '';
 
+        const mergedPropsForSemantic: SkeletonProps = {
+          ...props,
+          avatar,
+          title,
+          paragraph,
+        };
+        const [mergedClassNames, mergedStyles] = mergeSemantic<
+          SkeletonSemanticClassNames,
+          SkeletonSemanticStyles,
+          SkeletonProps
+        >([contextClassNames.value, props.classNames], [contextStyles.value, props.styles], {
+          props: mergedPropsForSemantic,
+        });
+
         // Avatar
         let avatarNode;
         if (hasAvatar) {
@@ -117,8 +158,15 @@ const Skeleton = defineComponent({
           };
 
           avatarNode = (
-            <div class={`${pre}-header`}>
-              <Element {...avatarProps} />
+            <div
+              class={classNames(`${pre}-header`, mergedClassNames.header)}
+              style={mergedStyles.header}
+            >
+              <Element
+                {...avatarProps}
+                class={mergedClassNames.avatar}
+                style={mergedStyles.avatar}
+              />
             </div>
           );
         }
@@ -134,7 +182,9 @@ const Skeleton = defineComponent({
               ...getComponentProps(title),
             };
 
-            $title = <Title {...titleProps} />;
+            $title = (
+              <Title {...titleProps} class={mergedClassNames.title} style={mergedStyles.title} />
+            );
           }
 
           // Paragraph
@@ -146,11 +196,29 @@ const Skeleton = defineComponent({
               ...getComponentProps(paragraph),
             };
 
-            paragraphNode = <Paragraph {...paragraphProps} />;
+            paragraphNode = (
+              <Paragraph
+                {...paragraphProps}
+                class={mergedClassNames.paragraph}
+                style={mergedStyles.paragraph}
+              />
+            );
           }
 
+          const sectionStyle =
+            mergedStyles.section || mergedStyles.content
+              ? [mergedStyles.section, mergedStyles.content]
+              : undefined;
+
           contentNode = (
-            <div class={`${pre}-content`}>
+            <div
+              class={classNames(
+                `${pre}-content`,
+                mergedClassNames.section,
+                mergedClassNames.content,
+              )}
+              style={sectionStyle}
+            >
               {$title}
               {paragraphNode}
             </div>
@@ -161,7 +229,7 @@ const Skeleton = defineComponent({
           pre,
           props.rootClassName,
           contextClassName.value,
-          contextClassNames.value.root,
+          mergedClassNames.root,
           {
             [`${pre}-with-avatar`]: hasAvatar,
             [`${pre}-active`]: active,
@@ -171,8 +239,13 @@ const Skeleton = defineComponent({
           },
         );
 
+        const rootStyle =
+          contextStyle.value || mergedStyles.root
+            ? [contextStyle.value, mergedStyles.root]
+            : undefined;
+
         return wrapSSR(
-          <div class={cls} style={[contextStyle.value, contextStyles.value.root]}>
+          <div class={cls} style={rootStyle}>
             {avatarNode}
             {contentNode}
           </div>,

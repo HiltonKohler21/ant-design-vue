@@ -18,9 +18,13 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*-0kxQrbHx2kAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | extra | 操作区 | slot | - |  |
 | icon | 自定义 icon | slot | - |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | status | 结果的状态,决定图标和颜色 | `success` \| `error` \| `info` \| `warning` \| `404` \| `403` \| `500` | `'info'` |  |
+| styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | subTitle | subTitle 文字 | string \| VNode \| slot | - |  |
 | title | title 文字 | string \| VNode \| slot | - |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `icon` \| `title` \| `subTitle` \| `extra` \| `body`。

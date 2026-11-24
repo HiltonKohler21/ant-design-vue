@@ -9,6 +9,7 @@ import type { Ref } from 'vue';
 export interface ComponentToken {
   zIndexPopup: number;
   colorBgDefault: string;
+  maxWidth?: number;
 }
 
 interface TooltipToken extends FullToken<'Tooltip'> {
@@ -135,6 +136,8 @@ const genTooltipStyle: GenerateStyle<TooltipToken> = token => {
       [`${componentCls}-pure`]: {
         position: 'relative',
         maxWidth: 'none',
+        margin: token.sizePopupArrow,
+        display: 'inline-block',
       },
     },
 
@@ -176,7 +179,7 @@ export default (prefixCls: Ref<string>, injectStyle: Ref<boolean>): UseComponent
 
       const TooltipToken = mergeToken<TooltipToken>(token, {
         // default variables
-        tooltipMaxWidth: 250,
+        tooltipMaxWidth: token.maxWidth ?? 250,
         tooltipColor: colorTextLightSolid,
         tooltipBorderRadius: borderRadius,
         tooltipBg: colorBgDefault,
@@ -188,6 +191,7 @@ export default (prefixCls: Ref<string>, injectStyle: Ref<boolean>): UseComponent
     ({ zIndexPopupBase, colorBgSpotlight }) => ({
       zIndexPopup: zIndexPopupBase + 70,
       colorBgDefault: colorBgSpotlight,
+      maxWidth: 250,
     }),
   );
 

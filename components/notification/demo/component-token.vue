@@ -35,7 +35,7 @@ const CustomThemeDemo = defineComponent({
 
     const openNotificationWithIcon = (type: NotificationType) => {
       api[type]({
-        message: `${type.charAt(0).toUpperCase() + type.slice(1)} Notification`,
+        title: `${type.charAt(0).toUpperCase() + type.slice(1)} Notification`,
         description:
           'This notification uses custom component tokens for enhanced background colors.',
         duration: 0,
@@ -85,7 +85,7 @@ const theme: ConfigProviderProps['theme'] = {
       colorErrorBg: 'linear-gradient(30deg, #ffccc7, #fff1f0)',
       colorInfoBg: 'linear-gradient(30deg, #bae0ff, #e6f4ff)',
       colorWarningBg: 'linear-gradient(30deg, #ffffb8, #feffe6)',
-    } as Record<string, any>,
+    },
   },
 };
 </script>

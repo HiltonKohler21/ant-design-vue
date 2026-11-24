@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 8
 title:
   zh-CN: 手动更新和移除
   en-US: Manual to update destroy

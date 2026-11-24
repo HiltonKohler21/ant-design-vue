@@ -8,27 +8,29 @@ title:
 
 ## zh-CN
 
-最简单的用法。
+最简单的用法，支持确认标题和描述。
 
 ## en-US
 
-The basic example.
+The basic example supports the title and description props of confirmation.
 
 </docs>
 
 <template>
   <a-popconfirm
-    title="Are you sure delete this task?"
+    title="Delete the task"
+    description="Are you sure to delete this task?"
     ok-text="Yes"
     cancel-text="No"
     @confirm="confirm"
     @cancel="cancel"
   >
-    <a href="#">Delete</a>
+    <a-button danger>Delete</a-button>
   </a-popconfirm>
 </template>
 <script lang="ts" setup>
 import { message } from 'ant-design-vue';
+
 const confirm = (e: MouseEvent) => {
   console.log(e);
   message.success('Click on Yes');

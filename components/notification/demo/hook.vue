@@ -3,7 +3,7 @@
 order: 0
 title:
   zh-CN: Hooks 调用（推荐）
-  en-US: Hooks Usage (Recommend)
+  en-US: Hooks usage (recommended)
 ---
 
 ## zh-CN
@@ -16,28 +16,28 @@ Use `notification.useNotification` to get `contextHolder` with context accessibl
 
 </docs>
 <template>
+  <contextHolder />
   <a-space>
-    <a-button type="primary" @click="() => open('topLeft')">
-      <RadiusUpleftOutlined />
+    <a-button type="primary" @click="() => openNotification('topLeft')">
+      <template #icon><RadiusUpleftOutlined /></template>
       topLeft
     </a-button>
-    <a-button type="primary" @click="() => open('topRight')">
-      <RadiusUprightOutlined />
+    <a-button type="primary" @click="() => openNotification('topRight')">
+      <template #icon><RadiusUprightOutlined /></template>
       topRight
     </a-button>
   </a-space>
   <a-divider />
   <a-space>
-    <a-button type="primary" @click="() => open('bottomLeft')">
-      <RadiusBottomleftOutlined />
+    <a-button type="primary" @click="() => openNotification('bottomLeft')">
+      <template #icon><RadiusBottomleftOutlined /></template>
       bottomLeft
     </a-button>
-    <a-button type="primary" @click="() => open('bottomRight')">
-      <RadiusBottomrightOutlined />
+    <a-button type="primary" @click="() => openNotification('bottomRight')">
+      <template #icon><RadiusBottomrightOutlined /></template>
       bottomRight
     </a-button>
   </a-space>
-  <contextHolder />
 </template>
 
 <script lang="ts" setup>
@@ -47,14 +47,15 @@ import {
   RadiusUpleftOutlined,
   RadiusUprightOutlined,
 } from '@ant-design/icons-vue';
-import { NotificationPlacement, notification } from 'ant-design-vue';
+import { notification } from 'ant-design-vue';
+import type { NotificationPlacement } from 'ant-design-vue';
+
 const [api, contextHolder] = notification.useNotification();
-const open = (placement: NotificationPlacement) => openNotification(placement);
+
 const openNotification = (placement: NotificationPlacement) => {
   api.info({
-    message: `Notification ${placement}`,
-    description:
-      'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+    title: `Notification ${placement}`,
+    description: 'Hello, Ant Design!',
     placement,
   });
 };

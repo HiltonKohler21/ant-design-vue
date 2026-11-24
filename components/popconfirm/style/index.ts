@@ -12,18 +12,38 @@ const genBaseStyle: GenerateStyle<PopconfirmToken> = token => {
   const {
     componentCls,
     iconCls,
+    antCls,
     zIndexPopup,
     colorText,
+    colorTextHeading,
     colorWarning,
     marginXS,
     fontSize,
     fontWeightStrong,
     lineHeight,
+    sizePopupArrow,
   } = token;
 
   return {
     [componentCls]: {
       zIndex: zIndexPopup,
+
+      [`&${antCls}-popover`]: {
+        fontSize,
+      },
+
+      [`&${antCls}-popover-pure`]: {
+        position: 'relative',
+        maxWidth: 'none',
+        margin: sizePopupArrow,
+        display: 'inline-block',
+        verticalAlign: 'top',
+
+        [`${antCls}-popover-content`]: {
+          display: 'block',
+          width: '100%',
+        },
+      },
 
       [`${componentCls}-inner-content`]: {
         color: colorText,
@@ -38,8 +58,11 @@ const genBaseStyle: GenerateStyle<PopconfirmToken> = token => {
         flexWrap: 'nowrap',
         alignItems: 'start',
 
-        [`> ${componentCls}-message-icon ${iconCls}`]: {
+        [`> ${componentCls}-message-icon`]: {
           color: colorWarning,
+        },
+
+        [`> ${componentCls}-message-icon ${iconCls}`]: {
           fontSize,
           flex: 'none',
           lineHeight: 1,
@@ -59,6 +82,17 @@ const genBaseStyle: GenerateStyle<PopconfirmToken> = token => {
 
         '&-title-only': {
           fontWeight: fontWeightStrong,
+          color: colorTextHeading,
+        },
+
+        [`&${componentCls}-message-no-icon`]: {
+          [`${componentCls}-message-title`]: {
+            marginInlineStart: 0,
+          },
+
+          [`+ ${componentCls}-description`]: {
+            marginInlineStart: 0,
+          },
         },
       },
 
@@ -72,6 +106,7 @@ const genBaseStyle: GenerateStyle<PopconfirmToken> = token => {
 
       [`${componentCls}-buttons`]: {
         textAlign: 'end',
+        whiteSpace: 'nowrap',
 
         button: {
           marginInlineStart: marginXS,

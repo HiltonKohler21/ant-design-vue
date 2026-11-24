@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 3
+order: 4
 title:
   zh-CN: Arrow.pointAtCenter
   en-US: Arrow.pointAtCenter
@@ -17,7 +17,7 @@ The arrow points to the center of the target element, which set `arrowPointAtCen
 
 </docs>
 <template>
-  <a-space>
+  <a-space wrap>
     <a-popover placement="topLeft">
       <template #content>
         <p>Content</p>

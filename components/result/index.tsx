@@ -1,5 +1,5 @@
 import type { App, CSSProperties, VNodeTypes, Plugin, ExtractPropTypes, PropType } from 'vue';
-import { defineComponent, computed } from 'vue';
+import { defineComponent } from 'vue';
 import PropTypes from '../_util/vue-types';
 import CheckCircleFilled from '@ant-design/icons-vue/CheckCircleFilled';
 import CloseCircleFilled from '@ant-design/icons-vue/CloseCircleFilled';
@@ -11,6 +11,8 @@ import unauthorized from './unauthorized';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import classNames from '../_util/classNames';
 import type { CustomSlotsType } from '../_util/type';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
 
 import useStyle from './style';
 
@@ -30,6 +32,16 @@ export const ExceptionMap = {
 export type ExceptionStatusType = 403 | 404 | 500 | '403' | '404' | '500';
 export type ResultStatusType = ExceptionStatusType | keyof typeof IconMap;
 
+export type ResultSemanticName = 'root' | 'title' | 'subTitle' | 'body' | 'extra' | 'icon';
+export type ResultSemanticClassNames = SemanticClassNames<ResultSemanticName>;
+export type ResultSemanticStyles = SemanticStyles<ResultSemanticName>;
+export type ResultClassNamesType =
+  | ResultSemanticClassNames
+  | ((info: { props: ResultProps }) => ResultSemanticClassNames);
+export type ResultStylesType =
+  | ResultSemanticStyles
+  | ((info: { props: ResultProps }) => ResultSemanticStyles);
+
 // ExceptionImageMap keys
 const ExceptionStatus = Object.keys(ExceptionMap);
 
@@ -41,26 +53,63 @@ export const resultProps = () => ({
   title: PropTypes.any,
   subTitle: PropTypes.any,
   extra: PropTypes.any,
+  classNames: {
+    type: [Object, Function] as PropType<ResultClassNamesType>,
+    default: undefined,
+  },
+  styles: {
+    type: [Object, Function] as PropType<ResultStylesType>,
+    default: undefined,
+  },
 });
 
 export type ResultProps = Partial<ExtractPropTypes<ReturnType<typeof resultProps>>>;
 
-const renderIcon = (prefixCls: string, { status, icon }) => {
+const renderIcon = (
+  prefixCls: string,
+  {
+    status,
+    icon,
+    className,
+    style,
+  }: {
+    status: ResultStatusType;
+    icon: any;
+    className?: string;
+    style?: CSSProperties;
+  },
+) => {
   if (ExceptionStatus.includes(`${status}`)) {
     const SVGComponent = ExceptionMap[status];
     return (
-      <div class={`${prefixCls}-icon ${prefixCls}-image`}>
+      <div class={classNames(`${prefixCls}-icon`, `${prefixCls}-image`, className)} style={style}>
         <SVGComponent />
       </div>
     );
   }
+  if (icon === null || icon === false) {
+    return null;
+  }
   const IconComponent = IconMap[status];
   const iconNode = icon || <IconComponent />;
-  return <div class={`${prefixCls}-icon`}>{iconNode}</div>;
+  return (
+    <div class={classNames(`${prefixCls}-icon`, className)} style={style}>
+      {iconNode}
+    </div>
+  );
 };
 
-const renderExtra = (prefixCls: string, extra: VNodeTypes) =>
-  extra && <div class={`${prefixCls}-extra`}>{extra}</div>;
+const renderExtra = (
+  prefixCls: string,
+  extra: VNodeTypes,
+  className?: string,
+  style?: CSSProperties,
+) =>
+  extra && (
+    <div class={classNames(`${prefixCls}-extra`, className)} style={style}>
+      {extra}
+    </div>
+  );
 
 const Result = defineComponent({
   compatConfig: { MODE: 3 },
@@ -85,35 +134,71 @@ const Result = defineComponent({
 
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
-    const className = computed(() =>
-      classNames(
-        prefixCls.value,
-        hashId.value,
-        `${prefixCls.value}-${props.status}`,
-        contextClassName.value,
-        contextClassNames.value.root,
-        {
-          [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-        },
-      ),
-    );
     return () => {
       const title = props.title ?? slots.title?.();
       const subTitle = props.subTitle ?? slots.subTitle?.();
       const icon = props.icon ?? slots.icon?.();
       const extra = props.extra ?? slots.extra?.();
       const pre = prefixCls.value;
+
+      const mergedPropsForSemantic: ResultProps = {
+        ...props,
+        status: props.status,
+      };
+      const [mergedClassNames, mergedStyles] = mergeSemantic<
+        ResultSemanticClassNames,
+        ResultSemanticStyles,
+        ResultProps
+      >([contextClassNames.value, props.classNames], [contextStyles.value, props.styles], {
+        props: mergedPropsForSemantic,
+      });
+
+      const rootCls = classNames(
+        pre,
+        hashId.value,
+        `${pre}-${props.status}`,
+        contextClassName.value,
+        mergedClassNames.root,
+        {
+          [`${pre}-rtl`]: direction.value === 'rtl',
+        },
+      );
+
       return wrapSSR(
         <div
           {...attrs}
-          class={[className.value, props.rootClassName, attrs.class]}
-          style={[contextStyle.value, contextStyles.value.root, attrs.style as CSSProperties]}
+          class={[rootCls, props.rootClassName, attrs.class]}
+          style={[contextStyle.value, mergedStyles.root, attrs.style as CSSProperties]}
         >
-          {renderIcon(pre, { status: props.status, icon })}
-          <div class={`${pre}-title`}>{title}</div>
-          {subTitle && <div class={`${pre}-subtitle`}>{subTitle}</div>}
-          {renderExtra(pre, extra)}
-          {slots.default && <div class={`${pre}-content`}>{slots.default()}</div>}
+          {renderIcon(pre, {
+            status: props.status,
+            icon,
+            className: mergedClassNames.icon,
+            style: mergedStyles.icon,
+          })}
+          <div
+            class={classNames(`${pre}-title`, mergedClassNames.title)}
+            style={mergedStyles.title}
+          >
+            {title}
+          </div>
+          {subTitle && (
+            <div
+              class={classNames(`${pre}-subtitle`, mergedClassNames.subTitle)}
+              style={mergedStyles.subTitle}
+            >
+              {subTitle}
+            </div>
+          )}
+          {renderExtra(pre, extra, mergedClassNames.extra, mergedStyles.extra)}
+          {slots.default && (
+            <div
+              class={classNames(`${pre}-content`, mergedClassNames.body)}
+              style={mergedStyles.body}
+            >
+              {slots.default()}
+            </div>
+          )}
         </div>,
       );
     };

@@ -1,101 +1,76 @@
 <docs>
 ---
-order: 4
+order: 6
 title:
-  zh-CN: 使用useModal获取上下文
-  en-US: Use useModal to get context
+  zh-CN: 使用 hooks 获得上下文
+  en-US: Use hooks to get context
 ---
 
 ## zh-CN
 
-通过 `Modal.useModal` 创建支持读取 context 的 `contextHolder`。
+通过 `Modal.useModal` 创建支持读取 context 的 `contextHolder`。其中仅有 hooks 方法支持 Promise `await` 操作。
 
 ## en-US
 
-Use `Modal.useModal` to get `contextHolder` with context accessible issue.
-
+Use `Modal.useModal` to get `contextHolder` with context accessible issue. Only hooks method support Promise `await` operation.
 </docs>
 
 <template>
-  <a-space wrap>
+  <a-space>
     <a-button @click="showConfirm">Confirm</a-button>
-    <a-button @click="showPromiseConfirm">With promise</a-button>
-    <a-button type="dashed" @click="showDeleteConfirm">Delete</a-button>
-    <a-button type="dashed" @click="showPropsConfirm">With extra props</a-button>
-    <contextHolder />
+    <a-button @click="showWarning">Warning</a-button>
+    <a-button @click="showInfo">Info</a-button>
+    <a-button @click="showError">Error</a-button>
   </a-space>
+  <contextHolder />
+  <UnreachableProvider />
 </template>
 
 <script lang="ts" setup>
+import { defineComponent, h, inject, provide } from 'vue';
 import { Modal } from 'ant-design-vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-import { h } from 'vue';
-const [modal, contextHolder] = Modal.useModal();
-const showConfirm = () => {
-  modal.confirm({
-    title: 'Do you Want to delete these items?',
-    icon: h(ExclamationCircleOutlined),
-    content: h('div', { style: 'color:red;' }, 'Some descriptions'),
-    onOk() {
-      console.log('OK');
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-    class: 'test',
-  });
-};
-const showDeleteConfirm = () => {
-  modal.confirm({
-    title: 'Are you sure delete this task?',
-    icon: h(ExclamationCircleOutlined),
-    content: 'Some descriptions',
-    okText: 'Yes',
-    okType: 'danger',
-    cancelText: 'No',
-    onOk() {
-      console.log('OK');
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-  });
-};
-const showPropsConfirm = () => {
-  modal.confirm({
-    title: 'Are you sure delete this task?',
-    icon: h(ExclamationCircleOutlined),
-    content: 'Some descriptions',
-    okText: 'Yes',
-    okType: 'danger',
-    okButtonProps: {
-      disabled: true,
-    },
-    cancelText: 'No',
-    onOk() {
-      console.log('OK');
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-  });
+
+const ReachableContext = Symbol('ReachableContext');
+const UnreachableContext = Symbol('UnreachableContext');
+
+provide(ReachableContext, 'Light');
+
+const UnreachableProvider = defineComponent({
+  setup() {
+    provide(UnreachableContext, 'Bamboo');
+    return () => null;
+  },
+});
+
+const ModalContent = defineComponent({
+  setup() {
+    const reachable = inject<string | null>(ReachableContext, null);
+    const unreachable = inject<string | null>(UnreachableContext, null);
+    return () => [`Reachable: ${reachable}!`, h('br'), `Unreachable: ${unreachable}!`];
+  },
+});
+
+const config = {
+  title: 'Use Hook!',
+  content: h(ModalContent),
 };
 
-function showPromiseConfirm() {
-  modal.confirm({
-    title: 'Do you want to delete these items?',
-    icon: h(ExclamationCircleOutlined),
-    content: 'When clicked the OK button, this dialog will be closed after 1 second',
-    async onOk() {
-      try {
-        return await new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        });
-      } catch {
-        return console.log('Oops errors!');
-      }
-    },
-    onCancel() {},
-  });
-}
+const [modal, contextHolder] = Modal.useModal();
+
+const showConfirm = async () => {
+  const confirmed = await modal.confirm(config);
+  console.log('Confirmed: ', confirmed);
+};
+
+const showWarning = () => {
+  modal.warning(config);
+};
+
+const showInfo = () => {
+  modal.info(config);
+};
+
+const showError = () => {
+  modal.error(config);
+};
 </script>

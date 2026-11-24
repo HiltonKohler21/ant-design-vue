@@ -9,20 +9,20 @@ title:
 
 ## zh-CN
 
-通过 `showProgress` 显示自动关闭的倒计时进度条，并可通过 `pauseOnHover` 控制鼠标悬停时是否暂停倒计时。
+显示自动关闭通知框的进度条，并可通过 `pauseOnHover` 控制鼠标悬停时是否暂停倒计时。
 
 ## en-US
 
-Display an auto-close progress bar via `showProgress`, and control whether hovering pauses the timer with `pauseOnHover`.
+Show progress bar for auto-closing notification, and control whether hovering pauses the timer with `pauseOnHover`.
 
 </docs>
 
 <template>
+  <contextHolder />
   <a-space>
     <a-button type="primary" @click="openNotification(true)">Pause on hover</a-button>
     <a-button type="primary" @click="openNotification(false)">Don't pause on hover</a-button>
   </a-space>
-  <contextHolder />
 </template>
 
 <script lang="ts" setup>
@@ -32,7 +32,7 @@ const [api, contextHolder] = notification.useNotification();
 
 const openNotification = (pauseOnHover: boolean) => {
   api.open({
-    message: 'Notification Title',
+    title: 'Notification Title',
     description:
       'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
     showProgress: true,

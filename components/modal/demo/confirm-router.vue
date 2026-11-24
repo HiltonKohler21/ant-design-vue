@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 13
+order: 16
 title:
   zh-CN: 销毁确认对话框
   en-US: destroy confirmation modal dialog

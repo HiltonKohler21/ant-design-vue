@@ -61,6 +61,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*bCbPTJ7LQngAAA
 | afterOpenChange | 显示隐藏的回调（动画结束后） | (open: boolean) => void | 4.3.0 |
 | openChange      | 显示隐藏的回调               | (open: boolean) => void | 4.0   |
 
+### 方法
+
+| 名称         | 说明                                           | 版本  |
+| ------------ | ---------------------------------------------- | ----- |
+| forceAlign() | 手动触发重新对齐（如异步加载数据或布局变化后） | 4.3.0 |
+
 ## 注意
 
 请确保 `Tooltip` 的子元素能接受 `mouseenter`、`mouseleave`、`focus`、`click` 事件。

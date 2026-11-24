@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 3
 title:
   zh-CN: 自定义配置
   en-US: Custom configuration

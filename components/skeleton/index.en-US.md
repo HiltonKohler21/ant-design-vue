@@ -24,11 +24,15 @@ Provide a placeholder while you wait for content to load, or to visualise conten
 | --- | --- | --- | --- | --- |
 | active | Show animation effect | boolean | false |  |
 | avatar | Show avatar placeholder | boolean \| [SkeletonAvatarProps](#skeletonavatarprops) | false |  |
+| classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | loading | Display the skeleton when `true` | boolean | - |  |
 | paragraph | Show paragraph placeholder | boolean \| [SkeletonParagraphProps](#skeletonparagraphprops) | true |  |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | round | Show paragraph and title radius when `true` | boolean | false |  |
+| styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | Show title placeholder | boolean \| [SkeletonTitleProps](#skeletontitleprops) | true |  |
+
+> Supported `SemanticDOM` keys: `root` \| `header` \| `section` \| `avatar` \| `title` \| `paragraph` for `Skeleton`, and `root` \| `content` for `Skeleton.Avatar` / `Skeleton.Button` / `Skeleton.Input` / `Skeleton.Image` / `Skeleton.Node`.
 
 ### SkeletonAvatarProps
 

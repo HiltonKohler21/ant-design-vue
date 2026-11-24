@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 6
+order: 8
 title:
   zh-CN: 静态方法（不推荐）
   en-US: Static method (deprecated)

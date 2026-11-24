@@ -12,11 +12,12 @@ title:
 
 ## en-US
 
-The icon can be customized to any vue node or (h) => vue node.
+The icon can be customized to any vue node or () => vue node.
 
 </docs>
 
 <template>
+  <contextHolder />
   <a-button type="primary" @click="openNotification">Open the notification box</a-button>
 </template>
 <script lang="ts" setup>
@@ -24,12 +25,14 @@ import { SmileOutlined } from '@ant-design/icons-vue';
 import { notification } from 'ant-design-vue';
 import { h } from 'vue';
 
+const [api, contextHolder] = notification.useNotification();
+
 const openNotification = () => {
-  notification.open({
-    message: 'Notification Title',
+  api.open({
+    title: 'Notification Title',
     description:
       'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-    icon: () => h(SmileOutlined, { style: 'color: #108ee9' }),
+    icon: () => h(SmileOutlined, { style: { color: '#108ee9' } }),
   });
 };
 </script>

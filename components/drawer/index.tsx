@@ -1,4 +1,4 @@
-import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
+import type { CSSProperties, ExtractPropTypes, Plugin, PropType } from 'vue';
 import {
   inject,
   nextTick,
@@ -18,17 +18,21 @@ import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { objectType, withInstall } from '../_util/type';
 import type { CustomSlotsType, VueNode } from '../_util/type';
-import type { DialogSemanticClassNames, DialogSemanticStyles } from '../_util/semantic';
+import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMergeSemantic';
 import omit from '../_util/omit';
 import devWarning from '../vc-util/devWarning';
 import type { KeyboardEventHandler, MouseEventHandler } from '../_util/EventInterface';
 import useStyle from './style';
+import PurePanel from './PurePanel';
 import Skeleton from '../skeleton';
 import { NoCompactStyle } from '../space/Compact';
 
 import isNumeric from '../_util/isNumeric';
 import { getTransitionName, getTransitionProps } from '../_util/transition';
 import { usePanelRef } from '../watermark/context';
+
+export type { DrawerPurePanelProps } from './PurePanel';
 
 type ILevelMove = number | [number, number];
 
@@ -37,6 +41,29 @@ export type placementType = (typeof PlacementTypes)[number];
 
 const SizeTypes = ['default', 'large'] as const;
 export type sizeType = (typeof SizeTypes)[number];
+
+export type DrawerSemanticName =
+  | 'root'
+  | 'mask'
+  | 'wrapper'
+  | 'section'
+  | 'content'
+  | 'header'
+  | 'title'
+  | 'extra'
+  | 'body'
+  | 'footer'
+  | 'dragger'
+  | 'close';
+
+export type DrawerSemanticClassNames = SemanticClassNames<DrawerSemanticName>;
+export type DrawerSemanticStyles = SemanticStyles<DrawerSemanticName>;
+export type DrawerClassNamesType =
+  | DrawerSemanticClassNames
+  | ((info: { props: DrawerProps }) => DrawerSemanticClassNames);
+export type DrawerStylesType =
+  | DrawerSemanticStyles
+  | ((info: { props: DrawerProps }) => DrawerSemanticStyles);
 
 export interface PushState {
   distance: string | number;
@@ -78,12 +105,18 @@ export const drawerProps = () => ({
     default: undefined,
   },
   closeIcon: PropTypes.any,
-  /** 语义化 classNames（antd 5.25+）：mask / wrapper / content / header / body / footer */
-  classNames: objectType<DialogSemanticClassNames>(),
+  /** 语义化 classNames（支持对象或函数） */
+  classNames: {
+    type: [Object, Function] as PropType<DrawerClassNamesType>,
+    default: undefined,
+  },
   loading: { type: Boolean, default: false },
   ariaId: String,
-  /** 语义化 styles（antd 5.25+）：mask / wrapper / content / header / body / footer */
-  styles: objectType<DialogSemanticStyles>(),
+  /** 语义化 styles（支持对象或函数） */
+  styles: {
+    type: [Object, Function] as PropType<DrawerStylesType>,
+    default: undefined,
+  },
   destroyOnClose: { type: Boolean, default: undefined },
   /** @deprecated Please use `destroyOnHidden` instead */
   destroyOnHidden: { type: Boolean, default: undefined },
@@ -105,10 +138,12 @@ export const drawerProps = () => ({
   size: {
     type: [String, Number] as PropType<sizeType | number | string>,
   },
+  maxSize: Number,
   resizable: {
     type: [Boolean, Object] as PropType<DrawerResizable>,
     default: undefined,
   },
+  drawerRender: Function as PropType<(node: VueNode) => VueNode>,
   drawerStyle: objectType<CSSProperties>(),
   headerStyle: objectType<CSSProperties>(),
   bodyStyle: objectType<CSSProperties>(),
@@ -156,7 +191,6 @@ const Drawer = defineComponent({
   name: 'ADrawer',
   inheritAttrs: false,
   props: initDefaultProps(drawerProps(), {
-    closable: true,
     placement: 'right',
     level: null,
     keyboard: true,
@@ -211,22 +245,6 @@ const Drawer = defineComponent({
       props,
     );
     const drawerConfig = computed(() => (configProvider.drawer?.value as any) || {});
-    const mergedClassNames = computed<DialogSemanticClassNames>(() => ({
-      mask: classnames(drawerConfig.value.classNames?.mask, props.classNames?.mask),
-      wrapper: classnames(drawerConfig.value.classNames?.wrapper, props.classNames?.wrapper),
-      content: classnames(drawerConfig.value.classNames?.content, props.classNames?.content),
-      header: classnames(drawerConfig.value.classNames?.header, props.classNames?.header),
-      body: classnames(drawerConfig.value.classNames?.body, props.classNames?.body),
-      footer: classnames(drawerConfig.value.classNames?.footer, props.classNames?.footer),
-    }));
-    const mergedStyles = computed<DialogSemanticStyles>(() => ({
-      mask: { ...drawerConfig.value.styles?.mask, ...props.styles?.mask },
-      wrapper: { ...drawerConfig.value.styles?.wrapper, ...props.styles?.wrapper },
-      content: { ...drawerConfig.value.styles?.content, ...props.styles?.content },
-      header: { ...drawerConfig.value.styles?.header, ...props.styles?.header },
-      body: { ...drawerConfig.value.styles?.body, ...props.styles?.body },
-      footer: { ...drawerConfig.value.styles?.footer, ...props.styles?.footer },
-    }));
     const panelRef = usePanelRef();
     const wrapperBodyRef = shallowRef<HTMLElement | null>(null);
     const setWrapperBodyRef = (el: any) => {
@@ -368,7 +386,12 @@ const Drawer = defineComponent({
 
     // ========================== Closable ==========================
     const mergedClosableInfo = computed(() => {
-      const rawClosable = props.closable;
+      const rawClosable =
+        props.closable !== undefined
+          ? props.closable
+          : drawerConfig.value.closable !== undefined
+          ? drawerConfig.value.closable
+          : true;
       const obj =
         rawClosable && typeof rawClosable === 'object' ? (rawClosable as DrawerClosableType) : null;
       const enabled = rawClosable !== false;
@@ -383,6 +406,7 @@ const Drawer = defineComponent({
         });
       }
       return {
+        raw: rawClosable,
         enabled,
         disabled,
         placement,
@@ -504,7 +528,9 @@ const Drawer = defineComponent({
         } else {
           nextSize = startSize - delta;
         }
-        const clampedSize = Math.max(0, Math.round(nextSize));
+        const rawSize = Math.max(0, Math.round(nextSize));
+        const clampedSize =
+          props.maxSize !== undefined ? Math.min(rawSize, props.maxSize) : rawSize;
         dragSize.value = clampedSize;
         resizableConfig?.onResize?.(clampedSize);
       };
@@ -580,65 +606,11 @@ const Drawer = defineComponent({
       ];
     });
 
-    const renderHeader = (prefixCls: string) => {
-      const { headerStyle } = props;
-      const { enabled: closable, placement: closablePlacement } = mergedClosableInfo.value;
-      const extra = getPropsSlot(slots, props, 'extra');
-      const title = getPropsSlot(slots, props, 'title');
-      if (!title && !closable) {
-        return null;
-      }
-
-      if (closablePlacement === 'end') {
-        return (
-          <div
-            class={classnames(
-              `${prefixCls}-header`,
-              {
-                [`${prefixCls}-header-close-only`]: closable && !title && !extra,
-              },
-              mergedClassNames.value.header,
-            )}
-            style={[headerStyle, mergedStyles.value.header]}
-          >
-            <div class={`${prefixCls}-header-title`}>
-              {title && (
-                <div class={`${prefixCls}-title`} id={props.ariaId}>
-                  {title}
-                </div>
-              )}
-            </div>
-            {extra && <div class={`${prefixCls}-extra`}>{extra}</div>}
-            {renderCloseIcon(prefixCls)}
-          </div>
-        );
-      }
-
-      return (
-        <div
-          class={classnames(
-            `${prefixCls}-header`,
-            {
-              [`${prefixCls}-header-close-only`]: closable && !title && !extra,
-            },
-            mergedClassNames.value.header,
-          )}
-          style={[headerStyle, mergedStyles.value.header]}
-        >
-          <div class={`${prefixCls}-header-title`}>
-            {renderCloseIcon(prefixCls)}
-            {title && (
-              <div class={`${prefixCls}-title`} id={props.ariaId}>
-                {title}
-              </div>
-            )}
-          </div>
-          {extra && <div class={`${prefixCls}-extra`}>{extra}</div>}
-        </div>
-      );
-    };
-
-    const renderCloseIcon = (prefixCls: string) => {
+    const renderCloseIcon = (
+      prefixCls: string,
+      semClassNames: DrawerSemanticClassNames,
+      semStyles: DrawerSemanticStyles,
+    ) => {
       const {
         enabled: closable,
         disabled: closeDisabled,
@@ -659,9 +631,14 @@ const Drawer = defineComponent({
             aria-label="Close"
             {...ariaOrDataProps}
             disabled={closeDisabled || undefined}
-            class={classnames(`${prefixCls}-close`, {
-              [`${prefixCls}-close-end`]: closablePlacement === 'end',
-            })}
+            class={classnames(
+              `${prefixCls}-close`,
+              {
+                [`${prefixCls}-close-end`]: closablePlacement === 'end',
+              },
+              semClassNames.close,
+            )}
+            style={semStyles.close}
           >
             {$closeIcon === undefined ? <CloseOutlined></CloseOutlined> : $closeIcon}
           </button>
@@ -669,7 +646,95 @@ const Drawer = defineComponent({
       );
     };
 
-    const renderResizeDragger = (prefixCls: string) => (
+    const renderHeader = (
+      prefixCls: string,
+      title: any,
+      extra: any,
+      semClassNames: DrawerSemanticClassNames,
+      semStyles: DrawerSemanticStyles,
+    ) => {
+      const { headerStyle } = props;
+      const { enabled: closable, placement: closablePlacement } = mergedClosableInfo.value;
+      if (!title && !closable && !extra) {
+        return null;
+      }
+
+      if (closablePlacement === 'end') {
+        return (
+          <div
+            class={classnames(
+              `${prefixCls}-header`,
+              {
+                [`${prefixCls}-header-close-only`]: closable && !title && !extra,
+              },
+              semClassNames.header,
+            )}
+            style={[headerStyle, semStyles.header]}
+          >
+            <div class={`${prefixCls}-header-title`}>
+              {title && (
+                <div
+                  class={classnames(`${prefixCls}-title`, semClassNames.title)}
+                  style={semStyles.title}
+                  id={props.ariaId}
+                >
+                  {title}
+                </div>
+              )}
+            </div>
+            {extra && (
+              <div
+                class={classnames(`${prefixCls}-extra`, semClassNames.extra)}
+                style={semStyles.extra}
+              >
+                {extra}
+              </div>
+            )}
+            {renderCloseIcon(prefixCls, semClassNames, semStyles)}
+          </div>
+        );
+      }
+
+      return (
+        <div
+          class={classnames(
+            `${prefixCls}-header`,
+            {
+              [`${prefixCls}-header-close-only`]: closable && !title && !extra,
+            },
+            semClassNames.header,
+          )}
+          style={[headerStyle, semStyles.header]}
+        >
+          <div class={`${prefixCls}-header-title`}>
+            {renderCloseIcon(prefixCls, semClassNames, semStyles)}
+            {title && (
+              <div
+                class={classnames(`${prefixCls}-title`, semClassNames.title)}
+                style={semStyles.title}
+                id={props.ariaId}
+              >
+                {title}
+              </div>
+            )}
+          </div>
+          {extra && (
+            <div
+              class={classnames(`${prefixCls}-extra`, semClassNames.extra)}
+              style={semStyles.extra}
+            >
+              {extra}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const renderResizeDragger = (
+      prefixCls: string,
+      semClassNames: DrawerSemanticClassNames,
+      semStyles: DrawerSemanticStyles,
+    ) => (
       <div
         class={classnames(
           `${prefixCls}-resizable-dragger`,
@@ -677,13 +742,43 @@ const Drawer = defineComponent({
           {
             [`${prefixCls}-resizable-dragger-dragging`]: isDragging.value,
           },
+          semClassNames.dragger,
         )}
+        style={semStyles.dragger}
         onMousedown={handleResizeMouseDown}
         onTouchstart={handleResizeTouchStart}
       />
     );
 
-    const renderBody = (prefixCls: string) => {
+    const renderFooter = (
+      prefixCls: string,
+      footer: any,
+      semClassNames: DrawerSemanticClassNames,
+      semStyles: DrawerSemanticStyles,
+    ) => {
+      if (!footer) {
+        return null;
+      }
+
+      const footerClassName = `${prefixCls}-footer`;
+      return (
+        <div
+          class={[footerClassName, semClassNames.footer]}
+          style={[props.footerStyle, semStyles.footer]}
+        >
+          {footer}
+        </div>
+      );
+    };
+
+    const renderBody = (
+      prefixCls: string,
+      title: any,
+      extra: any,
+      footer: any,
+      semClassNames: DrawerSemanticClassNames,
+      semStyles: DrawerSemanticStyles,
+    ) => {
       if (destroyClose.value && !props.forceRender && !load.value) {
         return null;
       }
@@ -692,8 +787,8 @@ const Drawer = defineComponent({
       const bodyContent = (
         <div
           key="body"
-          class={[`${prefixCls}-body`, mergedClassNames.value.body]}
-          style={[bodyStyle, mergedStyles.value.body]}
+          class={[`${prefixCls}-body`, semClassNames.body]}
+          style={[bodyStyle, semStyles.body]}
         >
           {props.loading ? (
             <Skeleton
@@ -708,62 +803,34 @@ const Drawer = defineComponent({
         </div>
       );
 
-      if (props.resizable) {
-        return (
-          <div
-            ref={setWrapperBodyRef}
-            class={[`${prefixCls}-wrapper-body`, mergedClassNames.value.content]}
-            style={[drawerStyle, mergedStyles.value.content]}
-            aria-labelledby={props.ariaId}
-          >
-            {renderHeader(prefixCls)}
-            {bodyContent}
-            {renderFooter(prefixCls)}
-            {renderResizeDragger(prefixCls)}
-          </div>
-        );
-      }
-
-      return (
+      const panelNode = props.resizable ? (
         <div
           ref={setWrapperBodyRef}
-          class={[`${prefixCls}-wrapper-body`, mergedClassNames.value.content]}
-          style={[drawerStyle, mergedStyles.value.content]}
+          class={[`${prefixCls}-wrapper-body`, semClassNames.content, semClassNames.section]}
+          style={[drawerStyle, semStyles.content, semStyles.section]}
           aria-labelledby={props.ariaId}
         >
-          {renderHeader(prefixCls)}
+          {renderHeader(prefixCls, title, extra, semClassNames, semStyles)}
           {bodyContent}
-          {renderFooter(prefixCls)}
+          {renderFooter(prefixCls, footer, semClassNames, semStyles)}
+          {renderResizeDragger(prefixCls, semClassNames, semStyles)}
         </div>
-      );
-    };
-
-    const renderFooter = (prefixCls: string) => {
-      const footer = getPropsSlot(slots, props, 'footer');
-      if (!footer) {
-        return null;
-      }
-
-      const footerClassName = `${prefixCls}-footer`;
-      return (
+      ) : (
         <div
-          class={[footerClassName, mergedClassNames.value.footer]}
-          style={[props.footerStyle, mergedStyles.value.footer]}
+          ref={setWrapperBodyRef}
+          class={[`${prefixCls}-wrapper-body`, semClassNames.content, semClassNames.section]}
+          style={[drawerStyle, semStyles.content, semStyles.section]}
+          aria-labelledby={props.ariaId}
         >
-          {footer}
+          {renderHeader(prefixCls, title, extra, semClassNames, semStyles)}
+          {bodyContent}
+          {renderFooter(prefixCls, footer, semClassNames, semStyles)}
         </div>
       );
+
+      return props.drawerRender ? props.drawerRender(panelNode) : panelNode;
     };
-    const drawerClassName = computed(() =>
-      classnames(
-        {
-          'no-mask': !mergedMaskConfig.value.enabled,
-          [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-        },
-        props.rootClassName,
-        hashId.value,
-      ),
-    );
+
     // =========================== Motion ===========================
     const maskMotion = computed(() => {
       return getTransitionProps(getTransitionName(prefixCls.value, 'mask-motion'));
@@ -776,6 +843,47 @@ const Drawer = defineComponent({
 
     return () => {
       const { width, height, placement, mask, forceRender, ...rest } = props;
+      const title = getPropsSlot(slots, props, 'title');
+      const extra = getPropsSlot(slots, props, 'extra');
+      const footer = getPropsSlot(slots, props, 'footer');
+
+      const mergedPropsForSemantic: DrawerProps = {
+        ...props,
+        open: mergedOpen.value,
+        mask: mergedMaskConfig.value.enabled,
+        maskClosable: mergedMaskConfig.value.closable,
+        closable: mergedClosableInfo.value.raw,
+        title,
+        extra,
+        footer,
+      };
+      const [semClassNames, semStyles] = mergeSemantic<
+        DrawerSemanticClassNames,
+        DrawerSemanticStyles,
+        DrawerProps
+      >(
+        [drawerConfig.value.classNames, props.classNames],
+        [drawerConfig.value.styles, props.styles],
+        { props: mergedPropsForSemantic },
+      );
+
+      const drawerClassName = classnames(
+        {
+          'no-mask': !mergedMaskConfig.value.enabled,
+          [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+        },
+        props.rootClassName,
+        semClassNames.root,
+        hashId.value,
+      );
+
+      const mergedRootStyle =
+        semStyles.root || props.rootStyle ? { ...semStyles.root, ...props.rootStyle } : undefined;
+
+      const mergedWrapperStyle = semStyles.wrapper
+        ? [...wrapperStyle.value, semStyles.wrapper]
+        : wrapperStyle.value;
+
       const mergedContentClass =
         classnames(drawerConfig.value.className, attrs.class as any) || undefined;
       const mergedContentStyle =
@@ -790,7 +898,9 @@ const Drawer = defineComponent({
         ...attrs,
         ...omit(rest, [
           'size',
+          'maxSize',
           'resizable',
+          'drawerRender',
           'closeIcon',
           'closable',
           'destroyOnClose',
@@ -820,11 +930,11 @@ const Drawer = defineComponent({
         open: visible.value,
         showMask: mergedMaskConfig.value.enabled,
         maskClosable: mergedMaskConfig.value.closable,
-        maskClassName: classnames(mergedClassNames.value.mask, {
+        maskClassName: classnames(semClassNames.mask, {
           [`${prefixCls.value}-mask-blur`]: mergedMaskConfig.value.blur,
         }),
-        wrapperClassName: mergedClassNames.value.wrapper,
-        maskStyle: { ...mergedStyles.value.mask, ...props.maskStyle },
+        wrapperClassName: semClassNames.wrapper,
+        maskStyle: { ...semStyles.mask, ...props.maskStyle },
         placement,
         ref: vcDrawer,
       };
@@ -837,12 +947,13 @@ const Drawer = defineComponent({
             width={mergedWidth.value}
             height={mergedHeight.value}
             getContainer={getContainer.value}
-            rootClassName={drawerClassName.value}
-            rootStyle={props.rootStyle}
-            contentWrapperStyle={wrapperStyle.value}
+            rootClassName={drawerClassName}
+            rootStyle={mergedRootStyle}
+            contentWrapperStyle={mergedWrapperStyle}
             v-slots={{
               handler: props.handle ? () => props.handle : slots.handle,
-              default: () => renderBody(prefixCls.value),
+              default: () =>
+                renderBody(prefixCls.value, title, extra, footer, semClassNames, semStyles),
             }}
           ></VcDrawer>
         </NoCompactStyle>,
@@ -851,4 +962,11 @@ const Drawer = defineComponent({
   },
 });
 
-export default withInstall(Drawer);
+(Drawer as any)._InternalPanelDoNotUseOrYouWillBeFired = PurePanel;
+
+export { PurePanel as DrawerPurePanel };
+
+export default withInstall(Drawer) as typeof Drawer &
+  Plugin & {
+    readonly _InternalPanelDoNotUseOrYouWillBeFired: typeof PurePanel;
+  };

@@ -8,7 +8,7 @@ title:
 
 ## zh-CN
 
-可以通过唯一的 key 来更新内容, 或者通过响应式数据更新。
+可以通过唯一的 key 来更新内容，或者通过响应式数据更新。
 
 ## en-US
 
@@ -17,44 +17,49 @@ Update content with unique key, or use reactive data.
 </docs>
 
 <template>
-  <a-button type="primary" @click="openNotification">
-    Open the notification box (update by key)
-  </a-button>
-  <br />
-  <br />
-  <a-button type="primary" @click="openNotification2">
-    Open the notification box (update by reactive)
-  </a-button>
+  <contextHolder />
+  <a-space direction="vertical">
+    <a-button type="primary" @click="openNotification">
+      Open the notification box (update by key)
+    </a-button>
+    <a-button type="primary" @click="openNotification2">
+      Open the notification box (update by reactive)
+    </a-button>
+  </a-space>
 </template>
 <script lang="ts" setup>
 import { notification } from 'ant-design-vue';
 import { ref } from 'vue';
+
 const key = 'updatable';
+const [api, contextHolder] = notification.useNotification();
+
 const openNotification = () => {
-  notification.open({
+  api.open({
     key,
-    message: 'Notification Title',
+    title: 'Notification Title',
     description: 'description.',
   });
   setTimeout(() => {
-    notification.open({
+    api.open({
       key,
-      message: 'New Title',
+      title: 'New Title',
       description: 'New description.',
     });
   }, 1000);
 };
-const message = ref('Notification Title');
-const description = ref('description');
+
+const titleRef = ref('Notification Title');
+const descriptionRef = ref('description.');
 const openNotification2 = () => {
   // content must use function
-  notification.open({
-    message: () => message.value,
-    description: () => description.value,
+  api.open({
+    title: () => titleRef.value,
+    description: () => descriptionRef.value,
   });
   setTimeout(() => {
-    message.value = 'New Title';
-    description.value = 'New description.';
+    titleRef.value = 'New Title';
+    descriptionRef.value = 'New description.';
   }, 1000);
 };
 </script>

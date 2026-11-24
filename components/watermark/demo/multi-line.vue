@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 0
+order: 1
 title:
   zh-CN: 多行水印
   en-US: Multi-line watermark

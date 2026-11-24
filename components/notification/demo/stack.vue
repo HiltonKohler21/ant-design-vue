@@ -9,27 +9,36 @@ title:
 
 ## zh-CN
 
-当通知数量超过指定阈值（默认为 3）时自动折叠堆叠，鼠标移入时展开查看全部通知。
+堆叠配置，默认开启。超过阈值后的消息会被自动收起，可以通过 `threshold` 设置触发堆叠的数量。折叠状态下最多展示 3 个消息。
 
 ## en-US
 
-Notifications automatically collapse into a card stack when the count reaches the threshold (default 3), and expand smoothly on hover.
+Stack configuration, enabled by default. Notifications will be stacked when the amount is over `threshold`. Up to 3 notifications are shown in the collapsed stack.
+
 </docs>
 
 <template>
   <contextHolder />
-  <a-space size="large">
-    <a-space>
-      <span>Enabled:</span>
-      <a-switch v-model:checked="enabled" />
+  <div>
+    <a-space size="large">
+      <a-space :style="{ width: '100%' }">
+        <span>Enabled:</span>
+        <a-switch v-model:checked="enabled" />
+      </a-space>
+      <a-space :style="{ width: '100%' }">
+        <span>Threshold:</span>
+        <a-input-number
+          v-model:value="threshold"
+          :disabled="!enabled"
+          :step="1"
+          :min="1"
+          :max="10"
+        />
+      </a-space>
     </a-space>
-    <a-space>
-      <span>Threshold:</span>
-      <a-input-number v-model:value="threshold" :disabled="!enabled" :step="1" :min="1" :max="10" />
-    </a-space>
-  </a-space>
-  <a-divider />
-  <a-button type="primary" @click="openNotification">Open the notification box</a-button>
+    <a-divider />
+    <a-button type="primary" @click="openNotification">Open the notification box</a-button>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -47,9 +56,9 @@ const [api, contextHolder] = notification.useNotification({
 const openNotification = () => {
   count += 1;
   api.open({
-    message: `Notification #${count}`,
+    title: `Notification #${count}`,
     description: 'This is the content of the stacked notification.',
-    duration: 0,
+    duration: false,
   });
 };
 </script>

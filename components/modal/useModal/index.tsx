@@ -34,9 +34,13 @@ const ElementsHolder = defineComponent({
     };
   },
 });
+
+type HookConfigUpdate = ModalFuncProps | ((prevConfig: ModalFuncProps) => ModalFuncProps);
+
 export type ModalFuncWithRef = (props: MaybeRef<ModalFuncProps>) => {
   destroy: () => void;
-  update: (configUpdate: ModalFuncProps) => void;
+  update: (configUpdate: HookConfigUpdate) => void;
+  then: <T>(resolve: (confirmed: boolean) => T, reject?: () => void) => Promise<T>;
 };
 
 function useModal(): readonly [
@@ -70,6 +74,12 @@ function useModal(): readonly [
       const modalRef = shallowRef<HookModalRef>(null);
       const configRef = shallowRef(unref(config));
       const updateConfig = shallowRef({});
+
+      let resolvePromise: (confirmed: boolean) => void;
+      const promise = new Promise<boolean>(resolve => {
+        resolvePromise = resolve;
+      });
+
       watch(
         () => config,
         val => {
@@ -96,8 +106,17 @@ function useModal(): readonly [
           ref={modalRef}
           open={open.value}
           destroyAction={destroyAction}
+          onConfirm={(confirmed: boolean) => {
+            resolvePromise(confirmed);
+          }}
           afterClose={() => {
-            closeFunc?.();
+            if (closeFunc) {
+              closeFunc();
+              const index = destroyFns.indexOf(closeFunc);
+              if (index !== -1) {
+                destroyFns.splice(index, 1);
+              }
+            }
           }}
         />
       );
@@ -108,10 +127,11 @@ function useModal(): readonly [
         destroyFns.push(closeFunc);
       }
 
-      const updateAction = (newConfig: ModalFuncProps) => {
+      const updateAction = (newConfig: HookConfigUpdate) => {
+        const nextConfig = typeof newConfig === 'function' ? newConfig(configRef.value) : newConfig;
         configRef.value = {
           ...configRef.value,
-          ...newConfig,
+          ...nextConfig,
         };
       };
 
@@ -123,8 +143,10 @@ function useModal(): readonly [
         }
       };
 
-      const update = (newConfig: ModalFuncProps) => {
-        updateConfig.value = newConfig;
+      const update = (newConfig: HookConfigUpdate) => {
+        if (typeof newConfig !== 'function') {
+          updateConfig.value = newConfig;
+        }
         if (modalRef.value) {
           updateAction(newConfig);
         } else {
@@ -134,6 +156,8 @@ function useModal(): readonly [
       return {
         destroy,
         update,
+        then: <T,>(resolve: (confirmed: boolean) => T, reject?: () => void) =>
+          promise.then(resolve, reject as any),
       };
     };
 

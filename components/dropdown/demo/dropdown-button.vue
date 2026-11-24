@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   zh-CN: 带下拉框的按钮
   en-US: Button with dropdown menu

@@ -232,4 +232,35 @@ describe('Tooltip', () => {
 
     wrapper.unmount();
   });
+
+  it('supports _InternalPanelDoNotUseOrYouWillBeFired pure panel and forceAlign ref method', () => {
+    const InternalTooltip = Tooltip._InternalPanelDoNotUseOrYouWillBeFired;
+    expect(InternalTooltip).toBeDefined();
+
+    const pureWrapper = mount(InternalTooltip, {
+      props: {
+        title: 'Pure Tooltip',
+        color: '#f50',
+        placement: 'bottomLeft',
+        classNames: { root: 'pure-tip-root', container: 'pure-tip-container' },
+        styles: { container: { fontSize: '15px' } },
+      },
+    });
+    expect(pureWrapper.find('.ant-tooltip-pure').exists()).toBe(true);
+    expect(pureWrapper.find('.ant-tooltip-placement-bottomLeft').exists()).toBe(true);
+    expect(pureWrapper.find('.ant-tooltip-pure').classes()).toContain('pure-tip-root');
+    expect(pureWrapper.find('.ant-tooltip-inner').text()).toBe('Pure Tooltip');
+    expect(pureWrapper.find('.ant-tooltip-inner').classes()).toContain('pure-tip-container');
+    expect(pureWrapper.find('.ant-tooltip-inner').attributes('style')).toContain('15px');
+    pureWrapper.unmount();
+
+    const tipWrapper = mount(Tooltip, {
+      props: { title: 'Aligned Tip', open: true },
+      slots: { default: () => <button>Trigger</button> },
+      attachTo: 'body',
+    });
+    expect(typeof tipWrapper.vm.forceAlign).toBe('function');
+    expect(() => tipWrapper.vm.forceAlign()).not.toThrow();
+    tipWrapper.unmount();
+  });
 });

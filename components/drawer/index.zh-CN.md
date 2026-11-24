@@ -27,13 +27,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*r29rQ51bNdwAAA
 | autofocus | 抽屉展开后是否将焦点切换至其 Dom 节点 | boolean | `true` | 3.0.0 |
 | ~~bodyStyle~~ | 可用于设置 Drawer 内容部分的样式（已废弃，请使用 `styles.body`） | CSSProperties | - |  |
 | class | Drawer 容器外层 className 设置，如果需要设置最外层，请使用 `rootClassName` | string | - |  |
-| classNames | 配置抽屉内置模块的 className | { mask?: string; wrapper?: string; content?: string; header?: string; body?: string; footer?: string } | - | 4.3.0 |
+| classNames | 用于自定义 Drawer 组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | closable | 是否显示关闭按钮，或自定义关闭按钮配置 | boolean \| `{ closeIcon?: VueNode; disabled?: boolean; placement?: 'start' \| 'end'; 'aria-label'?: string }` | `true` | 4.3.0 |
 | closeIcon | 自定义关闭图标 | VueNode \| slot | `<CloseOutlined />` | 3.0.0 |
 | ~~contentWrapperStyle~~ | 可用于设置 Drawer 包裹内容部分的样式（已废弃，请使用 `styles.wrapper`） | CSSProperties | - | 3.0.0 |
 | ~~destroyOnClose~~ | 关闭时销毁 Drawer 里的子元素（已废弃，请使用 `destroyOnHidden`） | boolean | `false` |  |
 | destroyOnHidden | 关闭时销毁 Drawer 里的子元素 | boolean | `false` | 4.3.0 |
-| ~~drawerStyle~~ | 可用于设置 Drawer 弹出层样式（已废弃，请使用 `styles.content`） | CSSProperties | - |  |
+| drawerRender | 自定义渲染抽屉面板 | `(node: VueNode) => VueNode` | - | 4.3.0 |
+| ~~drawerStyle~~ | 可用于设置 Drawer 弹出层样式（已废弃，请使用 `styles.section`） | CSSProperties | - |  |
 | extra | 抽屉右上角的操作区域 | VueNode \| slot | - | 3.0.0 |
 | footer | 抽屉的页脚 | VueNode \| slot | - | 3.0.0 |
 | ~~footerStyle~~ | 抽屉页脚部件的样式（已废弃，请使用 `styles.footer`） | CSSProperties | - | 3.0.0 |
@@ -46,6 +47,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*r29rQ51bNdwAAA
 | mask | 是否展示遮罩，或配置遮罩毛玻璃与点击关闭行为 | boolean \| `{ enabled?: boolean; blur?: boolean; closable?: boolean }` | `true` | 4.3.0 |
 | maskClosable | 点击蒙层是否允许关闭 | boolean | `true` |  |
 | ~~maskStyle~~ | 遮罩样式（已废弃，请使用 `styles.mask`） | CSSProperties | `{}` |  |
+| maxSize | 可拖拽的最大尺寸（宽度或高度，取决于 `placement`） | number | - | 4.3.0 |
 | open(v-model) | Drawer 是否可见 | boolean | - | 4.0 |
 | placement | 抽屉的方向 | `top` \| `right` \| `bottom` \| `left` | `right` |  |
 | push | 用于设置多层 Drawer 的推动行为 | boolean \| { distance: string \| number } | `{ distance: 180 }` | 3.0.0 |
@@ -54,10 +56,12 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*r29rQ51bNdwAAA
 | rootStyle | 可用于设置 Drawer 最外层容器的样式，和 `style` 的区别是作用节点包括 `mask` | CSSProperties | - | 4.0 |
 | size | 预设抽屉宽度（或高度），支持 `default`（378px）、`large`（736px）或自定义数值 | `default` \| `large` \| number \| string | `default` | 3.0.0 |
 | style | 设计 Drawer 容器样式，如果你只需要设置内容部分请使用 `styles.body` | CSSProperties | - |  |
-| styles | 配置抽屉内置模块的 style | { mask?: CSSProperties; wrapper?: CSSProperties; content?: CSSProperties; header?: CSSProperties; body?: CSSProperties; footer?: CSSProperties } | - | 4.3.0 |
+| styles | 用于自定义 Drawer 组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | title | 标题 | string \| slot | - |  |
 | width | 宽度 | string \| number | `378` |  |
 | zIndex | 设置 Drawer 的 `z-index` | number | `1000` |  |
+
+> 语义化结构 `SemanticDOM` 支持：`root` \| `mask` \| `wrapper` \| `section`（兼容 `content`） \| `header` \| `title` \| `extra` \| `body` \| `footer` \| `dragger` \| `close`。
 
 ## 事件
 

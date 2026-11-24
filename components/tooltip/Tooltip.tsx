@@ -80,6 +80,13 @@ export const tooltipDefaultProps = () => ({
   autoAdjustOverflow: true,
 });
 
+export interface TooltipRef {
+  forceAlign: () => void;
+  forcePopupAlign: () => void;
+  getPopupDomNode: () => HTMLElement | null;
+  open: boolean;
+}
+
 export type TooltipProps = Partial<ExtractPropTypes<ReturnType<typeof tooltipProps>>>;
 
 export default defineComponent({

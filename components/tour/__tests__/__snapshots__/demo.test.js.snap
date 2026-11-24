@@ -1,5 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`renders ./components/tour/demo/actions-render.vue correctly 1`] = `
+<button class="ant-btn ant-btn-primary" type="button">
+  <!----><span>Begin Tour</span>
+</button>
+<div class="ant-divider ant-divider-horizontal" role="separator">
+  <!---->
+</div>
+<div class="ant-space ant-space-horizontal ant-space-align-center">
+  <div class="ant-space-item" style="margin-right: 8px;"><button class="ant-btn ant-btn-default" type="button">
+      <!----><span>Upload</span>
+    </button></div>
+  <!---->
+  <div class="ant-space-item" style="margin-right: 8px;"><button class="ant-btn ant-btn-primary" type="button">
+      <!----><span>Save</span>
+    </button></div>
+  <!---->
+  <div class="ant-space-item"><button class="ant-btn ant-btn-default" type="button">
+      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg><!----></span>
+    </button></div>
+  <!---->
+</div>
+`;
+
 exports[`renders ./components/tour/demo/basic.vue correctly 1`] = `
 <button class="ant-btn ant-btn-primary" type="button">
   <!----><span>Begin Tour</span>
@@ -17,8 +40,82 @@ exports[`renders ./components/tour/demo/basic.vue correctly 1`] = `
     </button></div>
   <!---->
   <div class="ant-space-item"><button class="ant-btn ant-btn-default" type="button">
-      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" class="" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg></span>
+      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg><!----></span>
     </button></div>
+  <!---->
+</div>
+`;
+
+exports[`renders ./components/tour/demo/gap.vue correctly 1`] = `
+<div><button class="ant-btn ant-btn-primary" type="button">
+    <!----><span>Begin Tour</span>
+  </button>
+  <div style="display: flex; margin-top: 12px;" class="ant-space ant-space-vertical">
+    <div class="ant-space-item" style="margin-bottom: 8px;">
+      <div class="ant-row">
+        <div class="ant-col ant-col-6"><span class="ant-typography"><!---->Radius:<!----></span></div>
+        <div class="ant-col ant-col-12">
+          <div tabindex="-1" class="ant-slider ant-slider-horizontal">
+            <div class="ant-slider-rail"></div>
+            <div class="ant-slider-track" style="left: 0%; width: 8%;"></div>
+            <div class="ant-slider-step"></div>
+            <div class="ant-slider-handle" style="left: 8%; transform: translateX(-50%);" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8" aria-disabled="false"></div>
+            <!---->
+            <div class="ant-slider-mark"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <div class="ant-space-item" style="margin-bottom: 8px;">
+      <div class="ant-row">
+        <div class="ant-col ant-col-6"><span class="ant-typography"><!---->Offset:<!----></span></div>
+        <div class="ant-col ant-col-12">
+          <div tabindex="-1" class="ant-slider ant-slider-horizontal">
+            <div class="ant-slider-rail"></div>
+            <div class="ant-slider-track" style="left: 0%; width: 4%;"></div>
+            <div class="ant-slider-step"></div>
+            <div class="ant-slider-handle" style="left: 4%; transform: translateX(-50%);" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="50" aria-valuenow="2" aria-disabled="false"></div>
+            <!---->
+            <div class="ant-slider-mark"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <div class="ant-space-item" style="margin-bottom: 8px;">
+      <div class="ant-row">
+        <div class="ant-col ant-col-6"><span class="ant-typography"><!---->Horizontal offset:<!----></span></div>
+        <div class="ant-col ant-col-12">
+          <div tabindex="-1" class="ant-slider ant-slider-horizontal">
+            <div class="ant-slider-rail"></div>
+            <div class="ant-slider-track" style="left: 0%; width: 4%;"></div>
+            <div class="ant-slider-step"></div>
+            <div class="ant-slider-handle" style="left: 4%; transform: translateX(-50%);" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="50" aria-valuenow="2" aria-disabled="false"></div>
+            <!---->
+            <div class="ant-slider-mark"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+    <div class="ant-space-item">
+      <div class="ant-row">
+        <div class="ant-col ant-col-6"><span class="ant-typography"><!---->Vertical offset:<!----></span></div>
+        <div class="ant-col ant-col-12">
+          <div tabindex="-1" class="ant-slider ant-slider-horizontal">
+            <div class="ant-slider-rail"></div>
+            <div class="ant-slider-track" style="left: 0%; width: 4%;"></div>
+            <div class="ant-slider-step"></div>
+            <div class="ant-slider-handle" style="left: 4%; transform: translateX(-50%);" role="slider" tabindex="0" aria-valuemin="0" aria-valuemax="50" aria-valuenow="2" aria-disabled="false"></div>
+            <!---->
+            <div class="ant-slider-mark"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
   <!---->
 </div>
 `;
@@ -40,7 +137,7 @@ exports[`renders ./components/tour/demo/indicator.vue correctly 1`] = `
     </button></div>
   <!---->
   <div class="ant-space-item"><button class="ant-btn ant-btn-default" type="button">
-      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" class="" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg></span>
+      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg><!----></span>
     </button></div>
   <!---->
 </div>
@@ -63,7 +160,7 @@ exports[`renders ./components/tour/demo/mask.vue correctly 1`] = `
     </button></div>
   <!---->
   <div class="ant-space-item"><button class="ant-btn ant-btn-default" type="button">
-      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" class="" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg></span>
+      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg><!----></span>
     </button></div>
   <!---->
 </div>
@@ -86,7 +183,7 @@ exports[`renders ./components/tour/demo/non-modal.vue correctly 1`] = `
     </button></div>
   <!---->
   <div class="ant-space-item"><button class="ant-btn ant-btn-default" type="button">
-      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" class="" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg></span>
+      <!----><span role="img" aria-label="ellipsis" class="anticon anticon-ellipsis"><svg focusable="false" data-icon="ellipsis" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg><!----></span>
     </button></div>
   <!---->
 </div>
@@ -96,4 +193,98 @@ exports[`renders ./components/tour/demo/placement.vue correctly 1`] = `
 <button class="ant-btn ant-btn-primary" type="button">
   <!----><span>Begin Tour</span>
 </button>
+`;
+
+exports[`renders ./components/tour/demo/render-panel.vue correctly 1`] = `
+<div style="display: flex; flex-direction: column; row-gap: 16px; background: rgba(50, 0, 0, 0.65); padding: 8px;">
+  <div class="ant-tour ant-tour-pure ant-tour-placement-top">
+    <div class="ant-tour-content">
+      <div class="ant-tour-arrow"></div>
+      <div class="ant-tour-inner ant-tour-section"><button type="button" class="ant-tour-close"><span role="img" aria-label="close" class="anticon anticon-close ant-tour-close-icon"><svg focusable="false" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true" fill-rule="evenodd" viewBox="64 64 896 896"><path d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"></path></svg><!----></span></button>
+        <!---->
+        <div class="ant-tour-header">
+          <div class="ant-tour-title">Hello World!</div>
+        </div>
+        <div class="ant-tour-description">Hello World?!</div>
+        <div class="ant-tour-footer">
+          <div class="ant-tour-indicators"><span class="ant-tour-indicator-active ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span></div>
+          <div class="ant-tour-buttons ant-tour-actions">
+            <!----><button class="ant-btn ant-btn-primary ant-btn-sm ant-tour-next-btn" type="button">
+              <!----><span>Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ant-tour ant-tour-pure ant-tour-placement-top">
+    <div class="ant-tour-content">
+      <div class="ant-tour-arrow"></div>
+      <div class="ant-tour-inner ant-tour-section"><button type="button" class="ant-tour-close"><span role="img" aria-label="close" class="anticon anticon-close ant-tour-close-icon"><svg focusable="false" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true" fill-rule="evenodd" viewBox="64 64 896 896"><path d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"></path></svg><!----></span></button>
+        <div class="ant-tour-cover"><img draggable="false" alt="tour.png" src="https://user-images.githubusercontent.com/5378891/197385811-55df8480-7ff4-44bd-9d43-a7dade598d70.png"></div>
+        <div class="ant-tour-header">
+          <div class="ant-tour-title">Hello World!</div>
+        </div>
+        <div class="ant-tour-description">Hello World?!</div>
+        <div class="ant-tour-footer">
+          <div class="ant-tour-indicators"><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator-active ant-tour-indicator"></span><span class="ant-tour-indicator"></span></div>
+          <div class="ant-tour-buttons ant-tour-actions"><button class="ant-btn ant-btn-default ant-btn-sm ant-tour-prev-btn" type="button">
+              <!----><span>Previous</span>
+            </button><button class="ant-btn ant-btn-primary ant-btn-sm ant-tour-next-btn" type="button">
+              <!----><span>Next</span>
+            </button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ant-tour ant-tour-pure ant-tour-placement-top ant-tour-primary">
+    <div class="ant-tour-primary ant-tour-content">
+      <div class="ant-tour-arrow"></div>
+      <div class="ant-tour-inner ant-tour-section"><button type="button" class="ant-tour-close"><span role="img" aria-label="close" class="anticon anticon-close ant-tour-close-icon"><svg focusable="false" data-icon="close" width="1em" height="1em" fill="currentColor" aria-hidden="true" fill-rule="evenodd" viewBox="64 64 896 896"><path d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"></path></svg><!----></span></button>
+        <!---->
+        <div class="ant-tour-header">
+          <div class="ant-tour-title">Hello World!</div>
+        </div>
+        <div class="ant-tour-description">Hello World?!</div>
+        <div class="ant-tour-footer">
+          <div class="ant-tour-indicators"><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator"></span><span class="ant-tour-indicator-active ant-tour-indicator"></span></div>
+          <div class="ant-tour-buttons ant-tour-actions"><button class="ant-btn ant-btn-default ant-btn-sm ant-btn-background-ghost ant-tour-prev-btn" type="button">
+              <!----><span>Previous</span>
+            </button><button class="ant-btn ant-btn-default ant-btn-sm ant-tour-next-btn" type="button">
+              <!----><span>Finish</span>
+            </button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders ./components/tour/demo/style-class.vue correctly 1`] = `
+<div class="ant-flex ant-flex-align-stretch ant-flex-gap-middle ant-flex-vertical">
+  <div class="ant-flex ant-flex-gap-middle"><button class="ant-btn ant-btn-primary" type="button">
+      <!----><span>Begin Tour Object</span>
+    </button><button class="ant-btn ant-btn-primary" type="button">
+      <!----><span>Begin Tour Function</span>
+    </button></div>
+  <div class="ant-divider ant-divider-horizontal" role="separator">
+    <!---->
+  </div>
+  <!---->
+  <!---->
+  <div class="ant-space ant-space-horizontal ant-space-align-center">
+    <div class="ant-space-item" style="margin-right: 8px;"><button class="ant-btn ant-btn-primary" type="button">
+        <!----><span>Upload</span>
+      </button></div>
+    <!---->
+    <div class="ant-space-item" style="margin-right: 8px;"><button class="ant-btn ant-btn-default" type="button">
+        <!----><span>Save</span>
+      </button></div>
+    <!---->
+    <div class="ant-space-item"><button class="ant-btn ant-btn-dashed" type="button">
+        <!----><span>Other Actions</span>
+      </button></div>
+    <!---->
+  </div>
+</div>
 `;

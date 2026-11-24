@@ -66,4 +66,27 @@ describe('Popover', () => {
     expect(popup.innerHTML).toContain('only content text');
     popover.unmount();
   });
+
+  it('supports _InternalPanelDoNotUseOrYouWillBeFired pure panel rendering', () => {
+    const InternalPopover = Popover._InternalPanelDoNotUseOrYouWillBeFired;
+    expect(InternalPopover).toBeDefined();
+    const wrapper = mount(InternalPopover, {
+      props: {
+        title: 'Pure Title',
+        content: 'Pure Content',
+        placement: 'bottomLeft',
+        classNames: { root: 'pure-root', title: 'pure-title', content: 'pure-content' },
+        styles: { title: { color: 'rgb(1, 2, 3)' } },
+      },
+    });
+    expect(wrapper.find('.ant-popover-pure').exists()).toBe(true);
+    expect(wrapper.find('.ant-popover-placement-bottomLeft').exists()).toBe(true);
+    expect(wrapper.find('.ant-popover-pure').classes()).toContain('pure-root');
+    expect(wrapper.find('.ant-popover-title').text()).toBe('Pure Title');
+    expect(wrapper.find('.ant-popover-title').classes()).toContain('pure-title');
+    expect(wrapper.find('.ant-popover-title').attributes('style')).toContain('rgb(1, 2, 3)');
+    expect(wrapper.find('.ant-popover-inner-content').text()).toBe('Pure Content');
+    expect(wrapper.find('.ant-popover-inner-content').classes()).toContain('pure-content');
+    wrapper.unmount();
+  });
 });
