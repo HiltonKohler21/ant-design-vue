@@ -342,4 +342,4 @@ exports[`renders ./components/grid/demo/sort.vue correctly 1`] = `
 </div>
 `;
 
-exports[`renders ./components/grid/demo/use-breakpoint.vue correctly 1`] = `" Current break point:"`;
+exports[`renders ./components/grid/demo/use-breakpoint.vue correctly 1`] = `<div class="ant-flex ant-flex-wrap-wrap ant-flex-align-center ant-flex-gap-small"><span>Current break point:</span></div>`;

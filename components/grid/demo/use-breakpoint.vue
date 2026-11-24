@@ -17,12 +17,14 @@ Use `useBreakpoint` Hook provide personalized layout.
 </docs>
 
 <template>
-  Current break point:
-  <template v-for="(value, key) in screens">
-    <a-tag v-if="!!value" :key="key" color="blue">
-      {{ key }}
-    </a-tag>
-  </template>
+  <a-flex gap="small" wrap align="center">
+    <span>Current break point:</span>
+    <template v-for="(value, key) in screens">
+      <a-tag v-if="!!value" :key="key" color="blue">
+        {{ key }}
+      </a-tag>
+    </template>
+  </a-flex>
 </template>
 <script lang="ts" setup>
 import { Grid } from 'ant-design-vue';

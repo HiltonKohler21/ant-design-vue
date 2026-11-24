@@ -1160,16 +1160,12 @@ describe('cssVar 非法 CSS 检测（逐组件）', () => {
     // Switch: loading icon top = (18 - 14)/2 = 2px（旧 bug 为 11px）
     expect(resolveProp('.ant-switch-loading-icon.anticon', 'top')).toBe('2px');
 
-    // Spin: show-text dot margin-top = -(20/2 + 10) = -20px（旧 bug 为 0px）；text padding-top = (20-14)/2+2 = 5px（旧 bug 为 15px）
-    expect(
-      resolveProp(
-        '.ant-spin-nested-loading >div>.ant-spin.ant-spin-show-text .ant-spin-dot',
-        'margin-top',
-      ),
-    ).toBe('-20px');
-    expect(
-      resolveProp('.ant-spin-nested-loading >div>.ant-spin .ant-spin-text', 'padding-top'),
-    ).toBe('5px');
+    // Spin: v6 dotSize 令牌（default 20px / sm 14px / lg 32px）与基于 var() 的 dot-item calc() 守卫
+    expect(resolveProp('.ant-spin', '--ant-spin-dot-holder-size')).toBe('20px');
+    expect(resolveProp('.ant-spin-sm', '--ant-spin-dot-holder-size')).toBe('14px');
+    expect(resolveProp('.ant-spin-lg', '--ant-spin-dot-holder-size')).toBe('32px');
+    expect(resolveProp('.ant-spin >.ant-spin-section', 'top')).toBe('50%');
+    expect(resolveProp('.ant-spin .ant-spin-dot-item', 'background')).toBe('currentColor');
 
     // Modal: close button offset = (modalHeaderCloseSize - modalCloseBtnSize) / 2 = (56 - 22)/2 = 17px（旧 bug 为 45px）
     expect(resolveProp('.ant-modal .ant-modal-close', 'top')).toBe('17px');

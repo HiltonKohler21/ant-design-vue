@@ -1556,6 +1556,9 @@ const InternalTable = defineComponent({
       let mergedComponents = props.components;
       if (useVirtualBody) {
         const leafColumns = flattenLeafColumns(transformColumns(mergedColumns.value));
+        const allNumericWidths =
+          leafColumns.length > 0 &&
+          leafColumns.every(col => typeof col.width === 'number' && col.width > 0);
         const renderVirtualBody = (bodyData: any[], info: any) => {
           if (!bodyData || bodyData.length === 0) {
             return (
@@ -1648,15 +1651,24 @@ const InternalTable = defineComponent({
                           style: customCellStyle,
                           ...restCustomCellProps
                         } = customCellProps;
-                        const widthStyle =
-                          col.width !== undefined
-                            ? {
-                                flex: `0 0 ${
-                                  typeof col.width === 'number' ? `${col.width}px` : col.width
-                                }`,
-                                width: typeof col.width === 'number' ? `${col.width}px` : col.width,
-                              }
-                            : { flex: '1 1 0' };
+                        let widthStyle: CSSProperties;
+                        if (col.width !== undefined) {
+                          if (allNumericWidths && typeof col.width === 'number') {
+                            widthStyle = {
+                              flex: `${col.width} 0 ${col.width}px`,
+                              minWidth: `${col.width}px`,
+                            };
+                          } else {
+                            const resolvedWidth =
+                              typeof col.width === 'number' ? `${col.width}px` : col.width;
+                            widthStyle = {
+                              flex: `0 0 ${resolvedWidth}`,
+                              width: resolvedWidth,
+                            };
+                          }
+                        } else {
+                          widthStyle = { flex: '1 1 0', minWidth: 0 };
+                        }
                         return (
                           <div
                             key={col.key ?? String(col.dataIndex ?? colIdx)}

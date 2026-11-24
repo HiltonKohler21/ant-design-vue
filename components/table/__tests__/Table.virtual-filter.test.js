@@ -35,6 +35,10 @@ describe('Table virtual, filterOnClose, filterDropdownProps, and ConfigProvider.
     expect(renderedRows.length).toBeGreaterThan(0);
     expect(renderedRows.length).toBeLessThan(100);
     expect(renderedRows[0].text()).toContain('User 0');
+    const firstRowCells = renderedRows[0].findAll('.ant-table-cell');
+    expect(firstRowCells.length).toBe(2);
+    expect(firstRowCells[0].attributes('style')).toContain('flex: 100 0 100px');
+    expect(firstRowCells[1].attributes('style')).toContain('flex: 200 0 200px');
   });
 
   it('respects column.filterOnClose=false and spreads column.filterDropdownProps', async () => {
