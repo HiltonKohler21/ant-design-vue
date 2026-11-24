@@ -15,6 +15,7 @@ describe('delay spinning', () => {
     await asyncExpect(() => {
       expect(wrapper.find('.ant-spin').classes().includes('ant-spin-spinning')).toEqual(false);
     });
+    wrapper.unmount();
   });
 
   it('should render when delay is init set', async () => {
@@ -34,19 +35,23 @@ describe('delay spinning', () => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     expect(wrapper.findAll('.ant-spin')[0].classes().includes('ant-spin-spinning')).toEqual(true);
+    wrapper.unmount();
   });
 
   it('should cancel debounce function when unmount', async () => {
-    const props = {
+    const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+    const wrapper = mount(Spin, {
       props: {
-        delay: 100,
+        delay: 200,
         spinning: true,
       },
-      sync: false,
-    };
-    const wrapper = mount(Spin, props);
-    const spy = jest.spyOn(wrapper.vm.updateSpinning, 'cancel');
-    expect(wrapper.vm.updateSpinning.cancel).toEqual(expect.any(Function));
-    expect(spy).not.toHaveBeenCalled();
+    });
+    await asyncExpect(() => {
+      expect(wrapper.find('.ant-spin').classes().includes('ant-spin-spinning')).toEqual(false);
+    });
+    const beforeCalls = clearTimeoutSpy.mock.calls.length;
+    wrapper.unmount();
+    expect(clearTimeoutSpy.mock.calls.length).toBeGreaterThan(beforeCalls);
+    clearTimeoutSpy.mockRestore();
   });
 });

@@ -3,6 +3,7 @@ import Spin, { setDefaultIndicator } from './Spin';
 
 export type {
   SpinProps,
+  SpinRef,
   SpinSize,
   SpinSemanticName,
   SpinSemanticClassNames,

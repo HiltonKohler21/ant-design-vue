@@ -1,6 +1,6 @@
 <docs>
 ---
-order: 7
+order: 8
 title:
   zh-CN: 全屏
   en-US: Fullscreen
@@ -8,7 +8,7 @@ title:
 
 ## zh-CN
 
-`fullscreen` 属性非常适合创建流畅的页面加载器。它添加了半透明覆盖层，并在其中心放置了一个旋转指示器。
+`fullscreen` 属性非常适合创建流畅的页面加载器。它添加了半透明覆盖层，并在其中心放置了一个旋转加载符号。
 
 ## en-US
 
@@ -38,14 +38,13 @@ const clearTimer = () => {
 const showLoader = () => {
   clearTimer();
   spinning.value = true;
-  let ptg = 0;
-  percent.value = ptg;
+  let ptg = -10;
 
   timer = setInterval(() => {
-    ptg += 10;
-    percent.value = Math.min(ptg, 100);
+    ptg += 5;
+    percent.value = ptg;
 
-    if (ptg >= 110) {
+    if (ptg > 120) {
       clearTimer();
       spinning.value = false;
       percent.value = 0;

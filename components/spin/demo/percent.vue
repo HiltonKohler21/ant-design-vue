@@ -9,60 +9,58 @@ title:
 
 ## zh-CN
 
-展示进度，支持受控的 `percent` 数值与自动递增模式。
+展示进度，当设置 `percent="auto"` 时会预估一个永远不会停止的进度条。
 
 ## en-US
 
-Show the progress with controlled numeric `percent` or auto-incrementing progress.
+Show the progress. When `percent="auto"` is set, an indeterminate progress will be displayed.
 
 </docs>
 
 <template>
-  <a-flex vertical gap="middle">
-    <a-flex align="center" gap="middle">
-      <a-switch v-model:checked="auto" checked-children="Auto" un-checked-children="Manual" />
-      <a-slider
-        v-model:value="percent"
-        :disabled="auto"
-        :min="0"
-        :max="100"
-        style="width: 180px; margin: 0"
-      />
-    </a-flex>
-    <a-flex align="center" gap="middle">
-      <a-spin :percent="mergedPercent" size="small" />
-      <a-spin :percent="mergedPercent" />
-      <a-spin :percent="mergedPercent" size="large" />
-    </a-flex>
+  <a-flex align="center" gap="medium">
+    <a-switch
+      v-model:checked="auto"
+      checked-children="Auto"
+      un-checked-children="Auto"
+      @change="handleAutoChange"
+    />
+    <a-spin :percent="mergedPercent" size="small" />
+    <a-spin :percent="mergedPercent" />
+    <a-spin :percent="mergedPercent" size="large" />
   </a-flex>
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const auto = ref(false);
-const percent = ref(30);
-const autoPercent = ref(0);
-let timer: ReturnType<typeof setInterval> | null = null;
+const percent = ref(-50);
+let timer: ReturnType<typeof setTimeout> | null = null;
 
-const stopTimer = () => {
+const clearTimer = () => {
   if (timer) {
-    clearInterval(timer);
+    clearTimeout(timer);
     timer = null;
   }
 };
 
-watch(auto, val => {
-  stopTimer();
-  if (val) {
-    autoPercent.value = 0;
-    timer = setInterval(() => {
-      autoPercent.value = autoPercent.value >= 100 ? 0 : autoPercent.value + 5;
-    }, 100);
-  }
-});
+const scheduleNext = () => {
+  clearTimer();
+  timer = setTimeout(() => {
+    const nextPercent = percent.value + 5;
+    percent.value = nextPercent > 150 ? -50 : nextPercent;
+  }, 100);
+};
 
-onBeforeUnmount(stopTimer);
+watch(percent, scheduleNext);
+onMounted(scheduleNext);
+onBeforeUnmount(clearTimer);
 
-const mergedPercent = computed(() => (auto.value ? autoPercent.value : percent.value));
+const handleAutoChange = () => {
+  percent.value = -50;
+  scheduleNext();
+};
+
+const mergedPercent = computed(() => (auto.value ? 'auto' : percent.value));
 </script>

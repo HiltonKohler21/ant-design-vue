@@ -1,13 +1,5 @@
-import type { CSSProperties, VNode, ExtractPropTypes, PropType } from 'vue';
-import {
-  computed,
-  onBeforeUnmount,
-  cloneVNode,
-  isVNode,
-  defineComponent,
-  shallowRef,
-  watch,
-} from 'vue';
+import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
+import { computed, defineComponent, isVNode, onBeforeUnmount, shallowRef, watch } from 'vue';
 import { debounce } from 'throttle-debounce';
 import classNames from '../_util/classNames';
 import { mergeSemantic } from '../_util/hooks/useMergeSemantic';
@@ -15,24 +7,28 @@ import type { SemanticClassNames, SemanticStyles } from '../_util/hooks/useMerge
 import PropTypes from '../_util/vue-types';
 import { filterEmpty, getPropsSlot } from '../_util/props-util';
 import initDefaultProps from '../_util/props-util/initDefaultProps';
+import omit from '../_util/omit';
+import type { CustomSlotsType, VueNode } from '../_util/type';
+import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
+import Indicator from './Indicator';
 import useStyle from './style';
 import usePercent from './usePercent';
-import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
-import Progress from '../progress';
-import omit from '../_util/omit';
-import type { CustomSlotsType } from '../_util/type';
 
-export type SpinSize = 'small' | 'default' | 'medium' | 'large';
+export type SpinSize = 'small' | 'medium' | 'default' | 'large';
 
 export type SpinSemanticName =
   | 'root'
-  | 'wrapper'
-  | 'mask'
   | 'section'
   | 'indicator'
   | 'description'
+  | 'container'
+  /** @deprecated Please use `description` instead */
   | 'tip'
-  | 'container';
+  /** @deprecated Please use `root` instead */
+  | 'mask'
+  /** @deprecated Please use `root` instead */
+  | 'wrapper';
+
 export type SpinSemanticClassNames = SemanticClassNames<SpinSemanticName>;
 export type SpinSemanticStyles = SemanticStyles<SpinSemanticName>;
 export type SpinClassNamesType =
@@ -42,28 +38,39 @@ export type SpinStylesType =
   | SpinSemanticStyles
   | ((info: { props: SpinProps }) => SpinSemanticStyles);
 
+export interface SpinRef {
+  nativeElement: HTMLDivElement | undefined;
+}
+
 export const spinProps = () => ({
   prefixCls: String,
   rootClassName: String,
+  /** Whether Spin is spinning */
   spinning: { type: Boolean, default: undefined },
+  /**
+   * Note: `default` is deprecated, please use `medium` instead.
+   */
   size: String as PropType<SpinSize>,
+  /** @deprecated Please use `classNames.root` instead */
   wrapperClassName: String,
-  /** 自定义描述文案（antd 6.x 推荐，优先级高于 tip） */
+  /** Customize description content */
   description: PropTypes.any,
-  /** @deprecated 请使用 `description` 替代 */
+  /** @deprecated Please use `description` instead */
   tip: PropTypes.any,
+  /** Specifies a delay in milliseconds for loading state (prevent flush) */
   delay: Number,
+  /** Vue node of the spinning indicator */
   indicator: PropTypes.any,
-  /** 环形进度百分比（antd 5.11+ / v6 支持 'auto'），与 indicator 互斥 */
+  /** Progress percentage; when set to `'auto'`, displays an indeterminate progress */
   percent: [Number, String] as PropType<number | 'auto'>,
-  /** 全屏遮罩模式（antd 5.11+） */
+  /** Display a backdrop with the `Spin` component */
   fullscreen: { type: Boolean, default: false },
-  /** 语义化 classNames（antd 6.x 支持对象或函数） */
+  /** Semantic classNames (supports object or function) */
   classNames: {
     type: [Object, Function] as PropType<SpinClassNamesType>,
     default: undefined,
   },
-  /** 语义化 styles（antd 6.x 支持对象或函数） */
+  /** Semantic styles (supports object or function) */
   styles: {
     type: [Object, Function] as PropType<SpinStylesType>,
     default: undefined,
@@ -73,15 +80,42 @@ export const spinProps = () => ({
 export type SpinProps = Partial<ExtractPropTypes<ReturnType<typeof spinProps>>>;
 
 // Render indicator
-let defaultIndicator: () => VNode = null;
+let defaultIndicator: (() => VueNode) | VueNode | undefined = undefined;
 
 function shouldDelay(spinning?: boolean, delay?: number): boolean {
-  return !!spinning && !!delay && !isNaN(Number(delay));
+  return !!spinning && !!delay && !Number.isNaN(Number(delay));
 }
 
-export function setDefaultIndicator(Content: any) {
-  const Indicator = Content.indicator;
-  defaultIndicator = typeof Indicator === 'function' ? Indicator : () => <Indicator />;
+export function setDefaultIndicator(content: any) {
+  if (content === null || content === undefined) {
+    defaultIndicator = undefined;
+    return;
+  }
+  // Legacy Vue API: Spin.setDefaultIndicator({ indicator: ... })
+  if (typeof content === 'object' && !isVNode(content) && 'indicator' in content) {
+    const IndicatorComp = content.indicator;
+    if (IndicatorComp === null || IndicatorComp === undefined) {
+      defaultIndicator = undefined;
+    } else if (typeof IndicatorComp === 'function') {
+      defaultIndicator = IndicatorComp;
+    } else if (isVNode(IndicatorComp)) {
+      defaultIndicator = () => IndicatorComp;
+    } else {
+      defaultIndicator = () => <IndicatorComp />;
+    }
+    return;
+  }
+  // Standard antd API: Spin.setDefaultIndicator(vnodeOrComponent)
+  if (typeof content === 'function') {
+    defaultIndicator = content;
+  } else if (isVNode(content)) {
+    defaultIndicator = () => content;
+  } else if (typeof content === 'object') {
+    const Comp = content;
+    defaultIndicator = () => <Comp />;
+  } else {
+    defaultIndicator = () => content;
+  }
 }
 
 export default defineComponent({
@@ -89,8 +123,9 @@ export default defineComponent({
   name: 'ASpin',
   inheritAttrs: false,
   props: initDefaultProps(spinProps(), {
-    size: 'default',
     spinning: true,
+    delay: 0,
+    fullscreen: false,
     wrapperClassName: '',
   }),
   slots: Object as CustomSlotsType<{
@@ -99,7 +134,7 @@ export default defineComponent({
     description?: any;
     tip?: any;
   }>,
-  setup(props, { attrs, slots }) {
+  setup(props, { attrs, slots, expose }) {
     const { prefixCls, size, direction } = useConfigInject('spin', props);
     const {
       componentConfig: spinConfig,
@@ -109,23 +144,28 @@ export default defineComponent({
       styles: contextStyles,
     } = useComponentConfig('spin');
     const [wrapSSR, hashId] = useStyle(prefixCls);
+
+    const nativeElement = shallowRef<HTMLDivElement>();
+    expose({ nativeElement });
+
     const sSpinning = shallowRef(props.spinning && !shouldDelay(props.spinning, props.delay));
     const mergedPercent = usePercent(
       sSpinning,
       computed(() => props.percent),
     );
-    let updateSpinning: any;
+
+    let updateSpinning: ReturnType<typeof debounce> | undefined;
     watch(
       [() => props.spinning, () => props.delay],
       () => {
         updateSpinning?.cancel();
         if (shouldDelay(props.spinning, props.delay)) {
-          updateSpinning = debounce(props.delay, () => {
-            sSpinning.value = props.spinning;
+          updateSpinning = debounce(props.delay!, () => {
+            sSpinning.value = props.spinning!;
           });
-          updateSpinning?.();
+          updateSpinning();
         } else {
-          sSpinning.value = props.spinning;
+          sSpinning.value = !!props.spinning;
         }
       },
       {
@@ -136,19 +176,29 @@ export default defineComponent({
     onBeforeUnmount(() => {
       updateSpinning?.cancel();
     });
+
+    const mergedSize = computed<SpinSize>(() => {
+      const s = size.value as SpinSize | 'middle' | undefined;
+      if (s === 'middle' || s === undefined) {
+        return 'medium';
+      }
+      return s;
+    });
+
     return () => {
       const { class: cls, style: attrStyle, ...divProps } = omit(attrs, ['rootClassName']);
-      const description = props.description ?? slots.description?.() ?? props.tip ?? slots.tip?.();
+      const mergedDescription =
+        props.description ?? slots.description?.() ?? props.tip ?? slots.tip?.();
       const children = slots.default?.();
       const hasChildren = !!(children && filterEmpty(children).length);
       const isNested = hasChildren || props.fullscreen;
 
       const mergedPropsForSemantic: SpinProps = {
         ...props,
-        size: size.value as SpinSize,
+        size: mergedSize.value,
         spinning: sSpinning.value,
-        tip: description,
-        description,
+        tip: mergedDescription,
+        description: mergedDescription,
         fullscreen: props.fullscreen,
         percent: mergedPercent.value,
       };
@@ -161,159 +211,114 @@ export default defineComponent({
         props: mergedPropsForSemantic,
       });
 
-      const spinClassName = {
-        [hashId.value]: true,
-        [prefixCls.value]: true,
-        [props.rootClassName as string]: !isNested && !!props.rootClassName,
-        [contextClassName.value as string]: !!contextClassName.value,
-        [mergedClassNames.root as string]: !isNested && !!mergedClassNames.root,
-        [mergedClassNames.section as string]: !!mergedClassNames.section,
-        [`${prefixCls.value}-sm`]: size.value === 'small',
-        [`${prefixCls.value}-lg`]: size.value === 'large',
-        [`${prefixCls.value}-spinning`]: sSpinning.value,
-        [`${prefixCls.value}-show-text`]: !!description,
-        [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-        [cls as string]: !!cls,
-      };
+      const propOrSlotIndicator = getPropsSlot(slots, props, 'indicator');
+      const mergedIndicator =
+        propOrSlotIndicator !== undefined
+          ? propOrSlotIndicator
+          : spinConfig.value.indicator !== undefined
+          ? spinConfig.value.indicator
+          : typeof defaultIndicator === 'function'
+          ? defaultIndicator()
+          : defaultIndicator;
 
-      function renderIndicator(prefixClsVal: string) {
-        const dotClassName = `${prefixClsVal}-dot`;
-        const indicatorCls = mergedClassNames.indicator;
-        const indicatorStyle = mergedStyles.indicator;
-        if (mergedPercent.value !== undefined) {
-          return (
-            <Progress
-              type="circle"
-              percent={mergedPercent.value}
-              size={(size.value === 'small' && 14) || (size.value === 'large' ? 32 : 20)}
-              showInfo={false}
-              class={indicatorCls}
-              style={indicatorStyle}
-            />
-          );
-        }
-        let indicator = getPropsSlot(slots, props, 'indicator') ?? spinConfig.value.indicator;
-        // should not be render default indicator when indicator value is null
-        if (indicator === null) {
-          return null;
-        }
-        if (Array.isArray(indicator)) {
-          indicator = indicator.length === 1 ? indicator[0] : indicator;
-        }
-        if (isVNode(indicator)) {
-          return cloneVNode(indicator, {
-            class: classNames(dotClassName, indicatorCls),
-            ...(indicatorStyle ? { style: indicatorStyle } : {}),
-          });
-        }
-
-        if (defaultIndicator && isVNode(defaultIndicator())) {
-          return cloneVNode(defaultIndicator(), {
-            class: classNames(dotClassName, indicatorCls),
-            ...(indicatorStyle ? { style: indicatorStyle } : {}),
-          });
-        }
-
-        return (
-          <span
-            class={classNames(dotClassName, `${prefixClsVal}-dot-spin`, indicatorCls)}
-            style={indicatorStyle}
-          >
-            <i class={`${prefixClsVal}-dot-item`} />
-            <i class={`${prefixClsVal}-dot-item`} />
-            <i class={`${prefixClsVal}-dot-item`} />
-            <i class={`${prefixClsVal}-dot-item`} />
-          </span>
-        );
-      }
-
-      const descriptionCls = classNames(
-        `${prefixCls.value}-text`,
-        mergedClassNames.tip,
-        mergedClassNames.description,
+      const indicatorNode = (
+        <>
+          <Indicator
+            class={mergedClassNames.indicator}
+            style={mergedStyles.indicator}
+            prefixCls={prefixCls.value}
+            indicator={mergedIndicator}
+            percent={mergedPercent.value}
+          />
+          {mergedDescription ? (
+            <div
+              class={classNames(
+                `${prefixCls.value}-description`,
+                `${prefixCls.value}-text`,
+                mergedClassNames.tip,
+                mergedClassNames.description,
+              )}
+              style={
+                mergedStyles.tip || mergedStyles.description
+                  ? [mergedStyles.tip, mergedStyles.description]
+                  : undefined
+              }
+            >
+              {mergedDescription}
+            </div>
+          ) : null}
+        </>
       );
-      const descriptionStyle =
-        mergedStyles.tip || mergedStyles.description
-          ? [mergedStyles.tip, mergedStyles.description]
-          : undefined;
 
-      const spinStyle = isNested
-        ? [
-            !props.fullscreen ? contextStyle.value : undefined,
-            mergedStyles.section,
-            attrStyle as CSSProperties,
-          ]
-        : [contextStyle.value, mergedStyles.root, mergedStyles.section, attrStyle as CSSProperties];
+      const rootStyle = [
+        contextStyle.value,
+        mergedStyles.root,
+        hasChildren ? mergedStyles.wrapper : undefined,
+        !isNested ? mergedStyles.section : undefined,
+        props.fullscreen ? mergedStyles.mask : undefined,
+        attrStyle as CSSProperties,
+      ].filter(Boolean);
 
-      const spinElement = (
+      return wrapSSR(
         <div
+          ref={nativeElement}
           {...divProps}
-          class={spinClassName}
-          style={spinStyle}
+          class={classNames(
+            prefixCls.value,
+            {
+              [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
+              [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
+              [`${prefixCls.value}-spinning`]: sSpinning.value,
+              [`${prefixCls.value}-show-text`]: !!mergedDescription,
+              [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+              [`${prefixCls.value}-fullscreen`]: props.fullscreen,
+              [`${prefixCls.value}-fullscreen-show`]: props.fullscreen && sSpinning.value,
+              [`${prefixCls.value}-nested-loading`]: hasChildren,
+            },
+            props.rootClassName,
+            mergedClassNames.root,
+            hasChildren && mergedClassNames.wrapper,
+            props.fullscreen && mergedClassNames.mask,
+            isNested
+              ? props.wrapperClassName
+              : [`${prefixCls.value}-section`, mergedClassNames.section],
+            contextClassName.value,
+            cls,
+            hashId.value,
+          )}
+          style={rootStyle.length ? rootStyle : undefined}
           aria-live="polite"
           aria-busy={sSpinning.value}
         >
-          {renderIndicator(prefixCls.value)}
-          {description ? (
-            <div class={descriptionCls} style={descriptionStyle}>
-              {description}
-            </div>
+          {/* Indicator */}
+          {sSpinning.value ? (
+            isNested ? (
+              <div
+                class={classNames(`${prefixCls.value}-section`, mergedClassNames.section)}
+                style={mergedStyles.section}
+              >
+                {indicatorNode}
+              </div>
+            ) : (
+              indicatorNode
+            )
           ) : null}
-        </div>
-      );
-      if (props.fullscreen) {
-        const maskStyle =
-          contextStyle.value || mergedStyles.root || mergedStyles.mask
-            ? [contextStyle.value, mergedStyles.root, mergedStyles.mask]
-            : undefined;
-        return wrapSSR(
-          <div
-            class={[
-              `${prefixCls.value}-fullscreen`,
-              {
-                [`${prefixCls.value}-fullscreen-show`]: sSpinning.value,
-              },
-              props.rootClassName,
-              mergedClassNames.root,
-              mergedClassNames.mask,
-              hashId.value,
-            ]}
-            style={maskStyle}
-          >
-            {spinElement}
-          </div>,
-        );
-      }
-      if (hasChildren) {
-        const containerClassName = {
-          [`${prefixCls.value}-container`]: true,
-          [`${prefixCls.value}-blur`]: sSpinning.value,
-          [mergedClassNames.container as string]: !!mergedClassNames.container,
-        };
-        const wrapperStyle =
-          mergedStyles.root || mergedStyles.wrapper
-            ? [mergedStyles.root, mergedStyles.wrapper]
-            : undefined;
-        return wrapSSR(
-          <div
-            class={[
-              `${prefixCls.value}-nested-loading`,
-              props.wrapperClassName,
-              props.rootClassName,
-              mergedClassNames.root,
-              mergedClassNames.wrapper,
-              hashId.value,
-            ]}
-            style={wrapperStyle}
-          >
-            {sSpinning.value && <div key="loading">{spinElement}</div>}
-            <div class={containerClassName} style={mergedStyles.container} key="container">
+
+          {/* Children */}
+          {hasChildren ? (
+            <div
+              class={classNames(
+                `${prefixCls.value}-container`,
+                { [`${prefixCls.value}-blur`]: sSpinning.value },
+                mergedClassNames.container,
+              )}
+              style={mergedStyles.container}
+            >
               {children}
             </div>
-          </div>,
-        );
-      }
-      return wrapSSR(spinElement);
+          ) : null}
+        </div>,
+      );
     };
   },
 });

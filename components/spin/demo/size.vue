@@ -12,14 +12,14 @@ title:
 
 ## en-US
 
-A small `Spin` use in loading text, default `Spin` use in loading card-level block, and large `Spin` use in loading **page**.
+A small `Spin` is used for loading text, default sized `Spin` for loading a card-level block, and large `Spin` used for loading a **page**.
 
 </docs>
 
 <template>
-  <a-space>
+  <a-flex align="center" gap="medium">
     <a-spin size="small" />
     <a-spin />
     <a-spin size="large" />
-  </a-space>
+  </a-flex>
 </template>

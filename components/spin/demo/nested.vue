@@ -12,28 +12,26 @@ title:
 
 ## en-US
 
-Embedding content into `Spin` will alter it into loading state.
+Embedding content into `Spin` will set it into loading state.
 
 </docs>
 
 <template>
-  <a-spin :spinning="spinning">
-    <a-alert
-      message="Alert message title"
-      description="Further details about the context of this alert."
-    ></a-alert>
-  </a-spin>
-  <div class="spin-state">
-    Loading state：
-    <a-switch v-model:checked="spinning" />
-  </div>
+  <a-flex gap="medium" vertical>
+    <a-spin :spinning="loading">
+      <a-alert
+        type="info"
+        title="Alert message title"
+        description="Further details about the context of this alert."
+      />
+    </a-spin>
+    <p>
+      Loading state：
+      <a-switch v-model:checked="loading" />
+    </p>
+  </a-flex>
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-const spinning = ref<boolean>(false);
+const loading = ref<boolean>(false);
 </script>
-<style scoped>
-.spin-state {
-  margin-top: 16px;
-}
-</style>

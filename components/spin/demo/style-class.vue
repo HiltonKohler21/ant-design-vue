@@ -1,10 +1,10 @@
 <docs>
 ---
-order: 6.5
+order: 7
 version: 4.3.0
 title:
   zh-CN: 自定义语义结构的样式和类
-  en-US: Custom Semantic DOM Styling
+  en-US: Custom semantic dom styling
 ---
 
 ## zh-CN
@@ -17,7 +17,7 @@ You can customize the [semantic dom](#semantic-dom) style of Spin by passing obj
 </docs>
 
 <template>
-  <a-flex align="center" gap="middle" class="spin-style-class-demo">
+  <a-flex align="center" gap="medium" class="spin-style-class-demo">
     <a-spin spinning :percent="0" :class-names="classNames" :styles="stylesObject" />
     <a-spin spinning :percent="0" :class-names="classNames" :styles="stylesFn" size="small" />
   </a-flex>

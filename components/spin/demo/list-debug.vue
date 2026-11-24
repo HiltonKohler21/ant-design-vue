@@ -1,10 +1,10 @@
 <docs>
 ---
-order: 10
+order: 9
 debug: true
 title:
   zh-CN: List 嵌套调试
-  en-US: List nested debug
+  en-US: Nested in List debug
 ---
 
 ## zh-CN

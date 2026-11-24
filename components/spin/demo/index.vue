@@ -9,14 +9,12 @@
     <percent />
     <style-class />
     <fullscreen />
-    <inside />
     <list-debug />
   </demo-sort>
 </template>
 <script lang="ts">
 import Basic from './basic.vue';
 import Size from './size.vue';
-import Inside from './inside.vue';
 import Nested from './nested.vue';
 import Tip from './tip.vue';
 import Delay from './delay.vue';
@@ -34,7 +32,6 @@ export default defineComponent({
   components: {
     Basic,
     Size,
-    Inside,
     Nested,
     Tip,
     Delay,
