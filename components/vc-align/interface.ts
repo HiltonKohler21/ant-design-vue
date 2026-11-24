@@ -24,6 +24,9 @@ export interface AlignType {
   overflow?: {
     adjustX?: boolean | number;
     adjustY?: boolean | number;
+    shiftX?: boolean | number;
+    shiftY?: boolean | number;
+    alwaysByViewport?: boolean;
   };
   /**
    * Whether use css right instead of left to position

@@ -76,6 +76,12 @@ const Popover = defineComponent({
       getPopupDomNode: () => {
         return tooltipRef.value?.getPopupDomNode?.();
       },
+      forceAlign: () => {
+        tooltipRef.value?.forcePopupAlign?.();
+      },
+      forcePopupAlign: () => {
+        tooltipRef.value?.forcePopupAlign?.();
+      },
     });
     const { prefixCls, configProvider } = useConfigInject('popover', props);
     const {

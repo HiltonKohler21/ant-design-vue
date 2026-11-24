@@ -13,8 +13,11 @@ import { alignElement, alignPoint } from 'dom-align';
 import addEventListener from '../vc-util/Dom/addEventListener';
 import { cloneElement } from '../_util/vnode';
 import isVisible from '../vc-util/Dom/isVisible';
+import raf from '../_util/raf';
+import supportsPassive from '../_util/supportsPassive';
 
-import { isSamePoint, restoreFocus, monitorResize } from './util';
+import { isSamePoint, restoreFocus, monitorResize, getScrollableAncestors } from './util';
+import { applyAutoShift } from './autoShift';
 import type { AlignType, AlignResult, TargetType, TargetPoint } from './interface';
 import useBuffer from './hooks/useBuffer';
 import isEqual from 'lodash-es/isEqual';
@@ -90,6 +93,9 @@ export default defineComponent({
           // We only align when element is visible
           if (element && isVisible(element)) {
             result = alignElement(source, element, latestAlign);
+            if (result) {
+              result = applyAutoShift(source, element, latestAlign, result);
+            }
           } else if (point) {
             result = alignPoint(source, point, latestAlign);
           }
@@ -116,11 +122,84 @@ export default defineComponent({
     const sourceResizeMonitor = ref<MonitorRef>({
       cancel: () => {},
     });
+    // Listen for scrollable ancestors + window scroll
+    let scrollRafId: number | null = null;
+    const cancelScrollRaf = () => {
+      if (scrollRafId !== null) {
+        raf.cancel(scrollRafId);
+        scrollRafId = null;
+      }
+    };
+    const onScroll = () => {
+      if (props.disabled) return;
+      if (scrollRafId !== null) return;
+      scrollRafId = raf(() => {
+        scrollRafId = null;
+        if (!props.disabled) {
+          forceAlign(true);
+        }
+      });
+    };
+    const scrollMonitor = ref<{
+      element?: HTMLElement | null;
+      connected?: boolean;
+      active: boolean;
+      cancel: () => void;
+    }>({
+      element: null,
+      connected: false,
+      active: false,
+      cancel: () => {},
+    });
+    const clearScrollListeners = () => {
+      cancelScrollRaf();
+      scrollMonitor.value.cancel();
+      scrollMonitor.value = {
+        element: null,
+        connected: false,
+        active: false,
+        cancel: () => {},
+      };
+    };
+    const updateScrollListeners = (element: HTMLElement | null) => {
+      if (props.disabled || !element) {
+        if (scrollMonitor.value.active) {
+          clearScrollListeners();
+        }
+        return;
+      }
+      const connected = !!element.isConnected;
+      if (
+        scrollMonitor.value.active &&
+        scrollMonitor.value.element === element &&
+        scrollMonitor.value.connected === connected
+      ) {
+        return;
+      }
+      scrollMonitor.value.cancel();
+      const targets = getScrollableAncestors(element);
+      const option: AddEventListenerOptions | boolean = supportsPassive ? { passive: true } : false;
+      targets.forEach(t => {
+        t.addEventListener('scroll', onScroll, option);
+      });
+      scrollMonitor.value = {
+        element,
+        connected,
+        active: true,
+        cancel: () => {
+          targets.forEach(t => {
+            t.removeEventListener('scroll', onScroll, option);
+          });
+        },
+      };
+    };
 
     const goAlign = () => {
       const target = props.target;
       const element = getElement(target);
       const point = getPoint(target);
+
+      updateScrollListeners(element);
 
       if (nodeRef.value !== sourceResizeMonitor.value.element) {
         sourceResizeMonitor.value.cancel();
@@ -161,8 +240,10 @@ export default defineComponent({
       () => props.disabled,
       disabled => {
         if (!disabled) {
+          updateScrollListeners(getElement(props.target));
           forceAlign();
         } else {
+          clearScrollListeners();
           cancelForceAlign();
         }
       },
@@ -189,6 +270,7 @@ export default defineComponent({
     onUnmounted(() => {
       resizeMonitor.value.cancel();
       sourceResizeMonitor.value.cancel();
+      clearScrollListeners();
       if (winResizeRef.value) winResizeRef.value.remove();
       cancelForceAlign();
     });

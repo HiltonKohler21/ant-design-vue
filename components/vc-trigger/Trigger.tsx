@@ -696,11 +696,21 @@ export default defineComponent({
     }
     const trigger = cloneElement(child, { ...newChildProps, ref: 'triggerRef' }, true, true);
 
+    const getPortalContainer = getPopupContainer
+      ? () => {
+          const domNode = this.getRootDomNode();
+          if (!domNode && getPopupContainer.length > 0) {
+            return null;
+          }
+          return getPopupContainer(domNode);
+        }
+      : undefined;
+
     const portal = (
       <Portal
         key="portal"
         v-slots={{ default: this.getComponent }}
-        getContainer={getPopupContainer && (() => getPopupContainer(this.getRootDomNode()))}
+        getContainer={getPortalContainer}
         didUpdate={this.handlePortalUpdate}
         visible={this.$data.sPopupVisible}
       ></Portal>

@@ -19,6 +19,7 @@ Auto adjust Popup and arrow position when Popover is close to the edge of the co
   <div ref="containerRef" :style="scrollContainerStyle">
     <div :style="innerStyle">
       <a-popover
+        ref="popoverRef"
         content="Thanks for using antd. Have a nice day !"
         open
         :get-popup-container="getPopupContainer"
@@ -30,28 +31,29 @@ Auto adjust Popup and arrow position when Popover is close to the edge of the co
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
-const containerRef = ref<HTMLDivElement>();
+const containerRef = ref<HTMLDivElement | null>(null);
+const popoverRef = ref<{ forceAlign?: () => void } | null>(null);
 
 const scrollContainerStyle = {
   width: '100%',
   height: '300px',
   overflow: 'auto',
-  position: 'relative',
+  position: 'relative' as const,
   border: '1px solid var(--ant-color-border-secondary, #f0f0f0)',
   borderRadius: '6px',
 };
 
 const innerStyle = {
   width: '200%',
-  height: '200%',
+  height: '700px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 };
 
-const getPopupContainer = () => containerRef.value || document.body;
+const getPopupContainer = () => containerRef.value as HTMLElement;
 
 onMounted(() => {
   const el = containerRef.value;
@@ -59,5 +61,8 @@ onMounted(() => {
     el.scrollTop = (el.scrollHeight - el.clientHeight) / 2;
     el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
   }
+  nextTick(() => {
+    popoverRef.value?.forceAlign?.();
+  });
 });
 </script>

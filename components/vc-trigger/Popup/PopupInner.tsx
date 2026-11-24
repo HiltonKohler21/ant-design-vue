@@ -5,6 +5,8 @@ import type { CSSProperties } from 'vue';
 import {
   computed,
   defineComponent,
+  nextTick,
+  onBeforeUnmount,
   shallowRef,
   toRef,
   Transition,
@@ -75,6 +77,15 @@ export default defineComponent({
       alignRef.value?.forceAlign();
     };
 
+    let stableRealignScheduled = false;
+    let isStableRealigning = false;
+    let isUnmounted = false;
+
+    onBeforeUnmount(() => {
+      clearTimeout(timeoutId);
+      isUnmounted = true;
+    });
+
     const onInternalAlign = (popupDomNode: HTMLElement, matchAlign: AlignType) => {
       const nextAlignedClassName = props.getClassNameFromAlign(matchAlign);
       const preAlignedClassName = alignedClassName.value;
@@ -85,16 +96,36 @@ export default defineComponent({
         // Repeat until not more align needed
         if (preAlignedClassName !== nextAlignedClassName) {
           Promise.resolve().then(() => {
-            forceAlign();
+            if (!isUnmounted) {
+              forceAlign();
+            }
           });
         } else {
           goNextStatus(() => {
             prepareResolveRef.value?.();
           });
         }
-
-        props.onAlign?.(popupDomNode, matchAlign);
+      } else if (
+        status.value === 'stable' &&
+        preAlignedClassName !== nextAlignedClassName &&
+        !isStableRealigning &&
+        !stableRealignScheduled
+      ) {
+        // Re-align once after placement class (e.g. top <-> bottom) updates DOM padding/arrow
+        stableRealignScheduled = true;
+        nextTick(() => {
+          stableRealignScheduled = false;
+          if (isUnmounted || !visible.value) return;
+          isStableRealigning = true;
+          try {
+            forceAlign();
+          } finally {
+            isStableRealigning = false;
+          }
+        });
       }
+
+      props.onAlign?.(popupDomNode, matchAlign);
     };
 
     // ======================== Motion ========================

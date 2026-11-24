@@ -58,3 +58,43 @@ export function monitorResize(element: HTMLElement, callback: Function) {
     resizeObserver.disconnect();
   };
 }
+
+const SCROLLABLE_OVERFLOW_REGEX = /(auto|scroll|overlay|hidden)/;
+
+export function getScrollableAncestors(element: HTMLElement | null): EventTarget[] {
+  const targets: EventTarget[] = [];
+  if (typeof window === 'undefined') {
+    return targets;
+  }
+  const seen = new Set<EventTarget>();
+  const doc = element?.ownerDocument || document;
+  const win = doc.defaultView || window;
+  const body = doc.body;
+  const docEl = doc.documentElement;
+
+  let current: HTMLElement | null = element?.parentElement || null;
+  while (current && current !== body && current !== docEl) {
+    if (current.nodeType === 1) {
+      let overflow = `${current.style?.overflow || ''}${current.style?.overflowX || ''}${
+        current.style?.overflowY || ''
+      }`;
+      try {
+        const style = win.getComputedStyle(current);
+        overflow = `${style.overflow}${style.overflowX}${style.overflowY}`;
+      } catch {
+        // Ignore jsdom / nwsapi getComputedStyle errors on detached nodes or unsupported selectors
+      }
+      if (SCROLLABLE_OVERFLOW_REGEX.test(overflow) && !seen.has(current)) {
+        seen.add(current);
+        targets.push(current);
+      }
+    }
+    current = current.parentElement;
+  }
+
+  if (!seen.has(win)) {
+    seen.add(win);
+    targets.push(win);
+  }
+  return targets;
+}

@@ -17,25 +17,10 @@ Auto adjust Popup and arrow position when Popconfirm is close to the edge of the
 </docs>
 
 <template>
-  <div
-    ref="containerRef"
-    :style="{
-      height: '300px',
-      overflow: 'auto',
-      position: 'relative',
-      border: '1px solid var(--ant-color-border-secondary)',
-    }"
-  >
-    <div
-      :style="{
-        width: '1200px',
-        height: '700px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }"
-    >
+  <div ref="containerRef" :style="scrollContainerStyle">
+    <div :style="innerStyle">
       <a-popconfirm
+        ref="popconfirmRef"
         title="Thanks for using antd. Have a nice day !"
         :open="true"
         :auto-adjust-overflow="true"
@@ -47,18 +32,38 @@ Auto adjust Popup and arrow position when Popconfirm is close to the edge of the
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 const containerRef = ref<HTMLDivElement | null>(null);
+const popconfirmRef = ref<{ forceAlign?: () => void } | null>(null);
 
-const getPopupContainer = () => containerRef.value || document.body;
+const scrollContainerStyle = {
+  width: '100%',
+  height: '300px',
+  overflow: 'auto',
+  position: 'relative' as const,
+  border: '1px solid var(--ant-color-border-secondary, #f0f0f0)',
+  borderRadius: '6px',
+};
+
+const innerStyle = {
+  width: '200%',
+  height: '700px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const getPopupContainer = () => containerRef.value as HTMLElement;
 
 onMounted(() => {
-  if (containerRef.value) {
-    containerRef.value.scrollTop =
-      (containerRef.value.scrollHeight - containerRef.value.clientHeight) / 2;
-    containerRef.value.scrollLeft =
-      (containerRef.value.scrollWidth - containerRef.value.clientWidth) / 2;
+  const el = containerRef.value;
+  if (el) {
+    el.scrollTop = (el.scrollHeight - el.clientHeight) / 2;
+    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
   }
+  nextTick(() => {
+    popconfirmRef.value?.forceAlign?.();
+  });
 });
 </script>

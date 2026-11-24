@@ -128,6 +128,12 @@ const Popconfirm = defineComponent({
       getPopupDomNode: () => {
         return rootRef.value?.getPopupDomNode?.();
       },
+      forceAlign: () => {
+        rootRef.value?.forcePopupAlign?.();
+      },
+      forcePopupAlign: () => {
+        rootRef.value?.forcePopupAlign?.();
+      },
     });
     const [open, setOpen] = useMergedState(false, {
       defaultValue: props.defaultOpen ?? props.defaultVisible,

@@ -15,6 +15,8 @@ const targetOffset = [0, 0];
 export interface AdjustOverflow {
   adjustX?: 0 | 1;
   adjustY?: 0 | 1;
+  shiftX?: 0 | 1 | boolean;
+  shiftY?: 0 | 1 | boolean;
 }
 
 export interface PlacementsConfig {

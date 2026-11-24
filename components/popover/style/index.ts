@@ -51,6 +51,8 @@ const genBaseStyle: GenerateStyle<PopoverToken> = token => {
         cursor: 'auto',
         userSelect: 'text',
         '--antd-arrow-background-color': colorBgElevated,
+        width: 'max-content',
+        maxWidth: '100vw',
 
         '&-rtl': {
           direction: 'rtl',
