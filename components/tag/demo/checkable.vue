@@ -8,34 +8,40 @@ title:
 
 ## zh-CN
 
-可通过 `CheckableTag` 实现类似 Checkbox 的效果，点击切换选中效果。
-> 该组件为完全受控组件，不支持非受控用法。
+可通过 `CheckableTag` 实现类似 Checkbox 的效果，点击切换选中效果。而 `CheckableTagGroup` 则提供了类似 `CheckboxGroup` 或 `RadioGroup` 的功能。
+
+> `CheckableTag` 为完全受控组件，不支持非受控用法。
 
 ## en-US
 
-`CheckableTag` works like Checkbox, click it to toggle checked state.
-> it is an absolute controlled component and has no uncontrolled mode.
+`CheckableTag` works like Checkbox, click it to toggle checked state. `CheckableTagGroup` provides function that is similar to `CheckboxGroup` or `RadioGroup`.
+
+> `CheckableTag` is absolute controlled component and has no uncontrolled mode.
 
 </docs>
 
 <template>
-  <span style="margin-right: 8px">Categories:</span>
-  <a-space :size="[0, 8]" wrap>
-    <a-checkable-tag
-      v-for="(tag, index) in tagsData"
-      :key="tag"
-      v-model:checked="selectTags[index]"
-      @change="checked => handleChange(tag, checked)"
-    >
-      {{ tag }}
-    </a-checkable-tag>
-  </a-space>
+  <a-form :label-col="{ span: 6 }">
+    <a-form-item label="Checkable">
+      <a-checkable-tag v-model:checked="checked">Yes</a-checkable-tag>
+    </a-form-item>
+    <a-form-item label="Single">
+      <a-checkable-tag-group v-model:value="singleSelected" :options="tagsData" />
+    </a-form-item>
+    <a-form-item label="Multiple">
+      <a-checkable-tag-group v-model:value="multipleSelected" :options="tagsData" multiple />
+    </a-form-item>
+    <a-form-item label="Disabled">
+      <a-checkable-tag-group :default-value="['Books']" :options="tagsData" multiple disabled />
+    </a-form-item>
+  </a-form>
 </template>
+
 <script lang="ts" setup>
-import { reactive } from 'vue';
-const tagsData = reactive(['Movies', 'Books', 'Music', 'Sports']);
-const selectTags = reactive([false, true, false, false]);
-const handleChange = (tag: string, checked: boolean) => {
-  console.log(tag, checked);
-};
+import { ref } from 'vue';
+
+const tagsData = ['Movies', 'Books', 'Music', 'Sports'];
+const checked = ref(true);
+const singleSelected = ref<string | null>('Books');
+const multipleSelected = ref<string[]>(['Movies', 'Music']);
 </script>

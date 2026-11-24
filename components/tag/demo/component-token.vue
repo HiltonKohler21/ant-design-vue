@@ -19,7 +19,7 @@ Component Token Debug.
 <template>
   <a-flex vertical gap="small" align="start">
     <a-config-provider :theme="tagTheme">
-      <a-flex gap="small" align="center" wrap="wrap">
+      <a-flex gap="small" align="center" wrap>
         <a-tag>
           <a
             href="https://github.com/ant-design/ant-design/issues/1862"
@@ -59,7 +59,7 @@ Component Token Debug.
       </a-flex>
     </a-config-provider>
     <a-config-provider :theme="darkTheme">
-      <a-flex gap="small" align="center" wrap="wrap" style="background-color: #000; padding: 4px">
+      <a-flex gap="small" align="center" wrap style="background-color: #000; padding: 4px">
         <a-tag variant="solid" color="default">Dark</a-tag>
       </a-flex>
     </a-config-provider>

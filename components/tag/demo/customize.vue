@@ -17,7 +17,7 @@ The close icon can be customized using `closeIcon`.
 </docs>
 
 <template>
-  <a-flex gap="small" align="center" wrap="wrap">
+  <a-flex gap="small" align="center" wrap>
     <a-tag closable close-icon="Close">Tag1</a-tag>
     <a-tag closable>
       <template #closeIcon>

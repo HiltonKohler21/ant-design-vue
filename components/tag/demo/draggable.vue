@@ -17,7 +17,7 @@ Reorder tags via native HTML5 drag-and-drop events.
 </docs>
 
 <template>
-  <a-flex gap="small" align="center" wrap="wrap">
+  <a-flex gap="small" align="center" wrap>
     <a-tag
       v-for="(item, index) in items"
       :key="item.id"

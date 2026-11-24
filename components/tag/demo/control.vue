@@ -17,70 +17,124 @@ Generating a set of Tags by array, you can add and remove dynamically.
 </docs>
 
 <template>
-  <template v-for="(tag, index) in state.tags" :key="tag">
-    <a-tooltip v-if="tag.length > 20" :title="tag">
-      <a-tag :closable="index !== 0" @close="handleClose(tag)">
-        {{ `${tag.slice(0, 20)}...` }}
+  <a-flex gap="small" align="center" wrap>
+    <template v-for="(tag, index) in tags" :key="tag">
+      <a-input
+        v-if="editInputIndex === index"
+        ref="editInputRef"
+        v-model:value="editInputValue"
+        size="small"
+        :style="tagInputStyle"
+        @blur="handleEditInputConfirm"
+        @keyup.enter="handleEditInputConfirm"
+      />
+      <a-tooltip v-else-if="tag.length > 20" :title="tag">
+        <a-tag :closable="index !== 0" style="user-select: none" @close="handleClose(tag)">
+          <span @dblclick="e => handleEditStart(index, tag, e)">
+            {{ `${tag.slice(0, 20)}...` }}
+          </span>
+        </a-tag>
+      </a-tooltip>
+      <a-tag v-else :closable="index !== 0" style="user-select: none" @close="handleClose(tag)">
+        <span @dblclick="e => handleEditStart(index, tag, e)">
+          {{ tag }}
+        </span>
       </a-tag>
-    </a-tooltip>
-    <a-tag v-else :closable="index !== 0" @close="handleClose(tag)">
-      {{ tag }}
+    </template>
+    <a-input
+      v-if="inputVisible"
+      ref="inputRef"
+      v-model:value="inputValue"
+      type="text"
+      size="small"
+      :style="tagInputStyle"
+      @blur="handleInputConfirm"
+      @keyup.enter="handleInputConfirm"
+    />
+    <a-tag v-else variant="outlined" :style="tagPlusStyle" @click="showInput">
+      <template #icon>
+        <PlusOutlined />
+      </template>
+      New Tag
     </a-tag>
-  </template>
-  <a-input
-    v-if="state.inputVisible"
-    ref="inputRef"
-    v-model:value="state.inputValue"
-    type="text"
-    size="small"
-    :style="{ width: '78px' }"
-    @blur="handleInputConfirm"
-    @keyup.enter="handleInputConfirm"
-  />
-  <a-tag
-    v-else
-    style="background: var(--ant-color-bg-container, #fff); border-style: dashed"
-    @click="showInput"
-  >
-    <plus-outlined />
-    New Tag
-  </a-tag>
+  </a-flex>
 </template>
-<script lang="ts" setup>
-import { ref, reactive, nextTick } from 'vue';
-import { PlusOutlined } from '@ant-design/icons-vue';
 
+<script lang="ts" setup>
+import { computed, nextTick, ref } from 'vue';
+import type { CSSProperties } from 'vue';
+import { PlusOutlined } from '@ant-design/icons-vue';
+import { theme } from 'ant-design-vue';
+
+const { token } = theme.useToken();
+
+const tagInputStyle: CSSProperties = {
+  width: '64px',
+  height: '22px',
+  marginInlineEnd: '8px',
+  verticalAlign: 'top',
+};
+
+const tagPlusStyle = computed<CSSProperties>(() => ({
+  height: '22px',
+  background: token.value.colorBgContainer,
+  borderStyle: 'dashed',
+  cursor: 'pointer',
+}));
+
+const tags = ref<string[]>(['Unremovable', 'Tag 2', 'Tag 3']);
+const inputVisible = ref(false);
+const inputValue = ref('');
+const editInputIndex = ref(-1);
+const editInputValue = ref('');
 const inputRef = ref();
-const state = reactive({
-  tags: ['Unremovable', 'Tag 2', 'Tag 3Tag 3Tag 3Tag 3Tag 3Tag 3Tag 3'],
-  inputVisible: false,
-  inputValue: '',
-});
+const editInputRef = ref();
 
 const handleClose = (removedTag: string) => {
-  const tags = state.tags.filter(tag => tag !== removedTag);
-  console.log(tags);
-  state.tags = tags;
+  const nextTags = tags.value.filter(tag => tag !== removedTag);
+  console.log(nextTags);
+  tags.value = nextTags;
 };
 
 const showInput = () => {
-  state.inputVisible = true;
+  inputVisible.value = true;
   nextTick(() => {
-    inputRef.value.focus();
+    inputRef.value?.focus();
   });
 };
 
 const handleInputConfirm = () => {
-  const inputValue = state.inputValue;
-  let tags = state.tags;
-  if (inputValue && tags.indexOf(inputValue) === -1) {
-    tags = [...tags, inputValue];
+  const value = inputValue.value.trim();
+  if (value && !tags.value.includes(value)) {
+    tags.value = [...tags.value, value];
   }
-  console.log(tags);
-  Object.assign(state, {
-    tags,
-    inputVisible: false,
-    inputValue: '',
-  });
+  inputVisible.value = false;
+  inputValue.value = '';
+};
+
+const handleEditStart = (index: number, tag: string, e: MouseEvent) => {
+  if (index !== 0) {
+    editInputIndex.value = index;
+    editInputValue.value = tag;
+    e.preventDefault();
+    nextTick(() => {
+      const target = Array.isArray(editInputRef.value) ? editInputRef.value[0] : editInputRef.value;
+      target?.focus();
+    });
+  }
+};
+
+const handleEditInputConfirm = () => {
+  const index = editInputIndex.value;
+  if (index >= 0) {
+    const nextTags = [...tags.value];
+    const nextValue = editInputValue.value.trim();
+    if (nextValue) {
+      nextTags[index] = nextValue;
+      tags.value = nextTags;
+    }
+  }
+  editInputIndex.value = -1;
+  editInputValue.value = '';
 };
 </script>

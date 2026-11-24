@@ -96,8 +96,13 @@ describe('Tag', () => {
     });
   });
 
-  it('supports variant filled / solid / outlined and bordered=false compatibility', async () => {
+  it('supports default variant filled, solid / outlined, and bordered compatibility', async () => {
     document.head.innerHTML = '';
+    const defaultTag = mount(Tag, { slots: { default: () => 'Default' } });
+    expect(defaultTag.classes()).toContain('ant-tag-filled');
+    expect(defaultTag.classes()).not.toContain('ant-tag-borderless');
+    expect(defaultTag.classes()).not.toContain('ant-tag-outlined');
+
     const filled = mount(Tag, { props: { variant: 'filled', color: 'blue' } });
     expect(filled.classes()).toContain('ant-tag-filled');
     expect(filled.classes()).toContain('ant-tag-blue');
@@ -110,9 +115,18 @@ describe('Tag', () => {
     expect(outlined.classes()).toContain('ant-tag-outlined');
     expect(outlined.classes()).toContain('ant-tag-success');
 
+    const explicitBordered = mount(Tag, { props: { bordered: true } });
+    expect(explicitBordered.classes()).toContain('ant-tag-outlined');
+
     const borderless = mount(Tag, { props: { bordered: false } });
     expect(borderless.classes()).toContain('ant-tag-filled');
     expect(borderless.classes()).toContain('ant-tag-borderless');
+
+    const ctxOutlined = mount(ConfigProvider, {
+      props: { tag: { variant: 'outlined' } },
+      slots: { default: () => <Tag>Context Outlined</Tag> },
+    });
+    expect(ctxOutlined.find('.ant-tag').classes()).toContain('ant-tag-outlined');
 
     await nextTick();
     const css = collectCss();
@@ -205,6 +219,22 @@ describe('Tag', () => {
     expect(wrapper.find('.sem-content').text()).toBe('Semantic');
     expect(wrapper.find('.sem-content').attributes('style')).toContain('font-weight: 600');
     expect(wrapper.find('.ant-tag-close-icon').classes()).toContain('sem-close');
+
+    // Icon passed via slot should also be cloned directly with semantic icon class/style
+    const slotIconWrapper = mount(Tag, {
+      props: {
+        classNames: { icon: 'slot-sem-icon' },
+        styles: { icon: { color: 'rgb(82, 196, 26)' } },
+      },
+      slots: {
+        icon: () => <span class="slot-ic">S</span>,
+        default: () => 'Slot Icon',
+      },
+    });
+    expect(slotIconWrapper.find('.slot-ic').classes()).toContain('slot-sem-icon');
+    expect(slotIconWrapper.find('.slot-ic').attributes('style')).toContain(
+      'color: rgb(82, 196, 26)',
+    );
   });
 
   it('supports CheckableTag icon, disabled, and Space key toggle', async () => {
@@ -329,7 +359,15 @@ describe('Tag', () => {
     wrapper.unmount();
   });
 
-  it('uses alpha-tinted background for custom hex colors with filled and outlined variants', () => {
+  it('uses alpha-tinted background for custom hex colors with default (filled) and outlined variants', () => {
+    const defaultCustom = mount(Tag, {
+      props: { color: '#f50' },
+      slots: { default: () => 'Default Custom' },
+    });
+    expect(defaultCustom.classes()).toContain('ant-tag-filled');
+    expect(defaultCustom.element.style.backgroundColor).toBe('rgba(255, 85, 0, 0.1)');
+    expect(defaultCustom.element.style.color).toBe('rgb(255, 85, 0)');
+
     const filled = mount(Tag, {
       props: { variant: 'filled', color: '#f50' },
       slots: { default: () => 'Filled Custom' },

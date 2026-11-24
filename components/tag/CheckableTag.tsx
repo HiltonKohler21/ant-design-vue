@@ -1,6 +1,7 @@
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
 import { defineComponent, computed } from 'vue';
 import classNames from '../_util/classNames';
+import { filterEmpty } from '../_util/props-util';
 import PropTypes from '../_util/vue-types';
 import type { CustomSlotsType, VueNode } from '../_util/type';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
@@ -81,7 +82,18 @@ const CheckableTag = defineComponent({
     );
 
     return () => {
-      const iconNode = props.icon ?? slots.icon?.();
+      const rawIcon = props.icon ?? slots.icon?.();
+      const validIconList = Array.isArray(rawIcon)
+        ? filterEmpty(rawIcon)
+        : rawIcon !== undefined && rawIcon !== null && rawIcon !== false
+        ? [rawIcon]
+        : [];
+      const iconNode =
+        validIconList.length === 1
+          ? validIconList[0]
+          : validIconList.length > 0
+          ? validIconList
+          : null;
       const children = slots.default?.();
       return wrapSSR(
         <span

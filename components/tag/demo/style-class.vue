@@ -17,8 +17,8 @@ You can customize the [semantic dom](#semantic-dom) style of Tag by passing obje
 </docs>
 
 <template>
-  <a-space size="large" direction="vertical" class="tag-style-class-demo">
-    <a-flex gap="middle">
+  <a-space size="large" direction="vertical" class="tag-style-class-demo" style="max-width: 100%">
+    <a-flex gap="middle" wrap>
       <a-tag :class-names="tagClassNames" :styles="stylesObject">
         <template #icon>
           <CheckCircleOutlined />

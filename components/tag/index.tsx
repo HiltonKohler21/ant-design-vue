@@ -9,7 +9,7 @@ import type { PresetColorType, PresetStatusColorType } from '../_util/colors';
 import { isPresetColor, isPresetStatusColor } from '../_util/colors';
 import { eventType } from '../_util/type';
 import type { CustomSlotsType, LiteralUnion, VueNode } from '../_util/type';
-import { isValidElement } from '../_util/props-util';
+import { filterEmpty, isValidElement } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import pickAttrs from '../_util/pickAttrs';
 import CheckableTag from './CheckableTag';
@@ -19,6 +19,7 @@ import type { CheckableTagGroupProps, CheckableTagOption } from './CheckableTagG
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { useInjectDisabled } from '../config-provider/DisabledContext';
 import { mergeSemanticClassNames, mergeSemanticStyles } from '../config-provider/context';
+import useVariant from '../form/hooks/useVariant';
 import warning from '../_util/warning';
 
 import useStyle from './style';
@@ -82,7 +83,7 @@ export const tagProps = () => ({
   'onUpdate:visible': Function as PropType<(vis: boolean) => void>,
   icon: PropTypes.any,
   /** @deprecated Please use `variant="filled"` instead */
-  bordered: { type: Boolean, default: true },
+  bordered: { type: Boolean, default: undefined },
   disabled: { type: Boolean, default: undefined },
   href: String,
   target: String,
@@ -107,6 +108,14 @@ const Tag = defineComponent({
     const disabledContext = useInjectDisabled();
     const mergedDisabled = computed(() => props.disabled ?? disabledContext.value);
     const tagConfig = computed(() => configProvider.tag?.value as any);
+    const [contextVariant] = useVariant<TagVariant>(
+      'tag',
+      computed(() => undefined),
+      {
+        variants: ['filled', 'solid', 'outlined'],
+        defaultVariant: 'filled',
+      },
+    );
 
     const [wrapSSR, hashId] = useStyle(prefixCls);
 
@@ -129,21 +138,20 @@ const Tag = defineComponent({
 
     const colorState = computed(() => {
       const { color, variant, bordered } = props;
-      const ctxVariant = tagConfig.value?.variant as TagVariant | undefined;
       const isInverseColor = typeof color === 'string' && color.endsWith('-inverse');
 
-      let explicitVariant: TagVariant | undefined;
+      let mergedVariant: TagVariant;
       if (variant) {
-        explicitVariant = variant;
+        mergedVariant = variant;
       } else if (isInverseColor) {
-        explicitVariant = 'solid';
+        mergedVariant = 'solid';
       } else if (bordered === false) {
-        explicitVariant = 'filled';
-      } else if (ctxVariant) {
-        explicitVariant = ctxVariant;
+        mergedVariant = 'filled';
+      } else if (bordered === true) {
+        mergedVariant = 'outlined';
+      } else {
+        mergedVariant = contextVariant.value || 'filled';
       }
-
-      const mergedVariant: TagVariant = explicitVariant ?? 'outlined';
 
       let nextColor = isInverseColor ? color.replace(/-inverse$/, '') : color;
       if (nextColor === undefined && mergedVariant === 'solid') {
@@ -156,7 +164,7 @@ const Tag = defineComponent({
 
       const customStyle: CSSProperties = {};
       if (!isInternal && nextColor) {
-        if (!explicitVariant || mergedVariant === 'solid') {
+        if (mergedVariant === 'solid') {
           customStyle.backgroundColor = nextColor;
         } else {
           const tc = new TinyColor(nextColor);
@@ -171,7 +179,6 @@ const Tag = defineComponent({
       }
 
       return {
-        explicitVariant,
         mergedVariant,
         mergedColor: nextColor,
         isInverseColor,
@@ -213,16 +220,13 @@ const Tag = defineComponent({
     };
 
     const tagClassName = computed(() => {
-      const { explicitVariant, mergedColor, isInverseColor, isInternalColor } = colorState.value;
-      return classNames(prefixCls.value, hashId.value, {
-        [`${prefixCls.value}-${explicitVariant}`]: !!explicitVariant,
+      const { mergedVariant, mergedColor, isInverseColor, isInternalColor } = colorState.value;
+      return classNames(prefixCls.value, hashId.value, `${prefixCls.value}-${mergedVariant}`, {
         [`${prefixCls.value}-${mergedColor}`]: isInternalColor,
         ...(isInverseColor ? { [`${prefixCls.value}-${props.color}`]: true } : {}),
-        [`${prefixCls.value}-has-color`]:
-          props.color && !isInternalColor && (!explicitVariant || explicitVariant === 'solid'),
         [`${prefixCls.value}-hidden`]: !visible.value,
         [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-        [`${prefixCls.value}-borderless`]: !props.bordered,
+        [`${prefixCls.value}-borderless`]: props.bordered === false,
         [`${prefixCls.value}-disabled`]: mergedDisabled.value,
       });
     });
@@ -324,18 +328,33 @@ const Tag = defineComponent({
         ? { ...mergedStyles.root }
         : { ...colorState.value.customStyle, ...mergedStyles.root };
 
-      const iconNode = icon ? (
-        isValidElement(icon) ? (
-          cloneElement(icon, {
-            class: classNames(icon.props?.class, mergedClassNames.icon),
-            style: mergedStyles.icon ? [icon.props?.style, mergedStyles.icon] : icon.props?.style,
-          })
+      const validIconList = Array.isArray(icon)
+        ? filterEmpty(icon)
+        : icon !== undefined && icon !== null && icon !== false
+        ? [icon]
+        : [];
+      const singleIcon = validIconList.length === 1 ? validIconList[0] : undefined;
+      const hasIcon = validIconList.length > 0;
+      const iconNode = hasIcon ? (
+        singleIcon && isValidElement(singleIcon) ? (
+          mergedClassNames.icon || mergedStyles.icon ? (
+            cloneElement(
+              singleIcon,
+              {
+                ...(mergedClassNames.icon ? { class: mergedClassNames.icon } : {}),
+                ...(mergedStyles.icon ? { style: mergedStyles.icon } : {}),
+              },
+              false,
+            )
+          ) : (
+            singleIcon
+          )
         ) : mergedClassNames.icon || mergedStyles.icon ? (
           <span class={mergedClassNames.icon} style={mergedStyles.icon}>
-            {icon}
+            {validIconList}
           </span>
         ) : (
-          icon
+          validIconList
         )
       ) : null;
 

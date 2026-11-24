@@ -130,7 +130,6 @@ const genBaseStyle = (token: TagToken): CSSObject => {
       ...resetComponent(token),
       display: 'inline-block',
       height: 'auto',
-      marginInlineEnd: token.marginXS,
       paddingInline,
       fontSize: token.tagFontSize,
       lineHeight: `${unit(token.tagLineHeight)}`,
@@ -293,11 +292,22 @@ const genBaseStyle = (token: TagToken): CSSObject => {
       },
 
       [`&${componentCls}-outlined`]: {
-        borderColor: token.colorBorder,
+        borderColor: (token as any).colorBorderDisabled ?? token.colorBorder,
       },
 
-      [`&${componentCls}-solid, &${componentCls}-filled`]: {
+      [`&${componentCls}-solid`]: {
         color: token.colorTextDisabled,
+        backgroundColor: token.colorBgContainerDisabled,
+        borderColor: 'transparent',
+        [`&, a, a:hover, ${componentCls}-close-icon, ${componentCls}-close-icon:hover`]: {
+          color: token.colorTextDisabled,
+        },
+      },
+
+      [`&${componentCls}-filled`]: {
+        color: token.colorTextDisabled,
+        backgroundColor: token.colorBgContainerDisabled,
+        borderColor: 'transparent',
         [`${componentCls}-close-icon`]: {
           color: token.colorTextDisabled,
         },

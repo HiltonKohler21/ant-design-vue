@@ -19,7 +19,7 @@ Set the `disabled` property to make the tag unusable.
 <template>
   <context-holder />
   <a-flex vertical gap="middle">
-    <a-flex gap="small" wrap="wrap">
+    <a-flex gap="small" wrap>
       <a-tag disabled>Basic Tag</a-tag>
       <a-tag disabled>
         <a href="https://ant.design">Link Tag</a>
@@ -31,7 +31,7 @@ Set the `disabled` property to make the tag unusable.
       </a-tag>
     </a-flex>
 
-    <a-flex gap="small" wrap="wrap">
+    <a-flex gap="small" wrap>
       <a-tag disabled color="red">Preset Color Red</a-tag>
       <a-tag disabled color="#f50">Custom Color #f50 Outlined</a-tag>
       <a-tag disabled color="#f50" variant="solid">Custom Color #f50 Filled</a-tag>
@@ -39,7 +39,7 @@ Set the `disabled` property to make the tag unusable.
       <a-tag disabled color="success">Preset Status Success</a-tag>
     </a-flex>
 
-    <a-flex gap="small" wrap="wrap">
+    <a-flex gap="small" wrap>
       <a-checkable-tag
         v-for="tag in tagsData"
         :key="tag"
@@ -51,7 +51,7 @@ Set the `disabled` property to make the tag unusable.
       </a-checkable-tag>
     </a-flex>
 
-    <a-flex gap="small" wrap="wrap">
+    <a-flex gap="small" wrap>
       <a-tag disabled closable @close="() => handleClose('Closable')">Closable Tag</a-tag>
       <a-tag disabled closable color="success" @close="() => handleClose('Closable Success')">
         <template #icon><CheckCircleOutlined /></template>
@@ -63,7 +63,7 @@ Set the `disabled` property to make the tag unusable.
       </a-tag>
     </a-flex>
 
-    <a-flex gap="small" wrap="wrap">
+    <a-flex gap="small" wrap>
       <a-tag disabled variant="filled">Borderless Basic</a-tag>
       <a-tag disabled variant="filled" color="success">
         <template #icon><CheckCircleOutlined /></template>

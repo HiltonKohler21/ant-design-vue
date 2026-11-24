@@ -1,5 +1,5 @@
 import type { CSSProperties, ExtractPropTypes, PropType } from 'vue';
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import classNames from '../_util/classNames';
 import useMergedState from '../_util/hooks/useMergedState';
 import type { VueNode } from '../_util/type';
@@ -84,12 +84,17 @@ const CheckableTagGroup = defineComponent({
   name: 'ACheckableTagGroup',
   inheritAttrs: false,
   props: checkableTagGroupProps(),
-  setup(props, { emit, attrs }) {
+  setup(props, { emit, attrs, expose }) {
     const { prefixCls, direction, configProvider } = useConfigInject('tag', props);
     const disabledContext = useInjectDisabled();
     const mergedDisabled = computed(() => props.disabled ?? disabledContext.value);
     const tagConfig = computed(() => configProvider.tag?.value as any);
     const [wrapSSR, hashId] = useStyle(prefixCls);
+    const divRef = ref<HTMLDivElement | null>(null);
+
+    expose({
+      nativeElement: divRef,
+    });
 
     const [mergedValue, setMergedValue] = useMergedState<
       CheckableTagValue | CheckableTagValue[] | null | undefined
@@ -146,6 +151,7 @@ const CheckableTagGroup = defineComponent({
       return wrapSSR(
         <div
           {...attrs}
+          ref={divRef}
           id={props.id}
           class={[
             groupPrefixCls,

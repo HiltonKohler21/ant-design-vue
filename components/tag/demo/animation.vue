@@ -18,7 +18,7 @@ Animating the Tag add and remove transitions with Vue's built-in `<TransitionGro
 
 <template>
   <div>
-    <div style="margin-bottom: 12px">
+    <div style="margin-bottom: 8px">
       <TransitionGroup name="tag-fade" tag="div" class="tag-animation-group">
         <a-tag
           v-for="tag in tags"
@@ -41,16 +41,19 @@ Animating the Tag add and remove transitions with Vue's built-in `<TransitionGro
       v-model:value="inputValue"
       type="text"
       size="small"
-      style="width: 78px"
+      :style="{ width: '78px' }"
       @blur="handleInputConfirm"
       @keyup.enter="handleInputConfirm"
     />
     <a-tag
       v-else
+      variant="outlined"
       :style="{ background: token.colorBgContainer, borderStyle: 'dashed', cursor: 'pointer' }"
       @click="showInput"
     >
-      <PlusOutlined />
+      <template #icon>
+        <PlusOutlined />
+      </template>
       New Tag
     </a-tag>
   </div>
@@ -99,7 +102,7 @@ const handleInputConfirm = () => {
 
 .tag-fade-enter-active,
 .tag-fade-leave-active {
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .tag-fade-enter-from,
@@ -109,6 +112,6 @@ const handleInputConfirm = () => {
 }
 
 .tag-fade-move {
-  transition: transform 0.25s ease;
+  transition: transform 0.2s ease;
 }
 </style>

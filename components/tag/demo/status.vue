@@ -8,70 +8,60 @@ title:
 
 ## zh-CN
 
-预设五种状态颜色，可以通过设置 `color` 为 `success`、 `processing`、`error`、`default`、`warning` 来代表不同的状态。
+预设五种状态颜色，可以通过设置 `color` 为 `success`、`processing`、`error`、`default`、`warning` 来代表不同的状态。
 
 ## en-US
 
-We preset five different colors, you can set color property such as `success`,`processing`,`error`,`default` and `warning` to indicate specific status.
+We preset five different colors, you can set color property such as `success`, `processing`, `error`, `default` and `warning` to indicate specific status.
 
 </docs>
 
 <template>
-  <a-divider orientation="left">Without icon</a-divider>
-  <div>
-    <a-tag color="success">success</a-tag>
-    <a-tag color="processing">processing</a-tag>
-    <a-tag color="error">error</a-tag>
-    <a-tag color="warning">warning</a-tag>
-    <a-tag color="default">default</a-tag>
-  </div>
-  <a-divider orientation="left">With icon</a-divider>
-  <div>
-    <a-tag color="success">
-      <template #icon>
-        <check-circle-outlined />
-      </template>
-      success
-    </a-tag>
-    <a-tag color="processing">
-      <template #icon>
-        <sync-outlined :spin="true" />
-      </template>
-      processing
-    </a-tag>
-    <a-tag color="error">
-      <template #icon>
-        <close-circle-outlined />
-      </template>
-      error
-    </a-tag>
-    <a-tag color="warning">
-      <template #icon>
-        <exclamation-circle-outlined />
-      </template>
-      warning
-    </a-tag>
-    <a-tag color="default">
-      <template #icon>
-        <clock-circle-outlined />
-      </template>
-      waiting
-    </a-tag>
-    <a-tag color="default">
-      <template #icon>
-        <minus-circle-outlined />
-      </template>
-      stop
-    </a-tag>
+  <div v-for="variant in variants" :key="variant">
+    <a-divider title-placement="start">Status ({{ variant }})</a-divider>
+    <a-flex gap="small" align="center" wrap>
+      <a-tag color="success" :variant="variant">
+        <template #icon>
+          <CheckCircleOutlined />
+        </template>
+        success
+      </a-tag>
+      <a-tag color="processing" :variant="variant">
+        <template #icon>
+          <SyncOutlined :spin="true" />
+        </template>
+        processing
+      </a-tag>
+      <a-tag color="warning" :variant="variant">
+        <template #icon>
+          <ExclamationCircleOutlined />
+        </template>
+        warning
+      </a-tag>
+      <a-tag color="error" :variant="variant">
+        <template #icon>
+          <CloseCircleOutlined />
+        </template>
+        error
+      </a-tag>
+      <a-tag color="default" :variant="variant">
+        <template #icon>
+          <ClockCircleOutlined />
+        </template>
+        default
+      </a-tag>
+    </a-flex>
   </div>
 </template>
+
 <script lang="ts" setup>
 import {
   CheckCircleOutlined,
-  SyncOutlined,
+  ClockCircleOutlined,
   CloseCircleOutlined,
   ExclamationCircleOutlined,
-  ClockCircleOutlined,
-  MinusCircleOutlined,
+  SyncOutlined,
 } from '@ant-design/icons-vue';
+
+const variants = ['filled', 'solid', 'outlined'] as const;
 </script>
