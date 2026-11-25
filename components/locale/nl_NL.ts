@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/nl_NL';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/nl_NL';
 import DatePicker from '../date-picker/locale/nl_NL';
 import TimePicker from '../time-picker/locale/nl_NL';
-import Calendar from '../calendar/locale/nl_NL';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} is geen geldige ${type}';
 
@@ -15,12 +16,18 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Maak een selectie',
+    close: 'Sluiten',
+    show: 'Weergeven',
+    hide: 'Verbergen',
+    sortable: 'sorteerbaar',
   },
   Table: {
     cancelSort: 'Klik om sortering te annuleren',
     collapse: 'Rij inklappen',
+    collapseAll: 'Alle rijen inklappen',
     emptyText: 'Geen data',
     expand: 'Rij uitklappen',
+    expandAll: 'Alle rijen uitklappen',
     filterConfirm: 'OK',
     filterEmptyText: 'Geen filters',
     filterReset: 'Reset',
@@ -29,9 +36,20 @@ const localeValues: Locale = {
     selectInvert: 'Keer volgorde om',
     selectNone: 'Maak selectie leeg',
     selectionAll: 'Selecteer alle data',
+    selectRow: 'Rij selecteren',
+    selectedRow: 'Rij geselecteerd',
+    selectionMenu: 'Selectiemenu',
     sortTitle: 'Sorteren',
     triggerAsc: 'Klik om oplopend te sorteren',
     triggerDesc: 'Klik om aflopend te sorteren',
+    filterCheckall: 'Selecteer alle artikelen',
+    filterCheckAll: 'Selecteer alle artikelen',
+    filterSearchPlaceholder: 'Zoek in filters',
+  },
+  Tour: {
+    Next: 'Volgende',
+    Previous: 'Vorige',
+    Finish: 'Voltooien',
   },
   Modal: {
     okText: 'OK',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Annuleer',
   },
+  Splitter: {
+    toggleStartPanel: 'Beginpaneel omschakelen',
+    toggleEndPanel: 'Eindpaneel omschakelen',
+  },
   Transfer: {
     itemUnit: 'item',
     itemsUnit: 'items',
@@ -50,10 +72,10 @@ const localeValues: Locale = {
     removeCurrent: 'Verwijder huidige pagina',
     searchPlaceholder: 'Zoek hier',
     selectAll: 'Selecteer alles',
-    deselectAll: 'Deselecteer alle gegevens',
     selectCurrent: 'Selecteer huidige pagina',
     selectInvert: 'Huidige pagina omkeren',
     titles: ['', ''],
+    deselectAll: 'Deselecteer alle gegevens',
   },
   Upload: {
     downloadFile: 'Bestand downloaden',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'kopiëren',
     copied: 'Gekopieerd',
     expand: 'Uitklappen',
+    collapse: 'Samenvouwen',
   },
-  PageHeader: {
-    back: 'Terug',
+  Carousel: {
+    prevSlide: 'Vorige dia',
+    nextSlide: 'Volgende dia',
   },
   Form: {
     optional: '(optioneel)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} komt niet overeen met het patroon ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR-code verlopen',
+    refresh: 'Vernieuwen',
+    scanned: 'Gescand',
+  },
+  ColorPicker: {
+    presetEmpty: 'Leeg',
+    transparent: 'Transparant',
+    singleColor: 'Enkele kleur',
+    gradientColor: 'Kleurverloop',
+  },
+  PageHeader: {
+    back: 'Terug',
   },
   Image: {
     preview: 'Voorbeeld',

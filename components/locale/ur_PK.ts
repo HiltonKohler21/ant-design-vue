@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ur_PK';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ur_PK';
 import DatePicker from '../date-picker/locale/ur_PK';
 import TimePicker from '../time-picker/locale/ur_PK';
-import Calendar from '../calendar/locale/ur_PK';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} درست نہیں ہے ${type}';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'منتخب کریں',
+    close: 'بند کریں',
+    show: 'دکھائیں',
+    hide: 'چھپائیں',
+    sortable: 'قابل ترتیب',
   },
   Table: {
     filterTitle: 'فلٹر مینو',
@@ -26,12 +31,25 @@ const localeValues: Locale = {
     selectInvert: 'موجودہ صفحے کو الٹ دیں',
     selectNone: 'تمام ڈیٹا صاف کریں',
     selectionAll: 'تمام ڈیٹا کو منتخب کریں',
+    selectRow: 'قطار منتخب کریں',
+    selectedRow: 'قطار منتخب ہو گئی',
+    selectionMenu: 'انتخابی مینو',
     sortTitle: 'ترتیب دیں',
     expand: 'پھیلائیں',
     collapse: 'سمیٹیں',
+    expandAll: 'تمام قطاریں پھیلائیں',
+    collapseAll: 'تمام قطاریں سمیٹیں',
     triggerDesc: 'نزولی کو ترتیب دینے کیلئے کلک کریں',
     triggerAsc: 'چڑھنے کو ترتیب دینے کیلئے کلک کریں',
     cancelSort: 'ترتیب کو منسوخ کرنے کیلئے دبائیں',
+    filterCheckall: 'تمام اشیاء کو منتخب کریں۔',
+    filterCheckAll: 'تمام اشیاء کو منتخب کریں۔',
+    filterSearchPlaceholder: 'فلٹرز میں تلاش کریں۔',
+  },
+  Tour: {
+    Next: 'اگلا',
+    Previous: 'پچھلا',
+    Finish: 'ختم کریں',
   },
   Modal: {
     okText: 'ٹھیک ہے',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'ٹھیک ہے',
     cancelText: 'منسوخ کریں',
   },
+  Splitter: {
+    toggleStartPanel: 'ابتدائی پینل ٹوگل کریں',
+    toggleEndPanel: 'اختتامی پینل ٹوگل کریں',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'یہاں تلاش کریں',
@@ -51,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'موجودہ صفحہ منتخب کریں',
     removeCurrent: 'موجودہ صفحہ ہٹائیں',
     selectAll: 'تمام ڈیٹا کو منتخب کریں',
-    deselectAll: 'تمام ڈیٹا کو غیر منتخب کریں۔',
     removeAll: 'تمام ڈیٹا کو ہٹا دیں',
     selectInvert: 'موجودہ صفحے کو الٹ دیں',
+    deselectAll: 'تمام ڈیٹا کو غیر منتخب کریں۔',
   },
   Upload: {
     uploading: 'اپ لوڈ ہو رہا ہے…',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'کاپی',
     copied: 'کاپی ہوگیا',
     expand: 'پھیلائیں',
+    collapse: 'سمٹنا',
   },
-  PageHeader: {
-    back: 'پیچھے',
+  Carousel: {
+    prevSlide: 'پچھلی سلائیڈ',
+    nextSlide: 'اگلی سلائیڈ',
   },
   Form: {
     optional: '(اختیاری)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} پیٹرن سے ملتا نہیں ہے ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR کوڈ کی میعاد ختم ہو گئی۔',
+    refresh: 'ریفریش کریں۔',
+    scanned: 'سکین کیا گیا۔',
+  },
+  ColorPicker: {
+    presetEmpty: 'خالی',
+    transparent: 'شفاف',
+    singleColor: 'سنگل رنگ',
+    gradientColor: 'تدریجی رنگ',
+  },
+  PageHeader: {
+    back: 'پیچھے',
   },
   Image: {
     preview: 'پیش نظارہ',

@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/zh_TW';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/zh_TW';
 import DatePicker from '../date-picker/locale/zh_TW';
 import TimePicker from '../time-picker/locale/zh_TW';
-import Calendar from '../calendar/locale/zh_TW';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label}不是一個有效的${type}';
 
@@ -15,38 +16,57 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: '請選擇',
+    close: '關閉',
+    show: '顯示',
+    hide: '隱藏',
+    sortable: '可排序',
+    clear: '清除',
   },
   Table: {
     filterTitle: '篩選器',
     filterConfirm: '確定',
     filterReset: '重置',
     filterEmptyText: '無篩選項',
+    filterCheckall: '全選',
+    filterCheckAll: '全選',
+    filterSearchPlaceholder: '在篩選項中搜尋',
+    emptyText: '暫無數據',
     selectAll: '全部選取',
     selectInvert: '反向選取',
     selectNone: '清空所有',
     selectionAll: '全選所有',
+    selectRow: '選取列',
+    selectedRow: '列已選取',
+    selectionMenu: '選取選單',
     sortTitle: '排序',
     expand: '展開行',
     collapse: '關閉行',
+    expandAll: '展開所有行',
+    collapseAll: '收起所有行',
     triggerDesc: '點擊降序',
     triggerAsc: '點擊升序',
     cancelSort: '取消排序',
-  },
-  Tour: {
-    Next: '下一步',
-    Previous: '上一步',
-    Finish: '結束導覽',
   },
   Modal: {
     okText: '確定',
     cancelText: '取消',
     justOkText: '知道了',
   },
+  Tour: {
+    Next: '下一步',
+    Previous: '上一步',
+    Finish: '結束導覽',
+  },
   Popconfirm: {
     okText: '確定',
     cancelText: '取消',
   },
+  Splitter: {
+    toggleStartPanel: '切換起始面板',
+    toggleEndPanel: '切換結束面板',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: '搜尋資料',
     itemUnit: '項目',
     itemsUnit: '項目',
@@ -54,9 +74,9 @@ const localeValues: Locale = {
     selectCurrent: '全選當頁',
     removeCurrent: '刪除當頁',
     selectAll: '全選所有',
-    deselectAll: '取消全選',
     removeAll: '刪除全部',
     selectInvert: '反選當頁',
+    deselectAll: '取消全選',
   },
   Upload: {
     uploading: '正在上傳...',
@@ -76,11 +96,14 @@ const localeValues: Locale = {
     copy: '複製',
     copied: '複製成功',
     expand: '展開',
+    collapse: '收起',
   },
-  PageHeader: {
-    back: '返回',
+  Carousel: {
+    prevSlide: '上一張幻燈片',
+    nextSlide: '下一張幻燈片',
   },
   Form: {
+    optional: '（選填）',
     defaultValidateMessages: {
       default: '字段驗證錯誤${label}',
       required: '請輸入${label}',
@@ -129,13 +152,22 @@ const localeValues: Locale = {
       },
     },
   },
-  Image: {
-    preview: '預覽',
-  },
   QRCode: {
     expired: '二維碼過期',
     refresh: '點擊刷新',
     scanned: '已掃描',
+  },
+  ColorPicker: {
+    presetEmpty: '暫無',
+    transparent: '透明',
+    singleColor: '單色',
+    gradientColor: '漸變色',
+  },
+  PageHeader: {
+    back: '返回',
+  },
+  Image: {
+    preview: '預覽',
   },
 };
 

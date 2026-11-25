@@ -1,8 +1,12 @@
+/* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/da_DK';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/da_DK';
 import DatePicker from '../date-picker/locale/da_DK';
 import TimePicker from '../time-picker/locale/da_DK';
-import Calendar from '../calendar/locale/da_DK';
-import type { Locale } from '../locale-provider';
+
+const typeTemplate = '${label} er ikke en gyldig ${type}';
 
 const localeValues: Locale = {
   locale: 'da',
@@ -10,6 +14,13 @@ const localeValues: Locale = {
   TimePicker,
   Calendar,
   Pagination,
+  global: {
+    close: 'Luk',
+    show: 'Vis',
+    hide: 'Skjul',
+    placeholder: 'Vælg venligst',
+    sortable: 'sorterbar',
+  },
   Table: {
     filterTitle: 'Filtermenu',
     filterConfirm: 'OK',
@@ -20,12 +31,25 @@ const localeValues: Locale = {
     selectNone: 'Ryd alt data',
     selectInvert: 'Invertér valg',
     selectionAll: 'Vælg alt data',
+    selectRow: 'Vælg række',
+    selectedRow: 'Række valgt',
+    selectionMenu: 'Valgmenu',
     sortTitle: 'Sortér',
     expand: 'Udvid række',
     collapse: 'Flet række',
+    expandAll: 'Udvid alle rækker',
+    collapseAll: 'Fold alle rækker sammen',
     triggerDesc: 'Klik for at sortere faldende',
     triggerAsc: 'Klik for at sortere stigende',
     cancelSort: 'Klik for at annullere sortering',
+    filterCheckall: 'Vælg alle elementer',
+    filterCheckAll: 'Vælg alle elementer',
+    filterSearchPlaceholder: 'Søg i filtre',
+  },
+  Tour: {
+    Next: 'Næste',
+    Previous: 'Forrige',
+    Finish: 'Færdiggørelse',
   },
   Modal: {
     okText: 'OK',
@@ -36,11 +60,22 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Afbryd',
   },
+  Splitter: {
+    toggleStartPanel: 'Skift startpanelet',
+    toggleEndPanel: 'Skift slutpanelet',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: 'Søg her',
     itemUnit: 'element',
     itemsUnit: 'elementer',
+    remove: 'Fjern',
+    selectCurrent: 'Vælg den aktuelle side',
+    removeCurrent: 'Fjern den aktuelle side',
+    selectAll: 'Vælg alle data',
     deselectAll: 'Fravælg alle data',
+    removeAll: 'Fjern alle data',
+    selectInvert: 'Inverter den aktuelle side',
   },
   Upload: {
     uploading: 'Uploader...',
@@ -51,6 +86,81 @@ const localeValues: Locale = {
   },
   Empty: {
     description: 'Ingen data',
+  },
+  Icon: {
+    icon: 'ikon',
+  },
+  Text: {
+    edit: 'Rediger',
+    copy: 'Kopiér',
+    copied: 'Kopieret',
+    expand: 'Udvid',
+    collapse: 'Kollaps',
+  },
+  Carousel: {
+    prevSlide: 'Forrige slide',
+    nextSlide: 'Næste slide',
+  },
+  Form: {
+    optional: '(valgfrit)',
+    defaultValidateMessages: {
+      default: 'Feltvalideringsfejl ${label}',
+      required: 'Indtast venligst ${label}',
+      enum: '${label} skal være en af [${enum}]',
+      whitespace: '${label} kan ikke være et tomt tegn',
+      date: {
+        format: '${label} Datoformatet er ugyldigt',
+        parse: '${label} kan ikke konverteres til en dato',
+        invalid: '${label} er en ugyldig dato',
+      },
+      types: {
+        string: typeTemplate,
+        method: typeTemplate,
+        array: typeTemplate,
+        object: typeTemplate,
+        number: typeTemplate,
+        date: typeTemplate,
+        boolean: typeTemplate,
+        integer: typeTemplate,
+        float: typeTemplate,
+        regexp: typeTemplate,
+        email: typeTemplate,
+        url: typeTemplate,
+        hex: typeTemplate,
+      },
+      string: {
+        len: '${label} skal være ${len} tegn',
+        min: '${label} mindst ${min} tegn',
+        max: '${label} op til ${max} tegn',
+        range: '${label} skal være mellem ${min} og ${max} tegn',
+      },
+      number: {
+        len: '${label} skal være lig med ${len}',
+        min: '${label} Minimumsværdien er ${min}',
+        max: '${label} maksimal værdi er ${max}',
+        range: '${label} skal være mellem ${min}-${max}',
+      },
+      array: {
+        len: 'Skal være ${len} ${label}',
+        min: 'Mindst  ${min} ${label}',
+        max: 'Højst ${max} ${label}',
+        range: 'Mængden af ${label} skal være mellem ${min}-${max}',
+      },
+      pattern: {
+        mismatch: '${label} stemmer ikke overens med mønsteret ${pattern}',
+      },
+    },
+  },
+  QRCode: {
+    expired: 'QR-koden er udløbet',
+    refresh: 'Opdater',
+    scanned: 'Scannet',
+  },
+  ColorPicker: {
+    presetEmpty: 'Tom',
+    transparent: 'Gennemsigtig',
+    singleColor: 'Enkelt farve',
+    gradientColor: 'Gradient farve',
   },
 };
 

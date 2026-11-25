@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/tr_TR';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/tr_TR';
 import DatePicker from '../date-picker/locale/tr_TR';
 import TimePicker from '../time-picker/locale/tr_TR';
-import Calendar from '../calendar/locale/tr_TR';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} geçerli bir ${type} değil';
 
@@ -15,21 +16,40 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Lütfen seçiniz',
+    close: 'Kapat',
+    show: 'Göster',
+    hide: 'Gizle',
+    sortable: 'sıralanabilir',
   },
   Table: {
     filterTitle: 'Filtre menüsü',
     filterConfirm: 'Tamam',
     filterReset: 'Sıfırla',
     filterEmptyText: 'Filtre yok',
+    filterCheckall: 'Tümünü seç',
+    filterCheckAll: 'Tümünü seç',
     selectAll: 'Tüm sayfayı seç',
     selectInvert: 'Tersini seç',
     selectionAll: 'Tümünü seç',
+    selectRow: 'Satırı seç',
+    selectedRow: 'Satır seçildi',
+    selectionMenu: 'Seçim menüsü',
     sortTitle: 'Sırala',
     expand: 'Satırı genişlet',
     collapse: 'Satırı daralt',
+    expandAll: 'Tüm satırları genişlet',
+    collapseAll: 'Tüm satırları daralt',
     triggerDesc: 'Azalan düzende sırala',
     triggerAsc: 'Artan düzende sırala',
     cancelSort: 'Sıralamayı kaldır',
+    filterSearchPlaceholder: 'Filtrelerde ara',
+    emptyText: 'Veri yok',
+    selectNone: 'Tüm verileri temizle',
+  },
+  Tour: {
+    Next: 'Sonraki',
+    Previous: 'Önceki',
+    Finish: 'Bitir',
   },
   Modal: {
     okText: 'Tamam',
@@ -39,6 +59,10 @@ const localeValues: Locale = {
   Popconfirm: {
     okText: 'Tamam',
     cancelText: 'İptal',
+  },
+  Splitter: {
+    toggleStartPanel: 'Başlangıç panelini değiştir',
+    toggleEndPanel: 'Bitiş panelini değiştir',
   },
   Transfer: {
     titles: ['', ''],
@@ -71,9 +95,11 @@ const localeValues: Locale = {
     copy: 'Kopyala',
     copied: 'Kopyalandı',
     expand: 'Genişlet',
+    collapse: 'Daralt',
   },
-  PageHeader: {
-    back: 'Geri',
+  Carousel: {
+    prevSlide: 'Önceki slayt',
+    nextSlide: 'Sonraki slayt',
   },
   Form: {
     optional: '(opsiyonel)',
@@ -124,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} şu kalıpla eşleşmeli: ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR kodunun süresi doldu',
+    refresh: 'Yenile',
+    scanned: 'Tarandı',
+  },
+  ColorPicker: {
+    presetEmpty: 'Boş',
+    transparent: 'Şeffaf',
+    singleColor: 'Tek renk',
+    gradientColor: 'Gradyan rengi',
+  },
+  PageHeader: {
+    back: 'Geri',
   },
   Image: {
     preview: 'Önizleme',

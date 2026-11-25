@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/pl_PL';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/pl_PL';
 import DatePicker from '../date-picker/locale/pl_PL';
 import TimePicker from '../time-picker/locale/pl_PL';
-import Calendar from '../calendar/locale/pl_PL';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} nie posiada poprawnej wartości dla typu ${type}';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Wybierz',
+    close: 'Zamknij',
+    show: 'Pokaż',
+    hide: 'Ukryj',
+    sortable: 'sortowalne',
   },
   Table: {
     filterTitle: 'Menu filtra',
@@ -22,18 +27,29 @@ const localeValues: Locale = {
     filterReset: 'Usuń filtry',
     filterEmptyText: 'Brak filtrów',
     filterCheckall: 'Wybierz wszystkie elementy',
+    filterCheckAll: 'Wybierz wszystkie elementy',
     filterSearchPlaceholder: 'Szukaj w filtrach',
     emptyText: 'Brak danych',
     selectAll: 'Zaznacz bieżącą stronę',
     selectInvert: 'Odwróć zaznaczenie',
     selectNone: 'Wyczyść',
     selectionAll: 'Wybierz wszystkie',
+    selectRow: 'Wybierz wiersz',
+    selectedRow: 'Wiersz wybrany',
+    selectionMenu: 'Menu wyboru',
     sortTitle: 'Sortowanie',
     expand: 'Rozwiń wiersz',
     collapse: 'Zwiń wiersz',
+    expandAll: 'Rozwiń wszystkie wiersze',
+    collapseAll: 'Zwiń wszystkie wiersze',
     triggerDesc: 'Sortuj malejąco',
     triggerAsc: 'Sortuj rosnąco',
     cancelSort: 'Usuń sortowanie',
+  },
+  Tour: {
+    Next: 'Dalej',
+    Previous: 'Wróć',
+    Finish: 'Zakończ',
   },
   Modal: {
     okText: 'OK',
@@ -44,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Anuluj',
   },
+  Splitter: {
+    toggleStartPanel: 'Przełącz panel początkowy',
+    toggleEndPanel: 'Przełącz panel końcowy',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Szukaj',
@@ -53,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Wybierz aktualną stronę',
     removeCurrent: 'Usuń aktualną stronę',
     selectAll: 'Wybierz wszystkie',
-    deselectAll: 'Odznacz wszystkie dane',
     removeAll: 'Usuń wszystkie',
     selectInvert: 'Odwróć wybór',
+    deselectAll: 'Odznacz wszystkie dane',
   },
   Upload: {
     uploading: 'Wysyłanie...',
@@ -75,9 +95,11 @@ const localeValues: Locale = {
     copy: 'Kopiuj',
     copied: 'Skopiowany',
     expand: 'Rozwiń',
+    collapse: 'Zwiń',
   },
-  PageHeader: {
-    back: 'Wstecz',
+  Carousel: {
+    prevSlide: 'Poprzedni slajd',
+    nextSlide: 'Następny slajd',
   },
   Form: {
     optional: '(opcjonalne)',
@@ -128,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} nie posiada wartości zgodnej ze wzorem ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'Kod QR wygasł',
+    refresh: 'Odśwież',
+    scanned: 'Zeskanowano',
+  },
+  ColorPicker: {
+    presetEmpty: 'Pusty',
+    transparent: 'Przezroczysty',
+    singleColor: 'Pojedynczy kolor',
+    gradientColor: 'Kolor gradientowy',
+  },
+  PageHeader: {
+    back: 'Wstecz',
   },
   Image: {
     preview: 'Podgląd',

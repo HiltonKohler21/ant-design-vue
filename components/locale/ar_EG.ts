@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ar_EG';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ar_EG';
 import DatePicker from '../date-picker/locale/ar_EG';
 import TimePicker from '../time-picker/locale/ar_EG';
-import Calendar from '../calendar/locale/ar_EG';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = 'ليس ${label} من نوع ${type} صالحًا';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'يرجى التحديد',
+    close: 'إغلاق',
+    show: 'إظهار',
+    hide: 'إخفاء',
+    sortable: 'قابل للفرز',
   },
   Table: {
     filterTitle: 'الفلاتر',
@@ -23,12 +28,28 @@ const localeValues: Locale = {
     selectAll: 'اختيار الكل',
     selectInvert: 'إلغاء الاختيار',
     selectionAll: 'حدد جميع البيانات',
+    selectRow: 'تحديد الصف',
+    selectedRow: 'تم تحديد الصف',
+    selectionMenu: 'قائمة التحديد',
     sortTitle: 'رتب',
     expand: 'توسيع الصف',
     collapse: 'طي الصف',
+    expandAll: 'توسيع كل الصفوف',
+    collapseAll: 'طي كل الصفوف',
     triggerDesc: 'ترتيب تنازلي',
     triggerAsc: 'ترتيب تصاعدي',
     cancelSort: 'إلغاء الترتيب',
+    filterEmptyText: 'لا مرشحات',
+    filterCheckall: 'حدد كافة العناصر',
+    filterCheckAll: 'حدد كافة العناصر',
+    filterSearchPlaceholder: 'البحث في المرشحات',
+    emptyText: 'لا توجد بيانات',
+    selectNone: 'مسح كافة البيانات',
+  },
+  Tour: {
+    Next: 'التالي',
+    Previous: 'السابق',
+    Finish: 'إنهاء',
   },
   Modal: {
     okText: 'تأكيد',
@@ -39,11 +60,22 @@ const localeValues: Locale = {
     okText: 'تأكيد',
     cancelText: 'إلغاء',
   },
+  Splitter: {
+    toggleStartPanel: 'تبديل لوحة البداية',
+    toggleEndPanel: 'تبديل لوحة النهاية',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: 'ابحث هنا',
     itemUnit: 'عنصر',
     itemsUnit: 'عناصر',
+    remove: 'إزالة',
+    selectCurrent: 'حدد الصفحة الحالية',
+    removeCurrent: 'إزالة الصفحة الحالية',
+    selectAll: 'حدد كافة البيانات',
     deselectAll: 'إلغاء تحديد كافة البيانات',
+    removeAll: 'إزالة كافة البيانات',
+    selectInvert: 'عكس الصفحة الحالية',
   },
   Upload: {
     uploading: 'جاري الرفع...',
@@ -63,11 +95,14 @@ const localeValues: Locale = {
     copy: 'نسخ',
     copied: 'نقل',
     expand: 'وسع',
+    collapse: 'طي',
   },
-  PageHeader: {
-    back: 'عودة',
+  Carousel: {
+    prevSlide: 'الشريحة السابقة',
+    nextSlide: 'الشريحة التالية',
   },
   Form: {
+    optional: '(اختياري)',
     defaultValidateMessages: {
       default: 'خطأ في حقل الإدخال ${label}',
       required: 'يرجى إدخال ${label}',
@@ -115,6 +150,20 @@ const localeValues: Locale = {
         mismatch: 'لا يتطابق ${label} مع ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'انتهت صلاحية رمز الاستجابة السريعة',
+    refresh: 'انقر للتحديث',
+    scanned: 'تم المسح',
+  },
+  ColorPicker: {
+    presetEmpty: 'لا يوجد',
+    transparent: 'شفاف',
+    singleColor: 'لون واحد',
+    gradientColor: 'تدرج لوني',
+  },
+  PageHeader: {
+    back: 'عودة',
   },
 };
 

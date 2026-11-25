@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/pt_BR';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/pt_BR';
 import DatePicker from '../date-picker/locale/pt_BR';
 import TimePicker from '../time-picker/locale/pt_BR';
-import Calendar from '../calendar/locale/pt_BR';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} não é um ${type} válido';
 
@@ -15,20 +16,32 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Por favor escolha',
+    close: 'Fechar',
+    show: 'Mostrar',
+    hide: 'Ocultar',
+    sortable: 'classificável',
   },
   Table: {
     filterTitle: 'Menu de Filtro',
     filterConfirm: 'OK',
     filterReset: 'Resetar',
     filterEmptyText: 'Sem filtros',
+    filterCheckall: 'Selecionar todos os itens',
+    filterCheckAll: 'Selecionar todos os itens',
+    filterSearchPlaceholder: 'Pesquisar nos filtros',
     emptyText: 'Sem conteúdo',
     selectAll: 'Selecionar página atual',
     selectInvert: 'Inverter seleção',
     selectNone: 'Apagar todo o conteúdo',
     selectionAll: 'Selecionar todo o conteúdo',
+    selectRow: 'Selecionar linha',
+    selectedRow: 'Linha selecionada',
+    selectionMenu: 'Menu de seleção',
     sortTitle: 'Ordenar título',
     expand: 'Expandir linha',
     collapse: 'Colapsar linha',
+    expandAll: 'Expandir todas as linhas',
+    collapseAll: 'Colapsar todas as linhas',
     triggerDesc: 'Clique organiza por descendente',
     triggerAsc: 'Clique organiza por ascendente',
     cancelSort: 'Clique para cancelar organização',
@@ -47,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Cancelar',
   },
+  Splitter: {
+    toggleStartPanel: 'Alternar painel inicial',
+    toggleEndPanel: 'Alternar painel final',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Procurar',
@@ -56,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Selecionar página atual',
     removeCurrent: 'Remover página atual',
     selectAll: 'Selecionar todos',
-    deselectAll: 'Desmarcar todos os dados',
     removeAll: 'Remover todos',
     selectInvert: 'Inverter seleção atual',
+    deselectAll: 'Desmarcar todos os dados',
   },
   Upload: {
     uploading: 'Enviando...',
@@ -78,9 +95,11 @@ const localeValues: Locale = {
     copy: 'copiar',
     copied: 'copiado',
     expand: 'expandir',
+    collapse: 'Recolher',
   },
-  PageHeader: {
-    back: 'Retornar',
+  Carousel: {
+    prevSlide: 'Slide anterior',
+    nextSlide: 'Próximo slide',
   },
   Form: {
     optional: '(opcional)',
@@ -131,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} não se encaixa no padrão ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'Código QR expirado',
+    refresh: 'Atualizar',
+    scanned: 'Escaneado',
+  },
+  ColorPicker: {
+    presetEmpty: 'Vazio',
+    transparent: 'Transparente',
+    singleColor: 'Único',
+    gradientColor: 'Gradiente',
+  },
+  PageHeader: {
+    back: 'Retornar',
   },
   Image: {
     preview: 'Pré-visualização',

@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/fa_IR';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/fa_IR';
 import DatePicker from '../date-picker/locale/fa_IR';
 import TimePicker from '../time-picker/locale/fa_IR';
-import Calendar from '../calendar/locale/fa_IR';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} از نوع ${type} معتبر نیست';
 
@@ -15,23 +16,40 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'لطفاً انتخاب کنید',
+    close: 'بستن',
+    show: 'نمایش',
+    hide: 'مخفی کردن',
+    sortable: 'قابل مرتب سازی',
   },
   Table: {
     filterTitle: 'منوی فیلتر',
     filterConfirm: 'تایید',
     filterReset: 'پاک کردن',
     filterEmptyText: 'بدون فیلتر',
+    filterCheckall: 'انتخاب همه‌ی موارد',
+    filterCheckAll: 'انتخاب همه‌ی موارد',
+    filterSearchPlaceholder: 'جستجو در فیلترها',
     emptyText: 'بدون داده',
     selectAll: 'انتخاب صفحه‌ی کنونی',
-    selectInvert: 'معکوس کردن انتخاب‌ها در صفحه ی کنونی',
+    selectInvert: 'معکوس کردن انتخاب‌ها در صفحه‌ی کنونی',
     selectNone: 'انتخاب هیچکدام',
-    selectionAll: 'انتخاب همه داده‌ها',
+    selectionAll: 'انتخاب همه‌ی داده‌ها',
+    selectRow: 'انتخاب ردیف',
+    selectedRow: 'ردیف انتخاب شد',
+    selectionMenu: 'منوی انتخاب',
     sortTitle: 'مرتب سازی',
     expand: 'باز شدن ردیف',
     collapse: 'بستن ردیف',
+    expandAll: 'باز کردن همه ردیف‌ها',
+    collapseAll: 'بستن همه ردیف‌ها',
     triggerDesc: 'ترتیب نزولی',
     triggerAsc: 'ترتیب صعودی',
     cancelSort: 'لغوِ ترتیبِ داده شده',
+  },
+  Tour: {
+    Next: 'بعدی',
+    Previous: 'قبلی',
+    Finish: 'پایان',
   },
   Modal: {
     okText: 'تایید',
@@ -41,6 +59,10 @@ const localeValues: Locale = {
   Popconfirm: {
     okText: 'تایید',
     cancelText: 'لغو',
+  },
+  Splitter: {
+    toggleStartPanel: 'تغییر وضعیت پنل آغازین',
+    toggleEndPanel: 'تغییر وضعیت پنل پایانی',
   },
   Transfer: {
     titles: ['', ''],
@@ -53,7 +75,7 @@ const localeValues: Locale = {
     selectAll: 'انتخاب همه',
     deselectAll: 'لغو انتخاب همه',
     removeAll: 'پاک کردن همه انتخاب‌ها',
-    selectInvert: 'معکوس کردن انتخاب‌ها در صفحه ی کنونی',
+    selectInvert: 'معکوس کردن انتخاب‌ها در صفحه‌ی کنونی',
   },
   Upload: {
     uploading: 'در حال آپلود...',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'کپی',
     copied: 'کپی شد',
     expand: 'توسعه',
+    collapse: 'بستن',
   },
-  PageHeader: {
-    back: 'برگشت',
+  Carousel: {
+    prevSlide: 'اسلاید قبلی',
+    nextSlide: 'اسلاید بعدی',
   },
   Form: {
     optional: '(اختیاری)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: 'الگوی ${label} با ${pattern} برابری نمی‌کند',
       },
     },
+  },
+  QRCode: {
+    expired: 'کد QR منقضی شد',
+    refresh: 'به‌روزرسانی',
+    scanned: 'اسکن شد',
+  },
+  ColorPicker: {
+    presetEmpty: 'خالی',
+    transparent: 'شفاف',
+    singleColor: 'تک‌رنگ',
+    gradientColor: 'گرادینت',
+  },
+  PageHeader: {
+    back: 'برگشت',
   },
   Image: {
     preview: 'نمایش',

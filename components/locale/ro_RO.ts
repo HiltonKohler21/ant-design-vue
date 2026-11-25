@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ro_RO';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ro_RO';
 import DatePicker from '../date-picker/locale/ro_RO';
 import TimePicker from '../time-picker/locale/ro_RO';
-import Calendar from '../calendar/locale/ro_RO';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} nu conține tipul corect (${type})';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Selectează',
+    close: 'Închide',
+    show: 'Arată',
+    hide: 'Ascunde',
+    sortable: 'sortabil',
   },
   Table: {
     filterTitle: 'Filtrează',
@@ -26,12 +31,25 @@ const localeValues: Locale = {
     selectInvert: 'Inversează pagina curentă',
     selectNone: 'Șterge selecția',
     selectionAll: 'Selectează toate datele',
+    selectRow: 'Selectează rândul',
+    selectedRow: 'Rând selectat',
+    selectionMenu: 'Meniu de selecție',
     sortTitle: 'Ordonează',
     expand: 'Extinde rândul',
-    collapse: 'Micșorează rândul',
+    collapse: 'Restrânge rândul',
+    expandAll: 'Extinde toate rândurile',
+    collapseAll: 'Restrânge toate rândurile',
     triggerDesc: 'Apasă pentru ordonare descrescătoare',
     triggerAsc: 'Apasă pentru ordonare crescătoare',
     cancelSort: 'Apasă pentru a anula ordonarea',
+    filterCheckall: 'Selectează toate elementele',
+    filterCheckAll: 'Selectează toate elementele',
+    filterSearchPlaceholder: 'Caută în filtre',
+  },
+  Tour: {
+    Next: 'Următorul',
+    Previous: 'Înapoi',
+    Finish: 'Finalizare',
   },
   Modal: {
     okText: 'OK',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Anulare',
   },
+  Splitter: {
+    toggleStartPanel: 'Comută panoul de început',
+    toggleEndPanel: 'Comută panoul de sfârșit',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Căutare',
@@ -51,14 +73,14 @@ const localeValues: Locale = {
     selectCurrent: 'Selectează pagina curentă',
     removeCurrent: 'Șterge pagina curentă',
     selectAll: 'Selectează toate datele',
-    deselectAll: 'Deselectează toate datele',
     removeAll: 'Șterge toate datele',
     selectInvert: 'Inversează pagina curentă',
+    deselectAll: 'Deselectează toate datele',
   },
   Upload: {
     uploading: 'Se transferă...',
     removeFile: 'Înlătură fișierul',
-    uploadError: 'Eroare la upload',
+    uploadError: 'Eroare la încărcare',
     previewFile: 'Previzualizare fișier',
     downloadFile: 'Descărcare fișier',
   },
@@ -69,13 +91,15 @@ const localeValues: Locale = {
     icon: 'icon',
   },
   Text: {
-    edit: 'editează',
-    copy: 'copiază',
-    copied: 'copiat',
-    expand: 'extinde',
+    edit: 'Editează',
+    copy: 'Copiază',
+    copied: 'Copiat',
+    expand: 'Extinde',
+    collapse: 'Restrânge',
   },
-  PageHeader: {
-    back: 'înapoi',
+  Carousel: {
+    prevSlide: 'Diapozitivul anterior',
+    nextSlide: 'Diapozitivul următor',
   },
   Form: {
     optional: '(opțional)',
@@ -111,7 +135,7 @@ const localeValues: Locale = {
         range: '${label} trebuie să conțină între ${min}-${max} caractere',
       },
       number: {
-        len: '${label} trebuie să conțină ${len} cifre',
+        len: '${label} trebuie să fie egal cu ${len}',
         min: '${label} trebuie să fie minim ${min}',
         max: '${label} trebuie să fie maxim ${max}',
         range: '${label} trebuie să fie între ${min}-${max}',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} nu respectă șablonul ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'Codul QR a expirat',
+    refresh: 'Reîmprospătați',
+    scanned: 'Scanat',
+  },
+  ColorPicker: {
+    presetEmpty: 'Gol',
+    transparent: 'Transparent',
+    singleColor: 'O singură culoare',
+    gradientColor: 'Culoare gradient',
+  },
+  PageHeader: {
+    back: 'înapoi',
   },
   Image: {
     preview: 'Preview',

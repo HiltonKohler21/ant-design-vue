@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ml_IN';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ml_IN';
 import DatePicker from '../date-picker/locale/ml_IN';
 import TimePicker from '../time-picker/locale/ml_IN';
-import Calendar from '../calendar/locale/ml_IN';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} അസാധുവായ ${type} ആണ്';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'ദയവായി തിരഞ്ഞെടുക്കുക',
+    close: 'മുടക്കുക',
+    show: 'കാണിക്കുക',
+    hide: 'മറയ്ക്കുക',
+    sortable: 'അടുക്കാവുന്ന',
   },
   Table: {
     filterTitle: 'ഫിൽറ്റർ',
@@ -26,12 +31,25 @@ const localeValues: Locale = {
     selectInvert: 'നിലവിലെ പേജിൽ ഇല്ലാത്തത് തിരഞ്ഞെടുക്കുക',
     selectNone: 'എല്ലാ ഡാറ്റയും നീക്കം ചെയ്യുക',
     selectionAll: 'എല്ലാ ഡാറ്റയും തിരഞ്ഞെടുക്കുക',
+    selectRow: 'വരി തിരഞ്ഞെടുക്കുക',
+    selectedRow: 'വരി തിരഞ്ഞെടുത്തു',
+    selectionMenu: 'തിരഞ്ഞെടുക്കൽ മെനു',
     sortTitle: 'ക്രമമാക്കുക',
     expand: 'വരി വികസിപ്പിക്കുക',
     collapse: 'വരി ചുരുക്കുക',
+    expandAll: 'എല്ലാ വരികളും വികസിപ്പിക്കുക',
+    collapseAll: 'എല്ലാ വരികളും ചുരുക്കുക',
     triggerDesc: 'അവരോഹണ ക്രമത്തിനായി ക്ലിക്ക് ചെയ്യുക',
     triggerAsc: 'ആരോഹണ ക്രമത്തിനായി ക്ലിക്ക് ചെയ്യുക',
     cancelSort: 'ക്രമീകരണം ഒഴിവാക്കുന്നതിനായി ക്ലിക്ക് ചെയ്യുക',
+    filterCheckall: 'എല്ലാ ഇനങ്ങളും തിരഞ്ഞെടുക്കുക',
+    filterCheckAll: 'എല്ലാ ഇനങ്ങളും തിരഞ്ഞെടുക്കുക',
+    filterSearchPlaceholder: 'ഫിൽട്ടറുകളിൽ തിരയുക',
+  },
+  Tour: {
+    Next: 'അടുത്തത്',
+    Previous: 'മുമ്പത്തെ',
+    Finish: 'അവസാനിക്കുക',
   },
   Modal: {
     okText: 'ശരിയാണ്',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'ശരിയാണ്',
     cancelText: 'റദ്ദാക്കുക',
   },
+  Splitter: {
+    toggleStartPanel: 'ആരംഭ പാനൽ ടോഗിൾ ചെയ്യുക',
+    toggleEndPanel: 'അവസാന പാനൽ ടോഗിൾ ചെയ്യുക',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'ഇവിടെ തിരയുക',
@@ -51,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'നിലവിലെ പേജ് തിരഞ്ഞെടുക്കുക',
     removeCurrent: 'നിലവിലെ പേജ് നീക്കം ചെയ്യുക',
     selectAll: 'എല്ലാ ഡാറ്റയും തിരഞ്ഞെടുക്കുക',
-    deselectAll: 'എല്ലാ ഡാറ്റയും തിരഞ്ഞെടുത്തത് മാറ്റുക',
     removeAll: 'എല്ലാ ഡാറ്റയും നീക്കം ചെയ്യുക',
     selectInvert: 'നിലവിലെ പേജിൽ ഇല്ലാത്തത് തിരഞ്ഞെടുക്കുക',
+    deselectAll: 'എല്ലാ ഡാറ്റയും തിരഞ്ഞെടുത്തത് മാറ്റുക',
   },
   Upload: {
     uploading: 'അപ്‌ലോഡ് ചെയ്തു കൊണ്ടിരിക്കുന്നു...',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'കോപ്പി ചെയ്യുക',
     copied: 'കോപ്പി ചെയ്തു',
     expand: 'വികസിപ്പിക്കുക',
+    collapse: 'ചുരുക്കുക',
   },
-  PageHeader: {
-    back: 'തിരികെ',
+  Carousel: {
+    prevSlide: 'മുൻപത്തെ സ്ലൈഡ്',
+    nextSlide: 'അടുത്ത സ്ലൈഡ്',
   },
   Form: {
     optional: '(optional)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} ${pattern} മാതൃകയുമായി യോജിക്കുന്നില്ല',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR കോഡ് കാലഹരണപ്പെട്ടു',
+    refresh: 'പുതുക്കുക',
+    scanned: 'സ്കാൻ ചെയ്തു',
+  },
+  ColorPicker: {
+    presetEmpty: 'ശൂന്യം',
+    transparent: 'സുതാര്യം',
+    singleColor: 'ഏക നിറം',
+    gradientColor: 'ഗ്രേഡിയൻ്റ് നിറം',
+  },
+  PageHeader: {
+    back: 'തിരികെ',
   },
   Image: {
     preview: 'പ്രിവ്യൂ',

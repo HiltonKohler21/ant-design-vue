@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/zh_CN';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/zh_CN';
 import DatePicker from '../date-picker/locale/zh_CN';
 import TimePicker from '../time-picker/locale/zh_CN';
-import Calendar from '../calendar/locale/zh_CN';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label}不是一个有效的${type}';
 
@@ -16,6 +17,11 @@ const localeValues: Locale = {
   // locales for all components
   global: {
     placeholder: '请选择',
+    close: '关闭',
+    sortable: '可排序',
+    show: '显示',
+    hide: '隐藏',
+    clear: '清除',
   },
   Table: {
     filterTitle: '筛选',
@@ -23,33 +29,45 @@ const localeValues: Locale = {
     filterReset: '重置',
     filterEmptyText: '无筛选项',
     filterCheckall: '全选',
+    filterCheckAll: '全选',
     filterSearchPlaceholder: '在筛选项中搜索',
+    emptyText: '暂无数据',
     selectAll: '全选当页',
     selectInvert: '反选当页',
     selectNone: '清空所有',
     selectionAll: '全选所有',
+    selectRow: '选择行',
+    selectedRow: '行已选择',
+    selectionMenu: '选择菜单',
     sortTitle: '排序',
     expand: '展开行',
     collapse: '关闭行',
+    expandAll: '展开所有行',
+    collapseAll: '收起所有行',
     triggerDesc: '点击降序',
     triggerAsc: '点击升序',
     cancelSort: '取消排序',
-  },
-  Tour: {
-    Next: '下一步',
-    Previous: '上一步',
-    Finish: '结束导览',
   },
   Modal: {
     okText: '确定',
     cancelText: '取消',
     justOkText: '知道了',
   },
+  Tour: {
+    Next: '下一步',
+    Previous: '上一步',
+    Finish: '结束导览',
+  },
   Popconfirm: {
     cancelText: '取消',
     okText: '确定',
   },
+  Splitter: {
+    toggleStartPanel: '切换起始面板',
+    toggleEndPanel: '切换结束面板',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: '请输入搜索内容',
     itemUnit: '项',
     itemsUnit: '项',
@@ -79,9 +97,11 @@ const localeValues: Locale = {
     copy: '复制',
     copied: '复制成功',
     expand: '展开',
+    collapse: '收起',
   },
-  PageHeader: {
-    back: '返回',
+  Carousel: {
+    prevSlide: '上一张幻灯片',
+    nextSlide: '下一张幻灯片',
   },
   Form: {
     optional: '（可选）',
@@ -133,13 +153,25 @@ const localeValues: Locale = {
       },
     },
   },
-  Image: {
-    preview: '预览',
-  },
   QRCode: {
-    expired: '二维码已过期',
+    expired: '二维码过期',
     refresh: '点击刷新',
     scanned: '已扫描',
+  },
+  ColorPicker: {
+    presetEmpty: '暂无',
+    transparent: '无色',
+    singleColor: '单色',
+    gradientColor: '渐变色',
+  },
+  Input: {
+    otpCell: '第 ${index} 位，共 ${total} 位',
+  },
+  PageHeader: {
+    back: '返回',
+  },
+  Image: {
+    preview: '预览',
   },
 };
 

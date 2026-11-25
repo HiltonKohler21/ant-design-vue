@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/gl_ES';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/gl_ES';
 import DatePicker from '../date-picker/locale/gl_ES';
 import TimePicker from '../time-picker/locale/gl_ES';
-import Calendar from '../calendar/locale/gl_ES';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} non é un ${type} válido';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Escolla',
+    close: 'Cerrar',
+    show: 'Mostrar',
+    hide: 'Ocultar',
+    sortable: 'clasificable',
   },
   Table: {
     filterTitle: 'Filtrar menú',
@@ -23,6 +28,28 @@ const localeValues: Locale = {
     selectAll: 'Seleccionar todo',
     selectInvert: 'Invertir selección',
     sortTitle: 'Ordenar',
+    filterEmptyText: 'Sen filtros',
+    filterCheckall: 'Selecciona todos os elementos',
+    filterCheckAll: 'Selecciona todos os elementos',
+    filterSearchPlaceholder: 'Busca en filtros',
+    emptyText: 'Sen datos',
+    selectNone: 'Borrar todos os datos',
+    selectionAll: 'Seleccione todos os datos',
+    selectRow: 'Seleccionar fila',
+    selectedRow: 'Fila seleccionada',
+    selectionMenu: 'Menú de selección',
+    expand: 'Expandir fila',
+    collapse: 'Contraer fila',
+    expandAll: 'Expandir todas as filas',
+    collapseAll: 'Contraer todas as filas',
+    triggerDesc: 'Fai clic para ordenar descendente',
+    triggerAsc: 'Fai clic para ordenar ascendente',
+    cancelSort: 'Fai clic para cancelar a clasificación',
+  },
+  Tour: {
+    Next: 'Avanzar',
+    Previous: 'Anterior',
+    Finish: 'Finalizar',
   },
   Modal: {
     okText: 'Aceptar',
@@ -33,11 +60,22 @@ const localeValues: Locale = {
     okText: 'Aceptar',
     cancelText: 'Cancelar',
   },
+  Splitter: {
+    toggleStartPanel: 'Alternar o panel inicial',
+    toggleEndPanel: 'Alternar o panel final',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: 'Buscar aquí',
     itemUnit: 'elemento',
     itemsUnit: 'elementos',
+    remove: 'Eliminar',
+    selectCurrent: 'Seleccione a páxina actual',
+    removeCurrent: 'Eliminar a páxina actual',
+    selectAll: 'Seleccione todos os datos',
     deselectAll: 'Deseleccione todos os datos',
+    removeAll: 'Elimina todos os datos',
+    selectInvert: 'Inverte a páxina actual',
   },
   Upload: {
     uploading: 'Subindo...',
@@ -57,11 +95,14 @@ const localeValues: Locale = {
     copy: 'copiar',
     copied: 'copiado',
     expand: 'expandir',
+    collapse: 'Colapsar',
   },
-  PageHeader: {
-    back: 'voltar',
+  Carousel: {
+    prevSlide: 'Diapositiva anterior',
+    nextSlide: 'Diapositiva seguinte',
   },
   Form: {
+    optional: '(opcional)',
     defaultValidateMessages: {
       default: 'Error de validación do campo ${label}',
       required: 'Por favor complete ${label}',
@@ -109,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} non coincide co patrón ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'O código QR caducou',
+    refresh: 'Actualizar',
+    scanned: 'Escaneado',
+  },
+  ColorPicker: {
+    presetEmpty: 'Baleiro',
+    transparent: 'Transparente',
+    singleColor: 'Cor única',
+    gradientColor: 'Cor degradado',
+  },
+  PageHeader: {
+    back: 'voltar',
   },
 };
 

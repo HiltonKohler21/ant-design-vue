@@ -1,8 +1,12 @@
+/* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ta_IN';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ta_IN';
 import DatePicker from '../date-picker/locale/ta_IN';
 import TimePicker from '../time-picker/locale/ta_IN';
-import Calendar from '../calendar/locale/ta_IN';
-import type { Locale } from '../locale-provider';
+
+const typeTemplate = '${label} is not a valid ${type}';
 
 const localeValues: Locale = {
   locale: 'ta',
@@ -13,6 +17,10 @@ const localeValues: Locale = {
   // locales for all comoponents
   global: {
     placeholder: 'தேதியைத் தேர்ந்தெடுக்கவும்',
+    close: 'மூடு',
+    show: 'காட்டு',
+    hide: 'மறை',
+    sortable: 'வரிசைப்படுத்தக்கூடிய',
   },
   Table: {
     filterTitle: 'பட்டியலை மூடு',
@@ -22,6 +30,27 @@ const localeValues: Locale = {
     selectAll: 'அனைத்தையும் தேர்வுசெய்',
     selectInvert: 'தலைகீழாக மாற்று',
     sortTitle: 'தலைப்பை வரிசைப்படுத்தவும்',
+    filterEmptyText: 'வடிப்பான்கள் இல்லை',
+    filterCheckall: 'அனைத்து பொருட்களையும் தேர்ந்தெடுக்கவும்',
+    filterCheckAll: 'அனைத்து பொருட்களையும் தேர்ந்தெடுக்கவும்',
+    filterSearchPlaceholder: 'வடிப்பான்களில் தேடவும்',
+    expand: 'வரிசையை விரிவாக்கு',
+    collapse: 'வரிசையைச் சுருக்கு',
+    expandAll: 'அனைத்து வரிசைகளையும் விரிவாக்கு',
+    collapseAll: 'அனைத்து வரிசைகளையும் சுருக்கு',
+    triggerDesc: 'இறங்குவரிசையை வரிசைப்படுத்த கிளிக் செய்யவும்',
+    triggerAsc: 'ஏறுவரிசையில் வரிசைப்படுத்த கிளிக் செய்யவும்',
+    cancelSort: 'வரிசையாக்கத்தை ரத்து செய்ய கிளிக் செய்யவும்',
+    selectNone: 'எல்லா தரவையும் அழிக்கவும்',
+    selectionAll: 'எல்லா தரவையும் தேர்ந்தெடுக்கவும்',
+    selectRow: 'வரிசையைத் தேர்ந்தெடுக்கவும்',
+    selectedRow: 'வரிசை தேர்ந்தெடுக்கப்பட்டது',
+    selectionMenu: 'தேர்வு மெனு',
+  },
+  Tour: {
+    Next: 'அடுத்தது',
+    Previous: 'முந்தையது',
+    Finish: 'முடிக்கவும்',
   },
   Modal: {
     okText: 'சரி',
@@ -32,13 +61,23 @@ const localeValues: Locale = {
     okText: 'சரி',
     cancelText: 'ரத்து செய்யவும்',
   },
+  Splitter: {
+    toggleStartPanel: 'தொடக்கப் பலகையை மாற்று',
+    toggleEndPanel: 'இறுதிப் பலகையை மாற்று',
+  },
   Transfer: {
     titles: ['', ''],
     notFoundContent: 'உள்ளடக்கம் கிடைக்கவில்லை',
     searchPlaceholder: 'இங்கு தேடவும்',
     itemUnit: 'தகவல்',
     itemsUnit: 'தகவல்கள்',
+    remove: 'அகற்று',
+    selectCurrent: 'தற்போதைய பக்கத்தைத் தேர்ந்தெடுக்கவும்',
+    removeCurrent: 'தற்போதைய பக்கத்தை அகற்று',
+    selectAll: 'எல்லா தரவையும் தேர்ந்தெடுக்கவும்',
     deselectAll: 'எல்லா தரவையும் தேர்வுநீக்கவும்',
+    removeAll: 'எல்லா தரவையும் அகற்று',
+    selectInvert: 'தற்போதைய பக்கத்தை மாற்றவும்',
   },
   Upload: {
     uploading: 'பதிவேற்றுகிறது...',
@@ -58,6 +97,72 @@ const localeValues: Locale = {
     copy: 'நகல் எடு',
     copied: 'நகல் எடுக்கப்பட்டது',
     expand: 'விரிவாக்கவும்',
+    collapse: 'சுருக்கு',
+  },
+  Carousel: {
+    prevSlide: 'முந்தைய ஸ்லைடு',
+    nextSlide: 'அடுத்த ஸ்லைடு',
+  },
+  Form: {
+    optional: '(optional)',
+    defaultValidateMessages: {
+      default: '${label}க்கான புல சரிபார்ப்பு பிழை',
+      required: '${label} ஐ உள்ளிடவும்',
+      enum: '${label} கண்டிப்பாக [${enum}] இல் ஒன்றாக இருக்க வேண்டும்',
+      whitespace: '${label} வெற்று எழுத்தாக இருக்கக்கூடாது',
+      date: {
+        format: '${label} தேதி வடிவம் தவறானது',
+        parse: '${label}ஐ தேதியாக மாற்ற முடியாது',
+        invalid: '${label} என்பது தவறான தேதி',
+      },
+      types: {
+        string: typeTemplate,
+        method: typeTemplate,
+        array: typeTemplate,
+        object: typeTemplate,
+        number: typeTemplate,
+        date: typeTemplate,
+        boolean: typeTemplate,
+        integer: typeTemplate,
+        float: typeTemplate,
+        regexp: typeTemplate,
+        email: typeTemplate,
+        url: typeTemplate,
+        hex: typeTemplate,
+      },
+      string: {
+        len: '${label} கண்டிப்பாக ${len} எழுத்துகளாக இருக்க வேண்டும்',
+        min: '${label} குறைந்தது ${min} எழுத்துகளாக இருக்க வேண்டும்',
+        max: '${label} ${max} எழுத்துகள் வரை இருக்க வேண்டும்',
+        range: '${label} கண்டிப்பாக ${min}-${max} எழுத்துகளுக்கு இடையில் இருக்க வேண்டும்',
+      },
+      number: {
+        len: '${label} கண்டிப்பாக ${len}க்கு சமமாக இருக்க வேண்டும்',
+        min: '${label} குறைந்தபட்சம் ${min} ஆக இருக்க வேண்டும்',
+        max: '${label} அதிகபட்சம் ${max} ஆக இருக்க வேண்டும்',
+        range: '${label} கண்டிப்பாக ${min}-${max} இடையே இருக்க வேண்டும்',
+      },
+      array: {
+        len: '${len} ${label} ஆக இருக்க வேண்டும்',
+        min: 'குறைந்தது ${min} ${label}',
+        max: 'அதிகபட்சம் ${max} ${label}',
+        range: '${label} இன் தொகை கண்டிப்பாக ${min}-${max} இடையே இருக்க வேண்டும்',
+      },
+      pattern: {
+        mismatch: '${label} ஆனது ${pattern} வடிவத்துடன் பொருந்தவில்லை',
+      },
+    },
+  },
+  QRCode: {
+    expired: 'QR குறியீடு காலாவதியானது',
+    refresh: 'புதுப்பிப்பு',
+    scanned: 'ஸ்கேன் செய்யப்பட்டது',
+  },
+  ColorPicker: {
+    presetEmpty: 'காலி',
+    transparent: 'வெளிப்படையானது',
+    singleColor: 'ஒற்றை நிறம்',
+    gradientColor: 'சாய்வு நிறம்',
   },
   PageHeader: {
     back: 'பின் செல்லவும்',

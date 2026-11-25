@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/es_ES';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/es_ES';
 import DatePicker from '../date-picker/locale/es_ES';
 import TimePicker from '../time-picker/locale/es_ES';
-import Calendar from '../calendar/locale/es_ES';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} no es un ${type} válido';
 
@@ -15,23 +16,40 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Seleccione',
+    close: 'Cerrar',
+    show: 'Mostrar',
+    hide: 'Ocultar',
+    sortable: 'ordenable',
   },
   Table: {
     filterTitle: 'Filtrar menú',
     filterConfirm: 'Aceptar',
     filterReset: 'Reiniciar',
     filterEmptyText: 'Sin filtros',
+    filterCheckall: 'Seleccionar todo',
+    filterCheckAll: 'Seleccionar todo',
+    filterSearchPlaceholder: 'Buscar en filtros',
     emptyText: 'Sin datos',
     selectAll: 'Seleccionar todo',
     selectInvert: 'Invertir selección',
     selectNone: 'Vacíe todo',
     selectionAll: 'Seleccionar todos los datos',
+    selectRow: 'Seleccionar fila',
+    selectedRow: 'Fila seleccionada',
+    selectionMenu: 'Menú de selección',
     sortTitle: 'Ordenar',
     expand: 'Expandir fila',
     collapse: 'Colapsar fila',
+    expandAll: 'Expandir todas las filas',
+    collapseAll: 'Colapsar todas las filas',
     triggerDesc: 'Click para ordenar en orden descendente',
     triggerAsc: 'Click para ordenar en orden ascendente',
     cancelSort: 'Click para cancelar ordenamiento',
+  },
+  Tour: {
+    Next: 'Siguiente',
+    Previous: 'Anterior',
+    Finish: 'Finalizar',
   },
   Modal: {
     okText: 'Aceptar',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'Aceptar',
     cancelText: 'Cancelar',
   },
+  Splitter: {
+    toggleStartPanel: 'Alternar panel inicial',
+    toggleEndPanel: 'Alternar panel final',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Buscar aquí',
@@ -49,11 +71,11 @@ const localeValues: Locale = {
     itemsUnit: 'elementos',
     remove: 'Eliminar',
     selectCurrent: 'Seleccionar página actual',
-    removeCurrent: 'Remover página actual',
+    removeCurrent: 'Eliminar página actual',
     selectAll: 'Seleccionar todos los datos',
-    deselectAll: 'Deseleccionar todos los datos',
     removeAll: 'Eliminar todos los datos',
     selectInvert: 'Invertir página actual',
+    deselectAll: 'Deseleccionar todos los datos',
   },
   Upload: {
     uploading: 'Subiendo...',
@@ -73,15 +95,17 @@ const localeValues: Locale = {
     copy: 'Copiar',
     copied: 'Copiado',
     expand: 'Expandir',
+    collapse: 'Colapso',
   },
-  PageHeader: {
-    back: 'Volver',
+  Carousel: {
+    prevSlide: 'Diapositiva anterior',
+    nextSlide: 'Diapositiva siguiente',
   },
   Form: {
     optional: '(opcional)',
     defaultValidateMessages: {
       default: 'Error de validación del campo ${label}',
-      required: 'Por favor ingresar ${label}',
+      required: 'Por favor, rellena ${label}',
       enum: '${label} debe ser uno de [${enum}]',
       whitespace: '${label} no puede ser un carácter en blanco',
       date: {
@@ -114,18 +138,32 @@ const localeValues: Locale = {
         len: '${label} debe ser igual a ${len}',
         min: '${label} valor mínimo es ${min}',
         max: '${label} valor máximo es ${max}',
-        range: '${label} debe estar entre ${min}-${max}',
+        range: '${label} debe ser entre ${min}-${max}',
       },
       array: {
         len: 'Debe ser ${len} ${label}',
         min: 'Al menos ${min} ${label}',
-        max: 'A lo mucho ${max} ${label}',
-        range: 'El monto de ${label} debe estar entre ${min}-${max}',
+        max: 'Como máximo ${max} ${label}',
+        range: 'El valor de ${label} debe estar entre ${min}-${max}',
       },
       pattern: {
         mismatch: '${label} no coincide con el patrón ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'El código QR expiró',
+    refresh: 'Actualizar',
+    scanned: 'escaneado',
+  },
+  ColorPicker: {
+    presetEmpty: 'vacio',
+    transparent: 'Transparente',
+    singleColor: 'color único',
+    gradientColor: 'Color degradado',
+  },
+  PageHeader: {
+    back: 'Volver',
   },
   Image: {
     preview: 'Previsualización',

@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/en_GB';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/en_GB';
 import DatePicker from '../date-picker/locale/en_GB';
 import TimePicker from '../time-picker/locale/en_GB';
-import Calendar from '../calendar/locale/en_GB';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} is not a valid ${type}';
 
@@ -13,22 +14,43 @@ const localeValues: Locale = {
   DatePicker,
   TimePicker,
   Calendar,
+  global: {
+    placeholder: 'Please select',
+    close: 'Close',
+    sortable: 'sortable',
+    show: 'Show',
+    hide: 'Hide',
+    clear: 'Clear',
+  },
   Table: {
     filterTitle: 'Filter menu',
     filterConfirm: 'OK',
     filterReset: 'Reset',
     filterEmptyText: 'No filters',
+    filterCheckall: 'Select all items',
+    filterCheckAll: 'Select all items',
+    filterSearchPlaceholder: 'Search in filters',
     emptyText: 'No data',
     selectAll: 'Select current page',
     selectInvert: 'Invert current page',
     selectNone: 'Clear all data',
     selectionAll: 'Select all data',
+    selectRow: 'Select row',
+    selectedRow: 'Row selected',
+    selectionMenu: 'Selection menu',
     sortTitle: 'Sort',
     expand: 'Expand row',
     collapse: 'Collapse row',
+    expandAll: 'Expand all rows',
+    collapseAll: 'Collapse all rows',
     triggerDesc: 'Click to sort descending',
     triggerAsc: 'Click to sort ascending',
     cancelSort: 'Click to cancel sorting',
+  },
+  Tour: {
+    Next: 'Next',
+    Previous: 'Previous',
+    Finish: 'Finish',
   },
   Modal: {
     okText: 'OK',
@@ -39,10 +61,21 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Cancel',
   },
+  Splitter: {
+    toggleStartPanel: 'Toggle start panel',
+    toggleEndPanel: 'Toggle end panel',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: 'Search here',
     itemUnit: 'item',
     itemsUnit: 'items',
+    remove: 'Remove',
+    selectCurrent: 'Select current page',
+    removeCurrent: 'Remove current page',
+    selectAll: 'Select all data',
+    removeAll: 'Remove all data',
+    selectInvert: 'Invert current page',
     deselectAll: 'Deselect all data',
   },
   Upload: {
@@ -55,7 +88,22 @@ const localeValues: Locale = {
   Empty: {
     description: 'No data',
   },
+  Icon: {
+    icon: 'icon',
+  },
+  Text: {
+    edit: 'Edit',
+    copy: 'Copy',
+    copied: 'Copied',
+    expand: 'Expand',
+    collapse: 'Collapse',
+  },
+  Carousel: {
+    prevSlide: 'Previous slide',
+    nextSlide: 'Next slide',
+  },
   Form: {
+    optional: '(optional)',
     defaultValidateMessages: {
       default: 'Field validation error for ${label}',
       required: 'Please enter ${label}',
@@ -103,6 +151,17 @@ const localeValues: Locale = {
         mismatch: '${label} does not match the pattern ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR code expired',
+    refresh: 'Refresh',
+    scanned: 'Scanned',
+  },
+  ColorPicker: {
+    presetEmpty: 'Empty',
+    transparent: 'Transparent',
+    singleColor: 'Single',
+    gradientColor: 'Gradient',
   },
 };
 

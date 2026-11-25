@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/sv_SE';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/sv_SE';
 import DatePicker from '../date-picker/locale/sv_SE';
 import TimePicker from '../time-picker/locale/sv_SE';
-import Calendar from '../calendar/locale/sv_SE';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} är inte en giltig ${type}';
 
@@ -15,23 +16,40 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Vänligen välj',
+    close: 'Stäng',
+    show: 'Visa',
+    hide: 'Dölj',
+    sortable: 'sorterbar',
   },
   Table: {
     filterTitle: 'Filtermeny',
     filterConfirm: 'OK',
     filterReset: 'Återställ',
     filterEmptyText: 'Inga filter',
+    filterCheckall: 'Markera alla objekt',
+    filterCheckAll: 'Markera alla objekt',
+    filterSearchPlaceholder: 'Sök i filter',
     emptyText: 'Ingen data',
     selectAll: 'Markera nuvarande sida',
     selectInvert: 'Invertera nuvarande sida',
     selectNone: 'Avmarkera all data',
     selectionAll: 'Markera all data',
+    selectRow: 'Välj rad',
+    selectedRow: 'Rad vald',
+    selectionMenu: 'Valmeny',
     sortTitle: 'Sortera',
     expand: 'Expandera rad',
     collapse: 'Komprimera rad',
+    expandAll: 'Expandera alla rader',
+    collapseAll: 'Komprimera alla rader',
     triggerDesc: 'Klicka för att sortera i fallande ordning',
     triggerAsc: 'Klicka för att sortera i stigande ordning',
     cancelSort: 'Klicka för att avbryta sortering',
+  },
+  Tour: {
+    Next: 'Nästa',
+    Previous: 'Föregående',
+    Finish: 'Avsluta',
   },
   Modal: {
     okText: 'OK',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Avbryt',
   },
+  Splitter: {
+    toggleStartPanel: 'Växla startpanelen',
+    toggleEndPanel: 'Växla slutpanelen',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Sök här',
@@ -51,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Markera nuvarande sida',
     removeCurrent: 'Ta bort nuvarande sida',
     selectAll: 'Markera all data',
-    deselectAll: 'Avmarkera all data',
     removeAll: 'Ta bort all data',
     selectInvert: 'Invertera nuvarande sida',
+    deselectAll: 'Avmarkera all data',
   },
   Upload: {
     uploading: 'Laddar upp...',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'Kopiera',
     copied: 'Kopierad',
     expand: 'Expandera',
+    collapse: 'Kollapsa',
   },
-  PageHeader: {
-    back: 'Tillbaka',
+  Carousel: {
+    prevSlide: 'Föregående bild',
+    nextSlide: 'Nästa bild',
   },
   Form: {
     optional: '(valfritt)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} stämmer inte överens med mönstret ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR-koden har upphört att gälla',
+    refresh: 'Uppdatera',
+    scanned: 'Skannat',
+  },
+  ColorPicker: {
+    presetEmpty: 'Tom',
+    transparent: 'Transparent',
+    singleColor: 'Enfärgad',
+    gradientColor: 'Gradient färg',
+  },
+  PageHeader: {
+    back: 'Tillbaka',
   },
   Image: {
     preview: 'Förhandsgranska',

@@ -1,11 +1,12 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/by_BY';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/by_BY';
 import DatePicker from '../date-picker/locale/by_BY';
 import TimePicker from '../time-picker/locale/by_BY';
-import Calendar from '../calendar/locale/by_BY';
-import type { Locale } from '../locale-provider';
 
-const typeTemplate = "${label} не з'яўляецца тыпам ${type}";
+const typeTemplate: string = "${label} не з'яўляецца тыпам ${type}";
 
 const localeValues: Locale = {
   locale: 'by',
@@ -14,23 +15,41 @@ const localeValues: Locale = {
   TimePicker,
   Calendar,
   global: {
-    placeholder: 'Калі ласка выберыце',
+    placeholder: 'Калі ласка, выберыце',
+    close: 'Закрыць',
+    show: 'Паказаць',
+    hide: 'Схаваць',
+    sortable: 'сартавальны',
   },
   Table: {
     filterTitle: 'Фільтр',
     filterConfirm: 'OK',
     filterReset: 'Скінуць',
     filterEmptyText: 'Без фільтраў',
-    emptyText: 'Няма дадзеных',
-    selectAll: 'Выбраць усе',
+    filterCheckall: 'Выбраць усё',
+    filterCheckAll: 'Выбраць усё',
+    filterSearchPlaceholder: 'Пошук фільтраў',
+    emptyText: 'Няма даных',
+    selectAll: 'Выбраць усё',
     selectInvert: 'Інвертаваць выбар',
-    selectionAll: 'Выбраць усе дадзеныя',
+    selectNone: 'Ачысціць усе даныя',
+    selectionAll: 'Выбраць усе даныя',
+    selectRow: 'Выбраць радок',
+    selectedRow: 'Радок выбраны',
+    selectionMenu: 'Меню выбару',
     sortTitle: 'Сартаванне',
     expand: 'Разгарнуць радок',
     collapse: 'Згарнуць радок',
-    triggerDesc: 'Націсніце для сартавання па змяншэнні',
-    triggerAsc: 'Націсніце для сартавання па ўзросту',
+    expandAll: 'Разгарнуць усе радкі',
+    collapseAll: 'Згарнуць усе радкі',
+    triggerDesc: 'Націсніце для сартавання па ўбыванні',
+    triggerAsc: 'Націсніце для сартавання па ўзрастанні',
     cancelSort: 'Націсніце, каб адмяніць сартаванне',
+  },
+  Tour: {
+    Next: 'Наступны',
+    Previous: 'Папярэдняя',
+    Finish: 'Завяршыць',
   },
   Modal: {
     okText: 'OK',
@@ -41,28 +60,32 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Адмена',
   },
+  Splitter: {
+    toggleStartPanel: 'Пераключыць пачатковую панэль',
+    toggleEndPanel: 'Пераключыць канчатковую панэль',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Пошук',
     itemUnit: 'элем.',
     itemsUnit: 'элем.',
     remove: 'Выдаліць',
-    selectAll: 'Выбраць усе дадзеныя',
+    selectCurrent: 'Вылучыць бягучую старонку',
+    removeCurrent: 'Выдаліць бягучую старонку',
+    selectAll: 'Выбраць усе даныя',
+    removeAll: 'Выдаліць усе даныя',
+    selectInvert: 'Паказаць у адваротным парадку',
     deselectAll: 'Адмяніце выбар усіх даных',
-    selectCurrent: 'Вылучыць дадзеную старонку',
-    selectInvert: 'Паказаць у зваротным парадку',
-    removeAll: 'Выдаліць усе дадзеныя',
-    removeCurrent: 'Выдаліць дадзеную старонку',
   },
   Upload: {
-    uploading: 'Загрузка...',
+    uploading: 'Запампоўка...',
     removeFile: 'Выдаліць файл',
-    uploadError: 'Адбылася памылка пры загрузцы',
-    previewFile: 'Прадпрагляд файла',
-    downloadFile: 'Загрузіць файл',
+    uploadError: 'Адбылася памылка пры запампоўцы',
+    previewFile: 'Перадпрагляд файла',
+    downloadFile: 'Спампаваць файл',
   },
   Empty: {
-    description: 'Няма дадзеных',
+    description: 'Няма даных',
   },
   Icon: {
     icon: 'Іконка',
@@ -72,20 +95,23 @@ const localeValues: Locale = {
     copy: 'Капіяваць',
     copied: 'Капіяванне завершана',
     expand: 'Разгарнуць',
+    collapse: 'Згарнуць',
   },
-  PageHeader: {
-    back: 'Назад',
+  Carousel: {
+    prevSlide: 'Папярэдні слайд',
+    nextSlide: 'Наступны слайд',
   },
   Form: {
+    optional: '(не абавязкова)',
     defaultValidateMessages: {
-      default: 'Памылка праверкі поля ${label}',
-      required: 'Калі ласка, увядзіце ${label}',
-      enum: '${label} павінен быць адным з [${enum}]',
-      whitespace: '${label} не можа быць пустым',
+      default: 'Памылка праверкі поля «${label}»',
+      required: 'Калі ласка, увядзіце «${label}»',
+      enum: 'Поле «${label}» павінна быць адным з [${enum}]',
+      whitespace: 'Поле «${label}» не можа быць пустым',
       date: {
-        format: '${label} няправільны фармат даты',
-        parse: '${label} не можа быць пераўтворана ў дату',
-        invalid: "${label} не з'яўляецца карэктнай датай",
+        format: 'Поле «${label}» мае няправільны фармат даты',
+        parse: 'Поле «${label}» не можа быць пераўтворана ў дату',
+        invalid: "Поле «${label}» не з'яўляецца карэктнай датай",
       },
       types: {
         string: typeTemplate,
@@ -103,26 +129,41 @@ const localeValues: Locale = {
         hex: typeTemplate,
       },
       string: {
-        len: '${label} павінна быць ${len} сімвалаў',
-        min: '${label} павінна быць больш або роўная ${min} сімвалаў',
-        max: '${label} павінна быць менш або роўная ${max} сімвалаў',
-        range: 'Даўжыня ${label} павінна быць паміж ${min}-${max} сімвалаў',
+        len: 'Значэнне поля «${label}» павінна мець даўжыню ${len} сімвалаў',
+        min: 'Значэнне поля «${label}» павінна мець не меней за ${min} сімвалаў',
+        max: 'Значэнне поля «${label}» павінна быць не даўжэй за ${max} сімвалаў',
+        range: 'Значэнне поля «${label}» павінна мець даўжыню ${min}-${max} сімвалаў',
       },
       number: {
-        len: '${label} павінна быць роўная ${len}',
-        min: '${label} павінна быць больш або роўная ${min}',
-        max: '${label} павінна быць больш або роўная ${max}',
+        len: 'Значэнне поля «${label}» павінна быць роўнае ${len}',
+        min: 'Значэнне поля «${label}» павінна быць больш або роўнае ${min}',
+        max: 'Значэнне поля «${label}» павінна быць больш або роўнае ${max}',
+        range: 'Значэнне поля «${label}» павінна быць паміж ${min} і ${max}',
       },
       array: {
-        len: 'Колькасць элементаў ${label} павінна быць роўная ${len}',
-        min: 'Колькасць элементаў ${label} павінна быць больш або роўная ${min}',
-        max: 'Колькасць элементаў ${label} павінна быць менш або роўная ${max}',
-        range: 'Колькасць элементаў ${label} павінна быць паміж ${min} і ${max}',
+        len: 'Колькасць элементаў у полі «${label}» павінна быць роўная ${len}',
+        min: 'Колькасць элементаў у полі «${label}» павінна быць не меней за ${min}',
+        max: 'Колькасць элементаў у полі «${label}» павінна быць не болей за ${max}',
+        range: 'Колькасць элементаў у полі «${label}» павінна быць паміж ${min} і ${max}',
       },
       pattern: {
-        mismatch: '${label} не адпавядае шаблону ${pattern}',
+        mismatch: 'Значэнне поля «${label}» не адпавядае шаблону ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'Тэрмін дзеяння QR-кода скончыўся',
+    refresh: 'Абнавіць',
+    scanned: 'Адсканаваныя',
+  },
+  ColorPicker: {
+    presetEmpty: 'Пусты',
+    transparent: 'Празрысты',
+    singleColor: 'Аднакаляровы',
+    gradientColor: 'Градыент колеру',
+  },
+  PageHeader: {
+    back: 'Назад',
   },
 };
 

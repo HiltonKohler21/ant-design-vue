@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ka_GE';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ka_GE';
 import DatePicker from '../date-picker/locale/ka_GE';
 import TimePicker from '../time-picker/locale/ka_GE';
-import Calendar from '../calendar/locale/ka_GE';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} არ არის სწორი ${type}';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'გთხოვთ აირჩიოთ',
+    close: 'დახურვა',
+    show: 'აჩვენე',
+    hide: 'დამალე',
+    sortable: 'დასალაგებელი',
   },
   Table: {
     filterTitle: 'ფილტრის მენიუ',
@@ -26,12 +31,25 @@ const localeValues: Locale = {
     selectInvert: 'შეაბრუნეთ მიმდინარე გვერდი',
     selectNone: 'მონაცემების გასუფთავება',
     selectionAll: 'ყველას მონიშვნა',
+    selectRow: 'მწკრივის არჩევა',
+    selectedRow: 'მწკრივი არჩეულია',
+    selectionMenu: 'არჩევის მენიუ',
     sortTitle: 'დალაგება',
     expand: 'სტრიქონის გაშლა',
     collapse: 'სტრიქონის შეკუმშვა',
+    expandAll: 'ყველა სტრიქონის გაშლა',
+    collapseAll: 'ყველა სტრიქონის შეკუმშვა',
     triggerDesc: 'დაღმავალი დალაგება',
     triggerAsc: 'აღმავალი დალაგება',
     cancelSort: 'დალაგების გაუქმება',
+    filterCheckall: 'აირჩიეთ ყველა ელემენტი',
+    filterCheckAll: 'აირჩიეთ ყველა ელემენტი',
+    filterSearchPlaceholder: 'მოძებნეთ ფილტრებში',
+  },
+  Tour: {
+    Next: 'მომდევნო',
+    Previous: 'წინა',
+    Finish: 'დასრულება',
   },
   Modal: {
     okText: 'კარგი',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'კარგი',
     cancelText: 'გაუქმება',
   },
+  Splitter: {
+    toggleStartPanel: 'საწყისი პანელის გადართვა',
+    toggleEndPanel: 'საბოლოო პანელის გადართვა',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'მოძებნე აქ',
@@ -51,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'მიმდინარე გვერდის არჩევა',
     removeCurrent: 'მიმდინარე გვერდის ამოშლა',
     selectAll: 'ყველას მონიშვნა',
-    deselectAll: 'გააუქმეთ ყველა მონაცემი',
     removeAll: 'ყველას წაშლა',
     selectInvert: 'მიმდინარე გვერდის შებრუნება',
+    deselectAll: 'გააუქმეთ ყველა მონაცემი',
   },
   Upload: {
     uploading: 'იტვირთება...',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'ასლი',
     copied: 'ასლი აღებულია',
     expand: 'გაშლა',
+    collapse: 'კოლაფსი',
   },
-  PageHeader: {
-    back: 'უკან',
+  Carousel: {
+    prevSlide: 'წინა სლაიდი',
+    nextSlide: 'შემდეგი სლაიდი',
   },
   Form: {
     optional: '(არასავალდებულო)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} არ ერგება შაბლონს ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR კოდს ვადა გაუვიდა',
+    refresh: 'განაახლეთ',
+    scanned: 'დასკანირებულია',
+  },
+  ColorPicker: {
+    presetEmpty: 'ცარიელი',
+    transparent: 'გამჭვირვალე',
+    singleColor: 'ერთი ფერი',
+    gradientColor: 'გრადიენტური ფერი',
+  },
+  PageHeader: {
+    back: 'უკან',
   },
   Image: {
     preview: 'გადახედვა',

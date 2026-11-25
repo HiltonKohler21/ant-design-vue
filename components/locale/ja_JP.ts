@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ja_JP';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ja_JP';
 import DatePicker from '../date-picker/locale/ja_JP';
 import TimePicker from '../time-picker/locale/ja_JP';
-import Calendar from '../calendar/locale/ja_JP';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label}は有効な${type}ではありません';
 
@@ -13,20 +14,42 @@ const localeValues: Locale = {
   DatePicker,
   TimePicker,
   Calendar,
+  global: {
+    placeholder: '選んでください',
+    close: '閉じる',
+    show: '表示',
+    hide: '非表示',
+    sortable: '並べ替え可能',
+  },
   Table: {
     filterTitle: 'フィルター',
     filterConfirm: 'OK',
     filterReset: 'リセット',
     filterEmptyText: 'フィルターなし',
+    filterCheckall: 'すべてを選択',
+    filterCheckAll: 'すべてを選択',
+    filterSearchPlaceholder: 'フィルターで検索',
+    emptyText: 'データなし',
     selectAll: 'ページ単位で選択',
     selectInvert: 'ページ単位で反転',
+    selectNone: 'クリア',
     selectionAll: 'すべてを選択',
+    selectRow: '行を選択',
+    selectedRow: '行が選択されています',
+    selectionMenu: '選択メニュー',
     sortTitle: 'ソート',
     expand: '展開する',
     collapse: '折り畳む',
+    expandAll: 'すべての行を展開する',
+    collapseAll: 'すべての行を折り畳む',
     triggerDesc: 'クリックで降順にソート',
     triggerAsc: 'クリックで昇順にソート',
     cancelSort: 'ソートをキャンセル',
+  },
+  Tour: {
+    Next: '次',
+    Previous: '前の',
+    Finish: '仕上げる',
   },
   Modal: {
     okText: 'OK',
@@ -37,11 +60,22 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'キャンセル',
   },
+  Splitter: {
+    toggleStartPanel: '開始パネルを切り替える',
+    toggleEndPanel: '終了パネルを切り替える',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: 'ここを検索',
     itemUnit: 'アイテム',
     itemsUnit: 'アイテム',
+    remove: '削除',
+    selectCurrent: '現在のページを選択',
+    removeCurrent: '現在のページを削除',
+    selectAll: 'ページ単位で選択',
     deselectAll: 'すべてのデータの選択を解除する',
+    removeAll: 'ページ単位で削除',
+    selectInvert: 'ページ単位で反転',
   },
   Upload: {
     uploading: 'アップロード中...',
@@ -53,7 +87,22 @@ const localeValues: Locale = {
   Empty: {
     description: 'データがありません',
   },
+  Icon: {
+    icon: 'アイコン',
+  },
+  Text: {
+    edit: '編集',
+    copy: 'コピー',
+    copied: 'コピーされました',
+    expand: '展開する',
+    collapse: '折り畳む',
+  },
+  Carousel: {
+    prevSlide: '前のスライド',
+    nextSlide: '次のスライド',
+  },
   Form: {
+    optional: '(オプション)',
     defaultValidateMessages: {
       default: '${label}のフィールド検証エラー',
       required: '${label}を入力してください',
@@ -101,6 +150,17 @@ const localeValues: Locale = {
         mismatch: '${label}はパターン${pattern}と一致しません',
       },
     },
+  },
+  QRCode: {
+    expired: 'QRコードの有効期限が切れました',
+    refresh: 'リフレッシュ',
+    scanned: 'スキャン済み',
+  },
+  ColorPicker: {
+    presetEmpty: '空の',
+    transparent: '透明',
+    singleColor: '単色',
+    gradientColor: 'グラデーション',
   },
 };
 

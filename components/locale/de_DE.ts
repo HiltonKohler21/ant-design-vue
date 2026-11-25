@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/de_DE';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/de_DE';
 import DatePicker from '../date-picker/locale/de_DE';
 import TimePicker from '../time-picker/locale/de_DE';
-import Calendar from '../calendar/locale/de_DE';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} ist nicht gültig. ${type} erwartet';
 
@@ -15,20 +16,41 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Bitte auswählen',
+    close: 'Schließen',
+    clear: 'Löschen',
+    show: 'Anzeigen',
+    hide: 'Ausblenden',
+    sortable: 'sortierbar',
   },
   Table: {
     filterTitle: 'Filter-Menü',
     filterConfirm: 'OK',
     filterReset: 'Zurücksetzen',
+    filterEmptyText: 'Keine Filter',
+    filterSearchPlaceholder: 'Suche in Filtern',
+    filterCheckall: 'Alle auswählen',
+    filterCheckAll: 'Alle auswählen',
     selectAll: 'Selektiere Alle',
     selectInvert: 'Selektion Invertieren',
     selectionAll: 'Wählen Sie alle Daten aus',
+    selectRow: 'Zeile auswählen',
+    selectedRow: 'Zeile ausgewählt',
+    selectionMenu: 'Auswahlmenü',
     sortTitle: 'Sortieren',
+    emptyText: 'Keine Daten',
     expand: 'Zeile erweitern',
     collapse: 'Zeile reduzieren',
-    triggerDesc: 'Klicken zur absteigenden  Sortierung',
+    expandAll: 'Alle Zeilen erweitern',
+    collapseAll: 'Alle Zeilen reduzieren',
+    triggerDesc: 'Klicken zur absteigenden Sortierung',
     triggerAsc: 'Klicken zur aufsteigenden Sortierung',
     cancelSort: 'Klicken zum Abbrechen der Sortierung',
+    selectNone: 'Alle Daten löschen',
+  },
+  Tour: {
+    Next: 'Weiter',
+    Previous: 'Zurück',
+    Finish: 'Fertig',
   },
   Modal: {
     okText: 'OK',
@@ -38,6 +60,10 @@ const localeValues: Locale = {
   Popconfirm: {
     okText: 'OK',
     cancelText: 'Abbrechen',
+  },
+  Splitter: {
+    toggleStartPanel: 'Startpanel umschalten',
+    toggleEndPanel: 'Endpanel umschalten',
   },
   Transfer: {
     titles: ['', ''],
@@ -62,16 +88,22 @@ const localeValues: Locale = {
   Empty: {
     description: 'Keine Daten',
   },
+  Icon: {
+    icon: 'Symbol',
+  },
   Text: {
     edit: 'Bearbeiten',
     copy: 'Kopieren',
     copied: 'Kopiert',
     expand: 'Erweitern',
+    collapse: 'Zusammenbruch',
   },
-  PageHeader: {
-    back: 'Zurück',
+  Carousel: {
+    prevSlide: 'Vorherige Folie',
+    nextSlide: 'Nächste Folie',
   },
   Form: {
+    optional: '(optional)',
     defaultValidateMessages: {
       default: 'Feld-Validierungsfehler: ${label}',
       required: 'Bitte geben Sie ${label} an',
@@ -116,9 +148,26 @@ const localeValues: Locale = {
         range: 'Die Anzahl an ${label} muss zwischen ${min} und ${max} liegen',
       },
       pattern: {
-        mismatch: '${label} enspricht nicht dem ${pattern} Muster',
+        mismatch: '${label} entspricht nicht dem ${pattern} Muster',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR-Code abgelaufen',
+    refresh: 'Aktualisieren',
+    scanned: 'Gescannt',
+  },
+  ColorPicker: {
+    presetEmpty: 'Leer',
+    transparent: 'Transparent',
+    singleColor: 'Einfarbig',
+    gradientColor: 'Farbverlauf',
+  },
+  Input: {
+    otpCell: 'Zeichen ${index} von ${total}',
+  },
+  PageHeader: {
+    back: 'Zurück',
   },
   Image: {
     preview: 'Vorschau',

@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/th_TH';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/th_TH';
 import DatePicker from '../date-picker/locale/th_TH';
 import TimePicker from '../time-picker/locale/th_TH';
-import Calendar from '../calendar/locale/th_TH';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} ไม่ใช่ ${type} ที่ถูกต้อง';
 
@@ -15,22 +16,40 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'กรุณาเลือก',
+    close: 'ปิด',
+    show: 'แสดง',
+    hide: 'ซ่อน',
+    sortable: 'จัดเรียงได้',
   },
   Table: {
     filterTitle: 'ตัวกรอง',
     filterConfirm: 'ยืนยัน',
     filterReset: 'รีเซ็ต',
     filterEmptyText: 'ไม่มีตัวกรอง',
+    filterCheckall: 'เลือกรายการทั้งหมด',
+    filterCheckAll: 'เลือกรายการทั้งหมด',
+    filterSearchPlaceholder: 'ค้นหาตัวกรอง',
     emptyText: 'ไม่มีข้อมูล',
     selectAll: 'เลือกทั้งหมดในหน้านี้',
     selectInvert: 'กลับสถานะการเลือกในหน้านี้',
+    selectNone: 'ไม่เลือกข้อมูลทั้งหมด',
     selectionAll: 'เลือกข้อมูลทั้งหมด',
+    selectRow: 'เลือกแถว',
+    selectedRow: 'เลือกแถวแล้ว',
+    selectionMenu: 'เมนูการเลือก',
     sortTitle: 'เรียง',
     expand: 'แสดงแถวข้อมูล',
     collapse: 'ย่อแถวข้อมูล',
+    expandAll: 'ขยายแถวทั้งหมด',
+    collapseAll: 'ย่อแถวทั้งหมด',
     triggerDesc: 'คลิกเรียงจากมากไปน้อย',
     triggerAsc: 'คลิกเรียงจากน้อยไปมาก',
     cancelSort: 'คลิกเพื่อยกเลิกการเรียง',
+  },
+  Tour: {
+    Next: 'ถัดไป',
+    Previous: 'ย้อนกลับ',
+    Finish: 'เสร็จสิ้น',
   },
   Modal: {
     okText: 'ตกลง',
@@ -40,6 +59,10 @@ const localeValues: Locale = {
   Popconfirm: {
     okText: 'ตกลง',
     cancelText: 'ยกเลิก',
+  },
+  Splitter: {
+    toggleStartPanel: 'สลับแผงเริ่มต้น',
+    toggleEndPanel: 'สลับแผงสิ้นสุด',
   },
   Transfer: {
     titles: ['', ''],
@@ -72,9 +95,11 @@ const localeValues: Locale = {
     copy: 'คัดลอก',
     copied: 'คัดลอกแล้ว',
     expand: 'ขยาย',
+    collapse: 'ย่อ',
   },
-  PageHeader: {
-    back: 'ย้อนกลับ',
+  Carousel: {
+    prevSlide: 'สไลด์ก่อนหน้า',
+    nextSlide: 'สไลด์ถัดไป',
   },
   Form: {
     optional: '(ไม่จำเป็น)',
@@ -125,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} ไม่ตรงกับรูปแบบ ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'คิวอาร์โค้ดหมดอายุ',
+    refresh: 'รีเฟรช',
+    scanned: 'สแกนแล้ว',
+  },
+  ColorPicker: {
+    presetEmpty: 'ไม่มีข้อมูล',
+    transparent: 'โปร่งใส',
+    singleColor: 'สีเดียว',
+    gradientColor: 'สีไล่ระดับ',
+  },
+  PageHeader: {
+    back: 'ย้อนกลับ',
   },
 };
 

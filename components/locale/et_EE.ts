@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/et_EE';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/et_EE';
 import DatePicker from '../date-picker/locale/et_EE';
 import TimePicker from '../time-picker/locale/et_EE';
-import Calendar from '../calendar/locale/et_EE';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} ei ole kehtiv ${type}';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Palun vali',
+    close: 'Sulge',
+    show: 'Näita',
+    hide: 'Peida',
+    sortable: 'sorteeritav',
   },
   Table: {
     filterTitle: 'Filtri menüü',
@@ -22,18 +27,29 @@ const localeValues: Locale = {
     filterReset: 'Nulli',
     filterEmptyText: 'Filtreid pole',
     filterCheckall: 'Vali kõik',
+    filterCheckAll: 'Vali kõik',
     filterSearchPlaceholder: 'Otsi filtritest',
     emptyText: 'Andmed puuduvad',
     selectAll: 'Vali kõik',
     selectInvert: 'Inverteeri valik',
     selectNone: 'Kustuta kõik andmed',
     selectionAll: 'Vali kõik andmed',
+    selectRow: 'Vali rida',
+    selectedRow: 'Rida valitud',
+    selectionMenu: 'Valikumenüü',
     sortTitle: 'Sorteeri',
     expand: 'Laienda rida',
     collapse: 'Ahenda rida',
+    expandAll: 'Laienda kõik read',
+    collapseAll: 'Ahenda kõik read',
     triggerDesc: 'Klõpsa kahanevalt sortimiseks',
     triggerAsc: 'Klõpsa kasvavalt sortimiseks',
     cancelSort: 'Klõpsa sortimise tühistamiseks',
+  },
+  Tour: {
+    Next: 'Järgmine',
+    Previous: 'Eelmine',
+    Finish: 'Lõpetada',
   },
   Modal: {
     okText: 'OK',
@@ -44,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Tühista',
   },
+  Splitter: {
+    toggleStartPanel: 'Lülita alguspaneeli',
+    toggleEndPanel: 'Lülita lõpupaneeli',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Otsi siit',
@@ -53,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Vali praegune leht',
     removeCurrent: 'Eemalda praegune leht',
     selectAll: 'Vali kõik',
-    deselectAll: 'Tühista kõik andmed',
     removeAll: 'Eemalda kõik andmed',
     selectInvert: 'Inverteeri valik',
+    deselectAll: 'Tühista kõik andmed',
   },
   Upload: {
     uploading: 'Üleslaadimine...',
@@ -75,9 +95,11 @@ const localeValues: Locale = {
     copy: 'Kopeeri',
     copied: 'Kopeeritud',
     expand: 'Laienda',
+    collapse: 'Ahenda',
   },
-  PageHeader: {
-    back: 'Tagasi',
+  Carousel: {
+    prevSlide: 'Eelmine slaid',
+    nextSlide: 'Järgmine slaid',
   },
   Form: {
     optional: '(valikuline)',
@@ -128,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} ei vasta mustrile ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR-kood aegus',
+    refresh: 'Värskenda',
+    scanned: 'Skaneeritud',
+  },
+  ColorPicker: {
+    presetEmpty: 'Tühi',
+    transparent: 'Läbipaistev',
+    singleColor: 'Ühevärviline',
+    gradientColor: 'Gradiendi värv',
+  },
+  PageHeader: {
+    back: 'Tagasi',
   },
   Image: {
     preview: 'Eelvaade',

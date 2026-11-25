@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/sr_RS';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/sr_RS';
 import DatePicker from '../date-picker/locale/sr_RS';
 import TimePicker from '../time-picker/locale/sr_RS';
-import Calendar from '../calendar/locale/sr_RS';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} nije važeći ${type}';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Izaberi',
+    close: 'Zatvori',
+    show: 'Prikaži',
+    hide: 'Sakrij',
+    sortable: 'sortabilno',
   },
   Table: {
     filterTitle: 'Meni filtera',
@@ -26,12 +31,25 @@ const localeValues: Locale = {
     selectInvert: 'Obrni izbor trenutne stranice',
     selectNone: 'Obriši sve podatke',
     selectionAll: 'Izaberi sve podatke',
+    selectRow: 'Изабери ред',
+    selectedRow: 'Ред је изабран',
+    selectionMenu: 'Мени за избор',
     sortTitle: 'Sortiraj',
     expand: 'Proširi red',
     collapse: 'Skupi red',
+    expandAll: 'Proširi sve redove',
+    collapseAll: 'Skupi sve redove',
     triggerDesc: 'Klikni da sortiraš po padajućem redosledu',
     triggerAsc: 'Klikni da sortiraš po rastućem redosledu',
     cancelSort: 'Klikni da otkažeš sortiranje',
+    filterCheckall: 'Изаберите све ставке',
+    filterCheckAll: 'Изаберите све ставке',
+    filterSearchPlaceholder: 'Тражи у филтерима',
+  },
+  Tour: {
+    Next: 'Sledeće',
+    Previous: 'Prethodno',
+    Finish: 'Završi',
   },
   Modal: {
     okText: 'U redu',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'U redu',
     cancelText: 'Otkaži',
   },
+  Splitter: {
+    toggleStartPanel: 'Пребаци почетни панел',
+    toggleEndPanel: 'Пребаци завршни панел',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Pretraži ovde',
@@ -51,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Izaberi trenutnu stranicu',
     removeCurrent: 'Ukloni trenutnu stranicu',
     selectAll: 'Izaberi sve podatke',
-    deselectAll: 'Опозовите избор свих података',
     removeAll: 'Ukloni sve podatke',
     selectInvert: 'Obrni izbor trenutne stranice',
+    deselectAll: 'Опозовите избор свих података',
   },
   Upload: {
     uploading: 'Otpremanje...',
@@ -73,9 +95,11 @@ const localeValues: Locale = {
     copy: 'Kopiraj',
     copied: 'Kopirano',
     expand: 'Proširi',
+    collapse: 'Колапс',
   },
-  PageHeader: {
-    back: 'Nazad',
+  Carousel: {
+    prevSlide: 'Prethodni slajd',
+    nextSlide: 'Sledeći slajd',
   },
   Form: {
     optional: '(opcionalno)',
@@ -126,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} ne odgovara obrascu ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'КР код је истекао',
+    refresh: 'Освежи',
+    scanned: 'Скенирано',
+  },
+  ColorPicker: {
+    presetEmpty: 'Празан',
+    transparent: 'Транспарент',
+    singleColor: 'Једнобојна',
+    gradientColor: 'Градијентна боја',
+  },
+  PageHeader: {
+    back: 'Nazad',
   },
   Image: {
     preview: 'Pregled',

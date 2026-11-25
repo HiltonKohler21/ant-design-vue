@@ -1,12 +1,12 @@
 /* eslint-disable no-template-curly-in-string */
-
 import Pagination from '../vc-pagination/locale/ru_RU';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ru_RU';
 import DatePicker from '../date-picker/locale/ru_RU';
 import TimePicker from '../time-picker/locale/ru_RU';
-import Calendar from '../calendar/locale/ru_RU';
-import type { Locale } from '../locale-provider';
 
-const typeTemplate = '${label} не является типом ${type}';
+const typeTemplate: string = '${label} не является типом ${type}';
 
 const localeValues: Locale = {
   locale: 'ru',
@@ -16,28 +16,40 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Пожалуйста выберите',
+    close: 'Закрыть',
+    show: 'Показать',
+    hide: 'Скрыть',
+    sortable: 'сортируемый',
   },
   Table: {
     filterTitle: 'Фильтр',
     filterConfirm: 'OK',
     filterReset: 'Сбросить',
     filterEmptyText: 'Без фильтров',
+    filterCheckall: 'Выбрать все элементы',
+    filterCheckAll: 'Выбрать все элементы',
+    filterSearchPlaceholder: 'Поиск в фильтрах',
     emptyText: 'Нет данных',
     selectAll: 'Выбрать всё',
     selectInvert: 'Инвертировать выбор',
     selectNone: 'Очистить все данные',
     selectionAll: 'Выбрать все данные',
+    selectRow: 'Выбрать строку',
+    selectedRow: 'Строка выбрана',
+    selectionMenu: 'Меню выбора',
     sortTitle: 'Сортировка',
     expand: 'Развернуть строку',
     collapse: 'Свернуть строку',
+    expandAll: 'Развернуть все строки',
+    collapseAll: 'Свернуть все строки',
     triggerDesc: 'Нажмите для сортировки по убыванию',
     triggerAsc: 'Нажмите для сортировки по возрастанию',
     cancelSort: 'Нажмите, чтобы отменить сортировку',
   },
   Tour: {
-    Next: 'Вперёд',
+    Next: 'Далее',
     Previous: 'Назад',
-    Finish: 'Готово',
+    Finish: 'Завершить',
   },
   Modal: {
     okText: 'OK',
@@ -48,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Отмена',
   },
+  Splitter: {
+    toggleStartPanel: 'Переключить начальную панель',
+    toggleEndPanel: 'Переключить конечную панель',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Поиск',
@@ -57,7 +73,7 @@ const localeValues: Locale = {
     selectAll: 'Выбрать все данные',
     deselectAll: 'Очистить все данные',
     selectCurrent: 'Выбрать текущую страницу',
-    selectInvert: 'Показать в обратном порядке',
+    selectInvert: 'Инвертировать выбор',
     removeAll: 'Удалить все данные',
     removeCurrent: 'Удалить текущую страницу',
   },
@@ -79,12 +95,14 @@ const localeValues: Locale = {
     copy: 'Копировать',
     copied: 'Скопировано',
     expand: 'Раскрыть',
+    collapse: 'Свернуть',
   },
-  PageHeader: {
-    back: 'Назад',
+  Carousel: {
+    prevSlide: 'Предыдущий слайд',
+    nextSlide: 'Следующий слайд',
   },
   Form: {
-    optional: '(опционально)',
+    optional: '(необязательно)',
     defaultValidateMessages: {
       default: 'Ошибка проверки поля ${label}',
       required: 'Пожалуйста, введите ${label}',
@@ -120,6 +138,7 @@ const localeValues: Locale = {
         len: '${label} должна быть равна ${len}',
         min: '${label} должна быть больше или равна ${min}',
         max: '${label} должна быть меньше или равна ${max}',
+        range: '${label} должна быть между ${min}-${max}',
       },
       array: {
         len: 'Количество элементов ${label} должно быть равно ${len}',
@@ -132,13 +151,22 @@ const localeValues: Locale = {
       },
     },
   },
+  QRCode: {
+    expired: 'QR-код устарел',
+    refresh: 'Обновить',
+    scanned: 'Отсканировано',
+  },
+  ColorPicker: {
+    presetEmpty: 'Пустой',
+    transparent: 'Прозрачный',
+    singleColor: 'Один цвет',
+    gradientColor: 'Градиент',
+  },
+  PageHeader: {
+    back: 'Назад',
+  },
   Image: {
     preview: 'Предпросмотр',
-  },
-  QRCode: {
-    expired: 'QR код просрочен',
-    refresh: 'Обновить',
-    scanned: 'Отсканирован',
   },
 };
 

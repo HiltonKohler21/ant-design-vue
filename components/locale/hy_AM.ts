@@ -1,16 +1,30 @@
+/* eslint-disable no-template-curly-in-string */
+import Pagination from '../vc-pagination/locale/hy_AM';
+
 import type { Locale } from '../locale-provider';
 import type { PickerLocale } from '../date-picker/generatePicker';
+
+const typeTemplate = '${label}-ը վավեր ${type} չէ';
 
 const datePickerLocale: PickerLocale = {
   lang: {
     locale: 'hy-am',
     placeholder: 'Ընտրեք ամսաթիվը',
+    yearPlaceholder: 'Ընտրեք տարին',
+    quarterPlaceholder: 'Ընտրեք եռամսյակը',
+    monthPlaceholder: 'Ընտրեք ամիսը',
+    weekPlaceholder: 'Ընտրեք շաբաթը',
     rangePlaceholder: ['Մեկնարկի ամսաթիվ', 'Ավարտի ամսաթիվը'],
+    rangeYearPlaceholder: ['Մեկնարկի տարին', 'Ավարտի տարին'],
+    rangeQuarterPlaceholder: ['Մեկնարկի եռամսյակը', 'Ավարտի եռամսյակը'],
+    rangeMonthPlaceholder: ['Մեկնարկի ամիսը', 'Ավարտի ամիսը'],
+    rangeWeekPlaceholder: ['Մեկնարկի շաբաթը', 'Ավարտի շաբաթը'],
     today: 'Այսօր',
     now: 'Հիմա',
     backToToday: 'Վերադառնալ այսօր',
     ok: 'Օկ',
     clear: 'Մաքրել',
+    week: 'Շաբաթ',
     month: 'Ամիս',
     year: 'Տարի',
     timeSelect: 'ընտրեք ժամը',
@@ -20,9 +34,9 @@ const datePickerLocale: PickerLocale = {
     yearSelect: 'Ընտրեք տարին',
     decadeSelect: 'Ընտրեք տասնամյակը',
     yearFormat: 'YYYY',
-    dateFormat: 'DD/MM//YYYY',
     dayFormat: 'DD',
-    dateTimeFormat: 'DD/MM//YYYY HH:mm:ss',
+    dateFormat: 'DD/MM/YYYY',
+    dateTimeFormat: 'DD/MM/YYYY HH:mm:ss',
     monthBeforeYear: true,
     previousMonth: 'Անցած ամիս (PageUp)',
     nextMonth: 'Մյուս ամիս (PageDown)',
@@ -35,33 +49,25 @@ const datePickerLocale: PickerLocale = {
   },
   timePickerLocale: {
     placeholder: 'Ընտրեք ժամը',
+    rangePlaceholder: ['Մեկնարկի ժամը', 'Ավարտի ժամը'],
   },
 };
 
 const localeValues: Locale = {
   locale: 'hy-am',
-  Pagination: {
-    // Options.jsx
-    items_per_page: '/ էջ',
-    jump_to: 'Գնալ',
-    jump_to_confirm: 'հաստատել',
-    page: '',
-
-    // Pagination.jsx
-    prev_page: 'Նախորդ Էջ',
-    next_page: 'Հաջորդ Էջ',
-    prev_5: 'Նախորդ 5 Էջերը',
-    next_5: 'Հաջորդ 5 Էջերը',
-    prev_3: 'Նախորդ 3 Էջերը',
-    next_3: 'Հաջորդ 3 Էջերը',
-  },
+  Pagination,
   DatePicker: datePickerLocale,
   TimePicker: {
     placeholder: 'Ընտրեք ժամը',
+    rangePlaceholder: ['Մեկնարկի ժամը', 'Ավարտի ժամը'],
   },
   Calendar: datePickerLocale,
   global: {
     placeholder: 'Ընտրեք',
+    close: 'Դադարեցնել',
+    show: 'Ցույց տալ',
+    hide: 'Թաքցնել',
+    sortable: 'տեսակավորելի',
   },
   Table: {
     filterTitle: 'ֆիլտրի ընտրացանկ',
@@ -72,6 +78,26 @@ const localeValues: Locale = {
     sortTitle: 'Տեսակավորել',
     expand: 'Ընդլայնեք տողը',
     collapse: 'Կրճատել տողը',
+    expandAll: 'Ընդլայնել բոլոր տողերը',
+    collapseAll: 'Կրճատել բոլոր տողերը',
+    filterEmptyText: 'Զտիչներ չկան',
+    filterCheckall: 'Ընտրեք բոլոր տարրերը',
+    filterCheckAll: 'Ընտրեք բոլոր տարրերը',
+    filterSearchPlaceholder: 'Որոնել ֆիլտրերում',
+    emptyText: 'Տվյալներ չկան',
+    selectNone: 'Մաքրել բոլոր տվյալները',
+    selectionAll: 'Ընտրեք բոլոր տվյալները',
+    selectRow: 'Ընտրել տողը',
+    selectedRow: 'Տողն ընտրված է',
+    selectionMenu: 'Ընտրության ընտրացանկ',
+    triggerDesc: 'Սեղմեք՝ նվազման կարգով',
+    triggerAsc: 'Սեղմեք՝ աճող տեսակավորելու համար',
+    cancelSort: 'Սեղմեք՝ տեսակավորումը չեղարկելու համար',
+  },
+  Tour: {
+    Next: 'Հաջորդ',
+    Previous: 'Նախորդ',
+    Finish: 'Ավարտել',
   },
   Modal: {
     okText: 'Օկ',
@@ -82,12 +108,22 @@ const localeValues: Locale = {
     okText: 'Հաստատել',
     cancelText: 'Մերժել',
   },
+  Splitter: {
+    toggleStartPanel: 'Փոխարկել սկզբնական վահանակը',
+    toggleEndPanel: 'Փոխարկել վերջնական վահանակը',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Որոնեք այստեղ',
     itemUnit: 'պարագան',
     itemsUnit: 'պարագաները',
+    remove: 'Հեռացնել',
+    selectCurrent: 'Ընտրեք ընթացիկ էջը',
+    removeCurrent: 'Հեռացնել ընթացիկ էջը',
+    selectAll: 'Ընտրեք բոլոր տվյալները',
     deselectAll: 'Ապաընտրել բոլոր տվյալները',
+    removeAll: 'Հեռացրեք բոլոր տվյալները',
+    selectInvert: 'Շրջել ընթացիկ էջը',
   },
   Upload: {
     uploading: 'Ներբեռնում...',
@@ -107,6 +143,72 @@ const localeValues: Locale = {
     copy: 'Պատճենել',
     copied: 'Պատճենվել է',
     expand: 'Տեսնել ավելին',
+    collapse: 'Փլուզում',
+  },
+  Carousel: {
+    prevSlide: 'Նախորդ սլայդը',
+    nextSlide: 'Հաջորդ սլայդը',
+  },
+  Form: {
+    optional: '(ոչ պարտադիր)',
+    defaultValidateMessages: {
+      default: 'Դաշտի վավերականության սխալ՝ ${label}',
+      required: 'Խնդրում ենք մուտքագրել ${label}',
+      enum: '${label}-ը պետք է լինի [${enum}]-ից մեկը',
+      whitespace: '${label}-ը չի կարող լինել դատարկ նիշ',
+      date: {
+        format: '${label} ամսաթվի ձևաչափը անվավեր է',
+        parse: '${label}-ը հնարավոր չէ փոխարկել ամսաթվի',
+        invalid: '${label}-ը անվավեր ամսաթիվ է',
+      },
+      types: {
+        string: typeTemplate,
+        method: typeTemplate,
+        array: typeTemplate,
+        object: typeTemplate,
+        number: typeTemplate,
+        date: typeTemplate,
+        boolean: typeTemplate,
+        integer: typeTemplate,
+        float: typeTemplate,
+        regexp: typeTemplate,
+        email: typeTemplate,
+        url: typeTemplate,
+        hex: typeTemplate,
+      },
+      string: {
+        len: '${label}-ը պետք է լինի ${len} նիշ',
+        min: '${label}-ը պետք է լինի առնվազն ${min} նիշ',
+        max: '${label}-ը կարող է լինել առավելագույնը ${max} նիշ',
+        range: '${label}-ը պետք է լինի ${min}-${max} նիշերի միջև',
+      },
+      number: {
+        len: '${label}-ը պետք է հավասար լինի ${len}-ին',
+        min: '${label}-ը պետք է լինի առնվազն ${min}',
+        max: '${label}-ը կարող է լինել առավելագույնը ${max}',
+        range: '${label}-ը պետք է լինի ${min}-${max} միջակայքում',
+      },
+      array: {
+        len: 'Պետք է լինի ${len} ${label}',
+        min: 'Առնվազն ${min} ${label}',
+        max: 'Առավելագույնը ${max} ${label}',
+        range: '${label}-ի քանակը պետք է լինի ${min}-${max} միջակայքում',
+      },
+      pattern: {
+        mismatch: '${label}-ը չի համապատասխանում ${pattern} ձևանմուշին',
+      },
+    },
+  },
+  QRCode: {
+    expired: 'QR կոդը ժամկետանց է',
+    refresh: 'Թարմացնել',
+    scanned: 'Սկանավորվել է',
+  },
+  ColorPicker: {
+    presetEmpty: 'Դատարկ',
+    transparent: 'Թափանցիկ',
+    singleColor: 'Մեկ գույն',
+    gradientColor: 'Գրադիենտ գույն',
   },
   PageHeader: {
     back: 'Հետ',

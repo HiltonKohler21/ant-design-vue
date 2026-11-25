@@ -1,12 +1,12 @@
 /* eslint-disable no-template-curly-in-string */
-
 import Pagination from '../vc-pagination/locale/kk_KZ';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/kk_KZ';
 import DatePicker from '../date-picker/locale/kk_KZ';
 import TimePicker from '../time-picker/locale/kk_KZ';
-import Calendar from '../calendar/locale/kk_KZ';
-import type { Locale } from '../locale-provider';
 
-const typeTemplate = '${label} ${type} типі емес';
+const typeTemplate: string = '${label} ${type} типі емес';
 
 const localeValues: Locale = {
   locale: 'kk',
@@ -16,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Таңдаңыз',
+    close: 'Жабу',
+    show: 'Көрсету',
+    hide: 'Жасыру',
+    sortable: 'сұрыпталатын',
   },
   Table: {
     filterTitle: 'Фильтр',
@@ -26,12 +30,26 @@ const localeValues: Locale = {
     selectAll: 'Барлығын таңдау',
     selectInvert: 'Таңдауды төңкеру',
     selectionAll: 'Барлық деректерді таңдаңыз',
+    selectRow: 'Жолды таңдау',
+    selectedRow: 'Жол таңдалды',
+    selectionMenu: 'Таңдау мәзірі',
     sortTitle: 'Сұрыптау',
     expand: 'Жолды жазу',
     collapse: 'Жолды бүктеу',
+    expandAll: 'Барлық жолдарды жазу',
+    collapseAll: 'Барлық жолдарды бүктеу',
     triggerDesc: 'Төмендеуді сұрыптау үшін басыңыз',
     triggerAsc: 'Өсу ретімен сұрыптау үшін басыңыз',
     cancelSort: 'Сұрыптаудан бас тарту үшін басыңыз',
+    filterCheckall: 'Барлық элементтерді таңдаңыз',
+    filterCheckAll: 'Барлық элементтерді таңдаңыз',
+    filterSearchPlaceholder: 'Сүзгілерде іздеу',
+    selectNone: 'Барлық деректерді өшіріңіз',
+  },
+  Tour: {
+    Next: 'Келесі',
+    Previous: 'Алдыңғы',
+    Finish: 'Аяқтау',
   },
   Modal: {
     okText: 'Жарайды',
@@ -42,6 +60,10 @@ const localeValues: Locale = {
     okText: 'Жарайды',
     cancelText: 'Болдырмау',
   },
+  Splitter: {
+    toggleStartPanel: 'Бастапқы панельді ауыстыру',
+    toggleEndPanel: 'Соңғы панельді ауыстыру',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Іздеу',
@@ -49,11 +71,11 @@ const localeValues: Locale = {
     itemsUnit: 'элемент.',
     remove: 'Жою',
     selectAll: 'Барлық деректерді таңдау',
-    deselectAll: 'Барлық деректердің таңдауын алып тастаңыз',
     selectCurrent: 'Ағымдағы бетті таңдау',
     selectInvert: 'Кері тәртіпте көрсету',
     removeAll: 'Барлық деректерді жою',
     removeCurrent: 'Ағымдағы парақты өшіру',
+    deselectAll: 'Барлық деректердің таңдауын алып тастаңыз',
   },
   Upload: {
     uploading: 'Жүктеу...',
@@ -73,11 +95,14 @@ const localeValues: Locale = {
     copy: 'Көшіру',
     copied: 'Көшірілді',
     expand: 'Жазу',
+    collapse: 'Жыйрату',
   },
-  PageHeader: {
-    back: 'Артқа',
+  Carousel: {
+    prevSlide: 'Алдыңғы слайд',
+    nextSlide: 'Келесі слайд',
   },
   Form: {
+    optional: '(міндетті емес)',
     defaultValidateMessages: {
       default: '${label} өрісін тексеру қателігі',
       required: '${label} енгізіңіз',
@@ -113,6 +138,7 @@ const localeValues: Locale = {
         len: '${label} ${len} тең болуы керек',
         min: '${label} ${min} мәнінен үлкен немесе оған тең болуы керек',
         max: '${label} ${max} мәнінен аз немесе оған тең болуы керек',
+        range: '${label} ${min}-${max} аралығында болуы керек',
       },
       array: {
         len: '${label} элементтерінің саны ${len} тең болуы керек',
@@ -124,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} ${pattern} мен сәйкес келмейді',
       },
     },
+  },
+  QRCode: {
+    expired: 'QR кодының мерзімі аяқталды',
+    refresh: 'Жаңарту',
+    scanned: 'Сканерленген',
+  },
+  ColorPicker: {
+    presetEmpty: 'Бос',
+    transparent: 'Мөлдір',
+    singleColor: 'Бір түсті',
+    gradientColor: 'Градиент түсі',
+  },
+  PageHeader: {
+    back: 'Артқа',
   },
 };
 

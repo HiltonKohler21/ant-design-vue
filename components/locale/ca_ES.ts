@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ca_ES';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ca_ES';
 import DatePicker from '../date-picker/locale/ca_ES';
 import TimePicker from '../time-picker/locale/ca_ES';
-import Calendar from '../calendar/locale/ca_ES';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} no és un ${type} vàlid';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'Seleccionar',
+    close: 'Tancar',
+    show: 'Mostra',
+    hide: 'Amaga',
+    sortable: 'ordenable',
   },
   Table: {
     filterTitle: 'Filtrar el menú',
@@ -24,12 +29,27 @@ const localeValues: Locale = {
     selectAll: 'Seleccionar la pàgina actual',
     selectInvert: 'Invertir la selecció',
     selectionAll: 'Seleccionar-ho tot',
+    selectRow: 'Selecciona la fila',
+    selectedRow: 'Fila seleccionada',
+    selectionMenu: 'Menú de selecció',
     sortTitle: 'Ordenar',
     expand: 'Ampliar la fila',
     collapse: 'Plegar la fila',
+    expandAll: 'Ampliar totes les files',
+    collapseAll: 'Plegar totes les files',
     triggerDesc: 'Ordre descendent',
     triggerAsc: 'Ordre ascendent',
     cancelSort: 'Desactivar l’ordre',
+    filterCheckall: 'Seleccioneu tots els elements',
+    filterCheckAll: 'Seleccioneu tots els elements',
+    filterSearchPlaceholder: 'Cerca en filtres',
+    emptyText: 'Sense dades',
+    selectNone: 'Esborra totes les dades',
+  },
+  Tour: {
+    Next: 'Següent',
+    Previous: 'Anterior',
+    Finish: 'Finalitzar',
   },
   Modal: {
     okText: 'D’acord',
@@ -40,6 +60,10 @@ const localeValues: Locale = {
     okText: 'D’acord',
     cancelText: 'Cancel·lar',
   },
+  Splitter: {
+    toggleStartPanel: 'Commuta el panell inicial',
+    toggleEndPanel: 'Commuta el panell final',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Cercar',
@@ -49,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Seleccionar la pàgina actual',
     removeCurrent: 'Eliminar la selecció',
     selectAll: 'Seleccionar-ho tot',
-    deselectAll: 'Desseleccioneu totes les dades',
     removeAll: 'Eliminar-ho tot',
     selectInvert: 'Invertir la selecció',
+    deselectAll: 'Desseleccioneu totes les dades',
   },
   Upload: {
     uploading: 'Carregant…',
@@ -71,9 +95,11 @@ const localeValues: Locale = {
     copy: 'Copiar',
     copied: 'Copiat',
     expand: 'Ampliar',
+    collapse: 'Col·lapse',
   },
-  PageHeader: {
-    back: 'Enrere',
+  Carousel: {
+    prevSlide: 'Diapositiva anterior',
+    nextSlide: 'Diapositiva següent',
   },
   Form: {
     optional: '(opcional)',
@@ -124,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} no coincideix amb el patró ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'El codi QR ha caducat',
+    refresh: 'Actualitza',
+    scanned: 'Escanejat',
+  },
+  ColorPicker: {
+    presetEmpty: 'Buit',
+    transparent: 'Transparent',
+    singleColor: 'Un sol',
+    gradientColor: 'Color degradat',
+  },
+  PageHeader: {
+    back: 'Enrere',
   },
 };
 

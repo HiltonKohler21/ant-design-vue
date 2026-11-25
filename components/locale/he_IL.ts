@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/he_IL';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/he_IL';
 import DatePicker from '../date-picker/locale/he_IL';
 import TimePicker from '../time-picker/locale/he_IL';
-import Calendar from '../calendar/locale/he_IL';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} הוא לא ${type} תקין';
 
@@ -15,6 +16,10 @@ const localeValues: Locale = {
   Calendar,
   global: {
     placeholder: 'אנא בחר',
+    close: 'סגור',
+    show: 'הצג',
+    hide: 'הסתר',
+    sortable: 'ניתן למיין',
   },
   Table: {
     filterTitle: 'תפריט סינון',
@@ -23,12 +28,28 @@ const localeValues: Locale = {
     selectAll: 'בחר הכל',
     selectInvert: 'הפוך בחירה',
     selectionAll: 'בחר את כל הנתונים',
+    selectRow: 'בחירת שורה',
+    selectedRow: 'השורה נבחרה',
+    selectionMenu: 'תפריט בחירה',
     sortTitle: 'מיון',
     expand: 'הרחב שורה',
-    collapse: 'צמצם שורהw',
-    triggerDesc: 'לחץ על מיון לפי סדר יורד',
-    triggerAsc: 'לחץ על מיון לפי סדר עולה',
+    collapse: 'צמצם שורה',
+    expandAll: 'הרחב את כל השורות',
+    collapseAll: 'צמצם את כל השורות',
+    triggerDesc: 'לחץ למיון לפי סדר יורד',
+    triggerAsc: 'לחץ למיון לפי סדר עולה',
     cancelSort: 'לחץ כדי לבטל את המיון',
+    filterEmptyText: 'אין מסננים',
+    filterCheckall: 'בחר את כל הפריטים',
+    filterCheckAll: 'בחר את כל הפריטים',
+    filterSearchPlaceholder: 'חפש במסננים',
+    emptyText: 'אין נתונים',
+    selectNone: 'נקה את כל הנתונים',
+  },
+  Tour: {
+    Next: 'הבא',
+    Previous: 'הקודם',
+    Finish: 'סיום',
   },
   Modal: {
     okText: 'אישור',
@@ -39,11 +60,22 @@ const localeValues: Locale = {
     okText: 'אישור',
     cancelText: 'ביטול',
   },
+  Splitter: {
+    toggleStartPanel: 'החלפת מצב הלוח ההתחלתי',
+    toggleEndPanel: 'החלפת מצב הלוח הסופי',
+  },
   Transfer: {
+    titles: ['', ''],
     searchPlaceholder: 'חפש כאן',
     itemUnit: 'פריט',
     itemsUnit: 'פריטים',
+    remove: 'הסר',
+    selectCurrent: 'בחר את הדף הנוכחי',
+    removeCurrent: 'הסר את הדף הנוכחי',
+    selectAll: 'בחר את כל הנתונים',
     deselectAll: 'בטל את הבחירה בכל הנתונים',
+    removeAll: 'הסר את כל הנתונים',
+    selectInvert: 'הפוך את הדף הנוכחי',
   },
   Upload: {
     uploading: 'מעלה...',
@@ -63,11 +95,14 @@ const localeValues: Locale = {
     copy: 'העתק',
     copied: 'הועתק',
     expand: 'הרחב',
+    collapse: 'התמוטט',
   },
-  PageHeader: {
-    back: 'חזרה',
+  Carousel: {
+    prevSlide: 'השקופית הקודמת',
+    nextSlide: 'השקופית הבאה',
   },
   Form: {
+    optional: '(אופציונלי)',
     defaultValidateMessages: {
       default: 'ערך השדה שגוי ${label}',
       required: 'בבקשה הזן ${label}',
@@ -115,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} לא תואם לתבנית ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'פג תוקפו של קוד QR',
+    refresh: 'רענן',
+    scanned: 'נסרק',
+  },
+  ColorPicker: {
+    presetEmpty: 'ריק',
+    transparent: 'שקוף',
+    singleColor: 'צבע יחיד',
+    gradientColor: 'צבע שיפוע',
+  },
+  PageHeader: {
+    back: 'חזרה',
   },
 };
 

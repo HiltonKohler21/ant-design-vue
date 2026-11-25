@@ -43,12 +43,30 @@ export interface Locale {
     copy?: any;
     copied?: any;
     expand?: any;
+    collapse?: any;
+  };
+  Splitter?: {
+    toggleStartPanel?: string;
+    toggleEndPanel?: string;
+  };
+  Carousel?: {
+    prevSlide?: string;
+    nextSlide?: string;
   };
   Tour?: TourLocale;
   QRCode?: {
     expired?: string;
     refresh?: string;
     scanned?: string;
+  };
+  ColorPicker?: {
+    presetEmpty?: string;
+    transparent?: string;
+    singleColor?: string;
+    gradientColor?: string;
+  };
+  Input?: {
+    otpCell?: string;
   };
 }
 

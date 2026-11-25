@@ -1,9 +1,10 @@
 /* eslint-disable no-template-curly-in-string */
 import Pagination from '../vc-pagination/locale/ga_IE';
+
+import type { Locale } from '../locale-provider';
+import Calendar from '../calendar/locale/ga_IE';
 import DatePicker from '../date-picker/locale/ga_IE';
 import TimePicker from '../time-picker/locale/ga_IE';
-import Calendar from '../calendar/locale/ga_IE';
-import type { Locale } from '../locale-provider';
 
 const typeTemplate = '${label} is not a valid ${type}';
 
@@ -14,7 +15,11 @@ const localeValues: Locale = {
   TimePicker,
   Calendar,
   global: {
-    placeholder: 'Please select',
+    placeholder: 'Roghnaigh le do thoil',
+    close: 'Dún',
+    show: 'Taispeáin',
+    hide: 'Folaigh',
+    sortable: 'insocraithe',
   },
   Table: {
     filterTitle: 'Filter menu',
@@ -23,12 +28,28 @@ const localeValues: Locale = {
     selectAll: 'Select current page',
     selectInvert: 'Invert current page',
     selectionAll: 'Select all data',
+    selectRow: 'Roghnaigh ró',
+    selectedRow: 'Ró roghnaithe',
+    selectionMenu: 'Roghchlár roghnúcháin',
     sortTitle: 'Sort',
     expand: 'Expand row',
     collapse: 'Collapse row',
+    expandAll: 'Leathnaigh gach ró',
+    collapseAll: 'Laghdaigh gach ró',
     triggerDesc: 'Click to sort descending',
     triggerAsc: 'Click to sort ascending',
     cancelSort: 'Click to cancel sorting',
+    filterEmptyText: 'Gan scagairí',
+    filterCheckall: 'Roghnaigh gach mír',
+    filterCheckAll: 'Roghnaigh gach mír',
+    filterSearchPlaceholder: 'Cuardaigh i scagairí',
+    emptyText: 'Gan sonraí',
+    selectNone: 'Glan na sonraí go léir',
+  },
+  Tour: {
+    Next: 'Aghaidh',
+    Previous: 'Roimh',
+    Finish: 'Dhéanamh',
   },
   Modal: {
     okText: 'OK',
@@ -39,6 +60,10 @@ const localeValues: Locale = {
     okText: 'OK',
     cancelText: 'Cancel',
   },
+  Splitter: {
+    toggleStartPanel: 'Scoránaigh an painéal tosaigh',
+    toggleEndPanel: 'Scoránaigh an painéal deiridh',
+  },
   Transfer: {
     titles: ['', ''],
     searchPlaceholder: 'Search here',
@@ -48,9 +73,9 @@ const localeValues: Locale = {
     selectCurrent: 'Select current page',
     removeCurrent: 'Remove current page',
     selectAll: 'Select all data',
-    deselectAll: 'Díroghnaigh na sonraí go léir',
     removeAll: 'Remove all data',
     selectInvert: 'Invert current page',
+    deselectAll: 'Díroghnaigh na sonraí go léir',
   },
   Upload: {
     uploading: 'Uploading...',
@@ -70,11 +95,14 @@ const localeValues: Locale = {
     copy: 'Copy',
     copied: 'Copied',
     expand: 'Expand',
+    collapse: 'Laghdaigh',
   },
-  PageHeader: {
-    back: 'Back',
+  Carousel: {
+    prevSlide: 'An sleamhnán roimhe seo',
+    nextSlide: 'An chéad sleamhnán eile',
   },
   Form: {
+    optional: '(roghnach)',
     defaultValidateMessages: {
       default: 'Field validation error for ${label}',
       required: 'Please enter ${label}',
@@ -122,6 +150,20 @@ const localeValues: Locale = {
         mismatch: '${label} does not match the pattern ${pattern}',
       },
     },
+  },
+  QRCode: {
+    expired: 'Chuaigh an cód QR in éag',
+    refresh: 'Athnuaigh',
+    scanned: 'Scanta',
+  },
+  ColorPicker: {
+    presetEmpty: 'Folamh',
+    transparent: 'Trédhearcach',
+    singleColor: 'Dath aonair',
+    gradientColor: 'Dath grádán',
+  },
+  PageHeader: {
+    back: 'Back',
   },
 };
 
