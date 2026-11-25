@@ -1,6 +1,7 @@
 import RcTable from '../vc-table';
 import type { TableProps as RcTableProps } from '../vc-table/Table';
 import { INTERNAL_HOOKS } from '../vc-table/Table';
+import { getCellFixedInfo } from '../vc-table/utils/fixUtil';
 import type { SpinProps } from '../spin';
 import Spin from '../spin';
 import type {
@@ -1632,6 +1633,69 @@ const InternalTable = defineComponent({
         const allNumericWidths =
           leafColumns.length > 0 &&
           leafColumns.every(col => typeof col.width === 'number' && col.width > 0);
+        const scrollX = mergedScroll.value?.x;
+        const hasScrollX = scrollX !== undefined && scrollX !== false;
+        const totalNumericWidth = allNumericWidths
+          ? leafColumns.reduce((sum, col) => sum + (col.width as number), 0)
+          : 0;
+        const resolvedScrollWidth =
+          typeof scrollX === 'number'
+            ? Math.max(scrollX, totalNumericWidth)
+            : hasScrollX && totalNumericWidth > 0
+            ? totalNumericWidth
+            : undefined;
+
+        const isRTL = direction.value === 'rtl';
+        const leftOffsets: number[] = [];
+        const rightOffsets: number[] = [];
+        let accLeft = 0;
+        let accRight = 0;
+        const colCount = leafColumns.length;
+        for (let i = 0; i < colCount; i += 1) {
+          const wStart =
+            typeof leafColumns[i]?.width === 'number' ? (leafColumns[i].width as number) : 0;
+          const endIdx = colCount - i - 1;
+          const wEnd =
+            typeof leafColumns[endIdx]?.width === 'number'
+              ? (leafColumns[endIdx].width as number)
+              : 0;
+          if (isRTL) {
+            rightOffsets[i] = accRight;
+            accRight += wStart;
+            leftOffsets[endIdx] = accLeft;
+            accLeft += wEnd;
+          } else {
+            leftOffsets[i] = accLeft;
+            accLeft += wStart;
+            rightOffsets[endIdx] = accRight;
+            accRight += wEnd;
+          }
+        }
+        const virtualStickyOffsets = { left: leftOffsets, right: rightOffsets };
+        const normalizedVirtualFixedCols = leafColumns.map(col => {
+          const parsedFixed = col.fixed === true ? 'left' : normalizeFixedValue(col.fixed);
+          if (isRTL) {
+            return {
+              fixed:
+                parsedFixed === 'left'
+                  ? ('right' as RcFixedType)
+                  : parsedFixed === 'right'
+                  ? ('left' as RcFixedType)
+                  : parsedFixed,
+            };
+          }
+          return { fixed: parsedFixed };
+        });
+        const virtualFixedInfos = leafColumns.map((_, idx) =>
+          getCellFixedInfo(
+            idx,
+            idx,
+            normalizedVirtualFixedCols,
+            virtualStickyOffsets,
+            direction.value,
+          ),
+        );
+
         const renderVirtualBody = (bodyData: any[], info: any) => {
           if (!bodyData || bodyData.length === 0) {
             return (
@@ -1658,6 +1722,12 @@ const InternalTable = defineComponent({
               data={bodyData}
               height={virtualScrollY.value}
               itemHeight={listItemHeight.value}
+              scrollWidth={resolvedScrollWidth}
+              holderRef={(el: HTMLElement | null) => {
+                if (info?.ref) {
+                  info.ref.value = el;
+                }
+              }}
               itemKey={(record: any) => getRowKey.value(record)}
               onScroll={(e: UIEvent) => {
                 info?.onScroll?.({ currentTarget: e.currentTarget as HTMLElement });
@@ -1726,7 +1796,7 @@ const InternalTable = defineComponent({
                         } = customCellProps;
                         let widthStyle: CSSProperties;
                         if (col.width !== undefined) {
-                          if (allNumericWidths && typeof col.width === 'number') {
+                          if (!hasScrollX && allNumericWidths && typeof col.width === 'number') {
                             widthStyle = {
                               flex: `${col.width} 0 ${col.width}px`,
                               minWidth: `${col.width}px`,
@@ -1737,23 +1807,60 @@ const InternalTable = defineComponent({
                             widthStyle = {
                               flex: `0 0 ${resolvedWidth}`,
                               width: resolvedWidth,
+                              minWidth: resolvedWidth,
                             };
                           }
                         } else {
                           widthStyle = { flex: '1 1 0', minWidth: 0 };
                         }
+                        const fixedInfo = virtualFixedInfos[colIdx];
+                        const isFixLeft = typeof fixedInfo?.fixLeft === 'number';
+                        const isFixRight = typeof fixedInfo?.fixRight === 'number';
+                        const fixedStyle: CSSProperties | undefined =
+                          isFixLeft || isFixRight
+                            ? {
+                                position: 'sticky',
+                                ...(isFixLeft ? { left: `${fixedInfo.fixLeft}px` } : {}),
+                                ...(isFixRight ? { right: `${fixedInfo.fixRight}px` } : {}),
+                              }
+                            : undefined;
+                        const ellipsisConfig =
+                          col.ellipsis === true ? { showTitle: true } : col.ellipsis;
+                        const cellTitle =
+                          ellipsisConfig &&
+                          ellipsisConfig.showTitle &&
+                          (typeof cellNode === 'string' || typeof cellNode === 'number')
+                            ? String(cellNode)
+                            : undefined;
+                        if (col.ellipsis && (fixedInfo?.lastFixLeft || fixedInfo?.firstFixRight)) {
+                          cellNode = (
+                            <span class={`${prefixCls.value}-cell-content`}>{cellNode}</span>
+                          );
+                        }
                         return (
                           <div
                             key={col.key ?? String(col.dataIndex ?? colIdx)}
+                            title={cellTitle}
                             {...restCustomCellProps}
                             class={classNames(
                               `${prefixCls.value}-cell`,
+                              {
+                                [`${prefixCls.value}-cell-ellipsis`]: Boolean(col.ellipsis),
+                                [`${prefixCls.value}-cell-fix-left`]: isFixLeft,
+                                [`${prefixCls.value}-cell-fix-left-first`]: fixedInfo?.firstFixLeft,
+                                [`${prefixCls.value}-cell-fix-left-last`]: fixedInfo?.lastFixLeft,
+                                [`${prefixCls.value}-cell-fix-right`]: isFixRight,
+                                [`${prefixCls.value}-cell-fix-right-first`]:
+                                  fixedInfo?.firstFixRight,
+                                [`${prefixCls.value}-cell-fix-right-last`]: fixedInfo?.lastFixRight,
+                              },
                               col.className,
                               mergedClassNames.value.body?.cell,
                               customCellClass,
                             )}
                             style={[
                               widthStyle,
+                              fixedStyle,
                               col.align ? { textAlign: col.align } : undefined,
                               mergedStyles.value.body?.cell,
                               customCellStyle,
