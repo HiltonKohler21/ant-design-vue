@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, DefineComponent } from 'vue';
 import { computed, defineComponent, onBeforeUnmount, ref, watch } from 'vue';
 import PickerPanel from '../vc-picker/PickerPanel';
 import PresetPanel from '../vc-picker/PresetPanel';
@@ -31,7 +31,7 @@ export function generatePurePanel<DateType>(
     isRange?: boolean;
     displayName?: string;
   },
-) {
+): DefineComponent<any> {
   const isRange = !!options?.isRange;
   const defaultPicker = options?.defaultPicker;
   const displayName =
