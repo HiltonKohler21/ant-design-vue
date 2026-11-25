@@ -48,6 +48,7 @@ import useFilter, { getFilterData } from './hooks/useFilter';
 import useTitleColumns from './hooks/useTitleColumns';
 import renderExpandIcon from './ExpandIcon';
 import scrollTo from '../_util/scrollTo';
+import useReducedMotion from '../_util/hooks/useReducedMotion';
 import defaultLocale from '../locale/en_US';
 import type { SizeType } from '../config-provider';
 import devWarning from '../vc-util/devWarning';
@@ -789,6 +790,7 @@ const InternalTable = defineComponent({
     const internalRefs = reactive({
       body: null as HTMLElement | null,
     });
+    const shouldReduceMotion = useReducedMotion();
 
     const updateInternalRefs = refs => {
       Object.assign(internalRefs, refs);
@@ -852,6 +854,7 @@ const InternalTable = defineComponent({
       if (scroll && scroll.scrollToFirstRowOnChange !== false && internalRefs.body) {
         scrollTo(0, {
           getContainer: () => internalRefs.body,
+          duration: shouldReduceMotion.value ? 0 : undefined,
         });
       }
 

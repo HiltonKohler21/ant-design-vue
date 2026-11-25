@@ -15,6 +15,7 @@ import addEventListener from '../vc-util/Dom/addEventListener';
 import Affix from '../affix';
 import type { AffixProps } from '../affix';
 import scrollTo from '../_util/scrollTo';
+import useReducedMotion from '../_util/hooks/useReducedMotion';
 import getScroll from '../_util/getScroll';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import useMergeSemantic, {
@@ -138,6 +139,7 @@ export default defineComponent({
 
     const spanLinkNode = ref<HTMLSpanElement>(null);
     const anchorRef = ref();
+    const shouldReduceMotion = useReducedMotion();
     const linkTargetOffsetMap: Record<string, number> = {};
     const state = reactive<AnchorState>({
       links: [],
@@ -240,6 +242,7 @@ export default defineComponent({
           state.animating = false;
         },
         getContainer: getContainer.value,
+        duration: shouldReduceMotion.value ? 0 : undefined,
       });
     };
     expose({

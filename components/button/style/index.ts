@@ -242,7 +242,9 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
       backgroundColor: 'transparent',
       border: `${unit(token.lineWidth)} ${token.lineType} transparent`,
       cursor: 'pointer',
-      transition: `all ${token.motionDurationMid} ${token.motionEaseInOut}`,
+      transition: ['color', 'background-color', 'border-color', 'box-shadow', 'opacity']
+        .map(prop => `${prop} ${token.motionDurationMid} ${token.motionEaseInOut}`)
+        .join(', '),
       userSelect: 'none',
       touchAction: 'manipulation',
       lineHeight: token.lineHeight,

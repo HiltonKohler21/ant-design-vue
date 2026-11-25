@@ -15,6 +15,7 @@ import classNames from '../_util/classNames';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { withInstall } from '../_util/type';
 import getScroll from '../_util/getScroll';
+import useReducedMotion from '../_util/hooks/useReducedMotion';
 import scrollTo from '../_util/scrollTo';
 import throttleByAnimationFrame from '../_util/throttleByAnimationFrame';
 import { getTransitionProps } from '../_util/transition';
@@ -46,12 +47,13 @@ const BackTop = defineComponent({
 
     const domRef = ref<HTMLElement>();
     const visible = ref(props.visibilityHeight === 0);
+    const shouldReduceMotion = useReducedMotion();
 
     const getDefaultTarget = () => (domRef.value && domRef.value.ownerDocument) || window;
 
     const scrollToTop = (e: MouseEvent) => {
       const { target = getDefaultTarget, duration } = props;
-      scrollTo(0, { getContainer: target, duration });
+      scrollTo(0, { getContainer: target, duration: shouldReduceMotion.value ? 0 : duration });
       emit('click', e);
     };
 

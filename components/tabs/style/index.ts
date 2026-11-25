@@ -39,7 +39,9 @@ const genCardStyle: GenerateStyle<TabsToken> = (token: TabsToken): CSSObject => 
           padding: tabsCardHorizontalPadding,
           background: tabsCardHeadBackground,
           border: `${unit(token.lineWidth)} ${token.lineType} ${colorSplit}`,
-          transition: `all ${token.motionDurationSlow} ${token.motionEaseInOut}`,
+          transition: ['color', 'background-color', 'border-color']
+            .map(prop => `${prop} ${token.motionDurationSlow} ${token.motionEaseInOut}`)
+            .join(', '),
         },
 
         [`${componentCls}-tab-active`]: {

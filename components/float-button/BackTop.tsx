@@ -18,6 +18,7 @@ import classNames from '../_util/classNames';
 import useConfigInject, { useComponentConfig } from '../config-provider/hooks/useConfigInject';
 import getScroll from '../_util/getScroll';
 import scrollTo from '../_util/scrollTo';
+import useReducedMotion from '../_util/hooks/useReducedMotion';
 import throttleByAnimationFrame from '../_util/throttleByAnimationFrame';
 import { initDefaultProps } from '../_util/props-util';
 import { backTopProps } from './interface';
@@ -47,13 +48,6 @@ const getScrollProgress = (target: ScrollTarget | null | undefined): number => {
   return maxScroll > 0 ? Math.min(Math.max(scrollTop / maxScroll, 0), 1) : 0;
 };
 
-const isReducedMotion = (): boolean => {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-    return false;
-  }
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
 const BackTop = defineComponent({
   compatConfig: { MODE: 3 },
   name: 'AFloatButtonBackTop',
@@ -74,6 +68,7 @@ const BackTop = defineComponent({
     const [wrapSSR] = useStyle(prefixCls);
 
     const domRef = ref();
+    const shouldReduceMotion = useReducedMotion();
     const state = reactive({
       visible: props.visibilityHeight === 0,
       scrollProgress: 0,
@@ -87,7 +82,7 @@ const BackTop = defineComponent({
       const { target = getDefaultTarget, duration } = props;
       scrollTo(0, {
         getContainer: target,
-        duration: isReducedMotion() ? 0 : duration,
+        duration: shouldReduceMotion.value ? 0 : duration,
       });
       emit('click', e);
     };
