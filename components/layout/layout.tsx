@@ -51,10 +51,12 @@ function generator({ suffixCls, tagName, name }: GeneratorArgument) {
       props: basicProps(),
       setup(props, { slots }) {
         const { prefixCls } = useConfigInject(suffixCls, props);
+        const { prefixCls: defaultPrefixCls } = useConfigInject(suffixCls, {});
         return () => {
           const basicComponentProps = {
             ...props,
             prefixCls: prefixCls.value,
+            defaultPrefixCls: defaultPrefixCls.value,
             tagName,
           };
           return <BasicComponent {...basicComponentProps} v-slots={slots}></BasicComponent>;
@@ -68,7 +70,10 @@ function generator({ suffixCls, tagName, name }: GeneratorArgument) {
 const Basic = defineComponent({
   compatConfig: { MODE: 3 },
   inheritAttrs: false,
-  props: basicProps(),
+  props: {
+    ...basicProps(),
+    defaultPrefixCls: String,
+  },
   setup(props, { slots, attrs }) {
     const { prefixCls: layoutPrefixCls } = useConfigInject('layout', {});
     const [wrapSSR, hashId] = useStyle(layoutPrefixCls);
@@ -89,6 +94,9 @@ const Basic = defineComponent({
             ...attrs,
             class: [
               props.prefixCls,
+              props.defaultPrefixCls && props.defaultPrefixCls !== props.prefixCls
+                ? props.defaultPrefixCls
+                : undefined,
               props.rootClassName,
               mergedClassNames.value.root,
               hashId.value,

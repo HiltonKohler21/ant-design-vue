@@ -1,6 +1,6 @@
 // based on rc-checkbox 2.3.2
 import type { HTMLAttributes } from 'vue';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
 import { initDefaultProps } from '../_util/props-util';
@@ -12,6 +12,7 @@ export const checkboxProps = {
   type: String,
   defaultChecked: { type: [Boolean, Number], default: undefined },
   checked: { type: [Boolean, Number], default: undefined },
+  indeterminate: Boolean,
   disabled: Boolean,
   tabindex: { type: [Number, String] },
   readonly: Boolean,
@@ -38,6 +39,13 @@ export default defineComponent({
         checked.value = props.checked;
       },
     );
+    const syncIndeterminate = () => {
+      if (inputRef.value) {
+        inputRef.value.indeterminate = !!props.indeterminate;
+      }
+    };
+    onMounted(syncIndeterminate);
+    watch(() => props.indeterminate, syncIndeterminate);
     expose({
       focus() {
         inputRef.value?.focus();
@@ -51,6 +59,10 @@ export default defineComponent({
     const handleChange = e => {
       if (props.disabled) {
         return;
+      }
+      // Native checkbox activation clears indeterminate before firing change.
+      if (inputRef.value) {
+        inputRef.value.indeterminate = !!props.indeterminate;
       }
       if (props.checked === undefined) {
         checked.value = e.target.checked;

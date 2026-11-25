@@ -401,11 +401,16 @@ const Steps = defineComponent({
       const item = displayStep?.item;
 
       let iconNode = node;
+      const hasCustomIcon =
+        item?.icon !== undefined &&
+        item?.icon !== null &&
+        item?.icon !== false &&
+        item?.icon !== '';
       if (
         canApplyMaxCount.value &&
         originIndex !== undefined &&
         originIndex >= 0 &&
-        !item?.icon &&
+        !hasCustomIcon &&
         !isDot.value &&
         status !== 'finish' &&
         status !== 'error'

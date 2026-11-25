@@ -69,12 +69,13 @@ export default defineComponent({
       } = props;
 
       let iconNode;
+      const hasIcon = icon !== undefined && icon !== null && icon !== false && icon !== '';
       const iconClassName = classNames(`${prefixCls}-icon`, `${iconPrefix}icon`, {
-        [`${iconPrefix}icon-${icon}`]: icon && isString(icon),
+        [`${iconPrefix}icon-${icon}`]: hasIcon && isString(icon),
         [`${iconPrefix}icon-check`]:
-          !icon && status === 'finish' && ((icons && !icons.finish) || !icons),
+          !hasIcon && status === 'finish' && ((icons && !icons.finish) || !icons),
         [`${iconPrefix}icon-cross`]:
-          !icon && status === 'error' && ((icons && !icons.error) || !icons),
+          !hasIcon && status === 'error' && ((icons && !icons.error) || !icons),
       });
       const iconDot = <span class={`${prefixCls}-icon-dot`} />;
       // `progressDot` enjoy the highest priority
@@ -95,13 +96,13 @@ export default defineComponent({
         } else {
           iconNode = <span class={`${prefixCls}-icon`}>{iconDot}</span>;
         }
-      } else if (icon && !isString(icon)) {
+      } else if (hasIcon && !isString(icon)) {
         iconNode = <span class={`${prefixCls}-icon`}>{icon}</span>;
       } else if (icons && icons.finish && status === 'finish') {
         iconNode = <span class={`${prefixCls}-icon`}>{icons.finish}</span>;
       } else if (icons && icons.error && status === 'error') {
         iconNode = <span class={`${prefixCls}-icon`}>{icons.error}</span>;
-      } else if (icon || status === 'finish' || status === 'error') {
+      } else if (hasIcon || status === 'finish' || status === 'error') {
         iconNode = <span class={iconClassName} />;
       } else {
         iconNode = <span class={`${prefixCls}-icon`}>{stepNumber}</span>;
@@ -136,8 +137,9 @@ export default defineComponent({
         onStepClick,
       } = props;
       const mergedStatus = status || 'wait';
+      const hasIcon = icon !== undefined && icon !== null && icon !== false && icon !== '';
       const classString = classNames(`${prefixCls}-item`, `${prefixCls}-item-${mergedStatus}`, {
-        [`${prefixCls}-item-custom`]: icon,
+        [`${prefixCls}-item-custom`]: hasIcon,
         [`${prefixCls}-item-active`]: active,
         [`${prefixCls}-item-disabled`]: disabled === true,
       });

@@ -183,6 +183,7 @@ export default defineComponent({
       } else {
         mergedChecked = props.checked !== undefined ? props.checked : innerChecked.value;
         checkboxProps.onChange = handleChange;
+        checkboxProps.indeterminate = indeterminate;
       }
 
       const mergedPropsForSemantic: CheckboxProps = {

@@ -22,7 +22,7 @@ export const timerProps = () => ({
   value: someType<valueType>([Number, String, Object]),
   format: String,
   onFinish: Function as PropType<() => void>,
-  onChange: Function as PropType<(value?: number) => void>,
+  onChange: Function as PropType<(value: number) => void>,
 });
 
 export type StatisticTimerProps = Partial<ExtractPropTypes<ReturnType<typeof timerProps>>>;

@@ -18,7 +18,7 @@ export const countdownProps = () => {
     value: someType<countdownValueType>([Number, String, Object]),
     format: String,
     onFinish: Function as PropType<() => void>,
-    onChange: Function as PropType<(value?: countdownValueType) => void>,
+    onChange: Function as PropType<(value: number) => void>,
   };
 };
 

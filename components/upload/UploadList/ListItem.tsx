@@ -26,6 +26,7 @@ import type {
 import type { VueNode } from '../../_util/type';
 import useConfigInject from '../../config-provider/hooks/useConfigInject';
 import { getTransitionProps } from '../../_util/transition';
+import warning from '../../_util/warning';
 import {
   stringType,
   functionType,
@@ -33,6 +34,7 @@ import {
   objectType,
   anyType,
   someType,
+  booleanType,
 } from '../../_util/type';
 
 export const listItemProps = () => {
@@ -45,6 +47,7 @@ export const listItemProps = () => {
     items: arrayType<UploadFile[]>(),
     listType: stringType<UploadListType>(),
     isImgUrl: functionType<(file: UploadFile) => boolean>(),
+    hasPreview: booleanType(),
 
     showRemoveIcon: someType<boolean | ((file: UploadFile) => boolean)>([Boolean, Function]),
     showDownloadIcon: someType<boolean | ((file: UploadFile) => boolean)>([Boolean, Function]),
@@ -171,8 +174,23 @@ export default defineComponent({
         [`${prefixCls}-list-item-${mergedStatus.value}`]: true,
         [props.classNames?.item as string]: !!props.classNames?.item,
       };
-      const linkProps =
-        typeof file.linkProps === 'string' ? JSON.parse(file.linkProps) : file.linkProps;
+      let linkProps = file.linkProps;
+      let invalidLinkProps = false;
+      if (typeof linkProps === 'string') {
+        try {
+          linkProps = JSON.parse(linkProps);
+        } catch {
+          linkProps = {};
+          invalidLinkProps = true;
+        }
+      }
+      if (process.env.NODE_ENV !== 'production') {
+        warning(
+          !invalidLinkProps,
+          'Upload',
+          '`linkProps` is not a valid JSON string. It will be ignored.',
+        );
+      }
 
       const resolvedShowRemove =
         typeof showRemoveIcon === 'function' ? showRemoveIcon(file) : showRemoveIcon;
@@ -223,6 +241,21 @@ export default defineComponent({
         </span>
       );
       const listItemNameClass = `${prefixCls}-list-item-name`;
+      const onPreviewKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPreview(file, e as any);
+        }
+      };
+      const spanProps =
+        props.hasPreview !== false
+          ? {
+              role: 'button',
+              tabindex: 0,
+              onClick: (e: MouseEvent) => onPreview(file, e),
+              onKeydown: onPreviewKeyDown,
+            }
+          : {};
       const fileName = file.url
         ? [
             <a
@@ -233,19 +266,19 @@ export default defineComponent({
               title={file.name}
               {...linkProps}
               href={file.url}
-              onClick={e => onPreview(file, e)}
+              onClick={e => {
+                linkProps?.onClick?.(e);
+                if (!e.defaultPrevented) {
+                  onPreview(file, e);
+                }
+              }}
             >
               {file.name}
             </a>,
             downloadOrDelete,
           ]
         : [
-            <span
-              key="view"
-              class={listItemNameClass}
-              onClick={e => onPreview(file, e)}
-              title={file.name}
-            >
+            <span key="view" class={listItemNameClass} {...spanProps} title={file.name}>
               {file.name}
             </span>,
             downloadOrDelete,

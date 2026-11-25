@@ -50,6 +50,8 @@ export function calcRangeKeys({
     return [];
   }
 
+  const expandedKeySet = new Set(expandedKeys);
+
   function matchKey(key: Key) {
     return key === startKey || key === endKey;
   }
@@ -74,7 +76,7 @@ export function calcRangeKeys({
       keys.push(key);
     }
 
-    return expandedKeys.includes(key);
+    return expandedKeySet.has(key);
   });
 
   return keys;
@@ -83,18 +85,20 @@ export function calcRangeKeys({
 export function convertDirectoryKeysToNodes(
   treeData: DataNode[],
   keys: Key[],
-  fieldNames: FieldNames,
+  fieldNames: FieldNames = {
+    title: 'title',
+    key: 'key',
+    children: 'children',
+  },
 ) {
-  const restKeys: Key[] = [...keys];
+  const restKeys = new Set(keys);
   const nodes: DataNode[] = [];
   traverseNodesKey(treeData, fieldNames, (key: Key, node: DataNode) => {
-    const index = restKeys.indexOf(key);
-    if (index !== -1) {
+    if (key !== null && restKeys.delete(key)) {
       nodes.push(node);
-      restKeys.splice(index, 1);
     }
 
-    return !!restKeys.length;
+    return restKeys.size > 0;
   });
   return nodes;
 }

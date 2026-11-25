@@ -184,7 +184,10 @@ export default defineComponent({
     const [wrapSSR, hashId] = useStyle(prefixCls);
     const itemRef = shallowRef<HTMLDivElement>();
     const formContext = useInjectForm();
-    const fieldName = computed(() => props.name || props.prop);
+    const fieldName = computed(() =>
+      props.name !== undefined && props.name !== null ? props.name : props.prop,
+    );
+    const hasFieldName = (val: any) => val !== undefined && val !== null && val !== '';
     const errors = shallowRef([]);
     const warnings = shallowRef([]);
     const validateDisabled = shallowRef(false);
@@ -205,7 +208,7 @@ export default defineComponent({
     });
     const getNewFieldValue = () => {
       const model = formContext.model.value;
-      if (!model || !fieldName.value) {
+      if (!model || !hasFieldName(fieldName.value)) {
         return;
       } else {
         return getPropByPath(model, namePath.value, true).v;
@@ -264,7 +267,7 @@ export default defineComponent({
       let variables: Record<string, string> = {};
       if (typeof props.label === 'string') {
         variables.label = props.label;
-      } else if (props.name) {
+      } else if (props.name !== undefined && props.name !== null && props.name !== '') {
         variables.label = String(props.name);
       }
       if (props.messageVariables) {
@@ -435,14 +438,14 @@ export default defineComponent({
         clearValidate,
       },
       computed(() => {
-        return !!(props.autoLink && formContext.model.value && fieldName.value);
+        return !!(props.autoLink && formContext.model.value && hasFieldName(fieldName.value));
       }),
     );
     let registered = false;
     watch(
       fieldName,
       val => {
-        if (val) {
+        if (hasFieldName(val)) {
           if (!registered) {
             registered = true;
             formContext.addField(eventKey, {
@@ -472,7 +475,7 @@ export default defineComponent({
         return props.dependencies.map(dep => getValue(formContext.model.value, getNamePath(dep)));
       },
       (nextVals, prevVals) => {
-        if (!nextVals || !prevVals || !fieldName.value) return;
+        if (!nextVals || !prevVals || !hasFieldName(fieldName.value)) return;
         const hasValue =
           fieldValue.value !== undefined && fieldValue.value !== '' && fieldValue.value !== null;
         if (hasValue || errors.value.length || warnings.value.length) {

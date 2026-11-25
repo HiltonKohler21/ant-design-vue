@@ -66,12 +66,16 @@ function collectSortStates<RecordType>(
 ): SortState<RecordType>[] {
   let sortStates: SortState<RecordType>[] = [];
 
-  function pushState(column: ColumnsType<RecordType>[number], columnPos: string) {
+  function pushState(
+    column: ColumnsType<RecordType>[number],
+    columnPos: string,
+    sortOrder: SortOrder = column.sortOrder!,
+  ) {
     sortStates.push({
       column,
       key: getColumnKey(column, columnPos),
       multiplePriority: getMultiplePriority(column),
-      sortOrder: column.sortOrder!,
+      sortOrder,
     });
   }
 
@@ -82,6 +86,9 @@ function collectSortStates<RecordType>(
       if ('sortOrder' in column) {
         // Controlled
         pushState(column, columnPos);
+      } else if (init && column.sorter && column.defaultSortOrder) {
+        // Default sorter
+        pushState(column, columnPos, column.defaultSortOrder);
       }
       sortStates = [
         ...sortStates,
@@ -93,12 +100,7 @@ function collectSortStates<RecordType>(
         pushState(column, columnPos);
       } else if (init && column.defaultSortOrder) {
         // Default sorter
-        sortStates.push({
-          column,
-          key: getColumnKey(column, columnPos),
-          multiplePriority: getMultiplePriority(column),
-          sortOrder: column.defaultSortOrder!,
-        });
+        pushState(column, columnPos, column.defaultSortOrder);
       }
     }
   });

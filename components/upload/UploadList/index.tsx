@@ -237,6 +237,7 @@ export default defineComponent({
                 progress={progress}
                 listType={listType}
                 isImgUrl={isImgUrl}
+                hasPreview={Boolean(props.onPreview)}
                 showPreviewIcon={showPreviewIcon}
                 showRemoveIcon={showRemoveIcon}
                 showDownloadIcon={showDownloadIcon}

@@ -195,14 +195,27 @@ function notice(args: MessageArgsProps): MessageType {
     props: args,
   });
 
+  let closed = false;
+  let settled = false;
+  let resolveClose: ((val: any) => void) | undefined;
+  const finishClose = () => {
+    if (settled) {
+      return;
+    }
+    settled = true;
+    if (typeof args.onClose === 'function') {
+      args.onClose();
+    }
+    resolveClose?.(true);
+  };
+
   const closePromise = new Promise(resolve => {
-    const callback = () => {
-      if (typeof args.onClose === 'function') {
-        args.onClose();
-      }
-      return resolve(true);
-    };
+    resolveClose = resolve;
     getMessageInstance(args, instance => {
+      if (closed) {
+        finishClose();
+        return;
+      }
       instance.notice({
         key: target,
         duration,
@@ -237,15 +250,17 @@ function notice(args: MessageArgsProps): MessageType {
             </div>
           );
         },
-        onClose: callback,
+        onClose: finishClose,
         onClick: args.onClick,
       });
     });
   });
   const result: any = () => {
+    closed = true;
     if (messageInstance) {
       messageInstance.removeNotice(target);
     }
+    finishClose();
   };
   result.then = (filled: ThenableArgument, rejected: ThenableArgument) =>
     closePromise.then(filled, rejected);
