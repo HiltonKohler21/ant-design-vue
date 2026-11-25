@@ -239,23 +239,30 @@ const WHITELIST = {
     'enableEllipsis',
     'enableMeasure',
     'iconOnly',
+    'measureDeps',
     'miscDeps',
     'setContentRef',
     'loading',
     'maxLength',
     'tooltipProps',
-  ], // React aria / 内部子组件字段（CopyBtn.loading / EditConfig.maxLength / EllipsisTooltip.tooltipProps）
-  notification: ['datatestid', 'readonlytype'], // React 专有
+  ], // React aria / 内部子组件字段（CopyBtn.loading / EditConfig.maxLength / Ellipsis.measureDeps / EllipsisTooltip.tooltipProps）
+  notification: ['datatestid', 'items', 'readonlytype'], // React 专有 / PureList 内部属性
+  message: ['items'], // PureList 内部属性
   cascader: [], // 已补齐
   splitter: [
     'basicsState',
     'containerRef',
     'panelsRef',
+    'rootPrefixCls',
     'setBasicsState',
     'setOffset',
     'setResizing',
     'setSize',
-  ], // hook 内部变量误报
+  ], // hook 内部变量 / SplitBar 内部属性
+  steps: ['itemComponent', 'rootComponent', 'rootPrefixCls'], // StepsContext / ProgressIcon 内部属性
+  masonry: ['onResize'], // MasonryItem 内部回调
+  space: ['prefix'], // Space Item 内部属性
+  button: ['_skipSemantic'], // 内部实现标记
   'float-button': ['arialabel'], // React aria-label 驼峰
   carousel: [], // 已补齐
   form: ['fieldKey', 'meta', 'onSubItemMetaChange', 'onVisibleChanged'], // Field 内部（rc-field-form 内部字段）
@@ -270,7 +277,7 @@ const WHITELIST = {
   badge: ['motionClassName'], // 内部实现
   layout: ['displayName'], // 内部实现
   collapse: [], // 已补齐
-  watermark: ['add'], // antd 6.x，不在 5.x 基线
+  watermark: ['add'], // WatermarkContext 内部方法
   'color-picker': [
     'gradientDragging',
     'modeOptions',

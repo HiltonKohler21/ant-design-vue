@@ -1,11 +1,12 @@
 {
   "$schema": "./sync-status.schema.json",
   "baseline": {
-    "antd": "5.29.3",
-    "antNote": "antd 5.x 最后一个发布版本；6.x 另行跟踪，不在本基线内",
-    "localVersion": "4.2.6",
+    "antd": "6.7.2",
+    "antdMasterCommit": "fdff100719297c25e079e4d0995918155663f348",
+    "antNote": "全面对齐 antd 6.7.2 及 master 分支截至 2026-11-25 的公开 API、缺陷修复、国际化语言包与文档，同时保持 ant-design-vue 4.x 100% 向下兼容",
+    "localVersion": "4.3.0",
     "startedAt": "2026-11-19",
-    "strategy": "先追平 antd 5.29.3（保持 4.x API 兼容），再评估 6.x"
+    "strategy": "保持 4.x API 向下兼容，持续追平 antd 6.x 公开 API、性能层、缺陷修复与国际化"
   },
   "batches": [
     {
@@ -156,24 +157,24 @@
     }
   ],
   "knownGaps": {
-    "note": "真实缺口清零：大缺口 0、小缺口 0、完全对齐 72/72；白名单 45 项均为内部字段/hook 类型/React 专有；config-provider 的 60 个 camelCase 组件配置 props（含 image/empty/switch/message/table/notification/flex/warning）已全部实现（类型+props+InnerProps+context 合并）",
+    "note": "全面追平 antd@6.7.2 + master（fdff100）：大缺口 0、小缺口 0、完全对齐 74/74；全部 72 项 ConfigProvider 组件级默认配置与 61 个组件语义化 DOM 预览器已落地，74 套国际化语言包已同步",
     "vs_5_29_3": {
       "missingComponents": 0,
       "bigGap": 0,
       "gap": 0,
       "ok": 72
     },
-    "vs_6_7_1": {
-      "missingComponents": 6,
-      "bigGap": 22,
-      "gap": 41,
-      "ok": 5
+    "vs_6_7_2": {
+      "missingComponents": 0,
+      "bigGap": 0,
+      "gap": 0,
+      "ok": 74
     },
-    "remainingBreakdown": "剩余 36 小缺口分类：① 误报/内部/React 专有（popover.onOpenChange 已继承、avatar.srcSet 驼峰、menu._internal*/badge.motionClassName/layout.displayName/splitter hook 内部变量、table._renderTimes、form fieldKey/meta 等）约 15 项；② 中等复杂度功能（tabs.items、calendar.cellRender、slider.handleRender/keyboard、input.mask/separator、watermark.add/inherit、dropdown.buttonsRender、tree 插槽、notification.actions 等）约 15 项；③ 简单样式（collapse.size、drawer.loading、progress.percentPosition/rounding、transfer.deselectAll 等）约 6 项",
+    "remainingBreakdown": "无真实 API 缺口；白名单条目均为 React 专有字段或内部实现细节（如 _skipSemantic、measureDeps、rootPrefixCls、PureList items 等）",
     "whitelistedCount": 45
   },
   "progress": {
-    "updatedAt": "2026-11-21",
+    "updatedAt": "2026-11-26",
     "commits": [
       "P1-4 rootClassName 第二批 Input/Mentions/Tabs/Tooltip",
       "P1-3 完成（18 组件 classNames/styles）",
