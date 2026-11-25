@@ -122,6 +122,25 @@ function useColumns<RecordType>(
   transformColumns: Ref<(columns: ColumnsType<RecordType>) => ColumnsType<RecordType>>,
 ): [ComputedRef<ColumnsType<RecordType>>, ComputedRef<readonly ColumnType<RecordType>[]>] {
   const contextSlots = useInjectSlots();
+  // Stable expand cell renderer so column width updates do not invalidate body rows
+  const renderExpandCell: ColumnType<RecordType>['customRender'] = ({ record, index }) => {
+    const rowKey = getRowKey.value(record, index);
+    const expanded = expandedKeys.value.has(rowKey);
+    const recordExpandable = rowExpandable.value ? rowExpandable.value(record) : true;
+
+    const icon = expandIcon.value({
+      prefixCls: prefixCls.value,
+      expanded,
+      expandable: recordExpandable,
+      record,
+      onExpand: onTriggerExpand,
+    });
+
+    if (expandRowByClick.value) {
+      return <span onClick={e => e.stopPropagation()}>{icon}</span>;
+    }
+    return icon;
+  };
   // Add expand column
   const withExpandColumns = computed<ColumnsType<RecordType>>(() => {
     if (expandable.value) {
@@ -169,11 +188,6 @@ function useColumns<RecordType>(
       } else {
         fixedColumn = prevColumn ? prevColumn.fixed : null;
       }
-      const expandedKeysValue = expandedKeys.value;
-      const rowExpandableValue = rowExpandable.value;
-      const expandIconValue = expandIcon.value;
-      const prefixClsValue = prefixCls.value;
-      const expandRowByClickValue = expandRowByClick.value;
       // >>> Create expandable column
       const expandColumn = {
         [INTERNAL_COL_DEFINE]: {
@@ -184,24 +198,7 @@ function useColumns<RecordType>(
         fixed: fixedColumn,
         class: `${prefixCls.value}-row-expand-icon-cell`,
         width: expandColumnWidth.value,
-        customRender: ({ record, index }) => {
-          const rowKey = getRowKey.value(record, index);
-          const expanded = expandedKeysValue.has(rowKey);
-          const recordExpandable = rowExpandableValue ? rowExpandableValue(record) : true;
-
-          const icon = expandIconValue({
-            prefixCls: prefixClsValue,
-            expanded,
-            expandable: recordExpandable,
-            record,
-            onExpand: onTriggerExpand,
-          });
-
-          if (expandRowByClickValue) {
-            return <span onClick={e => e.stopPropagation()}>{icon}</span>;
-          }
-          return icon;
-        },
+        customRender: renderExpandCell,
       };
 
       return cloneColumns.map(col => (col === EXPAND_COLUMN ? expandColumn : col));

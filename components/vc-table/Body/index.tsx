@@ -69,7 +69,7 @@ export default defineComponent<BodyProps<any>>({
       } = props;
       const { onColumnResize } = resizeContext;
       const { prefixCls, getComponent } = tableContext;
-      const { flattenColumns } = bodyContext;
+      const flattenColumns = bodyContext.bodyFlattenColumns || bodyContext.flattenColumns;
       const WrapperComponent = getComponent(['body', 'wrapper'], 'tbody');
       const trComponent = getComponent(['body', 'row'], 'tr');
       const tdComponent = getComponent(['body', 'cell'], 'td');

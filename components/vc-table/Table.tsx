@@ -28,11 +28,14 @@ import Panel from './Panel';
 import Footer from './Footer';
 import { findAllChildrenKeys, renderExpandIcon } from './utils/expandUtil';
 import { getCellFixedInfo } from './utils/fixUtil';
+import type { FixedInfo } from './utils/fixUtil';
+import { INTERNAL_COL_DEFINE } from './utils/legacyUtil';
 import StickyScrollBar from './stickyScrollBar';
 import useSticky from './hooks/useSticky';
 import FixedHolder from './FixedHolder';
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, ShallowRef } from 'vue';
 import {
+  markRaw,
   onUpdated,
   computed,
   defineComponent,
@@ -55,6 +58,7 @@ import { getTargetScrollBarSize } from '../_util/getScrollBarSize';
 import classNames from '../_util/classNames';
 import type { EventHandler } from '../_util/EventInterface';
 import VCResizeObserver from '../vc-resize-observer';
+import type { BodyFixedInfo, FixedOffset } from './context/TableContext';
 import { useProvideTable } from './context/TableContext';
 import { useProvideBody } from './context/BodyContext';
 import { useProvideResize } from './context/ResizeContext';
@@ -67,6 +71,78 @@ const EMPTY_DATA = [];
 
 // Used for customize scroll
 const EMPTY_SCROLL_TARGET = {};
+
+// Column keys that only affect layout/header and never affect body cell rendering
+const BODY_IGNORED_COLUMN_KEYS = new Set([
+  'width',
+  'minWidth',
+  'maxWidth',
+  'resizable',
+  'title',
+  'customHeaderCell',
+  '__originColumn__',
+]);
+
+function shallowEqualValue(a: any, b: any): boolean {
+  if (Object.is(a, b)) return true;
+  if (!a || !b || typeof a !== 'object' || typeof b !== 'object') return false;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i += 1) {
+      if (!Object.is(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  for (let i = 0; i < keysA.length; i += 1) {
+    const k = keysA[i];
+    if (!Object.prototype.hasOwnProperty.call(b, k) || !Object.is(a[k], b[k])) return false;
+  }
+  return true;
+}
+
+function getColumnOriginTitle(col: any) {
+  if (!col || INTERNAL_COL_DEFINE in col) return undefined;
+  return col.__originColumn__ ? col.__originColumn__.title : col.title;
+}
+
+function isBodyColumnEqual(
+  prevCol: any,
+  nextCol: any,
+  prevOriginTitle: any,
+  nextOriginTitle: any,
+): boolean {
+  if (prevCol === nextCol) return true;
+  if (!prevCol || !nextCol) return false;
+  if (!Object.is(prevOriginTitle, nextOriginTitle)) return false;
+  if (!shallowEqualValue(prevCol[INTERNAL_COL_DEFINE], nextCol[INTERNAL_COL_DEFINE])) {
+    return false;
+  }
+  const prevKeys = Object.keys(prevCol);
+  const nextKeys = Object.keys(nextCol);
+  let prevChecked = 0;
+  for (let i = 0; i < prevKeys.length; i += 1) {
+    const k = prevKeys[i];
+    if (BODY_IGNORED_COLUMN_KEYS.has(k)) continue;
+    prevChecked += 1;
+    if (!Object.prototype.hasOwnProperty.call(nextCol, k)) return false;
+    const v1 = prevCol[k];
+    const v2 = nextCol[k];
+    if (Object.is(v1, v2)) continue;
+    if (k === 'dataIndex' || k === 'ellipsis') {
+      if (!shallowEqualValue(v1, v2)) return false;
+    } else {
+      return false;
+    }
+  }
+  let nextChecked = 0;
+  for (let i = 0; i < nextKeys.length; i += 1) {
+    if (!BODY_IGNORED_COLUMN_KEYS.has(nextKeys[i])) nextChecked += 1;
+  }
+  return prevChecked === nextChecked;
+}
 
 export const INTERNAL_HOOKS = 'rc-table-internal-hook';
 
@@ -564,22 +640,167 @@ export default defineComponent({
     const emptyNode = () => {
       return hasData.value ? null : slots.emptyText?.() || 'No Data';
     };
+    const stableBodySlots = { emptyNode, $stable: true };
+
+    // Keep body column references stable across pure width/resize updates so body rows skip re-render
+    let prevBodyFlattenColumns: ColumnType<any>[] | null = null;
+    let prevBodyOriginTitles: any[] = [];
+    const bodyFlattenColumns = computed<readonly ColumnType<any>[]>(() => {
+      const nextCols = flattenColumns.value;
+      const nextOriginTitles = nextCols.map(getColumnOriginTitle);
+      if (
+        prevBodyFlattenColumns &&
+        prevBodyFlattenColumns.length === nextCols.length &&
+        prevBodyFlattenColumns.every((prevCol, idx) =>
+          isBodyColumnEqual(
+            prevCol,
+            nextCols[idx],
+            prevBodyOriginTitles[idx],
+            nextOriginTitles[idx],
+          ),
+        )
+      ) {
+        // Keep latest __originColumn__ pointer without triggering reactive updates
+        for (let i = 0; i < prevBodyFlattenColumns.length; i += 1) {
+          const nextOrigin = (nextCols[i] as any)?.__originColumn__;
+          if (nextOrigin !== undefined) {
+            (prevBodyFlattenColumns[i] as any).__originColumn__ = nextOrigin;
+          }
+        }
+        return prevBodyFlattenColumns;
+      }
+      const nextBodyCols = nextCols.map((nextCol, idx) => {
+        if (
+          prevBodyFlattenColumns &&
+          idx < prevBodyFlattenColumns.length &&
+          isBodyColumnEqual(
+            prevBodyFlattenColumns[idx],
+            nextCol,
+            prevBodyOriginTitles[idx],
+            nextOriginTitles[idx],
+          )
+        ) {
+          const kept = prevBodyFlattenColumns[idx];
+          if ((nextCol as any)?.__originColumn__ !== undefined) {
+            (kept as any).__originColumn__ = (nextCol as any).__originColumn__;
+          }
+          return kept;
+        }
+        return markRaw({ ...nextCol });
+      });
+      prevBodyFlattenColumns = markRaw(nextBodyCols);
+      prevBodyOriginTitles = nextOriginTitles;
+      return prevBodyFlattenColumns;
+    });
+
+    // Shallow-reuse fixedInfoList when no column's fixed info actually changed (e.g. non-fixed resize)
+    let prevFixedInfoList: FixedInfo[] = [];
+    const fixedInfoList = computed<readonly FixedInfo[]>(() => {
+      const cols = flattenColumns.value;
+      const offsets = stickyOffsets.value;
+      const dir = props.direction;
+      const nextList = cols.map((_, colIndex) =>
+        getCellFixedInfo(colIndex, colIndex, cols, offsets, dir),
+      );
+      if (
+        prevFixedInfoList.length === nextList.length &&
+        prevFixedInfoList.every((prev, idx) => {
+          const next = nextList[idx];
+          return (
+            prev.fixLeft === next.fixLeft &&
+            prev.fixRight === next.fixRight &&
+            prev.lastFixLeft === next.lastFixLeft &&
+            prev.firstFixRight === next.firstFixRight &&
+            prev.lastFixRight === next.lastFixRight &&
+            prev.firstFixLeft === next.firstFixLeft &&
+            prev.isSticky === next.isSticky
+          );
+        })
+      ) {
+        return prevFixedInfoList;
+      }
+      prevFixedInfoList = markRaw(nextList);
+      return prevFixedInfoList;
+    });
+
+    // Structural fixed flags for BodyRow (excludes numeric left/right px so fixed-column resize never re-renders BodyRow)
+    let prevBodyFixedInfoList: BodyFixedInfo[] = [];
+    const bodyFixedInfoList = computed<readonly BodyFixedInfo[]>(() => {
+      const list = fixedInfoList.value;
+      const nextList: BodyFixedInfo[] = list.map(info => ({
+        isFixLeft: typeof info.fixLeft === 'number',
+        isFixRight: typeof info.fixRight === 'number',
+        lastFixLeft: info.lastFixLeft,
+        firstFixRight: info.firstFixRight,
+        lastFixRight: info.lastFixRight,
+        firstFixLeft: info.firstFixLeft,
+        isSticky: info.isSticky,
+      }));
+      if (
+        prevBodyFixedInfoList.length === nextList.length &&
+        prevBodyFixedInfoList.every((prev, idx) => {
+          const next = nextList[idx];
+          return (
+            prev.isFixLeft === next.isFixLeft &&
+            prev.isFixRight === next.isFixRight &&
+            prev.lastFixLeft === next.lastFixLeft &&
+            prev.firstFixRight === next.firstFixRight &&
+            prev.lastFixRight === next.lastFixRight &&
+            prev.firstFixLeft === next.firstFixLeft &&
+            prev.isSticky === next.isSticky
+          );
+        })
+      ) {
+        return prevBodyFixedInfoList;
+      }
+      prevBodyFixedInfoList = markRaw(nextList);
+      return prevBodyFixedInfoList;
+    });
+
+    // Per-column sticky px offsets synced directly to fixed body cell DOM nodes
+    const fixedOffsetRaw: FixedOffset[] = [];
+    const fixedOffsetRefs: ShallowRef<FixedOffset>[] = [];
+    const getFixedOffset = (colIndex: number) => fixedOffsetRaw[colIndex];
+    const getFixedOffsetRef = (colIndex: number) => {
+      while (fixedOffsetRefs.length <= colIndex) {
+        const idx = fixedOffsetRefs.length;
+        const initial = fixedOffsetRaw[idx] || { fixLeft: undefined, fixRight: undefined };
+        fixedOffsetRaw[idx] = initial;
+        fixedOffsetRefs.push(shallowRef(initial));
+      }
+      return fixedOffsetRefs[colIndex];
+    };
+
+    watch(
+      fixedInfoList,
+      list => {
+        fixedOffsetRaw.length = list.length;
+        for (let i = 0; i < list.length; i += 1) {
+          const info = list[i];
+          const nextLeft = typeof info.fixLeft === 'number' ? info.fixLeft : undefined;
+          const nextRight = typeof info.fixRight === 'number' ? info.fixRight : undefined;
+          const prev = fixedOffsetRaw[i];
+          if (!prev || prev.fixLeft !== nextLeft || prev.fixRight !== nextRight) {
+            const nextOffset: FixedOffset = { fixLeft: nextLeft, fixRight: nextRight };
+            fixedOffsetRaw[i] = nextOffset;
+            if (fixedOffsetRefs[i]) {
+              fixedOffsetRefs[i].value = nextOffset;
+            }
+          }
+        }
+      },
+      { immediate: true, flush: 'sync' },
+    );
+
     useProvideTable(
       reactive({
         ...toRefs(reactivePick(props, 'prefixCls', 'direction', 'transformCellText')),
         getComponent,
         scrollbarSize,
-        fixedInfoList: computed(() =>
-          flattenColumns.value.map((_, colIndex) =>
-            getCellFixedInfo(
-              colIndex,
-              colIndex,
-              flattenColumns.value,
-              stickyOffsets.value,
-              props.direction,
-            ),
-          ),
-        ),
+        fixedInfoList,
+        bodyFixedInfoList,
+        getFixedOffset,
+        getFixedOffsetRef,
         isSticky: computed(() => stickyState.value.isSticky),
         summaryCollect,
       }),
@@ -599,6 +820,7 @@ export default defineComponent({
         ),
         columns,
         flattenColumns,
+        bodyFlattenColumns,
         tableLayout: mergedTableLayout,
         expandIcon: mergedExpandIcon,
         expandableType,
@@ -627,7 +849,7 @@ export default defineComponent({
         getRowKey={getRowKey.value}
         customRow={props.customRow}
         childrenColumnName={mergedChildrenColumnName.value}
-        v-slots={{ emptyNode }}
+        v-slots={hasData.value ? stableBodySlots : { emptyNode }}
       />
     );
 

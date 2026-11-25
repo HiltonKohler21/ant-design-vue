@@ -95,7 +95,9 @@ export default defineComponent<BodyRowProps<unknown>>({
       return '';
     });
 
-    const columnsKey = computed(() => getColumnsKey(bodyContext.flattenColumns));
+    const columnsKey = computed(() =>
+      getColumnsKey(bodyContext.bodyFlattenColumns || bodyContext.flattenColumns),
+    );
 
     return () => {
       const { class: className, style } = attrs as any;
@@ -107,15 +109,16 @@ export default defineComponent<BodyRowProps<unknown>>({
         rowComponent: RowComponent,
         cellComponent,
       } = props;
-      const { prefixCls, fixedInfoList, transformCellText } = tableContext;
+      const { prefixCls, bodyFixedInfoList, transformCellText } = tableContext;
       const {
-        flattenColumns,
         expandedRowClassName,
         indentSize,
         expandIcon,
         expandedRowRender,
         expandIconColumnIndex,
       } = bodyContext;
+      const flattenColumns = bodyContext.bodyFlattenColumns || bodyContext.flattenColumns;
+      const keys = columnsKey.value;
       const baseRowNode = (
         <RowComponent
           {...additionalProps.value}
@@ -133,8 +136,10 @@ export default defineComponent<BodyRowProps<unknown>>({
           {flattenColumns.map((column, colIndex) => {
             const { customRender, dataIndex, className: columnClassName } = column;
 
-            const key = columnsKey[colIndex];
-            const fixedInfo = fixedInfoList[colIndex];
+            const key = keys[colIndex];
+            const fixedInfo = bodyFixedInfoList
+              ? bodyFixedInfoList[colIndex]
+              : tableContext.fixedInfoList[colIndex];
 
             let additionalCellProps;
             if (column.customCell) {
@@ -160,6 +165,7 @@ export default defineComponent<BodyRowProps<unknown>>({
             return (
               <Cell
                 cellType="body"
+                colIndex={colIndex}
                 class={columnClassName}
                 ellipsis={column.ellipsis}
                 align={column.align}

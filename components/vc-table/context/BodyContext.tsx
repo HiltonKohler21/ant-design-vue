@@ -18,6 +18,7 @@ export interface BodyContextProps<RecordType = DefaultRecordType> {
 
   columns: ColumnsType<RecordType>;
   flattenColumns: readonly ColumnType<RecordType>[];
+  bodyFlattenColumns?: readonly ColumnType<RecordType>[];
 
   tableLayout: TableLayout;
 

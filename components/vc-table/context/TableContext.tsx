@@ -1,7 +1,22 @@
-import type { InjectionKey } from 'vue';
+import type { InjectionKey, ShallowRef } from 'vue';
 import { inject, provide } from 'vue';
 import type { GetComponent, TransformCellText } from '../interface';
 import type { FixedInfo } from '../utils/fixUtil';
+
+export interface BodyFixedInfo {
+  isFixLeft: boolean;
+  isFixRight: boolean;
+  lastFixLeft: boolean;
+  firstFixRight: boolean;
+  lastFixRight: boolean;
+  firstFixLeft: boolean;
+  isSticky: boolean;
+}
+
+export interface FixedOffset {
+  fixLeft: number | undefined;
+  fixRight: number | undefined;
+}
 
 export interface TableContextProps {
   // Table context
@@ -14,6 +29,12 @@ export interface TableContextProps {
   direction: 'ltr' | 'rtl';
 
   fixedInfoList: readonly FixedInfo[];
+
+  bodyFixedInfoList?: readonly BodyFixedInfo[];
+
+  getFixedOffset?: (colIndex: number) => FixedOffset | undefined;
+
+  getFixedOffsetRef?: (colIndex: number) => ShallowRef<FixedOffset> | undefined;
 
   isSticky: boolean;
 

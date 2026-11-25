@@ -20,6 +20,7 @@ import { useInjectSlots } from '../../table/context';
 import { INTERNAL_COL_DEFINE } from '../utils/legacyUtil';
 import { useInjectHover } from '../context/HoverContext';
 import { useInjectSticky } from '../context/StickyContext';
+import { useInjectTable } from '../context/TableContext';
 import { warning } from '../../vc-util/warning';
 import type { MouseEventHandler } from '../../_util/EventInterface';
 import eagerComputed from '../../_util/eagerComputed';
@@ -54,6 +55,9 @@ export interface CellProps<RecordType = DefaultRecordType> {
   align?: AlignType;
 
   // Fixed
+  colIndex?: number;
+  isFixLeft?: boolean;
+  isFixRight?: boolean;
   fixLeft?: number | false;
   fixRight?: number | false;
   firstFixLeft?: boolean;
@@ -89,6 +93,9 @@ export default defineComponent({
     'component',
     'colSpan',
     'rowSpan',
+    'colIndex',
+    'isFixLeft',
+    'isFixRight',
     'fixLeft',
     'fixRight',
     'firstFixLeft',
@@ -107,6 +114,7 @@ export default defineComponent({
   ],
   setup(props, { slots }) {
     const contextSlots = useInjectSlots();
+    const tableContext = useInjectTable();
     const { onHover, startRow, endRow } = useInjectHover();
     const colSpan = computed(() => {
       return (
@@ -169,6 +177,34 @@ export default defineComponent({
         removeClass(cellDom, `${props.prefixCls}-cell-row-hover`);
       }
     });
+    // Sync body sticky offset directly to DOM so resizing fixed columns does not re-render cells
+    watch(
+      [
+        () => {
+          if (
+            props.cellType !== 'body' ||
+            props.colIndex === undefined ||
+            (!props.isFixLeft && !props.isFixRight)
+          ) {
+            return null;
+          }
+          return tableContext.getFixedOffsetRef?.(props.colIndex)?.value || null;
+        },
+        hoverRef,
+      ],
+      ([offset]) => {
+        if (!offset || !supportSticky.value) return;
+        const cellDom = findDOMNode(hoverRef.value) as HTMLElement | null;
+        if (!cellDom || !cellDom.style) return;
+        if (props.isFixLeft && typeof offset.fixLeft === 'number') {
+          cellDom.style.left = `${offset.fixLeft}px`;
+        }
+        if (props.isFixRight && typeof offset.fixRight === 'number') {
+          cellDom.style.right = `${offset.fixRight}px`;
+        }
+      },
+      { flush: 'post' },
+    );
     return () => {
       const {
         prefixCls,
@@ -178,6 +214,9 @@ export default defineComponent({
         dataIndex,
         customRender,
         component: Component = 'td',
+        colIndex,
+        isFixLeft: isFixLeftProp,
+        isFixRight: isFixRightProp,
         fixLeft,
         fixRight,
         firstFixLeft,
@@ -296,18 +335,30 @@ export default defineComponent({
       }
 
       // ====================== Fixed =======================
+      const resolvedFixLeft =
+        fixLeft !== undefined
+          ? fixLeft
+          : cellType === 'body' && colIndex !== undefined && isFixLeftProp
+          ? tableContext.getFixedOffset?.(colIndex)?.fixLeft
+          : undefined;
+      const resolvedFixRight =
+        fixRight !== undefined
+          ? fixRight
+          : cellType === 'body' && colIndex !== undefined && isFixRightProp
+          ? tableContext.getFixedOffset?.(colIndex)?.fixRight
+          : undefined;
       const fixedStyle: CSSProperties = {};
-      const isFixLeft = typeof fixLeft === 'number' && supportSticky.value;
-      const isFixRight = typeof fixRight === 'number' && supportSticky.value;
+      const isFixLeft = typeof resolvedFixLeft === 'number' && supportSticky.value;
+      const isFixRight = typeof resolvedFixRight === 'number' && supportSticky.value;
 
       if (isFixLeft) {
         fixedStyle.position = 'sticky';
-        fixedStyle.left = `${fixLeft}px`;
+        fixedStyle.left = `${resolvedFixLeft}px`;
       }
       if (isFixRight) {
         fixedStyle.position = 'sticky';
 
-        fixedStyle.right = `${fixRight}px`;
+        fixedStyle.right = `${resolvedFixRight}px`;
       }
 
       // ====================== Align =======================
