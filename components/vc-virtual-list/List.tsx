@@ -83,6 +83,8 @@ const List = defineComponent({
     data: PropTypes.array,
     height: Number,
     itemHeight: Number,
+    scrollWidth: Number,
+    holderRef: Function as PropType<(el: HTMLElement | null) => void>,
     /** If not match virtual scroll condition, Set List still use height of container. */
     fullHeight: { type: Boolean, default: undefined },
     itemKey: {
@@ -140,6 +142,13 @@ const List = defineComponent({
       { immediate: true },
     );
     const componentRef = shallowRef<HTMLDivElement>();
+    watch(
+      componentRef,
+      el => {
+        props.holderRef?.(el || null);
+      },
+      { immediate: true },
+    );
     const fillerInnerRef = shallowRef<HTMLDivElement>();
     const scrollBarRef = shallowRef<any>(); // Hack on scrollbar to enable flash call
     // =============================== Item Key ===============================
@@ -425,6 +434,9 @@ const List = defineComponent({
             cs!.pointerEvents = 'none';
           }
         }
+        if (typeof props.scrollWidth === 'number' && props.scrollWidth > 0) {
+          cs!.overflowX = 'auto';
+        }
       }
       return cs;
     });
@@ -468,6 +480,8 @@ const List = defineComponent({
       prefixCls = 'rc-virtual-list',
       height,
       itemHeight,
+      scrollWidth,
+      holderRef: _holderRef,
       // eslint-disable-next-line no-unused-vars
       fullHeight,
       data,
@@ -514,6 +528,7 @@ const List = defineComponent({
             prefixCls={prefixCls}
             height={scrollHeight}
             offset={offset}
+            scrollWidth={scrollWidth}
             onInnerResize={collectHeight}
             ref="fillerInnerRef"
             v-slots={{

@@ -8,14 +8,19 @@ interface FillerProps {
   height: number;
   /** Set offset of visible items. Should be the top of start item position */
   offset?: number;
+  /** Optional horizontal scroll content width */
+  scrollWidth?: number;
   onInnerResize?: () => void;
 }
 
 const Filter: FunctionalComponent<FillerProps> = (
-  { height, offset, prefixCls, onInnerResize },
+  { height, offset, scrollWidth, prefixCls, onInnerResize },
   { slots },
 ) => {
-  let outerStyle = {};
+  const hasScrollWidth = typeof scrollWidth === 'number' && scrollWidth > 0;
+  let outerStyle: CSSProperties = hasScrollWidth
+    ? { minWidth: '100%', width: `${scrollWidth}px` }
+    : {};
 
   let innerStyle: CSSProperties = {
     display: 'flex',
@@ -23,7 +28,14 @@ const Filter: FunctionalComponent<FillerProps> = (
   };
 
   if (offset !== undefined) {
-    outerStyle = { height: `${height}px`, position: 'relative', overflow: 'hidden' };
+    outerStyle = hasScrollWidth
+      ? {
+          height: `${height}px`,
+          position: 'relative',
+          minWidth: '100%',
+          width: `${scrollWidth}px`,
+        }
+      : { height: `${height}px`, position: 'relative', overflow: 'hidden' };
 
     innerStyle = {
       ...innerStyle,
@@ -65,6 +77,7 @@ Filter.props = {
   height: Number,
   /** Set offset of visible items. Should be the top of start item position */
   offset: Number,
+  scrollWidth: Number,
   onInnerResize: Function as PropType<() => void>,
 };
 
