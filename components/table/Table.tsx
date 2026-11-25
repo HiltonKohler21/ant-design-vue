@@ -52,6 +52,7 @@ import type { SizeType } from '../config-provider';
 import devWarning from '../vc-util/devWarning';
 import type { CSSProperties } from 'vue';
 import {
+  getCurrentInstance,
   nextTick,
   reactive,
   ref,
@@ -939,23 +940,35 @@ const InternalTable = defineComponent({
     });
 
     // ============================= Data =============================
+    let prevPageData: DefaultRecordType[] | null = null;
     const pageData = computed(() => {
+      let next: DefaultRecordType[];
       if (props.pagination === false || !mergedPagination.value.pageSize) {
-        return mergedData.value;
-      }
+        next = mergedData.value;
+      } else {
+        const { current = 1, total, pageSize = DEFAULT_PAGE_SIZE } = mergedPagination.value;
+        devWarning(current > 0, 'Table', '`current` should be positive number.');
 
-      const { current = 1, total, pageSize = DEFAULT_PAGE_SIZE } = mergedPagination.value;
-      devWarning(current > 0, 'Table', '`current` should be positive number.');
-
-      // Dynamic table data
-      if (mergedData.value.length < total!) {
-        if (mergedData.value.length > pageSize) {
-          return mergedData.value.slice((current - 1) * pageSize, current * pageSize);
+        // Dynamic table data
+        if (mergedData.value.length < total!) {
+          if (mergedData.value.length > pageSize) {
+            next = mergedData.value.slice((current - 1) * pageSize, current * pageSize);
+          } else {
+            next = mergedData.value;
+          }
+        } else {
+          next = mergedData.value.slice((current - 1) * pageSize, current * pageSize);
         }
-        return mergedData.value;
       }
-
-      return mergedData.value.slice((current - 1) * pageSize, current * pageSize);
+      if (
+        prevPageData &&
+        prevPageData.length === next.length &&
+        prevPageData.every((item, idx) => item === next[idx])
+      ) {
+        return prevPageData;
+      }
+      prevPageData = next;
+      return next;
     });
 
     watchEffect(
@@ -1074,33 +1087,118 @@ const InternalTable = defineComponent({
       );
     };
 
-    const mergedContextSlots = computed<ContextSlots>(() => {
-      const baseSlots: ContextSlots = { ...(props.contextSlots || {}) };
+    let latestBaseSlots: ContextSlots = {};
+    let prevMergedSlots: ContextSlots | null = null;
+    let prevRawSlotsMeta: {
+      keys: string[];
+      values: any[];
+      stable: boolean;
+      parentRender: any;
+      titleConfig: any;
+      needExpandAll: boolean;
+    } | null = null;
+
+    const renderMergedExpandColumnTitle = () => {
       const titleConfig = mergedExpandColumnTitle.value;
       const needExpandAll = mergedShowExpandAll.value;
-
-      if (needExpandAll || titleConfig !== undefined) {
-        const originSlot = baseSlots.expandColumnTitle;
-        const toVNodeArray = (node: any) =>
-          Array.isArray(node) ? node : node !== undefined && node !== null ? [node] : [];
-        baseSlots.expandColumnTitle = () => {
-          const expandAllNode = needExpandAll ? renderExpandAllIcon() : null;
-          if (typeof titleConfig === 'function') {
-            return toVNodeArray(titleConfig({ expandIcon: expandAllNode }));
-          }
-          if (titleConfig !== undefined) {
-            return toVNodeArray(titleConfig);
-          }
-          if (originSlot) {
-            return toVNodeArray(originSlot({ expandIcon: expandAllNode }));
-          }
-          return toVNodeArray(expandAllNode);
-        };
+      const originSlot = latestBaseSlots.expandColumnTitle;
+      const toVNodeArray = (node: any) =>
+        Array.isArray(node) ? node : node !== undefined && node !== null ? [node] : [];
+      const expandAllNode = needExpandAll ? renderExpandAllIcon() : null;
+      if (typeof titleConfig === 'function') {
+        return toVNodeArray(titleConfig({ expandIcon: expandAllNode }));
       }
-      return baseSlots;
+      if (titleConfig !== undefined) {
+        return toVNodeArray(titleConfig);
+      }
+      if (originSlot) {
+        return toVNodeArray(originSlot({ expandIcon: expandAllNode }));
+      }
+      return toVNodeArray(expandAllNode);
+    };
+
+    const mergedContextSlots = computed<ContextSlots>(() => {
+      const raw = (props.contextSlots || {}) as any;
+      const baseSlots: ContextSlots = { ...raw };
+      const titleConfig = mergedExpandColumnTitle.value;
+      const needExpandAll = mergedShowExpandAll.value;
+      const isStable = Boolean(raw.__stable__);
+      const rawSlotsSource = raw.__rawSlots__;
+      const parentRender = raw.__parentRender__;
+      const keys = Object.keys(baseSlots);
+      const values = keys.map(k => (rawSlotsSource ? rawSlotsSource[k] : baseSlots[k]));
+
+      latestBaseSlots = baseSlots;
+
+      if (
+        prevMergedSlots &&
+        prevRawSlotsMeta &&
+        prevRawSlotsMeta.titleConfig === titleConfig &&
+        prevRawSlotsMeta.needExpandAll === needExpandAll &&
+        prevRawSlotsMeta.keys.length === keys.length &&
+        prevRawSlotsMeta.keys.every((k, i) => k === keys[i])
+      ) {
+        const exactSameFns = prevRawSlotsMeta.values.every((v, i) => v === values[i]);
+        const stableSameTemplate =
+          isStable && prevRawSlotsMeta.stable && prevRawSlotsMeta.parentRender === parentRender;
+        if (exactSameFns || stableSameTemplate) {
+          return prevMergedSlots;
+        }
+      }
+
+      const nextSlots: ContextSlots = {};
+      if (isStable || rawSlotsSource) {
+        keys.forEach(k => {
+          (nextSlots as any)[k] = (...args: any[]) => (latestBaseSlots as any)[k]?.(...args);
+        });
+      } else {
+        Object.assign(nextSlots, baseSlots);
+      }
+      if (needExpandAll || titleConfig !== undefined) {
+        nextSlots.expandColumnTitle = renderMergedExpandColumnTitle;
+      }
+
+      prevRawSlotsMeta = {
+        keys,
+        values,
+        stable: isStable,
+        parentRender,
+        titleConfig,
+        needExpandAll,
+      };
+      prevMergedSlots = nextSlots;
+      return nextSlots;
     });
 
     useProvideSlots(mergedContextSlots);
+
+    const defaultExpandIcon = computed(() => renderExpandIcon(tableLocale.value));
+    const adaptedCustomExpandIcon = computed(() => {
+      const CustomExpandIconComp = (props.components as any)?.ExpandIcon;
+      if (!CustomExpandIconComp) return undefined;
+      return (iconProps: RenderExpandIconProps<any>) => (
+        <CustomExpandIconComp
+          prefixCls={iconProps.prefixCls}
+          type="row"
+          expanded={iconProps.expanded}
+          expandable={iconProps.expandable}
+          record={iconProps.record}
+          onClick={(e: MouseEvent) => {
+            iconProps.onExpand(iconProps.record, e);
+            e?.stopPropagation?.();
+          }}
+        />
+      );
+    });
+    const resolvedExpandIcon = computed(
+      () =>
+        props.expandIcon ||
+        adaptedCustomExpandIcon.value ||
+        slots.expandIcon ||
+        props.expandable?.expandIcon ||
+        tableConfig.value.expandable?.expandIcon ||
+        defaultExpandIcon.value,
+    );
 
     // ============================ Column ============================
     const [transformBasicColumns] = useColumns(mergedContextSlots);
@@ -1415,33 +1513,8 @@ const InternalTable = defineComponent({
     );
 
     return () => {
-      const CustomExpandIconComp = (props.components as any)?.ExpandIcon;
-      const adaptedCustomExpandIcon = CustomExpandIconComp
-        ? (iconProps: RenderExpandIconProps<any>) => (
-            <CustomExpandIconComp
-              prefixCls={iconProps.prefixCls}
-              type="row"
-              expanded={iconProps.expanded}
-              expandable={iconProps.expandable}
-              record={iconProps.record}
-              onClick={(e: MouseEvent) => {
-                iconProps.onExpand(iconProps.record, e);
-                e?.stopPropagation?.();
-              }}
-            />
-          )
-        : undefined;
-
-      const {
-        expandIcon = adaptedCustomExpandIcon ||
-          slots.expandIcon ||
-          props.expandable?.expandIcon ||
-          tableConfig.value.expandable?.expandIcon ||
-          renderExpandIcon(tableLocale.value),
-        pagination,
-        loading,
-        bordered,
-      } = props;
+      const expandIcon = resolvedExpandIcon.value;
+      const { pagination, loading, bordered } = props;
 
       const paginationClassNames = (
         mergedClassNames.value.pagination || mergedPagination.value.classNames
@@ -1825,6 +1898,7 @@ const Table = defineComponent({
     default: any;
   }>,
   setup(props, { attrs, slots, expose }) {
+    const instance = getCurrentInstance();
     const table = ref();
     const nativeElement = computed(() => table.value?.nativeElement);
     const scrollToMethod: TableRef['scrollTo'] = config => {
@@ -1837,6 +1911,21 @@ const Table = defineComponent({
     });
     return () => {
       const columns = props.columns || convertChildrenToColumns(slots.default?.());
+      const rawChildren = instance?.vnode?.children as any;
+      const rawSlotsSource =
+        rawChildren && typeof rawChildren === 'object' && !Array.isArray(rawChildren)
+          ? rawChildren
+          : null;
+      const nextContextSlots: ContextSlots = { ...slots };
+      if ((slots as any)._ === 1 || rawSlotsSource?._ === 1) {
+        Object.defineProperty(nextContextSlots, '__stable__', { value: true });
+        Object.defineProperty(nextContextSlots, '__parentRender__', {
+          value: (instance?.parent as any)?.render,
+        });
+      }
+      if (rawSlotsSource) {
+        Object.defineProperty(nextContextSlots, '__rawSlots__', { value: rawSlotsSource });
+      }
       return (
         <InternalTable
           ref={table}
@@ -1848,7 +1937,7 @@ const Table = defineComponent({
             props.expandedRowRender ||
             props.expandable?.expandedRowRender
           }
-          contextSlots={{ ...slots }} // use new object, 否则slot热更新失效，原因需进一步探究
+          contextSlots={nextContextSlots}
           v-slots={slots}
         />
       );

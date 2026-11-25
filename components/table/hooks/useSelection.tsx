@@ -320,20 +320,175 @@ export default function useSelection<RecordType>(
     });
   });
   const flattedDataLength = computed(() => flattedData.value.length);
+
+  // Stable body selection cell renderer so column resize does not invalidate selection cells
+  const renderSelectionCell: ColumnType<RecordType>['customRender'] = ({ record, index }) => {
+    const {
+      type: selectionType,
+      renderCell: customizeRenderCell,
+      checkStrictly,
+      onSelectMultiple,
+    } = mergedRowSelection.value;
+    const { getRecordByKey, getRowKey, expandType } = configRef;
+    const key = getRowKey.value(record, index);
+    const checked = derivedSelectedKeySet.value.has(key);
+
+    let node: any;
+    if (selectionType === 'radio') {
+      node = (
+        <Radio
+          {...checkboxPropsMap.value.get(key)}
+          checked={checked}
+          onClick={e => e.stopPropagation()}
+          onChange={event => {
+            if (!derivedSelectedKeySet.value.has(key)) {
+              triggerSingleSelection(key, true, [key], event.nativeEvent);
+            }
+          }}
+        />
+      );
+    } else {
+      const indeterminate = derivedHalfSelectedKeySet.value.has(key);
+      const checkboxProps = checkboxPropsMap.value.get(key);
+      let mergedIndeterminate: boolean;
+      if (expandType.value === 'nest') {
+        mergedIndeterminate = indeterminate;
+        devWarning(
+          typeof checkboxProps?.indeterminate !== 'boolean',
+          'Table',
+          'set `indeterminate` using `rowSelection.getCheckboxProps` is not allowed with tree structured dataSource.',
+        );
+      } else {
+        mergedIndeterminate = checkboxProps?.indeterminate ?? indeterminate;
+      }
+      node = (
+        <Checkbox
+          {...checkboxProps}
+          indeterminate={mergedIndeterminate}
+          checked={checked}
+          skipGroup
+          onClick={e => e.stopPropagation()}
+          onChange={({ nativeEvent }) => {
+            const { shiftKey } = nativeEvent;
+            const currentChecked = derivedSelectedKeySet.value.has(key);
+            const recordKeys = flattedData.value
+              .map(getRowKey.value)
+              .filter(k => !checkboxPropsMap.value.get(k)?.disabled);
+
+            let startIndex = -1;
+            let endIndex = -1;
+
+            // Get range of this
+            if (shiftKey && checkStrictly) {
+              const pointKeys = new Set([lastSelectedKey.value, key]);
+
+              recordKeys.some((recordKey, recordIndex) => {
+                if (pointKeys.has(recordKey)) {
+                  if (startIndex === -1) {
+                    startIndex = recordIndex;
+                  } else {
+                    endIndex = recordIndex;
+                    return true;
+                  }
+                }
+
+                return false;
+              });
+            }
+
+            if (endIndex !== -1 && startIndex !== endIndex && checkStrictly) {
+              // Batch update selections
+              const rangeKeys = recordKeys.slice(startIndex, endIndex + 1);
+              const changedKeys: Key[] = [];
+              const nextKeySet = new Set(derivedSelectedKeySet.value);
+
+              if (currentChecked) {
+                rangeKeys.forEach(recordKey => {
+                  if (nextKeySet.has(recordKey)) {
+                    changedKeys.push(recordKey);
+                    nextKeySet.delete(recordKey);
+                  }
+                });
+              } else {
+                rangeKeys.forEach(recordKey => {
+                  if (!nextKeySet.has(recordKey)) {
+                    changedKeys.push(recordKey);
+                    nextKeySet.add(recordKey);
+                  }
+                });
+              }
+
+              const keys = Array.from(nextKeySet);
+              onSelectMultiple?.(
+                !currentChecked,
+                keys.map(recordKey => getRecordByKey(recordKey)),
+                changedKeys.map(recordKey => getRecordByKey(recordKey)),
+              );
+
+              setSelectedKeys(keys);
+            } else {
+              // Single record selected
+              const originCheckedKeys = derivedSelectedKeys.value;
+              if (checkStrictly) {
+                const checkedKeys = currentChecked
+                  ? arrDel(originCheckedKeys, key)
+                  : arrAdd(originCheckedKeys, key);
+                triggerSingleSelection(key, !currentChecked, checkedKeys, nativeEvent);
+              } else {
+                // Always fill first
+                const result = conductCheck(
+                  [...originCheckedKeys, key],
+                  true,
+                  keyEntities.value,
+                  maxLevel.value,
+                  levelEntities.value,
+                  isCheckboxDisabled as any,
+                );
+                const { checkedKeys, halfCheckedKeys } = result;
+                let nextCheckedKeys = checkedKeys;
+
+                // If remove, we do it again to correction
+                if (currentChecked) {
+                  const tempKeySet = new Set(checkedKeys);
+                  tempKeySet.delete(key);
+                  nextCheckedKeys = conductCheck(
+                    Array.from(tempKeySet),
+                    { checked: false, halfCheckedKeys },
+                    keyEntities.value,
+                    maxLevel.value,
+                    levelEntities.value,
+                    isCheckboxDisabled as any,
+                  ).checkedKeys;
+                }
+
+                triggerSingleSelection(key, !currentChecked, nextCheckedKeys, nativeEvent);
+              }
+            }
+
+            setLastSelectedKey(key);
+          }}
+        />
+      );
+    }
+
+    if (customizeRenderCell) {
+      return customizeRenderCell(checked, record, index, node);
+    }
+
+    return node;
+  };
+
   // ======================= Columns ========================
   const transformColumns = (columns: ColumnsType<RecordType>): ColumnsType<RecordType> => {
     const {
       onSelectAll,
-      onSelectMultiple,
       columnWidth: selectionColWidth,
       type: selectionType,
       fixed,
-      renderCell: customizeRenderCell,
       hideSelectAll,
-      checkStrictly,
     } = mergedRowSelection.value;
 
-    const { prefixCls, getRecordByKey, getRowKey, expandType, getPopupContainer } = configRef;
+    const { prefixCls, getRecordByKey, getRowKey, getPopupContainer } = configRef;
     if (!rowSelectionRef.value) {
       if (process.env.NODE_ENV !== 'production') {
         devWarning(
@@ -458,169 +613,6 @@ export default function useSelection<RecordType>(
         </div>
       );
     }
-
-    // Body Cell
-    let renderCell: ({ record, index }: { record: RecordType; index: number }) => {
-      node: any;
-      checked: boolean;
-    };
-    if (selectionType === 'radio') {
-      renderCell = ({ record, index }) => {
-        const key = getRowKey.value(record, index);
-        const checked = keySet.has(key);
-
-        return {
-          node: (
-            <Radio
-              {...checkboxPropsMap.value.get(key)}
-              checked={checked}
-              onClick={e => e.stopPropagation()}
-              onChange={event => {
-                if (!keySet.has(key)) {
-                  triggerSingleSelection(key, true, [key], event.nativeEvent);
-                }
-              }}
-            />
-          ),
-          checked,
-        };
-      };
-    } else {
-      renderCell = ({ record, index }) => {
-        const key = getRowKey.value(record, index);
-        const checked = keySet.has(key);
-        const indeterminate = derivedHalfSelectedKeySet.value.has(key);
-        const checkboxProps = checkboxPropsMap.value.get(key);
-        let mergedIndeterminate: boolean;
-        if (expandType.value === 'nest') {
-          mergedIndeterminate = indeterminate;
-          devWarning(
-            typeof checkboxProps?.indeterminate !== 'boolean',
-            'Table',
-            'set `indeterminate` using `rowSelection.getCheckboxProps` is not allowed with tree structured dataSource.',
-          );
-        } else {
-          mergedIndeterminate = checkboxProps?.indeterminate ?? indeterminate;
-        }
-        // Record checked
-        return {
-          node: (
-            <Checkbox
-              {...checkboxProps}
-              indeterminate={mergedIndeterminate}
-              checked={checked}
-              skipGroup
-              onClick={e => e.stopPropagation()}
-              onChange={({ nativeEvent }) => {
-                const { shiftKey } = nativeEvent;
-
-                let startIndex = -1;
-                let endIndex = -1;
-
-                // Get range of this
-                if (shiftKey && checkStrictly) {
-                  const pointKeys = new Set([lastSelectedKey.value, key]);
-
-                  recordKeys.some((recordKey, recordIndex) => {
-                    if (pointKeys.has(recordKey)) {
-                      if (startIndex === -1) {
-                        startIndex = recordIndex;
-                      } else {
-                        endIndex = recordIndex;
-                        return true;
-                      }
-                    }
-
-                    return false;
-                  });
-                }
-
-                if (endIndex !== -1 && startIndex !== endIndex && checkStrictly) {
-                  // Batch update selections
-                  const rangeKeys = recordKeys.slice(startIndex, endIndex + 1);
-                  const changedKeys: Key[] = [];
-
-                  if (checked) {
-                    rangeKeys.forEach(recordKey => {
-                      if (keySet.has(recordKey)) {
-                        changedKeys.push(recordKey);
-                        keySet.delete(recordKey);
-                      }
-                    });
-                  } else {
-                    rangeKeys.forEach(recordKey => {
-                      if (!keySet.has(recordKey)) {
-                        changedKeys.push(recordKey);
-                        keySet.add(recordKey);
-                      }
-                    });
-                  }
-
-                  const keys = Array.from(keySet);
-                  onSelectMultiple?.(
-                    !checked,
-                    keys.map(recordKey => getRecordByKey(recordKey)),
-                    changedKeys.map(recordKey => getRecordByKey(recordKey)),
-                  );
-
-                  setSelectedKeys(keys);
-                } else {
-                  // Single record selected
-                  const originCheckedKeys = derivedSelectedKeys.value;
-                  if (checkStrictly) {
-                    const checkedKeys = checked
-                      ? arrDel(originCheckedKeys, key)
-                      : arrAdd(originCheckedKeys, key);
-                    triggerSingleSelection(key, !checked, checkedKeys, nativeEvent);
-                  } else {
-                    // Always fill first
-                    const result = conductCheck(
-                      [...originCheckedKeys, key],
-                      true,
-                      keyEntities.value,
-                      maxLevel.value,
-                      levelEntities.value,
-                      isCheckboxDisabled as any,
-                    );
-                    const { checkedKeys, halfCheckedKeys } = result;
-                    let nextCheckedKeys = checkedKeys;
-
-                    // If remove, we do it again to correction
-                    if (checked) {
-                      const tempKeySet = new Set(checkedKeys);
-                      tempKeySet.delete(key);
-                      nextCheckedKeys = conductCheck(
-                        Array.from(tempKeySet),
-                        { checked: false, halfCheckedKeys },
-                        keyEntities.value,
-                        maxLevel.value,
-                        levelEntities.value,
-                        isCheckboxDisabled as any,
-                      ).checkedKeys;
-                    }
-
-                    triggerSingleSelection(key, !checked, nextCheckedKeys, nativeEvent);
-                  }
-                }
-
-                setLastSelectedKey(key);
-              }}
-            />
-          ),
-          checked,
-        };
-      };
-    }
-
-    const renderSelectionCell: ColumnType<RecordType>['customRender'] = ({ record, index }) => {
-      const { node, checked } = renderCell({ record, index });
-
-      if (customizeRenderCell) {
-        return customizeRenderCell(checked, record, index, node);
-      }
-
-      return node;
-    };
 
     // Insert selection column if not exist
     if (!cloneColumns.includes(SELECTION_COLUMN)) {

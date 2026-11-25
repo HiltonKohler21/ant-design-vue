@@ -301,16 +301,16 @@ export function getSortData<RecordType>(
     .slice()
     .sort((a, b) => (b.multiplePriority as number) - (a.multiplePriority as number));
 
-  const cloneData = data.slice();
-
   const runningSorters = innerSorterStates.filter(
     ({ column: { sorter }, sortOrder }) => getSortFunction(sorter) && sortOrder,
   );
 
-  // Skip if no sorter needed
+  // Skip if no sorter needed (preserve reference to avoid redundant body updates)
   if (!runningSorters.length) {
-    return cloneData;
+    return data as RecordType[];
   }
+
+  const cloneData = data.slice();
 
   return cloneData
     .sort((record1, record2) => {
