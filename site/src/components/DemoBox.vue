@@ -546,7 +546,13 @@ export default defineComponent({
         if (element) {
           const rect = element.getBoundingClientRect();
           if (rect.top < 80) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const prefersReducedMotion =
+              typeof window !== 'undefined' &&
+              window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+            element.scrollIntoView({
+              behavior: prefersReducedMotion ? 'auto' : 'smooth',
+              block: 'start',
+            });
           }
         }
       }

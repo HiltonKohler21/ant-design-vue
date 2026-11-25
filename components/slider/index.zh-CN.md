@@ -36,6 +36,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*XkgXTaudeosAAA
 | range | 双滑块/多滑块模式 | boolean \| [range](#range) | false |  |
 | reverse | 反向坐标轴 | boolean | false | 1.5.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
+| startPoint | 单滑块模式下高亮轨道的起始值 | number | `min` | 4.3.0 |
 | step | 步长，取值必须大于 0，并且可被 (max - min) 整除。当 `marks` 不为空对象时，可以设置 `step` 为 `null`，此时 Slider 的可选值仅有 marks 标出来的部分。 | number\|null | 1 |  |
 | styles | 用于自定义 Slider 组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | tooltip | 设置 Tooltip 相关属性 | [tooltip](#tooltip) | - | 4.3.0 |

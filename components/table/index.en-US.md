@@ -119,7 +119,7 @@ Specify `dataSource` of Table as an array of data.
 | tableLayout | [table-layout](https://developer.mozilla.org/en-US/docs/Web/CSS/table-layout) attribute of table element | - \| 'auto' \| 'fixed' | -<hr />`fixed` when header/columns are fixed, or using `column.ellipsis` | 1.5.0 |
 | title | Table title renderer | Function(currentPageData)\| v-slot:title="currentPageData" |  |  |
 | transformCellText | The data can be changed again before rendering, generally used for the default configuration of empty data. You can configured globally through [ConfigProvider](/components/config-provider/) | Function({ text, column, record, index }) => any, The `text` here is the data processed by other defined cell api, and it may be of type VNode \| string \| number | - | 1.5.4 |
-| virtual | Support virtual list | boolean | `false` | 4.3.0 |
+| virtual | Support virtual list (enabled with `scroll.y`; supports horizontal `scroll.x`, sticky fixed columns and cell `ellipsis`) | boolean | `false` | 4.3.0 |
 
 ### Table ref
 

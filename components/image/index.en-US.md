@@ -24,17 +24,18 @@ Previewable image.
 | classNames | Customize class for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | fallback | Load failure fault-tolerant src | string | - | 2.0.0 |
 | height | Image height | string \| number | - | 2.0.0 |
-| placeholder | Load placeholder, use default placeholder when set `true` | boolean \| VueNode \| slot | - | 2.0.0 |
+| placeholder | Load placeholder, use default placeholder when set `true`, or pass `{ progress: true \| { percent?: number; render?: (progress: VueNode, percent: number) => VueNode } }` for progress overlay | boolean \| VueNode \| `{ progress?: boolean \| ImageProgressConfig }` \| slot | - | progress: 4.3.0 |
 | preview | Preview config, disabled when `false` | boolean \| [PreviewType](#previewtype) | `true` | 2.0.0 |
 | previewMask | Custom thumbnail cover (prefer `preview.cover`) | false \| function \| slot | - | 3.2.0 |
 | rootClassName | Root element class name | string | - | 4.3.0 |
+| rootStyle | Root element inline style | CSSProperties | - | 4.3.0 |
 | src | Image path | string | - | 2.0.0 |
 | styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | width | Image width | string \| number | - | 2.0.0 |
 | wrapperClassName | Class name of image wrapper element | string | - | 4.3.0 |
 | ~~wrapperStyle~~ | Inline style of image wrapper element (prefer `styles.root`) | CSSProperties | - | 4.3.0 |
 
-> Supported `SemanticDOM` keys: `root` \| `image` \| `cover` \| `popup: { root, mask, body, footer, actions, close }`.
+> Supported `SemanticDOM` keys: `root` \| `image` \| `cover` \| `placeholder: { progress: { root, content, rail, indicator } }` \| `popup: { root, mask, body, footer, actions, close }`.
 
 ### Events
 

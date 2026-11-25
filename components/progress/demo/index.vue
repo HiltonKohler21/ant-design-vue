@@ -16,6 +16,7 @@
     <Size />
     <info-position />
     <style-class />
+    <component-token />
   </demo-sort>
 </template>
 <script lang="ts">
@@ -35,6 +36,7 @@ import CircleSteps from './circle-steps.vue';
 import Size from './size.vue';
 import InfoPosition from './info-position.vue';
 import StyleClass from './style-class.vue';
+import ComponentToken from './component-token.vue';
 import CN from '../index.zh-CN.md';
 import US from '../index.en-US.md';
 import { defineComponent } from 'vue';
@@ -59,6 +61,7 @@ export default defineComponent({
     Size,
     InfoPosition,
     StyleClass,
+    ComponentToken,
   },
   setup() {
     return {};

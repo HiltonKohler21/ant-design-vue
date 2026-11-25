@@ -25,17 +25,18 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*LVQ3R5JjjJEAAA
 | classNames | 用于自定义组件内部各语义化结构的 class，支持对象或函数 | `Record<SemanticDOM, string> \| (info: { props }) => Record<SemanticDOM, string>` | - | 4.3.0 |
 | fallback | 加载失败容错地址 | string | - | 2.0.0 |
 | height | 图像高度 | string \| number | - | 2.0.0 |
-| placeholder | 加载占位，为 `true` 时使用默认占位 | boolean \| VueNode \| slot | - | 2.0.0 |
+| placeholder | 加载占位，为 `true` 时使用默认占位；也可传入 `{ progress: true \| { percent?: number; render?: (progress: VueNode, percent: number) => VueNode } }` 启用水墨进度加载层 | boolean \| VueNode \| `{ progress?: boolean \| ImageProgressConfig }` \| slot | - | progress: 4.3.0 |
 | preview | 预览参数，为 `false` 时禁用 | boolean \| [PreviewType](#previewtype) | `true` | 2.0.0 |
 | previewMask | 自定义缩略图悬浮层（推荐使用 `preview.cover`） | false \| function \| slot | - | 3.2.0 |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
+| rootStyle | 根节点行内样式 | CSSProperties | - | 4.3.0 |
 | src | 图片地址 | string | - | 2.0.0 |
 | styles | 用于自定义组件内部各语义化结构的行内 style，支持对象或函数 | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | width | 图像宽度 | string \| number | - | 2.0.0 |
 | wrapperClassName | 图片包裹容器类名 | string | - | 4.3.0 |
 | ~~wrapperStyle~~ | 图片包裹容器样式（推荐使用 `styles.root`） | CSSProperties | - | 4.3.0 |
 
-> 语义化结构 `SemanticDOM` 支持：`root` \| `image` \| `cover` \| `popup: { root, mask, body, footer, actions, close }`。
+> 语义化结构 `SemanticDOM` 支持：`root` \| `image` \| `cover` \| `placeholder: { progress: { root, content, rail, indicator } }` \| `popup: { root, mask, body, footer, actions, close }`。
 
 ### 事件
 

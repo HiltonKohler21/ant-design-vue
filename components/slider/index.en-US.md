@@ -35,6 +35,7 @@ To input a value in a range.
 | range | Dual/multiple thumb mode | boolean \| [range](#range) | false |  |
 | reverse | reverse the component | boolean | false | 1.5.0 |
 | rootClassName | Root class name | string | - | 4.3.0 |
+| startPoint | Starting value of the filled track in single-handle mode | number | `min` | 4.3.0 |
 | step | The granularity the slider can step through values. Must greater than 0, and be divided by (max - min) . When `marks` no null, `step` can be `null`. | number\|null | 1 |  |
 | styles | Customize inline style for each semantic structure inside the component. Supports object or function | `Record<SemanticDOM, CSSProperties> \| (info: { props }) => Record<SemanticDOM, CSSProperties>` | - | 4.3.0 |
 | tooltip | The tooltip related props | [tooltip](#tooltip) | - | 4.3.0 |

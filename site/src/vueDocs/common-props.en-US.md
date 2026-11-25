@@ -1,6 +1,6 @@
 # Common Props
 
-`ant-design-vue@4.3.0` standardizes a shared set of cross-component props and customization protocols, covering root container classes, static & functional **Semantic DOM (`classNames` / `styles`)** styling across 31 components, visual `variant` options, unified unmount-on-hide behavior, and **72 `ConfigProvider` per-component defaults**.
+`ant-design-vue@4.3.0` standardizes a shared set of cross-component props and customization protocols, covering root container classes, static & functional **Semantic DOM (`classNames` / `styles`)** styling across **61 components**, visual `variant` options, unified unmount-on-hide behavior, and **72 `ConfigProvider` per-component defaults**.
 
 > These props apply to most components. Check individual component API tables (and the interactive `#semantic-dom` previewer) for exceptions or component-specific semantic slot names.
 
@@ -100,43 +100,73 @@ const items = [
 </script>
 ```
 
-### All 31 Semantic-Enabled Components
+### All 61 Semantic-Enabled Components
 
 Click any component below to inspect its live **`Semantic DOM` (`#semantic-dom`)** previewer:
 
 | Component | Semantic Slot Keys (`classNames` / `styles`) | Interactive Previewer |
 | --- | --- | --- |
 | `Alert` | `root`, `icon`, `section`, `title`, `description`, `actions`, `close` | [Alert `#semantic-dom`](/components/alert#semantic-dom) |
-| `AutoComplete` | `root`, `prefix`, `suffix`, `popup: { root }` | [AutoComplete `#semantic-dom`](/components/auto-complete#semantic-dom) |
+| `Anchor` | `root`, `item`, `itemTitle`, `indicator` | [Anchor `#semantic-dom`](/components/anchor#semantic-dom) |
+| `AutoComplete` | `root`, `prefix`, `suffix`, `popup.root` | [AutoComplete `#semantic-dom`](/components/auto-complete#semantic-dom) |
 | `Badge` | `root`, `indicator` | [Badge `#semantic-dom`](/components/badge#semantic-dom) |
+| `Breadcrumb` | `root`, `item`, `separator` | [Breadcrumb `#semantic-dom`](/components/breadcrumb#semantic-dom) |
 | `Button` | `root`, `icon`, `content` | [Button `#semantic-dom`](/components/button#semantic-dom) |
-| `Card` | `root`, `header`, `title`, `extra`, `body`, `actions`, `cover` | [Card `#semantic-dom`](/components/card#semantic-dom) |
-| `Cascader` | `root`, `prefix`, `suffix`, `popup: { root }` | [Cascader `#semantic-dom`](/components/cascader#semantic-dom) |
-| `Collapse` | `root`, `header`, `title`, `body`, `icon` | [Collapse `#semantic-dom`](/components/collapse#semantic-dom) |
+| `Calendar` | `root`, `header`, `body`, `content`, `item`, `itemContent` | [Calendar `#semantic-dom`](/components/calendar#semantic-dom) |
+| `Card` | `root`, `header`, `title`, `extra`, `cover`, `body`, `actions` | [Card `#semantic-dom`](/components/card#semantic-dom) |
+| `Cascader` | `root`, `prefix`, `suffix`, `popup.root` | [Cascader `#semantic-dom`](/components/cascader#semantic-dom) |
+| `Checkbox` | `root`, `icon`, `label` | [Checkbox `#semantic-dom`](/components/checkbox#semantic-dom) |
+| `Collapse` | `root`, `header`, `icon`, `title`, `body` | [Collapse `#semantic-dom`](/components/collapse#semantic-dom) |
+| `ColorPicker` | `root`, `body`, `content`, `description`, `popup.root`, `popup.container` | [ColorPicker `#semantic-dom`](/components/color-picker#semantic-dom) |
+| `DatePicker` | `root`, `prefix`, `input`, `suffix`, `popup.*` (`root`/`container`/`header`/`body`/`content`/`item`/`footer`) | [DatePicker `#semantic-dom`](/components/date-picker#semantic-dom) |
 | `Descriptions` | `root`, `header`, `title`, `extra`, `label`, `content` | [Descriptions `#semantic-dom`](/components/descriptions#semantic-dom) |
 | `Divider` | `root`, `rail`, `content` | [Divider `#semantic-dom`](/components/divider#semantic-dom) |
-| `Drawer` | `mask`, `wrapper`, `content`, `header`, `body`, `footer` | [Drawer `#semantic-dom`](/components/drawer#semantic-dom) |
+| `Drawer` | `root`, `mask`, `section`, `header`, `title`, `extra`, `body`, `footer`, `dragger`, `close` | [Drawer `#semantic-dom`](/components/drawer#semantic-dom) |
+| `Dropdown` | `root`, `menu`, `itemTitle`, `item`, `itemContent`, `itemIcon` | [Dropdown `#semantic-dom`](/components/dropdown#semantic-dom) |
 | `Empty` | `root`, `image`, `description`, `footer` | [Empty `#semantic-dom`](/components/empty#semantic-dom) |
-| `Image` | `root`, `image`, `cover`, `popup: { root, mask, body, footer, actions, close }` | [Image `#semantic-dom`](/components/image#semantic-dom) |
-| `Input` | `root`, `prefix`, `suffix`, `input`, `count` (covers `Input`, `TextArea`, `Password`, `Search`, `OTP`) | [Input `#semantic-dom`](/components/input#semantic-dom) |
+| `FloatButton` | `root`, `icon`, `content` | [FloatButton `#semantic-dom`](/components/float-button#semantic-dom) |
+| `Form` | `root`, `label`, `content`, `help`, `helpItem`, `extra` | [Form `#semantic-dom`](/components/form#semantic-dom) |
+| `Image` | `root`, `image`, `cover`, `placeholder.progress`, `popup.*` | [Image `#semantic-dom`](/components/image#semantic-dom) |
+| `Input` | `root`, `prefix`, `input`, `suffix`, `count` (covers `Input`, `TextArea`, `Password`, `Search`, `OTP`) | [Input `#semantic-dom`](/components/input#semantic-dom) |
+| `InputNumber` | `root`, `prefix`, `input`, `suffix`, `actions`, `action`, `clear` | [InputNumber `#semantic-dom`](/components/input-number#semantic-dom) |
+| `Layout` | `root`, `body` | [Layout `#semantic-dom`](/components/layout#semantic-dom) |
 | `List` | `root`, `header`, `item`, `actions`, `extra`, `footer` | [List `#semantic-dom`](/components/list#semantic-dom) |
-| `Listy` | `root`, `item`, `groupHeader`, `groupSection`, `holder`, `scrollbar` | [Listy `#semantic-dom`](/components/listy#semantic-dom) |
+| `Listy` | `root`, `holder`, `groupSection`, `groupHeader`, `item`, `scrollbar` | [Listy `#semantic-dom`](/components/listy#semantic-dom) |
 | `Masonry` | `root`, `item` | [Masonry `#semantic-dom`](/components/masonry#semantic-dom) |
-| `Modal` | `mask`, `wrapper`, `content`, `header`, `body`, `footer` | [Modal `#semantic-dom`](/components/modal#semantic-dom) |
-| `Popconfirm` | `root`, `container` (`body`), `title`, `content`, `arrow` | [Popconfirm `#semantic-dom`](/components/popconfirm#semantic-dom) |
+| `Mentions` | `root`, `textarea`, `suffix`, `popup` | [Mentions `#semantic-dom`](/components/mentions#semantic-dom) |
+| `Menu` | `root`, `item`, `itemIcon`, `itemContent`, `itemTitle`, `list`, `popup`, `subMenu.*` | [Menu `#semantic-dom`](/components/menu#semantic-dom) |
+| `Message` | `root`, `wrapper`, `icon`, `title`, `list`, `listContent` | [Message `#semantic-dom`](/components/message#semantic-dom) |
+| `Modal` | `root`, `mask`, `wrapper`, `container`, `header`, `title`, `body`, `footer`, `close` | [Modal `#semantic-dom`](/components/modal#semantic-dom) |
+| `Notification` | `root`, `wrapper`, `icon`, `section`, `title`, `description`, `close`, `actions`, `progress`, `list`, `listContent` | [Notification `#semantic-dom`](/components/notification#semantic-dom) |
+| `Pagination` | `root`, `item` | [Pagination `#semantic-dom`](/components/pagination#semantic-dom) |
+| `Popconfirm` | `root`, `container` (`body`), `icon`, `title`, `content`, `arrow` | [Popconfirm `#semantic-dom`](/components/popconfirm#semantic-dom) |
 | `Popover` | `root`, `container` (`body`), `title`, `content`, `arrow` | [Popover `#semantic-dom`](/components/popover#semantic-dom) |
-| `Progress` | `root`, `rail`, `track`, `indicator` | [Progress `#semantic-dom`](/components/progress#semantic-dom) |
-| `Segmented` | `root`, `item`, `label`, `icon` | [Segmented `#semantic-dom`](/components/segmented#semantic-dom) |
-| `Select` | `root`, `prefix`, `suffix`, `popup: { root }` | [Select `#semantic-dom`](/components/select#semantic-dom) |
-| `Slider` | `root`, `tracks`, `track`, `rail`, `handle` | [Slider `#semantic-dom`](/components/slider#semantic-dom) |
+| `Progress` | `root`, `body`, `rail`, `track`, `indicator` | [Progress `#semantic-dom`](/components/progress#semantic-dom) |
+| `QRCode` | `root`, `cover` | [QRCode `#semantic-dom`](/components/qrcode#semantic-dom) |
+| `Radio` | `root`, `icon`, `label` | [Radio `#semantic-dom`](/components/radio#semantic-dom) |
+| `Result` | `root`, `icon`, `title`, `subTitle`, `extra`, `body` | [Result `#semantic-dom`](/components/result#semantic-dom) |
+| `Segmented` | `root`, `item`, `icon`, `label` | [Segmented `#semantic-dom`](/components/segmented#semantic-dom) |
+| `Select` | `root`, `prefix`, `suffix`, `popup.root` | [Select `#semantic-dom`](/components/select#semantic-dom) |
+| `Skeleton` | `root`, `header`, `section`, `avatar`, `title`, `paragraph` | [Skeleton `#semantic-dom`](/components/skeleton#semantic-dom) |
+| `Slider` | `root`, `rail`, `tracks`, `track`, `handle` | [Slider `#semantic-dom`](/components/slider#semantic-dom) |
 | `Space` | `root`, `item`, `separator` | [Space `#semantic-dom`](/components/space#semantic-dom) |
-| `Spin` | `root`, `wrapper`, `mask`, `section`, `indicator`, `description` (`tip`) | [Spin `#semantic-dom`](/components/spin#semantic-dom) |
+| `Spin` | `root`, `section`, `indicator`, `description` (`tip`), `container` | [Spin `#semantic-dom`](/components/spin#semantic-dom) |
 | `Splitter` | `root`, `panel`, `dragger` | [Splitter `#semantic-dom`](/components/splitter#semantic-dom) |
-| `Steps` | `root`, `item`, `itemIcon`, `itemTitle`, `itemContent`, `itemRail` | [Steps `#semantic-dom`](/components/steps#semantic-dom) |
+| `Statistic` | `root`, `header`, `title`, `prefix`, `content`, `value`, `suffix` | [Statistic `#semantic-dom`](/components/statistic#semantic-dom) |
+| `Steps` | `root`, `item`, `itemWrapper`, `itemIcon`, `itemSection`, `itemTitle`, `itemSubtitle`, `itemContent`, `itemRail` | [Steps `#semantic-dom`](/components/steps#semantic-dom) |
+| `Switch` | `root`, `content`, `indicator` | [Switch `#semantic-dom`](/components/switch#semantic-dom) |
+| `Table` | `root`, `title`, `content`, `header.*`, `section`, `body.*`, `footer`, `pagination.*` | [Table `#semantic-dom`](/components/table#semantic-dom) |
+| `Tabs` | `root`, `header`, `item`, `remove`, `indicator`, `body`, `content`, `popup.root` | [Tabs `#semantic-dom`](/components/tabs#semantic-dom) |
 | `Tag` | `root`, `icon`, `content`, `close` (`CheckableTagGroup`: `root`, `item`) | [Tag `#semantic-dom`](/components/tag#semantic-dom) |
+| `TimePicker` | `root`, `prefix`, `input`, `suffix`, `popup.*` | [TimePicker `#semantic-dom`](/components/time-picker#semantic-dom) |
+| `Timeline` | `root`, `item`, `itemWrapper`, `itemIcon`, `itemSection`, `itemHeader`, `itemTitle`, `itemContent`, `itemRail` | [Timeline `#semantic-dom`](/components/timeline#semantic-dom) |
 | `Tooltip` | `root`, `container` (`body`), `arrow` | [Tooltip `#semantic-dom`](/components/tooltip#semantic-dom) |
-| `Transfer` | `root`, `section`, `header`, `title`, `list`, `item`, `footer`, `actions` | [Transfer `#semantic-dom`](/components/transfer#semantic-dom) |
-| `TreeSelect` | `root`, `prefix`, `suffix`, `popup: { root }` | [TreeSelect `#semantic-dom`](/components/tree-select#semantic-dom) |
+| `Tour` | `root`, `mask`, `section`, `cover`, `close`, `header`, `title`, `description`, `footer`, `actions`, `indicators`, `indicator` | [Tour `#semantic-dom`](/components/tour#semantic-dom) |
+| `Transfer` | `root`, `section`, `header`, `title`, `body`, `list`, `item`, `itemIcon`, `itemContent`, `footer`, `actions` | [Transfer `#semantic-dom`](/components/transfer#semantic-dom) |
+| `Tree` | `root`, `item`, `itemIcon`, `itemTitle`, `itemSwitcher` | [Tree `#semantic-dom`](/components/tree#semantic-dom) |
+| `TreeSelect` | `root`, `prefix`, `suffix`, `popup.root` | [TreeSelect `#semantic-dom`](/components/tree-select#semantic-dom) |
+| `Typography` | `root`, `actions`, `action`, `textarea` | [Typography `#semantic-dom`](/components/typography#semantic-dom) |
+| `Upload` | `root`, `list`, `item`, `trigger` | [Upload `#semantic-dom`](/components/upload#semantic-dom) |
 
 ## Visual `variant`
 

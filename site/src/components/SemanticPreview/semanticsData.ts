@@ -985,6 +985,13 @@ export const SEMANTICS_DATA: Record<string, ComponentSemanticConfig> = {
         version: '4.3.0',
       },
       {
+        name: 'placeholder.progress',
+        selector: '.ant-image-progress-wrapper, .ant-image-placeholder',
+        descZh: '占位加载进度指示器元素',
+        descEn: 'Placeholder loading progress indicator element',
+        version: '4.3.0',
+      },
+      {
         name: 'popup.root',
         selector: '.ant-image',
         descZh: '全屏预览弹窗根容器（点击图片打开预览）',

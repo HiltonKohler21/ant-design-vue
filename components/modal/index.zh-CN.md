@@ -48,6 +48,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WtgsSLPa1Z4AAA
 | open(v-model) | 对话框是否可见 | boolean | false |  |
 | rootClassName | 根节点类名 | string | - | 4.3.0 |
 | rootStyle | 根节点样式 | CSSProperties | - | 4.3.0 |
+| scrollLock | 打开对话框时是否锁定页面滚动 | boolean | `true` | 4.3.0 |
 | styles | 用于自定义 Modal 组件内部各语义化结构的行内 style，支持对象或函数 | Record<[SemanticDOM](#semantic-dom), CSSProperties> \| (info: { props }) => Record<[SemanticDOM](#semantic-dom), CSSProperties> | - | 4.3.0 |
 | title | 标题 | string \| slot | - |  |
 | width | 宽度 | string \| number \| Partial<Record<[Breakpoint](/components/grid-cn/#col), string \| number>> | 520 | Breakpoint: 4.3.0 |

@@ -1,6 +1,6 @@
 # 通用属性
 
-`ant-design-vue@4.3.0` 在组件库层面统一了一组跨组件通用的属性与样式定制协议，涵盖根容器类名、覆盖 31 个组件的静态与函数式**语义化 DOM（`classNames` / `styles`）**、视觉形态变体 `variant`、弹层统一销毁策略以及 **72 项 `ConfigProvider` 组件级默认配置**。
+`ant-design-vue@4.3.0` 在组件库层面统一了一组跨组件通用的属性与样式定制协议，涵盖根容器类名、覆盖 **61 个组件**的静态与函数式**语义化 DOM（`classNames` / `styles`）**、视觉形态变体 `variant`、弹层统一销毁策略以及 **72 项 `ConfigProvider` 组件级默认配置**。
 
 > 以下通用属性适用于绝大多数组件；个别无 DOM 容器或特殊结构的组件请以对应组件 API 文档与交互式 `#semantic-dom` 预览器为准。
 
@@ -100,43 +100,73 @@ const items = [
 </script>
 ```
 
-### 全部 31 个支持语义化 DOM 的组件清单
+### 全部 61 个支持语义化 DOM 的组件清单
 
 点击下方链接可直接跳转对应组件页的 **`语义化 DOM`（`#semantic-dom`）** 交互预览器：
 
 | 组件 | 可用语义位（`classNames` / `styles` 键名） | 交互式预览器 |
 | --- | --- | --- |
 | `Alert` | `root`、`icon`、`section`、`title`、`description`、`actions`、`close` | [Alert `#semantic-dom`](/components/alert-cn#semantic-dom) |
-| `AutoComplete` | `root`、`prefix`、`suffix`、`popup: { root }` | [AutoComplete `#semantic-dom`](/components/auto-complete-cn#semantic-dom) |
+| `Anchor` | `root`、`item`、`itemTitle`、`indicator` | [Anchor `#semantic-dom`](/components/anchor-cn#semantic-dom) |
+| `AutoComplete` | `root`、`prefix`、`suffix`、`popup.root` | [AutoComplete `#semantic-dom`](/components/auto-complete-cn#semantic-dom) |
 | `Badge` | `root`、`indicator` | [Badge `#semantic-dom`](/components/badge-cn#semantic-dom) |
+| `Breadcrumb` | `root`、`item`、`separator` | [Breadcrumb `#semantic-dom`](/components/breadcrumb-cn#semantic-dom) |
 | `Button` | `root`、`icon`、`content` | [Button `#semantic-dom`](/components/button-cn#semantic-dom) |
-| `Card` | `root`、`header`、`title`、`extra`、`body`、`actions`、`cover` | [Card `#semantic-dom`](/components/card-cn#semantic-dom) |
-| `Cascader` | `root`、`prefix`、`suffix`、`popup: { root }` | [Cascader `#semantic-dom`](/components/cascader-cn#semantic-dom) |
-| `Collapse` | `root`、`header`、`title`、`body`、`icon` | [Collapse `#semantic-dom`](/components/collapse-cn#semantic-dom) |
+| `Calendar` | `root`、`header`、`body`、`content`、`item`、`itemContent` | [Calendar `#semantic-dom`](/components/calendar-cn#semantic-dom) |
+| `Card` | `root`、`header`、`title`、`extra`、`cover`、`body`、`actions` | [Card `#semantic-dom`](/components/card-cn#semantic-dom) |
+| `Cascader` | `root`、`prefix`、`suffix`、`popup.root` | [Cascader `#semantic-dom`](/components/cascader-cn#semantic-dom) |
+| `Checkbox` | `root`、`icon`、`label` | [Checkbox `#semantic-dom`](/components/checkbox-cn#semantic-dom) |
+| `Collapse` | `root`、`header`、`icon`、`title`、`body` | [Collapse `#semantic-dom`](/components/collapse-cn#semantic-dom) |
+| `ColorPicker` | `root`、`body`、`content`、`description`、`popup.root`、`popup.container` | [ColorPicker `#semantic-dom`](/components/color-picker-cn#semantic-dom) |
+| `DatePicker` | `root`、`prefix`、`input`、`suffix`、`popup.*`（`root`/`container`/`header`/`body`/`content`/`item`/`footer`） | [DatePicker `#semantic-dom`](/components/date-picker-cn#semantic-dom) |
 | `Descriptions` | `root`、`header`、`title`、`extra`、`label`、`content` | [Descriptions `#semantic-dom`](/components/descriptions-cn#semantic-dom) |
 | `Divider` | `root`、`rail`、`content` | [Divider `#semantic-dom`](/components/divider-cn#semantic-dom) |
-| `Drawer` | `mask`、`wrapper`、`content`、`header`、`body`、`footer` | [Drawer `#semantic-dom`](/components/drawer-cn#semantic-dom) |
+| `Drawer` | `root`、`mask`、`section`、`header`、`title`、`extra`、`body`、`footer`、`dragger`、`close` | [Drawer `#semantic-dom`](/components/drawer-cn#semantic-dom) |
+| `Dropdown` | `root`、`menu`、`itemTitle`、`item`、`itemContent`、`itemIcon` | [Dropdown `#semantic-dom`](/components/dropdown-cn#semantic-dom) |
 | `Empty` | `root`、`image`、`description`、`footer` | [Empty `#semantic-dom`](/components/empty-cn#semantic-dom) |
-| `Image` | `root`、`image`、`cover`、`popup: { root, mask, body, footer, actions, close }` | [Image `#semantic-dom`](/components/image-cn#semantic-dom) |
-| `Input` | `root`、`prefix`、`suffix`、`input`、`count`（覆盖 `Input`/`TextArea`/`Password`/`Search`/`OTP`） | [Input `#semantic-dom`](/components/input-cn#semantic-dom) |
+| `FloatButton` | `root`、`icon`、`content` | [FloatButton `#semantic-dom`](/components/float-button-cn#semantic-dom) |
+| `Form` | `root`、`label`、`content`、`help`、`helpItem`、`extra` | [Form `#semantic-dom`](/components/form-cn#semantic-dom) |
+| `Image` | `root`、`image`、`cover`、`placeholder.progress`、`popup.*` | [Image `#semantic-dom`](/components/image-cn#semantic-dom) |
+| `Input` | `root`、`prefix`、`input`、`suffix`、`count`（覆盖 `Input`/`TextArea`/`Password`/`Search`/`OTP`） | [Input `#semantic-dom`](/components/input-cn#semantic-dom) |
+| `InputNumber` | `root`、`prefix`、`input`、`suffix`、`actions`、`action`、`clear` | [InputNumber `#semantic-dom`](/components/input-number-cn#semantic-dom) |
+| `Layout` | `root`、`body` | [Layout `#semantic-dom`](/components/layout-cn#semantic-dom) |
 | `List` | `root`、`header`、`item`、`actions`、`extra`、`footer` | [List `#semantic-dom`](/components/list-cn#semantic-dom) |
-| `Listy` | `root`、`item`、`groupHeader`、`groupSection`、`holder`、`scrollbar` | [Listy `#semantic-dom`](/components/listy-cn#semantic-dom) |
+| `Listy` | `root`、`holder`、`groupSection`、`groupHeader`、`item`、`scrollbar` | [Listy `#semantic-dom`](/components/listy-cn#semantic-dom) |
 | `Masonry` | `root`、`item` | [Masonry `#semantic-dom`](/components/masonry-cn#semantic-dom) |
-| `Modal` | `mask`、`wrapper`、`content`、`header`、`body`、`footer` | [Modal `#semantic-dom`](/components/modal-cn#semantic-dom) |
-| `Popconfirm` | `root`、`container`（`body`）、`title`、`content`、`arrow` | [Popconfirm `#semantic-dom`](/components/popconfirm-cn#semantic-dom) |
+| `Mentions` | `root`、`textarea`、`suffix`、`popup` | [Mentions `#semantic-dom`](/components/mentions-cn#semantic-dom) |
+| `Menu` | `root`、`item`、`itemIcon`、`itemContent`、`itemTitle`、`list`、`popup`、`subMenu.*` | [Menu `#semantic-dom`](/components/menu-cn#semantic-dom) |
+| `Message` | `root`、`wrapper`、`icon`、`title`、`list`、`listContent` | [Message `#semantic-dom`](/components/message-cn#semantic-dom) |
+| `Modal` | `root`、`mask`、`wrapper`、`container`、`header`、`title`、`body`、`footer`、`close` | [Modal `#semantic-dom`](/components/modal-cn#semantic-dom) |
+| `Notification` | `root`、`wrapper`、`icon`、`section`、`title`、`description`、`close`、`actions`、`progress`、`list`、`listContent` | [Notification `#semantic-dom`](/components/notification-cn#semantic-dom) |
+| `Pagination` | `root`、`item` | [Pagination `#semantic-dom`](/components/pagination-cn#semantic-dom) |
+| `Popconfirm` | `root`、`container`（`body`）、`icon`、`title`、`content`、`arrow` | [Popconfirm `#semantic-dom`](/components/popconfirm-cn#semantic-dom) |
 | `Popover` | `root`、`container`（`body`）、`title`、`content`、`arrow` | [Popover `#semantic-dom`](/components/popover-cn#semantic-dom) |
-| `Progress` | `root`、`rail`、`track`、`indicator` | [Progress `#semantic-dom`](/components/progress-cn#semantic-dom) |
-| `Segmented` | `root`、`item`、`label`、`icon` | [Segmented `#semantic-dom`](/components/segmented-cn#semantic-dom) |
-| `Select` | `root`、`prefix`、`suffix`、`popup: { root }` | [Select `#semantic-dom`](/components/select-cn#semantic-dom) |
-| `Slider` | `root`、`tracks`、`track`、`rail`、`handle` | [Slider `#semantic-dom`](/components/slider-cn#semantic-dom) |
+| `Progress` | `root`、`body`、`rail`、`track`、`indicator` | [Progress `#semantic-dom`](/components/progress-cn#semantic-dom) |
+| `QRCode` | `root`、`cover` | [QRCode `#semantic-dom`](/components/qrcode-cn#semantic-dom) |
+| `Radio` | `root`、`icon`、`label` | [Radio `#semantic-dom`](/components/radio-cn#semantic-dom) |
+| `Result` | `root`、`icon`、`title`、`subTitle`、`extra`、`body` | [Result `#semantic-dom`](/components/result-cn#semantic-dom) |
+| `Segmented` | `root`、`item`、`icon`、`label` | [Segmented `#semantic-dom`](/components/segmented-cn#semantic-dom) |
+| `Select` | `root`、`prefix`、`suffix`、`popup.root` | [Select `#semantic-dom`](/components/select-cn#semantic-dom) |
+| `Skeleton` | `root`、`header`、`section`、`avatar`、`title`、`paragraph` | [Skeleton `#semantic-dom`](/components/skeleton-cn#semantic-dom) |
+| `Slider` | `root`、`rail`、`tracks`、`track`、`handle` | [Slider `#semantic-dom`](/components/slider-cn#semantic-dom) |
 | `Space` | `root`、`item`、`separator` | [Space `#semantic-dom`](/components/space-cn#semantic-dom) |
-| `Spin` | `root`、`wrapper`、`mask`、`section`、`indicator`、`description`（`tip`） | [Spin `#semantic-dom`](/components/spin-cn#semantic-dom) |
+| `Spin` | `root`、`section`、`indicator`、`description`（`tip`）、`container` | [Spin `#semantic-dom`](/components/spin-cn#semantic-dom) |
 | `Splitter` | `root`、`panel`、`dragger` | [Splitter `#semantic-dom`](/components/splitter-cn#semantic-dom) |
-| `Steps` | `root`、`item`、`itemIcon`、`itemTitle`、`itemContent`、`itemRail` | [Steps `#semantic-dom`](/components/steps-cn#semantic-dom) |
+| `Statistic` | `root`、`header`、`title`、`prefix`、`content`、`value`、`suffix` | [Statistic `#semantic-dom`](/components/statistic-cn#semantic-dom) |
+| `Steps` | `root`、`item`、`itemWrapper`、`itemIcon`、`itemSection`、`itemTitle`、`itemSubtitle`、`itemContent`、`itemRail` | [Steps `#semantic-dom`](/components/steps-cn#semantic-dom) |
+| `Switch` | `root`、`content`、`indicator` | [Switch `#semantic-dom`](/components/switch-cn#semantic-dom) |
+| `Table` | `root`、`title`、`content`、`header.*`、`section`、`body.*`、`footer`、`pagination.*` | [Table `#semantic-dom`](/components/table-cn#semantic-dom) |
+| `Tabs` | `root`、`header`、`item`、`remove`、`indicator`、`body`、`content`、`popup.root` | [Tabs `#semantic-dom`](/components/tabs-cn#semantic-dom) |
 | `Tag` | `root`、`icon`、`content`、`close`（`CheckableTagGroup`：`root`、`item`） | [Tag `#semantic-dom`](/components/tag-cn#semantic-dom) |
+| `TimePicker` | `root`、`prefix`、`input`、`suffix`、`popup.*` | [TimePicker `#semantic-dom`](/components/time-picker-cn#semantic-dom) |
+| `Timeline` | `root`、`item`、`itemWrapper`、`itemIcon`、`itemSection`、`itemHeader`、`itemTitle`、`itemContent`、`itemRail` | [Timeline `#semantic-dom`](/components/timeline-cn#semantic-dom) |
 | `Tooltip` | `root`、`container`（`body`）、`arrow` | [Tooltip `#semantic-dom`](/components/tooltip-cn#semantic-dom) |
-| `Transfer` | `root`、`section`、`header`、`title`、`list`、`item`、`footer`、`actions` | [Transfer `#semantic-dom`](/components/transfer-cn#semantic-dom) |
-| `TreeSelect` | `root`、`prefix`、`suffix`、`popup: { root }` | [TreeSelect `#semantic-dom`](/components/tree-select-cn#semantic-dom) |
+| `Tour` | `root`、`mask`、`section`、`cover`、`close`、`header`、`title`、`description`、`footer`、`actions`、`indicators`、`indicator` | [Tour `#semantic-dom`](/components/tour-cn#semantic-dom) |
+| `Transfer` | `root`、`section`、`header`、`title`、`body`、`list`、`item`、`itemIcon`、`itemContent`、`footer`、`actions` | [Transfer `#semantic-dom`](/components/transfer-cn#semantic-dom) |
+| `Tree` | `root`、`item`、`itemIcon`、`itemTitle`、`itemSwitcher` | [Tree `#semantic-dom`](/components/tree-cn#semantic-dom) |
+| `TreeSelect` | `root`、`prefix`、`suffix`、`popup.root` | [TreeSelect `#semantic-dom`](/components/tree-select-cn#semantic-dom) |
+| `Typography` | `root`、`actions`、`action`、`textarea` | [Typography `#semantic-dom`](/components/typography-cn#semantic-dom) |
+| `Upload` | `root`、`list`、`item`、`trigger` | [Upload `#semantic-dom`](/components/upload-cn#semantic-dom) |
 
 ## 形态变体 `variant`
 

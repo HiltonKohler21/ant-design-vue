@@ -36,6 +36,7 @@ A Drawer is a panel that is typically overlaid on top of a page and slides in fr
 | drawerRender | Custom drawer panel render | `(node: VueNode) => VueNode` | - | 4.3.0 |
 | ~~drawerStyle~~ | Style of the Drawer popup layer (deprecated, use `styles.section` instead) | CSSProperties | - |  |
 | extra | Extra actions area at corner | VueNode \| slot | - | 3.0.0 |
+| focusable | Configuration for focus management in the Drawer | `{ trap?: boolean; focusTriggerAfterClose?: boolean }` | - | 4.3.0 |
 | footer | The footer for Drawer | VueNode \| slot | - | 3.0.0 |
 | ~~footerStyle~~ | Style of the drawer footer part (deprecated, use `styles.footer` instead) | CSSProperties | - | 3.0.0 |
 | forceRender | Prerender Drawer component forcely | boolean | `false` | 3.0.0 |

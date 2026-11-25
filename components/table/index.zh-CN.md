@@ -120,7 +120,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*Sv8XQ50NB40AAA
 | tableLayout | 表格元素的 [table-layout](https://developer.mozilla.org/zh-CN/docs/Web/CSS/table-layout) 属性，设为 `fixed` 表示内容不会影响列的布局 | - \| 'auto' \| 'fixed' | 无<hr />固定表头/列或使用了 `column.ellipsis` 时，默认值为 `fixed` | 1.5.0 |
 | title | 表格标题 | Function(currentPageData)\|v-slot:title="currentPageData" |  |  |
 | transformCellText | 数据渲染前可以再次改变，一般用于空数据的默认配置，可以通过 [ConfigProvider](/components/config-provider-cn/) 全局统一配置 | Function({ text, column, record, index }) => any，此处的 text 是经过其它定义单元格 api 处理后的数据，有可能是 VNode \| string \| number 类型 | - | 1.5.4 |
-| virtual | 支持虚拟列表 | boolean | false | 4.3.0 |
+| virtual | 支持虚拟列表（结合 `scroll.y` 开启；支持 `scroll.x` 横向滚动、左右固定列与 `ellipsis` 省略） | boolean | false | 4.3.0 |
 
 ### Table ref
 

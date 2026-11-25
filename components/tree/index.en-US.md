@@ -35,7 +35,7 @@ Almost anything can be represented in a tree structure. Examples include directo
 | expandedKeys(v-model) | (Controlled) Specifies the keys of the expanded treeNodes | string\[] \| number\[] | \[] |  |
 | fieldNames | Replace the title,key and children fields in treeNode with the corresponding fields in treeData | object | { children:'children', title:'title', key:'key' } | 3.0.0 |
 | filterTreeNode | Defines a function to filter (highlight) treeNodes. When the function returns `true`, the corresponding treeNode will be highlighted | function(node) | - |  |
-| height | Config virtual scroll height. Will not support horizontal scroll when enable this | number | - |  |
+| height | A positive value sets the maximum height of the Tree's vertical scroll area with either `virtual` setting. The Tree grows with its content when `height` is omitted or `0` | number | - |  |
 | loadData | Load data asynchronously | function(node) | - |  |
 | loadedKeys | (Controlled) Set loaded tree nodes. Need work with `loadData` | string\[] \| number\[] | \[] |  |
 | multiple | Allows selecting multiple treeNodes | boolean | false |  |
@@ -51,7 +51,7 @@ Almost anything can be represented in a tree structure. Examples include directo
 | title | custom title | slot |  | 2.0.0 |
 | titleRender | Customize tree node title render | (nodeData: DataNode) => VueNode | - | 4.3.0 |
 | treeData | treeNode of tree, please use `treeNodes` before v1.1.4 | [TreeNode\[\]](#treenode) | - |  |
-| virtual | Disable virtual scroll when set to false | boolean | true | 3.0 |
+| virtual | Whether to virtualize node rendering when `height` is positive | boolean | true | 3.0 |
 
 > `SemanticDOM` slots: `root` \| `item` \| `itemIcon` \| `itemTitle` \| `itemSwitcher`.
 
@@ -105,6 +105,10 @@ Provides Tree data utilities. `getPath(key)` returns the node entities from the 
 | expandAction | Directory open logic, optional `false` `'click'` `'dblclick'` | string | click   |
 
 ## FAQ
+
+### Virtual scroll limitation
+
+With virtual scrolling, the Tree does not calculate the horizontal scroll width from node titles automatically. Configure an explicit scroll width when node titles exceed the viewport width.
 
 ### How to hide file icon when use showLine?
 

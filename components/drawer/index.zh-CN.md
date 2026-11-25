@@ -36,6 +36,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*r29rQ51bNdwAAA
 | drawerRender | 自定义渲染抽屉面板 | `(node: VueNode) => VueNode` | - | 4.3.0 |
 | ~~drawerStyle~~ | 可用于设置 Drawer 弹出层样式（已废弃，请使用 `styles.section`） | CSSProperties | - |  |
 | extra | 抽屉右上角的操作区域 | VueNode \| slot | - | 3.0.0 |
+| focusable | 抽屉焦点管理配置 | `{ trap?: boolean; focusTriggerAfterClose?: boolean }` | - | 4.3.0 |
 | footer | 抽屉的页脚 | VueNode \| slot | - | 3.0.0 |
 | ~~footerStyle~~ | 抽屉页脚部件的样式（已废弃，请使用 `styles.footer`） | CSSProperties | - | 3.0.0 |
 | forceRender | 预渲染 Drawer 内元素 | boolean | `false` | 3.0.0 |

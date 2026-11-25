@@ -1,6 +1,6 @@
 # Migrating from 4.2.6 to 4.3.0
 
-This handbook guides you through upgrading smoothly from `ant-design-vue@4.2.6` to `ant-design-vue@4.3.0` (covering all `4.2.7` and `4.3.0` improvements). `4.3.0` brings the Ant Design v6 performance layer (**native CSS Variables enabled by default** and **zero-runtime static CSS extraction**), adds **6 new top-level components** and **6 new subcomponents**, introduces **functional Semantic DOM (`classNames`/`styles`)** across 30+ components, wires **72 `ConfigProvider` per-component defaults**, expands **Component Design Tokens to 317+**, and modernizes component APIs across the entire library.
+This handbook guides you through upgrading smoothly from `ant-design-vue@4.2.6` to `ant-design-vue@4.3.0` (covering all `4.2.7` and `4.3.0` improvements, aligned with `antd@6.7.2`). `4.3.0` brings the Ant Design v6 performance layer (**native CSS Variables enabled by default** and **zero-runtime static CSS extraction**), adds **6 new top-level components** and **6 new subcomponents**, introduces **functional Semantic DOM (`classNames`/`styles`)** across **61 components**, wires **72 `ConfigProvider` per-component defaults**, syncs **74 locale packs**, expands **Component Design Tokens to 317+**, and modernizes component APIs across the entire library.
 
 > Upgrading from `3.x`? Please follow the [V3 to V4 Migration Guide](/docs/vue/migration-v4) first.
 
@@ -422,7 +422,7 @@ const users = Array.from({ length: 200 }, (_, i) => ({
 
 ### Functional Semantic DOM (`classNames` / `styles`)
 
-`4.3.0` standardizes semantic styling across **31 components** (`Alert`, `AutoComplete`, `Badge`, `Button`, `Card`, `Cascader`, `Collapse`, `Descriptions`, `Divider`, `Drawer`, `Empty`, `Image`, `Input`, `List`, `Listy`, `Masonry`, `Modal`, `Popconfirm`, `Popover`, `Progress`, `Segmented`, `Select`, `Slider`, `Space`, `Spin`, `Splitter`, `Steps`, `Tag`, `Tooltip`, `Transfer`, `TreeSelect`). Both `classNames` and `styles` accept either a **static object** or a **dynamic function** `({ props }) => ({ ... })`, and every semantic-enabled component page now includes an interactive **`Semantic DOM` (`#semantic-dom`)** previewer:
+`4.3.0` standardizes semantic styling across **61 components** covering inputs, overlays, data display, navigation, layout, and feedback. Both `classNames` and `styles` accept either a **static object** or a **dynamic function** `({ props }) => ({ ... })`, and every one of the 61 component documentation pages includes an interactive **`Semantic DOM` (`#semantic-dom`)** previewer:
 
 ```vue
 <template>
@@ -442,7 +442,7 @@ const users = Array.from({ length: 200 }, (_, i) => ({
 </template>
 ```
 
-See [Common Props](/docs/vue/common-props) for the complete semantic slot reference across all 31 components.
+See [Common Props](/docs/vue/common-props) for the complete semantic slot reference across all 61 components.
 
 ### Unified `ConfigProvider` Component Defaults (72 Component Configs)
 
@@ -515,17 +515,17 @@ All legacy `4.2.6` props below remain **100% backwards-compatible in `4.3.0`** s
 | Divider | `type="vertical"` / `orientation="left"` / `dashed` | `orientation="vertical"` (or `vertical`) / `titlePlacement="start"` / `variant="solid" \| "dashed" \| "dotted"` + `size` | RTL-aware `start`/`end` and semantic `rail`/`content` |
 | Alert | `message` / `closeText` / `closeIcon` / `afterClose` | `title` / `:closable="{ closeIcon, disabled, afterClose, onClose }"` + `variant="filled"` + `action` + `Alert.ErrorBoundary` | `message` remains supported as fallback |
 | Tag | `:bordered="false"` / `closeIcon` | `variant="filled" \| "solid" \| "outlined"` / `:closable="{ closeIcon, disabled }"` + `disabled` + `href`/`target` + `Tag.CheckableTagGroup` | `CheckableTag` also adds `icon` & `disabled` |
-| Image | `preview.visible` / `onVisibleChange` / `toolbarRender` / `previewMask` | `preview.open` / `onOpenChange` / `actionsRender` / `imageRender` / `mask` (`{ enabled, blur, closable }`) / `cover` / `Image.PreviewGroup.items` | Adds `minScale`, `maxScale`, `scaleStep`, `movable`, `wheel`, `onTransform`, `countRender` |
+| Image | `preview.visible` / `onVisibleChange` / `toolbarRender` / `previewMask` | `preview.open` / `onOpenChange` / `actionsRender` / `imageRender` / `mask` (`{ enabled, blur, closable }`) / `cover` / `placeholder.progress` / `rootStyle` / `Image.PreviewGroup.items` | Adds loading progress overlay, `minScale`, `maxScale`, `scaleStep`, `movable`, `wheel`, `onTransform`, `countRender` |
 | List | `<a-list :data-source="..." />` | `<a-listy :items="..." row-key="..." :group="..." sticky virtual :scroll-width="..." />` | Built-in virtualization, grouping, sticky headers, and pixel/key/index/group `scrollTo` |
-| Drawer | `afterVisibleChange` / `maskClosable` | `afterOpenChange` + `resizable` (`boolean \| { onResizeStart, onResize, onResizeEnd }`) + `loading` + `closable`/`mask` objects | `closable.placement` (`start`/`end`), `mask.blur`, numeric/string `size` |
-| Modal | `maskClosable` / `closeIcon` | `loading` (Skeleton body) + `afterOpenChange` + `closable`/`mask` objects | `mask: { enabled, blur, closable }` |
+| Drawer | `afterVisibleChange` / `maskClosable` | `afterOpenChange` + `resizable` (`boolean \| { onResizeStart, onResize, onResizeEnd }`) + `loading` + `focusable` + `closable`/`mask` objects | Edge resize, close focus restoration, `closable.placement` (`start`/`end`), `mask.blur`, numeric/string `size` |
+| Modal | `maskClosable` / `closeIcon` | `loading` (Skeleton body) + `scrollLock` + `afterOpenChange` + `closable`/`mask` objects | Opt-out background scroll lock & `mask: { enabled, blur, closable }` |
 | Notification | `btn` | `actions` + `stack` (`boolean \| { threshold }`) + `showProgress` + `pauseOnHover` + `closable` object | Collapsed card stack with hover expand & countdown bar |
 | Timeline | `<a-timeline-item>` | `:items="timelineItems"` (`content`, `title`, `icon`, `placement`) + `orientation="horizontal" \| "vertical"` + `variant="filled" \| "outlined"` + `titleSpan` | Config-driven items & horizontal timeline |
 | Breadcrumb / Descriptions | `routes` / `<a-descriptions-item>` | Config-driven `:items="..."` (`Breadcrumb` adds `dropdownIcon`; `Descriptions.items` supports numeric, `'filled'`, & responsive `span`) | Slot children remain fully supported |
 | DatePicker / TimePicker | Single selection / immediate select | `variant`, `multiple` (`DatePicker` with `maxTagCount`), `needConfirm` | Inherits `Form.variant` |
 | InputNumber / Radio / Rate | Manual suffix / full-width CSS / fixed star size | `InputNumber`: `suffix` + `changeOnWheel`; `Radio.Group`: `block` + `orientation`/`vertical`; `Rate`: `size` (`small`/`middle`/`medium`/`large`) | Native props with Component Tokens |
-| Slider | `tooltipOpen` / `tipFormatter` / `tooltipPlacement` / `onAfterChange` | `:tooltip="{ open, formatter, placement, getPopupContainer, autoAdjustOverflow }"` + `orientation` + `@change-complete` + `handleRender` | Unified `tooltip` config object |
-| Table | Non-virtual / manual column filtering | `virtual` (with `:scroll="{ y: 360 }"`) + `column.hidden` (incl. nested groups) + `column.sortIcon` + `filterOnClose` + `filterDropdownProps` | Built-in virtualization & declarative column hiding |
+| Slider | `tooltipOpen` / `tipFormatter` / `tooltipPlacement` / `onAfterChange` | `:tooltip="{ open, formatter, placement, getPopupContainer, autoAdjustOverflow }"` + `startPoint` + `orientation` + `@change-complete` + `handleRender` + `ariaDescribedByForHandle` | Custom track origin & unified `tooltip` config object |
+| Table | Non-virtual / manual column filtering | `virtual` (vertical & horizontal virtualization, fixed columns & `ellipsis`) + `column.hidden` (incl. nested groups) + `column.sortIcon` + `filterOnClose` + `filterDropdownProps` | Built-in virtualization, zero-rerender column resize & declarative column hiding |
 | Space / Tooltip | `Space`: `direction` / `split` | `Space`: `orientation` / `vertical` / `separator` + `Space.Addon`; `Tooltip`: `Tooltip.UniqueProvider` + `defaultOpen` + `afterOpenChange` | Smooth sibling tooltip transitions |
 | Steps / Splitter / Tabs | `Steps.direction` / `labelPlacement`; `Splitter.layout`; `Tabs.tabPosition` / `moreIcon` | `Steps`: `orientation` / `titlePlacement` / `variant` / `ellipsis` / `items[].content`; `Splitter`: `orientation` / `collapsibleIcon` / `draggerIcon` / `onDraggerDoubleClick`; `Tabs`: `items` / `tabPlacement` (`start`/`end`) / `more` / `indicator` | Consistent v6 naming across navigation & layout |
 | Carousel / Progress / Button / Collapse | `Carousel.dotPosition`; `Progress.gapPosition` / `trailColor`; `Button.iconPosition`; `Collapse.expandIconPosition` | `Carousel`: `dotPlacement` + `:autoplay="{ dotDuration: true }"`; `Progress`: `gapPlacement` / `railColor` / `percentPosition` / `rounding`; `Button`: `variant` + `color` (13 presets) + `iconPlacement`; `Collapse`: `expandIconPlacement` + `size` | Full v6 prop aliases & styles |

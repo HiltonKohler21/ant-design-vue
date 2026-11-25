@@ -1,6 +1,6 @@
 # 从 4.2.6 升级到 4.3.0
 
-本手册将帮助你从 `ant-design-vue@4.2.6` 平滑升级到 `ant-design-vue@4.3.0`（覆盖 `4.2.7` 与 `4.3.0` 全部演进）。`4.3.0` 完整落地了 Ant Design v6 性能层（**默认开启原生 CSS Variables** 与**零运行时静态样式提取**），新增 **6 个顶级组件** 与 **6 个高频子组件**，在 30+ 组件上统一了**函数式语义化 DOM（`classNames`/`styles`）**，接入全部 **72 项 `ConfigProvider` 组件默认配置**，将 **Component Design Tokens 扩展至 317+ 项**，并全面完成向下兼容的 v6 API 升级。
+本手册将帮助你从 `ant-design-vue@4.2.6` 平滑升级到 `ant-design-vue@4.3.0`（覆盖 `4.2.7` 与 `4.3.0` 全部演进，全面对齐 `antd@6.7.2`）。`4.3.0` 完整落地了 Ant Design v6 性能层（**默认开启原生 CSS Variables** 与**零运行时静态样式提取**），新增 **6 个顶级组件** 与 **6 个高频子组件**，在 **61 个组件**上统一了**函数式语义化 DOM（`classNames`/`styles`）**，接入全部 **72 项 `ConfigProvider` 组件默认配置**，同步 **74 套国际化语言包**，将 **Component Design Tokens 扩展至 317+ 项**，并全面完成向下兼容的 v6 API 升级。
 
 > 如果你是从 `3.x` 升级，请先阅读 [从 V3 到 V4 升级指南](/docs/vue/migration-v4-cn)。
 
@@ -424,7 +424,7 @@ const users = Array.from({ length: 200 }, (_, i) => ({
 
 ### 函数式语义化 DOM（`classNames` / `styles`）
 
-`4.3.0` 在 **31 个组件**（`Alert`、`AutoComplete`、`Badge`、`Button`、`Card`、`Cascader`、`Collapse`、`Descriptions`、`Divider`、`Drawer`、`Empty`、`Image`、`Input`、`List`、`Listy`、`Masonry`、`Modal`、`Popconfirm`、`Popover`、`Progress`、`Segmented`、`Select`、`Slider`、`Space`、`Spin`、`Splitter`、`Steps`、`Tag`、`Tooltip`、`Transfer`、`TreeSelect`）上统一提供语义化 `classNames` 与 `styles`，既支持**静态对象**，也支持根据组件属性动态计算的**函数式写法** `({ props }) => ({ ... })`；同时在对应组件文档页上线了交互式 **`语义化 DOM`（`#semantic-dom`）可视化预览器**：
+`4.3.0` 在全库 **61 个组件**上统一提供语义化 `classNames` 与 `styles`（覆盖表单录入、浮层弹框、数据展示、导航布局与反馈提示全品类），既支持**静态对象**，也支持根据组件属性动态计算的**函数式写法** `({ props }) => ({ ... })`；同时在全部 61 个对应组件文档页上线了交互式 **`语义化 DOM`（`#semantic-dom`）可视化预览器**：
 
 ```vue
 <template>
@@ -444,7 +444,7 @@ const users = Array.from({ length: 200 }, (_, i) => ({
 </template>
 ```
 
-全部 31 个组件的语义位清单请参阅 [通用属性](/docs/vue/common-props-cn)。
+全部 61 个组件的语义位清单请参阅 [通用属性](/docs/vue/common-props-cn)。
 
 ### `ConfigProvider` 统一组件默认配置（72 项组件配置）
 
@@ -517,17 +517,17 @@ const holderRender = (children: any) => h(ConfigProvider, { prefixCls: 'ant' }, 
 | Divider | `type="vertical"` / `orientation="left"` / `dashed` | `orientation="vertical"`（或 `vertical`） / `titlePlacement="start"` / `variant="solid" \| "dashed" \| "dotted"` + `size` | 兼容 RTL 方向与语义位 `rail`/`content` |
 | Alert | `message` / `closeText` / `closeIcon` / `afterClose` | `title` / `:closable="{ closeIcon, disabled, afterClose, onClose }"` + `variant="filled"` + `action` + `Alert.ErrorBoundary` | `message` 保留自动兜底 |
 | Tag | `:bordered="false"` / `closeIcon` | `variant="filled" \| "solid" \| "outlined"` / `:closable="{ closeIcon, disabled }"` + `disabled` + `href`/`target` + `Tag.CheckableTagGroup` | `CheckableTag` 同步新增 `icon` 与 `disabled` |
-| Image | `preview.visible` / `onVisibleChange` / `toolbarRender` / `previewMask` | `preview.open` / `onOpenChange` / `actionsRender` / `imageRender` / `mask`（`{ enabled, blur, closable }`） / `cover` / `Image.PreviewGroup.items` | 新增缩放范围、`movable`、`wheel`、`onTransform`、`countRender` |
+| Image | `preview.visible` / `onVisibleChange` / `toolbarRender` / `previewMask` | `preview.open` / `onOpenChange` / `actionsRender` / `imageRender` / `mask`（`{ enabled, blur, closable }`） / `cover` / `placeholder.progress` / `rootStyle` / `Image.PreviewGroup.items` | 新增占位加载进度条、缩放范围、`movable`、`wheel`、`onTransform`、`countRender` |
 | List | `<a-list :data-source="..." />` | `<a-listy :items="..." row-key="..." :group="..." sticky virtual :scroll-width="..." />` | 内置虚拟滚动、分组吸顶、横向滚动与多维 `scrollTo` |
-| Drawer | `afterVisibleChange` / `maskClosable` | `afterOpenChange` + `resizable`（`boolean \| { onResizeStart, onResize, onResizeEnd }`） + `loading` + `closable`/`mask` 对象 | 支持边缘拖拽改宽/高、`closable.placement`、`mask.blur`、自定义尺寸 |
-| Modal | `maskClosable` / `closeIcon` | `loading`（骨架屏） + `afterOpenChange` + `closable`/`mask` 对象 | 支持 `mask: { enabled, blur, closable }` |
+| Drawer | `afterVisibleChange` / `maskClosable` | `afterOpenChange` + `resizable`（`boolean \| { onResizeStart, onResize, onResizeEnd }`） + `loading` + `focusable` + `closable`/`mask` 对象 | 支持边缘拖拽改宽/高、关闭后焦点恢复、`closable.placement`、`mask.blur`、自定义尺寸 |
+| Modal | `maskClosable` / `closeIcon` | `loading`（骨架屏） + `scrollLock` + `afterOpenChange` + `closable`/`mask` 对象 | 支持关闭背景滚动锁与 `mask: { enabled, blur, closable }` |
 | Notification | `btn` | `actions` + `stack`（`boolean \| { threshold }`） + `showProgress` + `pauseOnHover` + `closable` 对象 | 支持堆叠折叠与悬停展开、倒计时进度条 |
 | Timeline | `<a-timeline-item>` | `:items="timelineItems"`（`content`、`title`、`icon`、`placement`） + `orientation="horizontal" \| "vertical"` + `variant="filled" \| "outlined"` + `titleSpan` | 数据驱动配置与水平时间轴 |
 | Breadcrumb / Descriptions | `routes` / `<a-descriptions-item>` | 配置式 `:items="..."`（`Breadcrumb` 新增 `dropdownIcon`；`Descriptions.items` 支持数值、`'filled'` 及响应式 `span`） | 兼容原有插槽子元素写法 |
 | DatePicker / TimePicker | 单选 / 即点即选 | `variant`、`multiple`（`DatePicker` 多日期选择与 `maxTagCount`）、`needConfirm` | 自动继承 `Form.variant` |
 | InputNumber / Radio / Rate | 手写后缀 / 手动撑满 / 固定星级尺寸 | `InputNumber`：`suffix` + `changeOnWheel`；`Radio.Group`：`block` + `orientation`/`vertical`；`Rate`：`size`（`small`/`middle`/`medium`/`large`） | 原生属性与组件级 Token 支持 |
-| Slider | `tooltipOpen` / `tipFormatter` / `tooltipPlacement` / `onAfterChange` | `:tooltip="{ open, formatter, placement, getPopupContainer, autoAdjustOverflow }"` + `orientation` + `@change-complete` + `handleRender` | 聚合 `tooltip` 配置对象 |
-| Table | 大数据全量渲染 / 手动过滤列 | `virtual`（配合 `:scroll="{ y: 360 }"`） + `column.hidden`（支持分组列） + `column.sortIcon` + `filterOnClose` + `filterDropdownProps` | 内置虚拟滚动与声明式隐藏列 |
+| Slider | `tooltipOpen` / `tipFormatter` / `tooltipPlacement` / `onAfterChange` | `:tooltip="{ open, formatter, placement, getPopupContainer, autoAdjustOverflow }"` + `startPoint` + `orientation` + `@change-complete` + `handleRender` + `ariaDescribedByForHandle` | 支持自定义轨道起点与聚合 `tooltip` 配置对象 |
+| Table | 大数据全量渲染 / 手动过滤列 | `virtual`（支持纵横双向虚拟滚动、固定列与 `ellipsis`） + `column.hidden`（支持分组列） + `column.sortIcon` + `filterOnClose` + `filterDropdownProps` | 内置虚拟滚动、高性能无重渲染列宽拖拽与声明式隐藏列 |
 | Space / Tooltip | `Space`：`direction` / `split` | `Space`：`orientation` / `vertical` / `separator` + `Space.Addon`；`Tooltip`：`Tooltip.UniqueProvider` + `defaultOpen` + `afterOpenChange` | 平滑过渡提示与紧凑装饰块 |
 | Steps / Splitter / Tabs | `Steps.direction` / `labelPlacement`；`Splitter.layout`；`Tabs.tabPosition` / `moreIcon` | `Steps`：`orientation` / `titlePlacement` / `variant` / `ellipsis` / `items[].content`；`Splitter`：`orientation` / `collapsibleIcon` / `draggerIcon` / `onDraggerDoubleClick`；`Tabs`：`items` / `tabPlacement`（`start`/`end`） / `more` / `indicator` | 布局与导航组件全面统一 v6 命名 |
 | Carousel / Progress / Button / Collapse | `Carousel.dotPosition`；`Progress.gapPosition` / `trailColor`；`Button.iconPosition`；`Collapse.expandIconPosition` | `Carousel`：`dotPlacement` + `:autoplay="{ dotDuration: true }"`；`Progress`：`gapPlacement` / `railColor` / `percentPosition` / `rounding`；`Button`：`variant` + `color`（13 种预设色） + `iconPlacement`；`Collapse`：`expandIconPlacement` + `size` | 完整 v6 属性别名与视觉增强 |

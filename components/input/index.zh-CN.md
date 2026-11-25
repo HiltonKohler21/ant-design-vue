@@ -152,6 +152,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*sBqqTatJ-AkAAA
 
 | 参数 | 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- | --- | --- |
+| autoComplete | 原生 `autocomplete` 属性（同时支持从 `ConfigProvider.otp.autoComplete` 继承） | string | - | 4.3.0 |
 | autoFocus | 自动获取焦点 | boolean | `false` | 4.3.0 |
 | classNames | 语义化结构 class（支持对象与函数式 `({ props }) => ...`） | `{ root?: string; input?: string; separator?: string } \| ((info: { props: OTPProps }) => ...)` | - | 4.3.0 |
 | defaultValue | 默认值 | string | - | 4.3.0 |

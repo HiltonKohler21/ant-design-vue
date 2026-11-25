@@ -36,7 +36,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*_9MMRpWoOcYAAA
 | expandedKeys(v-model) | （受控）展开指定的树节点 | string\[] \| number\[] | \[] |  |
 | fieldNames | 替换 treeNode 中 title,key,children 字段为 treeData 中对应的字段 | object | {children:'children', title:'title', key:'key' } | 3.0.0 |
 | filterTreeNode | 按需筛选树节点（高亮），返回 true | function(node) | - |  |
-| height | 设置虚拟滚动容器高度，设置后内部节点不再支持横向滚动 | number | - |  |
+| height | `height` 为正数时，无论 `virtual` 如何设置，均限制树的纵向滚动区域的最大高度。省略 `height` 或将其设为 `0` 时，树的高度随内容增长 | number | - |  |
 | loadData | 异步加载数据 | function(node) | - |  |
 | loadedKeys | （受控）已经加载的节点，需要配合 `loadData` 使用 | string\[] \| number\[] | \[] |  |
 | multiple | 支持点选多个节点（节点本身） | boolean | false |  |
@@ -52,7 +52,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*_9MMRpWoOcYAAA
 | title | 自定义标题 | slot |  | 2.0.0 |
 | titleRender | 自定义渲染节点 | (nodeData: DataNode) => VueNode | - | 4.3.0 |
 | treeData | treeNodes 数据，如果设置则不需要手动构造 TreeNode 节点（key 在整个树范围内唯一） | [TreeNode\[\]](#treenode) | -- |  |
-| virtual | 设置 false 时关闭虚拟滚动 | boolean | true | 3.0 |
+| virtual | `height` 为正数时是否启用节点的虚拟渲染 | boolean | true | 3.0 |
 
 > 语义化结构 `SemanticDOM` 支持：`root` \| `item` \| `itemIcon` \| `itemTitle` \| `itemSwitcher`。
 
@@ -106,6 +106,10 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*_9MMRpWoOcYAAA
 | expandAction | 目录展开逻辑，可选 `false` `'click'` `'dblclick'` | string | click  |
 
 ## FAQ
+
+### 虚拟滚动的限制
+
+启用虚拟滚动后，Tree 不会根据节点标题自动计算横向滚动宽度。当内容宽度超出可视区域时，可通过指定容器或内容宽度实现横向滚动。
 
 ### 在 showLine 时，如何隐藏子节点图标？
 

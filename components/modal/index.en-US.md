@@ -45,6 +45,7 @@ When requiring users to interact with the application, but without jumping to a 
 | open(v-model) | Whether the modal dialog is visible or not | boolean | false |  |
 | rootClassName | Root class name | string | - | 4.3.0 |
 | rootStyle | Root inline style | CSSProperties | - | 4.3.0 |
+| scrollLock | Whether to lock page scrolling while the Modal is open | boolean | `true` | 4.3.0 |
 | styles | Customize inline style for each semantic structure inside the Modal component. Supports object or function | Record<[SemanticDOM](#semantic-dom), CSSProperties> \| (info: { props }) => Record<[SemanticDOM](#semantic-dom), CSSProperties> | - | 4.3.0 |
 | title | The modal dialog's title | string \| slot | - |  |
 | width | Width of the modal dialog | string \| number \| Partial<Record<[Breakpoint](/components/grid/#col), string \| number>> | 520 | Breakpoint: 4.3.0 |

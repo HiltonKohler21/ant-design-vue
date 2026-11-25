@@ -151,6 +151,7 @@ One-time password input box (via `Input.OTP` or global tag `<a-input-o-t-p>`, av
 
 | Property | Description | Type | Default | Version |
 | --- | --- | --- | --- | --- |
+| autoComplete | Native `autocomplete` attribute (also inherits from `ConfigProvider.otp.autoComplete`) | string | - | 4.3.0 |
 | autoFocus | Focus input automatically on mount | boolean | `false` | 4.3.0 |
 | classNames | Semantic DOM class names (supports object and function `({ props }) => ...`) | `{ root?: string; input?: string; separator?: string } \| ((info: { props: OTPProps }) => ...)` | - | 4.3.0 |
 | defaultValue | Default value | string | - | 4.3.0 |
