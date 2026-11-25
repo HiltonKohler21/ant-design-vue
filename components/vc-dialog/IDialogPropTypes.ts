@@ -47,6 +47,7 @@ export function dialogPropTypes() {
     // https://github.com/ant-design/ant-design/issues/19771
     // https://github.com/react-component/dialog/issues/95
     focusTriggerAfterClose: { type: Boolean, default: undefined },
+    scrollLock: { type: Boolean, default: undefined },
     onClose: Function as PropType<(e: MouseEvent | KeyboardEvent) => void>,
     modalRender: Function,
   };

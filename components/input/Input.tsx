@@ -375,6 +375,7 @@ export default defineComponent({
             'styles',
             'rootClassName',
             'showCount',
+            'autoComplete',
           ])}
           {...vcExtraProps}
           showCount={effectiveShowCount}
@@ -386,7 +387,12 @@ export default defineComponent({
           disabled={mergedDisabled.value}
           ref={inputRef}
           prefixCls={prefixClsValue}
-          autocomplete={autocomplete.value}
+          autocomplete={
+            props.autoComplete ??
+            autocomplete.value ??
+            inputConfig.value?.autoComplete ??
+            inputConfig.value?.autocomplete
+          }
           onBlur={handleBlur}
           onFocus={handleFocus}
           prefix={prefix}

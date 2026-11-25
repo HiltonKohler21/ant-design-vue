@@ -20,6 +20,7 @@ export default defineComponent({
     reverse: { type: Boolean, default: undefined },
     ariaLabel: String,
     ariaLabelledBy: String,
+    ariaDescribedBy: String,
     ariaValueTextFormatter: Function,
     onMouseenter: { type: Function as PropType<(payload: MouseEvent) => void> },
     onMouseleave: { type: Function as PropType<(payload: MouseEvent) => void> },
@@ -95,6 +96,7 @@ export default defineComponent({
         tabindex,
         ariaLabel,
         ariaLabelledBy,
+        ariaDescribedBy,
         ariaValueTextFormatter,
         onMouseenter,
         onMouseleave,
@@ -139,6 +141,7 @@ export default defineComponent({
           {...handleProps}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
           aria-valuetext={ariaValueText}
         />
       );

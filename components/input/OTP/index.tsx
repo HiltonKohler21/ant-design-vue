@@ -59,6 +59,7 @@ export const otpProps = () => ({
   disabled: { type: Boolean, default: undefined },
   status: String as PropType<InputStatus>,
   autoFocus: { type: Boolean, default: undefined },
+  autoComplete: String,
   mask: { type: [Boolean, String] as PropType<boolean | string>, default: undefined },
   type: String,
   onInput: Function as PropType<(value: string[]) => void>,
@@ -186,6 +187,7 @@ const OTP = defineComponent({
         mask: props.mask,
         type: props.type,
         inputMode: props.inputMode,
+        autoComplete: props.autoComplete ?? otpConfig.value?.autoComplete,
       };
 
       const semanticInfo = {

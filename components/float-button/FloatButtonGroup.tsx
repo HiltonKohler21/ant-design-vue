@@ -37,6 +37,7 @@ const TriggerContextProvider = defineComponent({
   setup(props, { slots }) {
     useProvideFloatButtonGroupContext({
       shape: computed(() => props.shape),
+      individual: computed(() => true),
       classNames: computed(() => props.classNames),
       styles: computed(() => props.styles),
     });
@@ -123,6 +124,7 @@ const FloatButtonGroup = defineComponent({
 
     useProvideFloatButtonGroupContext({
       shape: computed(() => props.shape),
+      individual: computed(() => (props.shape ?? 'circle') === 'circle'),
       classNames: itemSemanticClassNames,
       styles: itemSemanticStyles,
     });
@@ -220,6 +222,7 @@ const FloatButtonGroup = defineComponent({
           [`${groupPrefixCls}-rtl`]: direction.value === 'rtl',
           [`${groupPrefixCls}-${shape}`]: shape,
           [`${groupPrefixCls}-${shape}-shadow`]: !trigger,
+          [`${groupPrefixCls}-individual`]: shape === 'circle',
           [`${groupPrefixCls}-${mergedPlacement.value}`]: isMenuMode,
           [`${groupPrefixCls}-menu-mode`]: isMenuMode,
         },

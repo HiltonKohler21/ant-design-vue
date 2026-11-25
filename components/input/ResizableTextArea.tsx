@@ -152,6 +152,7 @@ const ResizableTextArea = defineComponent({
         'classNames',
         'styles',
         'rootClassName',
+        'autoComplete',
       ]);
       const resolvedClassNames = resolveSemanticValue(props.classNames, { props });
       const resolvedStyles = resolveSemanticValue(props.styles, { props });
@@ -165,9 +166,15 @@ const ResizableTextArea = defineComponent({
       });
       const mergedAutoSizeStyle = needAutoSize.value ? autoSizeStyle.value : null;
       const style = [attrs.style, semanticStyle, textareaStyles.value, mergedAutoSizeStyle];
+      const resolvedAutoComplete =
+        props.autoComplete ??
+        (props as any).autocomplete ??
+        (attrs.autocomplete as string) ??
+        (attrs.autoComplete as string);
       const textareaProps: any = {
         ...otherProps,
-        ...attrs,
+        ...omit(attrs, ['autoComplete']),
+        autocomplete: resolvedAutoComplete,
         style,
         class: cls,
       };

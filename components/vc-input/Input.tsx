@@ -163,8 +163,8 @@ export default defineComponent({
       ]);
       const inputProps = {
         ...otherProps,
-        ...attrs,
-        autocomplete,
+        ...omit(attrs, ['autoComplete']),
+        autocomplete: autocomplete ?? (props as any).autoComplete ?? (attrs.autoComplete as string),
         onChange: handleChange,
         onInput: handleChange,
         onFocus: handleFocus,

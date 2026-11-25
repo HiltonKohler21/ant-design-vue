@@ -271,9 +271,16 @@ export default defineComponent({
         !hasOuterWrapper && (textAreaConfig.value?.style || mergedSemanticStyles.root)
           ? [textAreaConfig.value?.style, mergedSemanticStyles.root, customStyle]
           : customStyle;
+      const resolvedAutoComplete =
+        props.autoComplete ??
+        (props as any).autocomplete ??
+        (attrs.autocomplete as string) ??
+        textAreaConfig.value?.autoComplete ??
+        (configProvider as any).input?.value?.autoComplete;
       const resizeProps = {
-        ...omit(props, ['allowClear', 'rootClassName']),
+        ...omit(props, ['allowClear', 'rootClassName', 'autoComplete']),
         ...attrs,
+        autocomplete: resolvedAutoComplete,
         classNames: mergedSemanticClassNames,
         styles: mergedSemanticStyles,
         style: mergedTextareaStyle,

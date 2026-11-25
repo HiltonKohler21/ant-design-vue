@@ -130,6 +130,8 @@ export function cascaderProps<DataNodeType extends CascaderOptionType = Cascader
     variant: { type: String as PropType<Variant> },
     /** 展开/收起回调（antd 5.25 起替代 onDropdownVisibleChange） */
     onOpenChange: { type: Function as PropType<(open: boolean) => void> },
+    /** @deprecated Please use `onOpenChange` instead */
+    onPopupVisibleChange: { type: Function as PropType<(open: boolean) => void> },
     /** 选择后自动清除搜索值 */
     autoClearSearchValue: { type: Boolean, default: true },
     rootClassName: String,
@@ -213,6 +215,7 @@ const Cascader = defineComponent({
     deprecated(props.bordered === undefined, 'bordered', 'variant', 'Cascader');
     const handleOpenChange = (open: boolean) => {
       props.onDropdownVisibleChange?.(open);
+      props.onPopupVisibleChange?.(open);
       emit('openChange', open);
       emit('update:open', open);
     };
@@ -404,6 +407,7 @@ const Cascader = defineComponent({
               'variant',
               'bordered',
               'onOpenChange',
+              'onPopupVisibleChange',
               'rootClassName',
               'classNames',
               'styles',

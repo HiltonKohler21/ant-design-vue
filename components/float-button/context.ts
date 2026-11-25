@@ -9,6 +9,7 @@ import type {
 
 export interface FloatButtonGroupContext {
   shape: Ref<FloatButtonShape | undefined>;
+  individual?: Ref<boolean | undefined>;
   classNames?: Ref<FloatButtonSemanticClassNames | undefined>;
   styles?: Ref<FloatButtonSemanticStyles | undefined>;
 }
@@ -21,5 +22,5 @@ export const useProvideFloatButtonGroupContext = (props: FloatButtonGroupContext
 };
 
 export const useInjectFloatButtonGroupContext = () => {
-  return inject(contextKey, { shape: ref() } as FloatButtonGroupContext);
+  return inject(contextKey, { shape: ref(), individual: ref(true) } as FloatButtonGroupContext);
 };

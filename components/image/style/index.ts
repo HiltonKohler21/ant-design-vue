@@ -6,6 +6,7 @@ import { initZoomMotion, initFadeMotion } from '../../style/motion';
 import type { FullToken, GenerateStyle } from '../../theme/internal';
 import { genComponentStyleHook, mergeToken } from '../../theme/internal';
 import { resetComponent, textEllipsis } from '../../style';
+import { inkFlow1, inkFlow2, inkFlow3, progressActive } from './progressAnimation';
 
 export interface ComponentToken {
   /**
@@ -367,6 +368,131 @@ export const prepareComponentToken = (token: any): ComponentToken => ({
   progressAnimationDuration: '3s',
 });
 
+const genImageProgressStyle: GenerateStyle<ImageToken> = (token: ImageToken): CSSObject => {
+  const { componentCls, motionDurationMid, motionEaseInOut, progressAnimationDuration } = token;
+
+  const inkBaseStyle: CSSObject = {
+    position: 'absolute',
+    width: '150%',
+    height: '150%',
+    left: '-25%',
+    top: '-25%',
+    animationTimingFunction: motionEaseInOut,
+    animationIterationCount: 'infinite',
+    pointerEvents: 'none',
+    willChange: 'transform, opacity',
+  };
+
+  return {
+    [`${componentCls}-progress-wrapper`]: {
+      position: 'relative',
+      display: 'inline-block',
+      overflow: 'hidden',
+      borderRadius: 'inherit',
+      backgroundColor: token.colorBgBase,
+      backdropFilter: 'blur(8px)',
+
+      [`${componentCls}-progress-ink-1`]: {
+        ...inkBaseStyle,
+        background:
+          'radial-gradient(ellipse 65% 55% at 25% 30%, rgba(100, 180, 255, 0.98) 0%, transparent 55%)',
+        animationName: inkFlow1,
+        animationDuration: progressAnimationDuration,
+        filter: 'blur(40px)',
+
+        '&::before': {
+          content: '""',
+          ...inkBaseStyle,
+          background:
+            'radial-gradient(ellipse 60% 65% at 75% 45%, rgba(180, 140, 255, 0.95) 0%, transparent 50%)',
+          animationName: inkFlow2,
+          animationDuration: `calc(${progressAnimationDuration} + 2s)`,
+          animationDelay: '-1s',
+          filter: 'blur(45px)',
+        },
+
+        '&::after': {
+          content: '""',
+          ...inkBaseStyle,
+          background:
+            'radial-gradient(ellipse 55% 50% at 50% 70%, rgba(100, 220, 220, 0.9) 0%, transparent 45%)',
+          animationName: inkFlow3,
+          animationDuration: `calc(${progressAnimationDuration} + 0.5s)`,
+          animationDelay: '-2s',
+          filter: 'blur(38px)',
+        },
+      },
+
+      [`${componentCls}-progress-ink-2`]: {
+        ...inkBaseStyle,
+        background:
+          'radial-gradient(ellipse 45% 40% at 60% 20%, rgba(255, 150, 200, 0.88) 0%, transparent 45%)',
+        animationName: inkFlow3,
+        animationDuration: `calc(${progressAnimationDuration} + 1.5s)`,
+        animationDelay: '-3s',
+        filter: 'blur(42px)',
+
+        '&::before': {
+          content: '""',
+          ...inkBaseStyle,
+          background:
+            'radial-gradient(ellipse 50% 55% at 20% 75%, rgba(160, 190, 255, 0.88) 0%, transparent 50%)',
+          animationName: inkFlow1,
+          animationDuration: `calc(${progressAnimationDuration} + 2.5s)`,
+          animationDelay: '-2.5s',
+          filter: 'blur(35px)',
+        },
+      },
+
+      [`${componentCls}-progress-content`]: {
+        position: 'absolute',
+        top: '50%',
+        left: 0,
+        transform: 'translateY(-50%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '100%',
+        paddingInline: token.paddingLG,
+        textAlign: 'center',
+        fontSize: token.fontSize,
+        color: token.colorTextSecondary,
+        zIndex: 1,
+      },
+
+      [`${componentCls}-progress-rail`]: {
+        width: '100%',
+        height: 6,
+        marginTop: token.marginSM,
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        borderRadius: token.borderRadiusXS,
+        overflow: 'hidden',
+        backdropFilter: 'blur(4px)',
+
+        '&::before': {
+          content: '""',
+          display: 'block',
+          height: '100%',
+          width: 'var(--progress-percent, 0%)',
+          background:
+            'linear-gradient(90deg, rgba(120, 170, 255, 0.85) 0%, rgba(160, 150, 245, 0.85) 40%, rgba(130, 200, 220, 0.85) 60%, rgba(120, 170, 255, 0.85) 100%)',
+          backgroundSize: '200% 100%',
+          borderRadius: token.calc(token.borderRadiusXS).div(2).equal(),
+          transition: `width ${motionDurationMid} ease`,
+          animationName: progressActive,
+          animationDuration: progressAnimationDuration,
+          animationTimingFunction: 'linear',
+          animationIterationCount: 'infinite',
+        },
+      },
+
+      [`${componentCls}-progress-indicator`]: {
+        marginTop: token.marginXS,
+      },
+    },
+  };
+};
+
 // ============================== Export ==============================
 export default genComponentStyleHook(
   'Image',
@@ -381,6 +507,7 @@ export default genComponentStyleHook(
 
     return [
       genImageStyle(imageToken),
+      genImageProgressStyle(imageToken),
       genImagePreviewStyle(imageToken),
       genModalMaskStyle(mergeToken<ImageToken>(imageToken, { componentCls: previewCls })),
       genPreviewMotion(imageToken),

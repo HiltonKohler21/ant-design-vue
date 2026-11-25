@@ -130,7 +130,7 @@ export default defineComponent({
     });
     watchEffect(() => {
       props.scrollLocker?.unLock();
-      if (animatedVisible.value) {
+      if (animatedVisible.value && props.scrollLock !== false) {
         props.scrollLocker?.lock();
       }
     });

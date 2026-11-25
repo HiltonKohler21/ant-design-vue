@@ -66,6 +66,7 @@ const inputProps = () => {
       type: Function as PropType<() => void>,
     },
     variant: { type: String as PropType<Variant> },
+    autoComplete: String,
     rootClassName: String,
     /** 语义化 classNames（支持对象与函数式）：root / prefix / suffix / input / count */
     classNames: {

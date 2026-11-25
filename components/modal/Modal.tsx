@@ -152,6 +152,7 @@ export const modalProps = () => ({
   wrapProps: Object,
   focusTriggerAfterClose: { type: Boolean, default: undefined },
   focusable: objectType<ModalFocusableConfig>(),
+  scrollLock: { type: Boolean, default: undefined },
   modalRender: Function as PropType<(arg: { originVNode: VueNode }) => VueNode>,
   mousePosition: objectType<MousePosition>(),
 });
@@ -642,6 +643,7 @@ export default defineComponent({
             props.afterOpenChange?.(false);
           }}
           focusTriggerAfterClose={mergedFocusTriggerAfterClose.value}
+          scrollLock={props.scrollLock}
           destroyOnClose={destroyOnHidden ?? props.destroyOnClose}
           transitionName={getTransitionName(rootPrefixCls.value, 'zoom', props.transitionName)}
           maskTransitionName={getTransitionName(

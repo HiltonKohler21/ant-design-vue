@@ -88,6 +88,11 @@ export interface DrawerMaskConfig {
 
 export type DrawerMaskType = boolean | DrawerMaskConfig;
 
+export interface DrawerFocusableConfig {
+  trap?: boolean;
+  focusTriggerAfterClose?: boolean;
+}
+
 export interface DrawerResizableConfig {
   onResizeStart?: () => void;
   onResize?: (size: number) => void;
@@ -100,6 +105,7 @@ const defaultPushState: PushState = { distance: 180 };
 type getContainerFunc = () => HTMLElement;
 export const drawerProps = () => ({
   autofocus: { type: Boolean, default: undefined },
+  focusable: objectType<DrawerFocusableConfig>(),
   closable: {
     type: [Boolean, Object] as PropType<DrawerClosable>,
     default: undefined,
@@ -309,11 +315,33 @@ const Drawer = defineComponent({
       }
     });
 
+    const lastActiveElementRef = shallowRef<HTMLElement | null>(null);
+    const mergedFocusable = computed<DrawerFocusableConfig>(() => ({
+      ...(drawerConfig.value.focusable || {}),
+      ...(props.focusable || {}),
+    }));
+
     watch(
       visible,
-      () => {
-        if (!visible.value) {
+      (isOpen, prevOpen) => {
+        if (isOpen && !prevOpen && typeof document !== 'undefined') {
+          lastActiveElementRef.value = document.activeElement as HTMLElement | null;
+        }
+        if (!isOpen) {
           cleanupResizeListeners();
+          if (
+            prevOpen &&
+            mergedFocusable.value.focusTriggerAfterClose !== false &&
+            props.focusable !== undefined &&
+            lastActiveElementRef.value
+          ) {
+            try {
+              lastActiveElementRef.value.focus({ preventScroll: true });
+            } catch {
+              // ignore focus error
+            }
+            lastActiveElementRef.value = null;
+          }
         }
         if (parentDrawerOpts) {
           if (visible.value) {
@@ -900,6 +928,7 @@ const Drawer = defineComponent({
           'size',
           'maxSize',
           'resizable',
+          'focusable',
           'drawerRender',
           'closeIcon',
           'closable',

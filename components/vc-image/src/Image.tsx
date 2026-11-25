@@ -72,6 +72,14 @@ export interface ImageSemanticClassNames {
   root?: string;
   image?: string;
   cover?: string;
+  placeholder?: {
+    progress?: {
+      root?: string;
+      content?: string;
+      rail?: string;
+      indicator?: string;
+    };
+  };
   popup?: PreviewPopupClassNames;
 }
 
@@ -79,6 +87,14 @@ export interface ImageSemanticStyles {
   root?: CSSProperties;
   image?: CSSProperties;
   cover?: CSSProperties;
+  placeholder?: {
+    progress?: {
+      root?: CSSProperties;
+      content?: CSSProperties;
+      rail?: CSSProperties;
+      indicator?: CSSProperties;
+    };
+  };
   popup?: PreviewPopupStyles;
 }
 

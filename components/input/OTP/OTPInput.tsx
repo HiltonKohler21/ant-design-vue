@@ -20,6 +20,7 @@ const otpInputProps = () => ({
   size: String as PropType<SizeType>,
   htmlSize: Number,
   autoFocus: { type: Boolean, default: undefined },
+  autoComplete: String,
   onChange: Function as PropType<(index: number, txt: string) => void>,
   onActiveChange: Function as PropType<(nextIndex: number) => void>,
 });
@@ -78,7 +79,16 @@ export default defineComponent({
           </span>
         )}
         <Input
-          {...omit(props, ['index', 'onChange', 'onActiveChange', 'mask', 'value', 'className'])}
+          {...omit(props, [
+            'index',
+            'onChange',
+            'onActiveChange',
+            'mask',
+            'value',
+            'className',
+            'autoComplete',
+          ])}
+          autocomplete={props.autoComplete}
           aria-label={`OTP Input ${props.index + 1}`}
           type={(props.type ?? (props.mask === true ? 'password' : 'text')) as any}
           ref={inputRef}

@@ -99,12 +99,14 @@ const FloatButton = defineComponent({
         onClick?.(e);
       };
 
+      const mergedIndividual = groupContext.individual?.value ?? true;
       const classString = classNames(
         prefixCls.value,
         `${prefixCls.value}-${type}`,
         `${prefixCls.value}-${mergeShape.value}`,
         {
           [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+          [`${prefixCls.value}-individual`]: mergedIndividual,
         },
         contextClassName.value,
         mergedClassNames.value.root,

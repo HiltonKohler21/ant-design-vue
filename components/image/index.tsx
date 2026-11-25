@@ -18,11 +18,27 @@ import defaultLocale from '../locale/en_US';
 import useConfigInject from '../config-provider/hooks/useConfigInject';
 import { mergeSemanticClassNames, mergeSemanticStyles } from '../config-provider/context';
 import PreviewGroup, { icons } from './PreviewGroup';
+import ImageProgress from './Progress';
+import type { ProgressClassNames, ProgressStyles } from './Progress';
 import EyeOutlined from '@ant-design/icons-vue/EyeOutlined';
 import { getTransitionName } from '../_util/transition';
 import useStyle from './style';
 import classNames from '../_util/classNames';
 import { isPlainObj, normalizePreviewMask, resolveSemantic } from './util';
+import type { VueNode } from '../_util/type';
+import { isVNode } from 'vue';
+
+export interface ImageProgressConfig {
+  percent?: number;
+  /** Custom render function, receives default progress UI and percent */
+  render?: (progress: VueNode, percent: number) => VueNode;
+}
+
+export type ImagePlaceholderConfig = {
+  progress?: boolean | ImageProgressConfig;
+};
+
+export type ImagePlaceholderType = VueNode | ImagePlaceholderConfig;
 
 export type ImageClassNamesType =
   | ImageSemanticClassNames
@@ -32,8 +48,25 @@ export type ImageStylesType =
   | ImageSemanticStyles
   | ((info: { props: ImageProps }) => ImageSemanticStyles);
 
+function isPlaceholderConfig(val: unknown): val is ImagePlaceholderConfig {
+  return (
+    typeof val === 'object' &&
+    val !== null &&
+    !Array.isArray(val) &&
+    !isVNode(val) &&
+    'progress' in val
+  );
+}
+
 export const imageProps = () => ({
   ...vcImageProps(),
+  /** @deprecated Use `styles.root` instead */
+  wrapperStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
+  rootStyle: { type: Object as PropType<CSSProperties>, default: undefined as CSSProperties },
+  placeholder: {
+    type: [Boolean, Object, String, Number, Array, Function] as PropType<ImagePlaceholderType>,
+    default: undefined,
+  },
   classNames: [Object, Function] as PropType<ImageClassNamesType>,
   styles: [Object, Function] as PropType<ImageStylesType>,
 });
@@ -43,7 +76,13 @@ export type ImageProps = Partial<
     Omit<ImgHTMLAttributes, 'placeholder' | 'onClick'>
 >;
 
-export type { ImagePreviewType, ImageSemanticClassNames, ImageSemanticStyles };
+export type {
+  ImagePreviewType,
+  ImageSemanticClassNames,
+  ImageSemanticStyles,
+  ProgressClassNames,
+  ProgressStyles,
+};
 
 const Image = defineComponent({
   name: 'AImage',
@@ -147,16 +186,66 @@ const Image = defineComponent({
           ? { popup: { mask: previewMaskInfo.value.maskClassName } }
           : undefined,
       );
-      const mergedSemanticStyles = mergeSemanticStyles<ImageSemanticStyles>(
+      const mergedRootStyle =
+        props.wrapperStyle || props.rootStyle
+          ? { ...props.wrapperStyle, ...props.rootStyle }
+          : undefined;
+      const baseSemanticStyles = mergeSemanticStyles<ImageSemanticStyles>(
         resolveSemantic(contextImage.value?.styles, mergedPropsForSemantic),
+        mergedRootStyle ? { root: mergedRootStyle } : undefined,
+      );
+      const mergedSemanticStyles = mergeSemanticStyles<ImageSemanticStyles>(
+        baseSemanticStyles,
         resolveSemantic(props.styles, mergedPropsForSemantic),
       );
+
+      // ============================= Progress ==============================
+      const rawPlaceholder = props.placeholder;
+      const placeholderConfig = isPlaceholderConfig(rawPlaceholder) ? rawPlaceholder : undefined;
+      const progressOption = placeholderConfig?.progress;
+      const showProgressOverlay = Boolean(progressOption);
+      const progressConfig: ImageProgressConfig =
+        typeof progressOption === 'object' && progressOption !== null ? progressOption : {};
+      const placeholderNode = placeholderConfig ? undefined : rawPlaceholder;
+      const shouldRenderPlaceholderOverlay = Boolean(
+        !showProgressOverlay && (placeholderNode || slots.placeholder) && !props.src,
+      );
+
+      if (showProgressOverlay || shouldRenderPlaceholderOverlay) {
+        const mergedProgressRender = shouldRenderPlaceholderOverlay
+          ? () => (slots.placeholder ? slots.placeholder() : placeholderNode)
+          : progressConfig.render;
+
+        return wrapSSR(
+          <ImageProgress
+            prefixCls={prefixCls.value}
+            percent={progressConfig.percent}
+            render={mergedProgressRender}
+            classNames={mergedSemanticClassNames?.placeholder?.progress}
+            styles={mergedSemanticStyles?.placeholder?.progress}
+            rootClassName={classNames(
+              props.rootClassName,
+              mergedSemanticClassNames?.root,
+              mergedClass,
+              hashId.value,
+            )}
+            rootStyle={
+              mergedSemanticStyles?.root || mergedStyle
+                ? { ...mergedStyle, ...mergedSemanticStyles?.root }
+                : undefined
+            }
+            width={props.width}
+            height={props.height}
+          />,
+        );
+      }
 
       return wrapSSR(
         <ImageInternal
           {...{
             ...attrs,
             ...props,
+            placeholder: placeholderNode,
             prefixCls: prefixCls.value,
             fallback: mergedFallback.value,
             ...(mergedClass ? { class: mergedClass } : {}),

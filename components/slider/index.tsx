@@ -107,8 +107,10 @@ export const sliderProps = () => ({
   autofocus: booleanType(),
   handleStyle: someType<CSSProperties[] | CSSProperties>([Array, Object]),
   keyboard: { type: Boolean, default: true },
+  startPoint: Number,
   ariaLabelForHandle: String,
   ariaLabelledByForHandle: String,
+  ariaDescribedByForHandle: String,
   ariaRequired: { type: Boolean, default: undefined },
   ariaValueTextFormatterForHandle: functionType<(value: number) => string>(),
   autoAdjustOverflow: { type: Boolean, default: undefined },
@@ -140,6 +142,7 @@ export const sliderProps = () => ({
 export type SliderProps = Partial<ExtractPropTypes<ReturnType<typeof sliderProps>>>;
 export type SliderSingleProps = SliderProps & {
   range?: false;
+  startPoint?: number;
   value?: number;
   defaultValue?: number;
 };
