@@ -191,7 +191,7 @@ Fill in this form to create a new account for you.
 
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const residences: CascaderProps['options'] = [
   {

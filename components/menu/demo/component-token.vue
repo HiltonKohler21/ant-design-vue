@@ -68,8 +68,8 @@ import {
   PieChartOutlined,
   SettingOutlined,
 } from '@ant-design/icons-vue';
-import { theme } from 'ant-design-vue';
-import type { ConfigProviderProps, MenuProps } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps, MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const current = ref<string[]>(['mail']);
 const selectedKeys1 = ref<string[]>(['1']);

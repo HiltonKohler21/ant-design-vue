@@ -54,7 +54,7 @@ You can customize the [semantic dom](#semantic-dom) style of the Dropdown by pas
 <script lang="ts" setup>
 import { h } from 'vue';
 import { DownOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import type { DropdownProps } from 'ant-design-vue';
+import type { DropdownProps } from '@hiltonkohler21/ant-design-vue';
 
 const items = [
   {

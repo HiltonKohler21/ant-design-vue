@@ -71,8 +71,8 @@ import {
   PieChartOutlined,
   TeamOutlined,
 } from '@ant-design/icons-vue';
-import { theme } from 'ant-design-vue';
-import type { MenuProps } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 

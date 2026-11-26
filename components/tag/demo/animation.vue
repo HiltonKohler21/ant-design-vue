@@ -62,7 +62,7 @@ Animating the Tag add and remove transitions with Vue's built-in `<TransitionGro
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 

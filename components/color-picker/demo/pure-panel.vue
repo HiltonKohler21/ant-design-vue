@@ -24,7 +24,7 @@ Pure Panel
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { ColorPicker } from 'ant-design-vue';
+import { ColorPicker } from '@hiltonkohler21/ant-design-vue';
 
 const PureRenderColorPicker = ColorPicker._InternalPanelDoNotUseOrYouWillBeFired;
 

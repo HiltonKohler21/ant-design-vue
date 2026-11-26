@@ -22,7 +22,7 @@ The icon can be customized to any vue node or () => vue node.
 </template>
 <script lang="ts" setup>
 import { SmileOutlined } from '@ant-design/icons-vue';
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 import { h } from 'vue';
 
 const [api, contextHolder] = notification.useNotification();

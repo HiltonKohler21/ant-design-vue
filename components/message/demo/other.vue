@@ -24,7 +24,7 @@ Messages of success, error and warning types.
   </a-space>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 const success = () => {
   message.success('This is a success message');
 };

@@ -68,7 +68,7 @@ Use the operating area and customize the sub-nodes, suitable for use in the need
   </div>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 const onBack = () => {
   message.info('Back clicked');

@@ -33,7 +33,7 @@ Customize the indicator `size` and `align` via the `indicator` prop.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TabsProps } from 'ant-design-vue';
+import type { TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 type Align = 'start' | 'center' | 'end';
 

@@ -36,7 +36,7 @@ You can customize the [semantic dom](#semantic-dom) style of Slider by passing o
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { SliderProps } from 'ant-design-vue';
+import type { SliderProps } from '@hiltonkohler21/ant-design-vue';
 
 const horizontalValue = ref(30);
 const verticalValue = ref(30);

@@ -1199,8 +1199,8 @@ import { computed, defineComponent, h, ref } from 'vue';
 import type { CSSProperties } from 'vue';
 import { InboxOutlined } from '@ant-design/icons-vue';
 import dayjs from 'dayjs';
-import { App, Button, Input } from 'ant-design-vue';
-import type { ConfigProviderProps, TourProps } from 'ant-design-vue';
+import { App, Button, Input } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps, TourProps } from '@hiltonkohler21/ant-design-vue';
 
 const InputOTP = Input.OTP;
 

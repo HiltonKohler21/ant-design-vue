@@ -29,7 +29,7 @@ Use `titleSpan` to set the title span space.
 </template>
 
 <script lang="ts" setup>
-import type { TimelineProps } from 'ant-design-vue';
+import type { TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: TimelineProps['items'] = [
   { title: '05:10', content: 'Create a services' },

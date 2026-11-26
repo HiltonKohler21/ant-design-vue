@@ -26,7 +26,7 @@ You can customize the [semantic dom](#semantic-dom) style of divider by passing 
 </template>
 
 <script lang="ts" setup>
-import type { DividerProps } from 'ant-design-vue';
+import type { DividerProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNamesObject: DividerProps['classNames'] = {
   root: 'demo-divider-root',

@@ -20,7 +20,7 @@ Achieve richer custom styles by using semantic structure.
 </template>
 
 <script lang="ts" setup>
-import type { TimelineProps } from 'ant-design-vue';
+import type { TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: TimelineProps['items'] = [
   {

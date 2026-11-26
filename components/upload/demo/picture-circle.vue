@@ -38,7 +38,7 @@ Display circular thumbnail picture wall with `listType="picture-circle"`.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import type { UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const sampleImageUrl =
   'data:image/svg+xml;utf8,' +

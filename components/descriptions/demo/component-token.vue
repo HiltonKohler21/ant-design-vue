@@ -70,7 +70,11 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ConfigProviderProps, DescriptionsProps, RadioChangeEvent } from 'ant-design-vue';
+import type {
+  ConfigProviderProps,
+  DescriptionsProps,
+  RadioChangeEvent,
+} from '@hiltonkohler21/ant-design-vue';
 
 const size = ref<DescriptionsProps['size']>('default');
 

@@ -30,8 +30,8 @@ Use `optionRender` to customize the rendering dropdown options.
 
 <script lang="ts" setup>
 import { h, ref } from 'vue';
-import { Space } from 'ant-design-vue';
-import type { SelectProps } from 'ant-design-vue';
+import { Space } from '@hiltonkohler21/ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const value = ref<string[]>(['happy']);
 

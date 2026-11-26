@@ -41,7 +41,7 @@ You can config SubMenu theme with `theme` prop to enable different theme color e
 <script lang="ts" setup>
 import { computed, ref, VueElement, ComputedRef, h } from 'vue';
 import { MailOutlined } from '@ant-design/icons-vue';
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const selectedKeys = ref<string[]>(['1']);
 const openKeys = ref<string[]>(['sub1']);

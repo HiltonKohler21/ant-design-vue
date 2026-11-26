@@ -73,7 +73,7 @@ There are `outlined`, `filled` and `borderless`, totally three variants to choos
 
 <script lang="ts" setup>
 import type { CSSProperties } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const sharedStyle: CSSProperties = {
   flex: '1 1 50%',

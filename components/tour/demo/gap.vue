@@ -62,7 +62,7 @@ Using `gap` to control the radius of highlight area and the offset between highl
 
 <script lang="ts" setup>
 import { computed, createVNode, ref } from 'vue';
-import type { TourProps } from 'ant-design-vue';
+import type { TourProps } from '@hiltonkohler21/ant-design-vue';
 
 const tourNodeRef = ref<HTMLDivElement | null>(null);
 const radius = ref<number>(8);

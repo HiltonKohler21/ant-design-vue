@@ -37,8 +37,8 @@ You can set the `maxCount` prop to control the max number of items can be select
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
-import { TreeSelect } from 'ant-design-vue';
-import type { TreeSelectProps } from 'ant-design-vue';
+import { TreeSelect } from '@hiltonkohler21/ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const MAX_COUNT = 3;
 const value = ref<string[]>(['child1-1']);

@@ -39,7 +39,7 @@ You can customize the [semantic dom](#semantic-dom) style of Radio by passing ob
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { RadioProps } from 'ant-design-vue';
+import type { RadioProps } from '@hiltonkohler21/ant-design-vue';
 
 const value = ref<'styles' | 'classNames'>('styles');
 

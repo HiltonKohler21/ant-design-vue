@@ -59,8 +59,8 @@ You can customize the [semantic dom](#semantic-dom) style of Input by passing ob
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Input } from 'ant-design-vue';
-import type { InputProps, TextAreaProps } from 'ant-design-vue';
+import { Input } from '@hiltonkohler21/ant-design-vue';
+import type { InputProps, TextAreaProps } from '@hiltonkohler21/ant-design-vue';
 
 const AInputOtp = Input.OTP;
 const textareaVal = ref('TextArea');

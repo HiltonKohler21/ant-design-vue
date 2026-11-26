@@ -34,7 +34,7 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const activeKey = ref<string[]>([]);
 const text = 'Ant Design! '.repeat(26);

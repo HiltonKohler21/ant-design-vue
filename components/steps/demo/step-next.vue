@@ -36,7 +36,7 @@ Cooperate with the content and buttons, to represent the progress of a process.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 const current = ref<number>(0);
 const next = () => {
   current.value++;

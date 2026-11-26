@@ -106,7 +106,7 @@ Use `variant` to configure the visual variant of form controls inside `Form`, su
 </template>
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import type { FormProps, TreeSelectProps, CascaderProps } from 'ant-design-vue';
+import type { FormProps, TreeSelectProps, CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const labelCol = { xs: { span: 24 }, sm: { span: 6 } };
 const wrapperCol = { xs: { span: 24 }, sm: { span: 14 } };

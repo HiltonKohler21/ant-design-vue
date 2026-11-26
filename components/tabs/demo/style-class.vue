@@ -36,7 +36,7 @@ You can customize the [semantic dom](#semantic-dom) style of Tabs by passing obj
 </template>
 
 <script lang="ts" setup>
-import type { TabsProps } from 'ant-design-vue';
+import type { TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 const tabsClassNames: TabsProps['classNames'] = {
   root: 'demo-tabs-semantic-root',

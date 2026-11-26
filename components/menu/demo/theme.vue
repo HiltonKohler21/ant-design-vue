@@ -44,7 +44,7 @@ import {
   AppstoreOutlined,
   SettingOutlined,
 } from '@ant-design/icons-vue';
-import type { MenuTheme } from 'ant-design-vue';
+import type { MenuTheme } from '@hiltonkohler21/ant-design-vue';
 const theme = ref<MenuTheme>('dark');
 const selectedKeys = ref(['1']);
 const openKeys = ref(['sub1']);

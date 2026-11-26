@@ -33,7 +33,7 @@ Use Drawer to quickly preview details of an object, such as those in a list.
         <template #actions><a @click="showDrawer">View Profile</a></template>
         <a-list-item-meta description="Progresser XTech">
           <template #title>
-            <a href="https://www.antdv.com/">{{ item.name }}</a>
+            <a href="https://hiltonkohler21.github.io/ant-design-vue/">{{ item.name }}</a>
           </template>
           <template #avatar>
             <a-avatar src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png" />
@@ -119,8 +119,8 @@ Use Drawer to quickly preview details of an object, such as those in a list.
       <a-col :span="24">
         <description-item title="Github">
           <template #content>
-            <a href="https://github.com/vueComponent/ant-design-vue">
-              github.com/vueComponent/ant-design-vue
+            <a href="https://github.com/HiltonKohler21/ant-design-vue">
+              github.com/HiltonKohler21/ant-design-vue
             </a>
           </template>
         </description-item>

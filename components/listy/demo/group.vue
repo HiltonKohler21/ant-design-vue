@@ -45,7 +45,7 @@ Use `group` to derive a group key from each item and render group headers. Enabl
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ListyRef } from 'ant-design-vue';
+import type { ListyRef } from '@hiltonkohler21/ant-design-vue';
 
 interface Contact {
   id: number;

@@ -20,7 +20,7 @@ Customize and extend the panel content layout via `panelRender`.
 </template>
 <script lang="ts" setup>
 import { ref, h } from 'vue';
-import { Button, Divider, Space } from 'ant-design-vue';
+import { Button, Divider, Space } from '@hiltonkohler21/ant-design-vue';
 
 const color = ref('#1677ff');
 

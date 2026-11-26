@@ -29,8 +29,8 @@ Customize the progress bar color by configuring the component token.
 </template>
 
 <script lang="ts" setup>
-import { notification } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const COLOR_BG = 'linear-gradient(135deg, #6253e1, #04befe)';
 

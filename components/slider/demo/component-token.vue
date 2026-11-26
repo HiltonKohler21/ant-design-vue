@@ -35,7 +35,7 @@ Component Token Debug.
 <script lang="ts" setup>
 import { createVNode } from 'vue';
 import type { CSSProperties } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const verticalStyle: CSSProperties = {
   display: 'inline-block',

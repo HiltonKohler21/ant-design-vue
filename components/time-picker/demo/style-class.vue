@@ -29,7 +29,7 @@ You can customize the [semantic dom](#semantic-dom) style of TimePicker by passi
 </template>
 
 <script lang="ts" setup>
-import type { TimePickerProps } from 'ant-design-vue';
+import type { TimePickerProps } from '@hiltonkohler21/ant-design-vue';
 
 const pickerClassNames: TimePickerProps['classNames'] = {
   root: 'custom-time-picker-root',

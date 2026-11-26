@@ -20,7 +20,7 @@ import ControlsDemo from '../demo/controls.vue';
 import RenderPanelDemo from '../demo/render-panel.vue';
 import DebugTokenDemo from '../demo/debug-token.vue';
 
-jest.mock('ant-design-vue', () => ({
+jest.mock('@hiltonkohler21/ant-design-vue', () => ({
   InputNumber: require('..').default,
 }));
 

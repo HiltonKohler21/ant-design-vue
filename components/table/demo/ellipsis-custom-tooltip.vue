@@ -31,7 +31,7 @@ Ellipsis cell content via setting `column.ellipsis.showTitle`, use `Tooltip` ins
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

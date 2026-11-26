@@ -57,7 +57,7 @@ Call form method via `ref` to interact with form data.
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import type { FormInstance } from 'ant-design-vue';
+import type { FormInstance } from '@hiltonkohler21/ant-design-vue';
 
 interface FormState {
   note: string;

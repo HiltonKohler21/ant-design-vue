@@ -50,7 +50,7 @@ By using the `itemRender` slot with native HTML5 drag-and-drop events, we can re
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import type { UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const sampleImageUrl =
   'data:image/svg+xml;utf8,' +

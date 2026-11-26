@@ -130,7 +130,11 @@ Component Token
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps, TableColumnsType, TableProps } from 'ant-design-vue';
+import type {
+  ConfigProviderProps,
+  TableColumnsType,
+  TableProps,
+} from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

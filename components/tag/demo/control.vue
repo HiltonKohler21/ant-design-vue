@@ -64,7 +64,7 @@ Generating a set of Tags by array, you can add and remove dynamically.
 import { computed, nextTick, ref } from 'vue';
 import type { CSSProperties } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 

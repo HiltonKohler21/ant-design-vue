@@ -27,7 +27,7 @@ Use `column` to set shared column props on the table and override them per colum
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

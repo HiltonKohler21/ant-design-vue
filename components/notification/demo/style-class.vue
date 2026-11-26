@@ -26,7 +26,7 @@ You can customize the [semantic dom](#semantic-dom) style of Notification with `
 </template>
 
 <script lang="ts" setup>
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 
 type NotificationArgsProps = Parameters<typeof notification.open>[0];
 

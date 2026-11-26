@@ -27,7 +27,7 @@ Debug collapsed icon layout when `collapsedIconSize` is enlarged. Red outlines s
 <script lang="ts" setup>
 import { h } from 'vue';
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps, MenuProps } from 'ant-design-vue';
+import type { ConfigProviderProps, MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const themeConfig: ConfigProviderProps['theme'] = {
   components: {

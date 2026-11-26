@@ -189,7 +189,7 @@ Compact Mode for form component.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { CopyOutlined } from '@ant-design/icons-vue';
-import { TreeSelectProps } from 'ant-design-vue';
+import { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeData = ref<TreeSelectProps['treeData']>([
   {

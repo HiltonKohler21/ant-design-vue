@@ -32,10 +32,10 @@ Use `progress` for customize progress bar.
   </a-upload>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
-import type { UploadChangeParam, UploadProps } from 'ant-design-vue';
+import type { UploadChangeParam, UploadProps } from '@hiltonkohler21/ant-design-vue';
 const handleChange = (info: UploadChangeParam) => {
   if (info.file.status !== 'uploading') {
     console.log(info.file, info.fileList);

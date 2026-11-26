@@ -27,7 +27,7 @@ Allows custom rendering of the currently selected label, which can be used for v
 
 <script lang="ts" setup>
 import { h, ref } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const value = ref<string>('1');
 

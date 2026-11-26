@@ -102,7 +102,7 @@ A button is on the left, and a related functional menu is on the right. You can 
 </template>
 <script lang="ts" setup>
 import { UserOutlined, DownOutlined } from '@ant-design/icons-vue';
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 const handleButtonClick = (e: Event) => {
   console.log('click left button', e);
 };

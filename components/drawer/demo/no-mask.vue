@@ -34,7 +34,7 @@ Remove mask.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { DrawerProps } from 'ant-design-vue';
+import type { DrawerProps } from '@hiltonkohler21/ant-design-vue';
 
 const open = ref(false);
 

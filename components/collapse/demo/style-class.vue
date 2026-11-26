@@ -55,7 +55,7 @@ You can customize the [semantic dom](#semantic-dom) style of Collapse by passing
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CollapseProps } from 'ant-design-vue';
+import type { CollapseProps } from '@hiltonkohler21/ant-design-vue';
 
 const activeKey1 = ref(['1']);
 const activeKey2 = ref(['2']);

@@ -19,7 +19,7 @@ You can set different preview image.
 <template>
   <a-image
     :width="200"
-    src="https://www.antdv.com/logo.png"
+    src="https://hiltonkohler21.github.io/ant-design-vue/logo.png"
     :preview="{
       src: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
     }"

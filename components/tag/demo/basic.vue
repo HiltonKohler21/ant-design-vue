@@ -43,7 +43,7 @@ Set `closable` to show the default close button, or use an object to configure `
 <script lang="ts" setup>
 import { h } from 'vue';
 import { CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons-vue';
-import type { TagProps } from 'ant-design-vue';
+import type { TagProps } from '@hiltonkohler21/ant-design-vue';
 
 const preventDefault = (e: MouseEvent) => {
   e.preventDefault();

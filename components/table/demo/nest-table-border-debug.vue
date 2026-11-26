@@ -87,7 +87,7 @@ Debug border rendering when toggling `bordered` on parent and nested child table
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

@@ -42,7 +42,7 @@ You can customize the [semantic dom](#semantic-dom) style of Cascader by passing
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 interface Option {
   value: string;

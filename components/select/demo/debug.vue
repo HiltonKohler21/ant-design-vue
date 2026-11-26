@@ -60,7 +60,7 @@ Debug Usage.
 
 <script lang="ts" setup>
 import type { CSSProperties } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const boxStyle: CSSProperties = {
   width: '100%',

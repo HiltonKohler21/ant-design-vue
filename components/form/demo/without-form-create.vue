@@ -31,7 +31,7 @@ Manage form data and validation feedback manually via `validateStatus` and `help
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import type { ValidateStatus } from 'ant-design-vue/es/form';
+import type { ValidateStatus } from '@hiltonkohler21/ant-design-vue/es/form';
 
 const tips =
   'A prime is a natural number greater than 1 that has no positive divisors other than 1 and itself.';

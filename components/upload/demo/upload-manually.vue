@@ -38,8 +38,8 @@ Upload files manually after `beforeUpload` returns `false`.
 import { ref } from 'vue';
 import request from 'umi-request';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
-import type { UploadProps } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
+import type { UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const fileList = ref<UploadProps['fileList']>([]);
 const uploading = ref<boolean>(false);

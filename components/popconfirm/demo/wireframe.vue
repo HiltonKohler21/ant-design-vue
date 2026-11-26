@@ -24,7 +24,7 @@ Wireframe style.
   </a-config-provider>
 </template>
 <script lang="ts" setup>
-import { Popconfirm } from 'ant-design-vue';
+import { Popconfirm } from '@hiltonkohler21/ant-design-vue';
 
 const { _InternalPanelDoNotUseOrYouWillBeFired: InternalPopconfirm } = Popconfirm;
 </script>

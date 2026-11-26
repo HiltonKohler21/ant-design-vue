@@ -24,7 +24,7 @@ Image, Icon and letter are supported, and the latter two kinds avatar can have c
     </a-avatar>
     <a-avatar>U</a-avatar>
     <a-avatar :size="40">USER</a-avatar>
-    <a-avatar src="https://www.antdv.com/assets/logo.1ef800a8.svg" />
+    <a-avatar src="https://hiltonkohler21.github.io/ant-design-vue/logo.png" />
     <a-avatar style="color: #f56a00; background-color: #fde3cf">U</a-avatar>
     <a-avatar style="background-color: #87d068">
       <template #icon>

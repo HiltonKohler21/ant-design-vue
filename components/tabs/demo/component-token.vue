@@ -66,7 +66,7 @@ Component Token Debug.
 </template>
 
 <script lang="ts" setup>
-import type { ConfigProviderProps, TabsProps } from 'ant-design-vue';
+import type { ConfigProviderProps, TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 const tabItems: TabsProps['items'] = Array.from({ length: 3 }).map((_, i) => {
   const id = String(i + 1);

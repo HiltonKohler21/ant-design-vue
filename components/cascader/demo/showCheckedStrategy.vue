@@ -39,8 +39,8 @@ Shows a selected item in a box using `showCheckedStrategy`.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Cascader } from 'ant-design-vue';
-import type { CascaderProps } from 'ant-design-vue';
+import { Cascader } from '@hiltonkohler21/ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const { SHOW_CHILD } = Cascader;
 

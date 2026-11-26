@@ -40,8 +40,8 @@ Get the value of the parent `Provider`, such as `DisabledContext`, `SizeContext`
 
 <script lang="ts" setup>
 import { defineComponent, h, ref } from 'vue';
-import { ConfigProvider, Form, Input } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { ConfigProvider, Form, Input } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 type SizeType = ConfigProviderProps['componentSize'];
 

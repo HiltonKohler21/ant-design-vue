@@ -46,7 +46,7 @@ You can customize the [semantic dom](#semantic-dom) style of Upload by passing o
 
 <script lang="ts" setup>
 import { UploadOutlined } from '@ant-design/icons-vue';
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import type { UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const defaultFileList: UploadFile[] = [
   {

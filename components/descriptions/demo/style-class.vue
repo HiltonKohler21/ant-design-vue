@@ -40,7 +40,7 @@ You can customize the [semantic dom](#semantic-dom) style of Descriptions by pas
 </template>
 
 <script lang="ts" setup>
-import type { DescriptionsProps } from 'ant-design-vue';
+import type { DescriptionsProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: DescriptionsProps['classNames'] = {
   root: 'demo-descriptions-semantic-root',

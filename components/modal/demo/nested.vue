@@ -94,7 +94,7 @@ Nested modal.
 
 <script lang="ts" setup>
 import { h, ref } from 'vue';
-import { message, Modal, notification, Select } from 'ant-design-vue';
+import { message, Modal, notification, Select } from '@hiltonkohler21/ant-design-vue';
 
 const options = [
   { label: 'Option 1', value: '1' },

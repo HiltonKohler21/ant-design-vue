@@ -36,7 +36,7 @@ import {
   SolutionOutlined,
   UserOutlined,
 } from '@ant-design/icons-vue';
-import type { ConfigProviderProps, StepsProps } from 'ant-design-vue';
+import type { ConfigProviderProps, StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const content = 'This is a content.';
 

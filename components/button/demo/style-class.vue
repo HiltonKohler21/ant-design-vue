@@ -24,7 +24,7 @@ You can customize the [semantic dom](#semantic-dom) style of Button by passing o
 </template>
 
 <script lang="ts" setup>
-import type { ButtonProps } from 'ant-design-vue';
+import type { ButtonProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: ButtonProps['classNames'] = {
   root: 'custom-button-root',

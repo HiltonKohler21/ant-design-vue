@@ -54,7 +54,7 @@ You can customize the [semantic dom](#semantic-dom) style of Splitter by passing
 </template>
 
 <script lang="ts" setup>
-import type { SplitterProps } from 'ant-design-vue';
+import type { SplitterProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: SplitterProps['classNames'] = {
   root: 'custom-splitter-root',

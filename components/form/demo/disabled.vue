@@ -80,7 +80,7 @@ Set component disabled, only works for antd components.
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import type { TreeSelectProps, CascaderProps } from 'ant-design-vue';
+import type { TreeSelectProps, CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const componentDisabled = ref(true);
 const labelCol = { style: { width: '150px' } };

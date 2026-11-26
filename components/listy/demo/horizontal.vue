@@ -49,7 +49,7 @@ interface Item {
 const items: Item[] = Array.from({ length: 1000 }, (_, index) => ({
   id: index,
   name: `User ${index}`,
-  email: `user.${index}@antdv.com`,
+  email: `user.${index}@example.com`,
   address: `No. ${index} Zhongshan Road, Xihu District, Hangzhou, Zhejiang`,
   status: index % 2 ? 'Active' : 'Inactive',
 }));

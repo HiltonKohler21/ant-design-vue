@@ -60,7 +60,7 @@ Set component size, only works for antdv components.
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import type { CascaderProps, FormProps, TreeSelectProps } from 'ant-design-vue';
+import type { CascaderProps, FormProps, TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const formState = reactive<{
   size: FormProps['size'];

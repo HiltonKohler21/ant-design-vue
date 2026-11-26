@@ -23,7 +23,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { InputNumber } from 'ant-design-vue';
+import { InputNumber } from '@hiltonkohler21/ant-design-vue';
 
 const InternalInputNumber = InputNumber._InternalPanelDoNotUseOrYouWillBeFired;
 </script>

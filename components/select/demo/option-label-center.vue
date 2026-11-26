@@ -180,7 +180,7 @@ Options label Centered.
 
 <script lang="ts" setup>
 import { h, reactive } from 'vue';
-import { Typography } from 'ant-design-vue';
+import { Typography } from '@hiltonkohler21/ant-design-vue';
 
 const options = [
   { value: 'long', label: h(Typography, null, () => 'long, long, long piece of text') },

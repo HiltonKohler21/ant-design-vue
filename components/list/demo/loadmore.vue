@@ -42,7 +42,7 @@ Load more list with `loadMore` slot.
             description="Ant Design, a design language for background applications, is refined by Ant UED Team"
           >
             <template #title>
-              <a href="https://www.antdv.com/">{{ item.name?.last }}</a>
+              <a href="https://hiltonkohler21.github.io/ant-design-vue/">{{ item.name?.last }}</a>
             </template>
             <template #avatar>
               <a-avatar :src="item.picture?.large" />

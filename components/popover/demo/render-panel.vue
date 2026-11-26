@@ -38,7 +38,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { Popover } from 'ant-design-vue';
+import { Popover } from '@hiltonkohler21/ant-design-vue';
 
 const InternalPopover = Popover._InternalPanelDoNotUseOrYouWillBeFired;
 </script>

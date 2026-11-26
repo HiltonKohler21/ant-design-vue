@@ -40,7 +40,7 @@ Customize label & wrapper style.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import type { CSSProperties } from 'vue';
-import type { DescriptionsProps } from 'ant-design-vue';
+import type { DescriptionsProps } from '@hiltonkohler21/ant-design-vue';
 
 const labelStyle: CSSProperties = { background: 'red' };
 const contentStyle: CSSProperties = { background: 'green' };

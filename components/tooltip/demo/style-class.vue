@@ -28,7 +28,7 @@ You can customize the [semantic dom](#semantic-dom) style of Tooltip by passing 
 </template>
 
 <script lang="ts" setup>
-import type { TooltipProps } from 'ant-design-vue';
+import type { TooltipProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: TooltipProps['classNames'] = {
   container: 'custom-tooltip-style-class-container',

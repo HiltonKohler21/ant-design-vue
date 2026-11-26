@@ -30,7 +30,7 @@ To customize the text of the buttons, you need to set `okText` and `cancelText` 
 <script lang="ts" setup>
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { ref, createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
 const open = ref<boolean>(false);
 
 const showModal = () => {

@@ -37,7 +37,7 @@ Customize the footer rendering function to support extensions on top of the orig
 
 <script lang="ts" setup>
 import { h, ref } from 'vue';
-import { Button, Modal } from 'ant-design-vue';
+import { Button, Modal } from '@hiltonkohler21/ant-design-vue';
 
 const open = ref<boolean>(false);
 

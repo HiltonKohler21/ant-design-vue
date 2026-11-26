@@ -38,9 +38,9 @@ Use `locale` to support special calendar format.
 </template>
 
 <script lang="ts" setup>
-import type { DatePickerProps } from 'ant-design-vue';
-import en from 'ant-design-vue/es/date-picker/locale/en_US';
-import enUS from 'ant-design-vue/es/locale/en_US';
+import type { DatePickerProps } from '@hiltonkohler21/ant-design-vue';
+import en from '@hiltonkohler21/ant-design-vue/es/date-picker/locale/en_US';
+import enUS from '@hiltonkohler21/ant-design-vue/es/locale/en_US';
 import dayjs from 'dayjs';
 import buddhistEra from 'dayjs/plugin/buddhistEra';
 

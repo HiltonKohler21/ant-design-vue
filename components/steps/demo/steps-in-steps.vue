@@ -28,8 +28,8 @@ Test style of Steps inside Steps.
 
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue';
-import { Card, Steps } from 'ant-design-vue';
-import type { StepsProps } from 'ant-design-vue';
+import { Card, Steps } from '@hiltonkohler21/ant-design-vue';
+import type { StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const size = ref<StepsProps['size']>('medium');
 const content = 'This is a content.';

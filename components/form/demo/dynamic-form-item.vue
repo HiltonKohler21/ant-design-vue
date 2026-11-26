@@ -60,7 +60,7 @@ Add or remove form items dynamically.
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons-vue';
-import type { FormInstance } from 'ant-design-vue';
+import type { FormInstance } from '@hiltonkohler21/ant-design-vue';
 
 interface Domain {
   value: string;

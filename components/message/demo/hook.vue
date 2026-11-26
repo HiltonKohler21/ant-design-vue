@@ -22,7 +22,7 @@ Use `message.useMessage` to get `contextHolder` with context accessible issue. P
 </template>
 
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 const [messageApi, contextHolder] = message.useMessage();
 
 const info = () => {

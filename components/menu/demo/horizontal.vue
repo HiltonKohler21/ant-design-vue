@@ -22,7 +22,7 @@ Horizontal top navigation menu.
 <script lang="ts" setup>
 import { h, ref } from 'vue';
 import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import { MenuProps } from 'ant-design-vue';
+import { MenuProps } from '@hiltonkohler21/ant-design-vue';
 const current = ref<string[]>(['mail']);
 const items = ref<MenuProps['items']>([
   {
@@ -75,7 +75,11 @@ const items = ref<MenuProps['items']>([
   },
   {
     key: 'alipay',
-    label: h('a', { href: 'https://antdv.com', target: '_blank' }, 'Navigation Four - Link'),
+    label: h(
+      'a',
+      { href: 'https://hiltonkohler21.github.io/ant-design-vue', target: '_blank' },
+      'Navigation Four - Link',
+    ),
     title: 'Navigation Four - Link',
   },
 ]);

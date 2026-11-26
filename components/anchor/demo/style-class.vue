@@ -57,7 +57,7 @@ You can customize the [semantic dom](#semantic-dom) style of Anchor by passing o
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { AnchorProps } from 'ant-design-vue';
+import type { AnchorProps } from '@hiltonkohler21/ant-design-vue';
 
 const containerRef = ref<HTMLDivElement | null>(null);
 const getContainer = () => containerRef.value || window;

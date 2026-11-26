@@ -53,8 +53,8 @@ Use `Dropdown` with the browser Selection API to show custom actions after selec
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { message, theme } from 'ant-design-vue';
-import type { MenuProps } from 'ant-design-vue';
+import { message, theme } from '@hiltonkohler21/ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 interface SelectionInfo {
   text: string;

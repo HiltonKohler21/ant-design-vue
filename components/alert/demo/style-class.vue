@@ -40,7 +40,7 @@ You can customize the [semantic dom](#semantic-dom) style of Alert by passing ob
 </template>
 
 <script lang="ts" setup>
-import type { AlertProps } from 'ant-design-vue';
+import type { AlertProps } from '@hiltonkohler21/ant-design-vue';
 
 const alertClassNames: AlertProps['classNames'] = {
   root: 'custom-alert-root',

@@ -20,7 +20,7 @@ Static methods cannot consume Context provided by `ConfigProvider`. Please use h
   <a-button type="primary" @click="openNotification">Open the notification box</a-button>
 </template>
 <script lang="ts" setup>
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 
 const openNotification = () => {
   notification.open({

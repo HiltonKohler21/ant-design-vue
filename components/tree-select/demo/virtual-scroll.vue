@@ -35,8 +35,8 @@ Use virtual list through `height` prop.
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import type { TreeSelectProps } from 'ant-design-vue';
-import { TreeSelect } from 'ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
+import { TreeSelect } from '@hiltonkohler21/ant-design-vue';
 const SHOW_PARENT = TreeSelect.SHOW_PARENT;
 
 function dig(path = '0', level = 3) {

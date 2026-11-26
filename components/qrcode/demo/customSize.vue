@@ -31,8 +31,8 @@ Custom Size.
     :size="size"
     :icon-size="size / 4"
     error-level="H"
-    value="https://www.antdv.com"
-    icon="https://www.antdv.com/assets/logo.1ef800a8.svg"
+    value="https://hiltonkohler21.github.io/ant-design-vue"
+    icon="https://hiltonkohler21.github.io/ant-design-vue/logo.png"
   />
 </template>
 

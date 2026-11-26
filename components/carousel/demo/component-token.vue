@@ -37,7 +37,7 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import type { CSSProperties } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const contentStyle: CSSProperties = {
   margin: 0,

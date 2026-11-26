@@ -67,7 +67,7 @@ Use `scrollToFirstError` and `scrollToField` to automatically scroll and focus t
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import type { FormInstance } from 'ant-design-vue';
+import type { FormInstance } from '@hiltonkohler21/ant-design-vue';
 
 const formRef = ref<FormInstance>();
 

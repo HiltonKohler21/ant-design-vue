@@ -74,7 +74,7 @@ Crop, zoom, and rotate images with a Modal and Canvas preview inside `beforeUplo
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import type { UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const sampleImageUrl =
   'data:image/svg+xml;utf8,' +

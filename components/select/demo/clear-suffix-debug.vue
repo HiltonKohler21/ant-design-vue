@@ -44,7 +44,7 @@ Show edge cases when `allowClear` hides suffix content.
 
 <script lang="ts" setup>
 import type { CSSProperties } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const longLabel = 'A very very very very very very very long selected label';
 

@@ -39,7 +39,7 @@ You can customize the [semantic dom](#semantic-dom) style of Transfer by passing
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TransferProps } from 'ant-design-vue';
+import type { TransferProps } from '@hiltonkohler21/ant-design-vue';
 
 interface MockData {
   key: string;

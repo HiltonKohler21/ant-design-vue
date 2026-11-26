@@ -18,7 +18,7 @@ Avatar group display.
 <template>
   <a-avatar-group>
     <a-avatar :src="avatar1" />
-    <a href="https://www.antdv.com">
+    <a href="https://hiltonkohler21.github.io/ant-design-vue">
       <a-avatar style="background-color: #f56a00">K</a-avatar>
     </a>
     <a-tooltip title="Ant User" placement="top">

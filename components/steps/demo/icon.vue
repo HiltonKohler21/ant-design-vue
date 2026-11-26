@@ -25,7 +25,7 @@ import {
   LoadingOutlined,
   SmileOutlined,
 } from '@ant-design/icons-vue';
-import { StepProps } from 'ant-design-vue';
+import { StepProps } from '@hiltonkohler21/ant-design-vue';
 const items = [
   {
     title: 'Login',

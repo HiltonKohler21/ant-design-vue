@@ -24,7 +24,7 @@ You can customize the [semantic dom](#semantic-dom) style of Pagination by passi
 </template>
 
 <script lang="ts" setup>
-import type { PaginationProps } from 'ant-design-vue';
+import type { PaginationProps } from '@hiltonkohler21/ant-design-vue';
 
 const paginationClassNames: PaginationProps['classNames'] = {
   root: 'demo-pagination-root',

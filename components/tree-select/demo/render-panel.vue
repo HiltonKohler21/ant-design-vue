@@ -21,8 +21,8 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { TreeSelect } from 'ant-design-vue';
-import type { TreeSelectProps } from 'ant-design-vue';
+import { TreeSelect } from '@hiltonkohler21/ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const InternalTreeSelect = TreeSelect._InternalPanelDoNotUseOrYouWillBeFired;
 

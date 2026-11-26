@@ -47,8 +47,8 @@ Debug usage. Do not use in your production.
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Button, Modal, Space } from 'ant-design-vue';
-import type { ModalFuncProps } from 'ant-design-vue';
+import { Button, Modal, Space } from '@hiltonkohler21/ant-design-vue';
+import type { ModalFuncProps } from '@hiltonkohler21/ant-design-vue';
 
 /** Test usage. Do not use in your production. */
 const InternalPanel = Modal._InternalPanelDoNotUseOrYouWillBeFired;

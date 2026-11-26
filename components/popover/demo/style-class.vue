@@ -33,7 +33,7 @@ You can customize the [semantic dom](#semantic-dom) style of Popover by passing 
 </template>
 
 <script lang="ts" setup>
-import type { PopoverProps } from 'ant-design-vue';
+import type { PopoverProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: PopoverProps['classNames'] = {
   container: 'popover-style-class-container',

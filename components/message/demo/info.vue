@@ -20,7 +20,7 @@ Normal message for information.
   <a-button type="primary" @click="info">Display normal message</a-button>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 const info = () => {
   message.info('This is a normal message');
 };

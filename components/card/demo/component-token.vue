@@ -50,7 +50,7 @@ Component Token Debug.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const activeKey = ref('tab1');
 const tabList = [

@@ -32,8 +32,8 @@ Debug usage.
 <script lang="ts" setup>
 import { h } from 'vue';
 import { DownOutlined, MailOutlined } from '@ant-design/icons-vue';
-import { Flex } from 'ant-design-vue';
-import type { MenuProps } from 'ant-design-vue';
+import { Flex } from '@hiltonkohler21/ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const items1: MenuProps['items'] = [
   {
@@ -58,7 +58,11 @@ const items1: MenuProps['items'] = [
       },
       {
         key: '3',
-        label: h('a', { href: 'https://antdv.com', target: '_blank' }, 'Link Option'),
+        label: h(
+          'a',
+          { href: 'https://hiltonkohler21.github.io/ant-design-vue', target: '_blank' },
+          'Link Option',
+        ),
         disabled: true,
       },
     ],

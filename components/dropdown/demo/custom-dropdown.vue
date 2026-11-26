@@ -29,7 +29,7 @@ Customize the dropdown menu via `popupRender`. If you don't need the Menu conten
 <script lang="ts" setup>
 import { cloneVNode, h } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
-import { Button, Divider, Space, theme } from 'ant-design-vue';
+import { Button, Divider, Space, theme } from '@hiltonkohler21/ant-design-vue';
 
 const { useToken } = theme;
 const { token } = useToken();

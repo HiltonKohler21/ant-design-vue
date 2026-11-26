@@ -24,8 +24,8 @@ Demonstrates the new component token functionality that supports different backg
 
 <script lang="ts" setup>
 import { defineComponent, h } from 'vue';
-import { Button, Flex, notification } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { Button, Flex, notification } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 

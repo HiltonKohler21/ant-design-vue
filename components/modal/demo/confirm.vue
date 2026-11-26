@@ -27,7 +27,7 @@ To use `confirm()` to show a confirmation modal dialog.
 <script lang="ts" setup>
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
 const showConfirm = () => {
   Modal.confirm({
     title: 'Do you Want to delete these items?',

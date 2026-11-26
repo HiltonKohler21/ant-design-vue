@@ -3,9 +3,34 @@
 exports[`renders ./components/image/demo/basic.vue correctly 1`] = `
 <div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
   <!---->
-  <div class="ant-image-mask">
-    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
   </div>
+</div>
+`;
+
+exports[`renders ./components/image/demo/component-token.vue correctly 1`] = `
+<div class="ant-space ant-space-horizontal ant-space-align-center" style="flex-wrap: wrap; margin-bottom: -8px;">
+  <div class="ant-space-item" style="margin-right: 8px; padding-bottom: 8px;">
+    <div class="ant-image" style="width: 150px;"><img alt="svg image" width="150" class="ant-image-img" src="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <div class="ant-space-item" style="padding-bottom: 8px;">
+    <div class="ant-image" style="width: 150px;"><img alt="basic image" width="150" class="ant-image-img" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
 </div>
 `;
 
@@ -15,21 +40,107 @@ exports[`renders ./components/image/demo/controlled-preview.vue correctly 1`] = 
   </button>
   <div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" style="display: none;" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
     <!---->
-    <div class="ant-image-mask">
-      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+    <div class="ant-image-mask ant-image-cover">
+      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
     </div>
   </div>
   <!---->
 </div>
 `;
 
-exports[`renders ./components/image/demo/fallback.vue correctly 1`] = `
-<div class="ant-image" style="width: 200px; height: 200px;"><img width="200" height="200" class="ant-image-img" style="height: 200px;" src="https://www.antdv.com/#error">
+exports[`renders ./components/image/demo/coverPlacement.vue correctly 1`] = `
+<div class="ant-space ant-space-horizontal ant-space-align-center" style="flex-wrap: wrap; margin-bottom: -16px;">
+  <div class="ant-space-item" style="margin-right: 16px; padding-bottom: 16px;">
+    <div class="ant-image" style="width: 96px;"><img alt="basic image" width="96" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g2%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2313c2c2%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231677ff%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2212%22%20fill%3D%22url(%23g2)%22%2F%3E%3Ccircle%20cx%3D%22135%22%20cy%3D%2265%22%20r%3D%2222%22%20fill%3D%22%23fff1b8%22%2F%3E%3Cpath%20d%3D%22M16%20172l58-72%2042%2048%2030-34%2038%2058z%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.85%22%2F%3E%3C%2Fsvg%3E">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-space ant-space-horizontal ant-space-align-center">
+          <div class="ant-space-item" style="margin-right: 8px;"><span role="img" aria-label="zoom-in" class="anticon anticon-zoom-in"><svg focusable="false" data-icon="zoom-in" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M637 443H519V309c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v134H325c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h118v134c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V519h118c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zm284 424L775 721c122.1-148.9 113.6-369.5-26-509-148-148.1-388.4-148.1-537 0-148.1 148.6-148.1 389 0 537 139.5 139.6 360.1 148.1 509 26l146 146c3.2 2.8 8.3 2.8 11 0l43-43c2.8-2.7 2.8-7.8 0-11zM696 696c-118.8 118.7-311.2 118.7-430 0-118.7-118.8-118.7-311.2 0-430 118.8-118.7 311.2-118.7 430 0 118.7 118.8 118.7 311.2 0 430z"></path></svg><!----></span></div>
+          <!---->
+          <div class="ant-space-item">center</div>
+          <!---->
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
   <!---->
-  <div class="ant-image-mask">
-    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+  <div class="ant-space-item" style="margin-right: 16px; padding-bottom: 16px;">
+    <div class="ant-image" style="width: 96px;"><img alt="image" width="96" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g2%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2313c2c2%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231677ff%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2212%22%20fill%3D%22url(%23g2)%22%2F%3E%3Ccircle%20cx%3D%22135%22%20cy%3D%2265%22%20r%3D%2222%22%20fill%3D%22%23fff1b8%22%2F%3E%3Cpath%20d%3D%22M16%20172l58-72%2042%2048%2030-34%2038%2058z%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.85%22%2F%3E%3C%2Fsvg%3E">
+      <!---->
+      <div class="ant-image-mask ant-image-cover ant-image-cover-top">
+        <div class="ant-space ant-space-horizontal ant-space-align-center">
+          <div class="ant-space-item" style="margin-right: 8px;"><span role="img" aria-label="zoom-in" class="anticon anticon-zoom-in"><svg focusable="false" data-icon="zoom-in" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M637 443H519V309c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v134H325c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h118v134c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V519h118c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zm284 424L775 721c122.1-148.9 113.6-369.5-26-509-148-148.1-388.4-148.1-537 0-148.1 148.6-148.1 389 0 537 139.5 139.6 360.1 148.1 509 26l146 146c3.2 2.8 8.3 2.8 11 0l43-43c2.8-2.7 2.8-7.8 0-11zM696 696c-118.8 118.7-311.2 118.7-430 0-118.7-118.8-118.7-311.2 0-430 118.8-118.7 311.2-118.7 430 0 118.7 118.8 118.7 311.2 0 430z"></path></svg><!----></span></div>
+          <!---->
+          <div class="ant-space-item">top</div>
+          <!---->
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <div class="ant-space-item" style="padding-bottom: 16px;">
+    <div class="ant-image" style="width: 96px;"><img alt="image" width="96" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g2%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2313c2c2%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231677ff%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2212%22%20fill%3D%22url(%23g2)%22%2F%3E%3Ccircle%20cx%3D%22135%22%20cy%3D%2265%22%20r%3D%2222%22%20fill%3D%22%23fff1b8%22%2F%3E%3Cpath%20d%3D%22M16%20172l58-72%2042%2048%2030-34%2038%2058z%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.85%22%2F%3E%3C%2Fsvg%3E">
+      <!---->
+      <div class="ant-image-mask ant-image-cover ant-image-cover-bottom">
+        <div class="ant-space ant-space-horizontal ant-space-align-center">
+          <div class="ant-space-item" style="margin-right: 8px;"><span role="img" aria-label="zoom-in" class="anticon anticon-zoom-in"><svg focusable="false" data-icon="zoom-in" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M637 443H519V309c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v134H325c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h118v134c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V519h118c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zm284 424L775 721c122.1-148.9 113.6-369.5-26-509-148-148.1-388.4-148.1-537 0-148.1 148.6-148.1 389 0 537 139.5 139.6 360.1 148.1 509 26l146 146c3.2 2.8 8.3 2.8 11 0l43-43c2.8-2.7 2.8-7.8 0-11zM696 696c-118.8 118.7-311.2 118.7-430 0-118.7-118.8-118.7-311.2 0-430 118.8-118.7 311.2-118.7 430 0 118.7 118.8 118.7 311.2 0 430z"></path></svg><!----></span></div>
+          <!---->
+          <div class="ant-space-item">bottom</div>
+          <!---->
+        </div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`renders ./components/image/demo/fallback.vue correctly 1`] = `
+<div class="ant-image" style="width: 200px; height: 200px;"><img width="200" height="200" class="ant-image-img" style="height: 200px;" src="https://hiltonkohler21.github.io/ant-design-vue/#error">
+  <!---->
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
   </div>
 </div>
+`;
+
+exports[`renders ./components/image/demo/image-render.vue correctly 1`] = `
+<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+  <!---->
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+  </div>
+</div>
+`;
+
+exports[`renders ./components/image/demo/mask.vue correctly 1`] = `
+<div class="ant-space ant-space-horizontal ant-space-align-center" style="flex-wrap: wrap; margin-bottom: -16px;">
+  <div class="ant-space-item" style="margin-right: 16px; padding-bottom: 16px;">
+    <div class="ant-image" style="width: 160px;"><img width="160" class="ant-image-img" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">Blur Mask</div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <div class="ant-space-item" style="padding-bottom: 16px;">
+    <div class="ant-image" style="width: 160px;"><img width="160" class="ant-image-img" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+      <!---->
+      <div class="ant-image-mask ant-image-cover ant-image-cover-bottom">No Mask</div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`renders ./components/image/demo/nested.vue correctly 1`] = `
+<button class="ant-btn ant-btn-primary" type="button">
+  <!----><span>Open Modal</span>
+</button>
 `;
 
 exports[`renders ./components/image/demo/placeholder.vue correctly 1`] = `
@@ -43,8 +154,8 @@ exports[`renders ./components/image/demo/placeholder.vue correctly 1`] = `
         </div>
         <!---->
       </div>
-      <div class="ant-image-mask">
-        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
       </div>
     </div>
     <!---->
@@ -58,46 +169,81 @@ exports[`renders ./components/image/demo/placeholder.vue correctly 1`] = `
 `;
 
 exports[`renders ./components/image/demo/preview-group.vue correctly 1`] = `
-<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://www.antdv.com/vue.png">
+<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://hiltonkohler21.github.io/ant-design-vue/vue.png">
   <!---->
-  <div class="ant-image-mask">
-    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
   </div>
 </div>
-<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://www.antdv.com/logo.png">
+<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://hiltonkohler21.github.io/ant-design-vue/logo.png">
   <!---->
-  <div class="ant-image-mask">
-    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
   </div>
+</div>
+`;
+
+exports[`renders ./components/image/demo/preview-group-top-progress.vue correctly 1`] = `
+<div class="ant-space ant-space-horizontal ant-space-align-center" style="flex-wrap: wrap; margin-bottom: -12px;">
+  <div class="ant-space-item" style="margin-right: 12px; padding-bottom: 12px;">
+    <div class="ant-image" style="width: 116px;"><img alt="svg image 1" width="116" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20150%20150%22%3E%3Crect%20width%3D%22150%22%20height%3D%22150%22%20rx%3D%2212%22%20fill%3D%22%23e6f4ff%22%2F%3E%3Ccircle%20cx%3D%2275%22%20cy%3D%2275%22%20r%3D%2242%22%20fill%3D%22%231677ff%22%2F%3E%3Ctext%20x%3D%2275%22%20y%3D%2283%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-size%3D%2224%22%20font-family%3D%22sans-serif%22%3E1%3C%2Ftext%3E%3C%2Fsvg%3E">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <div class="ant-space-item" style="margin-right: 12px; padding-bottom: 12px;">
+    <div class="ant-image" style="width: 116px;"><img alt="svg image 2" width="116" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20150%20150%22%3E%3Crect%20width%3D%22150%22%20height%3D%22150%22%20rx%3D%2212%22%20fill%3D%22%23f6ffed%22%2F%3E%3Cpolygon%20points%3D%2275%2C28%20122%2C116%2028%2C116%22%20fill%3D%22%2352c41a%22%2F%3E%3Ctext%20x%3D%2275%22%20y%3D%22104%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-size%3D%2224%22%20font-family%3D%22sans-serif%22%3E2%3C%2Ftext%3E%3C%2Fsvg%3E">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
+  <div class="ant-space-item" style="padding-bottom: 12px;">
+    <div class="ant-image" style="width: 116px;"><img alt="svg image 3" width="116" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20150%20150%22%3E%3Crect%20width%3D%22150%22%20height%3D%22150%22%20rx%3D%2212%22%20fill%3D%22%23fff2e8%22%2F%3E%3Crect%20x%3D%2235%22%20y%3D%2235%22%20width%3D%2280%22%20height%3D%2280%22%20rx%3D%2214%22%20fill%3D%22%23fa541c%22%2F%3E%3Ctext%20x%3D%2275%22%20y%3D%2283%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-size%3D%2224%22%20font-family%3D%22sans-serif%22%3E3%3C%2Ftext%3E%3C%2Fsvg%3E">
+      <!---->
+      <div class="ant-image-mask ant-image-cover">
+        <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+      </div>
+    </div>
+    <!---->
+  </div>
+  <!---->
 </div>
 `;
 
 exports[`renders ./components/image/demo/preview-group-visible.vue correctly 1`] = `
 <div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp">
   <!---->
-  <div class="ant-image-mask">
-    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
   </div>
 </div>
 <div style="display: none;">
   <div class="ant-image"><img class="ant-image-img" src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp">
     <!---->
-    <div class="ant-image-mask">
-      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+    <div class="ant-image-mask ant-image-cover">
+      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
     </div>
   </div>
   <!---->
   <div class="ant-image"><img class="ant-image-img" src="https://gw.alipayobjects.com/zos/antfincdn/cV16ZqzMjW/photo-1473091540282-9b846e7965e3.webp">
     <!---->
-    <div class="ant-image-mask">
-      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+    <div class="ant-image-mask ant-image-cover">
+      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
     </div>
   </div>
   <!---->
   <div class="ant-image"><img class="ant-image-img" src="https://gw.alipayobjects.com/zos/antfincdn/x43I27A55%26/photo-1438109491414-7198515b166b.webp">
     <!---->
-    <div class="ant-image-mask">
-      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+    <div class="ant-image-mask ant-image-cover">
+      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
     </div>
   </div>
   <!---->
@@ -105,11 +251,62 @@ exports[`renders ./components/image/demo/preview-group-visible.vue correctly 1`]
 </div>
 `;
 
-exports[`renders ./components/image/demo/preview-src.vue correctly 1`] = `
-<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://www.antdv.com/logo.png">
+exports[`renders ./components/image/demo/preview-imgInfo.vue correctly 1`] = `
+<div class="ant-image" style="width: 200px; height: 200px;"><img alt="test" width="200px" height="200px" class="ant-image-img" style="height: 200px;" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g3%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23722ed1%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23eb2f96%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2212%22%20fill%3D%22url(%23g3)%22%2F%3E%3Ctext%20x%3D%22100%22%20y%3D%22108%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-size%3D%2224%22%20font-family%3D%22sans-serif%22%3EImgInfo%3C%2Ftext%3E%3C%2Fsvg%3E">
   <!---->
-  <div class="ant-image-mask">
-    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" class="" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg></span>Preview</div>
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+  </div>
+</div>
+`;
+
+exports[`renders ./components/image/demo/preview-mask.vue correctly 1`] = `
+<div class="ant-image" style="width: 96px;"><img alt="basic image" width="96" class="ant-image-img" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g1%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%231677ff%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23722ed1%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2212%22%20fill%3D%22url(%23g1)%22%2F%3E%3Ccircle%20cx%3D%2270%22%20cy%3D%2270%22%20r%3D%2224%22%20fill%3D%22%23ffd666%22%2F%3E%3Cpath%20d%3D%22M20%20170l52-62%2038%2042%2028-30%2042%2050z%22%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.85%22%2F%3E%3C%2Fsvg%3E">
+  <!---->
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-space ant-space-vertical ant-space-align-center">
+      <div class="ant-space-item" style="margin-bottom: 8px;"><span role="img" aria-label="zoom-in" class="anticon anticon-zoom-in"><svg focusable="false" data-icon="zoom-in" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M637 443H519V309c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v134H325c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h118v134c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V519h118c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zm284 424L775 721c122.1-148.9 113.6-369.5-26-509-148-148.1-388.4-148.1-537 0-148.1 148.6-148.1 389 0 537 139.5 139.6 360.1 148.1 509 26l146 146c3.2 2.8 8.3 2.8 11 0l43-43c2.8-2.7 2.8-7.8 0-11zM696 696c-118.8 118.7-311.2 118.7-430 0-118.7-118.8-118.7-311.2 0-430 118.8-118.7 311.2-118.7 430 0 118.7 118.8 118.7 311.2 0 430z"></path></svg><!----></span></div>
+      <!---->
+      <div class="ant-space-item">Preview</div>
+      <!---->
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders ./components/image/demo/preview-src.vue correctly 1`] = `
+<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://hiltonkohler21.github.io/ant-design-vue/logo.png">
+  <!---->
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+  </div>
+</div>
+`;
+
+exports[`renders ./components/image/demo/style-class.vue correctly 1`] = `
+<div class="image-style-class-demo ant-flex ant-flex-wrap-wrap ant-flex-gap-middle">
+  <div class="ant-image custom-image-root" style="width: 160px;"><img alt="Example image" width="160" class="ant-image-img" style="border-radius: 4px;" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+    <!---->
+    <div class="ant-image-mask ant-image-cover">
+      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+    </div>
+  </div>
+  <!---->
+  <div class="ant-image custom-image-root" style="width: 160px; border: 2px solid #a594f9; border-radius: 8px; padding: 4px; transition: all 0.3s ease;"><img alt="Example image" width="160" class="ant-image-img" style="border-radius: 4px; filter: grayscale(50%);" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+    <!---->
+    <div class="ant-image-mask ant-image-cover">
+      <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
+    </div>
+  </div>
+  <!---->
+</div>
+`;
+
+exports[`renders ./components/image/demo/toolbar-render.vue correctly 1`] = `
+<div class="ant-image" style="width: 200px;"><img width="200" class="ant-image-img" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png">
+  <!---->
+  <div class="ant-image-mask ant-image-cover">
+    <div class="ant-image-mask-info"><span role="img" aria-label="eye" class="anticon anticon-eye"><svg focusable="false" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 000 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"></path></svg><!----></span>Preview</div>
   </div>
 </div>
 `;

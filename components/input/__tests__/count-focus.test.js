@@ -27,7 +27,7 @@ import AlignDemo from '../demo/align.vue';
 import TextareaResizeDemo from '../demo/textarea-resize.vue';
 import DebugAddonDemo from '../demo/debug-addon.vue';
 
-jest.mock('ant-design-vue', () => ({
+jest.mock('@hiltonkohler21/ant-design-vue', () => ({
   Input: require('..').default,
 }));
 

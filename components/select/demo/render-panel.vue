@@ -31,7 +31,7 @@ Debug usage. Do not use in your production.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Select } from 'ant-design-vue';
+import { Select } from '@hiltonkohler21/ant-design-vue';
 
 const InternalSelect = Select._InternalPanelDoNotUseOrYouWillBeFired;
 

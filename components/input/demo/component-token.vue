@@ -36,7 +36,7 @@ token debug
 
 <script lang="ts" setup>
 import { UserOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const controlHeightTheme: ConfigProviderProps['theme'] = {
   token: {

@@ -51,7 +51,7 @@ Enable virtual scrolling via `virtual` and `scroll.y` to render large datasets s
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { TableColumnsType, TableRef } from 'ant-design-vue';
+import type { TableColumnsType, TableRef } from '@hiltonkohler21/ant-design-vue';
 
 interface VirtualRow {
   key: number;

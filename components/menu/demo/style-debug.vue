@@ -43,7 +43,7 @@ Debug usage.
 <script lang="ts" setup>
 import { cloneVNode, h, ref } from 'vue';
 import { AppstoreOutlined, MailOutlined } from '@ant-design/icons-vue';
-import type { MenuProps, MenuTheme } from 'ant-design-vue';
+import type { MenuProps, MenuTheme } from '@hiltonkohler21/ant-design-vue';
 
 const menuTheme = ref<MenuTheme>('dark');
 const current = ref('1');

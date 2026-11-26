@@ -16,9 +16,12 @@ Custom Color.
 
 <template>
   <a-space>
-    <a-qrcode value="http://www.antdv.com" :color="token.colorSuccessText" />
     <a-qrcode
-      value="http://www.antdv.com"
+      value="https://hiltonkohler21.github.io/ant-design-vue"
+      :color="token.colorSuccessText"
+    />
+    <a-qrcode
+      value="https://hiltonkohler21.github.io/ant-design-vue"
       :color="token.colorInfoText"
       :bg-color="token.colorBgLayout"
     />
@@ -26,7 +29,7 @@ Custom Color.
 </template>
 
 <script lang="ts" setup>
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { useToken } = theme;
 const { token } = useToken();

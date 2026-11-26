@@ -40,7 +40,7 @@ You can customize the [semantic dom](#semantic-dom) style of AutoComplete by pas
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { AutoCompleteProps } from 'ant-design-vue';
+import type { AutoCompleteProps } from '@hiltonkohler21/ant-design-vue';
 
 const value1 = ref('');
 const value2 = ref('');

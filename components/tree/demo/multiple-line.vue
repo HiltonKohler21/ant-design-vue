@@ -35,7 +35,7 @@ Debug long tree node titles wrapping across multiple lines in a narrow container
 </template>
 
 <script lang="ts" setup>
-import type { TreeProps } from 'ant-design-vue';
+import type { TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeData: TreeProps['treeData'] = [
   {

@@ -39,7 +39,7 @@ Debug use.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const radius = ref(0);
 

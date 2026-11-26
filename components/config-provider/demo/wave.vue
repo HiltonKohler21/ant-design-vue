@@ -37,7 +37,7 @@ Wave effect brings dynamic feedback. Use `wave.showEffect` to customize wave eff
 </template>
 
 <script lang="ts" setup>
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 type WaveConfig = NonNullable<ConfigProviderProps['wave']>;
 

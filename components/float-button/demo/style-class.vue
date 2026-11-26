@@ -48,7 +48,7 @@ You can customize the [semantic dom](#semantic-dom) style of FloatButton by pass
 
 <script lang="ts" setup>
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
-import type { FloatButtonProps } from 'ant-design-vue';
+import type { FloatButtonProps } from '@hiltonkohler21/ant-design-vue';
 
 const semanticClassNames: FloatButtonProps['classNames'] = {
   root: 'custom-float-btn-root',

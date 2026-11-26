@@ -31,7 +31,7 @@ Controlled mode lets parent nodes reflect the status of child nodes more intelli
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TreeProps } from 'ant-design-vue';
+import type { TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeData: TreeProps['treeData'] = [
   {

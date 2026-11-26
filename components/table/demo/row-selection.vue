@@ -35,7 +35,7 @@ Rows can be selectable by making first column as a selectable column. You can sw
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { TableColumnType, TableProps } from 'ant-design-vue';
+import type { TableColumnType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

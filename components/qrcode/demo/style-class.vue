@@ -20,13 +20,13 @@ You can customize the [semantic dom](#semantic-dom) style of QRCode by passing o
   <div class="demo-qrcode-style-class">
     <a-flex wrap="wrap" :gap="16">
       <a-qrcode
-        value="https://www.antdv.com/"
+        value="https://hiltonkohler21.github.io/ant-design-vue/"
         :size="160"
         :class-names="classNames"
         :styles="stylesObject"
       />
       <a-qrcode
-        value="https://www.antdv.com/"
+        value="https://hiltonkohler21.github.io/ant-design-vue/"
         :size="160"
         type="canvas"
         :icon="logoDataUri"
@@ -38,7 +38,7 @@ You can customize the [semantic dom](#semantic-dom) style of QRCode by passing o
 </template>
 
 <script lang="ts" setup>
-import type { QRCodeProps } from 'ant-design-vue';
+import type { QRCodeProps } from '@hiltonkohler21/ant-design-vue';
 
 const logoDataUri =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%231677ff'/><path d='M18 46L32 16l14 30h-8l-6-13-6 13h-8z' fill='%23fff'/></svg>";

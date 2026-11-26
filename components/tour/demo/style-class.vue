@@ -50,7 +50,7 @@ You can customize the [semantic dom](#semantic-dom) style of Tour by passing obj
 
 <script lang="ts" setup>
 import { createVNode, ref } from 'vue';
-import type { TourProps } from 'ant-design-vue';
+import type { TourProps } from '@hiltonkohler21/ant-design-vue';
 
 const ref1 = ref(null);
 const ref2 = ref(null);

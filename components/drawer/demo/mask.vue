@@ -36,7 +36,7 @@ Mask effect.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { DrawerProps } from 'ant-design-vue';
+import type { DrawerProps } from '@hiltonkohler21/ant-design-vue';
 
 type MaskKey = 'blur' | 'dimmed' | 'none';
 interface DrawerConfig {

@@ -25,7 +25,7 @@ We can store form data and validation state into an upper component using reacti
 <script lang="ts" setup>
 import { defineComponent, h, reactive, ref, watch } from 'vue';
 import type { PropType } from 'vue';
-import { Form, Input } from 'ant-design-vue';
+import { Form, Input } from '@hiltonkohler21/ant-design-vue';
 
 interface FieldData {
   name: (string | number)[];

@@ -29,7 +29,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { Tooltip } from 'ant-design-vue';
+import { Tooltip } from '@hiltonkohler21/ant-design-vue';
 
 const InternalTooltip = Tooltip._InternalPanelDoNotUseOrYouWillBeFired;
 </script>

@@ -73,8 +73,8 @@ Debug Form-level `feedbackIcons` and Form.Item-level `hasFeedback.icons`, includ
 <script lang="ts" setup>
 import { h, reactive } from 'vue';
 import { AlertFilled, CloseSquareFilled } from '@ant-design/icons-vue';
-import { Tooltip } from 'ant-design-vue';
-import type { FeedbackIcons } from 'ant-design-vue/es/form';
+import { Tooltip } from '@hiltonkohler21/ant-design-vue';
+import type { FeedbackIcons } from '@hiltonkohler21/ant-design-vue/es/form';
 
 const formState = reactive({
   item1: '',

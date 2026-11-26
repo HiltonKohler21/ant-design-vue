@@ -38,7 +38,7 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const current = ref<number>(3);
 const disabledCurrent = ref<number>(3);

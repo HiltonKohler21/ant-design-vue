@@ -25,7 +25,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { Drawer } from 'ant-design-vue';
+import { Drawer } from '@hiltonkohler21/ant-design-vue';
 
 /** Test usage. Do not use in your production. */
 const InternalDrawer = Drawer._InternalPanelDoNotUseOrYouWillBeFired;

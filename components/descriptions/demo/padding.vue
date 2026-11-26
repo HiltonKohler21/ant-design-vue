@@ -29,7 +29,7 @@ Padding debug.
 
 <script lang="ts" setup>
 import type { CSSProperties } from 'vue';
-import type { DescriptionsProps } from 'ant-design-vue';
+import type { DescriptionsProps } from '@hiltonkohler21/ant-design-vue';
 
 const boxStyle: CSSProperties = {
   width: '600px',

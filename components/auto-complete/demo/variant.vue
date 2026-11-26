@@ -54,7 +54,7 @@ There are `outlined`, `filled`, `borderless`, and `underlined` variants to choos
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { AutoCompleteProps } from 'ant-design-vue';
+import type { AutoCompleteProps } from '@hiltonkohler21/ant-design-vue';
 
 const mockVal = (str: string, repeat = 1) => ({
   value: str.repeat(repeat),

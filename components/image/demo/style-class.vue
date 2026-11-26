@@ -37,7 +37,7 @@ You can customize the [semantic dom](#semantic-dom) style of Image by passing ob
 </template>
 
 <script lang="ts" setup>
-import type { ImageProps } from 'ant-design-vue';
+import type { ImageProps } from '@hiltonkohler21/ant-design-vue';
 
 const imgSrc = 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png';
 

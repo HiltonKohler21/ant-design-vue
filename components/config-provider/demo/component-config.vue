@@ -96,7 +96,7 @@ Configure shared default props across components (`button`, `card`, `empty`, `sp
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { Empty } from 'ant-design-vue';
+import { Empty } from '@hiltonkohler21/ant-design-vue';
 
 const buttonVariant = ref<'outlined' | 'filled' | 'dashed' | 'solid'>('filled');
 const autoInsertSpace = ref(true);

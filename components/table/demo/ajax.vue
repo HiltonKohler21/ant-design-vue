@@ -35,7 +35,11 @@ Setting `rowSelection.preserveSelectedRowKeys` to keep the `key` when enable sel
 
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import type { TableColumnsType, TablePaginationConfig, TableProps } from 'ant-design-vue';
+import type {
+  TableColumnsType,
+  TablePaginationConfig,
+  TableProps,
+} from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   id: string;

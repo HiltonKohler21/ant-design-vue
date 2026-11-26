@@ -68,8 +68,8 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons-vue';
-import { theme } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const tagTheme: ConfigProviderProps['theme'] = {
   components: {

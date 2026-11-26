@@ -22,7 +22,7 @@ Set `icon` without `label` for Segmented Item.
 <script lang="ts" setup>
 import { h } from 'vue';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons-vue';
-import type { SegmentedProps } from 'ant-design-vue';
+import type { SegmentedProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: SegmentedProps['options'] = [
   { value: 'List', icon: h(BarsOutlined) },

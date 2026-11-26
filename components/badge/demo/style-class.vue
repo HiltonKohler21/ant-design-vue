@@ -28,7 +28,7 @@ You can customize the [semantic dom](#semantic-dom) style of Badge by passing ob
 </template>
 
 <script lang="ts" setup>
-import type { BadgeProps } from 'ant-design-vue';
+import type { BadgeProps } from '@hiltonkohler21/ant-design-vue';
 
 const badgeClassNames: BadgeProps['classNames'] = {
   indicator: 'custom-badge-indicator',

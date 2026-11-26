@@ -43,7 +43,7 @@ You can customize the [semantic dom](#semantic-dom) style of Result by passing o
 </template>
 
 <script lang="ts" setup>
-import type { ResultProps } from 'ant-design-vue';
+import type { ResultProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNamesObject: ResultProps['classNames'] = {
   root: 'demo-result-root',

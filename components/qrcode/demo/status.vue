@@ -16,12 +16,12 @@ The status can be controlled by the value `status`, four values ​​of `active
 
 <template>
   <a-space wrap>
-    <a-qrcode value="http://www.antdv.com" status="loading" />
+    <a-qrcode value="https://hiltonkohler21.github.io/ant-design-vue" status="loading" />
     <a-qrcode
-      value="http://www.antdv.com"
+      value="https://hiltonkohler21.github.io/ant-design-vue"
       status="expired"
       @refresh="() => console.log('refresh')"
     />
-    <a-qrcode value="http://www.antdv.com" status="scanned" />
+    <a-qrcode value="https://hiltonkohler21.github.io/ant-design-vue" status="scanned" />
   </a-space>
 </template>

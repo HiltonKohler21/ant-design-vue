@@ -34,7 +34,7 @@ If a `sortOrder` or `defaultSortOrder` is specified with the value `ascend` or `
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 type TableDataType = {
   key: string;

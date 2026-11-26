@@ -34,7 +34,7 @@ Implement infinite scroll loading by listening to the container's scroll event.
               <a-avatar :src="item.avatar" />
             </template>
             <template #title>
-              <a href="https://www.antdv.com/">{{ item.name }}</a>
+              <a href="https://hiltonkohler21.github.io/ant-design-vue/">{{ item.name }}</a>
             </template>
           </a-list-item-meta>
           <div>Content</div>
@@ -98,7 +98,7 @@ const createMockBatch = (offset: number, size: number): DataType[] =>
     return {
       id: `user-${seq}`,
       name: `${first} ${last} #${seq}`,
-      email: `${first.toLowerCase()}.${last.toLowerCase()}.${seq}@antdv.com`,
+      email: `${first.toLowerCase()}.${last.toLowerCase()}.${seq}@example.com`,
       avatar: avatars[(seq - 1) % avatars.length],
     };
   });

@@ -39,7 +39,7 @@ Test List `grid` for some edge cases.
 
 <script lang="ts" setup>
 import { defineComponent, h } from 'vue';
-import { Card, List } from 'ant-design-vue';
+import { Card, List } from '@hiltonkohler21/ant-design-vue';
 
 const data = [
   { title: 'Title 1' },

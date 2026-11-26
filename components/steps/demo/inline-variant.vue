@@ -26,8 +26,8 @@ Inline step bar modifies the style and aligns through `offset`.
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
-import type { StepsProps } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 

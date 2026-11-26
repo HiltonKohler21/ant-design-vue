@@ -24,5 +24,5 @@ Basic Usage.
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const text = ref('https://www.antdv.com/');
+const text = ref('https://hiltonkohler21.github.io/ant-design-vue/');
 </script>

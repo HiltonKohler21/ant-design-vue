@@ -27,7 +27,7 @@ jest.mock('../../tabs', () => ({
   },
 }));
 
-jest.mock('ant-design-vue', () => ({
+jest.mock('@hiltonkohler21/ant-design-vue', () => ({
   Card: require('../../card').default,
   List: require('..').default,
   message: require('../../message').default,

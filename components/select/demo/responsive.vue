@@ -64,7 +64,7 @@ Set a number and automatically fold after exceeding.
   </a-space>
 </template>
 <script lang="ts" setup>
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 const options = ref<SelectProps['options']>([]);
 

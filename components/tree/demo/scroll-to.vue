@@ -30,8 +30,8 @@ In controlled mode, use `Tree.useTree` to get the node path and update `expanded
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Tree } from 'ant-design-vue';
-import type { DataNode } from 'ant-design-vue/es/tree';
+import { Tree } from '@hiltonkohler21/ant-design-vue';
+import type { DataNode } from '@hiltonkohler21/ant-design-vue/es/tree';
 
 const TARGET_KEY = '0-1-1-1-1';
 

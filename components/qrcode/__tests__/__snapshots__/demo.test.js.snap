@@ -9,8 +9,47 @@ exports[`renders ./components/qrcode/demo/base.vue correctly 1`] = `
     </div>
   </div>
   <!---->
-  <div class="ant-space-item"><input placeholder="-" maxlength="60" type="text" class="ant-input"></div>
+  <div class="ant-space-item"><input type="text" class="ant-input" placeholder="-" maxlength="60" value="https://hiltonkohler21.github.io/ant-design-vue/"></div>
   <!---->
+</div>
+`;
+
+exports[`renders ./components/qrcode/demo/custom-status-render.vue correctly 1`] = `
+<div class="ant-flex ant-flex-wrap-wrap ant-flex-gap-middle">
+  <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
+    <div class="ant-qrcode-mask">
+      <div class="ant-space ant-space-vertical">
+        <div class="ant-space-item" style="margin-bottom: 8px;">
+          <div class="ant-spin ant-spin-spinning ant-spin-section" aria-live="polite" aria-busy="true"><span class="ant-spin-dot-holder"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></span>
+            <!---->
+            <!---->
+            <!---->
+          </div>
+        </div>
+        <!---->
+        <div class="ant-space-item">
+          <p>Loading...</p>
+        </div>
+        <!---->
+      </div>
+    </div><canvas style="height: 134px; width: 134px;"></canvas>
+    <!---->
+  </div>
+  <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
+    <div class="ant-qrcode-mask">
+      <div><span role="img" aria-label="close-circle" style="color: rgb(255, 77, 79);" class="anticon anticon-close-circle"><svg focusable="false" data-icon="close-circle" width="1em" height="1em" fill="currentColor" aria-hidden="true" fill-rule="evenodd" viewBox="64 64 896 896"><path d="M512 64c247.4 0 448 200.6 448 448S759.4 960 512 960 64 759.4 64 512 264.6 64 512 64zm127.98 274.82h-.04l-.08.06L512 466.75 384.14 338.88c-.04-.05-.06-.06-.08-.06a.12.12 0 00-.07 0c-.03 0-.05.01-.09.05l-45.02 45.02a.2.2 0 00-.05.09.12.12 0 000 .07v.02a.27.27 0 00.06.06L466.75 512 338.88 639.86c-.05.04-.06.06-.06.08a.12.12 0 000 .07c0 .03.01.05.05.09l45.02 45.02a.2.2 0 00.09.05.12.12 0 00.07 0c.02 0 .04-.01.08-.05L512 557.25l127.86 127.87c.04.04.06.05.08.05a.12.12 0 00.07 0c.03 0 .05-.01.09-.05l45.02-45.02a.2.2 0 00.05-.09.12.12 0 000-.07v-.02a.27.27 0 00-.05-.06L557.25 512l127.87-127.86c.04-.04.05-.06.05-.08a.12.12 0 000-.07c0-.03-.01-.05-.05-.09l-45.02-45.02a.2.2 0 00-.09-.05.12.12 0 00-.07 0z"></path></svg><!----></span> QR code expired<p><button class="ant-btn ant-btn-link" type="button">
+            <!----><span role="img" aria-label="reload" class="anticon anticon-reload"><svg focusable="false" data-icon="reload" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M909.1 209.3l-56.4 44.1C775.8 155.1 656.2 92 521.9 92 290 92 102.3 279.5 102 511.5 101.7 743.7 289.8 932 521.9 932c181.3 0 335.8-115 394.6-276.1 1.5-4.2-.7-8.9-4.9-10.3l-56.7-19.5a8 8 0 00-10.1 4.8c-1.8 5-3.8 10-5.9 14.9-17.3 41-42.1 77.8-73.7 109.4A344.77 344.77 0 01655.9 829c-42.3 17.9-87.4 27-133.8 27-46.5 0-91.5-9.1-133.8-27A341.5 341.5 0 01279 755.2a342.16 342.16 0 01-73.7-109.4c-17.9-42.4-27-87.4-27-133.9s9.1-91.5 27-133.9c17.3-41 42.1-77.8 73.7-109.4 31.6-31.6 68.4-56.4 109.3-73.8 42.3-17.9 87.4-27 133.8-27 46.5 0 91.5 9.1 133.8 27a341.5 341.5 0 01109.3 73.8c9.9 9.9 19.2 20.4 27.8 31.4l-60.2 47a8 8 0 003 14.1l175.6 43c5 1.2 9.9-2.6 9.9-7.7l.8-180.9c-.1-6.6-7.8-10.3-13-6.2z"></path></svg><!----></span><span>Refresh</span>
+          </button></p>
+      </div>
+    </div><canvas style="height: 134px; width: 134px;"></canvas>
+    <!---->
+  </div>
+  <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
+    <div class="ant-qrcode-mask">
+      <div><span role="img" aria-label="check-circle" style="color: rgb(82, 196, 26);" class="anticon anticon-check-circle"><svg focusable="false" data-icon="check-circle" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm193.5 301.7l-210.6 292a31.8 31.8 0 01-51.7 0L318.5 484.9c-3.8-5.3 0-12.7 6.5-12.7h46.9c10.2 0 19.9 4.9 25.9 13.3l71.2 98.8 157.2-218c6-8.3 15.6-13.3 25.9-13.3H699c6.5 0 10.3 7.4 6.5 12.7z"></path></svg><!----></span> Scanned</div>
+    </div><canvas style="height: 134px; width: 134px;"></canvas>
+    <!---->
+  </div>
 </div>
 `;
 
@@ -24,7 +63,7 @@ exports[`renders ./components/qrcode/demo/customColor.vue correctly 1`] = `
   </div>
   <!---->
   <div class="ant-space-item">
-    <div style="width: 160px; height: 160px; background-color: rgb(245, 245, 245);" class="ant-qrcode">
+    <div style="width: 160px; height: 160px;" class="ant-qrcode">
       <!----><canvas style="height: 134px; width: 134px;"></canvas>
       <!---->
     </div>
@@ -38,7 +77,7 @@ exports[`renders ./components/qrcode/demo/customSize.vue correctly 1`] = `
 <br>
 <br>
 <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
-  <!----><canvas style="height: 134px; width: 134px;"></canvas><img src="https://www.antdv.com/assets/logo.1ef800a8.svg" style="display: none;">
+  <!----><canvas style="height: 134px; width: 134px;"></canvas><img src="https://hiltonkohler21.github.io/ant-design-vue/logo.png" style="display: none;">
 </div>
 `;
 
@@ -53,10 +92,10 @@ exports[`renders ./components/qrcode/demo/customType.vue correctly 1`] = `
   <!---->
   <div class="ant-space-item">
     <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
-      <!----><svg height="134" width="134" viewBox="0 0 25 25">
+      <!----><svg height="134" width="134" viewBox="0 0 33 33">
         <!---->
-        <path fill="#FFFFFF" d="M0,0 h25v25H0z" shape-rendering="crispEdges"></path>
-        <path fill="#000000" d="M0 0h7v1H0zM10 0h1v1H10zM13 0h2v1H13zM18,0 h7v1H18zM0 1h1v1H0zM6 1h1v1H6zM8 1h1v1H8zM11 1h1v1H11zM14 1h1v1H14zM18 1h1v1H18zM24,1 h1v1H24zM0 2h1v1H0zM2 2h3v1H2zM6 2h1v1H6zM9 2h2v1H9zM12 2h3v1H12zM18 2h1v1H18zM20 2h3v1H20zM24,2 h1v1H24zM0 3h1v1H0zM2 3h3v1H2zM6 3h1v1H6zM8 3h4v1H8zM13 3h1v1H13zM15 3h2v1H15zM18 3h1v1H18zM20 3h3v1H20zM24,3 h1v1H24zM0 4h1v1H0zM2 4h3v1H2zM6 4h1v1H6zM8 4h2v1H8zM11 4h4v1H11zM18 4h1v1H18zM20 4h3v1H20zM24,4 h1v1H24zM0 5h1v1H0zM6 5h1v1H6zM13 5h2v1H13zM16 5h1v1H16zM18 5h1v1H18zM24,5 h1v1H24zM0 6h7v1H0zM8 6h1v1H8zM10 6h1v1H10zM12 6h1v1H12zM14 6h1v1H14zM16 6h1v1H16zM18,6 h7v1H18zM8 7h1v1H8zM13 7h1v1H13zM15 7h2v1H15zM1 8h1v1H1zM3 8h4v1H3zM8 8h1v1H8zM10 8h1v1H10zM14 8h2v1H14zM17 8h2v1H17zM20 8h2v1H20zM23 8h1v1H23zM0 9h1v1H0zM3 9h1v1H3zM7 9h3v1H7zM11 9h1v1H11zM13 9h3v1H13zM17 9h1v1H17zM19 9h5v1H19zM0 10h1v1H0zM2 10h1v1H2zM5 10h2v1H5zM8 10h1v1H8zM11 10h1v1H11zM15 10h1v1H15zM18 10h2v1H18zM21 10h1v1H21zM24,10 h1v1H24zM1 11h1v1H1zM3 11h3v1H3zM7 11h2v1H7zM11 11h1v1H11zM14 11h1v1H14zM19 11h1v1H19zM21,11 h4v1H21zM1 12h4v1H1zM6 12h3v1H6zM11 12h8v1H11zM24,12 h1v1H24zM0 13h1v1H0zM3 13h1v1H3zM5 13h1v1H5zM7 13h1v1H7zM9 13h8v1H9zM20 13h1v1H20zM23 13h1v1H23zM0 14h2v1H0zM3 14h1v1H3zM5 14h2v1H5zM8 14h1v1H8zM13 14h5v1H13zM20,14 h5v1H20zM0 15h1v1H0zM2 15h3v1H2zM8 15h3v1H8zM12 15h3v1H12zM19 15h2v1H19zM22 15h1v1H22zM24,15 h1v1H24zM0 16h1v1H0zM5 16h2v1H5zM8 16h2v1H8zM11 16h1v1H11zM15 16h6v1H15zM22 16h2v1H22zM8 17h2v1H8zM12 17h5v1H12zM20 17h1v1H20zM23 17h1v1H23zM0 18h7v1H0zM10 18h1v1H10zM12 18h2v1H12zM16 18h1v1H16zM18 18h1v1H18zM20 18h2v1H20zM24,18 h1v1H24zM0 19h1v1H0zM6 19h1v1H6zM8 19h1v1H8zM11 19h1v1H11zM14 19h3v1H14zM20 19h1v1H20zM24,19 h1v1H24zM0 20h1v1H0zM2 20h3v1H2zM6 20h1v1H6zM8 20h2v1H8zM13 20h1v1H13zM15 20h7v1H15zM23,20 h2v1H23zM0 21h1v1H0zM2 21h3v1H2zM6 21h1v1H6zM8 21h2v1H8zM12 21h1v1H12zM14 21h1v1H14zM17 21h3v1H17zM21 21h1v1H21zM23,21 h2v1H23zM0 22h1v1H0zM2 22h3v1H2zM6 22h1v1H6zM9 22h2v1H9zM12 22h2v1H12zM16 22h2v1H16zM19 22h2v1H19zM22,22 h3v1H22zM0 23h1v1H0zM6 23h1v1H6zM8 23h3v1H8zM12 23h1v1H12zM14 23h1v1H14zM17 23h4v1H17zM22,23 h3v1H22zM0 24h7v1H0zM11 24h3v1H11zM16 24h1v1H16zM18 24h1v1H18zM21 24h1v1H21zM24,24 h1v1H24z" shape-rendering="crispEdges"></path>
+        <path fill="#FFFFFF" d="M0,0 h33v33H0z" shape-rendering="crispEdges"></path>
+        <path fill="#000000" d="M0 0h7v1H0zM8 0h1v1H8zM11 0h2v1H11zM19 0h1v1H19zM21 0h1v1H21zM23 0h1v1H23zM26,0 h7v1H26zM0 1h1v1H0zM6 1h1v1H6zM8 1h1v1H8zM10 1h3v1H10zM14 1h1v1H14zM17 1h1v1H17zM20 1h5v1H20zM26 1h1v1H26zM32,1 h1v1H32zM0 2h1v1H0zM2 2h3v1H2zM6 2h1v1H6zM9 2h1v1H9zM11 2h1v1H11zM13 2h4v1H13zM18 2h1v1H18zM22 2h3v1H22zM26 2h1v1H26zM28 2h3v1H28zM32,2 h1v1H32zM0 3h1v1H0zM2 3h3v1H2zM6 3h1v1H6zM8 3h2v1H8zM12 3h1v1H12zM15 3h1v1H15zM18 3h1v1H18zM22 3h2v1H22zM26 3h1v1H26zM28 3h3v1H28zM32,3 h1v1H32zM0 4h1v1H0zM2 4h3v1H2zM6 4h1v1H6zM10 4h2v1H10zM13 4h1v1H13zM16 4h3v1H16zM21 4h2v1H21zM24 4h1v1H24zM26 4h1v1H26zM28 4h3v1H28zM32,4 h1v1H32zM0 5h1v1H0zM6 5h1v1H6zM9 5h2v1H9zM12 5h1v1H12zM14 5h3v1H14zM21 5h1v1H21zM24 5h1v1H24zM26 5h1v1H26zM32,5 h1v1H32zM0 6h7v1H0zM8 6h1v1H8zM10 6h1v1H10zM12 6h1v1H12zM14 6h1v1H14zM16 6h1v1H16zM18 6h1v1H18zM20 6h1v1H20zM22 6h1v1H22zM24 6h1v1H24zM26,6 h7v1H26zM8 7h1v1H8zM14 7h6v1H14zM23 7h2v1H23zM0 8h1v1H0zM2 8h2v1H2zM5 8h3v1H5zM9 8h3v1H9zM14 8h4v1H14zM20 8h2v1H20zM23 8h1v1H23zM26 8h1v1H26zM29 8h1v1H29zM31,8 h2v1H31zM1 9h1v1H1zM4 9h1v1H4zM7 9h1v1H7zM11 9h3v1H11zM16 9h4v1H16zM21 9h1v1H21zM23 9h1v1H23zM26 9h2v1H26zM29 9h2v1H29zM32,9 h1v1H32zM2 10h1v1H2zM5 10h3v1H5zM12 10h2v1H12zM16 10h1v1H16zM18 10h1v1H18zM20 10h1v1H20zM22 10h2v1H22zM25 10h5v1H25zM31,10 h2v1H31zM1 11h2v1H1zM4 11h1v1H4zM9 11h4v1H9zM17 11h1v1H17zM24 11h1v1H24zM27 11h1v1H27zM29 11h1v1H29zM32,11 h1v1H32zM1 12h1v1H1zM4 12h6v1H4zM14 12h3v1H14zM20 12h1v1H20zM22 12h1v1H22zM24 12h2v1H24zM27 12h3v1H27zM31,12 h2v1H31zM1 13h3v1H1zM5 13h1v1H5zM10 13h1v1H10zM13 13h2v1H13zM20 13h2v1H20zM25 13h1v1H25zM27 13h1v1H27zM29 13h1v1H29zM31 13h1v1H31zM0 14h2v1H0zM3 14h2v1H3zM6 14h1v1H6zM8 14h1v1H8zM10 14h2v1H10zM17 14h6v1H17zM26 14h1v1H26zM28 14h2v1H28zM3 15h2v1H3zM10 15h1v1H10zM13 15h3v1H13zM18 15h1v1H18zM21 15h3v1H21zM25 15h2v1H25zM29 15h2v1H29zM0 16h1v1H0zM2 16h1v1H2zM6 16h2v1H6zM9 16h2v1H9zM13 16h2v1H13zM16 16h1v1H16zM18 16h1v1H18zM21 16h2v1H21zM24 16h3v1H24zM28 16h3v1H28zM5 17h1v1H5zM7 17h1v1H7zM9 17h1v1H9zM11 17h2v1H11zM14 17h2v1H14zM20 17h1v1H20zM22 17h5v1H22zM28 17h2v1H28zM31,17 h2v1H31zM1 18h1v1H1zM5 18h2v1H5zM10 18h1v1H10zM12 18h4v1H12zM18 18h1v1H18zM20 18h3v1H20zM24 18h1v1H24zM27 18h2v1H27zM30 18h1v1H30zM0 19h4v1H0zM8 19h2v1H8zM11 19h2v1H11zM17 19h2v1H17zM22 19h4v1H22zM28 19h1v1H28zM31 19h1v1H31zM0 20h2v1H0zM3 20h1v1H3zM6 20h1v1H6zM8 20h2v1H8zM11 20h6v1H11zM19 20h1v1H19zM22 20h2v1H22zM29 20h2v1H29zM32,20 h1v1H32zM0 21h3v1H0zM4 21h1v1H4zM7 21h3v1H7zM12 21h2v1H12zM15 21h2v1H15zM20 21h1v1H20zM23 21h1v1H23zM26 21h1v1H26zM29 21h1v1H29zM32,21 h1v1H32zM3 22h1v1H3zM6 22h1v1H6zM8 22h1v1H8zM11 22h1v1H11zM15 22h1v1H15zM18 22h7v1H18zM27 22h1v1H27zM29,22 h4v1H29zM1 23h2v1H1zM5 23h1v1H5zM7 23h2v1H7zM11 23h1v1H11zM13 23h1v1H13zM15 23h1v1H15zM18 23h1v1H18zM20 23h1v1H20zM23 23h3v1H23zM27 23h1v1H27zM29 23h1v1H29zM32,23 h1v1H32zM0 24h1v1H0zM3 24h2v1H3zM6 24h1v1H6zM8 24h1v1H8zM13 24h1v1H13zM17 24h1v1H17zM19 24h1v1H19zM22 24h1v1H22zM24 24h6v1H24zM31,24 h2v1H31zM8 25h1v1H8zM10 25h1v1H10zM12 25h1v1H12zM14 25h3v1H14zM19 25h1v1H19zM21 25h1v1H21zM23 25h2v1H23zM28 25h2v1H28zM0 26h7v1H0zM8 26h2v1H8zM16 26h4v1H16zM21 26h1v1H21zM23 26h2v1H23zM26 26h1v1H26zM28 26h1v1H28zM0 27h1v1H0zM6 27h1v1H6zM8 27h1v1H8zM10 27h1v1H10zM13 27h1v1H13zM15 27h4v1H15zM20 27h1v1H20zM23 27h2v1H23zM28 27h4v1H28zM0 28h1v1H0zM2 28h3v1H2zM6 28h1v1H6zM9 28h2v1H9zM13 28h2v1H13zM16 28h4v1H16zM22 28h7v1H22zM30 28h1v1H30zM0 29h1v1H0zM2 29h3v1H2zM6 29h1v1H6zM8 29h3v1H8zM13 29h2v1H13zM16 29h2v1H16zM19 29h1v1H19zM21 29h3v1H21zM27 29h1v1H27zM29 29h1v1H29zM31,29 h2v1H31zM0 30h1v1H0zM2 30h3v1H2zM6 30h1v1H6zM8 30h1v1H8zM10 30h7v1H10zM18 30h1v1H18zM20 30h2v1H20zM26 30h2v1H26zM30 30h1v1H30zM0 31h1v1H0zM6 31h1v1H6zM10 31h1v1H10zM12 31h3v1H12zM17 31h2v1H17zM20 31h1v1H20zM23 31h2v1H23zM27 31h3v1H27zM32,31 h1v1H32zM0 32h7v1H0zM8 32h3v1H8zM14 32h1v1H14zM17 32h3v1H17zM21 32h1v1H21zM23 32h1v1H23zM28 32h1v1H28zM30 32h1v1H30z" shape-rendering="crispEdges"></path>
         <!---->
       </svg>
     </div>
@@ -86,13 +125,13 @@ exports[`renders ./components/qrcode/demo/errorLevel.vue correctly 1`] = `
 <br>
 <div class="ant-segmented ">
   <div class="ant-segmented-group">
-    <!----><label class="ant-segmented-item ant-segmented-item-selected"><input class="ant-segmented-item-input" type="radio">
+    <!----><label class="ant-segmented-item ant-segmented-item-selected"><input class="ant-segmented-item-input" type="radio" name="ant-segmented-84" checked="">
       <div class="ant-segmented-item-label" title="L">L</div>
-    </label><label class="ant-segmented-item"><input class="ant-segmented-item-input" type="radio">
+    </label><label class="ant-segmented-item"><input class="ant-segmented-item-input" type="radio" name="ant-segmented-84">
       <div class="ant-segmented-item-label" title="M">M</div>
-    </label><label class="ant-segmented-item"><input class="ant-segmented-item-input" type="radio">
+    </label><label class="ant-segmented-item"><input class="ant-segmented-item-input" type="radio" name="ant-segmented-84">
       <div class="ant-segmented-item-label" title="Q">Q</div>
-    </label><label class="ant-segmented-item"><input class="ant-segmented-item-input" type="radio">
+    </label><label class="ant-segmented-item"><input class="ant-segmented-item-input" type="radio" name="ant-segmented-84">
       <div class="ant-segmented-item-label" title="H">H</div>
     </label>
   </div>
@@ -101,18 +140,20 @@ exports[`renders ./components/qrcode/demo/errorLevel.vue correctly 1`] = `
 
 exports[`renders ./components/qrcode/demo/icon.vue correctly 1`] = `
 <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
-  <!----><canvas style="height: 134px; width: 134px;"></canvas><img src="https://www.antdv.com/assets/logo.1ef800a8.svg" style="display: none;">
+  <!----><canvas style="height: 134px; width: 134px;"></canvas><img src="https://hiltonkohler21.github.io/ant-design-vue/logo.png" style="display: none;">
 </div>
 `;
 
-exports[`renders ./components/qrcode/demo/popover.vue correctly 1`] = `<img width="100" height="100" src="https://www.antdv.com/logo.png">`;
+exports[`renders ./components/qrcode/demo/popover.vue correctly 1`] = `<img width="100" height="100" src="https://hiltonkohler21.github.io/ant-design-vue/logo.png">`;
 
 exports[`renders ./components/qrcode/demo/status.vue correctly 1`] = `
-<div class="ant-space ant-space-horizontal ant-space-align-center">
-  <div class="ant-space-item" style="margin-right: 8px;">
+<div class="ant-space ant-space-horizontal ant-space-align-center" style="flex-wrap: wrap; margin-bottom: -8px;">
+  <div class="ant-space-item" style="margin-right: 8px; padding-bottom: 8px;">
     <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
       <div class="ant-qrcode-mask">
-        <div class="ant-spin ant-spin-spinning" aria-live="polite" aria-busy="true"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>
+        <div class="ant-spin ant-spin-spinning ant-spin-section" aria-live="polite" aria-busy="true"><span class="ant-spin-dot-holder"><span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span></span>
+          <!---->
+          <!---->
           <!---->
         </div>
         <!---->
@@ -122,7 +163,7 @@ exports[`renders ./components/qrcode/demo/status.vue correctly 1`] = `
     </div>
   </div>
   <!---->
-  <div class="ant-space-item" style="margin-right: 8px;">
+  <div class="ant-space-item" style="margin-right: 8px; padding-bottom: 8px;">
     <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
       <div class="ant-qrcode-mask">
         <!---->
@@ -133,7 +174,7 @@ exports[`renders ./components/qrcode/demo/status.vue correctly 1`] = `
     </div>
   </div>
   <!---->
-  <div class="ant-space-item">
+  <div class="ant-space-item" style="padding-bottom: 8px;">
     <div style="width: 160px; height: 160px; background-color: transparent;" class="ant-qrcode">
       <div class="ant-qrcode-mask">
         <!---->
@@ -144,5 +185,19 @@ exports[`renders ./components/qrcode/demo/status.vue correctly 1`] = `
     </div>
   </div>
   <!---->
+</div>
+`;
+
+exports[`renders ./components/qrcode/demo/style-class.vue correctly 1`] = `
+<div class="demo-qrcode-style-class">
+  <div class="ant-flex ant-flex-wrap-wrap" style="gap: 16px;">
+    <div style="width: 160px; height: 160px; background-color: rgba(24, 144, 255, 0.1); border: 2px solid #1890ff; border-radius: 8px; padding: 16px;" class="ant-qrcode demo-qrcode-semantic-root">
+      <!----><canvas style="height: 134px; width: 134px;"></canvas>
+      <!---->
+    </div>
+    <div style="width: 160px; height: 160px; background-color: rgba(255, 77, 79, 0.1); border: 2px solid #ff4d4f; border-radius: 8px; padding: 16px;" class="ant-qrcode demo-qrcode-semantic-root">
+      <!----><canvas style="height: 134px; width: 134px;"></canvas><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%231677ff'/><path d='M18 46L32 16l14 30h-8l-6-13-6 13h-8z' fill='%23fff'/></svg>" style="display: none;">
+    </div>
+  </div>
 </div>
 `;

@@ -29,7 +29,7 @@ You can customize the [semantic dom](#semantic-dom) style of Progress by passing
 </template>
 
 <script lang="ts" setup>
-import type { ProgressProps } from 'ant-design-vue';
+import type { ProgressProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: ProgressProps['classNames'] = {
   root: 'demo-progress-root',

@@ -45,7 +45,7 @@ Component Token debug.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const value1 = ref<string>('a');
 const value2 = ref<string>('a');

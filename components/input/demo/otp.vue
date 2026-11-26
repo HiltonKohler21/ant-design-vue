@@ -58,7 +58,7 @@ One-time password input supporting `formatter`, `mask`, custom `separator`, `sta
 
 <script lang="ts" setup>
 import { h, ref } from 'vue';
-import { Input } from 'ant-design-vue';
+import { Input } from '@hiltonkohler21/ant-design-vue';
 
 const AInputOtp = Input.OTP;
 const basicValue = ref('');

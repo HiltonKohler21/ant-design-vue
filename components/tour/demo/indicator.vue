@@ -38,7 +38,7 @@ Custom indicator.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
-import type { TourProps } from 'ant-design-vue';
+import type { TourProps } from '@hiltonkohler21/ant-design-vue';
 
 const open = ref<boolean>(false);
 

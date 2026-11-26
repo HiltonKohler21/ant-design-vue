@@ -26,7 +26,7 @@ Make treeNode fill remaining horizontal space.
 </template>
 
 <script lang="ts" setup>
-import type { TreeProps } from 'ant-design-vue';
+import type { TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeData: TreeProps['treeData'] = [
   {

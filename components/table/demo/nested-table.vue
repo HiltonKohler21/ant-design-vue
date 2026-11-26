@@ -65,7 +65,7 @@ Showing more detailed info of every row.
 
 <script lang="ts" setup>
 import { DownOutlined } from '@ant-design/icons-vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataItem {
   key: string;

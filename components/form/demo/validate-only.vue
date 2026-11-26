@@ -41,7 +41,7 @@ Use `validateFields({ validateOnly: true })` to silently validate form values wi
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref, watch } from 'vue';
-import type { FormInstance } from 'ant-design-vue';
+import type { FormInstance } from '@hiltonkohler21/ant-design-vue';
 
 const formRef = ref<FormInstance>();
 const submittable = ref(false);

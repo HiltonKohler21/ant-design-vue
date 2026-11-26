@@ -34,7 +34,7 @@ import {
   AppstoreOutlined,
   SettingOutlined,
 } from '@ant-design/icons-vue';
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const selectedKeys = ref([]);
 const openKeys = ref([]);

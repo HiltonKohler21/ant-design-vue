@@ -37,7 +37,7 @@ use [`Form.useForm`](#useform) custom trigger to validation logic and status.
 </template>
 <script lang="ts" setup>
 import { reactive, toRaw } from 'vue';
-import { Form } from 'ant-design-vue';
+import { Form } from '@hiltonkohler21/ant-design-vue';
 
 const useForm = Form.useForm;
 

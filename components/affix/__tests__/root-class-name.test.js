@@ -115,7 +115,9 @@ describe('upstream: rootClassName 第六批（8 组件）', () => {
     expect(wrapper.find('div').element.getAttribute('class')).toContain('rc6-space');
   });
   c('float-button', require('../../float-button').default, {});
-  c('qrcode', require('../../qrcode').default, { value: 'https://antdv.com' });
+  c('qrcode', require('../../qrcode').default, {
+    value: 'https://hiltonkohler21.github.io/ant-design-vue',
+  });
   c('carousel', require('../../carousel').default);
   c('typography', require('../../typography').default);
   it('typography-text 挂到根节点', () => {

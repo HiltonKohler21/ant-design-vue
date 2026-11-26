@@ -29,7 +29,7 @@ Make tabs draggable and reorderable using native HTML5 Drag and Drop with `rende
 
 <script lang="ts" setup>
 import { cloneVNode, defineComponent, ref } from 'vue';
-import type { TabsProps } from 'ant-design-vue';
+import type { TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 const activeKey = ref('1');
 const draggingKey = ref<string | null>(null);

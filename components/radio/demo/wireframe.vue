@@ -27,7 +27,7 @@ Radio.Group display in wireframe theme mode.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { RadioGroupProps } from 'ant-design-vue';
+import type { RadioGroupProps } from '@hiltonkohler21/ant-design-vue';
 
 const value = ref(1);
 const options: RadioGroupProps['options'] = [

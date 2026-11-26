@@ -31,7 +31,7 @@ Debug row selection rendering performance with dynamic row count.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

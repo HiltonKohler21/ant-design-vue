@@ -40,10 +40,10 @@ Customize the status overlay via the `statusRender` prop or `#statusRender` slot
 <script lang="ts" setup>
 import { h } from 'vue';
 import { CheckCircleFilled, CloseCircleFilled, ReloadOutlined } from '@ant-design/icons-vue';
-import { Button, Space, Spin, message } from 'ant-design-vue';
-import type { QRCodeProps } from 'ant-design-vue';
+import { Button, Space, Spin, message } from '@hiltonkohler21/ant-design-vue';
+import type { QRCodeProps } from '@hiltonkohler21/ant-design-vue';
 
-const value = 'https://www.antdv.com';
+const value = 'https://hiltonkohler21.github.io/ant-design-vue';
 
 const handleRefresh = () => {
   message.info('QRCode refreshed');

@@ -20,7 +20,7 @@ Customize separator for each other.
 </template>
 
 <script lang="ts" setup>
-import type { BreadcrumbProps } from 'ant-design-vue';
+import type { BreadcrumbProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: BreadcrumbProps['items'] = [
   {

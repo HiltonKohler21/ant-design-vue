@@ -26,7 +26,7 @@ Specifies default value by an array.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const value = ref<string[]>(['zhejiang', 'hangzhou', 'xihu']);
 

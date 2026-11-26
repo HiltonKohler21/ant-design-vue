@@ -41,7 +41,7 @@ Wrap `Avatar.Group` with `overflowInFinal` mode. When enabled, `max.count` repre
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { AvatarGroupProps } from 'ant-design-vue';
+import type { AvatarGroupProps } from '@hiltonkohler21/ant-design-vue';
 
 const avatarCount = ref(4);
 const overflowInFinal = ref(true);

@@ -30,7 +30,7 @@ The `block` property will make the RadioGroup fit to its parent width.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { RadioGroupProps } from 'ant-design-vue';
+import type { RadioGroupProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: RadioGroupProps['options'] = [
   { label: 'Apple', value: 'Apple' },

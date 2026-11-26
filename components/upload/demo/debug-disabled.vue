@@ -52,7 +52,7 @@ Debug disabled styles across text, button, picture-card, picture-circle, and Dra
 
 <script lang="ts" setup>
 import { InboxOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons-vue';
-import type { UploadFile } from 'ant-design-vue';
+import type { UploadFile } from '@hiltonkohler21/ant-design-vue';
 
 const sampleImageUrl =
   'data:image/svg+xml;utf8,' +

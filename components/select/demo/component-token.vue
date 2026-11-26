@@ -74,7 +74,7 @@ Component Token
 </template>
 
 <script lang="ts" setup>
-import type { ConfigProviderProps, SelectProps } from 'ant-design-vue';
+import type { ConfigProviderProps, SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 type Theme = ConfigProviderProps['theme'];
 

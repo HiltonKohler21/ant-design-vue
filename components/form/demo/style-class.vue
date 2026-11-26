@@ -95,7 +95,7 @@ You can customize the [semantic dom](#semantic-dom) style of Form by passing obj
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import type { FormInstance, FormProps } from 'ant-design-vue';
+import type { FormInstance, FormProps } from '@hiltonkohler21/ant-design-vue';
 
 const objectFormRef = ref<FormInstance>();
 const fnFormRef = ref<FormInstance>();

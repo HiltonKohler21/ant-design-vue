@@ -47,7 +47,7 @@ import {
   PictureTwoTone,
   PlusOutlined,
 } from '@ant-design/icons-vue';
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import type { UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const previewOpen = ref(false);
 const previewImage = ref('');

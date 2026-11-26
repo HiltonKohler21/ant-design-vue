@@ -28,7 +28,7 @@ Asynchronous loading tree node.
 </template>
 
 <script lang="ts" setup>
-import type { TreeSelectProps } from 'ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 import { ref, watch } from 'vue';
 const value = ref<string>();
 const treeData = ref<TreeSelectProps['treeData']>([

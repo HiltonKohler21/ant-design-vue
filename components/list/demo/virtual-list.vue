@@ -47,7 +47,7 @@ An example of infinite & virtualized list using fixed-height virtual windowing f
                 <a-avatar :src="item.avatar" />
               </template>
               <template #title>
-                <a href="https://www.antdv.com/">{{ item.name }}</a>
+                <a href="https://hiltonkohler21.github.io/ant-design-vue/">{{ item.name }}</a>
               </template>
             </a-list-item-meta>
             <div>Content</div>
@@ -60,7 +60,7 @@ An example of infinite & virtualized list using fixed-height virtual windowing f
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 interface UserItem {
   email: string;
@@ -87,7 +87,7 @@ const createMockUsers = (offset: number, count: number): UserItem[] =>
     const baseName = names[(seq - 1) % names.length];
     return {
       name: `${baseName} User ${seq}`,
-      email: `${baseName.toLowerCase()}.user.${seq}@antdv.com`,
+      email: `${baseName.toLowerCase()}.user.${seq}@example.com`,
       avatar: avatars[(seq - 1) % avatars.length],
     };
   });

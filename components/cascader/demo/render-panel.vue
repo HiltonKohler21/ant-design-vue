@@ -21,8 +21,8 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { Cascader } from 'ant-design-vue';
-import type { CascaderProps } from 'ant-design-vue';
+import { Cascader } from '@hiltonkohler21/ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const InternalCascader = Cascader._InternalPanelDoNotUseOrYouWillBeFired;
 

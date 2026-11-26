@@ -18,7 +18,7 @@ Click the left and right switch buttons to preview multiple images.
 
 <template>
   <a-image-preview-group>
-    <a-image :width="200" src="https://www.antdv.com/vue.png" />
-    <a-image :width="200" src="https://www.antdv.com/logo.png" />
+    <a-image :width="200" src="https://hiltonkohler21.github.io/ant-design-vue/vue.png" />
+    <a-image :width="200" src="https://hiltonkohler21.github.io/ant-design-vue/logo.png" />
   </a-image-preview-group>
 </template>

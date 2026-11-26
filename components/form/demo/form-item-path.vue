@@ -45,7 +45,7 @@ Wrap field groups with Vue `provide` / `inject` to automatically prepend `name` 
 <script lang="ts" setup>
 import { computed, defineComponent, h, inject, provide, reactive } from 'vue';
 import type { ComputedRef, InjectionKey, PropType } from 'vue';
-import { Form } from 'ant-design-vue';
+import { Form } from '@hiltonkohler21/ant-design-vue';
 
 type PathSegment = string | number | (string | number)[];
 

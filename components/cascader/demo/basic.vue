@@ -20,7 +20,7 @@ Cascade selection box for selecting province/city/district.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 const options: CascaderProps['options'] = [
   {
     value: 'zhejiang',

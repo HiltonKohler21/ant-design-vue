@@ -60,7 +60,7 @@ You can manually specify the position of the popup via `placement`.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const randomOptions = (count?: number) => {
   const length = count ?? Math.floor(Math.random() * 5) + 1;

@@ -36,8 +36,8 @@ Debug custom expand column placement via `Table.EXPAND_COLUMN` together with row
 </template>
 
 <script lang="ts" setup>
-import { Table } from 'ant-design-vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import { Table } from '@hiltonkohler21/ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

@@ -22,7 +22,7 @@ End alternate timeline.
 <script lang="ts" setup>
 import { h } from 'vue';
 import { ClockCircleOutlined } from '@ant-design/icons-vue';
-import type { TimelineProps } from 'ant-design-vue';
+import type { TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: TimelineProps['items'] = [
   {

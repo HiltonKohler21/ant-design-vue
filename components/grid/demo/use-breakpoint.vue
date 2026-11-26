@@ -27,7 +27,7 @@ Use `useBreakpoint` Hook provide personalized layout.
   </a-flex>
 </template>
 <script lang="ts" setup>
-import { Grid } from 'ant-design-vue';
+import { Grid } from '@hiltonkohler21/ant-design-vue';
 
 const useBreakpoint = Grid.useBreakpoint;
 const screens = useBreakpoint();

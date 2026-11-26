@@ -46,7 +46,7 @@ Use `scrollTo` on the ref to jump to a pixel position, an item or a group, with 
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ListyRef, ScrollAlign } from 'ant-design-vue';
+import type { ListyRef, ScrollAlign } from '@hiltonkohler21/ant-design-vue';
 
 interface Item {
   id: number;

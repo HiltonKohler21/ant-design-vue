@@ -106,7 +106,7 @@ Custom menu, external selection panel.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { DownOutlined } from '@ant-design/icons-vue';
-import type { DatePickerProps } from 'ant-design-vue';
+import type { DatePickerProps } from '@hiltonkohler21/ant-design-vue';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 

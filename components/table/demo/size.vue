@@ -24,7 +24,7 @@ There are two compacted table sizes: `medium` and `small`. The `small` size is u
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

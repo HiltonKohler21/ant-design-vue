@@ -334,7 +334,7 @@ const CASES = [
   ['Statistic', () => <Statistic value={1} />],
   ['Result', () => <Result status="success" title="ok" />],
   ['Empty', () => <Empty />],
-  ['QRCode', () => <QRCode value="https://antdv.com" />],
+  ['QRCode', () => <QRCode value="https://hiltonkohler21.github.io/ant-design-vue" />],
   ['FloatButton', () => <FloatButton />],
   [
     'Tooltip',
@@ -414,7 +414,7 @@ const CASES = [
     ),
   ],
   ['ColorPicker(open)', () => <ColorPicker open value="#1677ff" />],
-  ['Image', () => <Image src="https://antdv.com/x.png" />],
+  ['Image', () => <Image src="https://hiltonkohler21.github.io/ant-design-vue/x.png" />],
   [
     'Layout',
     () => (
@@ -487,7 +487,12 @@ const CASES = [
     ),
   ],
   ['Tour(open)', () => <Tour open steps={[{ title: 'a', description: 'b' }]} />],
-  ['Image(preview)', () => <Image src="https://antdv.com/x.png" preview={{ open: true }} />],
+  [
+    'Image(preview)',
+    () => (
+      <Image src="https://hiltonkohler21.github.io/ant-design-vue/x.png" preview={{ open: true }} />
+    ),
+  ],
   [
     'Table(expandable)',
     () => (
@@ -739,7 +744,7 @@ describe('cssVar 非法 CSS 检测（逐组件）', () => {
               <span>dd</span>
             </Dropdown>
             <Select open options={[{ value: 'a', label: 'A' }]} />
-            <Image src="https://antdv.com/x.png" />
+            <Image src="https://hiltonkohler21.github.io/ant-design-vue/x.png" />
             <MessageStyleProbe />
           </div>
         ),

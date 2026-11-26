@@ -13,7 +13,7 @@ import AutoSizeDemo from '../demo/autoSize.vue';
 import AutosizeDebugDemo from '../demo/autosize-textarea-debug.vue';
 import RenderPanelDemo from '../demo/render-panel.vue';
 
-jest.mock('ant-design-vue', () => ({
+jest.mock('@hiltonkohler21/ant-design-vue', () => ({
   Mentions: require('..').default,
   Divider: require('../../divider').default,
   theme: require('../../theme').default,

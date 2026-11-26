@@ -92,7 +92,7 @@ Display lunar calendar, holidays and other information.
 import { ref } from 'vue';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
-import type { CalendarProps } from 'ant-design-vue';
+import type { CalendarProps } from '@hiltonkohler21/ant-design-vue';
 
 const CHINESE_DIGITS = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
 const LUNAR_DAYS = [

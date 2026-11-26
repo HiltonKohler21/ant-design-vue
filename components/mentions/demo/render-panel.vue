@@ -21,7 +21,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { Mentions } from 'ant-design-vue';
+import { Mentions } from '@hiltonkohler21/ant-design-vue';
 
 const InternalMentions = Mentions._InternalPanelDoNotUseOrYouWillBeFired;
 

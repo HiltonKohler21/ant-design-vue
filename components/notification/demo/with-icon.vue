@@ -34,7 +34,7 @@ A notification box with a icon at the left side.
   </a-flex>
 </template>
 <script lang="ts" setup>
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
 

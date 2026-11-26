@@ -20,7 +20,7 @@ The `style` and `class` are available to customize Message.
   <a-button @click="success">Customized style</a-button>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 const success = () => {
   message.success({
     content: () => 'This is a prompt message with custom className and style',

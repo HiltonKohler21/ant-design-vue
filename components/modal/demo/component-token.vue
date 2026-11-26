@@ -32,8 +32,8 @@ Component Token Debug.
 </template>
 
 <script lang="ts" setup>
-import { Modal } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 /** Test usage. Do not use in your production. */
 const InternalPanel = Modal._InternalPanelDoNotUseOrYouWillBeFired;

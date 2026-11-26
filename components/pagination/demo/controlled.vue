@@ -21,7 +21,7 @@ Controlled page number.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { PaginationProps } from 'ant-design-vue';
+import type { PaginationProps } from '@hiltonkohler21/ant-design-vue';
 
 const current = ref(3);
 

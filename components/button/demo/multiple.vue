@@ -38,7 +38,7 @@ If you need several buttons, we recommend that you use 1 primary button + n seco
 <script lang="ts" setup>
 import { h } from 'vue';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const onMenuClick: MenuProps['onClick'] = e => {
   console.log('click', e);

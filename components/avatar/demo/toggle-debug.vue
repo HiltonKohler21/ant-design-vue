@@ -42,7 +42,7 @@ Text inside Avatar should be set a proper font size when toggling its visibility
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { AvatarSize } from 'ant-design-vue';
+import type { AvatarSize } from '@hiltonkohler21/ant-design-vue';
 
 const invalidSrc = 'data:image/png;base64,AAAA';
 const sizes: AvatarSize[] = ['small', 'default', 'large'];

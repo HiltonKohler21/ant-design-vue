@@ -52,7 +52,7 @@ import {
   MenuUnfoldOutlined,
   PieChartOutlined,
 } from '@ant-design/icons-vue';
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const collapsed = ref(false);
 const tooltipEnabled = ref(true);

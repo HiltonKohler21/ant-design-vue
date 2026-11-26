@@ -27,7 +27,7 @@ Horizontal layout debug across `start`, `end`, and `alternate` modes.
 </template>
 
 <script lang="ts" setup>
-import type { TimelineProps } from 'ant-design-vue';
+import type { TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const longText = 'Long Text '.repeat(5);
 

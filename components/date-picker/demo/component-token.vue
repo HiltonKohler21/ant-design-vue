@@ -39,7 +39,7 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import dayjs from 'dayjs';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const presets = [
   { label: 'Yesterday', value: dayjs().add(-1, 'd') },

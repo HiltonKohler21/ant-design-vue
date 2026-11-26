@@ -68,7 +68,7 @@ const avatars = [
 const listData: DataItem[] = [];
 for (let i = 0; i < 3; i++) {
   listData.push({
-    href: 'https://www.antdv.com/',
+    href: 'https://hiltonkohler21.github.io/ant-design-vue/',
     title: `ant design vue part ${i}`,
     avatar: avatars[i % avatars.length],
     description:

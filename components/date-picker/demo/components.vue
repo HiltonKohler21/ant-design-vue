@@ -24,8 +24,8 @@ Replace panel with `components`.
 
 <script lang="ts" setup>
 import { computed, defineComponent, h, ref, watch } from 'vue';
-import { Button, Flex, Slider, Typography } from 'ant-design-vue';
-import type { DatePickerProps } from 'ant-design-vue';
+import { Button, Flex, Slider, Typography } from '@hiltonkohler21/ant-design-vue';
+import type { DatePickerProps } from '@hiltonkohler21/ant-design-vue';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 

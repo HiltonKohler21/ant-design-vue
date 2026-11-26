@@ -63,7 +63,7 @@ Table pagination settings.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TableColumnsType, TablePaginationPlacement } from 'ant-design-vue';
+import type { TableColumnsType, TablePaginationPlacement } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

@@ -36,7 +36,7 @@ Debug example for List component styles in Spin loading state.
               <a-avatar :src="avatarUrl" />
             </template>
             <template #title>
-              <a href="https://www.antdv.com/">{{ item.title }}</a>
+              <a href="https://hiltonkohler21.github.io/ant-design-vue/">{{ item.title }}</a>
             </template>
           </a-list-item-meta>
         </a-list-item>

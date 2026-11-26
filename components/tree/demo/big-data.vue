@@ -21,7 +21,7 @@ Big data virtual scroll debug with 10,000+ nodes.
 </template>
 
 <script lang="ts" setup>
-import type { TreeProps } from 'ant-design-vue';
+import type { TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeData: NonNullable<TreeProps['treeData']> = [];
 

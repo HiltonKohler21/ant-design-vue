@@ -55,7 +55,7 @@ import type {
   AntTreeNodeDragEnterEvent,
   AntTreeNodeDropEvent,
   TreeProps,
-} from 'ant-design-vue/es/tree';
+} from '@hiltonkohler21/ant-design-vue/es/tree';
 
 const x = 3;
 const y = 2;

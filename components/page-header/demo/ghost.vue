@@ -44,7 +44,7 @@ The default PageHeader is a transparent background. In some cases, PageHeader ne
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 const ghost = ref(false);
 const onBack = () => {
   message.info('Back clicked');

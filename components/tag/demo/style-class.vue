@@ -50,8 +50,8 @@ You can customize the [semantic dom](#semantic-dom) style of Tag by passing obje
 
 <script lang="ts" setup>
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
-import type { TagProps } from 'ant-design-vue';
-import type { CheckableTagGroupProps } from 'ant-design-vue/es/tag';
+import type { TagProps } from '@hiltonkohler21/ant-design-vue';
+import type { CheckableTagGroupProps } from '@hiltonkohler21/ant-design-vue/es/tag';
 
 const tagClassNames: TagProps['classNames'] = {
   root: 'custom-tag-root',

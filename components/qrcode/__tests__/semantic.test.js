@@ -9,7 +9,7 @@ describe('QRCode.Semantic & v6 features', () => {
   it('supports static object classNames and styles for root and cover', () => {
     const wrapper = mount(QRCode, {
       props: {
-        value: 'https://www.antdv.com',
+        value: 'https://hiltonkohler21.github.io/ant-design-vue',
         status: 'loading',
         classNames: {
           root: 'custom-root',
@@ -64,7 +64,7 @@ describe('QRCode.Semantic & v6 features', () => {
             }}
           >
             <QRCode
-              value="https://www.antdv.com"
+              value="https://hiltonkohler21.github.io/ant-design-vue"
               type={this.type}
               status={this.status}
               classNames={classNamesFn}
@@ -104,9 +104,9 @@ describe('QRCode.Semantic & v6 features', () => {
   it('supports object iconSize, marginSize, and string[] value', () => {
     const wrapper = mount(QRCode, {
       props: {
-        value: ['https://www.antdv.com', 'segment-2'],
+        value: ['https://hiltonkohler21.github.io/ant-design-vue', 'segment-2'],
         type: 'svg',
-        icon: 'https://www.antdv.com/assets/logo.1ef800a8.svg',
+        icon: 'https://hiltonkohler21.github.io/ant-design-vue/logo.png',
         iconSize: { width: 32, height: 24 },
         marginSize: 2,
       },

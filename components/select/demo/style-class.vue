@@ -44,7 +44,7 @@ You can customize the [semantic dom](#semantic-dom) style of Select by passing o
 
 <script lang="ts" setup>
 import { MehOutlined } from '@ant-design/icons-vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: SelectProps['classNames'] = {
   root: 'custom-select-root',

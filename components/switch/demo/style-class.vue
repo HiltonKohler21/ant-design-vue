@@ -49,7 +49,7 @@ You can customize the [semantic dom](#semantic-dom) style of Switch by passing o
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { SwitchProps } from 'ant-design-vue';
+import type { SwitchProps } from '@hiltonkohler21/ant-design-vue';
 
 const checked1 = ref(false);
 const checked2 = ref(false);

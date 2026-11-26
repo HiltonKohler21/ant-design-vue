@@ -28,7 +28,7 @@ Use `customHeaderCell` and `customCell` with native HTML5 drag-and-drop events t
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 import type { CSSProperties } from 'vue';
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

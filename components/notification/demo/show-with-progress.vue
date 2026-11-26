@@ -26,7 +26,7 @@ Show progress bar for auto-closing notification, and control whether hovering pa
 </template>
 
 <script lang="ts" setup>
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 
 const [api, contextHolder] = notification.useNotification();
 

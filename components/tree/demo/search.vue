@@ -39,7 +39,7 @@ Searchable Tree.
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import type { TreeProps } from 'ant-design-vue';
+import type { TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const x = 3;
 const y = 2;

@@ -30,7 +30,7 @@ Search the options while expanded.
   ></a-select>
 </template>
 <script lang="ts" setup>
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 const options = ref<SelectProps['options']>([
   { value: 'jack', label: 'Jack' },

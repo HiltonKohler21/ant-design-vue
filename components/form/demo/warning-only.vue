@@ -42,7 +42,7 @@ Rules with `warningOnly` only display warning messages and will not block form s
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 const formState = reactive({
   url: '',

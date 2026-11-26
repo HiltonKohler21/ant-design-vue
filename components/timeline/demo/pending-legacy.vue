@@ -24,7 +24,7 @@ Legacy `pending` and `pendingDot` props debug (prefer `item.loading` in `items`)
 </template>
 
 <script lang="ts" setup>
-import type { TimelineProps } from 'ant-design-vue';
+import type { TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: TimelineProps['items'] = [
   {

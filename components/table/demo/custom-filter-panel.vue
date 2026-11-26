@@ -95,7 +95,7 @@ Implement a customized column search example via `customFilterDropdown`.
 <script lang="ts" setup>
 import { SearchOutlined } from '@ant-design/icons-vue';
 import { reactive, ref } from 'vue';
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

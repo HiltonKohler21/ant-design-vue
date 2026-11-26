@@ -34,7 +34,11 @@ Component Token Debug.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps, UploadChangeParam, UploadProps } from 'ant-design-vue';
+import type {
+  ConfigProviderProps,
+  UploadChangeParam,
+  UploadProps,
+} from '@hiltonkohler21/ant-design-vue';
 
 const fileList = ref<UploadProps['fileList']>([
   {

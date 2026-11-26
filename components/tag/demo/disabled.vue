@@ -78,7 +78,7 @@ Set the `disabled` property to make the tag unusable.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons-vue';
 
 const [messageApi, contextHolder] = message.useMessage();

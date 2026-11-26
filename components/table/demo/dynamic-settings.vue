@@ -123,7 +123,7 @@ import type {
   TableColumnsType,
   TablePaginationPlacement,
   TableProps,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

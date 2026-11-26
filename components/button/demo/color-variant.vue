@@ -29,8 +29,8 @@ You can set the `color` and `variant` attributes at the same time to derive more
 </template>
 
 <script lang="ts" setup>
-import { Grid } from 'ant-design-vue';
-import type { ButtonProps } from 'ant-design-vue';
+import { Grid } from '@hiltonkohler21/ant-design-vue';
+import type { ButtonProps } from '@hiltonkohler21/ant-design-vue';
 
 const screens = Grid.useBreakpoint();
 

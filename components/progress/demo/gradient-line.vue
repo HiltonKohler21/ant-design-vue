@@ -33,7 +33,7 @@ Gradient encapsulation, `circle` and `dashboard` will ignore `strokeLinecap` whe
   </a-flex>
 </template>
 <script lang="ts" setup>
-import type { ProgressProps } from 'ant-design-vue';
+import type { ProgressProps } from '@hiltonkohler21/ant-design-vue';
 
 const twoColors: ProgressProps['strokeColor'] = {
   '0%': '#108ee9',

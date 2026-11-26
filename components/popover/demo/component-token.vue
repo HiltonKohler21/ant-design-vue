@@ -40,8 +40,8 @@ Component Token Debug.
 </template>
 
 <script lang="ts" setup>
-import { Popover } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { Popover } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const InternalPopover = Popover._InternalPanelDoNotUseOrYouWillBeFired;
 

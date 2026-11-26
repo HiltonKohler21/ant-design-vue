@@ -53,7 +53,7 @@ Display six gradient beam palettes and switch between them.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { BorderBeamGradient } from 'ant-design-vue';
+import type { BorderBeamGradient } from '@hiltonkohler21/ant-design-vue';
 
 interface PresetItem {
   key: string;

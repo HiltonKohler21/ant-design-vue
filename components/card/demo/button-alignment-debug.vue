@@ -64,8 +64,8 @@ Verify vertical alignment and icon spacing of buttons in Card `extra`, `actions`
 <script lang="ts" setup>
 import { h } from 'vue';
 import { SmileOutlined } from '@ant-design/icons-vue';
-import { Popconfirm } from 'ant-design-vue';
-import type { ButtonProps } from 'ant-design-vue';
+import { Popconfirm } from '@hiltonkohler21/ant-design-vue';
+import type { ButtonProps } from '@hiltonkohler21/ant-design-vue';
 
 const InternalPopconfirm = Popconfirm._InternalPanelDoNotUseOrYouWillBeFired;
 

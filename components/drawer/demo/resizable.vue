@@ -41,7 +41,7 @@ Set `resizable` to enable resizing the Drawer width or height by dragging its ed
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { DrawerProps } from 'ant-design-vue';
+import type { DrawerProps } from '@hiltonkohler21/ant-design-vue';
 
 const open = ref<boolean>(false);
 const placement = ref<DrawerProps['placement']>('right');

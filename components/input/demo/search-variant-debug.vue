@@ -63,7 +63,7 @@ Compare Input subcomponent variants configured through `input`, subcomponent glo
 </template>
 
 <script lang="ts" setup>
-import { Input } from 'ant-design-vue';
+import { Input } from '@hiltonkohler21/ant-design-vue';
 
 const AInputOtp = Input.OTP;
 </script>

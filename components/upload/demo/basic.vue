@@ -31,9 +31,9 @@ Classic mode. File selection dialog pops up when upload button is clicked.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import type { UploadChangeParam } from 'ant-design-vue';
+import type { UploadChangeParam } from '@hiltonkohler21/ant-design-vue';
 
 const handleChange = (info: UploadChangeParam) => {
   if (info.file.status !== 'uploading') {

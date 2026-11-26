@@ -26,7 +26,7 @@ Group table head with `columns[n].children`.
   />
 </template>
 <script lang="ts" setup>
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 type TableDataType = {
   key: number;
   name: string;

@@ -25,7 +25,7 @@ With `expandedRowRender`, set `showExpandAll` to display an expand-all control i
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

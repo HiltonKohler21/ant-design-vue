@@ -29,8 +29,8 @@ Use the `popupRender` prop to customize submenu popup rendering.
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Col, Flex, Row, Typography } from 'ant-design-vue';
-import type { ConfigProviderProps, MenuProps } from 'ant-design-vue';
+import { Col, Flex, Row, Typography } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps, MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const renderCard = (title: string, description: string) =>
   h('div', { class: 'custom-popup-menu-item' }, [

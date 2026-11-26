@@ -55,7 +55,7 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { HomeOutlined, UserOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const themeConfig: ConfigProviderProps['theme'] = {
   components: {

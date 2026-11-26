@@ -36,7 +36,7 @@ A long list of 10,000 rows. Enable `virtual` with `height` to render only visibl
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ListyRef, ScrollAlign } from 'ant-design-vue';
+import type { ListyRef, ScrollAlign } from '@hiltonkohler21/ant-design-vue';
 
 interface Item {
   id: number;

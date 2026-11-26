@@ -137,16 +137,21 @@ describe('Tag', () => {
 
   it('supports href, target, and disabled (including ConfigProvider componentDisabled)', () => {
     const linkWrapper = mount(Tag, {
-      props: { href: 'https://antdv.com', target: '_blank' },
+      props: { href: 'https://hiltonkohler21.github.io/ant-design-vue', target: '_blank' },
       slots: { default: () => 'Link Tag' },
     });
     expect(linkWrapper.element.tagName).toBe('A');
-    expect(linkWrapper.attributes('href')).toBe('https://antdv.com');
+    expect(linkWrapper.attributes('href')).toBe('https://hiltonkohler21.github.io/ant-design-vue');
     expect(linkWrapper.attributes('target')).toBe('_blank');
 
     const onClose = jest.fn();
     const disabledLink = mount(Tag, {
-      props: { href: 'https://antdv.com', disabled: true, closable: true, onClose },
+      props: {
+        href: 'https://hiltonkohler21.github.io/ant-design-vue',
+        disabled: true,
+        closable: true,
+        onClose,
+      },
       slots: { default: () => 'Disabled Link' },
     });
     expect(disabledLink.element.tagName).toBe('A');

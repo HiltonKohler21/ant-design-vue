@@ -43,8 +43,8 @@ import {
   MailOutlined,
   SettingOutlined,
 } from '@ant-design/icons-vue';
-import { Typography } from 'ant-design-vue';
-import type { ConfigProviderProps, MenuProps } from 'ant-design-vue';
+import { Typography } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps, MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const mode = ref<'vertical' | 'inline'>('inline');
 
@@ -124,7 +124,11 @@ const items: MenuProps['items'] = [
     icon: () => h(LinkOutlined),
     label: h(
       'a',
-      { href: 'https://antdv.com', target: '_blank', rel: 'noopener noreferrer' },
+      {
+        href: 'https://hiltonkohler21.github.io/ant-design-vue',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      },
       'Ant Design Vue',
     ),
   },

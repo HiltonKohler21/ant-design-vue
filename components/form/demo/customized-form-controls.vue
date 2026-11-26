@@ -29,7 +29,7 @@ Controls must inject `useInjectFormItemContext` and call the corresponding metho
 <script lang="ts" setup>
 import { defineComponent, h, reactive } from 'vue';
 import type { PropType } from 'vue';
-import { Form, Input, Select } from 'ant-design-vue';
+import { Form, Input, Select } from '@hiltonkohler21/ant-design-vue';
 
 type Currency = 'rmb' | 'dollar';
 

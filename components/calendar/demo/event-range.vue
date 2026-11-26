@@ -48,7 +48,7 @@ Render event ranges across days with `cellRender`. The example calculates whethe
 import { computed } from 'vue';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 interface CalendarEvent {
   key: string;

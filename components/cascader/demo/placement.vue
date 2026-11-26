@@ -29,7 +29,7 @@ You can manually specify the position of the popup via `placement`.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const placement = ref<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight'>('topLeft');
 

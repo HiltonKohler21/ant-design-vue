@@ -30,7 +30,7 @@ Custom paging display
 </template>
 <script lang="ts" setup>
 const baseUrl =
-  'https://raw.githubusercontent.com/vueComponent/ant-design-vue/main/components/carousel/demo/';
+  'https://raw.githubusercontent.com/HiltonKohler21/ant-design-vue/main/components/carousel/demo/';
 const getImgUrl = (i: number) => {
   return `${baseUrl}abstract0${i + 1}.jpg`;
 };

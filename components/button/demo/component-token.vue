@@ -125,7 +125,7 @@ Component Token. Button with MUI style.
 <script lang="ts" setup>
 import { h } from 'vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 type Theme = ConfigProviderProps['theme'];
 

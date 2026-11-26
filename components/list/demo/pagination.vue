@@ -44,7 +44,7 @@ List pagination can be used and set through the `pagination` property.
             <a-avatar :src="avatars[index % avatars.length]" />
           </template>
           <template #title>
-            <a href="https://www.antdv.com/">{{ item.title }}</a>
+            <a href="https://hiltonkohler21.github.io/ant-design-vue/">{{ item.title }}</a>
           </template>
         </a-list-item-meta>
       </a-list-item>

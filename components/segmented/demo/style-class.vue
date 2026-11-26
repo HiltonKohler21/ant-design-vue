@@ -37,7 +37,7 @@ You can customize the [semantic dom](#semantic-dom) style of the Segmented by pa
 <script lang="ts" setup>
 import { h, ref } from 'vue';
 import { CloudOutlined, RocketOutlined, ThunderboltOutlined } from '@ant-design/icons-vue';
-import type { SegmentedProps } from 'ant-design-vue';
+import type { SegmentedProps } from '@hiltonkohler21/ant-design-vue';
 
 const value1 = ref('boost');
 const value2 = ref('boost');

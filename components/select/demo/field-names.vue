@@ -32,7 +32,7 @@ Only options passing is supported, a-select-option construction node is not supp
   ></a-select>
 </template>
 <script lang="ts" setup>
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 const value = ref('lucy');
 const options = ref<SelectProps['options']>([

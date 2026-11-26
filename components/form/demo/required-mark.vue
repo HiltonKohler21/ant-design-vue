@@ -48,8 +48,8 @@ Switch required, optional, hidden, or custom render function mark style via `req
 <script lang="ts" setup>
 import { computed, h, reactive } from 'vue';
 import { InfoCircleOutlined } from '@ant-design/icons-vue';
-import { Tag } from 'ant-design-vue';
-import type { FormProps } from 'ant-design-vue';
+import { Tag } from '@hiltonkohler21/ant-design-vue';
+import type { FormProps } from '@hiltonkohler21/ant-design-vue';
 
 type RequiredMarkMode = boolean | 'optional' | 'customize';
 

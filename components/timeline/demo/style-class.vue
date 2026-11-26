@@ -34,7 +34,7 @@ You can customize the [semantic dom](#semantic-dom) style of Timeline by passing
 </template>
 
 <script lang="ts" setup>
-import type { TimelineProps } from 'ant-design-vue';
+import type { TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const timelineClassNames: TimelineProps['classNames'] = {
   root: 'demo-timeline-semantic-root',

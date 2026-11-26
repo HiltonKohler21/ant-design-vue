@@ -20,7 +20,7 @@ Display of the entire line.
 </template>
 
 <script lang="ts" setup>
-import type { DescriptionsProps } from 'ant-design-vue';
+import type { DescriptionsProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: DescriptionsProps['items'] = [
   {

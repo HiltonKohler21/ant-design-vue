@@ -35,7 +35,7 @@ Replace the title,key and children fields in treeNode with the corresponding fie
   ></a-tree-select>
 </template>
 <script lang="ts" setup>
-import type { TreeSelectProps } from 'ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 import { ref, watch } from 'vue';
 
 const value = ref<string>();

@@ -24,7 +24,7 @@ You can customize the [semantic dom](#semantic-dom) style of Spin by passing obj
 </template>
 
 <script lang="ts" setup>
-import type { SpinProps } from 'ant-design-vue';
+import type { SpinProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: SpinProps['classNames'] = {
   root: 'custom-spin-root',

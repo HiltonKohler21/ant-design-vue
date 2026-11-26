@@ -22,7 +22,7 @@ To customize the style or font of the close button.
 </template>
 
 <script lang="ts" setup>
-import { Button, Space, notification } from 'ant-design-vue';
+import { Button, Space, notification } from '@hiltonkohler21/ant-design-vue';
 import { h } from 'vue';
 
 const close = () => {

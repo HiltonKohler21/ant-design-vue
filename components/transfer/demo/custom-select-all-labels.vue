@@ -42,7 +42,7 @@ Custom the labels for select all checkboxs.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { SelectAllLabel } from 'ant-design-vue/es/transfer';
+import type { SelectAllLabel } from '@hiltonkohler21/ant-design-vue/es/transfer';
 
 interface MockData {
   key: string;

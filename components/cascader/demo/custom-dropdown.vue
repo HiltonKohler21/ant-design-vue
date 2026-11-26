@@ -22,8 +22,8 @@ Customize the dropdown menu via `popupRender`.
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Divider } from 'ant-design-vue';
-import type { CascaderProps } from 'ant-design-vue';
+import { Divider } from '@hiltonkohler21/ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: CascaderProps['options'] = [
   {

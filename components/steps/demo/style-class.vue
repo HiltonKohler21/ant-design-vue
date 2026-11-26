@@ -30,7 +30,7 @@ You can customize the [semantic dom](#semantic-dom) style of Steps by passing ob
 </template>
 
 <script lang="ts" setup>
-import type { StepsProps } from 'ant-design-vue';
+import type { StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: StepsProps['items'] = [
   { title: 'Finished', content: 'This is a content.' },

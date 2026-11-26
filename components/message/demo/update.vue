@@ -25,7 +25,7 @@ Update message content with unique `key`，or use reactive data.
   </a-button>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 const key = 'updatable';
 const openMessage = () => {

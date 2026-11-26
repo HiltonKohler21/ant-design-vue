@@ -47,7 +47,7 @@ to work with `Form`.
   </a-form>
 </template>
 <script lang="ts" setup>
-import { Mentions, Form } from 'ant-design-vue';
+import { Mentions, Form } from '@hiltonkohler21/ant-design-vue';
 import { reactive } from 'vue';
 
 const useForm = Form.useForm;

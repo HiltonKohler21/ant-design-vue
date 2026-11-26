@@ -40,7 +40,7 @@ Modify theme by `theme` prop.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const defaultData = {
   borderRadius: 6,

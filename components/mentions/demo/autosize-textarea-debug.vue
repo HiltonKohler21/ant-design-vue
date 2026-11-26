@@ -30,7 +30,7 @@ autoSize debug
 </template>
 
 <script lang="ts" setup>
-import type { MentionsOptionProps } from 'ant-design-vue';
+import type { MentionsOptionProps } from '@hiltonkohler21/ant-design-vue';
 
 const options = [
   {

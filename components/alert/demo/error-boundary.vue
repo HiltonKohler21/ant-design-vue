@@ -24,7 +24,7 @@ Use `Alert.ErrorBoundary` to catch errors thrown by descendant components and di
 
 <script lang="ts" setup>
 import { defineComponent, h, ref } from 'vue';
-import { Button } from 'ant-design-vue';
+import { Button } from '@hiltonkohler21/ant-design-vue';
 
 const ThrowError = defineComponent({
   setup() {

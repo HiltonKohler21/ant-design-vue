@@ -28,7 +28,7 @@ Update content with unique key, or use reactive data.
   </a-space>
 </template>
 <script lang="ts" setup>
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 
 const key = 'updatable';

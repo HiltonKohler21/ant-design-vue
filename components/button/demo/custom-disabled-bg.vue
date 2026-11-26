@@ -26,7 +26,7 @@ Customize the background color with `disabled` (applicable to type `default` and
 </template>
 
 <script lang="ts" setup>
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const disabledBgTheme: ConfigProviderProps['theme'] = {
   components: {

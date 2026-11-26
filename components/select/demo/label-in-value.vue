@@ -28,7 +28,7 @@ The label of the selected item will be packed as an object for passing to the on
   ></a-select>
 </template>
 <script lang="ts" setup>
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 const options = ref<SelectProps['options']>([
   {

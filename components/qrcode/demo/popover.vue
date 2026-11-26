@@ -17,8 +17,8 @@ With Popover.
 <template>
   <a-popover :overlay-inner-style="{ padding: 0 }">
     <template #content>
-      <a-qrcode value="http://www.antdv.com" :bordered="false" />
+      <a-qrcode value="https://hiltonkohler21.github.io/ant-design-vue" :bordered="false" />
     </template>
-    <img width="100" height="100" src="https://www.antdv.com/logo.png" />
+    <img width="100" height="100" src="https://hiltonkohler21.github.io/ant-design-vue/logo.png" />
   </a-popover>
 </template>

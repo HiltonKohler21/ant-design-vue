@@ -26,7 +26,7 @@ Display timeline horizontally with `orientation="horizontal"`, supporting `start
   </a-flex>
 </template>
 <script lang="ts" setup>
-import type { TimelineItemType } from 'ant-design-vue';
+import type { TimelineItemType } from '@hiltonkohler21/ant-design-vue';
 
 const items: TimelineItemType[] = [
   { content: 'Init' },

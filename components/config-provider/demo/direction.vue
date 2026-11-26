@@ -356,7 +356,7 @@ import {
   MinusOutlined,
   PlusOutlined,
 } from '@ant-design/icons-vue';
-import type { TreeProps, TreeSelectProps, CascaderProps } from 'ant-design-vue';
+import type { TreeProps, TreeSelectProps, CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const state = reactive({
   currentStep: 0,

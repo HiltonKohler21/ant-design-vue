@@ -43,7 +43,7 @@ Stack configuration, enabled by default. Notifications will be stacked when the 
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { notification } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
 
 const enabled = ref<boolean>(true);
 const threshold = ref<number>(3);

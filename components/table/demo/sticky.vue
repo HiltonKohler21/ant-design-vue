@@ -46,7 +46,7 @@ For long table，need to scroll to view the header and scroll bar，then you can
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 import { ref } from 'vue';
 const columns = ref<TableColumnsType>([
   {

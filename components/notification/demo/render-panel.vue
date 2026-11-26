@@ -28,7 +28,7 @@ Debug usage. Do not use in your production.
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Button, notification } from 'ant-design-vue';
+import { Button, notification } from '@hiltonkohler21/ant-design-vue';
 
 /** Test usage. Do not use in your production. */
 const InternalPanel = notification._InternalPanelDoNotUseOrYouWillBeFired;

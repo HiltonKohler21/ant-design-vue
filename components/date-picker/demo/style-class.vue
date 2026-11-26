@@ -29,7 +29,7 @@ You can customize the [semantic dom](#semantic-dom) style of DatePicker by passi
 </template>
 
 <script lang="ts" setup>
-import type { DatePickerProps } from 'ant-design-vue';
+import type { DatePickerProps } from '@hiltonkohler21/ant-design-vue';
 
 const pickerClassNames: DatePickerProps['classNames'] = {
   root: 'custom-date-picker-root',

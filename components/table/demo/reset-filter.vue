@@ -34,7 +34,7 @@ Control filters and sorters by `filteredValue` and `sortOrder`.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataItem {
   key: string;

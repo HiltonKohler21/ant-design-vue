@@ -32,7 +32,7 @@ You can customize the [semantic dom](#semantic-dom) style of Space by passing ob
 </template>
 
 <script lang="ts" setup>
-import type { SpaceProps } from 'ant-design-vue';
+import type { SpaceProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNamesObject: SpaceProps['classNames'] = {
   root: 'demo-space-root',

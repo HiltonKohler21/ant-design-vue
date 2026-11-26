@@ -36,7 +36,7 @@ You can customize the [semantic dom](#semantic-dom) style of Mentions by passing
 </template>
 
 <script lang="ts" setup>
-import type { MentionsProps } from 'ant-design-vue';
+import type { MentionsProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: MentionsProps['options'] = [
   { value: 'afc163', label: 'afc163' },

@@ -25,7 +25,7 @@ Use `variant` to switch between `filled` and `outlined` node styles with config-
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TimelineItemType, TimelineVariant } from 'ant-design-vue';
+import type { TimelineItemType, TimelineVariant } from '@hiltonkohler21/ant-design-vue';
 
 const variant = ref<TimelineVariant>('filled');
 const items: TimelineItemType[] = [

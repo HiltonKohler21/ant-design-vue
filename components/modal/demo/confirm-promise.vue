@@ -23,7 +23,7 @@ delay closing the dialog.
 <script lang="ts" setup>
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
 const showConfirm = () => {
   Modal.confirm({
     title: 'Do you want to delete these items?',

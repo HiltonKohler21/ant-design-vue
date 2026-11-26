@@ -52,7 +52,7 @@ Buggy!
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { StepsProps } from 'ant-design-vue';
+import type { StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const percent = ref<number | undefined>(0);
 const current = ref(1);

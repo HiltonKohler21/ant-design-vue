@@ -46,7 +46,7 @@ Implement drag sorting with a dedicated drag handle column using native HTML5 dr
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { HolderOutlined } from '@ant-design/icons-vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

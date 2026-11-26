@@ -22,8 +22,8 @@ Use `rowSelection.selections` custom selections, default no select dropdown, sho
 
 <script lang="ts" setup>
 import { computed, ref, unref } from 'vue';
-import { Table } from 'ant-design-vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import { Table } from '@hiltonkohler21/ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string | number;

@@ -23,7 +23,7 @@ You can ellipsis content from middle by customize `ellipsis={{ suffix: ... }}`.
 </template>
 <script lang="ts" setup>
 import { h, type FunctionalComponent } from 'vue';
-import { Typography } from 'ant-design-vue';
+import { Typography } from '@hiltonkohler21/ant-design-vue';
 
 const EllipsisMiddle: FunctionalComponent<{ suffixCount: number }> = (props, { slots }) => {
   const raw = slots.default?.() || [];

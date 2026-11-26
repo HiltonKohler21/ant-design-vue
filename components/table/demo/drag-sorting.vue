@@ -28,7 +28,7 @@ Use `customRow` with native HTML5 drag-and-drop events to implement row drag sor
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

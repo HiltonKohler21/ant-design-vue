@@ -82,7 +82,7 @@ You can customize the [semantic dom](#semantic-dom) style of Drawer by passing o
 <script lang="ts" setup>
 import { ref } from 'vue';
 import type { CSSProperties } from 'vue';
-import type { DrawerProps } from 'ant-design-vue';
+import type { DrawerProps } from '@hiltonkohler21/ant-design-vue';
 
 const drawerOpen = ref(false);
 const drawerFnOpen = ref(false);

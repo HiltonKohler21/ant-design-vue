@@ -25,8 +25,8 @@ We can customize the rendering of the cells in the calendar by providing a `cell
 <script lang="ts" setup>
 import { h } from 'vue';
 import type { CSSProperties } from 'vue';
-import { theme } from 'ant-design-vue';
-import type { DatePickerProps } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { DatePickerProps } from '@hiltonkohler21/ant-design-vue';
 import type { Dayjs } from 'dayjs';
 
 const { token } = theme.useToken();

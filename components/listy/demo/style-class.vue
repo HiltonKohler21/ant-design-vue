@@ -64,7 +64,7 @@ Customize semantic parts of Listy (`root`, `item`, `groupHeader`, etc.) via `cla
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ListyProps } from 'ant-design-vue';
+import type { ListyProps } from '@hiltonkohler21/ant-design-vue';
 
 interface User {
   id: number;

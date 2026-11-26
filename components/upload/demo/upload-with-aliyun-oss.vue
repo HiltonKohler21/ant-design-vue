@@ -38,8 +38,8 @@ Example of direct upload with Aliyun OSS using `beforeUpload` and `data` to atta
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
-import type { UploadFile, UploadProps } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
+import type { UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 interface OSSDataType {
   dir: string;

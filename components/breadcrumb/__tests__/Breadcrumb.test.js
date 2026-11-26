@@ -139,7 +139,12 @@ describe('Breadcrumb', () => {
           params: { id: '42' },
           separator: '>',
           items: [
-            { key: 'home', title: 'Home', href: 'https://antdv.com', class: 'home-item' },
+            {
+              key: 'home',
+              title: 'Home',
+              href: 'https://hiltonkohler21.github.io/ant-design-vue',
+              class: 'home-item',
+            },
             { key: 'user', title: 'User :id', path: 'users/:id', onClick },
             { key: 'detail', title: 'Detail', path: 'detail' },
           ],
@@ -149,7 +154,9 @@ describe('Breadcrumb', () => {
       const items = wrapper.findAll('li');
       expect(items).toHaveLength(3);
       expect(items[0].classes()).toContain('home-item');
-      expect(items[0].find('a').attributes('href')).toBe('https://antdv.com');
+      expect(items[0].find('a').attributes('href')).toBe(
+        'https://hiltonkohler21.github.io/ant-design-vue',
+      );
       expect(items[0].find('a').text()).toBe('Home');
       expect(items[0].find('.ant-breadcrumb-separator').text()).toBe('>');
 

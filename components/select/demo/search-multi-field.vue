@@ -26,7 +26,7 @@ Use `optionFilterProp` for multi-field search.
 </template>
 
 <script lang="ts" setup>
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: SelectProps['options'] = [
   { value: 'a11', label: 'a11', otherField: 'c11' },

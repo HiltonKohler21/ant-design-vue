@@ -45,7 +45,7 @@ You can customize the [semantic dom](#semantic-dom) style of Table by passing ob
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

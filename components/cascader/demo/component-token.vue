@@ -29,7 +29,7 @@ Component Token
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CascaderProps, ConfigProviderProps } from 'ant-design-vue';
+import type { CascaderProps, ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 interface Option {
   value: string;

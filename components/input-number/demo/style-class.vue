@@ -29,7 +29,7 @@ You can customize the [semantic dom](#semantic-dom) style of the InputNumber by 
 </template>
 
 <script lang="ts" setup>
-import type { InputNumberProps } from 'ant-design-vue';
+import type { InputNumberProps } from '@hiltonkohler21/ant-design-vue';
 
 const semanticClassNames: InputNumberProps['classNames'] = {
   root: 'custom-input-number-root',

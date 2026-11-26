@@ -43,8 +43,8 @@ Allows for custom rendering of tags.
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import type { TreeSelectProps } from 'ant-design-vue';
-import { TreeSelect } from 'ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
+import { TreeSelect } from '@hiltonkohler21/ant-design-vue';
 const SHOW_ALL = TreeSelect.SHOW_ALL;
 const value = ref<string[]>(['parent 1', 'parent 1-0', 'leaf1']);
 const treeData = ref<TreeSelectProps['treeData']>([

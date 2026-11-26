@@ -20,7 +20,7 @@ Use `Space.Addon` inside `Space.Compact` to create styled prefix/suffix cells wi
   <a-space orientation="vertical" size="middle" style="width: 100%">
     <a-space-compact>
       <a-space-addon>https://</a-space-addon>
-      <a-input default-value="antdv.com" />
+      <a-input default-value="hiltonkohler21.github.io/ant-design-vue" />
       <a-space-addon>.cn</a-space-addon>
     </a-space-compact>
     <a-space-compact>

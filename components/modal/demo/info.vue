@@ -26,7 +26,7 @@ Static methods cannot consume Context provided by `ConfigProvider`. When enable 
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
 
 const info = () => {
   Modal.info({

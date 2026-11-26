@@ -24,8 +24,8 @@ The situation of complex text.
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Badge, Table } from 'ant-design-vue';
-import type { DescriptionsProps, TableProps } from 'ant-design-vue';
+import { Badge, Table } from '@hiltonkohler21/ant-design-vue';
+import type { DescriptionsProps, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

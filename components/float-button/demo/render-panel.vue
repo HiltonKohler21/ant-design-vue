@@ -38,7 +38,7 @@ import {
   QuestionCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons-vue';
-import { FloatButton } from 'ant-design-vue';
+import { FloatButton } from '@hiltonkohler21/ant-design-vue';
 
 /** Test usage. Do not use in your production. */
 const InternalFloatButton = FloatButton._InternalPanelDoNotUseOrYouWillBeFired;

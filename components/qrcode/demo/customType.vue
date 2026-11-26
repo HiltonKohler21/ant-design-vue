@@ -16,7 +16,7 @@ Customize the rendering results by `type`, provide options `canvas` and `svg`.
 
 <template>
   <a-space>
-    <a-qrcode value="http://www.antdv.com" type="canvas" />
-    <a-qrcode value="http://www.antdv.com" type="svg" />
+    <a-qrcode value="https://hiltonkohler21.github.io/ant-design-vue" type="canvas" />
+    <a-qrcode value="https://hiltonkohler21.github.io/ant-design-vue" type="svg" />
   </a-space>
 </template>

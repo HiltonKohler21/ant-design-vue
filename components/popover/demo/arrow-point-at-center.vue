@@ -36,7 +36,7 @@ The arrow points to the center of the target element when setting `arrow: { poin
 </template>
 
 <script lang="ts" setup>
-import type { PopoverProps } from 'ant-design-vue';
+import type { PopoverProps } from '@hiltonkohler21/ant-design-vue';
 
 type Placement = NonNullable<PopoverProps['placement']>;
 

@@ -95,7 +95,11 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ConfigProviderProps, TableColumnsType, TransferProps } from 'ant-design-vue';
+import type {
+  ConfigProviderProps,
+  TableColumnsType,
+  TransferProps,
+} from '@hiltonkohler21/ant-design-vue';
 
 interface RecordType {
   key: string;

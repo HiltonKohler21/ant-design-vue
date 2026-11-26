@@ -108,7 +108,7 @@ Use form in drawer with submit button.
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
-import type { Rule } from 'ant-design-vue/es/form';
+import type { Rule } from '@hiltonkohler21/ant-design-vue/es/form';
 const form = reactive({
   name: '',
   url: '',

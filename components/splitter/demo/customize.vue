@@ -88,7 +88,7 @@ import {
   CaretUpOutlined,
   ColumnWidthOutlined,
 } from '@ant-design/icons-vue';
-import type { ConfigProviderProps, SplitterProps } from 'ant-design-vue';
+import type { ConfigProviderProps, SplitterProps } from '@hiltonkohler21/ant-design-vue';
 
 const splitterTheme: ConfigProviderProps['theme'] = {
   components: {

@@ -28,7 +28,7 @@ Customize the preview toolbar using `preview.actionsRender` (compatible with `to
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Space } from 'ant-design-vue';
+import { Space } from '@hiltonkohler21/ant-design-vue';
 import {
   RotateLeftOutlined,
   RotateRightOutlined,

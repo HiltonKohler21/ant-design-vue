@@ -27,7 +27,7 @@ You can customize the [semantic dom](#semantic-dom) style of Calendar by passing
 
 <script lang="ts" setup>
 import type { Dayjs } from 'dayjs';
-import type { CalendarProps } from 'ant-design-vue';
+import type { CalendarProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: CalendarProps<Dayjs>['classNames'] = {
   root: 'demo-calendar-semantic-root',

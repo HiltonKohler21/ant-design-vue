@@ -54,7 +54,7 @@ import {
   RightOutlined,
   UpOutlined,
 } from '@ant-design/icons-vue';
-import type { FloatButtonGroupPlacement } from 'ant-design-vue';
+import type { FloatButtonGroupPlacement } from '@hiltonkohler21/ant-design-vue';
 
 const BOX_SIZE = 100;
 const BUTTON_SIZE = 40;

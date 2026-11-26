@@ -29,8 +29,8 @@ Component Token Debug
 
 <script lang="ts" setup>
 import { defineComponent, h } from 'vue';
-import { Button, message } from 'ant-design-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import { Button, message } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const MessageTrigger = defineComponent({
   props: {

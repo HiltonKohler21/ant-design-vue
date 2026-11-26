@@ -27,8 +27,8 @@ Allows for custom rendering of tags.
 
 <script lang="ts" setup>
 import { h, ref } from 'vue';
-import { Tag } from 'ant-design-vue';
-import type { SelectProps } from 'ant-design-vue';
+import { Tag } from '@hiltonkohler21/ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const value = ref<string[]>(['gold', 'cyan']);
 

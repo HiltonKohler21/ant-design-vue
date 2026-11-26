@@ -61,7 +61,7 @@ Debug only.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TabsProps } from 'ant-design-vue';
+import type { TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 const placementList: Array<NonNullable<TabsProps['tabPlacement']>> = [
   'start',

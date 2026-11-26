@@ -31,8 +31,8 @@ Custom empty status, including customizing filter dropdown empty state (`Table.f
 
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue';
-import { Empty } from 'ant-design-vue';
-import type { ConfigProviderProps, TableColumnsType } from 'ant-design-vue';
+import { Empty } from '@hiltonkohler21/ant-design-vue';
+import type { ConfigProviderProps, TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

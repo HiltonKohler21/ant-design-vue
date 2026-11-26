@@ -57,7 +57,9 @@ describe('运行时取值（cssVar 模式）', () => {
   });
 
   it('QRCode 的尺寸计算不是 NaN（SVG 输出）', async () => {
-    await mountWith({}, () => <QRCode value="https://antdv.com" type="svg" />);
+    await mountWith({}, () => (
+      <QRCode value="https://hiltonkohler21.github.io/ant-design-vue" type="svg" />
+    ));
 
     const svg = document.querySelector('.ant-qrcode svg');
     expect(svg).toBeTruthy();

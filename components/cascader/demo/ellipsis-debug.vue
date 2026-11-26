@@ -21,7 +21,7 @@ Debug Cascader.Panel menu item ellipsis.
 </template>
 
 <script lang="ts" setup>
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: CascaderProps['options'] = [
   {

@@ -50,7 +50,7 @@ By setting `type=dashboard`, you can get a dashboard style of progress easily.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ProgressProps } from 'ant-design-vue';
+import type { ProgressProps } from '@hiltonkohler21/ant-design-vue';
 
 type GapPlacement = NonNullable<ProgressProps['gapPlacement']>;
 

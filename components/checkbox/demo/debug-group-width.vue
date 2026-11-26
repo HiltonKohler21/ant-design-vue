@@ -31,7 +31,7 @@ Checkbox icons keep consistent width when long labels wrap in a narrow container
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CheckboxOptionType } from 'ant-design-vue';
+import type { CheckboxOptionType } from '@hiltonkohler21/ant-design-vue';
 
 const options: CheckboxOptionType[] = [
   { label: 'Short', value: 'a' },

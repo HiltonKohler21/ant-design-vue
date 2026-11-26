@@ -44,7 +44,7 @@ Stack configuration, disabled by default. Messages will be stacked when the amou
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 const enabled = ref(true);
 const threshold = ref(3);

@@ -21,7 +21,7 @@ Support multiple handles in `range` mode, combined with `styles.tracks` and `sty
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { SliderProps } from 'ant-design-vue';
+import type { SliderProps } from '@hiltonkohler21/ant-design-vue';
 
 function getGradientColor(percentage: number) {
   const startColor = [135, 208, 104];

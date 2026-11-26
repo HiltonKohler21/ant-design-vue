@@ -48,7 +48,7 @@ set resizable for drag column
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 const data = [
   {

@@ -34,8 +34,8 @@ Set `pastable` to enable uploading files or images directly from the clipboard.
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
-import type { UploadChangeParam, UploadFile, UploadProps } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
+import type { UploadChangeParam, UploadFile, UploadProps } from '@hiltonkohler21/ant-design-vue';
 
 const fileList = ref<UploadFile[]>([]);
 

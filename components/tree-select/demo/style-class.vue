@@ -38,7 +38,7 @@ You can customize the [semantic dom](#semantic-dom) style of TreeSelect by passi
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TreeSelectProps } from 'ant-design-vue';
+import type { TreeSelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const value1 = ref<string>();
 const value2 = ref<string>();

@@ -49,7 +49,7 @@ Customize `root` and `item` semantic regions by passing static objects or functi
   </a-flex>
 </template>
 <script lang="ts" setup>
-import type { MasonryProps } from 'ant-design-vue';
+import type { MasonryProps } from '@hiltonkohler21/ant-design-vue';
 
 const items = [120, 80, 100, 60, 140, 90, 110, 70].map((height, index) => ({
   key: `item-${index}`,

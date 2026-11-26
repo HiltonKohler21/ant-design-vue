@@ -83,7 +83,7 @@ You can customize the [semantic dom](#semantic-dom) style of Modal by passing ob
 <script lang="ts" setup>
 import type { CSSProperties } from 'vue';
 import { ref } from 'vue';
-import type { ModalProps } from 'ant-design-vue';
+import type { ModalProps } from '@hiltonkohler21/ant-design-vue';
 
 const modalOpen = ref<boolean>(false);
 const modalFnOpen = ref<boolean>(false);

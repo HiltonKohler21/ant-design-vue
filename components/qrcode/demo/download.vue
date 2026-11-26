@@ -15,7 +15,7 @@ A way to download QRCode.
 </docs>
 
 <template>
-  <a-qrcode ref="qrcodeCanvasRef" value="http://www.antdv.com" />
+  <a-qrcode ref="qrcodeCanvasRef" value="https://hiltonkohler21.github.io/ant-design-vue" />
   <br />
   <br />
   <a-button type="primary" @click="dowloadChange">Downlaod</a-button>

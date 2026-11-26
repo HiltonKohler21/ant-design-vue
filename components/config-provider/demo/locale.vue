@@ -80,7 +80,7 @@ Components which need localization support are listed here, you can toggle the l
       </a-modal>
       <a-space wrap :size="80">
         <a-qrcode
-          value="https://antdv.com"
+          value="https://hiltonkohler21.github.io/ant-design-vue"
           status="expired"
           @refresh="() => console.log('refresh')"
         />
@@ -112,11 +112,11 @@ Components which need localization support are listed here, you can toggle the l
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import { Modal, theme } from 'ant-design-vue';
-import type { TourProps, UploadFile } from 'ant-design-vue';
+import { Modal, theme } from '@hiltonkohler21/ant-design-vue';
+import type { TourProps, UploadFile } from '@hiltonkohler21/ant-design-vue';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
-import enUS from 'ant-design-vue/es/locale/en_US';
-import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import enUS from '@hiltonkohler21/ant-design-vue/es/locale/en_US';
+import zhCN from '@hiltonkohler21/ant-design-vue/es/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 

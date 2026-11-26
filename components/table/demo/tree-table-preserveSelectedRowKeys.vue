@@ -34,7 +34,7 @@ Debug `checkStrictly` and `preserveSelectedRowKeys` with paginated tree data.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

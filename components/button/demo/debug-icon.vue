@@ -124,7 +124,7 @@ Debug usage
 <script lang="ts" setup>
 import { h, ref } from 'vue';
 import { ArrowDownOutlined, MinusSquareOutlined, SearchOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 type SizeType = ConfigProviderProps['componentSize'];
 

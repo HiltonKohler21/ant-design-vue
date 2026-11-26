@@ -22,7 +22,7 @@ Customize the dropdown menu rendering via `popupRender`.
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import { Divider, theme } from 'ant-design-vue';
+import { Divider, theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 

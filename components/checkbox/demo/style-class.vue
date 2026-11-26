@@ -25,7 +25,7 @@ You can customize the [semantic dom](#semantic-dom) style of Checkbox by passing
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CheckboxProps } from 'ant-design-vue';
+import type { CheckboxProps } from '@hiltonkohler21/ant-design-vue';
 
 const checked1 = ref(false);
 const checked2 = ref(true);

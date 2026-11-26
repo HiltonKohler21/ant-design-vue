@@ -27,7 +27,7 @@ Replace the page size changer with `components`.
 
 <script lang="ts" setup>
 import { defineComponent, h } from 'vue';
-import { InputNumber } from 'ant-design-vue';
+import { InputNumber } from '@hiltonkohler21/ant-design-vue';
 
 const SizeChanger = defineComponent({
   name: 'CustomSizeChanger',

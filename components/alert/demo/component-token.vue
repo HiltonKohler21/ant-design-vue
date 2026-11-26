@@ -33,7 +33,7 @@ Custom component token.
 
 <script lang="ts" setup>
 import { SmileOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const themeConfig: ConfigProviderProps['theme'] = {
   components: {

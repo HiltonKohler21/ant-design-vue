@@ -25,8 +25,8 @@ You can customize the [semantic dom](#semantic-dom) style of messages with `clas
 </template>
 
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
-import type { MessageArgsProps } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
+import type { MessageArgsProps } from '@hiltonkohler21/ant-design-vue';
 
 const defaultStyles = {
   root: {

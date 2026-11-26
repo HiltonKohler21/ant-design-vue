@@ -38,8 +38,8 @@ You can customize the [semantic dom](#semantic-dom) style of Empty by passing ob
 </template>
 
 <script lang="ts" setup>
-import { Empty } from 'ant-design-vue';
-import type { EmptyProps } from 'ant-design-vue';
+import { Empty } from '@hiltonkohler21/ant-design-vue';
+import type { EmptyProps } from '@hiltonkohler21/ant-design-vue';
 
 const simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
 

@@ -26,7 +26,7 @@ Debug bordered table selection header alignment when `selections: true` dropdown
 </template>
 
 <script lang="ts" setup>
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: string;

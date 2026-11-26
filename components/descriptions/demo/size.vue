@@ -67,7 +67,7 @@ Custom sizes to fit in a variety of containers.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { DescriptionsProps } from 'ant-design-vue';
+import type { DescriptionsProps } from '@hiltonkohler21/ant-design-vue';
 const size = ref<DescriptionsProps['size']>('default');
 const onChange = (e: any) => {
   console.log('size checked', e.target.value);

@@ -39,7 +39,7 @@ You can customize the [semantic dom](#semantic-dom) style of Tree by passing obj
 </template>
 
 <script lang="ts" setup>
-import type { TreeProps } from 'ant-design-vue';
+import type { TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeClassNames: TreeProps['classNames'] = {
   root: 'demo-tree-semantic-root',

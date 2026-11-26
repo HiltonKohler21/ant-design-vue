@@ -34,7 +34,7 @@ Debug connecting lines with custom `titleHeight` and `switcherSize` component to
 
 <script lang="ts" setup>
 import { CarryOutOutlined } from '@ant-design/icons-vue';
-import type { ConfigProviderProps, TreeProps } from 'ant-design-vue';
+import type { ConfigProviderProps, TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const lineTheme: ConfigProviderProps['theme'] = {
   components: {

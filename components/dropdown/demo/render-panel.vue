@@ -23,7 +23,7 @@ Debug usage. Do not use in your production.
 <script lang="ts" setup>
 import { h } from 'vue';
 import { SmileOutlined } from '@ant-design/icons-vue';
-import { Dropdown } from 'ant-design-vue';
+import { Dropdown } from '@hiltonkohler21/ant-design-vue';
 
 const InternalDropdown = Dropdown._InternalPanelDoNotUseOrYouWillBeFired;
 

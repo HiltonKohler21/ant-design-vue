@@ -37,7 +37,7 @@ Component Token
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { ConfigProviderProps, TreeProps } from 'ant-design-vue';
+import type { ConfigProviderProps, TreeProps } from '@hiltonkohler21/ant-design-vue';
 
 const treeData: TreeProps['treeData'] = [
   {

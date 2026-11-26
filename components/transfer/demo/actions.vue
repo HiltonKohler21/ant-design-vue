@@ -31,8 +31,8 @@ Customize operation buttons via `actions` with custom icons, loading states, and
 
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue';
-import { Button, message } from 'ant-design-vue';
-import type { TransferProps } from 'ant-design-vue';
+import { Button, message } from '@hiltonkohler21/ant-design-vue';
+import type { TransferProps } from '@hiltonkohler21/ant-design-vue';
 import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons-vue';
 
 interface RecordType {

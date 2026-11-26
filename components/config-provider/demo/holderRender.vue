@@ -27,7 +27,14 @@ Use `holderRender` to set the `Provider` for the static methods `message`, `moda
 <script lang="ts" setup>
 import { h, onBeforeUnmount } from 'vue';
 import { ExclamationCircleFilled } from '@ant-design/icons-vue';
-import { App, ConfigProvider, Modal, StyleProvider, message, notification } from 'ant-design-vue';
+import {
+  App,
+  ConfigProvider,
+  Modal,
+  StyleProvider,
+  message,
+  notification,
+} from '@hiltonkohler21/ant-design-vue';
 
 let configured = false;
 

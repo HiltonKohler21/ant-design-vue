@@ -31,8 +31,8 @@ Custom action.
 <script lang="ts" setup>
 import { h, ref } from 'vue';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
-import { Button } from 'ant-design-vue';
-import type { TourProps } from 'ant-design-vue';
+import { Button } from '@hiltonkohler21/ant-design-vue';
+import type { TourProps } from '@hiltonkohler21/ant-design-vue';
 
 const open = ref<boolean>(false);
 

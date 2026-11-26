@@ -71,7 +71,7 @@ Under different screen sizes, there should be different performance
   </div>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 const onBack = () => {
   message.info('Back clicked');

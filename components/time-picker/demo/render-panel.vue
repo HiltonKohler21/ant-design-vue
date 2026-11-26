@@ -23,7 +23,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { TimePicker } from 'ant-design-vue';
+import { TimePicker } from '@hiltonkohler21/ant-design-vue';
 
 const InternalTimePicker = TimePicker._InternalPanelDoNotUseOrYouWillBeFired;
 </script>

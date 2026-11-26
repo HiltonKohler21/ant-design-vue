@@ -60,7 +60,7 @@ Steps with progress dot style and variant combinations.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { ConfigProviderProps, StepsProps } from 'ant-design-vue';
+import type { ConfigProviderProps, StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const current = ref(1);
 

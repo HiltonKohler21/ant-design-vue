@@ -29,7 +29,7 @@ The basic example supports the title and description props of confirmation.
   </a-popconfirm>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 const confirm = (e: MouseEvent) => {
   console.log(e);

@@ -22,7 +22,7 @@ Set `icon` for Segmented Item. `icon` also accepts a bare `<svg>` element from a
 <script lang="ts" setup>
 import { h } from 'vue';
 import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons-vue';
-import type { SegmentedProps } from 'ant-design-vue';
+import type { SegmentedProps } from '@hiltonkohler21/ant-design-vue';
 
 // Icons from third-party libraries render as a bare `<svg>` rather than an `.anticon` wrapper.
 // It stays vertically centred with the label.

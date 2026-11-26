@@ -23,7 +23,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { DatePicker } from 'ant-design-vue';
+import { DatePicker } from '@hiltonkohler21/ant-design-vue';
 
 const InternalDatePicker = DatePicker._InternalPanelDoNotUseOrYouWillBeFired;
 </script>

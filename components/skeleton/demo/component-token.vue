@@ -23,7 +23,7 @@ Custom component token.
 </template>
 
 <script lang="ts" setup>
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const theme: ConfigProviderProps['theme'] = {
   components: {

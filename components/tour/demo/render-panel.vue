@@ -46,7 +46,7 @@ Debug usage. Do not use in your production.
 
 <script lang="ts" setup>
 import { createVNode } from 'vue';
-import { Tour } from 'ant-design-vue';
+import { Tour } from '@hiltonkohler21/ant-design-vue';
 
 const InternalPanel = Tour._InternalPanelDoNotUseOrYouWillBeFired;
 

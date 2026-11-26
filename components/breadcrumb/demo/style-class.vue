@@ -35,7 +35,7 @@ You can customize the [semantic dom](#semantic-dom) style of Breadcrumb by passi
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import type { BreadcrumbProps } from 'ant-design-vue';
+import type { BreadcrumbProps } from '@hiltonkohler21/ant-design-vue';
 
 const breadcrumbClassNames: BreadcrumbProps['classNames'] = {
   root: 'demo-breadcrumb-root',

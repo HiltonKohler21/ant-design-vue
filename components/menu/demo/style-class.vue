@@ -35,7 +35,7 @@ You can customize the [semantic dom](#semantic-dom) style of Menu by passing obj
 </template>
 
 <script lang="ts" setup>
-import type { MenuProps } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
 
 const menuClassNames: MenuProps['classNames'] = {
   root: 'demo-menu-root',

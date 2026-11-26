@@ -36,7 +36,7 @@ Align the date format. Switch the selection by arrow keys. Will try to align the
 </template>
 
 <script lang="ts" setup>
-import type { DatePickerProps } from 'ant-design-vue';
+import type { DatePickerProps } from '@hiltonkohler21/ant-design-vue';
 
 const onChange: DatePickerProps['onChange'] = (date, dateString) => {
   console.log(date, dateString);

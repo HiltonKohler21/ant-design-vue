@@ -159,7 +159,7 @@ There are 12 `placement` options available. Use `arrow: { pointAtCenter: true }`
   </a-config-provider>
 </template>
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 const text = 'Are you sure to delete this task?';
 const description = 'Delete the task';

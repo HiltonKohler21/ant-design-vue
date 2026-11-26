@@ -42,7 +42,7 @@ You can customize the [semantic dom](#semantic-dom) style of Popconfirm by passi
 </template>
 
 <script lang="ts" setup>
-import type { PopconfirmProps } from 'ant-design-vue';
+import type { PopconfirmProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: PopconfirmProps['classNames'] = {
   container: 'popconfirm-style-class-container',

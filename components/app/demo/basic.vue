@@ -23,7 +23,7 @@ Static method for `message`, `notification`, `modal`.
 
 <script lang="ts" setup>
 import { defineComponent, h } from 'vue';
-import { App, Button, Space } from 'ant-design-vue';
+import { App, Button, Space } from '@hiltonkohler21/ant-design-vue';
 
 const MyPage = defineComponent({
   name: 'AppBasicPage',

@@ -22,9 +22,9 @@ Customize the Tabs more dropdown menu via `popupRender` prop, supporting search 
 
 <script lang="ts" setup>
 import { computed, defineComponent, h, ref } from 'vue';
-import { Input, Menu } from 'ant-design-vue';
+import { Input, Menu } from '@hiltonkohler21/ant-design-vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
-import type { TabsProps } from 'ant-design-vue';
+import type { TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 const items: TabsProps['items'] = Array.from({ length: 30 }, (_, i) => {
   const id = String(i);

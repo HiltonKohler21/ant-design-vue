@@ -165,7 +165,7 @@ Hide arrow or point arrow at center by `arrow`.
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { PopoverProps } from 'ant-design-vue';
+import type { PopoverProps } from '@hiltonkohler21/ant-design-vue';
 
 const buttonWidth = 64;
 const arrow = ref<'Show' | 'Hide' | 'Center'>('Show');

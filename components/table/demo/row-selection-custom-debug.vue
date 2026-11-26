@@ -22,7 +22,7 @@ Debug custom `rowSelection.renderCell` returning merged `rowSpan` selection cell
 
 <script lang="ts" setup>
 import { h } from 'vue';
-import type { TableColumnsType, TableProps } from 'ant-design-vue';
+import type { TableColumnsType, TableProps } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

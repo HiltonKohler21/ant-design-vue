@@ -34,7 +34,7 @@ Set align.
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import type { CSSProperties } from 'vue';
-import type { FlexProps } from 'ant-design-vue';
+import type { FlexProps } from '@hiltonkohler21/ant-design-vue';
 const justifyOptions = reactive<FlexProps['justify'][]>([
   'flex-start',
   'center',

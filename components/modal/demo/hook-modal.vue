@@ -28,7 +28,7 @@ Use `Modal.useModal` to get `contextHolder` with context accessible issue. Only 
 
 <script lang="ts" setup>
 import { defineComponent, h, inject, provide } from 'vue';
-import { Modal } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
 
 const ReachableContext = Symbol('ReachableContext');
 const UnreachableContext = Symbol('UnreachableContext');

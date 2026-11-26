@@ -27,7 +27,7 @@ Use `titlePlacement` to set the label position and display the progress through 
 </template>
 
 <script lang="ts" setup>
-import type { StepsProps } from 'ant-design-vue';
+import type { StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const content = 'This is a content.';
 const items: StepsProps['items'] = [

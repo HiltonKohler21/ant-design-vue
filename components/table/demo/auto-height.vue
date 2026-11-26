@@ -47,7 +47,7 @@ Wrap Table to make it always fill the container height automatically.
 
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import type { TableColumnsType, TableProps, TableRef } from 'ant-design-vue';
+import type { TableColumnsType, TableProps, TableRef } from '@hiltonkohler21/ant-design-vue';
 
 interface DataType {
   key: number;

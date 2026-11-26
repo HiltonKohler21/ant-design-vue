@@ -200,8 +200,8 @@ Demo for debugging.
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue';
 import { ClockCircleOutlined, DownOutlined } from '@ant-design/icons-vue';
-import { Badge, Dropdown } from 'ant-design-vue';
-import type { TableColumnsType, TreeProps } from 'ant-design-vue';
+import { Badge, Dropdown } from '@hiltonkohler21/ant-design-vue';
+import type { TableColumnsType, TreeProps } from '@hiltonkohler21/ant-design-vue';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 

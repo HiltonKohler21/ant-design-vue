@@ -24,7 +24,7 @@ You can customize the [semantic dom](#semantic-dom) style of Skeleton by passing
 </template>
 
 <script lang="ts" setup>
-import type { SkeletonProps } from 'ant-design-vue';
+import type { SkeletonProps } from '@hiltonkohler21/ant-design-vue';
 
 const baseClassNames: SkeletonProps['classNames'] = {
   root: 'demo-skeleton-root',

@@ -23,7 +23,7 @@ Custom component token.
 </template>
 
 <script lang="ts" setup>
-import type { ConfigProviderProps, TimelineProps } from 'ant-design-vue';
+import type { ConfigProviderProps, TimelineProps } from '@hiltonkohler21/ant-design-vue';
 
 const timelineTheme: ConfigProviderProps['theme'] = {
   components: {

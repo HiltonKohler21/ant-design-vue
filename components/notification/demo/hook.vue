@@ -47,8 +47,8 @@ import {
   RadiusUpleftOutlined,
   RadiusUprightOutlined,
 } from '@ant-design/icons-vue';
-import { notification } from 'ant-design-vue';
-import type { NotificationPlacement } from 'ant-design-vue';
+import { notification } from '@hiltonkohler21/ant-design-vue';
+import type { NotificationPlacement } from '@hiltonkohler21/ant-design-vue';
 
 const [api, contextHolder] = notification.useNotification();
 

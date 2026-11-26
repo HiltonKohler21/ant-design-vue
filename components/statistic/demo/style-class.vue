@@ -48,7 +48,7 @@ You can customize the [semantic dom](#semantic-dom) style of Statistic by passin
 
 <script lang="ts" setup>
 import { ArrowUpOutlined } from '@ant-design/icons-vue';
-import type { StatisticProps } from 'ant-design-vue';
+import type { StatisticProps } from '@hiltonkohler21/ant-design-vue';
 
 const classNames: StatisticProps['classNames'] = {
   root: 'demo-statistic-semantic-root',

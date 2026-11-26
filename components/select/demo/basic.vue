@@ -54,7 +54,7 @@ Basic Usage
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 const value1 = ref('lucy');
 const value2 = ref('lucy');
 const value3 = ref('lucy');

@@ -39,7 +39,7 @@ You can customize the [semantic dom](#semantic-dom) style of ColorPicker by pass
 </template>
 
 <script lang="ts" setup>
-import type { ColorPickerProps } from 'ant-design-vue';
+import type { ColorPickerProps } from '@hiltonkohler21/ant-design-vue';
 
 const pickerClassNames: ColorPickerProps['classNames'] = {
   root: 'custom-color-picker-root',

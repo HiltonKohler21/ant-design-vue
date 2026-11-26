@@ -37,7 +37,7 @@ Customize handle rendering with `handleRender` and listen for committed values v
 
 <script lang="ts" setup>
 import { cloneVNode, ref } from 'vue';
-import type { SliderProps } from 'ant-design-vue';
+import type { SliderProps } from '@hiltonkohler21/ant-design-vue';
 
 const singleValue = ref<number>(30);
 const rangeValue = ref<[number, number]>([20, 60]);

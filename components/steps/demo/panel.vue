@@ -32,7 +32,7 @@ Panel style steps.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { StepsProps } from 'ant-design-vue';
+import type { StepsProps } from '@hiltonkohler21/ant-design-vue';
 
 const current = ref(0);
 

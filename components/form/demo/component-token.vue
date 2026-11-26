@@ -47,7 +47,7 @@ Component Token Debug.
 
 <script lang="ts" setup>
 import { reactive } from 'vue';
-import type { ConfigProviderProps } from 'ant-design-vue';
+import type { ConfigProviderProps } from '@hiltonkohler21/ant-design-vue';
 
 const formState = reactive({
   username: '',

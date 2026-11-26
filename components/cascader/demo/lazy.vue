@@ -28,7 +28,7 @@ Load options lazily with `loadData`.
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { CascaderProps } from 'ant-design-vue';
+import type { CascaderProps } from '@hiltonkohler21/ant-design-vue';
 
 const options = ref<CascaderProps['options']>([
   {

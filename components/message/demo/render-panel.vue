@@ -21,7 +21,7 @@ Debug usage. Do not use in your production.
 </template>
 
 <script lang="ts" setup>
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 
 /** Test usage. Do not use in your production. */
 const InternalPanel = message._InternalPanelDoNotUseOrYouWillBeFired;

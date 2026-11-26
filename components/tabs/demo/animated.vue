@@ -26,7 +26,7 @@ Animated of Tab Pane.
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import type { TabsProps } from 'ant-design-vue';
+import type { TabsProps } from '@hiltonkohler21/ant-design-vue';
 
 const inkBar = ref(true);
 const tabPane = ref(true);

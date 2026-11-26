@@ -25,7 +25,7 @@ mask effect.
 </template>
 
 <script lang="ts" setup>
-import { Modal } from 'ant-design-vue';
+import { Modal } from '@hiltonkohler21/ant-design-vue';
 
 const modalConfig = {
   title: 'Title',
