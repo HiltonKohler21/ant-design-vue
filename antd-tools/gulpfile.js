@@ -22,7 +22,6 @@ const gulp = require('gulp');
 const fs = require('fs');
 const rimraf = require('rimraf');
 const stripCode = require('gulp-strip-code');
-const compareVersions = require('compare-versions');
 const getTSCommonConfig = require('./getTSCommonConfig');
 const replaceLib = require('./replaceLib');
 const sortApiTable = require('./sortApiTable');
@@ -245,18 +244,7 @@ function generateLocale() {
 }
 
 function tag() {
-  console.log('tagging');
-  const { version } = packageJson;
-  execSync(`git config --global user.email ${process.env.GITHUB_USER_EMAIL}`);
-  execSync(`git config --global user.name ${process.env.GITHUB_USER_NAME}`);
-  execSync(`git tag ${version}`);
-  execSync(
-    `git push https://${process.env.GITHUB_TOKEN}@github.com/vueComponent/ant-design-vue.git ${version}:${version}`,
-  );
-  execSync(
-    `git push https://${process.env.GITHUB_TOKEN}@github.com/vueComponent/ant-design-vue.git master:master`,
-  );
-  console.log('tagged');
+  console.log('Auto git tag/push is disabled for internal fork; skipping remote push.');
 }
 
 function githubRelease(done) {
@@ -339,10 +327,7 @@ function publish(tagString, done) {
   }
   const publishNpm = process.env.PUBLISH_NPM_CLI || 'npm';
   runCmd(publishNpm, args, code => {
-    tag();
-    githubRelease(() => {
-      done(code);
-    });
+    done(code);
   });
 }
 
@@ -424,42 +409,8 @@ gulp.task(
 gulp.task(
   'pub-with-ci',
   gulp.series(done => {
-    if (!process.env.NPM_TOKEN) {
-      console.log('no NPM token found, skip');
-    } else {
-      const github = new Octokit({
-        auth: process.env.GITHUB_TOKEN,
-      });
-      const [_, owner, repo] = execSync('git remote get-url origin') // eslint-disable-line
-        .toString()
-        .match(/github.com[:/](.+)\/(.+)\.git/);
-      const getLatestRelease = github.repos.getLatestRelease({
-        owner,
-        repo,
-      });
-      const listCommits = github.repos.listCommits({
-        owner,
-        repo,
-        per_page: 1,
-      });
-      Promise.all([getLatestRelease, listCommits]).then(([latestRelease, commits]) => {
-        const preVersion = latestRelease.data.tag_name;
-        const { version } = packageJson;
-        const [_, newVersion] = commits.data[0].commit.message.trim().match(/bump (.+)/) || []; // eslint-disable-line
-        if (
-          compareVersions(version, preVersion) === 1 &&
-          newVersion &&
-          newVersion.trim() === version
-        ) {
-          // eslint-disable-next-line no-unused-vars
-          runCmd('npm', ['run', 'pub'], _code => {
-            done();
-          });
-        } else {
-          console.log('donot need publish' + version);
-        }
-      });
-    }
+    console.log('pub-with-ci is disabled for internal fork; publish manually instead.');
+    done();
   }),
 );
 

@@ -1,6 +1,8 @@
 name: codecov
 
-on: [push]
+# Disabled automatic push trigger for internal fork; manual dispatch only
+on:
+  workflow_dispatch: {}
 
 jobs:
   setup:

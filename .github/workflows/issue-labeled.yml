@@ -1,8 +1,8 @@
 name: Issue Labeled
 
+# Disabled automatic issue trigger for internal fork; manual dispatch only
 on:
-  issues:
-    types: [labeled]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -46,9 +46,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Hello @${{ github.event.issue.user.login }}, we use GitHub issues to trace bugs or discuss plans of Ant Design Vue. So, please don't ask usage questions here. You can try to open a new discussion in [antdv discussions](https://github.com/vueComponent/ant-design-vue/discussions), select `Q&A` to ask questions, also can ask questions on [Stack Overflow](http://stackoverflow.com/questions/) or [Segment Fault](https://segmentfault.com).
+            Hello @${{ github.event.issue.user.login }}, we use GitHub issues to trace bugs or discuss plans of Ant Design Vue. So, please don't ask usage questions here. You can try to open a new discussion in [antdv discussions](https://github.com/HiltonKohler21/ant-design-vue/discussions), select `Q&A` to ask questions, also can ask questions on [Stack Overflow](http://stackoverflow.com/questions/) or [Segment Fault](https://segmentfault.com).
 
-            你好 @${{ github.event.issue.user.login }}，Ant Design Vue Issue 板块是用于 bug 反馈与需求讨论的地方。请勿询问如何使用的问题，你可以试着在 [antdv discussions](https://github.com/vueComponent/ant-design-vue/discussions) 新开一个 discussion，选择 `Q&A` 类别进行提问，也可以在 [Stack Overflow](http://stackoverflow.com/questions/) 或者 [Segment Fault](https://segmentfault.com/) 中提问。
+            你好 @${{ github.event.issue.user.login }}，Ant Design Vue Issue 板块是用于 bug 反馈与需求讨论的地方。请勿询问如何使用的问题，你可以试着在 [antdv discussions](https://github.com/HiltonKohler21/ant-design-vue/discussions) 新开一个 discussion，选择 `Q&A` 类别进行提问，也可以在 [Stack Overflow](http://stackoverflow.com/questions/) 或者 [Segment Fault](https://segmentfault.com/) 中提问。
 
       - name: 1.x
         if: github.event.label.name == '1.x'

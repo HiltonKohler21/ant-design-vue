@@ -1,9 +1,7 @@
 name: Antd Upstream Sync Scan
 
+# Disabled automatic weekly cron for internal fork; manual dispatch only
 on:
-  schedule:
-    # 每周一 00:00 UTC 运行
-    - cron: '0 0 * * 1'
   workflow_dispatch: {}
 
 permissions:

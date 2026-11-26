@@ -1,8 +1,8 @@
 name: Emoji Helper
 
+# Disabled automatic release trigger for internal fork; manual dispatch only
 on:
-  release:
-    types: [published]
+  workflow_dispatch: {}
 
 jobs:
   emoji:

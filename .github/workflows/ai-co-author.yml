@@ -1,8 +1,8 @@
 name: AI Co-Author Check
 
+# Disabled automatic PR gate for internal fork; manual dispatch only
 on:
-  pull_request:
-    branches: [main, feat/vapor]
+  workflow_dispatch: {}
 
 permissions:
   pull-requests: read
