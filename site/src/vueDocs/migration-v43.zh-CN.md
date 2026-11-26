@@ -1,6 +1,6 @@
 # 从 4.2.6 升级到 4.3.0
 
-本手册将帮助你从 `ant-design-vue@4.2.6` 平滑升级到 `ant-design-vue@4.3.0`（覆盖 `4.2.7` 与 `4.3.0` 全部演进，全面对齐 `antd@6.7.2`）。`4.3.0` 完整落地了 Ant Design v6 性能层（**默认开启原生 CSS Variables** 与**零运行时静态样式提取**），新增 **6 个顶级组件** 与 **6 个高频子组件**，在 **61 个组件**上统一了**函数式语义化 DOM（`classNames`/`styles`）**，接入全部 **72 项 `ConfigProvider` 组件默认配置**，同步 **74 套国际化语言包**，将 **Component Design Tokens 扩展至 317+ 项**，并全面完成向下兼容的 v6 API 升级。
+本手册将帮助你从 `ant-design-vue@4.2.6` 平滑升级到 `@hiltonkohler21/ant-design-vue@4.3.0`（覆盖 `4.2.7` 与 `4.3.0` 全部演进，全面对齐 `antd@6.7.2`）。`4.3.0` 完整落地了 Ant Design v6 性能层（**默认开启原生 CSS Variables** 与**零运行时静态样式提取**），新增 **6 个顶级组件** 与 **6 个高频子组件**，在 **61 个组件**上统一了**函数式语义化 DOM（`classNames`/`styles`）**，接入全部 **72 项 `ConfigProvider` 组件默认配置**，同步 **74 套国际化语言包**，将 **Component Design Tokens 扩展至 317+ 项**，并全面完成向下兼容的 v6 API 升级。
 
 > 如果你是从 `3.x` 升级，请先阅读 [从 V3 到 V4 升级指南](/docs/vue/migration-v4-cn)。
 
@@ -24,17 +24,17 @@
 
 ### 升级命令
 
-使用你偏好的包管理器将 `ant-design-vue` 升级至 `4.3.0`：
+使用你偏好的包管理器将 `@hiltonkohler21/ant-design-vue` 升级至 `4.3.0`：
 
 ```bash
 # npm
-npm install ant-design-vue@4.3.0
+npm install @hiltonkohler21/ant-design-vue@4.3.0
 
 # yarn
-yarn add ant-design-vue@4.3.0
+yarn add @hiltonkohler21/ant-design-vue@4.3.0
 
 # pnpm
-pnpm add ant-design-vue@4.3.0
+pnpm add @hiltonkohler21/ant-design-vue@4.3.0
 ```
 
 如项目中使用了图标库，建议同步更新 `@ant-design/icons-vue` 至最新 7.x 版本：
@@ -78,7 +78,7 @@ npm install @ant-design/icons-vue@latest
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 
@@ -100,7 +100,7 @@ const cardStyle = computed(() => ({
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token, realToken } = theme.useToken();
 
@@ -151,8 +151,8 @@ npm run static-style-extract
 ```ts
 // main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import '../dist/static-style/antdv.css';
 import App from './App.vue';
 
@@ -212,7 +212,7 @@ createApp(App).use(Antd).mount('#app');
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { MasonryRef } from 'ant-design-vue';
+import type { MasonryRef } from '@hiltonkohler21/ant-design-vue';
 
 const masonryRef = ref<MasonryRef>();
 const items = [
@@ -306,7 +306,7 @@ const code = ref('');
     <!-- 5. Space.Addon -->
     <a-space-compact>
       <a-space-addon>https://</a-space-addon>
-      <a-input v-model:value="domain" placeholder="antdv.com" />
+      <a-input v-model:value="domain" placeholder="hiltonkohler21.github.io/ant-design-vue" />
       <a-space-addon>.com</a-space-addon>
     </a-space-compact>
 
@@ -407,7 +407,7 @@ const domain = ref('');
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { ListyRef } from 'ant-design-vue';
+import type { ListyRef } from '@hiltonkohler21/ant-design-vue';
 
 const listyRef = ref<ListyRef>();
 const users = Array.from({ length: 200 }, (_, i) => ({
@@ -472,7 +472,7 @@ const users = Array.from({ length: 200 }, (_, i) => ({
 
 <script setup lang="ts">
 import { h } from 'vue';
-import { ConfigProvider, Empty } from 'ant-design-vue';
+import { ConfigProvider, Empty } from '@hiltonkohler21/ant-design-vue';
 
 // 为 message / notification / Modal 静态方法自定义上下文包裹
 const holderRender = (children: any) => h(ConfigProvider, { prefixCls: 'ant' }, () => children);
@@ -558,7 +558,14 @@ const holderRender = (children: any) => h(ConfigProvider, { prefixCls: 'ant' }, 
     分组标题
   </a-divider>
   <a-alert title="系统通知" variant="filled" :closable="{ closeIcon: '关闭' }" />
-  <a-tag variant="filled" color="blue" href="https://antdv.com" target="_blank">Beta</a-tag>
+  <a-tag
+    variant="filled"
+    color="blue"
+    href="https://hiltonkohler21.github.io/ant-design-vue"
+    target="_blank"
+  >
+    Beta
+  </a-tag>
   <a-image
     src="/demo.png"
     :preview="{
@@ -615,7 +622,7 @@ const previewOpen = ref(false);
 <script setup lang="ts">
 import { h, ref } from 'vue';
 import type { Dayjs } from 'dayjs';
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 const dates = ref<Dayjs[]>([]);
 const time = ref<Dayjs>();
@@ -710,7 +717,7 @@ const rows = [{ id: 1, name: 'Ant Design Vue 4.3.0' }];
 
 <script setup lang="ts">
 import { h, ref } from 'vue';
-import { App, Button } from 'ant-design-vue';
+import { App, Button } from '@hiltonkohler21/ant-design-vue';
 
 const drawerOpen = ref(false);
 const modalOpen = ref(false);
@@ -750,14 +757,14 @@ const openNotice = () => {
 
 #### 1. TailwindCSS v4 样式冲突怎么处理？
 
-TailwindCSS v4 使用原生 CSS `@layer`（`theme`, `base`, `components`, `utilities`），而 `ant-design-vue` 默认使用 `:where(.css-xxx)` 降权选择器。如果你引入了 `ant-design-vue/dist/reset.css` 或预提取的 `antdv.css`，请显式声明 `@layer` 顺序，避免 Tailwind Preflight 与 Ant Design Vue 互相覆盖：
+TailwindCSS v4 使用原生 CSS `@layer`（`theme`, `base`, `components`, `utilities`），而 `@hiltonkohler21/ant-design-vue` 默认使用 `:where(.css-xxx)` 降权选择器。如果你引入了 `@hiltonkohler21/ant-design-vue/dist/reset.css` 或预提取的 `antdv.css`，请显式声明 `@layer` 顺序，避免 Tailwind Preflight 与 Ant Design Vue 互相覆盖：
 
 ```css
 /* src/assets/main.css */
 @layer theme, base, antd, components, utilities;
 
 @import 'tailwindcss';
-@import 'ant-design-vue/dist/reset.css' layer(base);
+@import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(base);
 /* 若使用 zeroRuntime 预提取静态样式，可将其放入 antd 层： */
 /* @import './antdv.css' layer(antd); */
 ```
@@ -769,7 +776,12 @@ TailwindCSS v4 使用原生 CSS `@layer`（`theme`, `base`, `components`, `utili
 在 `4.3.0` 默认开启 `cssVar: true` 后，服务端渲染除了调用 `extractStyle(cache)` 提取组件规则外，还需一并调用 `extractCSSVarStyle()` 提取 `:root` CSS 变量声明，确保首屏 HTML 立即拥有完整主题变量：
 
 ```ts
-import { createCache, extractStyle, extractCSSVarStyle, clearCSSVarRegistry } from 'ant-design-vue';
+import {
+  createCache,
+  extractStyle,
+  extractCSSVarStyle,
+  clearCSSVarRegistry,
+} from '@hiltonkohler21/ant-design-vue';
 
 // 每次 SSR 请求或预构建提取后：
 const componentCss = extractStyle(cache);
@@ -781,6 +793,6 @@ const cssVarCss = `<style data-antdv-cssvar>${extractCSSVarStyle()}</style>`;
 
 #### 3. 嵌套 `ConfigProvider` 局部主题会不会污染全局 `:root`？
 
-**不会。** 在 `4.3.0` 中，顶层 `<a-config-provider>` 使用 `:root` CSS 变量模式以获得最佳全局换肤性能；当你在页面内部嵌套子级 `<a-config-provider>` 并设置了局部 `token`、`components` 或 `algorithm` 时，`ant-design-vue` 会**自动为该子树降级隔离为作用域 hash 模式**，防止子主题的变量声明覆盖外层 `:root`。
+**不会。** 在 `4.3.0` 中，顶层 `<a-config-provider>` 使用 `:root` CSS 变量模式以获得最佳全局换肤性能；当你在页面内部嵌套子级 `<a-config-provider>` 并设置了局部 `token`、`components` 或 `algorithm` 时，`@hiltonkohler21/ant-design-vue` 会**自动为该子树降级隔离为作用域 hash 模式**，防止子主题的变量声明覆盖外层 `:root`。
 
 > 注意：如果嵌套 `<a-config-provider :theme="{ inherit: false }">` 想重置为默认主题而不传 `token`/`algorithm`，建议显式加上 `cssVar: false`（即 `:theme="{ inherit: false, cssVar: false }"`），确保其样式作用域完全隔离。

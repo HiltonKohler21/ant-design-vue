@@ -1,6 +1,6 @@
 # Ant Design Vue 设计规范 (DESIGN.md)
 
-> 本文档定义了 Ant Design Vue 的核心视觉设计语言、Token 层级结构与 UI 架构规范。可作为 AI 编码智能体（Cursor, Claude Code, Windsurf, Copilot, Antigravity）、设计工具与工程师在构建基于 `ant-design-vue` 的界面时的权威规范。
+> 本文档定义了 Ant Design Vue 的核心视觉设计语言、Token 层级结构与 UI 架构规范。可作为 AI 编码智能体（Cursor, Claude Code, Windsurf, Copilot, Antigravity）、设计工具与工程师在构建基于 `@hiltonkohler21/ant-design-vue` 的界面时的权威规范。
 
 ---
 
@@ -211,7 +211,7 @@ Ant Design Vue 提供 13 种内置调色板：
 </template>
 
 <script setup lang="ts">
-  import { theme } from 'ant-design-vue';
+  import { theme } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -228,7 +228,7 @@ Ant Design Vue 提供 13 种内置调色板：
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { theme } from 'ant-design-vue';
+  import { theme } from '@hiltonkohler21/ant-design-vue';
 
   const { useToken } = theme;
   const { token, realToken } = useToken();

@@ -1,16 +1,16 @@
 <h1 align="center">
-  <a href="https://www.antdv.com/" target="_blank">Ant Design Vue</a>
+  <a href="https://hiltonkohler21.github.io/ant-design-vue/" target="_blank">Ant Design Vue</a>
 </h1>
 
 <div align="center">
 
 基于 Ant Design 和 Vue 3 的企业级 UI 组件库。
 
-![test](https://github.com/vueComponent/ant-design-vue/workflows/test/badge.svg) [![codecov](https://img.shields.io/codecov/c/github/vueComponent/ant-design-vue/master.svg?style=flat-square)](https://codecov.io/gh/vueComponent/ant-design-vue) [![npm package](https://img.shields.io/npm/v/ant-design-vue.svg?style=flat-square)](https://www.npmjs.org/package/ant-design-vue) [![NPM downloads](http://img.shields.io/npm/dm/ant-design-vue.svg?style=flat-square)](http://www.npmtrends.com/ant-design-vue) [![backers](https://opencollective.com/ant-design-vue/backers/badge.svg)](#backers) [![sponsors](https://opencollective.com/ant-design-vue/sponsors/badge.svg)](#sponsors) [![extension-for-VSCode](https://img.shields.io/badge/extension%20for-VSCode-blue.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=ant-design-vue.vscode-ant-design-vue-helper) [![issues-helper](https://img.shields.io/badge/Issues%20Manage%20By-issues--helper-orange?style=flat-square)](https://github.com/actions-cool/issues-helper)
+![test](https://github.com/HiltonKohler21/ant-design-vue/workflows/test/badge.svg) [![npm package](https://img.shields.io/npm/v/@hiltonkohler21/ant-design-vue.svg?style=flat-square)](https://www.npmjs.org/package/ant-design-vue) [![NPM downloads](http://img.shields.io/npm/dm/@hiltonkohler21/ant-design-vue.svg?style=flat-square)](http://www.npmtrends.com/@hiltonkohler21/ant-design-vue) [![backers](https://opencollective.com/ant-design-vue/backers/badge.svg)](#backers) [![sponsors](https://opencollective.com/ant-design-vue/sponsors/badge.svg)](#sponsors) [![extension-for-VSCode](https://img.shields.io/badge/extension%20for-VSCode-blue.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=ant-design-vue.vscode-ant-design-vue-helper) [![issues-helper](https://img.shields.io/badge/Issues%20Manage%20By-issues--helper-orange?style=flat-square)](https://github.com/actions-cool/issues-helper)
 
 </div>
 
-[![](https://cdn-images-1.medium.com/max/2000/1*NIlj0-TdLMbo_hzSBP8tmg.png)](https://www.antdv.com/)
+[![](https://cdn-images-1.medium.com/max/2000/1*NIlj0-TdLMbo_hzSBP8tmg.png)](https://hiltonkohler21.github.io/ant-design-vue/)
 
 <div align="center">
   <sup><strong>赞助商</strong></sup>
@@ -47,7 +47,7 @@
 
 ## 支持环境
 
-- 现代浏览器。1.x 版本支持 IE 9+（需要 [polyfills](https://www.antdv.com/docs/vue/getting-started-cn/#兼容性)）
+- 现代浏览器。1.x 版本支持 IE 9+（需要 [polyfills](https://hiltonkohler21.github.io/ant-design-vue/docs/vue/getting-started-cn/#兼容性)）
 - 支持服务端渲染。
 - [Electron](https://electronjs.org/)
 - 支持 Vue 2 和 Vue 3
@@ -61,18 +61,18 @@
 ### 使用 npm 或 yarn 安装
 
 ```bash
-$ npm install ant-design-vue --save
+$ npm install @hiltonkohler21/ant-design-vue --save
 ```
 
 ```bash
-$ yarn add ant-design-vue
+$ yarn add @hiltonkohler21/ant-design-vue
 ```
 
 如果你的网络环境不佳，推荐使用 [cnpm](https://github.com/cnpm/cnpm)。
 
 ## 链接
 
-- [首页](https://www.antdv.com/)
+- [首页](https://hiltonkohler21.github.io/ant-design-vue/)
 - [Vue 官方文档](https://cn.vuejs.org/)
 - [Ant Design Of React](http://ant.design/)
 
@@ -96,7 +96,7 @@ $ yarn add ant-design-vue
 
 ## 赞助
 
-ant-design-vue 是 MIT 协议的开源项目。为了项目能够更好的持续的发展，我们期望获得更多的[支持者](https://github.com/vueComponent/ant-design-vue/blob/master/BACKERS.md)，你可以通过如下任何一种方式支持我们：
+ant-design-vue 是 MIT 协议的开源项目。为了项目能够更好的持续的发展，我们期望获得更多的[支持者](https://github.com/HiltonKohler21/ant-design-vue/blob/master/BACKERS.md)，你可以通过如下任何一种方式支持我们：
 
 - [Patreon](https://www.patreon.com/tangjinzhou)
 - [opencollective](https://opencollective.com/ant-design-vue)
@@ -107,7 +107,7 @@ ant-design-vue 是 MIT 协议的开源项目。为了项目能够更好的持续
 
 成为赞助商，并在 Github 上的自述文件上获得您的徽标，并链接到您的网站。 [[成为赞助商](https://opencollective.com/ant-design-vue#sponsor)]
 
-<a href="http://www.jeecg.com/" target="_blank"><img src="https://www.antdv.com/jeecg-logo.png" height="64"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/0/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/0/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/1/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/1/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/2/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/2/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/3/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/3/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/4/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/4/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/5/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/5/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/6/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/6/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/7/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/7/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/8/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/8/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/9/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/9/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/10/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/10/avatar.svg"></a>
+<a href="http://www.jeecg.com/" target="_blank"><img src="https://hiltonkohler21.github.io/ant-design-vue/jeecg-logo.png" height="64"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/0/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/0/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/1/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/1/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/2/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/2/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/3/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/3/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/4/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/4/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/5/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/5/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/6/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/6/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/7/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/7/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/8/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/8/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/9/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/9/avatar.svg"></a> <a href="https://opencollective.com/ant-design-vue/sponsor/10/website" target="_blank"><img src="https://opencollective.com/ant-design-vue/sponsor/10/avatar.svg"></a>
 
 ## 支持者
 
@@ -121,12 +121,12 @@ ant-design-vue 是 MIT 协议的开源项目。为了项目能够更好的持续
 
 <a href="https://www.mokeyjay.com" target="_blank"><img  width="64" style="border-radius: 50%;" src="https://www.mokeyjay.com/headimg.png" title="donation by Patreon"></a>
 
-## [更多赞助者 (通过 Patreon、支付宝、微信、paypal 等等)](https://github.com/vueComponent/ant-design-vue/blob/master/BACKERS.md)
+## [更多赞助者 (通过 Patreon、支付宝、微信、paypal 等等)](https://github.com/HiltonKohler21/ant-design-vue/blob/master/BACKERS.md)
 
 ## 贡献者
 
 感谢所有为 ant-design-vue 做出贡献的人!
 
-<a href="https://github.com/vueComponent/ant-design-vue/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=vueComponent/ant-design-vue&max=100&columns=15" />
+<a href="https://github.com/HiltonKohler21/ant-design-vue/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=HiltonKohler21/ant-design-vue&max=100&columns=15" />
 </a>

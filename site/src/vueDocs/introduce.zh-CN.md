@@ -31,7 +31,7 @@
 
 ## 支持环境
 
-- 现代浏览器（最近 2 个版本）；如需支持 IE9，请使用 [1.x 版本](https://1x.antdv.com/)。
+- 现代浏览器（最近 2 个版本）；如需支持 IE9，请使用 `1.x` 版本。
 - 支持服务端渲染（Nuxt 3 / Vite SSR），详见 [SSR 与静态样式导出](/docs/vue/ssr-extract-ssr-cn)。
 - [Electron](https://www.electronjs.org/)
 
@@ -41,9 +41,9 @@
 
 ## 版本
 
-- 稳定版：[![npm package](https://img.shields.io/npm/v/ant-design-vue.svg?style=flat-square)](https://www.npmjs.com/package/ant-design-vue)
+- 稳定版：[![npm package](https://img.shields.io/npm/v/@hiltonkohler21/ant-design-vue.svg?style=flat-square)](https://www.npmjs.com/package/@hiltonkohler21/ant-design-vue)
 
-你可以订阅：<https://github.com/vueComponent/ant-design-vue/releases.atom> 获取稳定版发布通知。
+你可以订阅：<https://github.com/HiltonKohler21/ant-design-vue/releases.atom> 获取稳定版发布通知。
 
 ## 安装
 
@@ -52,11 +52,11 @@
 **我们推荐使用包管理器进行开发**，不仅可在 Vite 等现代构建工具中轻松调试，也可享受 ES Module Tree Shaking 与完整 TypeScript 生态。
 
 ```bash
-npm install ant-design-vue@4.3.0
+npm install @hiltonkohler21/ant-design-vue@4.3.0
 # 或
-yarn add ant-design-vue@4.3.0
+yarn add @hiltonkohler21/ant-design-vue@4.3.0
 # 或
-pnpm add ant-design-vue@4.3.0
+pnpm add @hiltonkohler21/ant-design-vue@4.3.0
 ```
 
 如需在 Vite 项目中快速集成与自动按需引入，请参阅 [在 Vite 中使用](/docs/vue/use-with-vite-cn)。
@@ -65,7 +65,7 @@ pnpm add ant-design-vue@4.3.0
 
 在浏览器中使用 `script` 和 `link` 标签直接引入文件，并使用全局变量 `antd`。
 
-我们在 npm 发布包内的 `ant-design-vue/dist` 目录下提供了 `antd.js`、`antd.min.js` 和 `reset.css`。你也可以通过 [![jsdelivr](https://data.jsdelivr.com/v1/package/npm/ant-design-vue/badge)](https://www.jsdelivr.com/package/npm/ant-design-vue) 或 [UNPKG](https://unpkg.com/ant-design-vue/dist/) 获取。
+我们在 npm 发布包内的 `@hiltonkohler21/ant-design-vue/dist` 目录下提供了 `antd.js`、`antd.min.js` 和 `reset.css`。你也可以通过 [![jsdelivr](https://data.jsdelivr.com/v1/package/npm/@hiltonkohler21/ant-design-vue/badge)](https://www.jsdelivr.com/package/npm/@hiltonkohler21/ant-design-vue) 或 [UNPKG](https://unpkg.com/@hiltonkohler21/ant-design-vue/dist/) 获取。
 
 > **强烈不推荐在生产环境直接引入全量 UMD 文件**，这样无法按需加载，也难以享受现代构建优化。
 >
@@ -86,8 +86,8 @@ pnpm add ant-design-vue@4.3.0
 
 ```ts
 import { createApp } from 'vue';
-import { DatePicker } from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import { DatePicker } from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 const app = createApp(App);
@@ -96,7 +96,7 @@ app.use(DatePicker).mount('#app');
 
 ### 按需加载与自动按需引入
 
-`ant-design-vue` 默认支持基于 ES modules 的 Tree Shaking。如果你使用 Vite，推荐使用 [`unplugin-vue-components`](https://github.com/unplugin/unplugin-vue-components) 并配置 `AntDesignVueResolver({ importStyle: false })` 实现自动按需导入，完整配置请查看 [在 Vite 中使用](/docs/vue/use-with-vite-cn)。
+`@hiltonkohler21/ant-design-vue` 默认支持基于 ES modules 的 Tree Shaking。如果你使用 Vite，推荐使用 [`unplugin-vue-components`](https://github.com/unplugin/unplugin-vue-components) 并配置 `AntDesignVueResolver({ importStyle: false })` 实现自动按需导入，完整配置请查看 [在 Vite 中使用](/docs/vue/use-with-vite-cn)。
 
 ## 链接
 
@@ -113,13 +113,13 @@ app.use(DatePicker).mount('#app');
 
 ## 如何贡献
 
-如果你希望参与贡献，欢迎提交 [Pull Request](https://github.com/vueComponent/ant-design-vue/pulls) 或在 [GitHub Issues](https://github.com/vueComponent/ant-design-vue/issues) 反馈 Bug 与建议。
+如果你希望参与贡献，欢迎提交 [Pull Request](https://github.com/HiltonKohler21/ant-design-vue/pulls) 或在 [GitHub Issues](https://github.com/HiltonKohler21/ant-design-vue/issues) 反馈 Bug 与建议。
 
 > 推荐阅读 [《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way) 与 [《如何向开源社区提问题》](https://github.com/seajs/seajs/issues/545)，清晰的可复现示例有助于更快定位问题。
 
 ## 关于 ant-design-vue
 
-Ant Design 作为一门面向企业级产品的设计语言，经历多年演进已成为前端领域的事实标准。`ant-design-vue` 是 Ant Design 的 Vue 3 实现，在保持一致的视觉规范、HTML 结构与 CSS 体系的同时，充分结合 Vue 3 组合式 API、响应式系统与 TypeScript 生态，致力于为 Vue 开发者带来**愉悦**的开发体验。
+Ant Design 作为一门面向企业级产品的设计语言，经历多年演进已成为前端领域的事实标准。`@hiltonkohler21/ant-design-vue` 是 Ant Design 的 Vue 3 实现，在保持一致的视觉规范、HTML 结构与 CSS 体系的同时，充分结合 Vue 3 组合式 API、响应式系统与 TypeScript 生态，致力于为 Vue 开发者带来**愉悦**的开发体验。
 
 ## 特别感谢
 

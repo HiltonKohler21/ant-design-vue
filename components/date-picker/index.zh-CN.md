@@ -28,14 +28,14 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*wz1QTJSQgmAAAA
 
 默认配置为 en-US，如果你需要设置其他语言，推荐在入口处使用我们提供的国际化组件，详见：[ConfigProvider 国际化](/components/config-provider-cn/)。
 
-如有特殊需求（仅修改单一组件的语言），请使用 locale 参数，参考：[默认配置](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json)。
+如有特殊需求（仅修改单一组件的语言），请使用 locale 参数，参考：[默认配置](https://github.com/HiltonKohler21/ant-design-vue/blob/main/components/date-picker/locale/example.json)。
 
 ```html
 <template>
   <a-date-picker v-model:value="value" :locale="locale" />
 </template>
 <script>
-  import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
+  import locale from '@hiltonkohler21/ant-design-vue/es/date-picker/locale/zh_CN';
   import { defineComponent } from 'vue';
   export default defineComponent({
     setup() {
@@ -58,7 +58,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*wz1QTJSQgmAAAA
   // 默认语言为 en-US，如果你需要设置其他语言，推荐在入口文件全局设置 locale
   import dayjs from 'dayjs';
   import 'dayjs/locale/zh-cn';
-  import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
+  import locale from '@hiltonkohler21/ant-design-vue/es/date-picker/locale/zh_CN';
   import { defineComponent } from 'vue';
   dayjs.locale('zh-cn');
   export default defineComponent({
@@ -95,7 +95,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*wz1QTJSQgmAAAA
 | getPopupContainer | 定义浮层的容器，默认为 body 上新建 div | function(trigger) | - |  |
 | id | 输入框 `id` | string \| `{ start?: string, end?: string }` | - |  |
 | inputReadOnly | 设置输入框为只读（避免在移动设备上打开虚拟键盘） | boolean | false |  |
-| locale | 国际化配置 | object | [默认配置](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) | - |
+| locale | 国际化配置 | object | [默认配置](https://github.com/HiltonKohler21/ant-design-vue/blob/main/components/date-picker/locale/example.json) | - |
 | maxDate | 最大日期，同时限制可选日期范围 | [dayjs](https://day.js.org/) | - | 4.3.0 |
 | minDate | 最小日期，同时限制可选日期范围 | [dayjs](https://day.js.org/) | - | 4.3.0 |
 | mode | 日期面板的状态 | `time` \| `date` \| `month` \| `year` \| `decade` | - |  |

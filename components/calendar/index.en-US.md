@@ -39,7 +39,7 @@ customize the progress dot by setting a scoped slot
 | fullCellRender | Customize the display of the cell; the returned content will override the cell (replaces `dateFullCellRender` / `monthFullCellRender`) | `(current: dayjs, info: CellRenderInfo) => VNode` \| `v-slot:fullCellRender="{ current, info }"` | - | 4.3.0 |
 | fullscreen | Whether to display in full-screen | boolean | `true` |  |
 | headerRender | Render custom header in panel | v-slot:headerRender="{value: dayjs, type: string, onChange: f(), onTypeChange: f()}" | - | 1.5.0 |
-| locale | The calendar's locale | object | [default](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
+| locale | The calendar's locale | object | [default](https://github.com/HiltonKohler21/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
 | mode | The display mode of the calendar | `month` \| `year` | `month` |  |
 | ~~monthCellRender~~ | Customize the display of the month cell by setting a scoped slot, the returned content will be appended to the cell (deprecated, please use `cellRender` instead) | v-slot:monthCellRender="{current: dayjs}" | - |  |
 | ~~monthFullCellRender~~ | Customize the display of the month cell by setting a scoped slot, the returned content will override the cell (deprecated, please use `fullCellRender` instead) | v-slot:monthFullCellRender="{current: dayjs}" | - |  |

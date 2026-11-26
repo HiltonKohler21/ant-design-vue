@@ -20,10 +20,10 @@
 
 - 弃用 less，采用 CSS-in-JS，更好地支持动态主题。
   - 所有 less 文件全部移除，less 变量不再支持透出。
-  - 产物中不再包含 css 文件。由于 CSS-in-JS 支持按需引入，原本的 `ant-design-vue/dist/antd.css` 也已经移除，如果需要重置一些基本样式请引入 `ant-design-vue/dist/reset.css`。
-  - 如果需要组件重置样式，又不想引入 `ant-design-vue/dist/reset.css` 从而导致污染全局样式的话，可以尝试在应用最外层使用[App 组件](/components/app-cn)，解决原生元素没有 ant-design-vue 规范样式的问题。
+  - 产物中不再包含 css 文件。由于 CSS-in-JS 支持按需引入，原本的 `@hiltonkohler21/ant-design-vue/dist/antd.css` 也已经移除，如果需要重置一些基本样式请引入 `@hiltonkohler21/ant-design-vue/dist/reset.css`。
+  - 如果需要组件重置样式，又不想引入 `@hiltonkohler21/ant-design-vue/dist/reset.css` 从而导致污染全局样式的话，可以尝试在应用最外层使用[App 组件](/components/app-cn)，解决原生元素没有 ant-design-vue 规范样式的问题。
 - 移除 css variables 以及在此之上构筑的动态主题方案。
-- LocaleProvider 在 3.x 中已经废弃（使用 `<ConfigProvider locale />` 替代），我们在 4.x 里彻底移除了相关目录 `ant-design-vue/es/locale-provider`、`ant-design-vue/lib/locale-provider`。
+- LocaleProvider 在 3.x 中已经废弃（使用 `<ConfigProvider locale />` 替代），我们在 4.x 里彻底移除了相关目录 `@hiltonkohler21/ant-design-vue/es/locale-provider`、`@hiltonkohler21/ant-design-vue/lib/locale-provider`。
 - 不再支持 `babel-plugin-import`，CSS-in-JS 本身具有按需加载的能力，不再需要插件支持。
 
 ### 兼容性调整
@@ -108,7 +108,7 @@ const visible = ref(true);
 通过 git 保存你的代码，然后按照上述文档进行依赖安装：
 
 ```bash
-npm install --save ant-design-vue@4.x
+npm install --save @hiltonkohler21/ant-design-vue@4.x
 ```
 
 ### less 迁移
@@ -116,8 +116,8 @@ npm install --save ant-design-vue@4.x
 如果你使用到了 ant-design-vue 的 less 变量，通过兼容包将 v4 变量转译成 v3 版本，并通过 less-loader 注入：
 
 ```js
-const { theme } = require('ant-design-vue/lib');
-const convertLegacyToken = require('ant-design-vue/lib/theme/convertLegacyToken');
+const { theme } = require('@hiltonkohler21/ant-design-vue/lib');
+const convertLegacyToken = require('@hiltonkohler21/ant-design-vue/lib/theme/convertLegacyToken');
 
 const { defaultAlgorithm, defaultSeed } = theme;
 
@@ -140,9 +140,9 @@ module.exports = {
 
 ```diff
 // Your less file
---  @import (reference) '~ant-design-vue/es/style/themes/index';
+--  @import (reference) '~@hiltonkohler21/ant-design-vue/es/style/themes/index';
 or
---  @import '~ant-design-vue/es/style/some-other-less-file-ref';
+--  @import '~@hiltonkohler21/ant-design-vue/es/style/some-other-less-file-ref';
 ```
 
 ### 移除 babel-plugin-import
@@ -151,7 +151,7 @@ or
 
 ```diff
 "plugins": [
--- ["import", { "libraryName": "ant-design-vue", "libraryDirectory": "lib"}, "ant-design-vue"],
+-- ["import", { "libraryName": "@hiltonkohler21/ant-design-vue", "libraryDirectory": "lib"}, "@hiltonkohler21/ant-design-vue"],
 ]
 ```
 
@@ -161,4 +161,4 @@ Ant Design Vue v4 使用 `:where` css selector 降低 CSS-in-JS hash 值优先�
 
 ## 遇到问题
 
-如果您在升级过程中遇到了问题，请到 [GitHub issues](https://github.com/vueComponent/ant-design-vue/issues) 进行反馈。我们会尽快响应和相应改进这篇文档。
+如果您在升级过程中遇到了问题，请到 [GitHub issues](https://github.com/HiltonKohler21/ant-design-vue/issues) 进行反馈。我们会尽快响应和相应改进这篇文档。

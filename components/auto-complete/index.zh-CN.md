@@ -48,7 +48,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*WERTQ6qvgEYAAA
 | notFoundContent | 当下拉列表为空时显示的内容 | string \| slot | - |  |
 | open | 是否展开下拉菜单 | boolean | - |  |
 | option | 通过 option 插槽，自定义节点 | v-slot:option="{value, label, [disabled, key, title]}" | - | 3.0 |
-| options | 自动完成的数据源 | [DataSourceItemType](https://github.com/vueComponent/ant-design-vue/blob/724d53b907e577cf5880c1e6742d4c3f924f8f49/components/auto-complete/index.vue#L9)\[] | - |  |
+| options | 自动完成的数据源 | [DataSourceItemType](https://github.com/HiltonKohler21/ant-design-vue/blob/724d53b907e577cf5880c1e6742d4c3f924f8f49/components/auto-complete/index.vue#L9)\[] | - |  |
 | placeholder | 输入框提示 | string \| slot | - |  |
 | ~~popupClassName~~ | 下拉菜单的 className 属性（已废弃，请使用 `classNames.popup.root`） | string | - | 4.0 |
 | popupMatchSelectWidth | 下拉菜单和选择器同宽。默认将设置 `min-width`，当值小于选择框宽度时会被忽略。`false` 时会关闭虚拟滚动 | boolean \| number | true | 4.3.0 |

@@ -1,6 +1,6 @@
 # Use in Vite
 
-[Vite](https://vitejs.dev/) is the recommended build tool for modern Vue 3 applications, offering instant dev server startup and fast HMR. This guide walks through setting up `ant-design-vue@4.3.0` in a Vite + Vue 3 + TypeScript project, including automatic on-demand imports, icons, theming, and dev performance tips.
+[Vite](https://vitejs.dev/) is the recommended build tool for modern Vue 3 applications, offering instant dev server startup and fast HMR. This guide walks through setting up `@hiltonkohler21/ant-design-vue@4.3.0` in a Vite + Vue 3 + TypeScript project, including automatic on-demand imports, icons, theming, and dev performance tips.
 
 ## 1. Create a Vite Project
 
@@ -27,13 +27,13 @@ npm run dev
 
 Open `http://localhost:5173` in your browser to verify the initial Vite + Vue app.
 
-## 2. Install `ant-design-vue` and Icons
+## 2. Install `@hiltonkohler21/ant-design-vue` and Icons
 
 ```bash
-npm install ant-design-vue @ant-design/icons-vue
+npm install @hiltonkohler21/ant-design-vue @ant-design/icons-vue
 ```
 
-> `ant-design-vue` 4.x uses CSS-in-JS with native CSS Variables (enabled by default in 4.3.0). You do **not** need `less`, `less-loader`, or `babel-plugin-import`.
+> `@hiltonkohler21/ant-design-vue` 4.x uses CSS-in-JS with native CSS Variables (enabled by default in 4.3.0). You do **not** need `less`, `less-loader`, or `babel-plugin-import`.
 
 ## 3. Importing Components
 
@@ -72,7 +72,7 @@ Import the optional base reset stylesheet in `src/main.ts`:
 
 ```ts
 import { createApp } from 'vue';
-import 'ant-design-vue/dist/reset.css';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).mount('#app');
@@ -94,7 +94,7 @@ Then use `<a-*>` components directly in your templates without manual imports:
 
 <script setup lang="ts">
 import { h } from 'vue';
-import { App } from 'ant-design-vue';
+import { App } from '@hiltonkohler21/ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 
 const { message } = App.useApp();
@@ -113,8 +113,8 @@ Convenient for admin dashboards and rapid prototyping:
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).use(Antd).mount('#app');
@@ -122,7 +122,7 @@ createApp(App).use(Antd).mount('#app');
 
 ### Option C: Direct ES Module Import
 
-`ant-design-vue` supports ES module tree shaking out of the box:
+`@hiltonkohler21/ant-design-vue` supports ES module tree shaking out of the box:
 
 ```vue
 <template>
@@ -130,18 +130,18 @@ createApp(App).use(Antd).mount('#app');
 </template>
 
 <script setup lang="ts">
-import { Button } from 'ant-design-vue';
+import { Button } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
 ## 4. TypeScript & IDE Intellisense (Vue - Official / Volar)
 
-When using global registration (`app.use(Antd)`), add `ant-design-vue/typings/global` to `tsconfig.json` for full template tag and prop autocompletion:
+When using global registration (`app.use(Antd)`), add `@hiltonkohler21/ant-design-vue/typings/global` to `tsconfig.json` for full template tag and prop autocompletion:
 
 ```json
 {
   "compilerOptions": {
-    "types": ["ant-design-vue/typings/global"]
+    "types": ["@hiltonkohler21/ant-design-vue/typings/global"]
   }
 }
 ```
@@ -156,7 +156,12 @@ In large projects, pre-bundle frequently used dependencies via `optimizeDeps.inc
 // vite.config.ts
 export default defineConfig({
   optimizeDeps: {
-    include: ['ant-design-vue', 'ant-design-vue/es/locale/en_US', '@ant-design/icons-vue', 'dayjs'],
+    include: [
+      '@hiltonkohler21/ant-design-vue',
+      '@hiltonkohler21/ant-design-vue/es/locale/en_US',
+      '@ant-design/icons-vue',
+      'dayjs',
+    ],
   },
 });
 ```

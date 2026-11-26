@@ -146,7 +146,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*ylFATY6w-ygAAA
 ```html
 <script>
   // 自定义组件
-  import { Form } from 'ant-design-vue';
+  import { Form } from '@hiltonkohler21/ant-design-vue';
   export default {
     setup() {
       const formItemContext = Form.useInjectFormItemContext();
@@ -231,7 +231,7 @@ Form.Item 会对唯一子元素进行劫持，并监听 `blur` 和 `change` 事�
 2.2 以下版本需要需要 @ant-design-vue/use 库单独提供，不建议继续使用，你应该尽快升级到 2.2+ 版本
 
 ```ts
-import { Form } from 'ant-design-vue';
+import { Form } from '@hiltonkohler21/ant-design-vue';
 const useForm = Form.useForm;
 
 useForm(modelRef, ruleRef, [options]);

@@ -1,6 +1,6 @@
 # 通用属性
 
-`ant-design-vue@4.3.0` 在组件库层面统一了一组跨组件通用的属性与样式定制协议，涵盖根容器类名、覆盖 **61 个组件**的静态与函数式**语义化 DOM（`classNames` / `styles`）**、视觉形态变体 `variant`、弹层统一销毁策略以及 **72 项 `ConfigProvider` 组件级默认配置**。
+`@hiltonkohler21/ant-design-vue@4.3.0` 在组件库层面统一了一组跨组件通用的属性与样式定制协议，涵盖根容器类名、覆盖 **61 个组件**的静态与函数式**语义化 DOM（`classNames` / `styles`）**、视觉形态变体 `variant`、弹层统一销毁策略以及 **72 项 `ConfigProvider` 组件级默认配置**。
 
 > 以下通用属性适用于绝大多数组件；个别无 DOM 容器或特殊结构的组件请以对应组件 API 文档与交互式 `#semantic-dom` 预览器为准。
 
@@ -34,7 +34,7 @@
 
 ## 语义化 DOM（`classNames` 与 `styles`）
 
-`ant-design-vue` 通过成对的 `classNames` 和 `styles` 属性开放组件内部各语义部位的定制能力，替代过去分散的 `bodyStyle`、`headStyle`、`headerStyle`、`footerStyle`、`maskStyle`、`dropdownStyle`、`imageStyle`、`wrapperStyle` 与 `orientationMargin` 等属性。
+`@hiltonkohler21/ant-design-vue` 通过成对的 `classNames` 和 `styles` 属性开放组件内部各语义部位的定制能力，替代过去分散的 `bodyStyle`、`headStyle`、`headerStyle`、`footerStyle`、`maskStyle`、`dropdownStyle`、`imageStyle`、`wrapperStyle` 与 `orientationMargin` 等属性。
 
 > **交互式语义化 DOM 预览器**：所有支持语义化样式的组件文档页均在 `#design-tokens` 上方内置了 **`语义化 DOM`（`#semantic-dom`）** 实时预览器（例如体验 [Alert 语义化 DOM](/components/alert-cn#semantic-dom)、[Card 语义化 DOM](/components/card-cn#semantic-dom) 或 [Button 语义化 DOM](/components/button-cn#semantic-dom)）。悬停或点击右侧语义位即可高亮对应的真实 DOM 节点，并支持一键复制键名与查看示例代码。
 

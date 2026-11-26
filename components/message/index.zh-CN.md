@@ -110,7 +110,7 @@ message.config({
   <!-- <component :is='contextHolder'/> -->
 </template>
 <script setup>
-  import { message } from 'ant-design-vue';
+  import { message } from '@hiltonkohler21/ant-design-vue';
   const [messageApi, contextHolder] = message.useMessage();
   messageApi.open({
     // ...

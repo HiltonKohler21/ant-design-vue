@@ -38,7 +38,7 @@ coverDark: https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*-p-wQLik200AAA
 | fullCellRender | 自定义单元格的内容，返回内容覆盖单元格（替代 `dateFullCellRender` / `monthFullCellRender`） | `(current: dayjs, info: CellRenderInfo) => VNode` \| `v-slot:fullCellRender="{ current, info }"` | - | 4.3.0 |
 | fullscreen | 是否全屏显示 | boolean | true |  |
 | headerRender | 自定义头部内容 | v-slot:headerRender="{value: dayjs, type: string, onChange: f(), onTypeChange: f()}" | - |  |
-| locale | 国际化配置 | object | [默认配置](https://github.com/vueComponent/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
+| locale | 国际化配置 | object | [默认配置](https://github.com/HiltonKohler21/ant-design-vue/blob/main/components/date-picker/locale/example.json) |  |
 | mode | 初始模式，`month/year` | `month` \| `year` | `month` |  |
 | ~~monthCellRender~~ | 作用域插槽，自定义渲染月单元格，返回内容会被追加到单元格（已废弃，请使用 `cellRender`） | v-slot:monthCellRender="{current: dayjs}" | - |  |
 | ~~monthFullCellRender~~ | 作用域插槽，自定义渲染月单元格，返回内容覆盖单元格（已废弃，请使用 `fullCellRender`） | v-slot:monthFullCellRender="{current: dayjs}" | - |  |

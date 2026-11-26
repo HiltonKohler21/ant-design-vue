@@ -19,10 +19,10 @@ This document will help you upgrade from ant-design-vue `3.x` version to ant-des
 
 - Remove less, adopt CSS-in-JS, for better support of dynamic themes.
   - All less files are removed, and less variables are no longer exported.
-  - Css files are no longer included in package. Since CSS-in-JS supports importing on demand, the original `ant-design-vue/dist/antd.css` has also been abandoned. If you need to reset some basic styles, please import `ant-design-vue/dist/reset.css`.
-  - If you need to reset the style of the component, but you don't want to introduce `ant-design-vue/dist/reset.css` to pollute the global style, You can try using the [App](/components/app) in the outermost layer to solve the problem that native elements do not have antd specification style.
+  - Css files are no longer included in package. Since CSS-in-JS supports importing on demand, the original `@hiltonkohler21/ant-design-vue/dist/antd.css` has also been abandoned. If you need to reset some basic styles, please import `@hiltonkohler21/ant-design-vue/dist/reset.css`.
+  - If you need to reset the style of the component, but you don't want to introduce `@hiltonkohler21/ant-design-vue/dist/reset.css` to pollute the global style, You can try using the [App](/components/app) in the outermost layer to solve the problem that native elements do not have antd specification style.
 - Remove css variables and dynamic theme built on top of them.
-- LocaleProvider has been deprecated in 3.x (use `<ConfigProvider locale />` instead), we removed the related folder `ant-design-vue/es/locale-provider` and `ant-design-vue/lib/locale-provider` in 4.x.
+- LocaleProvider has been deprecated in 3.x (use `<ConfigProvider locale />` instead), we removed the related folder `@hiltonkohler21/ant-design-vue/es/locale-provider` and `@hiltonkohler21/ant-design-vue/lib/locale-provider` in 4.x.
 - Replace built-in Moment.js with Dayjs. For more: [Use custom date library](/docs/vue/replace-date).
 - `babel-plugin-import` is no longer supported. CSS-in-JS itself has the ability to import on demand, and plugin support is no longer required.
 
@@ -106,7 +106,7 @@ const visible = ref(true);
 Use git to save your code and install latest version:
 
 ```bash
-npm install --save ant-design-vue@4
+npm install --save @hiltonkohler21/ant-design-vue@4
 ```
 
 ### less migration
@@ -114,8 +114,8 @@ npm install --save ant-design-vue@4
 If you using ant-design-vue less variables, you can use compatible package to covert it into v3 less variables and use less-loader to inject them:
 
 ```js
-const { theme } = require('ant-design-vue/lib');
-const convertLegacyToken = require('ant-design-vue/lib/theme/convertLegacyToken');
+const { theme } = require('@hiltonkohler21/ant-design-vue/lib');
+const convertLegacyToken = require('@hiltonkohler21/ant-design-vue/lib/theme/convertLegacyToken');
 
 const { defaultAlgorithm, defaultSeed } = theme;
 
@@ -138,9 +138,9 @@ Ant then remove ant-design-vue less reference in your less file:
 
 ```diff
 // Your less file
---  @import (reference) '~ant-design-vue/es/style/themes/index';
+--  @import (reference) '~@hiltonkohler21/ant-design-vue/es/style/themes/index';
 or
---  @import '~ant-design-vue/es/style/some-other-less-file-ref';
+--  @import '~@hiltonkohler21/ant-design-vue/es/style/some-other-less-file-ref';
 ```
 
 ### Remove babel-plugin-import
@@ -149,7 +149,7 @@ Remove `babel-plugin-import` from package.json and modify `.babelrc`:
 
 ```diff
 "plugins": [
--- ["import", { "libraryName": "ant-design-vue", "libraryDirectory": "lib"}, "ant-design-vue"],
+-- ["import", { "libraryName": "@hiltonkohler21/ant-design-vue", "libraryDirectory": "lib"}, "@hiltonkohler21/ant-design-vue"],
 ]
 ```
 
@@ -159,4 +159,4 @@ Ant Design Vue v4 using `:where` css selector to reduce CSS-in-JS hash priority.
 
 ## Encounter problems
 
-If you encounter problems during the upgrade, please go to [GitHub issues](https://github.com/vueComponent/ant-design-vue/issues) for feedback. We will respond and improve this document as soon as possible.
+If you encounter problems during the upgrade, please go to [GitHub issues](https://github.com/HiltonKohler21/ant-design-vue/issues) for feedback. We will respond and improve this document as soon as possible.

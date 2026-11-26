@@ -147,7 +147,7 @@ The second way is to wrap it with a custom component and call `useInjectFormItem
 ```html
 <script>
   // custom component
-  import { Form } from 'ant-design-vue';
+  import { Form } from '@hiltonkohler21/ant-design-vue';
   export default {
     name: 'custom-name',
     setup() {
@@ -233,7 +233,7 @@ See more advanced usage at [async-validator](https://github.com/yiminghe/async-v
 The following versions need to be provided separately by `@ant-design-vue/use` library, it is not recommended to continue to use, you should upgrade to version 2.2+ as soon as possible
 
 ```ts
-import { Form } from 'ant-design-vue';
+import { Form } from '@hiltonkohler21/ant-design-vue';
 const useForm = Form.useForm;
 
 useForm(modelRef, ruleRef, [options]);

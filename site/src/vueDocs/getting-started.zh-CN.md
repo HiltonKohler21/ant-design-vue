@@ -23,7 +23,7 @@ npm create rsbuild@latest
 ## 2. 安装依赖
 
 ```bash
-npm install ant-design-vue@4.3.0 @ant-design/icons-vue
+npm install @hiltonkohler21/ant-design-vue@4.3.0 @ant-design/icons-vue
 ```
 
 > `4.x` 采用 CSS-in-JS 与原生 CSS Variables（4.3.0 默认开启），**不需要**引入 `antd.css`，也不再需要 `babel-plugin-import`。
@@ -35,8 +35,8 @@ npm install ant-design-vue@4.3.0 @ant-design/icons-vue
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).use(Antd).mount('#app');
@@ -59,7 +59,7 @@ createApp(App).use(Antd).mount('#app');
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { Dayjs } from 'dayjs';
-import { App } from 'ant-design-vue';
+import { App } from '@hiltonkohler21/ant-design-vue';
 
 const date = ref<Dayjs>();
 const { message } = App.useApp();
@@ -69,7 +69,7 @@ const notify = () => message.success('欢迎使用 Ant Design Vue 4.3.0！');
 
 ### 方式二：按需导入（ES Modules / `unplugin-vue-components`）
 
-`ant-design-vue` 原生支持 Tree Shaking，你可以直接在 `<script setup lang="ts">` 中按需引入组件：
+`@hiltonkohler21/ant-design-vue` 原生支持 Tree Shaking，你可以直接在 `<script setup lang="ts">` 中按需引入组件：
 
 ```vue
 <template>
@@ -77,7 +77,7 @@ const notify = () => message.success('欢迎使用 Ant Design Vue 4.3.0！');
 </template>
 
 <script setup lang="ts">
-import { Button } from 'ant-design-vue';
+import { Button } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -87,8 +87,8 @@ import { Button } from 'ant-design-vue';
 
 ```ts
 import { createApp } from 'vue';
-import { Button, DatePicker } from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import { Button, DatePicker } from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 const app = createApp(App);

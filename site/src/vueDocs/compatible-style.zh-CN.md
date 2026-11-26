@@ -7,7 +7,7 @@ title: 样式兼容
 
 Ant Design Vue 支持最近 2 个版本的现代浏览器。默认启用了现代 CSS 特性以提升可维护性与主题性能；如需兼容旧版浏览器、Shadow DOM、rem 适配，或与 TailwindCSS 等三方样式库共存，可按需使用 `StyleProvider` 与 CSS `@layer` 进行配置。
 
-> `StyleProvider` 以及内置转换器（`legacyLogicalPropertiesTransformer`、`px2remTransformer`）均已直接从 `ant-design-vue` 导出，无需额外安装独立包。
+> `StyleProvider` 以及内置转换器（`legacyLogicalPropertiesTransformer`、`px2remTransformer`）均已直接从 `@hiltonkohler21/ant-design-vue` 导出，无需额外安装独立包。
 
 ## 默认样式特性与兼容性一览
 
@@ -57,7 +57,7 @@ Ant Design Vue 的 CSS-in-JS 默认使用 `:where()` 包裹 hash 选择器，将
 </template>
 
 <script setup lang="ts">
-import { legacyLogicalPropertiesTransformer } from 'ant-design-vue';
+import { legacyLogicalPropertiesTransformer } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -85,7 +85,7 @@ import { legacyLogicalPropertiesTransformer } from 'ant-design-vue';
 </template>
 
 <script setup lang="ts">
-import { px2remTransformer } from 'ant-design-vue';
+import { px2remTransformer } from '@hiltonkohler21/ant-design-vue';
 
 const px2rem = px2remTransformer({
   rootValue: 16, // 16px = 1rem（默认 16）
@@ -111,7 +111,7 @@ const px2rem = px2remTransformer({
 
 ```ts
 import { createApp, defineComponent, h } from 'vue';
-import Antd, { ConfigProvider, StyleProvider } from 'ant-design-vue';
+import Antd, { ConfigProvider, StyleProvider } from '@hiltonkohler21/ant-design-vue';
 import MyApp from './MyApp.vue';
 
 const host = document.getElementById('shadow-host')!;
@@ -133,7 +133,7 @@ createApp(Root).use(Antd).mount(mountEl);
 
 ## CSS `@layer` 与 TailwindCSS 共存
 
-当 `ant-design-vue` 与 TailwindCSS、UnoCSS 等原子化样式框架共存时，常见冲突是三方框架的基础重置（Preflight）与组件 `:where()` 低权重样式互相覆盖。通过显式规划 CSS `@layer` 层级可以彻底解决顺序冲突。
+当 `@hiltonkohler21/ant-design-vue` 与 TailwindCSS、UnoCSS 等原子化样式框架共存时，常见冲突是三方框架的基础重置（Preflight）与组件 `:where()` 低权重样式互相覆盖。通过显式规划 CSS `@layer` 层级可以彻底解决顺序冲突。
 
 ### TailwindCSS v4
 
@@ -144,7 +144,7 @@ TailwindCSS v4 内置了 `theme`、`base`、`components`、`utilities` 四个级
 @layer theme, base, antd, components, utilities;
 
 @import 'tailwindcss';
-@import 'ant-design-vue/dist/reset.css' layer(base);
+@import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(base);
 
 /* 若开启 4.3.0 zeroRuntime 并引入预提取静态 CSS，需指定 layer(antd) */
 /* @import '../dist/static-style/antdv.css' layer(antd); */
@@ -182,12 +182,12 @@ module.exports = {
 
 ### `reset.css` 与 `zeroRuntime` 静态 CSS（`antdv.css`）
 
-当同时引入 `ant-design-vue/dist/reset.css` 与 `npm run static-style-extract` 产出的 `antdv.css` 时，建议显式划分 `@layer`，确保 `reset.css` 永远不会覆盖组件样式：
+当同时引入 `@hiltonkohler21/ant-design-vue/dist/reset.css` 与 `npm run static-style-extract` 产出的 `antdv.css` 时，建议显式划分 `@layer`，确保 `reset.css` 永远不会覆盖组件样式：
 
 ```css
 @layer reset, antd;
 
-@import 'ant-design-vue/dist/reset.css' layer(reset);
+@import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(reset);
 @import '../dist/static-style/antdv.css' layer(antd);
 ```
 

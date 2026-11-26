@@ -58,7 +58,7 @@ Switch visual modes rapidly with `theme.algorithm`. Three preset algorithms are 
 </template>
 
 <script setup lang="ts">
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -128,7 +128,7 @@ Bind `:theme` to a reactive Vue `ref` or `computed` to switch themes at runtime 
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const isDark = ref(false);
 const themeConfig = computed(() => ({
@@ -163,7 +163,7 @@ Use `theme.useToken()` to read tokens inside Vue components:
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token, realToken } = theme.useToken();
 
@@ -188,8 +188,8 @@ const radiusNumber = computed(() => realToken.value.borderRadius); // 6
 To compute tokens outside Vue components (e.g., build scripts, Canvas helpers, or Less `modifyVars`), run the exported algorithms against `defaultSeed` (equivalent to `theme.getDesignToken(config)` in React `antd`):
 
 ```ts
-import { theme } from 'ant-design-vue';
-import type { SeedToken, MapToken } from 'ant-design-vue/es/theme/interface';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { SeedToken, MapToken } from '@hiltonkohler21/ant-design-vue/es/theme/interface';
 
 const { defaultAlgorithm, darkAlgorithm, compactAlgorithm, defaultSeed } = theme;
 

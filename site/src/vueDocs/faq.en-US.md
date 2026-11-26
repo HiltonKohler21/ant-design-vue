@@ -26,7 +26,7 @@ To temporarily opt out and keep hashed mode, pass `<a-config-provider :theme="{ 
 
 ## How do I resolve style conflicts with TailwindCSS v4 / v3?
 
-`ant-design-vue` lowers selector specificity with `:where(.css-xxx)` by default, which can allow Tailwind Preflight resets to override button backgrounds or borders.
+`@hiltonkohler21/ant-design-vue` lowers selector specificity with `:where(.css-xxx)` by default, which can allow Tailwind Preflight resets to override button backgrounds or borders.
 
 - **TailwindCSS v4**: Declare an explicit `@layer` order at the top of your main CSS file and assign `reset.css` to `layer(base)`:
 
@@ -34,7 +34,7 @@ To temporarily opt out and keep hashed mode, pass `<a-config-provider :theme="{ 
   @layer theme, base, antd, components, utilities;
 
   @import 'tailwindcss';
-  @import 'ant-design-vue/dist/reset.css' layer(base);
+  @import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(base);
   ```
 
 - **Increase component specificity**: Wrap your app in `<a-style-provider hash-priority="high">` to remove `:where(...)`.
@@ -76,7 +76,7 @@ If your CSP forbids inline `<style>` tags altogether, use `4.3.0` `zeroRuntime: 
 During SSR, collect generated styles and inject them into the HTML `<head>`. Under `4.3.0` default `cssVar: true`, be sure to extract **both** component rules (`extractStyle(cache)`) and `:root` CSS variable declarations (`extractCSSVarStyle()`):
 
 ```ts
-import { createCache, extractStyle, extractCSSVarStyle } from 'ant-design-vue';
+import { createCache, extractStyle, extractCSSVarStyle } from '@hiltonkohler21/ant-design-vue';
 
 const componentCss = extractStyle(cache);
 const cssVarCss = `<style data-antdv-cssvar>${extractCSSVarStyle()}</style>`;
@@ -107,7 +107,7 @@ Use one of these two approaches instead:
    ```
    ```ts
    // Any descendant component
-   import { App } from 'ant-design-vue';
+   import { App } from '@hiltonkohler21/ant-design-vue';
    const { message, modal, notification } = App.useApp();
    message.success('Inherits Dark Mode and custom prefixCls!');
    ```
@@ -138,11 +138,11 @@ Configure theme motion tokens and `wave.disabled` on `ConfigProvider`:
 
 ## Why aren't template types showing up in VS Code (Vue - Official / Volar)?
 
-- **Global registration (`app.use(Antd)`)**: Add `ant-design-vue/typings/global` to `tsconfig.json`:
+- **Global registration (`app.use(Antd)`)**: Add `@hiltonkohler21/ant-design-vue/typings/global` to `tsconfig.json`:
   ```json
   {
     "compilerOptions": {
-      "types": ["ant-design-vue/typings/global"]
+      "types": ["@hiltonkohler21/ant-design-vue/typings/global"]
     }
   }
   ```
@@ -151,12 +151,17 @@ Configure theme motion tokens and `wave.disabled` on `ConfigProvider`:
 
 ## How can I speed up Vite dev server cold start and avoid dependency re-bundling?
 
-Pre-bundle `ant-design-vue`, `@ant-design/icons-vue`, and `dayjs` in `vite.config.ts`:
+Pre-bundle `@hiltonkohler21/ant-design-vue`, `@ant-design/icons-vue`, and `dayjs` in `vite.config.ts`:
 
 ```ts
 export default defineConfig({
   optimizeDeps: {
-    include: ['ant-design-vue', 'ant-design-vue/es/locale/en_US', '@ant-design/icons-vue', 'dayjs'],
+    include: [
+      '@hiltonkohler21/ant-design-vue',
+      '@hiltonkohler21/ant-design-vue/es/locale/en_US',
+      '@ant-design/icons-vue',
+      'dayjs',
+    ],
   },
 });
 ```
@@ -214,7 +219,7 @@ Popups mount to `document.body` by default. Inside scrollable containers or nest
 ## Do you ship Less / Sass / CSS files? Does Ant Design Vue override global styles?
 
 - **CSS-in-JS architecture**: Since v4.0, `antd.css` and all `.less` files have been removed (Sass/Stylus files are not provided). Styles are injected automatically via CSS-in-JS (with native CSS Variables by default in 4.3.0).
-- **No unwanted global overrides**: v4 does not mutate global element styles by default. Import `ant-design-vue/dist/reset.css` if you want a global reset, or wrap only your app root with `<a-app>` to scope reset typography cleanly (ideal for micro-frontends).
+- **No unwanted global overrides**: v4 does not mutate global element styles by default. Import `@hiltonkohler21/ant-design-vue/dist/reset.css` if you want a global reset, or wrap only your app root with `<a-app>` to scope reset typography cleanly (ideal for micro-frontends).
 
 ## Why didn't changing `colorPrimary` change link (`<a>`) colors?
 

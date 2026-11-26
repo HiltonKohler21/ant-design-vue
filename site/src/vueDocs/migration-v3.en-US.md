@@ -99,7 +99,7 @@ Major updates after the 3.0 version refactoring include `Tree` `TreeSelect` `Dat
     ```html
     <script>
       // custom component
-      import { Form } from 'ant-design-vue';
+      import { Form } from '@hiltonkohler21/ant-design-vue';
       export default {
         name: 'custom-name',
         setup() {
@@ -129,4 +129,4 @@ Major updates after the 3.0 version refactoring include `Tree` `TreeSelect` `Dat
 
 ## Encounter problems
 
-V3 has made a lot of detailed improvements and refactorings. We have collected all known incompatible changes and related effects as much as possible, but there may still be some scenarios that we have not considered. If you encounter problems during the upgrade process, please go to [GitHub issues](https://vuecomponent.github.io/issue-helper/) for feedback. We will respond as soon as possible and improve this document accordingly.
+V3 has made a lot of detailed improvements and refactorings. We have collected all known incompatible changes and related effects as much as possible, but there may still be some scenarios that we have not considered. If you encounter problems during the upgrade process, please go to [GitHub issues](https://github.com/HiltonKohler21/ant-design-vue/issues) for feedback. We will respond as soon as possible and improve this document accordingly.

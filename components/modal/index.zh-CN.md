@@ -161,7 +161,7 @@ router.beforeEach(() => {
   <contextHolder />
 </template>
 <script setup>
-  import { Modal } from 'ant-design-vue';
+  import { Modal } from '@hiltonkohler21/ant-design-vue';
   const [modal, contextHolder] = Modal.useModal();
 
   modal.confirm({
@@ -208,7 +208,7 @@ const confirmed = await modal.confirm({ ... });
   <contextHolder />
 </template>
 <script setup>
-  import { Modal } from 'ant-design-vue';
+  import { Modal } from '@hiltonkohler21/ant-design-vue';
   const [modal, contextHolder] = Modal.useModal();
 
   modal.confirm({

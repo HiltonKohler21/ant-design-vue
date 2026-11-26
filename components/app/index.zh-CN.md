@@ -44,7 +44,7 @@ App 组件通过 `provide/inject` 提供上下文方法调用，因而 useApp �
 </template>
 
 <script setup lang="ts">
-  import { App } from 'ant-design-vue';
+  import { App } from '@hiltonkohler21/ant-design-vue';
 
   const { message, modal, notification } = App.useApp();
 
@@ -95,10 +95,10 @@ App 组件只能在 `ConfigProvider` 之下才能使用 Design Token，如果需
 #### 全局场景 (pinia 场景)
 
 ```ts
-import { App } from 'ant-design-vue';
-import type { MessageInstance } from 'ant-design-vue/es/message/interface';
-import type { ModalStaticFunctions } from 'ant-design-vue/es/modal/confirm';
-import type { NotificationInstance } from 'ant-design-vue/es/notification/interface';
+import { App } from '@hiltonkohler21/ant-design-vue';
+import type { MessageInstance } from '@hiltonkohler21/ant-design-vue/es/message/interface';
+import type { ModalStaticFunctions } from '@hiltonkohler21/ant-design-vue/es/modal/confirm';
+import type { NotificationInstance } from '@hiltonkohler21/ant-design-vue/es/notification/interface';
 
 export const useGlobalStore = defineStore('global', () => {
   const message: MessageInstance = ref();

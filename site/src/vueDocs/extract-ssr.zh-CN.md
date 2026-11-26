@@ -1,6 +1,6 @@
 # SSR 与静态样式导出
 
-在服务端渲染（SSR）场景中，`ant-design-vue@4.3.0` 提供两种样式输出方案，你可以根据项目的主题复杂度与缓存策略进行选择：
+在服务端渲染（SSR）场景中，`@hiltonkohler21/ant-design-vue@4.3.0` 提供两种样式输出方案，你可以根据项目的主题复杂度与缓存策略进行选择：
 
 - **按请求内联抽取（Inline SSR）**：在服务端通过 `StyleProvider` + `createCache` 收集当前页面实际渲染到的组件样式与 `:root` CSS 变量，随 HTML 一起下发。优点是零多余样式、天然支持动态多主题；缺点是 HTML 体积略增。
 - **构建期静态整体导出（Zero-Runtime / Static Extract）**：预先将组件样式与 `--ant-*` 变量烘焙为独立 `.css` 文件并开启 `zeroRuntime: true`。优点是可被 CDN 强缓存、客户端零 `<style>` 运行时注入开销；适合主题固定的应用。
@@ -21,7 +21,7 @@ import Antd, {
   extractStyle,
   extractCSSVarStyle,
   clearCSSVarRegistry,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 import App from './App.vue';
 
 export async function render() {
@@ -84,8 +84,8 @@ npm run static-style-extract
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import '../dist/static-style/antdv.css';
 import App from './App.vue';
 
@@ -127,7 +127,7 @@ import {
   extractStyle,
   extractCSSVarStyle,
   clearCSSVarRegistry,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 
 async function buildStaticCss() {
   clearCSSVarRegistry();
@@ -172,7 +172,7 @@ async function buildStaticCss() {
 buildStaticCss();
 ```
 
-> 若需要快速提取全量组件默认样式，也可使用内置模块 `ant-design-vue/lib/_util/static-style-extract`（使用 `h(ConfigProvider, ...)` 包裹节点）。
+> 若需要快速提取全量组件默认样式，也可使用内置模块 `@hiltonkohler21/ant-design-vue/lib/_util/static-style-extract`（使用 `h(ConfigProvider, ...)` 包裹节点）。
 
 ## Nuxt 3 集成指南
 
@@ -187,7 +187,7 @@ import Antd, {
   extractCSSVarStyle,
   clearCSSVarRegistry,
   useStyleProvider,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(Antd);
@@ -225,9 +225,9 @@ export default defineNuxtPlugin(nuxtApp => {
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  css: ['ant-design-vue/dist/reset.css'],
+  css: ['@hiltonkohler21/ant-design-vue/dist/reset.css'],
   build: {
-    transpile: ['ant-design-vue', '@ant-design/icons-vue'],
+    transpile: ['@hiltonkohler21/ant-design-vue', '@ant-design/icons-vue'],
   },
 });
 ```
@@ -267,8 +267,8 @@ res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
 
 | 导出方法 / 组件 | 导入路径 | 说明 |
 | --- | --- | --- |
-| `StyleProvider` | `ant-design-vue` | 样式上下文容器，传入 `:cache="cache"` 以收集 SSR 样式 |
-| `createCache()` | `ant-design-vue` | 创建单次渲染隔离的样式缓存实体 |
-| `extractStyle(cache, plain?)` | `ant-design-vue` | 从缓存导出组件 CSS；`plain = true` 时返回纯 CSS 文本，默认返回 `<style>` HTML |
-| `extractCSSVarStyle()` | `ant-design-vue` | 导出 `4.3.0` CSS 变量模式下已登记的全部 `:root` / 组件级变量声明块 |
-| `clearCSSVarRegistry()` | `ant-design-vue` | 清空变量登记表，适用于 SSR 请求前或多次离线构建提取 |
+| `StyleProvider` | `@hiltonkohler21/ant-design-vue` | 样式上下文容器，传入 `:cache="cache"` 以收集 SSR 样式 |
+| `createCache()` | `@hiltonkohler21/ant-design-vue` | 创建单次渲染隔离的样式缓存实体 |
+| `extractStyle(cache, plain?)` | `@hiltonkohler21/ant-design-vue` | 从缓存导出组件 CSS；`plain = true` 时返回纯 CSS 文本，默认返回 `<style>` HTML |
+| `extractCSSVarStyle()` | `@hiltonkohler21/ant-design-vue` | 导出 `4.3.0` CSS 变量模式下已登记的全部 `:root` / 组件级变量声明块 |
+| `clearCSSVarRegistry()` | `@hiltonkohler21/ant-design-vue` | 清空变量登记表，适用于 SSR 请求前或多次离线构建提取 |

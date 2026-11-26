@@ -1,6 +1,6 @@
 # Ant Design Vue Design Specification (DESIGN.md)
 
-> This document defines the core visual design language, token hierarchy, and UI architectural rules of Ant Design Vue. It serves as an authoritative specification for AI coding agents, design tools, and developers building user interfaces with `ant-design-vue`.
+> This document defines the core visual design language, token hierarchy, and UI architectural rules of Ant Design Vue. It serves as an authoritative specification for AI coding agents, design tools, and developers building user interfaces with `@hiltonkohler21/ant-design-vue`.
 
 ---
 
@@ -227,7 +227,7 @@ All interactive transitions utilize cubic-bezier curves matching natural physics
 </template>
 
 <script setup lang="ts">
-  import { theme } from 'ant-design-vue';
+  import { theme } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -244,7 +244,7 @@ AI agents can consume the current theme tokens reactively:
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { theme } from 'ant-design-vue';
+  import { theme } from '@hiltonkohler21/ant-design-vue';
 
   const { useToken } = theme;
   const { token, realToken } = useToken();

@@ -1,6 +1,6 @@
 # SSR & Static Style Extraction
 
-`ant-design-vue@4.3.0` offers two SSR styling strategies depending on your theming needs and caching architecture:
+`@hiltonkohler21/ant-design-vue@4.3.0` offers two SSR styling strategies depending on your theming needs and caching architecture:
 
 - **Per-Request Inline Extraction (Inline SSR)**: Collect only the component rules and `:root` CSS variables used during each server render via `StyleProvider` + `createCache`, and inline them into `<head>`. Zero unused CSS and full dynamic multi-theme support, at the cost of slightly larger HTML payloads.
 - **Build-Time Static Extraction (Zero-Runtime)**: Pre-bake component styles and `--ant-*` variables into a static `.css` file and enable `zeroRuntime: true`. Cacheable by CDNs with zero runtime `<style>` injection overhead; ideal for apps with fixed themes.
@@ -21,7 +21,7 @@ import Antd, {
   extractStyle,
   extractCSSVarStyle,
   clearCSSVarRegistry,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 import App from './App.vue';
 
 export async function render() {
@@ -84,8 +84,8 @@ This generates `dist/static-style/antdv.css` containing both `:root` CSS variabl
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import '../dist/static-style/antdv.css';
 import App from './App.vue';
 
@@ -127,7 +127,7 @@ import {
   extractStyle,
   extractCSSVarStyle,
   clearCSSVarRegistry,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 
 async function buildStaticCss() {
   clearCSSVarRegistry();
@@ -172,7 +172,7 @@ async function buildStaticCss() {
 buildStaticCss();
 ```
 
-> For a quick full-library default stylesheet, you can also use `ant-design-vue/lib/_util/static-style-extract` with a Vue `h(ConfigProvider, ...)` wrapper.
+> For a quick full-library default stylesheet, you can also use `@hiltonkohler21/ant-design-vue/lib/_util/static-style-extract` with a Vue `h(ConfigProvider, ...)` wrapper.
 
 ## Nuxt 3 Guide
 
@@ -187,7 +187,7 @@ import Antd, {
   extractCSSVarStyle,
   clearCSSVarRegistry,
   useStyleProvider,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 
 export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.use(Antd);
@@ -224,9 +224,9 @@ Transpile the packages in `nuxt.config.ts`:
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  css: ['ant-design-vue/dist/reset.css'],
+  css: ['@hiltonkohler21/ant-design-vue/dist/reset.css'],
   build: {
-    transpile: ['ant-design-vue', '@ant-design/icons-vue'],
+    transpile: ['@hiltonkohler21/ant-design-vue', '@ant-design/icons-vue'],
   },
 });
 ```
@@ -266,8 +266,8 @@ res.status(200).set({ 'Content-Type': 'text/html' }).end(finalHtml);
 
 | Export | Package | Description |
 | --- | --- | --- |
-| `StyleProvider` | `ant-design-vue` | Style context provider; pass `:cache="cache"` to collect SSR styles |
-| `createCache()` | `ant-design-vue` | Creates an isolated style cache instance per render |
-| `extractStyle(cache, plain?)` | `ant-design-vue` | Extracts component CSS; returns plain CSS when `plain = true`, otherwise `<style>` HTML tags |
-| `extractCSSVarStyle()` | `ant-design-vue` | Extracts all registered `:root` / component CSS variable blocks in `4.3.0` CSS Variables mode |
-| `clearCSSVarRegistry()` | `ant-design-vue` | Clears the CSS variable registry before an SSR render or build extraction |
+| `StyleProvider` | `@hiltonkohler21/ant-design-vue` | Style context provider; pass `:cache="cache"` to collect SSR styles |
+| `createCache()` | `@hiltonkohler21/ant-design-vue` | Creates an isolated style cache instance per render |
+| `extractStyle(cache, plain?)` | `@hiltonkohler21/ant-design-vue` | Extracts component CSS; returns plain CSS when `plain = true`, otherwise `<style>` HTML tags |
+| `extractCSSVarStyle()` | `@hiltonkohler21/ant-design-vue` | Extracts all registered `:root` / component CSS variable blocks in `4.3.0` CSS Variables mode |
+| `clearCSSVarRegistry()` | `@hiltonkohler21/ant-design-vue` | Clears the CSS variable registry before an SSR render or build extraction |

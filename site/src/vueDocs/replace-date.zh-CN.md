@@ -6,15 +6,15 @@
 
 ```js
 // moment 或者 date-fns
-import DatePicker from 'ant-design-vue/es/date-picker/moment';
-import TimePicker from 'ant-design-vue/es/time-picker/moment';
-import Calendar from 'ant-design-vue/es/calendar/moment';
-// import DatePicker from 'ant-design-vue/es/date-picker/date-fns';
-// import TimePicker from 'ant-design-vue/es/time-picker/date-fns';
-// import Calendar from 'ant-design-vue/es/calendar/date-fns';
+import DatePicker from '@hiltonkohler21/ant-design-vue/es/date-picker/moment';
+import TimePicker from '@hiltonkohler21/ant-design-vue/es/time-picker/moment';
+import Calendar from '@hiltonkohler21/ant-design-vue/es/calendar/moment';
+// import DatePicker from '@hiltonkohler21/ant-design-vue/es/date-picker/date-fns';
+// import TimePicker from '@hiltonkohler21/ant-design-vue/es/time-picker/date-fns';
+// import Calendar from '@hiltonkohler21/ant-design-vue/es/calendar/date-fns';
 import { createApp } from 'vue';
 import App from './App.vue';
-import antd from 'ant-design-vue';
+import antd from '@hiltonkohler21/ant-design-vue';
 const app = createApp(App);
 app.use(DatePicker).use(TimePicker).use(Calendar).use(antd).mount('#app');
 ```

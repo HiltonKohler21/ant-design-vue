@@ -1,6 +1,6 @@
 # Migrating from 4.2.6 to 4.3.0
 
-This handbook guides you through upgrading smoothly from `ant-design-vue@4.2.6` to `ant-design-vue@4.3.0` (covering all `4.2.7` and `4.3.0` improvements, aligned with `antd@6.7.2`). `4.3.0` brings the Ant Design v6 performance layer (**native CSS Variables enabled by default** and **zero-runtime static CSS extraction**), adds **6 new top-level components** and **6 new subcomponents**, introduces **functional Semantic DOM (`classNames`/`styles`)** across **61 components**, wires **72 `ConfigProvider` per-component defaults**, syncs **74 locale packs**, expands **Component Design Tokens to 317+**, and modernizes component APIs across the entire library.
+This handbook guides you through upgrading smoothly from `ant-design-vue@4.2.6` to `@hiltonkohler21/ant-design-vue@4.3.0` (covering all `4.2.7` and `4.3.0` improvements, aligned with `antd@6.7.2`). `4.3.0` brings the Ant Design v6 performance layer (**native CSS Variables enabled by default** and **zero-runtime static CSS extraction**), adds **6 new top-level components** and **6 new subcomponents**, introduces **functional Semantic DOM (`classNames`/`styles`)** across **61 components**, wires **72 `ConfigProvider` per-component defaults**, syncs **74 locale packs**, expands **Component Design Tokens to 317+**, and modernizes component APIs across the entire library.
 
 > Upgrading from `3.x`? Please follow the [V3 to V4 Migration Guide](/docs/vue/migration-v4) first.
 
@@ -26,13 +26,13 @@ Upgrading from `4.2.6` to `4.3.0` is designed to be **incremental and low-risk**
 
 ```bash
 # npm
-npm install ant-design-vue@4.3.0
+npm install @hiltonkohler21/ant-design-vue@4.3.0
 
 # yarn
-yarn add ant-design-vue@4.3.0
+yarn add @hiltonkohler21/ant-design-vue@4.3.0
 
 # pnpm
-pnpm add ant-design-vue@4.3.0
+pnpm add @hiltonkohler21/ant-design-vue@4.3.0
 ```
 
 If your project uses Ant Design icons, update `@ant-design/icons-vue` to the latest 7.x release as well:
@@ -76,7 +76,7 @@ In `4.3.0` with default `cssVar: true`:
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token } = theme.useToken();
 
@@ -98,7 +98,7 @@ const cardStyle = computed(() => ({
 ```vue
 <script setup lang="ts">
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token, realToken } = theme.useToken();
 
@@ -149,8 +149,8 @@ npm run static-style-extract
 ```ts
 // main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import '../dist/static-style/antdv.css';
 import App from './App.vue';
 
@@ -210,7 +210,7 @@ createApp(App).use(Antd).mount('#app');
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { MasonryRef } from 'ant-design-vue';
+import type { MasonryRef } from '@hiltonkohler21/ant-design-vue';
 
 const masonryRef = ref<MasonryRef>();
 const items = [
@@ -304,7 +304,7 @@ const code = ref('');
     <!-- 5. Space.Addon -->
     <a-space-compact>
       <a-space-addon>https://</a-space-addon>
-      <a-input v-model:value="domain" placeholder="antdv.com" />
+      <a-input v-model:value="domain" placeholder="hiltonkohler21.github.io/ant-design-vue" />
       <a-space-addon>.com</a-space-addon>
     </a-space-compact>
 
@@ -405,7 +405,7 @@ With `List` deprecated upstream, `4.3.0` introduces **`Listy`** as the modern vi
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { ListyRef } from 'ant-design-vue';
+import type { ListyRef } from '@hiltonkohler21/ant-design-vue';
 
 const listyRef = ref<ListyRef>();
 const users = Array.from({ length: 200 }, (_, i) => ({
@@ -470,7 +470,7 @@ See [Common Props](/docs/vue/common-props) for the complete semantic slot refere
 
 <script setup lang="ts">
 import { h } from 'vue';
-import { ConfigProvider, Empty } from 'ant-design-vue';
+import { ConfigProvider, Empty } from '@hiltonkohler21/ant-design-vue';
 
 // Wrap static message / notification / modal holders with custom context
 const holderRender = (children: any) => h(ConfigProvider, { prefixCls: 'ant' }, () => children);
@@ -556,7 +556,14 @@ All legacy `4.2.6` props below remain **100% backwards-compatible in `4.3.0`** s
     Section
   </a-divider>
   <a-alert title="Notice" variant="filled" :closable="{ closeIcon: 'Dismiss' }" />
-  <a-tag variant="filled" color="blue" href="https://antdv.com" target="_blank">Beta</a-tag>
+  <a-tag
+    variant="filled"
+    color="blue"
+    href="https://hiltonkohler21.github.io/ant-design-vue"
+    target="_blank"
+  >
+    Beta
+  </a-tag>
   <a-image
     src="/demo.png"
     :preview="{
@@ -613,7 +620,7 @@ const previewOpen = ref(false);
 <script setup lang="ts">
 import { h, ref } from 'vue';
 import type { Dayjs } from 'dayjs';
-import type { TableColumnsType } from 'ant-design-vue';
+import type { TableColumnsType } from '@hiltonkohler21/ant-design-vue';
 
 const dates = ref<Dayjs[]>([]);
 const time = ref<Dayjs>();
@@ -708,7 +715,7 @@ const rows = [{ id: 1, name: 'Ant Design Vue 4.3.0' }];
 
 <script setup lang="ts">
 import { h, ref } from 'vue';
-import { App, Button } from 'ant-design-vue';
+import { App, Button } from '@hiltonkohler21/ant-design-vue';
 
 const drawerOpen = ref(false);
 const modalOpen = ref(false);
@@ -748,14 +755,14 @@ const openNotice = () => {
 
 #### 1. How do I avoid style conflicts with TailwindCSS v4?
 
-TailwindCSS v4 organizes styles with native CSS `@layer` (`theme`, `base`, `components`, `utilities`), whereas `ant-design-vue` uses `:where(.css-xxx)` low-specificity selectors by default. Declare an explicit `@layer` order and place `reset.css` (and pre-extracted `antdv.css` if using `zeroRuntime`) inside appropriate layers:
+TailwindCSS v4 organizes styles with native CSS `@layer` (`theme`, `base`, `components`, `utilities`), whereas `@hiltonkohler21/ant-design-vue` uses `:where(.css-xxx)` low-specificity selectors by default. Declare an explicit `@layer` order and place `reset.css` (and pre-extracted `antdv.css` if using `zeroRuntime`) inside appropriate layers:
 
 ```css
 /* src/assets/main.css */
 @layer theme, base, antd, components, utilities;
 
 @import 'tailwindcss';
-@import 'ant-design-vue/dist/reset.css' layer(base);
+@import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(base);
 /* If using zeroRuntime extracted CSS: */
 /* @import './antdv.css' layer(antd); */
 ```
@@ -767,7 +774,7 @@ If Tailwind's base reset overrides Ant Design Vue component styles (e.g., transp
 With `cssVar: true` enabled by default in `4.3.0`, SSR must extract **both** component styles (`extractStyle(cache)`) and `:root` CSS variable declarations (`extractCSSVarStyle()`), and inject them into `<head>`:
 
 ```ts
-import { createCache, extractStyle, extractCSSVarStyle } from 'ant-design-vue';
+import { createCache, extractStyle, extractCSSVarStyle } from '@hiltonkohler21/ant-design-vue';
 
 const componentCss = extractStyle(cache);
 const cssVarCss = `<style data-antdv-cssvar>${extractCSSVarStyle()}</style>`;
@@ -777,6 +784,6 @@ See [SSR & Static Style Extraction](/docs/vue/ssr-extract-ssr) for complete Nuxt
 
 #### 3. Will a nested `ConfigProvider` leak into global `:root` CSS variables?
 
-**No.** In `4.3.0`, the root `<a-config-provider>` uses `:root` CSS variables for fast global theme switching. Whenever a nested `<a-config-provider>` defines local `token`, `components`, or `algorithm` overrides, `ant-design-vue` **automatically isolates that subtree in scoped hashed mode** so local overrides never clobber global `:root` variables.
+**No.** In `4.3.0`, the root `<a-config-provider>` uses `:root` CSS variables for fast global theme switching. Whenever a nested `<a-config-provider>` defines local `token`, `components`, or `algorithm` overrides, `@hiltonkohler21/ant-design-vue` **automatically isolates that subtree in scoped hashed mode** so local overrides never clobber global `:root` variables.
 
 > Tip: If you use `<a-config-provider :theme="{ inherit: false }">` to reset a subtree to default tokens without passing `token`/`algorithm`, explicitly add `cssVar: false` (`:theme="{ inherit: false, cssVar: false }"`) to guarantee full `:root` isolation.

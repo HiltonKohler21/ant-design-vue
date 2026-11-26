@@ -7,7 +7,7 @@ title: Compatible Style
 
 Ant Design Vue supports the last 2 versions of modern browsers. Modern CSS features are enabled by default for maintainability and dynamic theming performance. When targeting legacy browsers, Shadow DOM, `rem` scaling, or integrating with TailwindCSS and other CSS frameworks, use `StyleProvider` and CSS `@layer`.
 
-> `StyleProvider` and built-in transformers (`legacyLogicalPropertiesTransformer`, `px2remTransformer`) are exported directly from `ant-design-vue` — no extra package installation is required.
+> `StyleProvider` and built-in transformers (`legacyLogicalPropertiesTransformer`, `px2remTransformer`) are exported directly from `@hiltonkohler21/ant-design-vue` — no extra package installation is required.
 
 ## Default CSS Features & Browser Compatibility
 
@@ -57,7 +57,7 @@ To support both LTR and RTL cleanly, Ant Design Vue uses CSS Logical Properties 
 </template>
 
 <script setup lang="ts">
-import { legacyLogicalPropertiesTransformer } from 'ant-design-vue';
+import { legacyLogicalPropertiesTransformer } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -85,7 +85,7 @@ Use `px2remTransformer` to automatically convert component `px` values into `rem
 </template>
 
 <script setup lang="ts">
-import { px2remTransformer } from 'ant-design-vue';
+import { px2remTransformer } from '@hiltonkohler21/ant-design-vue';
 
 const px2rem = px2remTransformer({
   rootValue: 16, // 16px = 1rem (default: 16)
@@ -111,7 +111,7 @@ Inside a Shadow DOM (micro-frontends or Web Components), `<style>` tags in `docu
 
 ```ts
 import { createApp, defineComponent, h } from 'vue';
-import Antd, { ConfigProvider, StyleProvider } from 'ant-design-vue';
+import Antd, { ConfigProvider, StyleProvider } from '@hiltonkohler21/ant-design-vue';
 import MyApp from './MyApp.vue';
 
 const host = document.getElementById('shadow-host')!;
@@ -144,7 +144,7 @@ TailwindCSS v4 defines `@layer theme, base, components, utilities`. Declare the 
 @layer theme, base, antd, components, utilities;
 
 @import 'tailwindcss';
-@import 'ant-design-vue/dist/reset.css' layer(base);
+@import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(base);
 
 /* When using 4.3.0 zeroRuntime with pre-extracted static CSS: */
 /* @import '../dist/static-style/antdv.css' layer(antd); */
@@ -180,12 +180,12 @@ module.exports = {
 
 ### `reset.css` and `zeroRuntime` Static CSS (`antdv.css`)
 
-When loading both `ant-design-vue/dist/reset.css` and pre-extracted `antdv.css`, isolate them in ordered layers so resets never override components:
+When loading both `@hiltonkohler21/ant-design-vue/dist/reset.css` and pre-extracted `antdv.css`, isolate them in ordered layers so resets never override components:
 
 ```css
 @layer reset, antd;
 
-@import 'ant-design-vue/dist/reset.css' layer(reset);
+@import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(reset);
 @import '../dist/static-style/antdv.css' layer(antd);
 ```
 

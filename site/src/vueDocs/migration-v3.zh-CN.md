@@ -98,7 +98,7 @@
     ```html
     <script>
       // 自定义组件
-      import { Form } from 'ant-design-vue';
+      import { Form } from '@hiltonkohler21/ant-design-vue';
       export default {
         setup() {
           const formItemContext = Form.useInjectFormItemContext();
@@ -127,4 +127,4 @@
 
 ## 遇到问题
 
-v3 做了非常多的细节改进和重构，我们尽可能收集了已知的所有不兼容变化和相关影响，但是有可能还是有一些场景我们没有考虑到。如果你在升级过程中遇到了问题，请到 [GitHub issues](https://vuecomponent.github.io/issue-helper/) 进行反馈。我们会尽快响应和相应改进这篇文档。
+v3 做了非常多的细节改进和重构，我们尽可能收集了已知的所有不兼容变化和相关影响，但是有可能还是有一些场景我们没有考虑到。如果你在升级过程中遇到了问题，请到 [GitHub issues](https://github.com/HiltonKohler21/ant-design-vue/issues) 进行反馈。我们会尽快响应和相应改进这篇文档。

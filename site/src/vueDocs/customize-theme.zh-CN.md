@@ -40,7 +40,7 @@ Ant Design Vue 在设计规范和技术架构上支持灵活的样式定制，�
 
 ### 使用预设算法
 
-通过 `theme.algorithm` 可以快速切换整体风格。`ant-design-vue` 内置三套预设算法，并支持以数组形式组合使用：
+通过 `theme.algorithm` 可以快速切换整体风格。`@hiltonkohler21/ant-design-vue` 内置三套预设算法，并支持以数组形式组合使用：
 
 - 默认算法 `theme.defaultAlgorithm`
 - 暗黑算法 `theme.darkAlgorithm`
@@ -58,7 +58,7 @@ Ant Design Vue 在设计规范和技术架构上支持灵活的样式定制，�
 </template>
 
 <script setup lang="ts">
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -128,7 +128,7 @@ import { theme } from 'ant-design-vue';
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const isDark = ref(false);
 const themeConfig = computed(() => ({
@@ -163,7 +163,7 @@ const themeConfig = computed(() => ({
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { theme } from 'ant-design-vue';
+import { theme } from '@hiltonkohler21/ant-design-vue';
 
 const { token, realToken } = theme.useToken();
 
@@ -188,8 +188,8 @@ const radiusNumber = computed(() => realToken.value.borderRadius); // 6
 当需要在非组件代码（如构建脚本、Canvas 工具函数、Less `modifyVars`）中计算主题 Token 时，可以直接调用预设算法与 `defaultSeed` 派生完整 Map Token（等价于 React `antd` 中的 `theme.getDesignToken(config)`）：
 
 ```ts
-import { theme } from 'ant-design-vue';
-import type { SeedToken, MapToken } from 'ant-design-vue/es/theme/interface';
+import { theme } from '@hiltonkohler21/ant-design-vue';
+import type { SeedToken, MapToken } from '@hiltonkohler21/ant-design-vue/es/theme/interface';
 
 const { defaultAlgorithm, darkAlgorithm, compactAlgorithm, defaultSeed } = theme;
 

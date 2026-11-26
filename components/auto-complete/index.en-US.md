@@ -47,7 +47,7 @@ The differences with Select are:
 | notFoundContent | Specify content to show when no result matches | string \| slot | - |  |
 | open | Controlled open state of dropdown | boolean | - |  |
 | option | Custom render option by slot | v-slot:option="{value, label, [disabled, key, title]}" | - | 3.0 |
-| options | Data source for autocomplete | [DataSourceItemType](https://github.com/vueComponent/ant-design-vue/blob/724d53b907e577cf5880c1e6742d4c3f924f8f49/components/auto-complete/index.vue#L9)\[] | - |  |
+| options | Data source for autocomplete | [DataSourceItemType](https://github.com/HiltonKohler21/ant-design-vue/blob/724d53b907e577cf5880c1e6742d4c3f924f8f49/components/auto-complete/index.vue#L9)\[] | - |  |
 | placeholder | Placeholder of input | string \| slot | - |  |
 | ~~popupClassName~~ | The className of dropdown menu (deprecated, please use `classNames.popup.root` instead) | string | - | 4.0 |
 | popupMatchSelectWidth | Determine whether the popup menu and the select input are the same width. Default set `min-width` same as input. Will ignore when value less than select width. `false` will disable virtual scroll | boolean \| number | true | 4.3.0 |

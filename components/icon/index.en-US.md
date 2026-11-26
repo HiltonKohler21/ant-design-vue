@@ -29,7 +29,7 @@ bun add @ant-design/icons-vue
 
 ## API
 
-Since 2.0, `ant-design-vue` no longer includes the built-in Icon component. Please use the standalone `@ant-design/icons-vue` package.
+Since 2.0, `@hiltonkohler21/ant-design-vue` no longer includes the built-in Icon component. Please use the standalone `@ant-design/icons-vue` package.
 
 ### Common Icon
 
@@ -281,7 +281,7 @@ When enabling CSS `layer`, dynamically injected icon styles may affect `@layer` 
 
 This problem can be resolved by the two steps below:
 
-1. Use the latest `@ant-design/icons-vue` alongside the current version of `ant-design-vue`.
+1. Use the latest `@ant-design/icons-vue` alongside the current version of `@hiltonkohler21/ant-design-vue`.
 2. Avoid static methods of `message`, `Modal`, and `notification`; prefer `useMessage`, `useModal`, `useNotification`, or the contextual instance provided by `<a-app>`.
 
 If you must use static methods, you can render any icon component directly inside `<a-app>` to avoid style injection order issues caused by static methods:

@@ -43,7 +43,7 @@ App provides upstream and downstream method calls through `provide/inject`, beca
 </template>
 
 <script setup lang="ts">
-  import { App } from 'ant-design-vue';
+  import { App } from '@hiltonkohler21/ant-design-vue';
 
   const { message, modal, notification } = App.useApp();
 
@@ -94,10 +94,10 @@ The App component can only use the token in the `ConfigProvider`, if you need to
 #### Global scene (pinia scene)
 
 ```ts
-import { App } from 'ant-design-vue';
-import type { MessageInstance } from 'ant-design-vue/es/message/interface';
-import type { ModalStaticFunctions } from 'ant-design-vue/es/modal/confirm';
-import type { NotificationInstance } from 'ant-design-vue/es/notification/interface';
+import { App } from '@hiltonkohler21/ant-design-vue';
+import type { MessageInstance } from '@hiltonkohler21/ant-design-vue/es/message/interface';
+import type { ModalStaticFunctions } from '@hiltonkohler21/ant-design-vue/es/modal/confirm';
+import type { NotificationInstance } from '@hiltonkohler21/ant-design-vue/es/notification/interface';
 
 export const useGlobalStore = defineStore('global', () => {
   const message: MessageInstance = ref();

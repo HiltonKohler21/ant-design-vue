@@ -23,7 +23,7 @@ For full Vite configuration, automatic on-demand imports, and dev optimization t
 ## 2. Install Dependencies
 
 ```bash
-npm install ant-design-vue@4.3.0 @ant-design/icons-vue
+npm install @hiltonkohler21/ant-design-vue@4.3.0 @ant-design/icons-vue
 ```
 
 > `4.x` uses CSS-in-JS with native CSS Variables (enabled by default in 4.3.0). Do **not** import `antd.css`, and `babel-plugin-import` is no longer needed.
@@ -35,8 +35,8 @@ npm install ant-design-vue@4.3.0 @ant-design/icons-vue
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).use(Antd).mount('#app');
@@ -59,7 +59,7 @@ Wrap your root with `<a-config-provider>` and `<a-app>`:
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { Dayjs } from 'dayjs';
-import { App } from 'ant-design-vue';
+import { App } from '@hiltonkohler21/ant-design-vue';
 
 const date = ref<Dayjs>();
 const { message } = App.useApp();
@@ -69,7 +69,7 @@ const notify = () => message.success('Welcome to Ant Design Vue 4.3.0!');
 
 ### Option B: On-Demand Import (ES Modules / `unplugin-vue-components`)
 
-`ant-design-vue` supports ES module tree shaking natively:
+`@hiltonkohler21/ant-design-vue` supports ES module tree shaking natively:
 
 ```vue
 <template>
@@ -77,7 +77,7 @@ const notify = () => message.success('Welcome to Ant Design Vue 4.3.0!');
 </template>
 
 <script setup lang="ts">
-import { Button } from 'ant-design-vue';
+import { Button } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
@@ -87,8 +87,8 @@ Or configure `unplugin-vue-components` to resolve `<a-*>` tags automatically —
 
 ```ts
 import { createApp } from 'vue';
-import { Button, DatePicker } from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import { Button, DatePicker } from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 const app = createApp(App);

@@ -54,7 +54,7 @@ Some components use dynamic style to support wave effect. You can config `csp` p
 | getTargetContainer | Config Affix, Anchor scroll target container | () => HTMLElement \| Window | () => window | 3.0 |
 | holderRender | Wrapper renderer for static method holders (such as `message`) | (children: VueNode) => VueNode | - | 4.3.0 |
 | iconPrefixCls | Set icon prefix class | string | `anticon` | 4.0 |
-| locale | Language package setting, available in [ant-design-vue/es/locale](https://unpkg.com/ant-design-vue/es/locale/) | Locale | - | 1.5.0 |
+| locale | Language package setting, available in [@hiltonkohler21/ant-design-vue/es/locale](https://unpkg.com/@hiltonkohler21/ant-design-vue/es/locale/) | Locale | - | 1.5.0 |
 | pageHeader | Unify `ghost` of PageHeader, see [PageHeader](/components/page-header/) | { ghost?: boolean } | `{ ghost: true }` | 1.5.0 |
 | popupMatchSelectWidth | Determine whether the popup menu and select input share the same width (`min-width`). `false` disables virtual scroll | boolean \| number | - | 4.3.0 |
 | popupOverflow | Popup overflow behavior: position within viewport by default or within scroll container | `viewport` \| `scroll` | `viewport` | 4.3.0 |
@@ -87,7 +87,7 @@ Configure global defaults for `Modal`, `Message`, and `Notification` static meth
 
 ```ts
 import { h, ref } from 'vue';
-import { App, ConfigProvider, StyleProvider } from 'ant-design-vue';
+import { App, ConfigProvider, StyleProvider } from '@hiltonkohler21/ant-design-vue';
 
 ConfigProvider.config({
   prefixCls: 'ant',
@@ -119,7 +119,7 @@ ConfigProvider.config({
 Get values from parent `Provider`s, such as `DisabledContext` and `SizeContext` (returns reactive `Ref`s in Vue 3).
 
 ```ts
-import { ConfigProvider } from 'ant-design-vue';
+import { ConfigProvider } from '@hiltonkohler21/ant-design-vue';
 
 const {
   componentDisabled, // 4.3.0+

@@ -26,7 +26,7 @@
 
 ## 如何解决与 TailwindCSS v4 / v3 的样式优先级冲突？
 
-`ant-design-vue` 默认使用 `:where(.css-xxx)` 降低组件选择器权重，而 TailwindCSS Preflight（`base` reset）可能会把按钮背景重置为透明或覆盖边框样式。
+`@hiltonkohler21/ant-design-vue` 默认使用 `:where(.css-xxx)` 降低组件选择器权重，而 TailwindCSS Preflight（`base` reset）可能会把按钮背景重置为透明或覆盖边框样式。
 
 - **TailwindCSS v4**：在入口 CSS 顶部显式声明 `@layer` 顺序，并将 `reset.css` 归入 `base` 层：
 
@@ -34,7 +34,7 @@
   @layer theme, base, antd, components, utilities;
 
   @import 'tailwindcss';
-  @import 'ant-design-vue/dist/reset.css' layer(base);
+  @import '@hiltonkohler21/ant-design-vue/dist/reset.css' layer(base);
   ```
 
 - **提升组件权重**：在根组件外层包裹 `<a-style-provider hash-priority="high">`，移除 `:where(...)` 降权包装。
@@ -76,7 +76,7 @@ Shadow DOM 内部无法读取注入到 `document.head` 的 `<style>` 标签。�
 4.x 采用 CSS-in-JS，服务端渲染时必须收集本次渲染产生的样式并内联到 HTML `<head>` 中。特别注意在 `4.3.0` 默认开启 `cssVar: true` 后，需同时提取组件样式与 `:root` CSS 变量声明：
 
 ```ts
-import { createCache, extractStyle, extractCSSVarStyle } from 'ant-design-vue';
+import { createCache, extractStyle, extractCSSVarStyle } from '@hiltonkohler21/ant-design-vue';
 
 // renderToString 完成后：
 const componentCss = extractStyle(cache);
@@ -108,7 +108,7 @@ const cssVarCss = `<style data-antdv-cssvar>${extractCSSVarStyle()}</style>`;
    ```
    ```ts
    // 任意子组件
-   import { App } from 'ant-design-vue';
+   import { App } from '@hiltonkohler21/ant-design-vue';
    const { message, modal, notification } = App.useApp();
    message.success('自动继承暗黑主题与自定义 prefixCls');
    ```
@@ -143,7 +143,7 @@ const cssVarCss = `<style data-antdv-cssvar>${extractCSSVarStyle()}</style>`;
   ```json
   {
     "compilerOptions": {
-      "types": ["ant-design-vue/typings/global"]
+      "types": ["@hiltonkohler21/ant-design-vue/typings/global"]
     }
   }
   ```
@@ -152,14 +152,14 @@ const cssVarCss = `<style data-antdv-cssvar>${extractCSSVarStyle()}</style>`;
 
 ## Vite 开发环境首次打开页面较慢或频繁触发依赖重优化？
 
-在 `vite.config.ts` 中通过 `optimizeDeps.include` 提前预打包 `ant-design-vue`、`@ant-design/icons-vue` 与 `dayjs` 及其语言包，避免运行期按需发现依赖导致的二次重载：
+在 `vite.config.ts` 中通过 `optimizeDeps.include` 提前预打包 `@hiltonkohler21/ant-design-vue`、`@ant-design/icons-vue` 与 `dayjs` 及其语言包，避免运行期按需发现依赖导致的二次重载：
 
 ```ts
 export default defineConfig({
   optimizeDeps: {
     include: [
-      'ant-design-vue',
-      'ant-design-vue/es/locale/zh_CN',
+      '@hiltonkohler21/ant-design-vue',
+      '@hiltonkohler21/ant-design-vue/es/locale/zh_CN',
       '@ant-design/icons-vue',
       'dayjs',
       'dayjs/locale/zh-cn',
@@ -220,8 +220,8 @@ dayjs.locale('zh-cn');
 
 ## 是否提供 Sass / Less / CSS 文件？全局样式会不会被覆盖？
 
-- **CSS-in-JS 架构**：自 4.0 起 `ant-design-vue` 移除了 `antd.css` 与全部 `.less` 源码文件，不再需要也不提供 Sass/Stylus 版本，样式通过 CSS-in-JS（4.3.0 起默认原生 CSS Variables）按需自动注入。
-- **不污染全局样式**：4.x 不再主动修改全局标签样式。如果需要统一基础排版与盒模型，可在入口按需引入 `ant-design-vue/dist/reset.css`；如果不想影响外部页面（如微前端子应用），推荐仅在应用最外层包裹 `<a-app>` 组件。
+- **CSS-in-JS 架构**：自 4.0 起 `@hiltonkohler21/ant-design-vue` 移除了 `antd.css` 与全部 `.less` 源码文件，不再需要也不提供 Sass/Stylus 版本，样式通过 CSS-in-JS（4.3.0 起默认原生 CSS Variables）按需自动注入。
+- **不污染全局样式**：4.x 不再主动修改全局标签样式。如果需要统一基础排版与盒模型，可在入口按需引入 `@hiltonkohler21/ant-design-vue/dist/reset.css`；如果不想影响外部页面（如微前端子应用），推荐仅在应用最外层包裹 `<a-app>` 组件。
 
 ## 为什么修改了 `colorPrimary`，但链接（`a` 标签）颜色没有跟着变？
 
@@ -233,6 +233,6 @@ dayjs.locale('zh-cn');
 </a-config-provider>
 ```
 
-## `ant-design-vue` 适合移动端 H5 开发吗？
+## `@hiltonkohler21/ant-design-vue` 适合移动端 H5 开发吗？
 
-`ant-design-vue` 定位为**企业级桌面中后台产品**设计体系，并未针对移动端触控交互做专门适配。移动端项目建议选用专门的移动端 Vue 组件库。
+`@hiltonkohler21/ant-design-vue` 定位为**企业级桌面中后台产品**设计体系，并未针对移动端触控交互做专门适配。移动端项目建议选用专门的移动端 Vue 组件库。

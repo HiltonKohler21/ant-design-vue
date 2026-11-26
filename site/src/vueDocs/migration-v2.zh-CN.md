@@ -99,4 +99,4 @@ validateFields().then(values => {
 
 ## 遇到问题
 
-v2 做了非常多的细节改进和重构，我们尽可能收集了已知的所有不兼容变化和相关影响，但是有可能还是有一些场景我们没有考虑到。如果你在升级过程中遇到了问题，请到 [GitHub issues](https://vuecomponent.github.io/issue-helper/) 进行反馈。我们会尽快响应和相应改进这篇文档。
+v2 做了非常多的细节改进和重构，我们尽可能收集了已知的所有不兼容变化和相关影响，但是有可能还是有一些场景我们没有考虑到。如果你在升级过程中遇到了问题，请到 [GitHub issues](https://github.com/HiltonKohler21/ant-design-vue/issues) 进行反馈。我们会尽快响应和相应改进这篇文档。

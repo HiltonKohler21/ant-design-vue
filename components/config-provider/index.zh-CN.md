@@ -55,7 +55,7 @@ ConfigProvider 使用 Vue 3 的 [provide / inject](https://cn.vuejs.org/guide/co
 | getTargetContainer | 配置 Affix、Anchor 滚动监听容器 | () => HTMLElement \| Window | () => window | 3.0 |
 | holderRender | 配置静态方法（如 `message`）渲染时的外层包裹容器 | (children: VueNode) => VueNode | - | 4.3.0 |
 | iconPrefixCls | 设置图标统一样式前缀 | string | `anticon` | 4.0 |
-| locale | 语言包配置，语言包可到 [ant-design-vue/es/locale](https://unpkg.com/ant-design-vue/es/locale/) 目录下寻找 | Locale | - | 1.5.0 |
+| locale | 语言包配置，语言包可到 [@hiltonkohler21/ant-design-vue/es/locale](https://unpkg.com/@hiltonkohler21/ant-design-vue/es/locale/) 目录下寻找 | Locale | - | 1.5.0 |
 | pageHeader | 统一设置 PageHeader 的 `ghost`，参考 [PageHeader](/components/page-header-cn/) | { ghost?: boolean } | `{ ghost: true }` | 1.5.0 |
 | popupMatchSelectWidth | 下拉菜单和选择器同宽。默认将设置 `min-width`，当值小于选择框宽度时会被忽略。`false` 时会关闭虚拟滚动 | boolean \| number | - | 4.3.0 |
 | popupOverflow | 弹层类组件展示逻辑，默认随可视区域定位，可配置为随滚动容器定位 | `viewport` \| `scroll` | `viewport` | 4.3.0 |
@@ -88,7 +88,7 @@ ConfigProvider 使用 Vue 3 的 [provide / inject](https://cn.vuejs.org/guide/co
 
 ```ts
 import { h, ref } from 'vue';
-import { App, ConfigProvider, StyleProvider } from 'ant-design-vue';
+import { App, ConfigProvider, StyleProvider } from '@hiltonkohler21/ant-design-vue';
 
 ConfigProvider.config({
   prefixCls: 'ant',
@@ -120,7 +120,7 @@ ConfigProvider.config({
 获取父级 `Provider` 的值，如 `DisabledContext`、`SizeContext`（在 Vue 3 中返回响应式 `Ref`）。
 
 ```ts
-import { ConfigProvider } from 'ant-design-vue';
+import { ConfigProvider } from '@hiltonkohler21/ant-design-vue';
 
 const {
   componentDisabled, // 4.3.0+

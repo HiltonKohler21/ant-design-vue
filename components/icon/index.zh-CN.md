@@ -30,7 +30,7 @@ bun add @ant-design/icons-vue
 
 ## API
 
-从 2.0 开始，`ant-design-vue` 不再内置 Icon 组件，请使用独立的包 `@ant-design/icons-vue`。
+从 2.0 开始，`@hiltonkohler21/ant-design-vue` 不再内置 Icon 组件，请使用独立的包 `@ant-design/icons-vue`。
 
 ### 通用图标
 
@@ -283,7 +283,7 @@ export default defineConfig({
 
 可以通过以下方式解决：
 
-1. 确保使用最新版本的 `@ant-design/icons-vue` 配合当前版本的 `ant-design-vue`。
+1. 确保使用最新版本的 `@ant-design/icons-vue` 配合当前版本的 `@hiltonkohler21/ant-design-vue`。
 2. 尽量避免直接调用 `message`、`Modal`、`notification` 的静态方法，优先使用 `useMessage`、`useModal`、`useNotification` 或 `<a-app>` 提供的上下文实例。
 
 如果无法避免使用静态方法，可以在 `<a-app>` 组件下提前渲染任意一个图标组件，以规避静态方法首次挂载时对样式注入顺序的影响：

@@ -150,7 +150,7 @@ notification.config({
   <!-- <component :is='contextHolder'/> -->
 </template>
 <script setup>
-  import { notification } from 'ant-design-vue';
+  import { notification } from '@hiltonkohler21/ant-design-vue';
   const [notificationApi, contextHolder] = notification.useNotification();
   notificationApi.open({
     // ...

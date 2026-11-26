@@ -1,6 +1,6 @@
 # 在 Vite 中使用
 
-[Vite](https://cn.vitejs.dev/) 是现代 Vue 3 应用的首选构建工具，具备毫秒级冷启动与极速热更新（HMR）。本文介绍如何在 Vite + Vue 3 + TypeScript 工程中接入 `ant-design-vue@4.3.0`，并配置自动按需引入、图标、主题及工程化优化。
+[Vite](https://cn.vitejs.dev/) 是现代 Vue 3 应用的首选构建工具，具备毫秒级冷启动与极速热更新（HMR）。本文介绍如何在 Vite + Vue 3 + TypeScript 工程中接入 `@hiltonkohler21/ant-design-vue@4.3.0`，并配置自动按需引入、图标、主题及工程化优化。
 
 ## 1. 创建 Vite 项目
 
@@ -27,13 +27,13 @@ npm run dev
 
 打开浏览器访问 `http://localhost:5173`，看到 Vite + Vue 欢迎页即表示初始化成功。
 
-## 2. 安装 `ant-design-vue` 与图标库
+## 2. 安装 `@hiltonkohler21/ant-design-vue` 与图标库
 
 ```bash
-npm install ant-design-vue @ant-design/icons-vue
+npm install @hiltonkohler21/ant-design-vue @ant-design/icons-vue
 ```
 
-> `ant-design-vue` 4.x 内置了 CSS-in-JS 与原生 CSS Variables（4.3.0 起默认开启），**不需要**安装 `less`、`less-loader` 或 `babel-plugin-import`。
+> `@hiltonkohler21/ant-design-vue` 4.x 内置了 CSS-in-JS 与原生 CSS Variables（4.3.0 起默认开启），**不需要**安装 `less`、`less-loader` 或 `babel-plugin-import`。
 
 ## 3. 引入方式
 
@@ -72,7 +72,7 @@ export default defineConfig({
 
 ```ts
 import { createApp } from 'vue';
-import 'ant-design-vue/dist/reset.css';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).mount('#app');
@@ -94,7 +94,7 @@ createApp(App).mount('#app');
 
 <script setup lang="ts">
 import { h } from 'vue';
-import { App } from 'ant-design-vue';
+import { App } from '@hiltonkohler21/ant-design-vue';
 import { PlusOutlined } from '@ant-design/icons-vue';
 
 const { message } = App.useApp();
@@ -113,8 +113,8 @@ const onClick = () => {
 ```ts
 // src/main.ts
 import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).use(Antd).mount('#app');
@@ -122,7 +122,7 @@ createApp(App).use(Antd).mount('#app');
 
 ### 方式三：ES Module 手动按需导入
 
-`ant-design-vue` 原生支持 Tree Shaking，直接在 `<script setup lang="ts">` 中按需导入组件即可：
+`@hiltonkohler21/ant-design-vue` 原生支持 Tree Shaking，直接在 `<script setup lang="ts">` 中按需导入组件即可：
 
 ```vue
 <template>
@@ -130,18 +130,18 @@ createApp(App).use(Antd).mount('#app');
 </template>
 
 <script setup lang="ts">
-import { Button } from 'ant-design-vue';
+import { Button } from '@hiltonkohler21/ant-design-vue';
 </script>
 ```
 
 ## 4. TypeScript 与 IDE 类型提示（Vue - Official / Volar）
 
-若使用全局全量注册（`app.use(Antd)`），在 `tsconfig.json` 中声明 `ant-design-vue/typings/global` 即可获得模板标签与属性的完整补全：
+若使用全局全量注册（`app.use(Antd)`），在 `tsconfig.json` 中声明 `@hiltonkohler21/ant-design-vue/typings/global` 即可获得模板标签与属性的完整补全：
 
 ```json
 {
   "compilerOptions": {
-    "types": ["ant-design-vue/typings/global"]
+    "types": ["@hiltonkohler21/ant-design-vue/typings/global"]
   }
 }
 ```
@@ -157,8 +157,8 @@ import { Button } from 'ant-design-vue';
 export default defineConfig({
   optimizeDeps: {
     include: [
-      'ant-design-vue',
-      'ant-design-vue/es/locale/zh_CN',
+      '@hiltonkohler21/ant-design-vue',
+      '@hiltonkohler21/ant-design-vue/es/locale/zh_CN',
       '@ant-design/icons-vue',
       'dayjs',
       'dayjs/locale/zh-cn',
