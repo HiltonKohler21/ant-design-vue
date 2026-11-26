@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Button, Result } from 'ant-design-vue';
+import { Button, Result } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

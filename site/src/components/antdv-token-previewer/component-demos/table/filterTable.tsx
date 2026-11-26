@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
-import type { TableProps } from 'ant-design-vue';
-import { Table } from 'ant-design-vue';
+import type { TableProps } from '@hiltonkohler21/ant-design-vue';
+import { Table } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

@@ -1,4 +1,4 @@
-import type { SelectProps } from 'ant-design-vue';
+import type { SelectProps } from '@hiltonkohler21/ant-design-vue';
 
 const options: SelectProps['options'] = [];
 

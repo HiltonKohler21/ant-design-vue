@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { List, ListItem, ListItemMeta, Avatar } from 'ant-design-vue';
+import { List, ListItem, ListItemMeta, Avatar } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const data = [
@@ -20,7 +20,9 @@ const Demo = defineComponent({
               <ListItemMeta
                 v-slots={{
                   avatar: () => <Avatar src="https://joeschmoe.io/api/v1/random" />,
-                  title: () => <a href="https://www.antdv.com">{item.title}</a>,
+                  title: () => (
+                    <a href="https://hiltonkohler21.github.io/ant-design-vue">{item.title}</a>
+                  ),
                 }}
                 description="Ant Design, a design language for background applications, is refined by Ant UED Team"
               />

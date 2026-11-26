@@ -18,7 +18,7 @@ import enUS from '../../components/locale/en_US';
 import zhCN from '../../components/locale/zh_CN';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-import { theme as antdTheme } from 'ant-design-vue';
+import { theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
 import SiteToken from './SiteToken.vue';
 import type { Direction, GlobalConfig } from './type';
 import { installHappyWorkEffect } from './layouts/header/happyWork';

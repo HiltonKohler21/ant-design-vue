@@ -54,7 +54,7 @@
 
 <script lang="ts">
 import { defineComponent, defineAsyncComponent, ref, watch, onMounted, nextTick } from 'vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { useLocale } from '../../i18n';
 import locales from './locales';
 

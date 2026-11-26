@@ -1,12 +1,12 @@
-import type { InputProps } from 'ant-design-vue';
-import { ConfigProvider, Input, InputNumber, Select, theme } from 'ant-design-vue';
-import classNames from 'ant-design-vue/es/_util/classNames';
+import type { InputProps } from '@hiltonkohler21/ant-design-vue';
+import { ConfigProvider, Input, InputNumber, Select, theme } from '@hiltonkohler21/ant-design-vue';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
 import type { PropType } from 'vue';
 import { defineComponent, watchEffect, computed, toRefs, ref } from 'vue';
 import { HexColorPicker, RgbaColorPicker } from '../vue-colorful';
 import tinycolor from 'tinycolor2';
 import makeStyle from './utils/makeStyle';
-import type { ValueType } from 'ant-design-vue/es/input-number/src/utils/MiniDecimal';
+import type { ValueType } from '@hiltonkohler21/ant-design-vue/es/input-number/src/utils/MiniDecimal';
 
 const { useToken } = theme;
 

@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
-import { Button, Popconfirm, Space, Upload } from 'ant-design-vue';
+import { Button, Popconfirm, Space, Upload } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

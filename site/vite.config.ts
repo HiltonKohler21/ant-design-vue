@@ -282,14 +282,14 @@ function devAntdBundlePlugin(): Plugin {
                 if (path.isAbsolute(args.path)) {
                   return null;
                 }
-                if (args.path === 'ant-design-vue') {
+                if (args.path === '@hiltonkohler21/ant-design-vue') {
                   return { path: path.resolve(COMPONENTS_DIR, 'index.ts') };
                 }
-                if (args.path.startsWith('ant-design-vue/es/')) {
+                if (args.path.startsWith('@hiltonkohler21/ant-design-vue/es/')) {
                   return {
                     path: path.resolve(
                       COMPONENTS_DIR,
-                      args.path.slice('ant-design-vue/es/'.length),
+                      args.path.slice('@hiltonkohler21/ant-design-vue/es/'.length),
                     ),
                   };
                 }
@@ -508,8 +508,8 @@ function devAntdBundlePlugin(): Plugin {
           resolve: {
             alias: [
               ...baseAliases,
-              { find: 'ant-design-vue/es', replacement: COMPONENTS_DIR },
-              { find: 'ant-design-vue', replacement: COMPONENTS_DIR },
+              { find: '@hiltonkohler21/ant-design-vue/es', replacement: COMPONENTS_DIR },
+              { find: '@hiltonkohler21/ant-design-vue', replacement: COMPONENTS_DIR },
             ],
           },
           ...(command === 'serve'
@@ -550,13 +550,15 @@ function devAntdBundlePlugin(): Plugin {
 
       const entryKeys = Object.keys(DEV_LIB_ENTRIES).filter(k => k !== 'index');
       const entryAliases = entryKeys.map(key => ({
-        find: new RegExp(`^ant-design-vue/es/${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`),
+        find: new RegExp(
+          `^@hiltonkohler21/ant-design-vue/es/${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+        ),
         replacement: path.join(outDir, `${key}.js`),
       }));
       const devLibExcludes = [
-        'ant-design-vue',
-        'ant-design-vue/es',
-        ...entryKeys.map(key => `ant-design-vue/es/${key}`),
+        '@hiltonkohler21/ant-design-vue',
+        '@hiltonkohler21/ant-design-vue/es',
+        ...entryKeys.map(key => `@hiltonkohler21/ant-design-vue/es/${key}`),
         ...Object.values(DEV_VENDOR_ENTRIES),
       ];
 
@@ -566,15 +568,18 @@ function devAntdBundlePlugin(): Plugin {
         resolve: {
           alias: [
             ...baseAliases,
-            { find: /^ant-design-vue$/, replacement: path.join(outDir, 'index.js') },
+            {
+              find: /^@hiltonkohler21\/ant-design-vue$/,
+              replacement: path.join(outDir, 'index.js'),
+            },
             {
               find: /^@ant-design\/icons-vue$/,
               replacement: path.join(outDir, 'vendor/icons-vue.js'),
             },
             { find: /^lodash-es$/, replacement: path.join(outDir, 'vendor/lodash-es.js') },
             ...entryAliases,
-            { find: 'ant-design-vue/es', replacement: COMPONENTS_DIR },
-            { find: 'ant-design-vue', replacement: COMPONENTS_DIR },
+            { find: '@hiltonkohler21/ant-design-vue/es', replacement: COMPONENTS_DIR },
+            { find: '@hiltonkohler21/ant-design-vue', replacement: COMPONENTS_DIR },
           ],
         },
         css: {
@@ -620,10 +625,12 @@ function devAntdBundlePlugin(): Plugin {
       }
 
       let devTarget: string | null = null;
-      if (source === 'ant-design-vue') {
+      if (source === '@hiltonkohler21/ant-design-vue') {
         devTarget = path.join(outDir, 'index.js').replace(/\\/g, '/');
-      } else if (source.startsWith('ant-design-vue/es/')) {
-        const sub = source.slice('ant-design-vue/es/'.length).replace(/\.[jt]sx?$/, '');
+      } else if (source.startsWith('@hiltonkohler21/ant-design-vue/es/')) {
+        const sub = source
+          .slice('@hiltonkohler21/ant-design-vue/es/'.length)
+          .replace(/\.[jt]sx?$/, '');
         if (Object.prototype.hasOwnProperty.call(DEV_LIB_ENTRIES, sub)) {
           devTarget = path.join(outDir, `${sub}.js`).replace(/\\/g, '/');
         }

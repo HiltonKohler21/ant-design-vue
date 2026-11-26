@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { ColorPicker, Space } from 'ant-design-vue';
+import { ColorPicker, Space } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

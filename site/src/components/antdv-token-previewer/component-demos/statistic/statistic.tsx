@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Statistic, Row, Col, Button } from 'ant-design-vue';
+import { Statistic, Row, Col, Button } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Typography } from 'ant-design-vue';
+import { Typography } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const { Title, Paragraph, Text, Link } = Typography;

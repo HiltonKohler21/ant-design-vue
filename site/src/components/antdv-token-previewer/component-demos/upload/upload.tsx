@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
-import type { UploadProps } from 'ant-design-vue';
-import { Upload, message, Button } from 'ant-design-vue';
+import type { UploadProps } from '@hiltonkohler21/ant-design-vue';
+import { Upload, message, Button } from '@hiltonkohler21/ant-design-vue';
 import { UploadOutlined } from '@ant-design/icons-vue';
 
 import type { ComponentDemo } from '../../interface';

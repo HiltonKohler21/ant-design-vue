@@ -92,8 +92,8 @@ ${SCRIPT_CLOSE}
 }
 
 const MAIN_ENTRY = `import { createApp } from 'vue';
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/reset.css';
+import Antd from '@hiltonkohler21/ant-design-vue';
+import '@hiltonkohler21/ant-design-vue/dist/reset.css';
 import App from './App.vue';
 
 createApp(App).use(Antd).mount('#app');
@@ -184,7 +184,7 @@ function buildOnlineDemoFiles(code: string, meta: Meta): Record<string, string> 
       dependencies: {
         ...getDeps(code),
         vue: '^3.4.0',
-        'ant-design-vue': packageInfo.version,
+        '@hiltonkohler21/ant-design-vue': packageInfo.version,
       },
       devDependencies,
     },
@@ -209,7 +209,7 @@ function buildOnlineDemoFiles(code: string, meta: Meta): Record<string, string> 
   return files;
 }
 
-// CodeSandbox (Vite 5 + Vue 3 + TypeScript 5 + ant-design-vue@4.3.0)
+// CodeSandbox (Vite 5 + Vue 3 + TypeScript 5 + @hiltonkohler21/ant-design-vue@4.3.0)
 export function getCodeSandboxParams(code: string, meta: Meta): string {
   const projectFiles = buildOnlineDemoFiles(code, meta);
   const files: Record<string, { content: string; isBinary: boolean }> = {

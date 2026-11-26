@@ -1,4 +1,4 @@
-import { Button, Drawer } from 'ant-design-vue';
+import { Button, Drawer } from '@hiltonkohler21/ant-design-vue';
 import { defineComponent, ref } from 'vue';
 import type { ComponentDemo } from '../../interface';
 

@@ -1,11 +1,6 @@
 <template>
   <a-menu class="ecosystem" mode="inline" :selectable="false">
     <a-menu-item-group key="ecosystem" :title="$t('app.header.menu.ecosystem')">
-      <a-menu-item key="pro">
-        <a target="_blank" rel="noopener noreferrer" href="https://pro.antdv.com">
-          Ant Design Vue Pro
-        </a>
-      </a-menu-item>
       <a-menu-item key="design">
         <router-link :to="getLocalizedPathname('/docs/vue/download', isZhCN)">
           {{ isZhCN ? '设计资源' : 'Design Resources' }}

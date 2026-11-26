@@ -1,4 +1,4 @@
-import { Card, Space } from 'ant-design-vue';
+import { Card, Space } from '@hiltonkohler21/ant-design-vue';
 import { defineComponent } from 'vue';
 
 import Menu from '../component-demos/menu/menu';

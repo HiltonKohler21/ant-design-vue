@@ -1,4 +1,4 @@
-import { Rate } from 'ant-design-vue';
+import { Rate } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

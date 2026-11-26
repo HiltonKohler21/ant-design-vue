@@ -1,5 +1,5 @@
 import { defineComponent, ref, reactive } from 'vue';
-import { Form, FormItem, Input } from 'ant-design-vue';
+import { Form, FormItem, Input } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

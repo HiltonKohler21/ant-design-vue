@@ -7,7 +7,7 @@
 </template>
 <script>
 import * as AntdIcons from '@ant-design/icons-vue';
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { computed, defineComponent, markRaw } from 'vue';
 import { useI18n } from 'vue-i18n';
 

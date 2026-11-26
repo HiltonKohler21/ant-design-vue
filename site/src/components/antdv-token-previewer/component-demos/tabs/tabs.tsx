@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Tabs } from 'ant-design-vue';
+import { Tabs } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const { TabPane } = Tabs;

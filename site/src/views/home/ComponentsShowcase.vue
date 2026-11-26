@@ -175,7 +175,7 @@
             >
               <a-qrcode
                 type="svg"
-                value="https://www.antdv.com"
+                value="https://hiltonkohler21.github.io/ant-design-vue"
                 :size="92"
                 :bordered="false"
                 bg-color="transparent"

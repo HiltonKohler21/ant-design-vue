@@ -512,7 +512,11 @@
     />
 
     <!-- QRCode -->
-    <a-qrcode v-else-if="component === 'QRCode'" value="https://www.antdv.com" status="loading" />
+    <a-qrcode
+      v-else-if="component === 'QRCode'"
+      value="https://hiltonkohler21.github.io/ant-design-vue"
+      status="loading"
+    />
 
     <!-- Radio -->
     <a-radio v-else-if="component === 'Radio'" v-model:checked="radioChecked">
@@ -798,7 +802,7 @@ import {
   Tour,
   message,
   notification,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 import {
   AppstoreOutlined,
   ArrowUpOutlined,

@@ -1,5 +1,5 @@
 import { defineComponent, ref } from 'vue';
-import { Switch } from 'ant-design-vue';
+import { Switch } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

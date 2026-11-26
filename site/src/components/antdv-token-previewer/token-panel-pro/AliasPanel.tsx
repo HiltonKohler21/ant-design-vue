@@ -4,10 +4,10 @@ import {
   RightOutlined,
   ShrinkOutlined,
 } from '@ant-design/icons-vue';
-import { Button, Collapse, Empty, Tooltip } from 'ant-design-vue';
+import { Button, Collapse, Empty, Tooltip } from '@hiltonkohler21/ant-design-vue';
 import type { MutableTheme, AliasToken, SelectedToken } from '../interface';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import useMergedState from 'ant-design-vue/es/_util/hooks/useMergedState';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
+import useMergedState from '@hiltonkohler21/ant-design-vue/es/_util/hooks/useMergedState';
 import { defineComponent, toRefs, computed } from 'vue';
 import type { PropType, Ref } from 'vue';
 import { Pick } from '../icons';

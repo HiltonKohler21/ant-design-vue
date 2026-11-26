@@ -105,7 +105,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { version as antdVersion } from 'ant-design-vue';
+import { version as antdVersion } from '@hiltonkohler21/ant-design-vue';
 import {
   AppstoreOutlined,
   ArrowRightOutlined,

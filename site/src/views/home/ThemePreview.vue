@@ -110,7 +110,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { theme as antdTheme } from 'ant-design-vue';
+import { theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
 import { ArrowRightOutlined, BgColorsOutlined, CheckOutlined } from '@ant-design/icons-vue';
 import ThemePreviewStage from './ThemePreviewStage.vue';
 

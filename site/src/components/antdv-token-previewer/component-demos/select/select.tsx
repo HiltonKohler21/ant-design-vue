@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Select, Space } from 'ant-design-vue';
+import { Select, Space } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const { Option } = Select;

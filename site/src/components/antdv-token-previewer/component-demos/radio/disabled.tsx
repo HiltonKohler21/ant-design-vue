@@ -1,4 +1,4 @@
-import { Radio } from 'ant-design-vue';
+import { Radio } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = () => <Radio disabled>Radio</Radio>;

@@ -1,11 +1,20 @@
 import { defineComponent, toRefs, computed, ref } from 'vue';
 import type { PropType } from 'vue';
-import { ConfigProvider, Empty, Input, Table, Tag, Tooltip, message, theme } from 'ant-design-vue';
+import {
+  ConfigProvider,
+  Empty,
+  Input,
+  Table,
+  Tag,
+  Tooltip,
+  message,
+  theme,
+} from '@hiltonkohler21/ant-design-vue';
 import { CheckOutlined, CopyOutlined, SearchOutlined } from '@ant-design/icons-vue';
-import { token2CSSVar } from 'ant-design-vue/es/_util/cssinjs';
+import { token2CSSVar } from '@hiltonkohler21/ant-design-vue/es/_util/cssinjs';
 import getDesignToken from '../antdv-token-previewer/utils/getDesignToken';
-import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
-import tokenData from 'ant-design-vue/es/version/token.json';
+import tokenMeta from '@hiltonkohler21/ant-design-vue/es/version/token-meta.json';
+import tokenData from '@hiltonkohler21/ant-design-vue/es/version/token.json';
 import { useLocale } from '../../i18n';
 import useSiteToken from '../../hooks/useSiteToken';
 import { CssVarBadge, copyText, isColorValue, useColumns } from '../TokenTable';

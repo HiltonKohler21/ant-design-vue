@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Splitter } from 'ant-design-vue';
+import { Splitter } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const paneStyle = {

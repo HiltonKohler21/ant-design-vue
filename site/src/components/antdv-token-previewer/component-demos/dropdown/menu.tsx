@@ -1,4 +1,4 @@
-import { Menu } from 'ant-design-vue';
+import { Menu } from '@hiltonkohler21/ant-design-vue';
 import { DownOutlined } from '@ant-design/icons-vue';
 
 const menu = (

@@ -1,4 +1,4 @@
-import { Row, Col } from 'ant-design-vue';
+import { Row, Col } from '@hiltonkohler21/ant-design-vue';
 import makeStyle from '../../utils/makeStyle';
 import type { ComponentDemo } from '../../interface';
 import { defineComponent } from 'vue';

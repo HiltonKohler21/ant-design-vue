@@ -44,7 +44,7 @@
             <h2>{{ resolvedIsCN ? '社区' : 'Community' }}</h2>
             <div class="footer-item">
               <a
-                href="https://github.com/vueComponent/ant-design-vue/discussions"
+                href="https://github.com/HiltonKohler21/ant-design-vue/discussions"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -64,26 +64,6 @@
                 <span>{{ resolvedIsCN ? '常见问题' : 'FAQ' }}</span>
               </router-link>
             </div>
-            <div v-if="resolvedIsCN" class="footer-item">
-              <a
-                href="https://zhuanlan.zhihu.com/ant-design-vue"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ReadOutlined class="footer-link-icon" />
-                <span>知乎专栏</span>
-              </a>
-            </div>
-            <div v-else class="footer-item">
-              <a
-                href="https://stackoverflow.com/questions/tagged/ant-design-vue"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ReadOutlined class="footer-link-icon" />
-                <span>StackOverflow</span>
-              </a>
-            </div>
           </div>
         </a-col>
 
@@ -92,7 +72,7 @@
             <h2>{{ resolvedIsCN ? '帮助' : 'Help' }}</h2>
             <div class="footer-item">
               <a
-                href="https://github.com/vueComponent/ant-design-vue"
+                href="https://github.com/HiltonKohler21/ant-design-vue"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -102,7 +82,7 @@
             </div>
             <div class="footer-item">
               <a
-                href="https://github.com/vueComponent/ant-design-vue/issues"
+                href="https://github.com/HiltonKohler21/ant-design-vue/issues"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -112,9 +92,7 @@
             </div>
             <div class="footer-item">
               <a
-                :href="`https://vuecomponent.github.io/issue-helper/${
-                  resolvedIsCN ? '?lang=zh' : ''
-                }`"
+                href="https://github.com/HiltonKohler21/ant-design-vue/issues/new"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -134,11 +112,6 @@
         <a-col :lg="6" :md="12" :sm="12" :xs="24">
           <div class="footer-center">
             <h2>{{ resolvedIsCN ? '生态与设计' : 'Ecosystem' }}</h2>
-            <div class="footer-item">
-              <a href="https://pro.antdv.com" target="_blank" rel="noopener noreferrer">
-                Ant Design Vue Pro
-              </a>
-            </div>
             <div class="footer-item">
               <router-link :to="getLocalizedPathname('/components/overview', resolvedIsCN)">
                 {{ resolvedIsCN ? '组件总览' : 'Components Overview' }}
@@ -169,7 +142,7 @@
       <span class="heart" aria-hidden="true">❤</span>
       <span>by</span>
       <a
-        href="https://github.com/vueComponent/ant-design-vue"
+        href="https://github.com/HiltonKohler21/ant-design-vue"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -185,7 +158,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject } from 'vue';
-import { version as antdVersion } from 'ant-design-vue';
+import { version as antdVersion } from '@hiltonkohler21/ant-design-vue';
 import {
   BgColorsOutlined,
   BugOutlined,
@@ -194,7 +167,6 @@ import {
   IssuesCloseOutlined,
   MessageOutlined,
   QuestionCircleOutlined,
-  ReadOutlined,
 } from '@ant-design/icons-vue';
 import { GLOBAL_CONFIG } from '../SymbolKey';
 import type { GlobalConfig } from '../type';
@@ -210,7 +182,6 @@ export default defineComponent({
     IssuesCloseOutlined,
     MessageOutlined,
     QuestionCircleOutlined,
-    ReadOutlined,
   },
   props: {
     isCN: {

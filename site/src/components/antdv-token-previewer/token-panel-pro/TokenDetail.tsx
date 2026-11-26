@@ -1,7 +1,7 @@
-import { Tooltip } from 'ant-design-vue';
+import { Tooltip } from '@hiltonkohler21/ant-design-vue';
 import type { MutableTheme, TokenValue } from '../interface';
-import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
-import classNames from 'ant-design-vue/es/_util/classNames';
+import tokenMeta from '@hiltonkohler21/ant-design-vue/es/version/token-meta.json';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
 import type { PropType } from 'vue';
 import { defineComponent, computed, toRefs } from 'vue';
 import { useInjectLocaleContext } from '../locale';

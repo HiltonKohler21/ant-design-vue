@@ -1,8 +1,8 @@
 import type { PropType, Ref } from 'vue';
 import { defineComponent, inject, toRefs, ref, computed } from 'vue';
-import { ConfigProvider, theme as antdTheme } from 'ant-design-vue';
-import type { DerivativeFunc } from 'ant-design-vue/es/_util/cssinjs';
-import classNames from 'ant-design-vue/es/_util/classNames';
+import { ConfigProvider, theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
+import type { DerivativeFunc } from '@hiltonkohler21/ant-design-vue/es/_util/cssinjs';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
 import type { SelectedToken, Theme } from './interface';
 import type { Locale } from './locale';
 import { useProvideLocaleContext, zhCN } from './locale';

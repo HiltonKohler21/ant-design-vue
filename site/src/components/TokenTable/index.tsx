@@ -1,11 +1,11 @@
 import { defineComponent, toRefs, computed, ref } from 'vue';
 import type { ComputedRef, PropType } from 'vue';
-import type { TableProps } from 'ant-design-vue';
-import { Table, Tooltip, theme } from 'ant-design-vue';
+import type { TableProps } from '@hiltonkohler21/ant-design-vue';
+import { Table, Tooltip, theme } from '@hiltonkohler21/ant-design-vue';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons-vue';
-import { token2CSSVar } from 'ant-design-vue/es/_util/cssinjs';
+import { token2CSSVar } from '@hiltonkohler21/ant-design-vue/es/_util/cssinjs';
 import getDesignToken from '../antdv-token-previewer/utils/getDesignToken';
-import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
+import tokenMeta from '@hiltonkohler21/ant-design-vue/es/version/token-meta.json';
 import { useLocale } from '../../i18n';
 import useSiteToken from '../../hooks/useSiteToken';
 import ColorChunk from '../ColorChunk';

@@ -1,5 +1,5 @@
-import type { MenuProps } from 'ant-design-vue';
-import { Menu } from 'ant-design-vue';
+import type { MenuProps } from '@hiltonkohler21/ant-design-vue';
+import { Menu } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

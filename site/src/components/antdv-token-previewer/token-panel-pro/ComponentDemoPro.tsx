@@ -5,9 +5,9 @@ import {
   Segmented,
   Space,
   theme as antdTheme,
-} from 'ant-design-vue';
+} from '@hiltonkohler21/ant-design-vue';
 import { CheckOutlined, CopyOutlined } from '@ant-design/icons-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
+import type { ThemeConfig } from '@hiltonkohler21/ant-design-vue/es/config-provider/context';
 import type { MutableTheme } from '../interface';
 import type { PropType, CSSProperties } from 'vue';
 import { defineComponent, onBeforeUnmount, toRefs, ref, computed } from 'vue';
@@ -53,7 +53,7 @@ function formatVueThemeConfigSnippet(config: ThemeConfig = {}): string {
     entries.push(`  ${k}: ${formatted},`);
   });
 
-  return `<template>\n  <a-config-provider :theme="themeConfig">\n    <App />\n  </a-config-provider>\n</template>\n\n<script setup lang="ts">\nimport { theme } from 'ant-design-vue';\n\nconst themeConfig = {\n${entries.join(
+  return `<template>\n  <a-config-provider :theme="themeConfig">\n    <App />\n  </a-config-provider>\n</template>\n\n<script setup lang="ts">\nimport { theme } from '@hiltonkohler21/ant-design-vue';\n\nconst themeConfig = {\n${entries.join(
     '\n',
   )}\n};\n${scriptClose}`;
 }

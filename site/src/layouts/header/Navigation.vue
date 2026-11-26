@@ -43,7 +43,7 @@
       </a-menu-item>
       <a-menu-item key="github">
         <a
-          href="https://github.com/vueComponent/ant-design-vue"
+          href="https://github.com/HiltonKohler21/ant-design-vue"
           target="_blank"
           rel="noopener noreferrer"
         >

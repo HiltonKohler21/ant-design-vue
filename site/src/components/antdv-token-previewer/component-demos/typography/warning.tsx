@@ -1,4 +1,4 @@
-import { Typography } from 'ant-design-vue';
+import { Typography } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 import { defineComponent } from 'vue';

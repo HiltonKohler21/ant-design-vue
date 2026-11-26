@@ -1,25 +1,15 @@
 <template>
-  <div v-if="isCN" id="right-bottom">
-    <img v-if="isCN" width="150" :src="`https://next.antdv.com/common_rice.png?v=${v}`" />
-    <div v-if="isMobile" class="close" @click="visible = false">
-      <close-outlined />
-    </div>
-    <!-- <span v-if="isCN">广告</span> -->
-  </div>
+  <div v-if="false" id="right-bottom" />
 </template>
 
 <script>
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 dayjs.extend(isBetween);
-import { CloseOutlined } from '@ant-design/icons-vue';
 const isEffective = (start, end) => {
   return dayjs().isBetween(start, end);
 };
 export default {
-  components: {
-    CloseOutlined,
-  },
   props: ['isCN', 'isMobile'],
   data() {
     return {

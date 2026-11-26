@@ -1,5 +1,5 @@
 import { defineComponent, ref } from 'vue';
-import { TreeSelect } from 'ant-design-vue';
+import { TreeSelect } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const treeData = [

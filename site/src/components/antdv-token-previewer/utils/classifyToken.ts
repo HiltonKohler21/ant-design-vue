@@ -1,4 +1,4 @@
-import type { GlobalToken } from 'ant-design-vue/es/theme/interface';
+import type { GlobalToken } from '@hiltonkohler21/ant-design-vue/es/theme/interface';
 import type { TokenValue } from '../interface';
 
 function defineTokenType<T extends string>(types: T[]) {

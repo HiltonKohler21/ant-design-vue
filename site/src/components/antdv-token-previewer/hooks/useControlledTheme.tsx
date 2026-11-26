@@ -1,6 +1,6 @@
-import type { DerivativeFunc } from 'ant-design-vue/es/_util/cssinjs';
-import { theme as antTheme } from 'ant-design-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
+import type { DerivativeFunc } from '@hiltonkohler21/ant-design-vue/es/_util/cssinjs';
+import { theme as antTheme } from '@hiltonkohler21/ant-design-vue';
+import type { ThemeConfig } from '@hiltonkohler21/ant-design-vue/es/config-provider/context';
 import type { Ref } from 'vue';
 import { watchEffect, ref, computed } from 'vue';
 import type { MutableTheme, Theme } from '../interface';

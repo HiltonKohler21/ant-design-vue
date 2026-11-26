@@ -1,5 +1,5 @@
-import { theme as antdTheme } from 'ant-design-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
+import { theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
+import type { ThemeConfig } from '@hiltonkohler21/ant-design-vue/es/config-provider/context';
 import type { PropType } from 'vue';
 import { toRefs, defineComponent } from 'vue';
 

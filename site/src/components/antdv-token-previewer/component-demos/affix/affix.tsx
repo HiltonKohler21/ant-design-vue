@@ -1,5 +1,5 @@
 import { defineComponent, ref } from 'vue';
-import { Affix, Button } from 'ant-design-vue';
+import { Affix, Button } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

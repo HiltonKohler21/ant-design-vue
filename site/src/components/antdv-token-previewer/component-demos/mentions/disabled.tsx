@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Mentions } from 'ant-design-vue';
+import { Mentions } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

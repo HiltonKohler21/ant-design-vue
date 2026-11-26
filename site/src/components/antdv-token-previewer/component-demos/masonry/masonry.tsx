@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Card, Masonry } from 'ant-design-vue';
+import { Card, Masonry } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const items = [

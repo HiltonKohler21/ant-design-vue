@@ -19,28 +19,6 @@
         display: none;
       }
     </style>
-    <script>
-      (function () {
-        var host = location.host;
-        if (host === 'vue.ant.design') {
-          location.replace(location.href.replace(host, 'www.antdv.com'));
-          return;
-        }
-        var hmMap = {
-          'www.antdv.com': 'https://hm.baidu.com/hm.js?4ad38a0c8f0960d731b654425317da22',
-        };
-        var hmSrc = hmMap[host];
-        if (!hmSrc) {
-          return;
-        }
-        window._hmt = window._hmt || [];
-        var hm = document.createElement('script');
-        hm.async = true;
-        hm.src = hmSrc;
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(hm, s);
-      })();
-    </script>
   </head>
 
   <body>

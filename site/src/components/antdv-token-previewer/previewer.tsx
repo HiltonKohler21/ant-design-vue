@@ -1,6 +1,6 @@
-import { Button, Layout, message, theme as antdTheme } from 'ant-design-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import classNames from 'ant-design-vue/es/_util/classNames';
+import { Button, Layout, message, theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
+import type { ThemeConfig } from '@hiltonkohler21/ant-design-vue/es/config-provider/context';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
 import { defineComponent, toRefs, watchEffect, computed, ref } from 'vue';
 import type { PropType } from 'vue';
 import ComponentPanel from './component-panel';

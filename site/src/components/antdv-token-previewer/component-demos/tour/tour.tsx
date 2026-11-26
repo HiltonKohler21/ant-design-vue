@@ -1,6 +1,6 @@
 import { computed, defineComponent, ref } from 'vue';
-import { Button, Space, Tour } from 'ant-design-vue';
-import type { TourProps } from 'ant-design-vue';
+import { Button, Space, Tour } from '@hiltonkohler21/ant-design-vue';
+import type { TourProps } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

@@ -195,7 +195,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { theme as antdTheme } from 'ant-design-vue';
+import { theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
 import { ExportOutlined, PlusOutlined, RocketOutlined } from '@ant-design/icons-vue';
 
 const props = defineProps<{

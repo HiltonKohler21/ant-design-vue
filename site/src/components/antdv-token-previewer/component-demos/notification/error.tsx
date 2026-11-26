@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { notification, Button } from 'ant-design-vue';
+import { notification, Button } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

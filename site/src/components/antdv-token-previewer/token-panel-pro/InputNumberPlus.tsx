@@ -1,4 +1,4 @@
-import { InputNumber, Slider } from 'ant-design-vue';
+import { InputNumber, Slider } from '@hiltonkohler21/ant-design-vue';
 import type { PropType } from 'vue';
 import { defineComponent, toRefs } from 'vue';
 

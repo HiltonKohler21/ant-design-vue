@@ -1,4 +1,4 @@
-import { Button, Modal } from 'ant-design-vue';
+import { Button, Modal } from '@hiltonkohler21/ant-design-vue';
 import { defineComponent, ref } from 'vue';
 import type { ComponentDemo } from '../../interface';
 

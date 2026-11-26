@@ -1,4 +1,4 @@
-import { Progress, Space } from 'ant-design-vue';
+import { Progress, Space } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

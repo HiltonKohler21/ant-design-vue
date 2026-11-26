@@ -123,7 +123,7 @@ export default {
   'app.footer.seeconf': 'Experience Tech Conference',
   'app.footer.xtech': 'Ant Financial Experience Tech',
   'app.footer.xtech.slogan': 'Experience The Beauty',
-  'app.publish.title': 'ant-design-vue@4.3.0 has been released! 🎉 🎉 🎉',
+  'app.publish.title': '@hiltonkohler21/ant-design-vue@4.3.0 has been released! 🎉 🎉 🎉',
   'app.publish.greeting': 'Hello, ',
   'app.publish.intro': ' has been released, so please upgrade. ',
   'app.publish.old-version-guide': 'If you need documentation for an older version, please visit ',

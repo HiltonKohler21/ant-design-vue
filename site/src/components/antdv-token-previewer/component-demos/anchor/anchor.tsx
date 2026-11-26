@@ -1,4 +1,4 @@
-import { Anchor } from 'ant-design-vue';
+import { Anchor } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const items = [

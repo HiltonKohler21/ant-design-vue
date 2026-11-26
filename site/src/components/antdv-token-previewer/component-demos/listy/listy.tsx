@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Listy } from 'ant-design-vue';
+import { Listy } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const items = Array.from({ length: 12 }, (_, idx) => ({

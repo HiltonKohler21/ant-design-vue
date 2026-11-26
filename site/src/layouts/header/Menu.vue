@@ -79,7 +79,7 @@
 <script lang="ts">
 import { computed, defineComponent, inject, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { version } from 'ant-design-vue';
+import { version } from '@hiltonkohler21/ant-design-vue';
 import Github from './Github.vue';
 import Navigation from './Navigation.vue';
 import Ecosystem from './Ecosystem.vue';
@@ -124,7 +124,7 @@ export default defineComponent({
 
     const handleVersionChange = (v: string) => {
       if (v && v !== antdVersion.value) {
-        window.location.href = `https://${v}.antdv.com${route.fullPath}`;
+        window.location.href = 'https://hiltonkohler21.github.io/ant-design-vue/';
       }
     };
 

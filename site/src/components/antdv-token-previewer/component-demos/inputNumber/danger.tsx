@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { InputNumber } from 'ant-design-vue';
+import { InputNumber } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 function onChange() {}

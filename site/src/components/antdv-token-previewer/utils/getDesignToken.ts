@@ -1,8 +1,8 @@
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import type { GlobalToken, MapToken } from 'ant-design-vue/es/theme/interface';
-import defaultMap from 'ant-design-vue/es/theme/themes/default';
-import seed from 'ant-design-vue/es/theme/themes/seed';
-import formatToken from 'ant-design-vue/es/theme/util/alias';
+import type { ThemeConfig } from '@hiltonkohler21/ant-design-vue/es/config-provider/context';
+import type { GlobalToken, MapToken } from '@hiltonkohler21/ant-design-vue/es/theme/interface';
+import defaultMap from '@hiltonkohler21/ant-design-vue/es/theme/themes/default';
+import seed from '@hiltonkohler21/ant-design-vue/es/theme/themes/seed';
+import formatToken from '@hiltonkohler21/ant-design-vue/es/theme/util/alias';
 
 export default function getDesignToken(config: ThemeConfig = {}): GlobalToken {
   const seedToken = { ...seed, ...config.token };

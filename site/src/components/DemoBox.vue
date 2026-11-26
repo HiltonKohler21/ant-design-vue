@@ -253,7 +253,7 @@ import {
   watch,
 } from 'vue';
 import { useRoute } from 'vue-router';
-import { BadgeRibbon } from 'ant-design-vue';
+import { BadgeRibbon } from '@hiltonkohler21/ant-design-vue';
 import {
   BugOutlined,
   CheckOutlined,
@@ -433,7 +433,7 @@ export default defineComponent({
     const editGithubUrl = computed(() => {
       const relativePath = props.jsfiddle?.relativePath || '';
       return relativePath
-        ? `https://github.com/vueComponent/ant-design-vue/edit/main/${relativePath}`
+        ? `https://github.com/HiltonKohler21/ant-design-vue/edit/main/${relativePath}`
         : '';
     });
 
@@ -571,7 +571,7 @@ export default defineComponent({
       const code = activeCode.value;
       if (!code) return;
       const params = getCodeSandboxParams(code, {
-        title: `${title.value} - ant-design-vue@${packageInfo.version}`,
+        title: `${title.value} - @hiltonkohler21/ant-design-vue@${packageInfo.version}`,
       });
       submitPostForm('https://codesandbox.io/api/v1/sandboxes/define', {
         parameters: params,
@@ -582,7 +582,7 @@ export default defineComponent({
       const code = activeCode.value;
       if (!code) return;
       const fields = getStackBlitzParams(code, {
-        title: `${title.value} - ant-design-vue@${packageInfo.version}`,
+        title: `${title.value} - @hiltonkohler21/ant-design-vue@${packageInfo.version}`,
       });
       submitPostForm('https://stackblitz.com/run?file=src%2Fdemo.vue', fields);
     };

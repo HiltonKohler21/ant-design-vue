@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Divider, Space, Tag, theme } from 'ant-design-vue';
+import { Divider, Space, Tag, theme } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

@@ -1,4 +1,4 @@
-import { Checkbox } from 'ant-design-vue';
+import { Checkbox } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = () => <Checkbox disabled>Checkbox</Checkbox>;

@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Divider } from 'ant-design-vue';
+import { Divider } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

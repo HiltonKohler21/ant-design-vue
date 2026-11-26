@@ -1,4 +1,4 @@
-import { message } from 'ant-design-vue';
+import { message } from '@hiltonkohler21/ant-design-vue';
 import { defineComponent, onBeforeUnmount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CopyableIcon from './CopyableIcon.vue';

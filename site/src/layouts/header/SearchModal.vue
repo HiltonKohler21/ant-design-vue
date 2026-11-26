@@ -415,7 +415,7 @@ function loadDesignTokenEntries(): Promise<SearchEntry[]> {
     return Promise.resolve(cachedTokenEntries);
   }
   if (!tokenLoadPromise) {
-    tokenLoadPromise = import('ant-design-vue/es/version/token-meta.json')
+    tokenLoadPromise = import('@hiltonkohler21/ant-design-vue/es/version/token-meta.json')
       .then(mod => {
         const raw = (mod as any)?.default || mod || {};
         cachedTokenEntries = buildTokenEntries(raw);

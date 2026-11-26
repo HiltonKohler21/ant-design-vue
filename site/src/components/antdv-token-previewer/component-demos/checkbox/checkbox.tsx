@@ -1,4 +1,4 @@
-import { Checkbox, Space } from 'ant-design-vue';
+import { Checkbox, Space } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = (props: any) => (

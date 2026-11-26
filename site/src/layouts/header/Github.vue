@@ -3,7 +3,7 @@
     <a
       id="github-btn"
       class="header-button header-icon-btn github-btn"
-      href="https://github.com/vueComponent/ant-design-vue"
+      href="https://github.com/HiltonKohler21/ant-design-vue"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="GitHub Repository"

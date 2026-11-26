@@ -1,4 +1,4 @@
-import { Skeleton } from 'ant-design-vue';
+import { Skeleton } from '@hiltonkohler21/ant-design-vue';
 
 import type { ComponentDemo } from '../../interface';
 

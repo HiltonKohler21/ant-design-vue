@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue';
 import type { CSSProperties } from 'vue';
 
-import { Card } from 'ant-design-vue';
+import { Card } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const gridStyle: CSSProperties = {

@@ -1,5 +1,5 @@
 import { defineComponent, ref } from 'vue';
-import { BackTop } from 'ant-design-vue';
+import { BackTop } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const Demo = defineComponent({

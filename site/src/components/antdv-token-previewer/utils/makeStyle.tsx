@@ -1,12 +1,12 @@
-import type { CSSInterpolation } from 'ant-design-vue/es/_util/cssinjs';
-import { useStyleRegister } from 'ant-design-vue/es/_util/cssinjs';
-import { theme as antdTheme } from 'ant-design-vue';
-import type { GlobalToken } from 'ant-design-vue/es/theme/interface';
-import { mergeToken } from 'ant-design-vue/es/theme/internal';
+import type { CSSInterpolation } from '@hiltonkohler21/ant-design-vue/es/_util/cssinjs';
+import { useStyleRegister } from '@hiltonkohler21/ant-design-vue/es/_util/cssinjs';
+import { theme as antdTheme } from '@hiltonkohler21/ant-design-vue';
+import type { GlobalToken } from '@hiltonkohler21/ant-design-vue/es/theme/interface';
+import { mergeToken } from '@hiltonkohler21/ant-design-vue/es/theme/internal';
 import { computed } from 'vue';
-import useConfigInject from 'ant-design-vue/es/config-provider/hooks/useConfigInject';
+import useConfigInject from '@hiltonkohler21/ant-design-vue/es/config-provider/hooks/useConfigInject';
 
-import type { UseComponentStyleResult } from 'ant-design-vue/es/theme/internal';
+import type { UseComponentStyleResult } from '@hiltonkohler21/ant-design-vue/es/theme/internal';
 const makeStyle = (
   path: string,
   styleFn: (token: GlobalToken & { rootCls: string }) => CSSInterpolation,

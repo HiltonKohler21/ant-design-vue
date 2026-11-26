@@ -1,4 +1,4 @@
-import { Avatar, Space } from 'ant-design-vue';
+import { Avatar, Space } from '@hiltonkohler21/ant-design-vue';
 import { UserOutlined } from '@ant-design/icons-vue';
 
 export default () => (

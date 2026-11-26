@@ -122,7 +122,7 @@ export default {
   'app.footer.seeconf': '蚂蚁体验科技大会',
   'app.footer.xtech': '蚂蚁体验科技',
   'app.footer.xtech.slogan': '让用户体验美好',
-  'app.publish.title': 'ant-design-vue@4.3.0 发布！🎉 🎉 🎉',
+  'app.publish.title': '@hiltonkohler21/ant-design-vue@4.3.0 发布！🎉 🎉 🎉',
   'app.publish.greeting': '你好，',
   'app.publish.intro': ' 已正式发布，欢迎升级。',
   'app.publish.old-version-guide': '如果您还需要使用旧版，请查阅 ',

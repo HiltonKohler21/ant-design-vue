@@ -15,10 +15,10 @@ import {
   RadiusSettingOutlined,
   TabletOutlined,
 } from '@ant-design/icons-vue';
-import { Collapse, Space } from 'ant-design-vue';
-import type { ThemeConfig } from 'ant-design-vue/es/config-provider/context';
-import classNames from 'ant-design-vue/es/_util/classNames';
-import PropTypes from 'ant-design-vue/es/_util/vue-types';
+import { Collapse, Space } from '@hiltonkohler21/ant-design-vue';
+import type { ThemeConfig } from '@hiltonkohler21/ant-design-vue/es/config-provider/context';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
+import PropTypes from '@hiltonkohler21/ant-design-vue/es/_util/vue-types';
 import { Motion, ShapeLine } from '../../icons';
 import type { MutableTheme, TokenValue } from '../../interface';
 import type { TokenType } from '../../utils/classifyToken';

@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { Table, Tag, Space } from 'ant-design-vue';
+import { Table, Tag, Space } from '@hiltonkohler21/ant-design-vue';
 import type { ComponentDemo } from '../../interface';
 
 const columns = [

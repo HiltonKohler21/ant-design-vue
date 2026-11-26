@@ -8,7 +8,7 @@
         </a-tag>
       </h1>
       <p class="components-overview-desc">
-        <code>ant-design-vue</code>
+        <code>@hiltonkohler21/ant-design-vue</code>
         {{
           isZhCN
             ? '为 Web 应用提供了丰富的基础 UI 组件，我们还将持续探索企业级应用的最佳 UI 实践。'
@@ -181,7 +181,7 @@
 import type { Ref } from 'vue';
 import type { GlobalConfig } from '../type';
 import { computed, defineComponent, h, inject, reactive, ref } from 'vue';
-import { BadgeRibbon, BorderBeam } from 'ant-design-vue';
+import { BadgeRibbon, BorderBeam } from '@hiltonkohler21/ant-design-vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import { GLOBAL_CONFIG } from '../SymbolKey';
 import { getLocalizedPathname } from '../utils/util';

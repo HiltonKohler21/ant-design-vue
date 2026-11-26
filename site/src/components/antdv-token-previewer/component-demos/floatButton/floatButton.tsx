@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import { FloatButton, Space } from 'ant-design-vue';
+import { FloatButton, Space } from '@hiltonkohler21/ant-design-vue';
 import { QuestionCircleOutlined } from '@ant-design/icons-vue';
 import type { ComponentDemo } from '../../interface';
 

@@ -1,8 +1,8 @@
 import type { PropType } from 'vue';
 import { defineComponent, toRefs, computed } from 'vue';
 import { BuildOutlined, CarOutlined } from '@ant-design/icons-vue';
-import { ConfigProvider, Drawer, Empty, Tag, Tooltip } from 'ant-design-vue';
-import classNames from 'ant-design-vue/es/_util/classNames';
+import { ConfigProvider, Drawer, Empty, Tag, Tooltip } from '@hiltonkohler21/ant-design-vue';
+import classNames from '@hiltonkohler21/ant-design-vue/es/_util/classNames';
 import ComponentDemos from '../component-demos';
 import type { AliasToken, ComponentDemo, MutableTheme, TokenName, TokenValue } from '../interface';
 import { useInjectLocaleContext } from '../locale';

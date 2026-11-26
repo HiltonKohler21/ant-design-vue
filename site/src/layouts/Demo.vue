@@ -177,8 +177,8 @@ import {
   FileTextOutlined,
   GithubOutlined,
 } from '@ant-design/icons-vue';
-import tokenData from 'ant-design-vue/es/version/token.json';
-import tokenMeta from 'ant-design-vue/es/version/token-meta.json';
+import tokenData from '@hiltonkohler21/ant-design-vue/es/version/token.json';
+import tokenMeta from '@hiltonkohler21/ant-design-vue/es/version/token-meta.json';
 import Contributor from '../components/Contributors/index.vue';
 import { resolveSemanticComponentName } from '../components/SemanticPreview/semanticsData';
 
@@ -196,9 +196,9 @@ const TOKEN_COMPONENT_ALIAS: Record<string, string> = {
 };
 
 const IMPORT_OVERRIDES: Record<string, string> = {
-  Grid: "import { Row, Col } from 'ant-design-vue';",
-  Message: "import { message } from 'ant-design-vue';",
-  Notification: "import { notification } from 'ant-design-vue';",
+  Grid: "import { Row, Col } from '@hiltonkohler21/ant-design-vue';",
+  Message: "import { message } from '@hiltonkohler21/ant-design-vue';",
+  Notification: "import { notification } from '@hiltonkohler21/ant-design-vue';",
   Icon: "import { HomeOutlined } from '@ant-design/icons-vue';",
 };
 
@@ -360,18 +360,18 @@ export default defineComponent({
       const title = String(docTitle.value || '').trim();
       if (!title) return '';
       if (IMPORT_OVERRIDES[title]) return IMPORT_OVERRIDES[title];
-      return `import { ${title} } from 'ant-design-vue';`;
+      return `import { ${title} } from '@hiltonkohler21/ant-design-vue';`;
     });
 
     const sourceGithubUrl = computed(() =>
       componentSlug.value
-        ? `https://github.com/vueComponent/ant-design-vue/tree/main/components/${componentSlug.value}`
+        ? `https://github.com/HiltonKohler21/ant-design-vue/tree/main/components/${componentSlug.value}`
         : '',
     );
 
     const docsGithubUrl = computed(() =>
       componentSlug.value
-        ? `https://github.com/vueComponent/ant-design-vue/blob/main/components/${
+        ? `https://github.com/HiltonKohler21/ant-design-vue/blob/main/components/${
             componentSlug.value
           }/index.${props.isZhCN ? 'zh-CN' : 'en-US'}.md`
         : '',
