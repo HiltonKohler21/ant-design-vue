@@ -300,4 +300,77 @@ describe('Table column resize performance & virtual table ERP features', () => {
 
     wrapper.unmount();
   });
+
+  it('defers #headerCell slot invocation to render phase without Vue slot warnings and keeps resize handle inside header cell', async () => {
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    try {
+      const tag = ref('Initial');
+      const Demo = defineComponent({
+        components: { ATable: Table },
+        setup() {
+          const columns = ref([
+            {
+              title: 'Code',
+              dataIndex: 'code',
+              key: 'code',
+              width: 120,
+              resizable: true,
+              ellipsis: true,
+            },
+            {
+              title: 'Name',
+              dataIndex: 'name',
+              key: 'name',
+              width: 180,
+              resizable: true,
+              ellipsis: true,
+            },
+          ]);
+          const dataSource = ref([{ key: '1', code: 'C1', name: 'Item 1' }]);
+          return { columns, dataSource, tag };
+        },
+        template: `
+          <a-table :columns="columns" :data-source="dataSource" :pagination="false">
+            <template #headerCell="{ column }">
+              <span v-if="column.key === 'name'" class="custom-header-cell">
+                {{ column.title }}-{{ tag }}
+              </span>
+            </template>
+          </a-table>
+        `,
+      });
+
+      const wrapper = mount(Demo, { attachTo: document.body });
+      await nextTick();
+      await nextTick();
+
+      const customHeader = wrapper.find('.custom-header-cell');
+      expect(customHeader.exists()).toBe(true);
+      expect(customHeader.text()).toBe('Name-Initial');
+
+      tag.value = 'Updated';
+      await nextTick();
+      await nextTick();
+      expect(wrapper.find('.custom-header-cell').text()).toBe('Name-Updated');
+
+      const vueSlotWarnings = warnSpy.mock.calls
+        .map(args => args.join(' '))
+        .filter(
+          msg => msg.includes('[Vue warn]') || msg.includes('outside of the render function'),
+        );
+      expect(vueSlotWarnings).toEqual([]);
+
+      const resizeStyles = Array.from(document.head.querySelectorAll('style'))
+        .map(s => s.textContent || '')
+        .join('\n');
+      expect(resizeStyles).toContain('ant-table-resize-handle');
+      expect(resizeStyles).toContain('right:0');
+      expect(resizeStyles).not.toContain('right:-8px');
+
+      wrapper.unmount();
+    } finally {
+      warnSpy.mockRestore();
+    }
+  });
 });

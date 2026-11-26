@@ -89,7 +89,8 @@ export default defineComponent<RowProps>({
                 rowType="header"
                 column={column}
                 v-slots={{
-                  default: () => column.title,
+                  default: () =>
+                    typeof column.title === 'function' ? (column.title as any)() : column.title,
                   dragHandle: () =>
                     col.resizable ? (
                       <DragHandleVue

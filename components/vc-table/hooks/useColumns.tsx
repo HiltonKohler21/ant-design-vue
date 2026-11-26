@@ -194,7 +194,7 @@ function useColumns<RecordType>(
           class: `${prefixCls.value}-expand-icon-col`,
           columnType: 'EXPAND_COLUMN',
         },
-        title: customRenderSlot(contextSlots.value, 'expandColumnTitle', {}, () => ['']),
+        title: () => customRenderSlot(contextSlots.value, 'expandColumnTitle', {}, () => ['']),
         fixed: fixedColumn,
         class: `${prefixCls.value}-row-expand-icon-cell`,
         width: expandColumnWidth.value,

@@ -9,7 +9,10 @@ function fillTitle<RecordType>(
   return columns.map(column => {
     const cloneColumn = { ...column };
 
-    cloneColumn.title = renderColumnTitle(cloneColumn.title, columnTitleProps);
+    if (typeof cloneColumn.title === 'function') {
+      const titleFn = cloneColumn.title;
+      cloneColumn.title = (() => renderColumnTitle(titleFn, columnTitleProps)) as any;
+    }
 
     if ('children' in cloneColumn) {
       cloneColumn.children = fillTitle(cloneColumn.children, columnTitleProps);

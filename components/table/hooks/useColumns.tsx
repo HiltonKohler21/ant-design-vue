@@ -29,15 +29,17 @@ function fillSlots<RecordType>(columns: ColumnsType<RecordType>, contextSlots: R
     });
 
     if (contextSlots.value.headerCell && !column.slots?.title) {
-      cloneColumn.title = customRenderSlot(
-        contextSlots.value,
-        'headerCell',
-        {
-          title: column.title,
-          column,
-        },
-        () => [column.title as any],
-      );
+      const origTitle = cloneColumn.title;
+      cloneColumn.title = (renderProps: any) =>
+        customRenderSlot(
+          contextSlots.value,
+          'headerCell',
+          {
+            title: typeof origTitle === 'function' ? origTitle(renderProps) : origTitle,
+            column,
+          },
+          () => [(typeof origTitle === 'function' ? origTitle(renderProps) : origTitle) as any],
+        );
     }
     if ('children' in cloneColumn && Array.isArray(cloneColumn.children)) {
       cloneColumn.children = fillSlots(cloneColumn.children, contextSlots);
