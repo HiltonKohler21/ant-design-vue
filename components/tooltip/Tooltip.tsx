@@ -1,5 +1,5 @@
 import type { CSSProperties, ExtractPropTypes } from 'vue';
-import { computed, watch, defineComponent, ref, onBeforeUnmount } from 'vue';
+import { computed, watch, defineComponent, ref, onBeforeUnmount, mergeProps } from 'vue';
 import VcTooltip from '../vc-tooltip';
 import classNames from '../_util/classNames';
 import PropTypes from '../_util/vue-types';
@@ -129,7 +129,15 @@ export default defineComponent({
     } = useComponentConfig('tooltip');
     const injectFromPopover = computed(() => !!(attrs as any)['data-popover-inject']);
     const uniqueContext = useInjectTooltipUnique();
-    const useUnique = computed(() => !!uniqueContext && !injectFromPopover.value);
+    const isNoTitle = () => {
+      const title = props.title ?? slots.title;
+      return !title && title !== 0;
+    };
+    const mergedOpen = computed(() => props.open ?? props.visible);
+    const useUnique = computed(
+      () =>
+        !!uniqueContext && !injectFromPopover.value && !(mergedOpen.value === false && isNoTitle()),
+    );
     const uniqueId = `ant-tooltip-unique-${++tooltipUniqueUid}`;
     const triggerElRef = ref<HTMLElement | null>(null);
     let enterTimer: ReturnType<typeof setTimeout> | null = null;
@@ -145,7 +153,6 @@ export default defineComponent({
       const ctxArrow = injectFromPopover.value ? undefined : tooltipConfig.value.arrow;
       return props.arrow ?? ctxArrow ?? true;
     });
-    const mergedOpen = computed(() => props.open ?? props.visible);
     const innerOpen = ref(
       firstNotUndefined([props.open, props.visible, props.defaultOpen, props.defaultVisible]),
     );
@@ -159,10 +166,6 @@ export default defineComponent({
         innerOpen.value = !!val;
       });
     });
-    const isNoTitle = () => {
-      const title = props.title ?? slots.title;
-      return !title && title !== 0;
-    };
 
     const handleVisibleChange = (val: boolean) => {
       const noTitle = isNoTitle();
@@ -557,7 +560,61 @@ export default defineComponent({
           eventProps.class = openClassName || `${prefixCls.value}-open`;
         }
 
-        return wrapSSR(cloneElement(child, eventProps, false, true));
+        const { class: childClass, style: childStyle } = child.props || {};
+        const { class: attrClass, style: attrStyle, ...restAttrs } = attrs as Record<string, any>;
+        const eventKeys = [
+          'onMouseenter',
+          'onMouseleave',
+          'onFocus',
+          'onBlur',
+          'onClick',
+          'onContextmenu',
+        ] as const;
+        const triggerExtraProps: Record<string, any> = {
+          ...restAttrs,
+          ...eventProps,
+        };
+        const composedEvents: Record<string, (...args: any[]) => any> = {};
+        for (const key of eventKeys) {
+          const uniqueFns = Array.from(
+            new Set(
+              [child.props?.[key], restAttrs[key], eventProps[key]]
+                .flat()
+                .filter((fn): fn is (...a: any[]) => any => typeof fn === 'function'),
+            ),
+          );
+          if (uniqueFns.length === 1) {
+            composedEvents[key] = uniqueFns[0];
+          } else if (uniqueFns.length > 1) {
+            composedEvents[key] = (...args: any[]) => {
+              for (const fn of uniqueFns) {
+                fn(...args);
+              }
+            };
+          }
+          if (composedEvents[key]) {
+            triggerExtraProps[key] = composedEvents[key];
+          }
+        }
+        if (childClass || attrClass || eventProps.class) {
+          triggerExtraProps.class = classNames(childClass, attrClass, eventProps.class);
+        }
+        if (childStyle || attrStyle || eventProps.style) {
+          triggerExtraProps.style = mergeProps(
+            { style: childStyle },
+            { style: attrStyle },
+            { style: eventProps.style },
+          ).style;
+        }
+        const cloned = cloneElement(child, triggerExtraProps, false, true);
+        if (cloned.props) {
+          for (const key of eventKeys) {
+            if (composedEvents[key]) {
+              cloned.props[key] = composedEvents[key];
+            }
+          }
+        }
+        return wrapSSR(cloned);
       }
 
       const vcTooltipProps = {

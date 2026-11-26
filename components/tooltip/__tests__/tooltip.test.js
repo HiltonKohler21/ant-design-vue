@@ -3,6 +3,8 @@ import { asyncExpect } from '../../../tests/utils';
 import { mount } from '@vue/test-utils';
 import Tooltip, { TooltipUniqueProvider } from '..';
 import ConfigProvider from '../../config-provider';
+import Dropdown from '../../dropdown';
+import Menu from '../../menu';
 import mountTest from '../../../tests/shared/mountTest';
 
 describe('Tooltip', () => {
@@ -233,6 +235,62 @@ describe('Tooltip', () => {
     wrapper.unmount();
   });
 
+  it('Tooltip.UniqueProvider preserves fallthrough attrs (class, style, onClick, data-*) on trigger', async () => {
+    document.body.innerHTML = '';
+    const onAttrClick = jest.fn();
+    const onChildClick = jest.fn();
+    const onAttrMouseenter = jest.fn();
+
+    const wrapper = mount(
+      {
+        render() {
+          return (
+            <Tooltip.UniqueProvider>
+              <Tooltip
+                title="Refresh"
+                mouseEnterDelay={0}
+                mouseLeaveDelay={0}
+                class="s-tool-item"
+                style={{ marginLeft: '8px' }}
+                data-test-attr="toolbar-refresh"
+                onClick={onAttrClick}
+                onMouseenter={onAttrMouseenter}
+              >
+                <span id="unique-attr-trigger" class="inner-icon" onClick={onChildClick}>
+                  Icon
+                </span>
+              </Tooltip>
+            </Tooltip.UniqueProvider>
+          );
+        },
+      },
+      { attachTo: 'body' },
+    );
+
+    await nextTick();
+    const trigger = document.getElementById('unique-attr-trigger');
+    expect(trigger).toBeTruthy();
+    expect(trigger.classList.contains('s-tool-item')).toBe(true);
+    expect(trigger.classList.contains('inner-icon')).toBe(true);
+    expect(trigger.style.marginLeft).toBe('8px');
+    expect(trigger.getAttribute('data-test-attr')).toBe('toolbar-refresh');
+
+    trigger.dispatchEvent(new MouseEvent('click'));
+    expect(onAttrClick).toHaveBeenCalledTimes(1);
+    expect(onChildClick).toHaveBeenCalledTimes(1);
+
+    trigger.dispatchEvent(new MouseEvent('mouseenter'));
+    await nextTick();
+    expect(onAttrMouseenter).toHaveBeenCalledTimes(1);
+    const container = document.body.querySelector('.ant-tooltip-unique-container');
+    expect(container).toBeTruthy();
+    expect(container.classList.contains('ant-tooltip-unique-container-visible')).toBe(true);
+    expect(trigger.classList.contains('s-tool-item')).toBe(true);
+    expect(trigger.classList.contains('ant-tooltip-open')).toBe(true);
+
+    wrapper.unmount();
+  });
+
   it('supports _InternalPanelDoNotUseOrYouWillBeFired pure panel and forceAlign ref method', () => {
     const InternalTooltip = Tooltip._InternalPanelDoNotUseOrYouWillBeFired;
     expect(InternalTooltip).toBeDefined();
@@ -262,5 +320,75 @@ describe('Tooltip', () => {
     expect(typeof tipWrapper.vm.forceAlign).toBe('function');
     expect(() => tipWrapper.vm.forceAlign()).not.toThrow();
     tipWrapper.unmount();
+  });
+
+  it('Tooltip.UniqueProvider does not leak into Dropdown MenuItem tooltips or emit Vue warnings', async () => {
+    document.body.innerHTML = '';
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const onMenuClick = jest.fn();
+
+    try {
+      const wrapper = mount(
+        {
+          render() {
+            return (
+              <Tooltip.UniqueProvider>
+                <Dropdown
+                  trigger={['click']}
+                  v-slots={{
+                    overlay: () => (
+                      <Menu onClick={onMenuClick}>
+                        <Menu.Item key="default">Default</Menu.Item>
+                        <Menu.Item key="small">Small</Menu.Item>
+                      </Menu>
+                    ),
+                  }}
+                >
+                  <Tooltip title="Density" mouseEnterDelay={0} mouseLeaveDelay={0}>
+                    <span id="unique-dropdown-trigger">Density</span>
+                  </Tooltip>
+                </Dropdown>
+              </Tooltip.UniqueProvider>
+            );
+          },
+        },
+        { attachTo: 'body' },
+      );
+
+      await nextTick();
+      const trigger = document.getElementById('unique-dropdown-trigger');
+      expect(trigger).toBeTruthy();
+
+      trigger.dispatchEvent(new MouseEvent('mouseenter'));
+      await nextTick();
+      const uniqueContainer = document.body.querySelector('.ant-tooltip-unique-container');
+      expect(uniqueContainer).toBeTruthy();
+      expect(uniqueContainer.classList.contains('ant-tooltip-unique-container-visible')).toBe(true);
+
+      trigger.click();
+      await nextTick();
+      await new Promise(r => setTimeout(r, 30));
+      await nextTick();
+
+      const items = Array.from(document.body.querySelectorAll('.ant-dropdown-menu-item'));
+      expect(items.length).toBe(2);
+
+      items[1].dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      await nextTick();
+      items[1].click();
+      await nextTick();
+
+      expect(onMenuClick).toHaveBeenCalledTimes(1);
+      expect(onMenuClick.mock.calls[0][0].key).toBe('small');
+
+      const vueWarnings = warnSpy.mock.calls
+        .map(args => args.join(' '))
+        .filter(msg => msg.includes('[Vue warn]'));
+      expect(vueWarnings).toEqual([]);
+
+      wrapper.unmount();
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 });
