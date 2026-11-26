@@ -1,5 +1,5 @@
 {
-  "name": "ant-design-vue",
+  "name": "@hiltonkohler21/ant-design-vue",
   "version": "4.3.0",
   "title": "Ant Design Vue",
   "description": "An enterprise-class UI design language and Vue-based implementation",
@@ -78,17 +78,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vueComponent/ant-design-vue.git"
+    "url": "https://github.com/HiltonKohler21/ant-design-vue.git"
   },
   "license": "MIT",
-  "funding": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/ant-design-vue"
-  },
   "bugs": {
-    "url": "https://github.com/vueComponent/ant-design-vue/issues"
+    "url": "https://github.com/HiltonKohler21/ant-design-vue/issues"
   },
-  "homepage": "https://www.antdv.com/",
+  "homepage": "https://hiltonkohler21.github.io/ant-design-vue/",
   "peerDependencies": {
     "vue": ">=3.2.0"
   },

@@ -159,7 +159,7 @@ module.exports = () => {
       }
     })
     .then(() => {
-      console.log(chalk.green(`sort ant-design-vue api successfully!`));
+      console.log(chalk.green(`sort @hiltonkohler21/ant-design-vue api successfully!`));
     });
   /* eslint-enable no-console */
 };

@@ -2,10 +2,10 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "ant-design-vue": ["components/index.ts"],
-      "ant-design-vue/es/*": ["components/*"],
-      "ant-design-vue/lib/*": ["components/*"],
-      "ant-design-vue/locale/*": ["components/locale/*"]
+      "@hiltonkohler21/ant-design-vue": ["components/index.ts"],
+      "@hiltonkohler21/ant-design-vue/es/*": ["components/*"],
+      "@hiltonkohler21/ant-design-vue/lib/*": ["components/*"],
+      "@hiltonkohler21/ant-design-vue/locale/*": ["components/locale/*"]
     },
     "lib": ["DOM", "ESNext"],
     "strictNullChecks": false,
